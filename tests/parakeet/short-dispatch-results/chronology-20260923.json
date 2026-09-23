@@ -1,0 +1,854 @@
+{
+  "posthoc_diagnostic_only": true,
+  "original_verdict_unchanged": true,
+  "blocks": [
+    {
+      "process": "current-screen0-512",
+      "index": 6,
+      "m": 167,
+      "reduction": 1024,
+      "columns": 4096,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 183274422,
+          "calls": 10,
+          "mean_ms": 18.3274422
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 236387281,
+          "calls": 10,
+          "mean_ms": 23.6387281
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 184282957,
+          "calls": 10,
+          "mean_ms": 18.4282957
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 183149161,
+          "calls": 10,
+          "mean_ms": 18.3149161
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 182704339,
+          "calls": 10,
+          "mean_ms": 18.2704339
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 173840264,
+          "calls": 10,
+          "mean_ms": 17.3840264
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 174501102,
+          "calls": 10,
+          "mean_ms": 17.450110199999997
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 173693891,
+          "calls": 10,
+          "mean_ms": 17.3693891
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 174552371,
+          "calls": 10,
+          "mean_ms": 17.4552371
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 177626833,
+          "calls": 10,
+          "mean_ms": 17.762683300000003
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 174597939,
+          "calls": 10,
+          "mean_ms": 17.4597939
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 174300309,
+          "calls": 10,
+          "mean_ms": 17.4300309
+        }
+      ]
+    },
+    {
+      "process": "current-screen0-512",
+      "index": 14,
+      "m": 48,
+      "reduction": 1024,
+      "columns": 1024,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 25918698,
+          "calls": 10,
+          "mean_ms": 2.5918698
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 26204540,
+          "calls": 10,
+          "mean_ms": 2.6204539999999996
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 26786158,
+          "calls": 10,
+          "mean_ms": 2.6786158
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 26863555,
+          "calls": 10,
+          "mean_ms": 2.6863555
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 26251563,
+          "calls": 10,
+          "mean_ms": 2.6251563
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 26937978,
+          "calls": 10,
+          "mean_ms": 2.6937978
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 32813193,
+          "calls": 10,
+          "mean_ms": 3.2813193
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 69500589,
+          "calls": 10,
+          "mean_ms": 6.9500589
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 26157882,
+          "calls": 10,
+          "mean_ms": 2.6157882
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 26118392,
+          "calls": 10,
+          "mean_ms": 2.6118392
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 26482642,
+          "calls": 10,
+          "mean_ms": 2.6482642
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 26159533,
+          "calls": 10,
+          "mean_ms": 2.6159532999999997
+        }
+      ]
+    },
+    {
+      "process": "candidate-screen1-512",
+      "index": 6,
+      "m": 167,
+      "reduction": 1024,
+      "columns": 4096,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 184530015,
+          "calls": 10,
+          "mean_ms": 18.4530015
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 183037527,
+          "calls": 10,
+          "mean_ms": 18.3037527
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 181978413,
+          "calls": 10,
+          "mean_ms": 18.1978413
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 182309866,
+          "calls": 10,
+          "mean_ms": 18.230986599999998
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 182467313,
+          "calls": 10,
+          "mean_ms": 18.2467313
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 183953072,
+          "calls": 10,
+          "mean_ms": 18.395307199999998
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 212934109,
+          "calls": 10,
+          "mean_ms": 21.2934109
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 183855334,
+          "calls": 10,
+          "mean_ms": 18.3855334
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 183422880,
+          "calls": 10,
+          "mean_ms": 18.342288
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 197288589,
+          "calls": 10,
+          "mean_ms": 19.7288589
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 181876160,
+          "calls": 10,
+          "mean_ms": 18.187616000000002
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 181975240,
+          "calls": 10,
+          "mean_ms": 18.197524
+        }
+      ]
+    },
+    {
+      "process": "candidate-screen1-512",
+      "index": 14,
+      "m": 48,
+      "reduction": 1024,
+      "columns": 1024,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 11411944,
+          "calls": 10,
+          "mean_ms": 1.1411944
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 11374346,
+          "calls": 10,
+          "mean_ms": 1.1374346
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 11353245,
+          "calls": 10,
+          "mean_ms": 1.1353245
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 11309588,
+          "calls": 10,
+          "mean_ms": 1.1309588000000002
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 11323699,
+          "calls": 10,
+          "mean_ms": 1.1323699
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 11335618,
+          "calls": 10,
+          "mean_ms": 1.1335618
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 11327295,
+          "calls": 10,
+          "mean_ms": 1.1327295
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 11318760,
+          "calls": 10,
+          "mean_ms": 1.131876
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 11320756,
+          "calls": 10,
+          "mean_ms": 1.1320755999999998
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 11323279,
+          "calls": 10,
+          "mean_ms": 1.1323279
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 11266704,
+          "calls": 10,
+          "mean_ms": 1.1266704
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 11329178,
+          "calls": 10,
+          "mean_ms": 1.1329178
+        }
+      ]
+    },
+    {
+      "process": "candidate-screen2-512",
+      "index": 6,
+      "m": 167,
+      "reduction": 1024,
+      "columns": 4096,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 183743997,
+          "calls": 10,
+          "mean_ms": 18.374399699999998
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 183407597,
+          "calls": 10,
+          "mean_ms": 18.3407597
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 183059098,
+          "calls": 10,
+          "mean_ms": 18.305909800000002
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 182852714,
+          "calls": 10,
+          "mean_ms": 18.2852714
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 183141101,
+          "calls": 10,
+          "mean_ms": 18.3141101
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 182872664,
+          "calls": 10,
+          "mean_ms": 18.2872664
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 211402605,
+          "calls": 10,
+          "mean_ms": 21.1402605
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 183412701,
+          "calls": 10,
+          "mean_ms": 18.341270100000003
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 185341222,
+          "calls": 10,
+          "mean_ms": 18.5341222
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 197667622,
+          "calls": 10,
+          "mean_ms": 19.7667622
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 182541872,
+          "calls": 10,
+          "mean_ms": 18.2541872
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 182856001,
+          "calls": 10,
+          "mean_ms": 18.2856001
+        }
+      ]
+    },
+    {
+      "process": "candidate-screen2-512",
+      "index": 14,
+      "m": 48,
+      "reduction": 1024,
+      "columns": 1024,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 11634381,
+          "calls": 10,
+          "mean_ms": 1.1634381
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 11443459,
+          "calls": 10,
+          "mean_ms": 1.1443459
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 11486046,
+          "calls": 10,
+          "mean_ms": 1.1486046
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 11640829,
+          "calls": 10,
+          "mean_ms": 1.1640829
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 11597502,
+          "calls": 10,
+          "mean_ms": 1.1597502000000002
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 11488705,
+          "calls": 10,
+          "mean_ms": 1.1488705
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 11435820,
+          "calls": 10,
+          "mean_ms": 1.1435819999999999
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 11542441,
+          "calls": 10,
+          "mean_ms": 1.1542441
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 11399794,
+          "calls": 10,
+          "mean_ms": 1.1399793999999999
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 11424099,
+          "calls": 10,
+          "mean_ms": 1.1424099
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 11447325,
+          "calls": 10,
+          "mean_ms": 1.1447325
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 11446894,
+          "calls": 10,
+          "mean_ms": 1.1446894
+        }
+      ]
+    },
+    {
+      "process": "current-screen3-512",
+      "index": 6,
+      "m": 167,
+      "reduction": 1024,
+      "columns": 4096,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 181483067,
+          "calls": 10,
+          "mean_ms": 18.1483067
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 235055014,
+          "calls": 10,
+          "mean_ms": 23.5055014
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 183221091,
+          "calls": 10,
+          "mean_ms": 18.3221091
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 182508069,
+          "calls": 10,
+          "mean_ms": 18.2508069
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 182130018,
+          "calls": 10,
+          "mean_ms": 18.2130018
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 173263861,
+          "calls": 10,
+          "mean_ms": 17.3263861
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 173843939,
+          "calls": 10,
+          "mean_ms": 17.3843939
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 175202118,
+          "calls": 10,
+          "mean_ms": 17.5202118
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 173239295,
+          "calls": 10,
+          "mean_ms": 17.3239295
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 172840090,
+          "calls": 10,
+          "mean_ms": 17.284009
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 174649403,
+          "calls": 10,
+          "mean_ms": 17.464940300000002
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 173398195,
+          "calls": 10,
+          "mean_ms": 17.3398195
+        }
+      ]
+    },
+    {
+      "process": "current-screen3-512",
+      "index": 14,
+      "m": 48,
+      "reduction": 1024,
+      "columns": 1024,
+      "frequency": 1000000000,
+      "blocks": [
+        {
+          "first": 0,
+          "last": 9,
+          "warmup": true,
+          "ticks": 25283633,
+          "calls": 10,
+          "mean_ms": 2.5283633
+        },
+        {
+          "first": 10,
+          "last": 19,
+          "warmup": true,
+          "ticks": 25478297,
+          "calls": 10,
+          "mean_ms": 2.5478297
+        },
+        {
+          "first": 20,
+          "last": 29,
+          "warmup": true,
+          "ticks": 26154001,
+          "calls": 10,
+          "mean_ms": 2.6154001
+        },
+        {
+          "first": 30,
+          "last": 39,
+          "warmup": true,
+          "ticks": 26415586,
+          "calls": 10,
+          "mean_ms": 2.6415586
+        },
+        {
+          "first": 40,
+          "last": 49,
+          "warmup": true,
+          "ticks": 25209489,
+          "calls": 10,
+          "mean_ms": 2.5209489
+        },
+        {
+          "first": 50,
+          "last": 59,
+          "warmup": true,
+          "ticks": 25434120,
+          "calls": 10,
+          "mean_ms": 2.543412
+        },
+        {
+          "first": 60,
+          "last": 69,
+          "warmup": false,
+          "ticks": 26350151,
+          "calls": 10,
+          "mean_ms": 2.6350151
+        },
+        {
+          "first": 70,
+          "last": 79,
+          "warmup": false,
+          "ticks": 25196070,
+          "calls": 10,
+          "mean_ms": 2.519607
+        },
+        {
+          "first": 80,
+          "last": 89,
+          "warmup": false,
+          "ticks": 25002399,
+          "calls": 10,
+          "mean_ms": 2.5002399
+        },
+        {
+          "first": 90,
+          "last": 99,
+          "warmup": false,
+          "ticks": 25147183,
+          "calls": 10,
+          "mean_ms": 2.5147183
+        },
+        {
+          "first": 100,
+          "last": 109,
+          "warmup": false,
+          "ticks": 25160096,
+          "calls": 10,
+          "mean_ms": 2.5160096
+        },
+        {
+          "first": 110,
+          "last": 119,
+          "warmup": false,
+          "ticks": 25219154,
+          "calls": 10,
+          "mean_ms": 2.5219154
+        }
+      ]
+    }
+  ]
+}

@@ -9,9 +9,14 @@ it is rejected. A separate
 [short, wide packing candidate](../tests/parakeet/short-wide-pack-results/screen-20260923.md)
 passes numerical checks and reduces complete-call latency by 68.27% across its
 twelve short cases. It is rejected because a longer case regresses by 11.31%,
-exceeding the fixed 5% limit. All 48 repeatability controls pass. A distinct
-implementation will isolate short-case dispatch while retaining the original
-general kernel body; the cause of the measured regression remains unproven.
+exceeding the fixed 5% limit. All 48 repeatability controls pass. The subsequent
+[isolated dispatcher](../tests/parakeet/short-dispatch-results/screen-20260923.md)
+preserves the general kernel's compiled instructions and passes numerical and
+generated-code checks, but also fails admission: the same longer case regresses
+9.18%, and one current-product repeatability control fails. Its
+[complete clock chronology](../tests/parakeet/short-dispatch-results/chronology-20260923.md)
+shows transitions and spikes that now require compilation/GC event attribution.
+Neither rejected candidate is integrated; the cause remains unproven.
 The current published complete Parakeet ratio remains 1.914728 to ORT.
 
 The original e5 review used Microsoft ONNX Runtime 1.23.2 at
