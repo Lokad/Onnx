@@ -108,6 +108,9 @@ including the original Microsoft ORT error limits.
 [Parakeet regression](tests/pyannote/convolution-pointer-results/parakeet-20260923.md)
 also passes all 784 arrays and 20 public clips per role, preserving exact current
 outputs and every native tolerance. These correctness runs supply no new timing ratio.
+[Shared/e5 regression](tests/pyannote/convolution-pointer-results/shared-20260923.md)
+passes all 166 arrays and 5.0 million values per role. Fresh native public checks,
+long meetings and matched application timing remain the final admission gates.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
