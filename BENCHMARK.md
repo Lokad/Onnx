@@ -5,8 +5,8 @@ are seconds; Lokad / ORT is the latency ratio, so 1.156 means 15.6% more time.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT | Status |
 |---|---|---:|---:|---:|---|
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 10.453277 | 9.040291 | **1.156** | Qualified |
 | Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 76.172826 | 39.782592 | **1.915** | Qualified |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 10.453277 | 9.040291 | **1.156** | Qualified |
 | multilingual-e5-small | One 30-token forward pass | 0.026403 | 0.015958 | **1.655** | Qualified |
 | DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.135218 | 0.104708 | **1.291** | Qualified |
 | ResNet50 | One 224x224 image, feature export | 0.117725 | 0.073213 | **1.608** | Qualified |
