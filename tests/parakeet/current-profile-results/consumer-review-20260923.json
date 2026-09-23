@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "build": {
+    "bytes": 40800,
+    "sha256": "27df0af0d6ef488a4468aa7cee8f1d31112eebd28525b79ea8d6e6da4fddcecc"
+  },
+  "inventory": {
+    "bytes": 1124653,
+    "sha256": "394cde4ed6b4c2f202539d514acd4ca17a6e033c2864e7ece9b55cfcdb1f00e0"
+  },
+  "source_patch": {
+    "bytes": 2609,
+    "sha256": "9359e58f4f9626809f1a694748c3dca394e6fc93840528afd4d04ea813edf61d"
+  },
+  "reviewer": {
+    "bytes": 4497,
+    "sha256": "6b007c3e2e056554eb5648ce6b3974781c57f417559437bc91b54e9ca18755da"
+  },
+  "unchanged_methods": 159,
+  "main_instructions_compared": 878,
+  "changed_main_offsets": [
+    319,
+    339,
+    [
+      1195,
+      1229
+    ]
+  ],
+  "new_main_interval": [
+    1195,
+    1231
+  ],
+  "locals_and_exception_regions_preserved": true,
+  "branch_targets_preserved": true,
+  "exact_public_call_extracted": true,
+  "product_unchanged": true,
+  "no_performance_measurement": true
+}

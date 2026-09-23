@@ -1,0 +1,37 @@
+--- qualified/Program.cs
++++ parakeet/Program.cs
+@@ -15,7 +15,7 @@
+ using var process=Process.GetCurrentProcess();Require(Affinity(process)==4,"CPU2 affinity required before CLR");
+ using var document=JsonDocument.Parse(File.ReadAllBytes(manifestPath));var manifest=document.RootElement;
+ Require(manifest.GetProperty("schema").GetInt32()==1,"Schema");
+-string family=manifest.GetProperty("family").GetString()!;Require(family=="pyannote" && !conformance,"Only the original pyannote timing workload");
++string family=manifest.GetProperty("family").GetString()!;Require(family=="parakeet" && !conformance,"Only the current Parakeet timing workload");
+ Require(Sha(typeof(ComputationalGraph).Assembly.Location)=="521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb","Qualified Core");
+ Require(Sha(typeof(Community1Diarizer).Assembly.Location)=="f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a","Qualified Data");
+ string PathOf(JsonElement spec)
+@@ -49,7 +49,7 @@
+     process.Refresh();long userBefore=process.UserProcessorTime.Ticks,systemBefore=process.PrivilegedProcessorTime.Ticks;uint threadId=DiagnosticControl.GetCurrentThreadId();
+     if(pass>=warmup)DiagnosticEvents.Log.Boundary("begin",c.Name,pass);
+     long start=Stopwatch.GetTimestamp();object actual;
+-    if(parakeet is not null)actual=parakeet.Transcribe(c.Pcm,16000,ParakeetTranscriptionOptions.Default,CancellationToken.None);
++    if(parakeet is not null)actual=pass<warmup?SampledRequests.WarmupParakeet(parakeet,c.Pcm):SampledRequests.FullParakeet(parakeet,c.Pcm);
+     else actual=pass<warmup?SampledRequests.Warmup(pyannote!,c.Pcm):c.Name switch
+     {
+         "dialogue-30s"=>SampledRequests.Full(pyannote!,c.Pcm),
+--- qualified/Diagnostic.cs
++++ parakeet/Diagnostic.cs
+@@ -55,6 +55,14 @@
+ static class SampledRequests
+ {
+     [MethodImpl(MethodImplOptions.NoInlining)]
++    public static ParakeetTranscription WarmupParakeet(ParakeetTranscriber d, float[] pcm)
++        => d.Transcribe(pcm,16000,ParakeetTranscriptionOptions.Default,CancellationToken.None);
++
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    public static ParakeetTranscription FullParakeet(ParakeetTranscriber d, float[] pcm)
++    { var value=d.Transcribe(pcm,16000,ParakeetTranscriptionOptions.Default,CancellationToken.None); After(value); return value; }
++
++    [MethodImpl(MethodImplOptions.NoInlining)]
+     public static Community1Diarization Warmup(Community1Diarizer d, float[] pcm) => d.Diarize(pcm, 16000, CancellationToken.None);
+ 
+     [MethodImpl(MethodImplOptions.NoInlining)]
