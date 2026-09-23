@@ -40,7 +40,10 @@ where T : unmanaged
             || !GraphConvPacking.Standard(input) || !GraphConvPacking.Standard(denseWeight)
             || !GraphConvPacking.Standard(output) || bias is not null && !GraphConvPacking.Standard(bias)) return false;
         int lanes = GraphConvPacking.Lanes;
-        if (lanes == 0 || GraphConvPacking.Resolve(options.PackedConvWeights, sourceWeight, lanes) is not float[] prepared) return false;
+        if (lanes == 0 || GraphConvPacking.ResolveRecord(options.PackedConvWeights, sourceWeight, lanes) is not PackedConvWeight record) return false;
+        if (sh == 1 && oh == h && ow == w && record.WinogradValues is float[] winograd
+            && ConvWinogradDispatch.Execute(input, winograd, bias, output, c, m, h, w, lanes, options)) return true;
+        var prepared = record.Values;
         if (!PlanConvBlockedScratch(c, m, h, w, oh, ow, out int inputCount, out int outputCount)) return false;
         float[]? packedInput = null, packedOutput = null;
         try

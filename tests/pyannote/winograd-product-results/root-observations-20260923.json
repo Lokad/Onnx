@@ -1,0 +1,204 @@
+{
+  "closure": "62141a2a722548697c106e42b2c0d9425b4f0c6ce166611a5bc3ca26a4fccdd0",
+  "passed": true,
+  "root_source_verified": true,
+  "root_integration": {
+    "bytes": 74662,
+    "sha256": "f367e28d3180fc0bf7d17600c353db534c7b8188b5c3e5457942bed7c83000eb"
+  },
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "f30e4c965004f49dec0654f2668c8f57fb19ffb687fb2bc61b89e0515a9244e0"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "5879522db70760b03ec38f105db1ea71db3b22cf69d8fa099bd8d26ace5c45a3"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "core_methods": 3179,
+    "data_methods": 697,
+    "public_surface_equal": true
+  },
+  "suites": {
+    "backend": {
+      "passed": 3449,
+      "skipped": 41,
+      "census_exact": true,
+      "trx": {
+        "bytes": 5205404,
+        "sha256": "5abd74a9094ab7746a3648b7d0b61fd2fb200065f74505050130d964ce6602e1"
+      }
+    },
+    "tensors": {
+      "passed": 343,
+      "skipped": 0,
+      "census_exact": true,
+      "trx": {
+        "bytes": 496155,
+        "sha256": "d497765e7abb6b76a5cbb237cc65f13d232e9d27b654874ef2c0699237a3c663"
+      }
+    }
+  },
+  "focused": {
+    "256": {
+      "passed": true,
+      "cases": 48,
+      "census_exact": true,
+      "trx": {
+        "bytes": 73424,
+        "sha256": "e760556ce8bac4d139934031e5601c390c9704ff3ed50a48d674c19da940dbdc"
+      }
+    },
+    "512": {
+      "passed": true,
+      "cases": 48,
+      "census_exact": true,
+      "trx": {
+        "bytes": 73424,
+        "sha256": "5492ec924cd7142157f161a8e53d9fa58e1a54b5c86314ef5295557ce4b9c320"
+      }
+    }
+  },
+  "package": {
+    "passed": true,
+    "package": {
+      "bytes": 565067,
+      "sha256": "d416e6dda64204a86c431a21737b86b3102891c19e7cdb53688c8605c5d51a15"
+    },
+    "core": {
+      "bytes": 766976,
+      "sha256": "f30e4c965004f49dec0654f2668c8f57fb19ffb687fb2bc61b89e0515a9244e0"
+    },
+    "dependencies": [
+      {
+        "id": "Google.Protobuf",
+        "version": "3.33.5",
+        "exclude": "Build,Analyzers"
+      }
+    ]
+  },
+  "consumer": {
+    "passed": true,
+    "winograd_values": 1056,
+    "winograd_calls": 2,
+    "winograd_weights": 51200,
+    "winograd_scratch": 28800,
+    "prepared_graph_values": 1056,
+    "prepared_graph_calls": 2,
+    "retained_weights": 18432,
+    "scratch": 8384,
+    "ownership": true
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 4415488,
+      "seconds": 0.2599801220349036
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 170524672,
+      "seconds": 1.5519806630327366
+    },
+    {
+      "name": "cli-build",
+      "samples": 69,
+      "peak_rss": 518029312,
+      "seconds": 18.17799301899504
+    },
+    {
+      "name": "backend-restore",
+      "samples": 7,
+      "peak_rss": 171081728,
+      "seconds": 1.8608486829907633
+    },
+    {
+      "name": "backend-build",
+      "samples": 65,
+      "peak_rss": 593367040,
+      "seconds": 17.678081491030753
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 4,
+      "peak_rss": 155095040,
+      "seconds": 1.0946776579949073
+    },
+    {
+      "name": "tensors-build",
+      "samples": 21,
+      "peak_rss": 363180032,
+      "seconds": 5.790735758957453
+    },
+    {
+      "name": "inventory",
+      "samples": 3,
+      "peak_rss": 134729728,
+      "seconds": 0.8855718499980867
+    },
+    {
+      "name": "backend-tests",
+      "samples": 94,
+      "peak_rss": 1063342080,
+      "seconds": 26.063556327018887
+    },
+    {
+      "name": "tensors-tests",
+      "samples": 30,
+      "peak_rss": 340406272,
+      "seconds": 8.282604668987915
+    },
+    {
+      "name": "focused-256",
+      "samples": 9,
+      "peak_rss": 342384640,
+      "seconds": 2.540861818008125
+    },
+    {
+      "name": "focused-512",
+      "samples": 9,
+      "peak_rss": 342257664,
+      "seconds": 2.5460945650120266
+    },
+    {
+      "name": "package",
+      "samples": 3,
+      "peak_rss": 129785856,
+      "seconds": 0.8318889279616997
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 153960448,
+      "seconds": 1.107180172984954
+    },
+    {
+      "name": "consumer-build",
+      "samples": 12,
+      "peak_rss": 299552768,
+      "seconds": 3.3256527460180223
+    },
+    {
+      "name": "consumer-run",
+      "samples": 1,
+      "peak_rss": 8290304,
+      "seconds": 0.2795426989905536
+    }
+  ],
+  "no_performance_measurement": true
+}

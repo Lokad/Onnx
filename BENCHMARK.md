@@ -10,7 +10,7 @@ available APIs and their remaining qualification limits.
 
 Microsoft ONNX Runtime audio baselines are listed below for
 [Parakeet](#audio-amd-current-parakeet-versus-microsoft-ort) and
-[pyannote](#audio-amd-lstm-input-row-pyannote-versus-microsoft-ort) on the AMD VM,
+[pyannote](#audio-amd-winograd-pyannote-versus-microsoft-ort) on the AMD VM,
 and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-runtime-baselines).
 
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
@@ -20,30 +20,28 @@ Latest matched comparisons for the current product on AMD:
 
 | Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---:|---:|---:|
-| Pyannote, complete 30-second dialogue | 12.960 | 9.022 | 1.436 |
+| Pyannote, complete 30-second dialogue | 10.453 | 9.040 | 1.156 |
 | Parakeet, 20 clips / 213.265 seconds of audio | 74.545 | 39.229 | 1.900 |
 
 Each row comes from its own matched campaign on AMD EPYC 9V74, CPU2, with
 ORT 1.29.0. Complete application timers include frontend, inference and owned
-results. The Pyannote row is the current-product control from the latest
-[matched application comparison](tests/pyannote/convolution-pointer-results/application-20260923.md).
-All twelve repeatability controls pass. Its candidate is not selected, and
-the current product remains Core `208371f6` / Data `b9358370`.
-The [LSTM input-row change](#audio-amd-lstm-input-row-pyannote-versus-microsoft-ort)
-reduces Pyannote dialogue latency **3.76%**, from contemporary selected 13.161 s.
-All twelve repeatability controls and four speed gates pass; all three crops
-improve. Both ten-minute meetings and recovery also pass. The change is
-[integrated and verified in the normal root build](tests/pyannote/lstm-input-root-amd/results-20260922.md),
-including the full test suites and independent NuGet consumption.
+results. The [Winograd change](#audio-amd-winograd-pyannote-versus-microsoft-ort)
+reduces Pyannote dialogue latency **19.72%**, from contemporary selected
+13.020559 s to **10.453277 s**. All twelve repeatability controls and four speed
+gates pass; both ten-minute meetings and recovery pass. The exact change is
+[integrated and verified in the actual root build](tests/pyannote/winograd-product-results/root-20260923.md),
+including 3,449 backend and 343 tensor tests, both instruction widths and
+independent NuGet consumption. The measured product is Core `521bae17` /
+Data `f3b9aa81`; the root build matches all 3,179 Core / 697 Data methods.
 
-The [fresh Parakeet baseline](#audio-amd-current-parakeet-versus-microsoft-ort)
-uses the same current Core `208371f6` / Data `b9358370` as the Pyannote result.
-All 320 requests and 42 repeatability controls pass, with exact retained
-transcripts, tokens and owned outputs. Earlier campaigns remain historical;
-this refresh does not establish a speedup against their different products.
-The full application parity target remains <=1.05 for both models.
+The [retained Parakeet baseline](#audio-amd-current-parakeet-versus-microsoft-ort)
+currently measures the preceding Core `208371f6` / Data `b9358370`. All 320
+requests and 42 repeatability controls pass. A fresh comparison for the newly
+integrated product follows its passing Parakeet tensor/public regression;
+this table does not yet claim new-product Parakeet timing. Earlier campaigns
+remain historical. The full application parity target remains <=1.05.
 
-The [current Pyannote profile](tests/pyannote/current-profile-results/results-20260922.md)
+The [pre-Winograd Pyannote profile](tests/pyannote/current-profile-results/results-20260922.md)
 passes all48 public requests and846 resource observations. Two captures
 attribute about64.9% of full-request sampled thread time to blocked convolution
 and8.1–8.5% to the two LSTM projection helpers. Profiling adds about12.2% wall
@@ -173,12 +171,12 @@ from 1.281574 s to 0.917072 s. All eight forms improve, including residual
 form 2 (ratio 0.986720). All 18 repeatability controls, nine speed gates and
 strict process separation pass. Every one of 4,176 call clocks and 464
 preparation clocks is retained. This is a component result; product integration
-and complete application/Microsoft ORT qualification remain to be done.
+and complete application/Microsoft ORT qualification are recorded below.
 The [isolated product build](tests/pyannote/winograd-product-results/build-20260923.md)
 and [full suites/NuGet qualification](tests/pyannote/winograd-product-results/product-20260923.md)
 now pass: 3,449 backend and 343 tensor tests, 48 focused graph cases in each
-instruction width, and actual packaged Winograd dispatch. The root remains
-unchanged pending complete model and application qualification.
+instruction width, and actual packaged Winograd dispatch. Subsequent complete
+model, application and actual-root qualifications are recorded below.
 [Complete Pyannote qualification](tests/pyannote/winograd-product-results/models-20260923.md)
 now passes all 18 graph arrays (2,917,107 values), 16 public requests and the
 original Microsoft ORT accuracy limits. Segmentation and public speaker
@@ -197,7 +195,7 @@ is now **admitted**: full-dialogue latency falls **19.72%**, from 13.020559 s
 to **10.453277 s**, versus **Microsoft ORT 9.040291 s** (ratio **1.156299**).
 All twelve repeatability controls, four speed gates, native checks and both
 long meetings/recovery pass. Every timing sample is retained. The exact
-seven-file change is applied; actual-root build/package verification is next.
+seven-file change is integrated, and [actual-root build/package verification](tests/pyannote/winograd-product-results/root-20260923.md) passes.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
@@ -830,6 +828,36 @@ The [complete report](tests/parakeet/single-panel-amd-results/results-20260922.m
 and [raw observations](tests/parakeet/single-panel-amd-results/observations-20260922.json)
 retain every clip, clock, failed gate and evidence identity. Earlier comparisons
 below remain separate historical measurements.
+
+### Audio: AMD Winograd pyannote versus Microsoft ORT
+
+AMD EPYC 9V74, CPU2, .NET 10.0.8 / SDK 10.0.204, ORT 1.29.0. These are
+complete public diarization requests. The selected Winograd product is Core
+`521bae17` / Data `f3b9aa81`; its predecessor is `208371f6` / `b9358370`.
+
+| Workload | Predecessor seconds | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
+|---|---:|---:|---:|---:|
+| Complete 30-second dialogue | 13.020559 | 10.453277 | 9.040291 | 1.156299 |
+| Dialogue 0–10 seconds | 0.605208 | 0.486496 | 0.433258 | 1.122878 |
+| Dialogue 10–20 seconds | 0.609008 | 0.482627 | 0.435221 | 1.108924 |
+| Dialogue 20–30 seconds | 0.608227 | 0.481848 | 0.434026 | 1.110183 |
+
+Full-dialogue latency falls **19.72%** and the change is integrated. All twelve
+repeatability controls and four speed gates pass. Six fresh processes retain
+all 96 requests, 24 warmups and 72 measurements; model setup is separate.
+The full request uses 21 overlapping windows and is not reconstructed by
+summing the three crops. The separate <=1.05 parity target remains unmet.
+
+Fresh native Pyannote/Parakeet checks, both 600-second meetings and recovery
+pass. Public speaker timelines and decisions remain exact; changed centroid
+floats satisfy the original native tolerance. Own-product repeats and held
+outputs remain exact. The original shared exactness failure for affected
+ResNet features is retained with its explicit arithmetic-scope correction.
+All 1,931 resource observations pass; peak owned RSS is 2,817,003,520 bytes.
+
+[Complete application evidence and every clock](tests/pyannote/winograd-product-results/application-20260923.md),
+[actual-root suite and NuGet proof](tests/pyannote/winograd-product-results/root-20260923.md).
+This campaign supplies no new Parakeet timing ratio.
 
 ### Audio: AMD LSTM input-row pyannote versus Microsoft ORT
 

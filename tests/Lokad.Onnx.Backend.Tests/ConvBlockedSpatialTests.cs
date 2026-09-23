@@ -2,7 +2,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx.Backend.Tests;
 
-public class ConvBlockedSpatialTests
+public partial class ConvBlockedSpatialTests
 {
     static float[] Values(int count) => Values(count, 0);
 
@@ -83,15 +83,16 @@ public class ConvBlockedSpatialTests
     {
         var graph = Graph(c, m, h, w, stride, long.MaxValue, relu);
         var x = Operand(graph, "x").ToArray(); var weights = Operand(graph, "w").ToArray(); var expected = Reference(graph);
-        var first = Run(graph); Equal(expected, first.ToArray());
+        var first = Run(graph); var held = first.ToArray();
+        if (stride == 1 && GraphConvPacking.Lanes != 0) Close(expected, held); else Equal(expected, held);
         if (GraphConvPacking.Lanes != 0)
         {
-            Assert.Single(graph.PackedConvWeights); Assert.Equal(Bytes(c, m), graph.RetainedPackedWeightBytes);
+            Assert.Single(graph.PackedConvWeights); Assert.Equal(Bytes(c, m) + (stride == 1 ? WinogradBytes(c, m) : 0), graph.RetainedPackedWeightBytes);
             Assert.True(Lokad.Onnx.Tensor<float>.PlanConvBlockedScratch(c, m, h, w, (h + stride - 1) / stride, (w + stride - 1) / stride, out int a, out int b));
-            Assert.Equal((long)(a + b) * 4, graph.LastScratchBytes);
+            Assert.Equal(stride == 1 ? WinogradScratch(c, m, h, w) : (long)(a + b) * 4, graph.LastScratchBytes);
         }
         else Assert.Empty(graph.PackedConvWeights);
-        var again = Run(graph); Assert.NotSame(first, again); Equal(expected, first.ToArray()); Equal(expected, again.ToArray());
+        var again = Run(graph); Assert.NotSame(first, again); Equal(held, first.ToArray()); Equal(held, again.ToArray());
         Equal(x, Operand(graph, "x").ToArray()); Equal(weights, Operand(graph, "w").ToArray());
     }
 
@@ -143,9 +144,9 @@ public class ConvBlockedSpatialTests
         // Replacement is safe through fallback; explicit preparation rebuilds the clone.
         graph.Prepare();
         if (old is not null) Assert.NotSame(old, Assert.Single(graph.PackedConvWeights).Value);
-        Equal(Reference(graph), Run(graph).ToArray());
+        Close(Reference(graph), Run(graph).ToArray());
         replaced.Buffer.Span[17] += .25f; graph.InvalidatePreparation();
-        Equal(Reference(graph), Run(graph).ToArray());
+        Close(Reference(graph), Run(graph).ToArray());
     }
 
     [Fact]
@@ -157,10 +158,10 @@ public class ConvBlockedSpatialTests
         graph.Prepare();
         if (GraphConvPacking.Lanes != 0)
         {
-            Assert.Single(graph.PackedConvWeights); Assert.Equal(Bytes(), graph.RetainedPackedWeightBytes);
+            Assert.Single(graph.PackedConvWeights); Assert.Equal(Bytes() + WinogradBytes(16, 32), graph.RetainedPackedWeightBytes);
             Assert.Null(GraphConvPacking.Resolve(graph.PackedConvWeights, alias, GraphConvPacking.Lanes));
         }
-        Equal(Reference(graph), Run(graph).ToArray());
+        Close(Reference(graph), Run(graph).ToArray());
     }
 
     [Fact]
@@ -207,8 +208,9 @@ public class ConvBlockedSpatialTests
         var a = graph.CreateExecution(options); var b = graph.CreateExecution(options);
         Assert.Same(graph.PackedConvWeights, a.PackedConvWeights); Assert.Same(a.PackedConvWeights, b.PackedConvWeights);
         var results = await Task.WhenAll(Task.Run(() => Run(a, options)), Task.Run(() => Run(b, options)));
-        Assert.NotSame(results[0], results[1]); Equal(expected, results[0].ToArray()); Equal(expected, results[1].ToArray());
-        Run(a, options); Equal(expected, results[0].ToArray()); Equal(expected, results[1].ToArray());
+        Assert.NotSame(results[0], results[1]); Close(expected, results[0].ToArray()); Close(expected, results[1].ToArray());
+        var held0 = results[0].ToArray(); var held1 = results[1].ToArray(); Equal(held0, held1);
+        var again = Run(a, options); Equal(held0, results[0].ToArray()); Equal(held1, results[1].ToArray()); Equal(held0, again.ToArray());
     }
 
     [Fact]
@@ -243,7 +245,7 @@ public class ConvBlockedSpatialTests
     [Fact]
     public void FailedRequestDoesNotCorruptPreparedWeightsOrHeldOutputs()
     {
-        var graph = Graph(); var expected = Reference(graph); var held = Run(graph);
+        var graph = Graph(); var held = Run(graph); var expected = held.ToArray(); Close(Reference(graph), expected);
         Assert.False(graph.Execute(new Dictionary<string, ITensor>(), true));
         Equal(expected, held.ToArray()); Equal(expected, Run(graph).ToArray());
     }
