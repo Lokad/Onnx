@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 19085,
+    "sha256": "7900d3b9d841291cb5dd6b5f366a996570898897ffd7afd67a75f1f2455e5bc4"
+  },
+  "inputs": {
+    "current": {
+      "bytes": 90171,
+      "sha256": "3124fd621ced92a3767160bca801bc65381abf9b57d0219b449745380e00cb2e"
+    },
+    "candidate": {
+      "bytes": 146706,
+      "sha256": "c6df85dfe7a8fb5cf9776ea346092ae2556d4bcb5f54d3a2ee5ec012b6c78cff"
+    }
+  },
+  "bodies": [
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 1885,
+      "vector_fma": 0,
+      "zmm_stack_operands": 2
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2713,
+      "vector_fma": 0,
+      "zmm_stack_operands": 2
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 3712,
+      "vector_fma": 1,
+      "zmm_stack_operands": 0
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 1921,
+      "vector_fma": 0,
+      "zmm_stack_operands": 2
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": 1128,
+      "vector_fma": 0,
+      "zmm_stack_operands": 0
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:PackedTile12(int,int,ptr,ptr,ptr,int,int)",
+      "tier": "FullOpts",
+      "bytes": 1135,
+      "vector_fma": 24,
+      "zmm_stack_operands": 0
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:PackedTile8(int,int,ptr,ptr,ptr,int,int)",
+      "tier": "FullOpts",
+      "bytes": 907,
+      "vector_fma": 16,
+      "zmm_stack_operands": 0
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2827,
+      "vector_fma": 0,
+      "zmm_stack_operands": 2
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": 1128,
+      "vector_fma": 0,
+      "zmm_stack_operands": 0
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 4298,
+      "vector_fma": 1,
+      "zmm_stack_operands": 0
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool",
+      "tier": "Tier1",
+      "bytes": 639,
+      "vector_fma": 0,
+      "zmm_stack_operands": 0
+    }
+  ],
+  "review": "All 11 emitted bodies retained. Candidate Tier1 checks both axes >=1024 and full32 columns before wider tile calls; AVX2 remainder/fallback and odd final-row call retained. Exact-three-row branch retains helper call. PackedTile12/8 consume ascending reduction terms with 24/16 ZMM FMA accumulations and no ZMM stack operands. Existing scalar address spills remain. No performance inference."
+}
