@@ -71,7 +71,7 @@ control varies 11.27%, exceeding the fixed 10% repeatability limit. All 2,352
 timing clocks remain. This is not a qualified speedup; the prototype is not
 integrated and the application/ORT ratios above remain unchanged.
 
-The next [convolution channel-block prototype](tests/pyannote/convolution-channel-blocks/build-20260923.md)
+The [convolution channel-block prototype](tests/pyannote/convolution-channel-blocks/build-20260923.md)
 passes its normal AMD build and compiled-scope checks. It preserves the
 existing accumulation order while reusing smaller weight ranges.
 [AMD numerical checks](tests/pyannote/convolution-channel-blocks/numerics-20260923.md)
@@ -88,7 +88,12 @@ application or ORT timing.
 
 The distinct [row-pointer and fixed-step prototype](tests/pyannote/convolution-pointer-unroll/build-20260923.md)
 passes its normal AMD build with compiled changes confined to Kernel512.
-Numerical and performance qualification remain pending; it is not integrated.
+[Numerical qualification](tests/pyannote/convolution-pointer-results/numerics-20260923.md)
+passes in both instruction modes, including captured native comparisons and
+25,600 finite-extreme graph executions.
+[Generated-code inspection](tests/pyannote/convolution-pointer-results/codegen-20260923.md)
+passes all emitted optimized reductions without vector spills in their loops.
+The prospective performance screen is running; the prototype is not integrated.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
