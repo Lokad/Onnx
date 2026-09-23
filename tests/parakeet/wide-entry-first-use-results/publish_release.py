@@ -61,13 +61,13 @@ def pyannote():
     text('pyannote-20260923.md',lines)
 
 def root():
-    base,proof,a=closed('parakeet-wide-entry-first-use-root-amd-20260923')
+    base,proof,a=closed('parakeet-wide-entry-first-use-root-amd-v2-20260923')
     assert a['root_source_verified'] and a['inventory']['implementation_flags_equal']
     source=read(base/'bundle/evidence/root-applied.json')['source_files']
     assert len(source)==422
     assert a['inventory']['core_methods']==3189 and a['inventory']['data_methods']==697
     assert a['suites']['backend']['passed']==3449 and a['suites']['tensors']['passed']==343
-    assert a['suite256']['backend']['passed']==3369 and a['suite256']['tensors']['passed']==343
+    assert a['suite256']['backend']['passed']==3359 and a['suite256']['tensors']['passed']==343
     data('root-observations-20260923.json',dict(closure=pin(base/'closed.json'),**a))
     text('root-20260923.md',['# M54 actual root and package qualification','',
         'All 422 integrated root inputs match the admitted isolated source. A normal',
@@ -75,10 +75,10 @@ def root():
         'implementation flags and public interfaces against the measured candidate.','',
         '| Complete suite | Normal pass / skip | AVX512 disabled pass / skip |',
         '| --- | ---: | ---: |',
-        '| Backend | 3,449 / 41 | 3,369 / 121 |',
+        '| Backend | 3,449 / 41 | 3,359 / 131 |',
         '| Tensor | 343 / 0 | 343 / 0 |','',
         'Every test outcome matches its prospective census. Disabling AVX512 skips',
-        'the 83 hardware-specific cases and activates three unsupported-hardware',
+        'the 93 hardware-specific cases and activates three unsupported-hardware',
         'checks; all other outcomes are unchanged. No new skip or test failure.','',
         'The normal NuGet package contains the exact built Core and only the existing',
         'Google.Protobuf 3.33.5 dependency. An independent PackageReference consumer',
@@ -93,7 +93,7 @@ def root():
         'Closure: `'+pin(base/'closed.json')['sha256']+'`.'])
 
 def benchmark():
-    rb,rp,ra=closed('parakeet-wide-entry-first-use-root-amd-20260923')
+    rb,rp,ra=closed('parakeet-wide-entry-first-use-root-amd-v2-20260923')
     pb,pp,pa=closed('parakeet-wide-entry-first-use-app-amd-v2-20260923')
     yb,yp,ya=closed('parakeet-wide-entry-first-use-pyannote-app-amd-20260923')
     gb,gp,ga=closed('parakeet-wide-entry-first-use-graphs-amd-20260923')

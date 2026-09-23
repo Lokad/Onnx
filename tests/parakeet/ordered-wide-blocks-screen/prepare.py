@@ -15,7 +15,7 @@ BUILD = ROOT / 'artifacts/parakeet-ordered-wide-blocks-build-amd-20260923'
 NUMERICS = ROOT / 'artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923'
 SOURCE = ROOT / 'artifacts/parakeet-ordered-wide-blocks-source-20260923'
 CURRENT = ROOT / 'artifacts/parakeet-wide-entry-first-use-build-amd-20260923'
-RELEASE = ROOT / 'artifacts/parakeet-wide-entry-first-use-root-amd-20260923'
+RELEASE = ROOT / 'artifacts/parakeet-wide-entry-first-use-root-amd-v2-20260923'
 OLD = ROOT / 'artifacts/parakeet-wide-entry-first-use-screen-amd-20260923'
 REVIEW = ROOT / 'tests/parakeet/ordered-wide-blocks-results/codegen-review-20260923.json'
 CONSUMER = dict(bytes=20480, sha256='e1a75f61a0cb69064dd5e9a87a91feea1df0c42f173e054bf6fada5a16c1d78a')

@@ -1,0 +1,141 @@
+{
+  "closure": {
+    "bytes": 104483,
+    "sha256": "14f5373cead061c8cc5de1847d1cd0fe0b76db6b0dca73137f83b3ca41b744cf"
+  },
+  "passed": false,
+  "classification": "Checker omitted ten existing AVX512-only cases.",
+  "product_tests_failed": 0,
+  "inventory": {
+    "passed": true,
+    "core_methods": 3189,
+    "data_methods": 697,
+    "public_surface_equal": true,
+    "implementation_flags_equal": true
+  },
+  "ordinary": {
+    "backend": {
+      "passed": 3449,
+      "skipped": 41,
+      "census_exact": true,
+      "trx": {
+        "bytes": 5233376,
+        "sha256": "a84730014e7ecd9e1ebb147102def5f117c9b63542d4ffaaaf2c1f6430093c33"
+      }
+    },
+    "tensors": {
+      "passed": 343,
+      "skipped": 0,
+      "census_exact": true,
+      "trx": {
+        "bytes": 498899,
+        "sha256": "9651beb25acfcfdad77f22cc2186dc755fad98366791e7d77c29be7e7c235492"
+      }
+    }
+  },
+  "disabled_backend": {
+    "passed": 3359,
+    "skipped": 131,
+    "census_exact": true,
+    "avx512_disabled": true,
+    "trx": {
+      "bytes": 5293573,
+      "sha256": "a25f75f6f5486a856683bfc6f0174ddf02a1d9efdd40cbeb69cca4942ad36daf"
+    }
+  },
+  "source": {
+    "bytes": 4644,
+    "sha256": "1cb029e34d24026bb532bac12b59d9d0534dca1a35f8664543a8f4dbeba7b36b"
+  },
+  "omitted_cases": [
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeHoldsContractOnWideSweep",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeHoldsContractOnReducedRange",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeMatchesEstrinCore",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeHandlesExceptionals",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeTailsMatchScalar(n: 1)",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeTailsMatchScalar(n: 7)",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeTailsMatchScalar(n: 15)",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeTailsMatchScalar(n: 16)",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeTailsMatchScalar(n: 17)",
+    "Lokad.Onnx.Backend.Tests.Exp512Tests.ProbeTailsMatchScalar(n: 33)"
+  ],
+  "completed_jobs": [
+    "sdk-version",
+    "cli-restore",
+    "cli-build",
+    "backend-restore",
+    "backend-build",
+    "tensors-restore",
+    "tensors-build",
+    "inventory",
+    "backend-tests",
+    "tensors-tests",
+    "backend-tests-256"
+  ],
+  "unexecuted_jobs": [
+    "tensors-tests-256",
+    "package",
+    "consumer-restore",
+    "consumer-build",
+    "consumer-run"
+  ],
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 8933376
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 171282432
+    },
+    {
+      "name": "cli-build",
+      "samples": 63,
+      "peak_rss": 509145088
+    },
+    {
+      "name": "backend-restore",
+      "samples": 7,
+      "peak_rss": 173248512
+    },
+    {
+      "name": "backend-build",
+      "samples": 65,
+      "peak_rss": 592928768
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 4,
+      "peak_rss": 157433856
+    },
+    {
+      "name": "tensors-build",
+      "samples": 21,
+      "peak_rss": 364363776
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 179408896
+    },
+    {
+      "name": "backend-tests",
+      "samples": 90,
+      "peak_rss": 610074624
+    },
+    {
+      "name": "tensors-tests",
+      "samples": 28,
+      "peak_rss": 330334208
+    },
+    {
+      "name": "backend-tests-256",
+      "samples": 91,
+      "peak_rss": 783642624
+    }
+  ],
+  "release_admitted": false,
+  "normal_root_and_package_incomplete": true
+}

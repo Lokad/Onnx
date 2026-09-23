@@ -12,7 +12,7 @@ TOOLS = Path(__file__).resolve().parent
 BASE = ROOT / 'artifacts/parakeet-ordered-wide-blocks-build-amd-20260923'
 SOURCE = ROOT / 'artifacts/parakeet-ordered-wide-blocks-source-20260923'
 QUALIFIED = ROOT / 'artifacts/parakeet-wide-entry-first-use-build-amd-20260923'
-RELEASE = ROOT / 'artifacts/parakeet-wide-entry-first-use-root-amd-20260923'
+RELEASE = ROOT / 'artifacts/parakeet-wide-entry-first-use-root-amd-v2-20260923'
 
 
 def retained_scope():

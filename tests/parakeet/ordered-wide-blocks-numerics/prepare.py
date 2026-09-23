@@ -14,7 +14,7 @@ BASE = ROOT / 'artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923'
 BUILD = ROOT / 'artifacts/parakeet-ordered-wide-blocks-build-amd-20260923'
 CURRENT = ROOT / 'artifacts/parakeet-wide-entry-first-use-build-amd-20260923'
 SOURCE = ROOT / 'artifacts/parakeet-ordered-wide-blocks-source-20260923'
-RELEASE = ROOT / 'artifacts/parakeet-wide-entry-first-use-root-amd-20260923'
+RELEASE = ROOT / 'artifacts/parakeet-wide-entry-first-use-root-amd-v2-20260923'
 CAPTURE = ROOT / 'artifacts/parakeet-wide-matmul-v3-20260921'
 FIXTURES = ROOT / 'artifacts/parakeet-short-wide-pack-numerics-amd-20260923'
 
