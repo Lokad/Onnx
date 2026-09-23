@@ -7,12 +7,13 @@ Release CLI and the assets described in each model's linked instructions.
 
 Audio orchestration APIs live in the repository's `Lokad.Onnx.Data` project;
 the core `Lokad.Onnx` NuGet package does not include that assembly. The
-[current package check](../tests/pyannote/portable-root-completion/results-20260922.md)
-passes independent matrix, convolution, ownership and MNIST import checks.
-The normal root build preserves every Core/Data method and public declaration
-of the selected Pyannote candidate. Its matched AMD dialogue comparison is
-15.466 seconds versus Microsoft ORT 8.952 seconds (1.728 ratio), 64.1% below
-pre-integration production; see [BENCHMARK.md](../BENCHMARK.md). Both ten-minute
+[current package check](../tests/pyannote/winograd-product-results/root-20260923.md)
+passes the complete suites and independent package consumer, including direct
+and Winograd convolution and output ownership. The normal root build preserves
+all 3,179 Core / 697 Data methods and public declarations of the measured
+product. Its matched AMD dialogue comparison is **10.453 seconds versus
+Microsoft ORT 9.040 seconds (1.156 ratio)**, 19.72% below its contemporary
+predecessor; see [BENCHMARK.md](../BENCHMARK.md). Both ten-minute
 meetings and recovery preserve native speaker timelines. These speed changes
 do not expand the model/accuracy coverage stated below.
 
