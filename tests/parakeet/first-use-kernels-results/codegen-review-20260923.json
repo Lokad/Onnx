@@ -1,0 +1,1875 @@
+{
+  "passed": true,
+  "mechanism_admitted": true,
+  "numerical_passed": true,
+  "no_performance_measurement": true,
+  "closure": {
+    "bytes": 19447,
+    "sha256": "8d59a4d948ed0dc60be07e3427acd6b832199e2f3e598e18bde4c0abe90497ed"
+  },
+  "census": {
+    "bytes": 69689,
+    "sha256": "23f0861d638bc1ec12b04682cd772870df9354a42561f159cc25302df1884eba"
+  },
+  "inputs": {
+    "current": {
+      "bytes": 489426,
+      "sha256": "7a066cbd6654f2390663b18c12e9ccfd3d17b0283e949076aa51b7fd91d5ae4e"
+    },
+    "candidate": {
+      "bytes": 182963,
+      "sha256": "75ed7cdff52b32c2d713045887948ea2080560e2b3edb866914d8ed1e85b3ca4"
+    }
+  },
+  "bodies": [
+    {
+      "role": "current",
+      "index": 0,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 1885,
+      "instruction_count": 504,
+      "calls": [
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.MathOps:mm_m1_kblocked(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG47",
+        "call     G_M000_IG50",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG53",
+        "call     G_M000_IG56",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG59",
+        "call     G_M000_IG59",
+        "call     G_M000_IG62",
+        "call     G_M000_IG62",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "current",
+      "index": 1,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 1851,
+      "instruction_count": 346,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 2,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 870,
+      "instruction_count": 180,
+      "calls": [],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 3,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 966,
+      "instruction_count": 192,
+      "calls": [
+        "call     [System.Span`1[float]:.ctor(ptr,int):this]",
+        "call     [System.Runtime.InteropServices.MemoryMarshal:Cast[float,System.Runtime.Intrinsics.Vector256`1[float]](System.Span`1[float]):System.Span`1[System.Runtime.Intrinsics.Vector256`1[float]]]",
+        "call     [System.Span`1[float]:.ctor(ptr,int):this]",
+        "call     [System.Runtime.InteropServices.MemoryMarshal:Cast[float,System.Runtime.Intrinsics.Vector256`1[float]](System.Span`1[float]):System.Span`1[System.Runtime.Intrinsics.Vector256`1[float]]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_RNGCHKFAIL"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "current",
+      "index": 4,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 564,
+      "instruction_count": 129,
+      "calls": [
+        "call     [System.ThrowHelper:ThrowArgumentOutOfRangeException()]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_OVERFLOW"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "current",
+      "index": 5,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2330,
+      "instruction_count": 432,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 6,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 957,
+      "instruction_count": 205,
+      "calls": [],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 7,
+      "method": "Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 794,
+      "instruction_count": 178,
+      "calls": [
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.ReadOnlySpan`1[float]:.ctor(ptr,int):this]",
+        "call     [System.Span`1[float]:.ctor(ptr,int):this]",
+        "call     [System.ReadOnlySpan`1[float]:CopyTo(System.Span`1[float]):this]",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "current",
+      "index": 8,
+      "method": "Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 334,
+      "instruction_count": 94,
+      "calls": [],
+      "vector_fma": 0
+    },
+    {
+      "role": "current",
+      "index": 9,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4105,
+      "instruction_count": 731,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 10,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1577,
+      "instruction_count": 347,
+      "calls": [],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 11,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 966,
+      "instruction_count": 192,
+      "calls": [
+        "call     [System.Span`1[float]:.ctor(ptr,int):this]",
+        "call     [System.Runtime.InteropServices.MemoryMarshal:Cast[float,System.Runtime.Intrinsics.Vector256`1[float]](System.Span`1[float]):System.Span`1[System.Runtime.Intrinsics.Vector256`1[float]]]",
+        "call     [System.Span`1[float]:.ctor(ptr,int):this]",
+        "call     [System.Runtime.InteropServices.MemoryMarshal:Cast[float,System.Runtime.Intrinsics.Vector256`1[float]](System.Span`1[float]):System.Span`1[System.Runtime.Intrinsics.Vector256`1[float]]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_RNGCHKFAIL"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "current",
+      "index": 12,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2713,
+      "instruction_count": 621,
+      "calls": [
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_m1_kblocked(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG72",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG75",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG78",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG81",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG84",
+        "call     G_M000_IG84",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG87",
+        "call     G_M000_IG87",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     CORINFO_HELP_CLASSPROFILE32",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     CORINFO_HELP_CLASSPROFILE32",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     CORINFO_HELP_CLASSPROFILE32",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "current",
+      "index": 13,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 564,
+      "instruction_count": 129,
+      "calls": [
+        "call     [System.ThrowHelper:ThrowArgumentOutOfRangeException()]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_OVERFLOW"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "current",
+      "index": 14,
+      "method": "Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 794,
+      "instruction_count": 178,
+      "calls": [
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.ReadOnlySpan`1[float]:.ctor(ptr,int):this]",
+        "call     [System.Span`1[float]:.ctor(ptr,int):this]",
+        "call     [System.ReadOnlySpan`1[float]:CopyTo(System.Span`1[float]):this]",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "current",
+      "index": 15,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4105,
+      "instruction_count": 731,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 16,
+      "method": "Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 334,
+      "instruction_count": 94,
+      "calls": [],
+      "vector_fma": 0
+    },
+    {
+      "role": "current",
+      "index": 17,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 298,
+      "instruction_count": 93,
+      "calls": [
+        "call     [System.ThrowHelper:ThrowArgumentOutOfRangeException()]",
+        "call     CORINFO_HELP_OVERFLOW"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "current",
+      "index": 18,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1577,
+      "instruction_count": 347,
+      "calls": [],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 19,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 3712,
+      "instruction_count": 937,
+      "calls": [
+        "call     r11",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG94",
+        "call     [Lokad.Onnx.MathOps:mm_m1_kblocked(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]",
+        "call     CORINFO_HELP_GETDYNAMIC_GCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     Interop+Sys:SchedGetCpu():int",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [System.Threading.ProcessorIdCache:RefreshCurrentProcessorId():int]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [System.Threading.Monitor:Enter(System.Object)]",
+        "call     [System.Threading.Monitor:Exit(System.Object)]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     CORINFO_HELP_GET_GCSTATIC_BASE",
+        "call     [System.ArgumentOutOfRangeException:ThrowIfNegative[int](int,System.String)]",
+        "call     CORINFO_HELP_NEWARR_1_VC",
+        "call     [System.GC:<AllocateUninitializedArray>g__AllocateNewArrayWorker|77_0[float](int,bool):float[]]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferAllocated(int,int,int,int,int):this]",
+        "call     [r11]Lokad.Onnx.IScratchAccountant:AddScratchBytes(long):this",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.ThrowHelper:ThrowArgumentOutOfRangeException()]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_OVERFLOW",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]",
+        "call     [System.ThrowHelper:ThrowArgumentNullException(int)]",
+        "call     rax",
+        "call     CORINFO_HELP_GETDYNAMIC_GCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED",
+        "call     [System.Buffers.SharedArrayPool`1[float]:InitializeTlsBucketsAndTrimming():System.Buffers.SharedArrayPoolThreadLocalArray[]:this]",
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [System.SR:get_ArgumentException_BufferNotFromPool():System.String]",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String,System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_ASSIGN_REF",
+        "call     [System.Buffers.SharedArrayPool`1[float]:CreatePerCorePartitions(int):System.Buffers.SharedArrayPoolPartitions:this]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     Interop+Sys:SchedGetCpu():int",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [System.Threading.ProcessorIdCache:RefreshCurrentProcessorId():int]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [System.Threading.Monitor:Enter(System.Object)]",
+        "call     CORINFO_HELP_ASSIGN_REF",
+        "call     [System.Threading.Monitor:Exit(System.Object)]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Diagnostics.Tracing.EventSource:WriteEvent(int,int,int,int):this]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferDropped(int,int,int,int,int):this]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "current",
+      "index": 20,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 1327,
+      "instruction_count": 338,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 21,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4796,
+      "instruction_count": 848,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 15
+    },
+    {
+      "role": "current",
+      "index": 22,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1846,
+      "instruction_count": 398,
+      "calls": [],
+      "vector_fma": 15
+    },
+    {
+      "role": "current",
+      "index": 23,
+      "method": "Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 295,
+      "instruction_count": 94,
+      "calls": [],
+      "vector_fma": 0
+    },
+    {
+      "role": "current",
+      "index": 24,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4796,
+      "instruction_count": 848,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 15
+    },
+    {
+      "role": "current",
+      "index": 25,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1846,
+      "instruction_count": 398,
+      "calls": [],
+      "vector_fma": 15
+    },
+    {
+      "role": "current",
+      "index": 26,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 1629,
+      "instruction_count": 402,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW"
+      ],
+      "vector_fma": 15
+    },
+    {
+      "role": "current",
+      "index": 27,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 1851,
+      "instruction_count": 346,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 28,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 870,
+      "instruction_count": 182,
+      "calls": [],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 29,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 668,
+      "instruction_count": 173,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 30,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2330,
+      "instruction_count": 432,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_PATCHPOINT",
+        "call     CORINFO_HELP_COUNTPROFILE32"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 31,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 957,
+      "instruction_count": 205,
+      "calls": [],
+      "vector_fma": 10
+    },
+    {
+      "role": "current",
+      "index": 32,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 752,
+      "instruction_count": 200,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "candidate",
+      "index": 0,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 343,
+      "instruction_count": 90,
+      "calls": [
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RunShortWidePackedRows(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RunGeneralFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)]"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 1,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunShortWidePackedRows(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 605,
+      "instruction_count": 173,
+      "calls": [
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG20",
+        "call     G_M000_IG20",
+        "call     G_M000_IG23",
+        "call     G_M000_IG23",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 2,
+      "method": "Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)",
+      "tier": "FullOpts",
+      "bytes": 292,
+      "instruction_count": 93,
+      "calls": [],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 3,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "FullOpts",
+      "bytes": 1592,
+      "instruction_count": 397,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW"
+      ],
+      "vector_fma": 15
+    },
+    {
+      "role": "candidate",
+      "index": 4,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunGeneralFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 1853,
+      "instruction_count": 500,
+      "calls": [
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.MathOps:mm_m1_kblocked(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG47",
+        "call     G_M000_IG50",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG53",
+        "call     G_M000_IG56",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG59",
+        "call     G_M000_IG59",
+        "call     G_M000_IG62",
+        "call     G_M000_IG62",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 5,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "FullOpts",
+      "bytes": 1341,
+      "instruction_count": 344,
+      "calls": [
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String):this]",
+        "call     CORINFO_HELP_THROW"
+      ],
+      "vector_fma": 10
+    },
+    {
+      "role": "candidate",
+      "index": 6,
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)",
+      "tier": "FullOpts",
+      "bytes": 302,
+      "instruction_count": 90,
+      "calls": [
+        "call     [System.ThrowHelper:ThrowArgumentOutOfRangeException()]",
+        "call     CORINFO_HELP_OVERFLOW"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "candidate",
+      "index": 7,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 477,
+      "instruction_count": 111,
+      "calls": [
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.Tensor`1[float]:RunShortWidePackedRows(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.Tensor`1[float]:RunGeneralFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)]"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 8,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunGeneralFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2713,
+      "instruction_count": 621,
+      "calls": [
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_m1_kblocked(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG72",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG75",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG78",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG81",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG84",
+        "call     G_M000_IG84",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG87",
+        "call     G_M000_IG87",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseIntrinsics():bool:this]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.TensorExecutionOptions:get_UseSimd():bool:this]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     CORINFO_HELP_CLASSPROFILE32",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     CORINFO_HELP_CLASSPROFILE32",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     CORINFO_HELP_CLASSPROFILE32",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 9,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 296,
+      "instruction_count": 78,
+      "calls": [
+        "tail.jmp [Lokad.Onnx.Tensor`1[float]:RunGeneralFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)]",
+        "tail.jmp [Lokad.Onnx.Tensor`1[float]:RunShortWidePackedRows(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)]"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 10,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunGeneralFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 3710,
+      "instruction_count": 935,
+      "calls": [
+        "call     r11",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG96",
+        "call     [Lokad.Onnx.MathOps:mm_m1_kblocked(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]",
+        "call     CORINFO_HELP_GETDYNAMIC_GCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     Interop+Sys:SchedGetCpu():int",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [System.Threading.ProcessorIdCache:RefreshCurrentProcessorId():int]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [System.Threading.Monitor:Enter(System.Object)]",
+        "call     [System.Threading.Monitor:Exit(System.Object)]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     CORINFO_HELP_GET_GCSTATIC_BASE",
+        "call     [System.ArgumentOutOfRangeException:ThrowIfNegative[int](int,System.String)]",
+        "call     CORINFO_HELP_NEWARR_1_VC",
+        "call     [System.GC:<AllocateUninitializedArray>g__AllocateNewArrayWorker|77_0[float](int,bool):float[]]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferAllocated(int,int,int,int,int):this]",
+        "call     [r11]Lokad.Onnx.IScratchAccountant:AddScratchBytes(long):this",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4tiled(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4(int,int,int,ptr,ptr,ptr)]",
+        "call     [System.ThrowHelper:ThrowArgumentOutOfRangeException()]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     CORINFO_HELP_OVERFLOW",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]",
+        "call     [System.ThrowHelper:ThrowArgumentNullException(int)]",
+        "call     rax",
+        "call     CORINFO_HELP_GETDYNAMIC_GCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED",
+        "call     [System.Buffers.SharedArrayPool`1[float]:InitializeTlsBucketsAndTrimming():System.Buffers.SharedArrayPoolThreadLocalArray[]:this]",
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [System.SR:get_ArgumentException_BufferNotFromPool():System.String]",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String,System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_ASSIGN_REF",
+        "call     [System.Buffers.SharedArrayPool`1[float]:CreatePerCorePartitions(int):System.Buffers.SharedArrayPoolPartitions:this]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     Interop+Sys:SchedGetCpu():int",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [System.Threading.ProcessorIdCache:RefreshCurrentProcessorId():int]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [System.Threading.Monitor:Enter(System.Object)]",
+        "call     CORINFO_HELP_ASSIGN_REF",
+        "call     [System.Threading.Monitor:Exit(System.Object)]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Diagnostics.Tracing.EventSource:WriteEvent(int,int,int,int):this]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferDropped(int,int,int,int,int):this]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [System.Buffers.SharedArrayPool`1[float]:Return(float[],bool):this]"
+      ],
+      "vector_fma": 1
+    },
+    {
+      "role": "candidate",
+      "index": 11,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunShortWidePackedRows(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 772,
+      "instruction_count": 198,
+      "calls": [
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.Tensor`1[float]:RentScratch[float](int,Lokad.Onnx.TensorExecutionOptions):float[]]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:PackPanelsB(int,int,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:TryPackedAvx512Rows(int,int,int,ptr,ptr,ptr):bool]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     G_M000_IG23",
+        "call     G_M000_IG23",
+        "call     G_M000_IG26",
+        "call     G_M000_IG26",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     CORINFO_HELP_COUNTPROFILE32",
+        "call     [System.Buffers.ArrayPool`1[float]:get_Shared():System.Buffers.ArrayPool`1[float]]",
+        "call     CORINFO_HELP_CLASSPROFILE32",
+        "call     [rax+0x28]System.Buffers.ArrayPool`1[float]:Return(float[],bool):this"
+      ],
+      "vector_fma": 0
+    },
+    {
+      "role": "candidate",
+      "index": 12,
+      "method": "Lokad.Onnx.Tensor`1[float]:RunShortWidePackedRows(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 2639,
+      "instruction_count": 661,
+      "calls": [
+        "call     r8",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)]",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)]",
+        "call     G_M000_IG54",
+        "call     CORINFO_HELP_GETDYNAMIC_GCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     Interop+Sys:SchedGetCpu():int",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [System.Threading.ProcessorIdCache:RefreshCurrentProcessorId():int]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [System.Threading.Monitor:Enter(System.Object)]",
+        "call     [System.Threading.Monitor:Exit(System.Object)]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     CORINFO_HELP_GET_GCSTATIC_BASE",
+        "call     [System.ArgumentOutOfRangeException:ThrowIfNegative[int](int,System.String)]",
+        "call     CORINFO_HELP_NEWARR_1_VC",
+        "call     [System.GC:<AllocateUninitializedArray>g__AllocateNewArrayWorker|77_0[float](int,bool):float[]]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferRented(int,int,int,int):this]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferAllocated(int,int,int,int,int):this]",
+        "call     [r11]Lokad.Onnx.IScratchAccountant:AddScratchBytes(long):this",
+        "call     [Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics(int,int,int,ptr,ptr,ptr)]",
+        "call     CORINFO_HELP_RNGCHKFAIL",
+        "call     [System.ThrowHelper:ThrowArgumentNullException(int)]",
+        "call     rax",
+        "call     CORINFO_HELP_GETDYNAMIC_GCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED",
+        "call     [System.Buffers.SharedArrayPool`1[float]:InitializeTlsBucketsAndTrimming():System.Buffers.SharedArrayPoolThreadLocalArray[]:this]",
+        "call     CORINFO_HELP_NEWSFAST",
+        "call     [System.SR:get_ArgumentException_BufferNotFromPool():System.String]",
+        "call     [CORINFO_HELP_STRCNS]",
+        "call     [System.ArgumentException:.ctor(System.String,System.String):this]",
+        "call     CORINFO_HELP_THROW",
+        "call     CORINFO_HELP_ASSIGN_REF",
+        "call     [System.Buffers.SharedArrayPool`1[float]:CreatePerCorePartitions(int):System.Buffers.SharedArrayPoolPartitions:this]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     Interop+Sys:SchedGetCpu():int",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [CORINFO_HELP_GETDYNAMIC_NONGCTHREADSTATIC_BASE_NOCTOR_OPTIMIZED]",
+        "call     [System.Threading.ProcessorIdCache:RefreshCurrentProcessorId():int]",
+        "call     [CORINFO_HELP_GET_NONGCSTATIC_BASE]",
+        "call     [System.Threading.Monitor:Enter(System.Object)]",
+        "call     CORINFO_HELP_ASSIGN_REF",
+        "call     [System.Threading.Monitor:Exit(System.Object)]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Diagnostics.Tracing.EventSource:WriteEvent(int,int,int,int):this]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Runtime.CompilerServices.RuntimeHelpers:GetHashCode(System.Object):int]",
+        "call     [System.Buffers.ArrayPoolEventSource:BufferDropped(int,int,int,int,int):this]",
+        "call     CORINFO_HELP_RNGCHKFAIL"
+      ],
+      "vector_fma": 0
+    }
+  ],
+  "first_use": {
+    "PackPanelsB": {
+      "bodies": [
+        2
+      ],
+      "tiers": [
+        "FullOpts"
+      ],
+      "passed": true
+    },
+    "mm_unsafe_vectorized_intrinsics_2x4packed_bump": {
+      "bodies": [
+        5
+      ],
+      "tiers": [
+        "FullOpts"
+      ],
+      "passed": true
+    },
+    "mm_unsafe_vectorized_intrinsics_3x4packed": {
+      "bodies": [
+        3
+      ],
+      "tiers": [
+        "FullOpts"
+      ],
+      "passed": true
+    },
+    "mm_unsafe_vectorized_intrinsics": {
+      "bodies": [
+        6
+      ],
+      "tiers": [
+        "FullOpts"
+      ],
+      "passed": true
+    }
+  },
+  "body_checks": [
+    {
+      "role": "current",
+      "index": 0,
+      "basic_blocks": 64,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 1,
+      "basic_blocks": 28,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 2,
+      "basic_blocks": 19,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 3,
+      "basic_blocks": 24,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 4,
+      "basic_blocks": 18,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 5,
+      "basic_blocks": 36,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 6,
+      "basic_blocks": 22,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 7,
+      "basic_blocks": 21,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 8,
+      "basic_blocks": 12,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 9,
+      "basic_blocks": 55,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 10,
+      "basic_blocks": 48,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 11,
+      "basic_blocks": 24,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 12,
+      "basic_blocks": 89,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 13,
+      "basic_blocks": 18,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 14,
+      "basic_blocks": 21,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 15,
+      "basic_blocks": 55,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 16,
+      "basic_blocks": 12,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 17,
+      "basic_blocks": 13,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 18,
+      "basic_blocks": 48,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 19,
+      "basic_blocks": 129,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 20,
+      "basic_blocks": 45,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 21,
+      "basic_blocks": 56,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 22,
+      "basic_blocks": 47,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 23,
+      "basic_blocks": 11,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 24,
+      "basic_blocks": 56,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 25,
+      "basic_blocks": 47,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 26,
+      "basic_blocks": 47,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 27,
+      "basic_blocks": 28,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 28,
+      "basic_blocks": 19,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 29,
+      "basic_blocks": 18,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 30,
+      "basic_blocks": 36,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 31,
+      "basic_blocks": 22,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "index": 32,
+      "basic_blocks": 18,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 0,
+      "basic_blocks": 5,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 1,
+      "basic_blocks": 25,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 2,
+      "basic_blocks": 11,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 3,
+      "basic_blocks": 46,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 4,
+      "basic_blocks": 64,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 5,
+      "basic_blocks": 46,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 6,
+      "basic_blocks": 13,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 7,
+      "basic_blocks": 11,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 8,
+      "basic_blocks": 89,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 9,
+      "basic_blocks": 9,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 10,
+      "basic_blocks": 131,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 11,
+      "basic_blocks": 28,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "index": 12,
+      "basic_blocks": 83,
+      "passed": true
+    }
+  ],
+  "arithmetic_opcode_counts": {
+    "PackPanelsB": {},
+    "mm_unsafe_vectorized_intrinsics_2x4packed_bump": {
+      "vfmadd231ps": 10,
+      "vpmaskmovd": 5,
+      "vmulps": 2,
+      "vaddps": 2
+    },
+    "mm_unsafe_vectorized_intrinsics_3x4packed": {
+      "vfmadd231ps": 15,
+      "vpmaskmovd": 7,
+      "vmulps": 3,
+      "vaddps": 3
+    },
+    "mm_unsafe_vectorized_intrinsics": {
+      "vfmadd213ps": 1,
+      "vmulss": 1,
+      "vaddss": 1
+    }
+  },
+  "files": {
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-0.txt": {
+      "bytes": 3830,
+      "sha256": "092c8fe1ad147370c4e2e09c722e7f0b5d161d27067eb72461aa55bbc7b8f292"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-1.txt": {
+      "bytes": 8187,
+      "sha256": "6e0076cb95973e9ab81106e65a4e14766b0f9af68de6203b8f89393cab357195"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-10.txt": {
+      "bytes": 40615,
+      "sha256": "1347c86563de9b145c0715b4ddeb9f200b0cd573a2177cc5deb148d800b4703b"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-11.txt": {
+      "bytes": 9379,
+      "sha256": "684912eee6ccc6cd5123ff71e9ac2b721014fbdd156c35082718b1aa105a35de"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-12.txt": {
+      "bytes": 28703,
+      "sha256": "f4b9bdacb55104cf366463623ee1741272974cd375ef3f3a9c76f36cac421bc9"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-2.txt": {
+      "bytes": 3563,
+      "sha256": "1de764096b8deece4ac74621cfc10ac17d294e96eb7808e2e05b7dfbc0b97d3a"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-3.txt": {
+      "bytes": 15925,
+      "sha256": "bc672543c0ea28f2606f7bd84fdda696dfc57c8d9efc9aed14d422097d27ec0a"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-4.txt": {
+      "bytes": 22938,
+      "sha256": "008d10a793dde068997d2c16fa2cb28a0ce8402df98a7e3799071e89534e4f21"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-5.txt": {
+      "bytes": 13965,
+      "sha256": "d878e6c462d39d0f363e4ef6c9fa9a3c2a43c88b3bcc55994dc282045bb5520a"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-6.txt": {
+      "bytes": 3726,
+      "sha256": "9a6e032b521359f18511ee81a4b9497997c84cabe49d79d4bfbdfbcf73615a85"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-7.txt": {
+      "bytes": 4975,
+      "sha256": "d5c1f1b6c70e32ffc5b427fbd1bac96623f15124f54d64f800423d58da5aafba"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-8.txt": {
+      "bytes": 29059,
+      "sha256": "5561529c739a51d85eebf619a50f89afafffdc9224e0b0c5cd11478128c01880"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/candidate-9.txt": {
+      "bytes": 3625,
+      "sha256": "526460c095fe383bd2b75bca0896e566d16b9302518d418ec85e508eabc885fb"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/census.json": {
+      "bytes": 69689,
+      "sha256": "23f0861d638bc1ec12b04682cd772870df9354a42561f159cc25302df1884eba"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-0.txt": {
+      "bytes": 23111,
+      "sha256": "2d50342d76cdba9fc0388f2559c8ebda2837ce250a262b61b3fc59003ad89507"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-1.txt": {
+      "bytes": 15462,
+      "sha256": "d4ead87d8fe8ac4a5e3d8da477383137ff8b87c7ad9bb7a7911087230b543511"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-10.txt": {
+      "bytes": 14752,
+      "sha256": "6dfa9894a6e4142e09ace5d92b3e1591cd3ad9a723472c25d13c08c2c1f0d919"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-11.txt": {
+      "bytes": 9159,
+      "sha256": "e0fcc8dc666b986bad9fdaf307dc05048a0ac2b0556ae393c5188c8d27e6ba4e"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-12.txt": {
+      "bytes": 29052,
+      "sha256": "573c65cc3cf362792690c39c25c682e1f5683c7b54d9506fe7b846f3d235a00d"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-13.txt": {
+      "bytes": 5593,
+      "sha256": "7da136686e3d1277c7e1e1ff56c52c74ee4adc1f1d8a51f9f01f0ac45d222e8b"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-14.txt": {
+      "bytes": 7835,
+      "sha256": "056ddeeb3e410dffbd73748eea58a561a39d2634b2e52adc18d6fdd8fd68a899"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-15.txt": {
+      "bytes": 32705,
+      "sha256": "09de9f54c748e894d27a620bb123e069409b4bef388799738114027346fa53c0"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-16.txt": {
+      "bytes": 3864,
+      "sha256": "1634a60b12e0f838a05d860503648e7aca7cb5a7f4f6ea33c8d4f3323231a8bd"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-17.txt": {
+      "bytes": 3827,
+      "sha256": "ceceee8dadc1ef2bf1fdc8e3e7822173947dde41581a9b7a17b5a1bf6ce358b6"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-18.txt": {
+      "bytes": 14752,
+      "sha256": "6dfa9894a6e4142e09ace5d92b3e1591cd3ad9a723472c25d13c08c2c1f0d919"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-19.txt": {
+      "bytes": 40560,
+      "sha256": "82fd855849b8726dfcf5a4f10f17710cc20d97deeacd97b075722c9c2ee20aa4"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-2.txt": {
+      "bytes": 7771,
+      "sha256": "41d453e29dd333adbba8a689cb5d6ab483a85743c81325f8b849a61bb173613d"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-20.txt": {
+      "bytes": 13605,
+      "sha256": "f963ec2bbcbe689bf792ac1e205cb2e677a28f44db64cd4d30ca13f3401d9f95"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-21.txt": {
+      "bytes": 37663,
+      "sha256": "c63b102a4e3b914c56efb8e3a1865988cb7076b0fe22e310dcfee0fde0206b62"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-22.txt": {
+      "bytes": 16578,
+      "sha256": "4c2141e5ed06b14445a03f81a926e35335ac198d7fdc769ae882027dca1c1a50"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-23.txt": {
+      "bytes": 3568,
+      "sha256": "14510cf5706a9bcd85caecf885ff3edf0763ae2eadce61b63d1d38e526c17fd4"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-24.txt": {
+      "bytes": 37663,
+      "sha256": "c63b102a4e3b914c56efb8e3a1865988cb7076b0fe22e310dcfee0fde0206b62"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-25.txt": {
+      "bytes": 16578,
+      "sha256": "4c2141e5ed06b14445a03f81a926e35335ac198d7fdc769ae882027dca1c1a50"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-26.txt": {
+      "bytes": 16125,
+      "sha256": "687b550d3362404c9380e9ba3cf701009136f088a01e6636534c68d7455b404f"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-27.txt": {
+      "bytes": 15462,
+      "sha256": "d4ead87d8fe8ac4a5e3d8da477383137ff8b87c7ad9bb7a7911087230b543511"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-28.txt": {
+      "bytes": 7843,
+      "sha256": "17b5b02242fe3a5ad1ee0a732f533ac5fbb88fff18dc2dffe43dd7371b4ab312"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-29.txt": {
+      "bytes": 7002,
+      "sha256": "5cd5d14f7cf954784d8bce0cd842e45f7fc120119ad16c97ef508946bce49292"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-3.txt": {
+      "bytes": 9159,
+      "sha256": "e0fcc8dc666b986bad9fdaf307dc05048a0ac2b0556ae393c5188c8d27e6ba4e"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-30.txt": {
+      "bytes": 19338,
+      "sha256": "f5da4ac58b81401e4e9b81390a3f1752fe226d211f99f5a19ee031514d2a4efd"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-31.txt": {
+      "bytes": 8766,
+      "sha256": "58e7e9dfb72f298b29950a47d709e6ec4a5d50e74c3612523e6ab01e1320538b"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-32.txt": {
+      "bytes": 7756,
+      "sha256": "ae5a30ead5b84da7e9ba8f289e149fe6cdb06dff4d9b340c7a51d05340f54954"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-4.txt": {
+      "bytes": 5593,
+      "sha256": "99e9f51779431821f7fb28213d0a359d18aac9faa1e143497553fcdb9792ba56"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-5.txt": {
+      "bytes": 19338,
+      "sha256": "f5da4ac58b81401e4e9b81390a3f1752fe226d211f99f5a19ee031514d2a4efd"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-6.txt": {
+      "bytes": 8766,
+      "sha256": "58e7e9dfb72f298b29950a47d709e6ec4a5d50e74c3612523e6ab01e1320538b"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-7.txt": {
+      "bytes": 7835,
+      "sha256": "056ddeeb3e410dffbd73748eea58a561a39d2634b2e52adc18d6fdd8fd68a899"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-8.txt": {
+      "bytes": 3864,
+      "sha256": "67bb6d05906926da432c26c46b6424e1c9eb5e9570b2bb747672e0eee98abe9a"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/current-9.txt": {
+      "bytes": 32705,
+      "sha256": "09de9f54c748e894d27a620bb123e069409b4bef388799738114027346fa53c0"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/mm_unsafe_vectorized_intrinsics.diff": {
+      "bytes": 5206,
+      "sha256": "54113133b14185fe33c4d29ac82108818abe88c17fb22cfb35678694ac8fda4b"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/mm_unsafe_vectorized_intrinsics_2x4packed_bump.diff": {
+      "bytes": 22153,
+      "sha256": "ee1db3e95c0c936d877aa4b296f5c00e2fa2e088e96002777a5d642fae0fa16a"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/mm_unsafe_vectorized_intrinsics_3x4packed.diff": {
+      "bytes": 25527,
+      "sha256": "7b839b2732d3abda1826172a280043874a502391a6538d4ee9b8826c8e44ee0a"
+    },
+    "artifacts/parakeet-first-use-kernels-codegen-20260923/PackPanelsB.diff": {
+      "bytes": 1464,
+      "sha256": "86197e8f066df899882def82f6c4dca01fc75f6a703c52884f5b703f0de4f497"
+    }
+  },
+  "review": "All 46 emitted bodies retained and checked for complete boundaries, labels, branches and call census. Four candidate float kernels each emit one optimized FullOpts body, with no instrumented Tier0/OSR replacement or dynamic PGO data. Packing preserves 32-column panels and scalar tail; the JIT uses the existing 512-bit copies on this CPU. Packed two/three-row main loops keep eight/twelve ordered AVX2 FMA accumulators without stack vector spills in those loops. Eight-wide remainder uses FMA; masked remainder preserves separate multiply/add, as does raw scalar tail. Native layouts differ from current Tier1; no identical-machine-code claim. Wrapper remains 296 bytes with original guards and separate helper calls. Short helper returns scratch through IG54 before its IG48 odd-row fallback using original B. General helper IL and all arithmetic bodies are proven exact by the normal build inventory. These checks and exact actual-DLL numerical results admit only the component timing experiment."
+}

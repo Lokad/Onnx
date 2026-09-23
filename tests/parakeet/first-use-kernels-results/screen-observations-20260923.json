@@ -1,0 +1,1112 @@
+{
+  "closure": {
+    "bytes": 18363,
+    "sha256": "ffe6c075c2386f3db3cad10bb0a1b678a0f42e002562ad953fb5f54a45df542c"
+  },
+  "passed": true,
+  "root_product_changed": false,
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 766976,
+        "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 767488,
+        "sha256": "c00a25b46c86f85e7972855926984cceff534d71535eed5c4193234b796f6469"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "9b623be98cfab7f00601fc56e264c20ae8da3d40dfcd9ab1091e741e3f85dcd0"
+      }
+    }
+  },
+  "consumer": {
+    "bytes": 20480,
+    "sha256": "0a4df6f365dc98e594dd028ca6ccc39a78f0ca21a408e606f482aef05dbdddb8"
+  },
+  "resources": 459,
+  "peak_rss": 339943424,
+  "admitted": true,
+  "controls": [
+    {
+      "role": "current",
+      "scope": "all21",
+      "ratio": {
+        "numerator": 17699441588,
+        "denominator": 17356561913,
+        "value": 1.0197550457699336
+      },
+      "limit": 1.1,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "short12",
+      "ratio": {
+        "numerator": 3734712958,
+        "denominator": 3629964507,
+        "value": 1.0288566047403505
+      },
+      "limit": 1.1,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "unchanged9",
+      "ratio": {
+        "numerator": 3247651357,
+        "denominator": 3233334196,
+        "value": 1.0044279867567392
+      },
+      "limit": 1.1,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-0",
+      "ratio": {
+        "numerator": 1145127488,
+        "denominator": 1123268747,
+        "value": 1.0194599387353915
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-1",
+      "ratio": {
+        "numerator": 1137071239,
+        "denominator": 1091424041,
+        "value": 1.0418235225588182
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-2",
+      "ratio": {
+        "numerator": 114054454,
+        "denominator": 110087461,
+        "value": 1.0360349213612983
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-3",
+      "ratio": {
+        "numerator": 362817574,
+        "denominator": 352796921,
+        "value": 1.028403459337447
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-4",
+      "ratio": {
+        "numerator": 732594667,
+        "denominator": 728339049,
+        "value": 1.0058429079229556
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-5",
+      "ratio": {
+        "numerator": 86320151,
+        "denominator": 82970703,
+        "value": 1.0403690444806766
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-6",
+      "ratio": {
+        "numerator": 1104679212,
+        "denominator": 1046366299,
+        "value": 1.0557289670507632
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-7",
+      "ratio": {
+        "numerator": 1031481922,
+        "denominator": 1004303307,
+        "value": 1.027062158225075
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-8",
+      "ratio": {
+        "numerator": 241892967,
+        "denominator": 237041332,
+        "value": 1.0204674642985891
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-9",
+      "ratio": {
+        "numerator": 163577545,
+        "denominator": 162746774,
+        "value": 1.0051046849014653
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-10",
+      "ratio": {
+        "numerator": 1120643225,
+        "denominator": 1111924512,
+        "value": 1.007841101536936
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-11",
+      "ratio": {
+        "numerator": 279005369,
+        "denominator": 269618314,
+        "value": 1.0348160881979256
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-12",
+      "ratio": {
+        "numerator": 1138426282,
+        "denominator": 1080969669,
+        "value": 1.0531528447538707
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-13",
+      "ratio": {
+        "numerator": 1004780273,
+        "denominator": 1001185132,
+        "value": 1.0035908853268907
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-14",
+      "ratio": {
+        "numerator": 224185670,
+        "denominator": 208415667,
+        "value": 1.0756661110318544
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-15",
+      "ratio": {
+        "numerator": 442193123,
+        "denominator": 437592379,
+        "value": 1.0105137662829362
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-16",
+      "ratio": {
+        "numerator": 1294565886,
+        "denominator": 1287637139,
+        "value": 1.005380977909181
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-17",
+      "ratio": {
+        "numerator": 94051635,
+        "denominator": 87424133,
+        "value": 1.0758086099635669
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-18",
+      "ratio": {
+        "numerator": 1800468158,
+        "denominator": 1682164275,
+        "value": 1.0703283768168244
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-19",
+      "ratio": {
+        "numerator": 1352771007,
+        "denominator": 1339802213,
+        "value": 1.009679633213145
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "current",
+      "scope": "fixture-20",
+      "ratio": {
+        "numerator": 276207039,
+        "denominator": 273494830,
+        "value": 1.009916856563614
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "all21",
+      "ratio": {
+        "numerator": 9795542915,
+        "denominator": 9596368923,
+        "value": 1.0207551411995668
+      },
+      "limit": 1.1,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "short12",
+      "ratio": {
+        "numerator": 3428190797,
+        "denominator": 3324596180,
+        "value": 1.0311600601670667
+      },
+      "limit": 1.1,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "unchanged9",
+      "ratio": {
+        "numerator": 6367352118,
+        "denominator": 6271772743,
+        "value": 1.0152396106996506
+      },
+      "limit": 1.1,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-0",
+      "ratio": {
+        "numerator": 356394987,
+        "denominator": 342045679,
+        "value": 1.0419514377201065
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-1",
+      "ratio": {
+        "numerator": 338093174,
+        "denominator": 335257685,
+        "value": 1.0084576405757857
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-2",
+      "ratio": {
+        "numerator": 71466311,
+        "denominator": 71464382,
+        "value": 1.0000269924673804
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-3",
+      "ratio": {
+        "numerator": 676120811,
+        "denominator": 674647043,
+        "value": 1.0021845022746212
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-4",
+      "ratio": {
+        "numerator": 671749655,
+        "denominator": 671274272,
+        "value": 1.0007081799792261
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-5",
+      "ratio": {
+        "numerator": 12046601,
+        "denominator": 12021033,
+        "value": 1.0021269386749043
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-6",
+      "ratio": {
+        "numerator": 3259649,
+        "denominator": 3216236,
+        "value": 1.0134980766336799
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-7",
+      "ratio": {
+        "numerator": 340522303,
+        "denominator": 333337307,
+        "value": 1.021554731046051
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-8",
+      "ratio": {
+        "numerator": 240275258,
+        "denominator": 234021359,
+        "value": 1.0267236248294755
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-9",
+      "ratio": {
+        "numerator": 1139820233,
+        "denominator": 1118088093,
+        "value": 1.019436876339224
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-10",
+      "ratio": {
+        "numerator": 1127035487,
+        "denominator": 1108776387,
+        "value": 1.0164677929779902
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-11",
+      "ratio": {
+        "numerator": 281311325,
+        "denominator": 269836011,
+        "value": 1.0425269924406049
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-12",
+      "ratio": {
+        "numerator": 345989724,
+        "denominator": 323466785,
+        "value": 1.0696298354095306
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-13",
+      "ratio": {
+        "numerator": 12746018,
+        "denominator": 12379915,
+        "value": 1.0295723355128044
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-14",
+      "ratio": {
+        "numerator": 34364092,
+        "denominator": 34052615,
+        "value": 1.0091469333559258
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-15",
+      "ratio": {
+        "numerator": 475317687,
+        "denominator": 456864262,
+        "value": 1.0403914828426655
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-16",
+      "ratio": {
+        "numerator": 472324585,
+        "denominator": 431938909,
+        "value": 1.0934985831526467
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-17",
+      "ratio": {
+        "numerator": 99077848,
+        "denominator": 99021859,
+        "value": 1.0005654206108168
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-18",
+      "ratio": {
+        "numerator": 398837960,
+        "denominator": 395889149,
+        "value": 1.0074485774804602
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-19",
+      "ratio": {
+        "numerator": 29980147,
+        "denominator": 29769154,
+        "value": 1.0070876384327214
+      },
+      "limit": 1.2,
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "scope": "fixture-20",
+      "ratio": {
+        "numerator": 86608187,
+        "denominator": 85879219,
+        "value": 1.0084882933087689
+      },
+      "limit": 1.2,
+      "passed": true
+    }
+  ],
+  "gates": [
+    {
+      "name": "strict-separation-short12",
+      "passed": true
+    },
+    {
+      "name": "strict-separation-all21",
+      "passed": true
+    },
+    {
+      "name": "short-twelve-at-least-ten-percent",
+      "passed": true
+    },
+    {
+      "name": "all-twenty-one-no-five-percent-regression",
+      "passed": true
+    }
+  ],
+  "rows": [
+    {
+      "index": 0,
+      "current": {
+        "numerator": 453679247,
+        "denominator": 24000000000,
+        "value": 0.018903301958333334
+      },
+      "candidate": {
+        "numerator": 349220333,
+        "denominator": 60000000000,
+        "value": 0.005820338883333333
+      },
+      "ratio": {
+        "numerator": 99777238,
+        "denominator": 324056605,
+        "value": 0.30790064593807615
+      },
+      "passed": true
+    },
+    {
+      "index": 1,
+      "current": {
+        "numerator": 9285397,
+        "denominator": 500000000,
+        "value": 0.018570794
+      },
+      "candidate": {
+        "numerator": 673350859,
+        "denominator": 120000000000,
+        "value": 0.005611257158333333
+      },
+      "ratio": {
+        "numerator": 673350859,
+        "denominator": 2228495280,
+        "value": 0.3021549406198428
+      },
+      "passed": true
+    },
+    {
+      "index": 2,
+      "current": {
+        "numerator": 44828383,
+        "denominator": 12000000000,
+        "value": 0.0037356985833333334
+      },
+      "candidate": {
+        "numerator": 142930693,
+        "denominator": 120000000000,
+        "value": 0.0011910891083333334
+      },
+      "ratio": {
+        "numerator": 142930693,
+        "denominator": 448283830,
+        "value": 0.318839724823445
+      },
+      "passed": true
+    },
+    {
+      "index": 3,
+      "current": {
+        "numerator": 47707633,
+        "denominator": 4000000000,
+        "value": 0.01192690825
+      },
+      "candidate": {
+        "numerator": 675383927,
+        "denominator": 60000000000,
+        "value": 0.011256398783333333
+      },
+      "ratio": {
+        "numerator": 675383927,
+        "denominator": 715614495,
+        "value": 0.9437817871478413
+      },
+      "passed": true
+    },
+    {
+      "index": 4,
+      "current": {
+        "numerator": 365233429,
+        "denominator": 30000000000,
+        "value": 0.012174447633333333
+      },
+      "candidate": {
+        "numerator": 1343023927,
+        "denominator": 120000000000,
+        "value": 0.011191866058333333
+      },
+      "ratio": {
+        "numerator": 1343023927,
+        "denominator": 1460933716,
+        "value": 0.9192914861854006
+      },
+      "passed": true
+    },
+    {
+      "index": 5,
+      "current": {
+        "numerator": 84645427,
+        "denominator": 30000000000,
+        "value": 0.0028215142333333334
+      },
+      "candidate": {
+        "numerator": 156439621,
+        "denominator": 60000000000,
+        "value": 0.0026073270166666667
+      },
+      "ratio": {
+        "numerator": 156439621,
+        "denominator": 169290854,
+        "value": 0.9240878482425282
+      },
+      "passed": true
+    },
+    {
+      "index": 6,
+      "current": {
+        "numerator": 2151045511,
+        "denominator": 120000000000,
+        "value": 0.017925379258333332
+      },
+      "candidate": {
+        "numerator": 418342171,
+        "denominator": 24000000000,
+        "value": 0.017430923791666667
+      },
+      "ratio": {
+        "numerator": 2091710855,
+        "denominator": 2151045511,
+        "value": 0.9724158992933553
+      },
+      "passed": true
+    },
+    {
+      "index": 7,
+      "current": {
+        "numerator": 2035785229,
+        "denominator": 120000000000,
+        "value": 0.016964876908333332
+      },
+      "candidate": {
+        "numerator": 67385961,
+        "denominator": 4000000000,
+        "value": 0.01684649025
+      },
+      "ratio": {
+        "numerator": 2021578830,
+        "denominator": 2035785229,
+        "value": 0.9930216612255418
+      },
+      "passed": true
+    },
+    {
+      "index": 8,
+      "current": {
+        "numerator": 478934299,
+        "denominator": 120000000000,
+        "value": 0.003991119158333333
+      },
+      "candidate": {
+        "numerator": 474296617,
+        "denominator": 120000000000,
+        "value": 0.003952471808333333
+      },
+      "ratio": {
+        "numerator": 474296617,
+        "denominator": 478934299,
+        "value": 0.9903166634553354
+      },
+      "passed": true
+    },
+    {
+      "index": 9,
+      "current": {
+        "numerator": 761423411,
+        "denominator": 40000000000,
+        "value": 0.019035585275
+      },
+      "candidate": {
+        "numerator": 1128954163,
+        "denominator": 60000000000,
+        "value": 0.018815902716666666
+      },
+      "ratio": {
+        "numerator": 2257908326,
+        "denominator": 2284270233,
+        "value": 0.9884593746312677
+      },
+      "passed": true
+    },
+    {
+      "index": 10,
+      "current": {
+        "numerator": 2232567737,
+        "denominator": 120000000000,
+        "value": 0.018604731141666667
+      },
+      "candidate": {
+        "numerator": 1117905937,
+        "denominator": 60000000000,
+        "value": 0.018631765616666667
+      },
+      "ratio": {
+        "numerator": 2235811874,
+        "denominator": 2232567737,
+        "value": 1.0014530967845836
+      },
+      "passed": true
+    },
+    {
+      "index": 11,
+      "current": {
+        "numerator": 182874561,
+        "denominator": 40000000000,
+        "value": 0.004571864025
+      },
+      "candidate": {
+        "numerator": 68893417,
+        "denominator": 15000000000,
+        "value": 0.004592894466666666
+      },
+      "ratio": {
+        "numerator": 551147336,
+        "denominator": 548623683,
+        "value": 1.004599970942195
+      },
+      "passed": true
+    },
+    {
+      "index": 12,
+      "current": {
+        "numerator": 2219395951,
+        "denominator": 120000000000,
+        "value": 0.018494966258333332
+      },
+      "candidate": {
+        "numerator": 669456509,
+        "denominator": 120000000000,
+        "value": 0.005578804241666666
+      },
+      "ratio": {
+        "numerator": 669456509,
+        "denominator": 2219395951,
+        "value": 0.3016390602579774
+      },
+      "passed": true
+    },
+    {
+      "index": 13,
+      "current": {
+        "numerator": 133731027,
+        "denominator": 8000000000,
+        "value": 0.016716378375
+      },
+      "candidate": {
+        "numerator": 108879043,
+        "denominator": 20000000000,
+        "value": 0.00544395215
+      },
+      "ratio": {
+        "numerator": 217758086,
+        "denominator": 668655135,
+        "value": 0.32566576490884197
+      },
+      "passed": true
+    },
+    {
+      "index": 14,
+      "current": {
+        "numerator": 432601337,
+        "denominator": 120000000000,
+        "value": 0.0036050111416666667
+      },
+      "candidate": {
+        "numerator": 22805569,
+        "denominator": 20000000000,
+        "value": 0.00114027845
+      },
+      "ratio": {
+        "numerator": 136833414,
+        "denominator": 432601337,
+        "value": 0.3163037242300525
+      },
+      "passed": true
+    },
+    {
+      "index": 15,
+      "current": {
+        "numerator": 439892751,
+        "denominator": 20000000000,
+        "value": 0.02199463755
+      },
+      "candidate": {
+        "numerator": 932181949,
+        "denominator": 120000000000,
+        "value": 0.007768182908333333
+      },
+      "ratio": {
+        "numerator": 932181949,
+        "denominator": 2639356506,
+        "value": 0.3531853112229773
+      },
+      "passed": true
+    },
+    {
+      "index": 16,
+      "current": {
+        "numerator": 103288121,
+        "denominator": 4800000000,
+        "value": 0.021518358541666668
+      },
+      "candidate": {
+        "numerator": 452131747,
+        "denominator": 60000000000,
+        "value": 0.007535529116666667
+      },
+      "ratio": {
+        "numerator": 904263494,
+        "denominator": 2582203025,
+        "value": 0.3501907035369537
+      },
+      "passed": true
+    },
+    {
+      "index": 17,
+      "current": {
+        "numerator": 22684471,
+        "denominator": 5000000000,
+        "value": 0.0045368942
+      },
+      "candidate": {
+        "numerator": 198099707,
+        "denominator": 120000000000,
+        "value": 0.0016508308916666668
+      },
+      "ratio": {
+        "numerator": 198099707,
+        "denominator": 544427304,
+        "value": 0.36386806015151657
+      },
+      "passed": true
+    },
+    {
+      "index": 18,
+      "current": {
+        "numerator": 3482632433,
+        "denominator": 120000000000,
+        "value": 0.029021936941666666
+      },
+      "candidate": {
+        "numerator": 794727109,
+        "denominator": 120000000000,
+        "value": 0.006622725908333333
+      },
+      "ratio": {
+        "numerator": 794727109,
+        "denominator": 3482632433,
+        "value": 0.22819723995834043
+      },
+      "passed": true
+    },
+    {
+      "index": 19,
+      "current": {
+        "numerator": 134628661,
+        "denominator": 6000000000,
+        "value": 0.022438110166666667
+      },
+      "candidate": {
+        "numerator": 776740913,
+        "denominator": 120000000000,
+        "value": 0.006472840941666667
+      },
+      "ratio": {
+        "numerator": 776740913,
+        "denominator": 2692573220,
+        "value": 0.2884753169312142
+      },
+      "passed": true
+    },
+    {
+      "index": 20,
+      "current": {
+        "numerator": 549701869,
+        "denominator": 120000000000,
+        "value": 0.004580848908333333
+      },
+      "candidate": {
+        "numerator": 28747901,
+        "denominator": 20000000000,
+        "value": 0.00143739505
+      },
+      "ratio": {
+        "numerator": 172487406,
+        "denominator": 549701869,
+        "value": 0.31378355382670164
+      },
+      "passed": true
+    }
+  ],
+  "scopes": {
+    "short12": {
+      "current": {
+        "numerator": 1472935493,
+        "denominator": 8000000000,
+        "value": 0.184116936625
+      },
+      "candidate": {
+        "numerator": 6752786977,
+        "denominator": 120000000000,
+        "value": 0.056273224808333334
+      },
+      "ratio": {
+        "numerator": 6752786977,
+        "denominator": 22094032395,
+        "value": 0.3056385025726763
+      }
+    },
+    "all21": {
+      "current": {
+        "numerator": 35056003501,
+        "denominator": 120000000000,
+        "value": 0.2921333625083333
+      },
+      "candidate": {
+        "numerator": 9695955919,
+        "denominator": 60000000000,
+        "value": 0.16159926531666666
+      },
+      "ratio": {
+        "numerator": 19391911838,
+        "denominator": 35056003501,
+        "value": 0.5531694974142398
+      }
+    },
+    "unchanged9": {
+      "current": {
+        "numerator": 6480985553,
+        "denominator": 60000000000,
+        "value": 0.10801642588333334
+      },
+      "candidate": {
+        "numerator": 12639124861,
+        "denominator": 120000000000,
+        "value": 0.10532604050833333
+      },
+      "ratio": {
+        "numerator": 12639124861,
+        "denominator": 12961971106,
+        "value": 0.9750928124773741
+      }
+    }
+  },
+  "processes": {
+    "current-screen0-512": {
+      "all21": {
+        "numerator": 4424860397,
+        "denominator": 15000000000,
+        "value": 0.2949906931333333
+      },
+      "short12": {
+        "numerator": 1867356479,
+        "denominator": 10000000000,
+        "value": 0.1867356479
+      },
+      "unchanged9": {
+        "numerator": 3247651357,
+        "denominator": 30000000000,
+        "value": 0.10825504523333333
+      }
+    },
+    "candidate-screen1-512": {
+      "all21": {
+        "numerator": 3198789641,
+        "denominator": 20000000000,
+        "value": 0.15993948205
+      },
+      "short12": {
+        "numerator": 166229809,
+        "denominator": 3000000000,
+        "value": 0.05540993633333333
+      },
+      "unchanged9": {
+        "numerator": 6271772743,
+        "denominator": 60000000000,
+        "value": 0.10452954571666667
+      }
+    },
+    "candidate-screen2-512": {
+      "all21": {
+        "numerator": 1959108583,
+        "denominator": 12000000000,
+        "value": 0.16325904858333334
+      },
+      "short12": {
+        "numerator": 3428190797,
+        "denominator": 60000000000,
+        "value": 0.057136513283333336
+      },
+      "unchanged9": {
+        "numerator": 1061225353,
+        "denominator": 10000000000,
+        "value": 0.1061225353
+      }
+    },
+    "current-screen3-512": {
+      "all21": {
+        "numerator": 17356561913,
+        "denominator": 60000000000,
+        "value": 0.28927603188333334
+      },
+      "short12": {
+        "numerator": 3629964507,
+        "denominator": 20000000000,
+        "value": 0.18149822535
+      },
+      "unchanged9": {
+        "numerator": 808333549,
+        "denominator": 7500000000,
+        "value": 0.10777780653333334
+      }
+    }
+  },
+  "calls": 10080,
+  "warmups": 5040,
+  "measured": 5040
+}
