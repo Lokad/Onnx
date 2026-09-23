@@ -1,0 +1,908 @@
+{
+  "passed": true,
+  "performance": {
+    "admitted": false,
+    "controls": [
+      {
+        "role": "current",
+        "form": null,
+        "ratio": {
+          "numerator": 11650924276,
+          "denominator": 11450963143,
+          "seconds": 1.0174623855218883
+        },
+        "limit": {
+          "numerator": 11,
+          "denominator": 10,
+          "seconds": 1.1
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 1,
+        "ratio": {
+          "numerator": 1285854345,
+          "denominator": 1271965012,
+          "seconds": 1.0109195873070131
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 2,
+        "ratio": {
+          "numerator": 335702167,
+          "denominator": 331892596,
+          "seconds": 1.0114783247529873
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 5,
+        "ratio": {
+          "numerator": 797638011,
+          "denominator": 786913856,
+          "seconds": 1.0136281181456284
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 6,
+        "ratio": {
+          "numerator": 106098787,
+          "denominator": 104161834,
+          "seconds": 1.0185956115173624
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 9,
+        "ratio": {
+          "numerator": 2331067525,
+          "denominator": 2292701603,
+          "seconds": 1.0167339360472372
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 10,
+        "ratio": {
+          "numerator": 1941343881,
+          "denominator": 1883520959,
+          "seconds": 1.0306993780577305
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 13,
+        "ratio": {
+          "numerator": 1197037610,
+          "denominator": 1176922811,
+          "seconds": 1.017091009547949
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "current",
+        "form": 14,
+        "ratio": {
+          "numerator": 98806196,
+          "denominator": 97334311,
+          "seconds": 1.0151219542716032
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": null,
+        "ratio": {
+          "numerator": 8844096913,
+          "denominator": 8759828159,
+          "seconds": 1.0096199094857152
+        },
+        "limit": {
+          "numerator": 11,
+          "denominator": 10,
+          "seconds": 1.1
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 1,
+        "ratio": {
+          "numerator": 1304335231,
+          "denominator": 1265424447,
+          "seconds": 1.0307491957281587
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 2,
+        "ratio": {
+          "numerator": 1465622271,
+          "denominator": 1441963790,
+          "seconds": 1.0164071255908582
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 5,
+        "ratio": {
+          "numerator": 1263244410,
+          "denominator": 1252710593,
+          "seconds": 1.008408819290634
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 6,
+        "ratio": {
+          "numerator": 862416966,
+          "denominator": 855950783,
+          "seconds": 1.0075543864535492
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 9,
+        "ratio": {
+          "numerator": 1574030231,
+          "denominator": 1566069680,
+          "seconds": 1.005083139723387
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 10,
+        "ratio": {
+          "numerator": 1247621714,
+          "denominator": 1245620257,
+          "seconds": 1.0016067954810084
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 13,
+        "ratio": {
+          "numerator": 686134888,
+          "denominator": 682978793,
+          "seconds": 1.0046210732051237
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 14,
+        "ratio": {
+          "numerator": 457119393,
+          "denominator": 432681625,
+          "seconds": 1.0564797915788544
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      }
+    ],
+    "gates": [
+      {
+        "form": null,
+        "ratio": {
+          "numerator": 17603925072,
+          "denominator": 23101887419,
+          "seconds": 0.7620124171119353
+        },
+        "limit": {
+          "numerator": 9,
+          "denominator": 10,
+          "seconds": 0.9
+        },
+        "passed": true
+      },
+      {
+        "form": 1,
+        "ratio": {
+          "numerator": 2569759678,
+          "denominator": 2557819357,
+          "seconds": 1.0046681642967956
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 2,
+        "ratio": {
+          "numerator": 2907586061,
+          "denominator": 2670379052,
+          "seconds": 1.0888289656190726
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": false
+      },
+      {
+        "form": 5,
+        "ratio": {
+          "numerator": 2515955003,
+          "denominator": 3169103734,
+          "seconds": 0.7939011197416361
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 6,
+        "ratio": {
+          "numerator": 1718367749,
+          "denominator": 2312866831,
+          "seconds": 0.7429600900355512
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 9,
+        "ratio": {
+          "numerator": 3140099911,
+          "denominator": 4623769128,
+          "seconds": 0.6791212588847927
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 10,
+        "ratio": {
+          "numerator": 2493241971,
+          "denominator": 3824864840,
+          "seconds": 0.6518510000473637
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 13,
+        "ratio": {
+          "numerator": 1369113681,
+          "denominator": 2373960421,
+          "seconds": 0.5767213593322161
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 14,
+        "ratio": {
+          "numerator": 444900509,
+          "denominator": 784562028,
+          "seconds": 0.5670686231579894
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      }
+    ],
+    "rows": [
+      {
+        "form": null,
+        "current": {
+          "numerator": 23101887419,
+          "denominator": 18000000000,
+          "seconds": 1.2834381899444445
+        },
+        "candidate": {
+          "numerator": 366748439,
+          "denominator": 375000000,
+          "seconds": 0.9779958373333333
+        },
+        "ratio": {
+          "numerator": 17603925072,
+          "denominator": 23101887419,
+          "seconds": 0.7620124171119353
+        },
+        "eligible": true
+      },
+      {
+        "form": 1,
+        "current": {
+          "numerator": 2557819357,
+          "denominator": 18000000000,
+          "seconds": 0.1421010753888889
+        },
+        "candidate": {
+          "numerator": 1284879839,
+          "denominator": 9000000000,
+          "seconds": 0.14276442655555555
+        },
+        "ratio": {
+          "numerator": 2569759678,
+          "denominator": 2557819357,
+          "seconds": 1.0046681642967956
+        },
+        "eligible": true
+      },
+      {
+        "form": 2,
+        "current": {
+          "numerator": 667594763,
+          "denominator": 4500000000,
+          "seconds": 0.1483543917777778
+        },
+        "candidate": {
+          "numerator": 2907586061,
+          "denominator": 18000000000,
+          "seconds": 0.16153255894444443
+        },
+        "ratio": {
+          "numerator": 2907586061,
+          "denominator": 2670379052,
+          "seconds": 1.0888289656190726
+        },
+        "eligible": true
+      },
+      {
+        "form": 5,
+        "current": {
+          "numerator": 1584551867,
+          "denominator": 9000000000,
+          "seconds": 0.17606131855555557
+        },
+        "candidate": {
+          "numerator": 2515955003,
+          "denominator": 18000000000,
+          "seconds": 0.13977527794444444
+        },
+        "ratio": {
+          "numerator": 2515955003,
+          "denominator": 3169103734,
+          "seconds": 0.7939011197416361
+        },
+        "eligible": true
+      },
+      {
+        "form": 6,
+        "current": {
+          "numerator": 2312866831,
+          "denominator": 18000000000,
+          "seconds": 0.1284926017222222
+        },
+        "candidate": {
+          "numerator": 1718367749,
+          "denominator": 18000000000,
+          "seconds": 0.09546487494444444
+        },
+        "ratio": {
+          "numerator": 1718367749,
+          "denominator": 2312866831,
+          "seconds": 0.7429600900355512
+        },
+        "eligible": true
+      },
+      {
+        "form": 9,
+        "current": {
+          "numerator": 192657047,
+          "denominator": 750000000,
+          "seconds": 0.2568760626666667
+        },
+        "candidate": {
+          "numerator": 3140099911,
+          "denominator": 18000000000,
+          "seconds": 0.17444999505555556
+        },
+        "ratio": {
+          "numerator": 3140099911,
+          "denominator": 4623769128,
+          "seconds": 0.6791212588847927
+        },
+        "eligible": true
+      },
+      {
+        "form": 10,
+        "current": {
+          "numerator": 95621621,
+          "denominator": 450000000,
+          "seconds": 0.2124924911111111
+        },
+        "candidate": {
+          "numerator": 831080657,
+          "denominator": 6000000000,
+          "seconds": 0.13851344283333333
+        },
+        "ratio": {
+          "numerator": 2493241971,
+          "denominator": 3824864840,
+          "seconds": 0.6518510000473637
+        },
+        "eligible": true
+      },
+      {
+        "form": 13,
+        "current": {
+          "numerator": 2373960421,
+          "denominator": 18000000000,
+          "seconds": 0.13188669005555556
+        },
+        "candidate": {
+          "numerator": 456371227,
+          "denominator": 6000000000,
+          "seconds": 0.07606187116666667
+        },
+        "ratio": {
+          "numerator": 1369113681,
+          "denominator": 2373960421,
+          "seconds": 0.5767213593322161
+        },
+        "eligible": true
+      },
+      {
+        "form": 14,
+        "current": {
+          "numerator": 65380169,
+          "denominator": 750000000,
+          "seconds": 0.08717355866666666
+        },
+        "candidate": {
+          "numerator": 444900509,
+          "denominator": 9000000000,
+          "seconds": 0.04943338988888889
+        },
+        "ratio": {
+          "numerator": 444900509,
+          "denominator": 784562028,
+          "seconds": 0.5670686231579894
+        },
+        "eligible": true
+      }
+    ],
+    "process_separation": {
+      "candidate_max": {
+        "numerator": 8844096913,
+        "denominator": 9000000000,
+        "seconds": 0.9826774347777778
+      },
+      "current_min": {
+        "numerator": 11450963143,
+        "denominator": 9000000000,
+        "seconds": 1.272329238111111
+      },
+      "passed": true
+    },
+    "process_totals": {
+      "current-a": {
+        "total": {
+          "numerator": 2912731069,
+          "denominator": 2250000000,
+          "seconds": 1.2945471417777779
+        },
+        "forms": {
+          "1": {
+            "numerator": 28574541,
+            "denominator": 200000000,
+            "seconds": 0.142872705
+          },
+          "2": {
+            "numerator": 335702167,
+            "denominator": 2250000000,
+            "seconds": 0.1492009631111111
+          },
+          "5": {
+            "numerator": 265879337,
+            "denominator": 1500000000,
+            "seconds": 0.17725289133333333
+          },
+          "6": {
+            "numerator": 1167086657,
+            "denominator": 9000000000,
+            "seconds": 0.1296762952222222
+          },
+          "9": {
+            "numerator": 93242701,
+            "denominator": 360000000,
+            "seconds": 0.2590075027777778
+          },
+          "10": {
+            "numerator": 647114627,
+            "denominator": 3000000000,
+            "seconds": 0.21570487566666666
+          },
+          "13": {
+            "numerator": 119703761,
+            "denominator": 900000000,
+            "seconds": 0.13300417888888888
+          },
+          "14": {
+            "numerator": 24701549,
+            "denominator": 281250000,
+            "seconds": 0.08782772977777778
+          }
+        }
+      },
+      "candidate-a": {
+        "total": {
+          "numerator": 8759828159,
+          "denominator": 9000000000,
+          "seconds": 0.9733142398888889
+        },
+        "forms": {
+          "1": {
+            "numerator": 421808149,
+            "denominator": 3000000000,
+            "seconds": 0.14060271633333332
+          },
+          "2": {
+            "numerator": 144196379,
+            "denominator": 900000000,
+            "seconds": 0.16021819888888889
+          },
+          "5": {
+            "numerator": 1252710593,
+            "denominator": 9000000000,
+            "seconds": 0.13919006588888888
+          },
+          "6": {
+            "numerator": 143736161,
+            "denominator": 1500000000,
+            "seconds": 0.09582410733333334
+          },
+          "9": {
+            "numerator": 1574030231,
+            "denominator": 9000000000,
+            "seconds": 0.17489224788888888
+          },
+          "10": {
+            "numerator": 623810857,
+            "denominator": 4500000000,
+            "seconds": 0.13862463488888888
+          },
+          "13": {
+            "numerator": 682978793,
+            "denominator": 9000000000,
+            "seconds": 0.07588653255555555
+          },
+          "14": {
+            "numerator": 3461453,
+            "denominator": 72000000,
+            "seconds": 0.048075736111111114
+          }
+        }
+      },
+      "candidate-b": {
+        "total": {
+          "numerator": 8844096913,
+          "denominator": 9000000000,
+          "seconds": 0.9826774347777778
+        },
+        "forms": {
+          "1": {
+            "numerator": 1304335231,
+            "denominator": 9000000000,
+            "seconds": 0.14492613677777777
+          },
+          "2": {
+            "numerator": 162846919,
+            "denominator": 1000000000,
+            "seconds": 0.162846919
+          },
+          "5": {
+            "numerator": 14036049,
+            "denominator": 100000000,
+            "seconds": 0.14036049
+          },
+          "6": {
+            "numerator": 855950783,
+            "denominator": 9000000000,
+            "seconds": 0.09510564255555555
+          },
+          "9": {
+            "numerator": 19575871,
+            "denominator": 112500000,
+            "seconds": 0.17400774222222223
+          },
+          "10": {
+            "numerator": 1245620257,
+            "denominator": 9000000000,
+            "seconds": 0.1384022507777778
+          },
+          "13": {
+            "numerator": 85766861,
+            "denominator": 1125000000,
+            "seconds": 0.07623720977777777
+          },
+          "14": {
+            "numerator": 152373131,
+            "denominator": 3000000000,
+            "seconds": 0.05079104366666667
+          }
+        }
+      },
+      "current-b": {
+        "total": {
+          "numerator": 11450963143,
+          "denominator": 9000000000,
+          "seconds": 1.272329238111111
+        },
+        "forms": {
+          "1": {
+            "numerator": 317991253,
+            "denominator": 2250000000,
+            "seconds": 0.14132944577777778
+          },
+          "2": {
+            "numerator": 82973149,
+            "denominator": 562500000,
+            "seconds": 0.14750782044444444
+          },
+          "5": {
+            "numerator": 12295529,
+            "denominator": 70312500,
+            "seconds": 0.17486974577777778
+          },
+          "6": {
+            "numerator": 572890087,
+            "denominator": 4500000000,
+            "seconds": 0.1273089082222222
+          },
+          "9": {
+            "numerator": 2292701603,
+            "denominator": 9000000000,
+            "seconds": 0.2547446225555556
+          },
+          "10": {
+            "numerator": 1883520959,
+            "denominator": 9000000000,
+            "seconds": 0.20928010655555557
+          },
+          "13": {
+            "numerator": 1176922811,
+            "denominator": 9000000000,
+            "seconds": 0.13076920122222221
+          },
+          "14": {
+            "numerator": 97334311,
+            "denominator": 1125000000,
+            "seconds": 0.08651938755555555
+          }
+        }
+      }
+    },
+    "preparation": {
+      "current-a": {
+        "numerator": 53349001,
+        "denominator": 3000000000,
+        "seconds": 0.017783000333333333
+      },
+      "candidate-a": {
+        "numerator": 15734759,
+        "denominator": 500000000,
+        "seconds": 0.031469518
+      },
+      "candidate-b": {
+        "numerator": 9761809,
+        "denominator": 300000000,
+        "seconds": 0.032539363333333335
+      },
+      "current-b": {
+        "numerator": 395731,
+        "denominator": 23437500,
+        "seconds": 0.016884522666666665
+      }
+    },
+    "prepared_bytes": {
+      "current-a": 19537920,
+      "candidate-a": 34734080,
+      "candidate-b": 34734080,
+      "current-b": 19537920
+    },
+    "calls": 4176,
+    "warmups": 1044,
+    "measured": 3132,
+    "preparations": 464
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 10088448,
+      "seconds": 0.2569235739647411
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 153473024,
+      "seconds": 1.018544954014942
+    },
+    {
+      "name": "consumer-build",
+      "samples": 14,
+      "peak_rss": 328671232,
+      "seconds": 3.574687886983156
+    },
+    {
+      "name": "verify",
+      "samples": 22,
+      "peak_rss": 1393434624,
+      "seconds": 5.613769023038913
+    },
+    {
+      "name": "current-a",
+      "samples": 82,
+      "peak_rss": 2741133312,
+      "seconds": 20.923625677998643
+    },
+    {
+      "name": "candidate-a",
+      "samples": 69,
+      "peak_rss": 2977456128,
+      "seconds": 17.612451788038015
+    },
+    {
+      "name": "candidate-b",
+      "samples": 68,
+      "peak_rss": 2935164928,
+      "seconds": 17.370243681012653
+    },
+    {
+      "name": "current-b",
+      "samples": 82,
+      "peak_rss": 2739720192,
+      "seconds": 20.948184647015296
+    }
+  ],
+  "built": {
+    "passed": true,
+    "consumer": {
+      "bytes": 34816,
+      "sha256": "ae627fd8f1e9138d5a4a3eefa580bffc898d127b19228860ec3d6b4d2d864872"
+    },
+    "files": {
+      "runtime/WinogradScreen.runtimeconfig.json": {
+        "bytes": 330,
+        "sha256": "9950d4583cfc9a106857c0d5b8a75b53e8774852b57b80bc3823a74d44a4d87f"
+      },
+      "runtime/WinogradScreen.deps.json": {
+        "bytes": 414,
+        "sha256": "e03dddc0f3abb7d235790b6fba8d3449f30dc8508d02341fa70a27b9fc363246"
+      },
+      "runtime/WinogradScreen.dll": {
+        "bytes": 34816,
+        "sha256": "ae627fd8f1e9138d5a4a3eefa580bffc898d127b19228860ec3d6b4d2d864872"
+      },
+      "runtime/WinogradPrototype.runtimeconfig.json": {
+        "bytes": 330,
+        "sha256": "9950d4583cfc9a106857c0d5b8a75b53e8774852b57b80bc3823a74d44a4d87f"
+      },
+      "runtime/WinogradPrototype.dll": {
+        "bytes": 53248,
+        "sha256": "6eef05772e9b61bba18f4e5c045d920f2648f1f9b4551dd990d56f95e47eaf3f"
+      },
+      "runtime/WinogradPrototype.deps.json": {
+        "bytes": 423,
+        "sha256": "a1b347b6dc63a96ccd9fdfce3be7dfc92030d195f1d49b3e242dc3b06dbf6857"
+      }
+    }
+  },
+  "verification_calls": 174,
+  "root_product_changed": false,
+  "no_application_or_ort_timing": true
+}

@@ -151,6 +151,18 @@ All 18 repeatability controls and strict process separation pass; seven of nine
 speed gates pass. All 4,176 call clocks and 464 preparation clocks remain.
 This prototype is not integrated and supplies no new application or ORT ratio.
 
+The subsequent [contiguous input-load prototype](tests/pyannote/winograd-contiguous-results/numerics-20260923.md)
+passes an expanded 1,920-case synthetic census and preserves all captured
+results in both instruction widths. Its
+[generated code](tests/pyannote/winograd-contiguous-results/codegen-20260923.md)
+uses contiguous loads and permutations for interior tiles, retaining the
+masked border path. The [complete-call screen](tests/pyannote/winograd-contiguous-results/screen-20260923.md)
+reduces aggregate latency **23.80%**, from 1.283438 s to 0.977996 s, but remains
+**not admitted**: form 2 regresses 8.88%, above the fixed 5% limit.
+All 18 repeatability controls and strict process separation pass; eight of nine
+speed gates pass. Every call and preparation clock is retained. Product source
+and the application/Microsoft ORT comparisons above remain unchanged.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
