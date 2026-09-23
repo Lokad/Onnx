@@ -12,7 +12,7 @@ BASE = ROOT / 'artifacts/parakeet-last-axis-pad-source-20260923'
 PARENT = ROOT / 'artifacts/parakeet-first-use-kernels-source-20260923'
 QUALIFIED = ROOT / 'artifacts/parakeet-first-use-kernels-root-amd-20260923'
 FILE = 'src/Lokad.Onnx/CPUExecutionProvider.Shape.cs'
-HELPER = 'src/Lokad.Onnx/CPUExecutionProvider.LastAxisPad.cs'
+HELPER = 'src/Lokad.Onnx/Zzz.LastAxisPad.cs'
 TESTS = 'tests/Lokad.Onnx.Backend.Tests/LastAxisPadTests.cs'
 
 

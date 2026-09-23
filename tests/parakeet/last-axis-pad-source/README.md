@@ -9,6 +9,8 @@ empty-output return. A new private helper copies contiguous source rows for
 nonnegative last-axis padding with zero outer padding. Source materialization,
 fill, crop/reflection fallback, validation and result ownership remain intact.
 Zero-width input returns the already-filled destination without division.
+The helper's source file sorts after existing CPUExecutionProvider files, so
+the normal build can require exact existing compiler-generated method names.
 
 Six draft public-operator tests cover all four supported element types, an
 independent coordinate oracle, exceptional float bits, empty shapes, layouts,
