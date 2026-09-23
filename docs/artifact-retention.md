@@ -10,14 +10,14 @@ After retaining the next Parakeet candidate's build, numerical, component,
 application, cross-model and follow-up diagnostic evidence, the inventory
 measured **38.62 GB**. After collecting and publishing the complete warmed
 comparison and the closed padding build/screen, the latest inventory is
-**39.70 GB**, including **26.26 GB** in artifacts, after closing the isolated
-Parakeet matrix build, numerical and component lanes. Counting the model junction
-again produces **50.48 GB**, but that includes the same 10.79 GB of canonical
+**39.78 GB**, including **26.34 GB** in artifacts, after closing the isolated
+Parakeet matrix build, numerical, component and runtime diagnostic lanes. Counting the model junction
+again produces **50.56 GB**, but that includes the same 10.79 GB of canonical
 models twice; it is not another stored copy. The actual repository remains
 below 50 GB. Its receipt is
-`artifacts/repository-retention-20260923/m50-closed-size.json`. The padding
+`artifacts/repository-retention-20260923/m51-closed-size.json`. The padding
 diagnostic reused existing binaries and copied no models. Recheck after
-subsequent collections; the actual repository has about 10.30 GB of headroom.
+subsequent collections; the actual repository has about 10.22 GB of headroom.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
