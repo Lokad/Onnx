@@ -79,8 +79,12 @@ pass expanded channel coverage, 119.8 million captured values per instruction
 mode and 25,600 finite-extreme graph executions.
 [Generated-code inspection](tests/pyannote/convolution-channel-blocks/codegen-20260923.md)
 confirms the intended arithmetic and guards, with no vector spills in the
-optimized loop. The method grows 69.1%; performance qualification remains
-pending. This adds no timing result.
+optimized loop. The method grows 69.1%. Its
+[complete-call screen](tests/pyannote/convolution-channel-results/results-20260923.md)
+is **rejected**: 3.91% slower, from 1.439605 s to 1.495899 s. All 32
+repeatability controls pass; seven of twelve speed gates fail. All 17,184
+call clocks remain. The candidate is not integrated and supplies no new
+application or ORT timing.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,

@@ -1,0 +1,1105 @@
+{
+  "numerical": {
+    "closure": {
+      "bytes": 88597,
+      "sha256": "c2be39dcfa6b39a3941ffb776eee8714a96d6d639a7ff6d9a44a5553003081f8"
+    },
+    "analysis": {
+      "passed": true,
+      "core": {
+        "bytes": 757248,
+        "sha256": "8e0ff60c62456a83194b14fadd4e49a6aebea3d57d7a6236a8660770c205001b"
+      },
+      "consumers": {
+        "raw": {
+          "bytes": 45568,
+          "sha256": "bffad7721b1448cd4083ce20969dc0d4d7b020d94d9c8542b4777338ccc72887"
+        },
+        "wide": {
+          "bytes": 45568,
+          "sha256": "4c723e872b22f191e45935099d4fd1018492d7ee24f702f108c1efa58cd5ce69"
+        },
+        "span": {
+          "bytes": 45568,
+          "sha256": "6b53bfc896829bce649135bee9d6272e7a025addc0771fa7d7ba97e847c7a122"
+        },
+        "channels64": {
+          "bytes": 45568,
+          "sha256": "b42328fc91c5f43a163c4603e9487dc46625ae94a0be516c5341451a2270d401"
+        },
+        "channels128": {
+          "bytes": 45568,
+          "sha256": "00b1b29b88802686420d591cf70bf515a00dadabb15c5ad6fea5510da8a3f533"
+        },
+        "layers": {
+          "bytes": 48640,
+          "sha256": "0c5dabe657a8b4bc57efd686073f7e2d32e7eb240b2167838377e805d8934dd1"
+        }
+      },
+      "inventories": {
+        "raw": {
+          "passed": true,
+          "mode": "raw",
+          "methods": 145,
+          "unchanged": 144,
+          "changed": [
+            "Probe::Main::Int32 Main(System.String[])"
+          ],
+          "only_core_literal_changed": true,
+          "channel_literals": null,
+          "all_branch_exception_targets_preserved": true
+        },
+        "wide": {
+          "passed": true,
+          "mode": "wide",
+          "methods": 145,
+          "unchanged": 144,
+          "changed": [
+            "Probe::Main::Int32 Main(System.String[])"
+          ],
+          "only_core_literal_changed": true,
+          "channel_literals": null,
+          "all_branch_exception_targets_preserved": true
+        },
+        "span": {
+          "passed": true,
+          "mode": "span",
+          "methods": 145,
+          "unchanged": 144,
+          "changed": [
+            "Probe::Main::Int32 Main(System.String[])"
+          ],
+          "only_core_literal_changed": true,
+          "channel_literals": null,
+          "all_branch_exception_targets_preserved": true
+        },
+        "channels64": {
+          "passed": true,
+          "mode": "channels64",
+          "methods": 145,
+          "unchanged": 144,
+          "changed": [
+            "Probe::Main::Int32 Main(System.String[])"
+          ],
+          "only_core_literal_changed": false,
+          "channel_literals": [
+            64,
+            80
+          ],
+          "all_branch_exception_targets_preserved": true
+        },
+        "channels128": {
+          "passed": true,
+          "mode": "channels128",
+          "methods": 145,
+          "unchanged": 144,
+          "changed": [
+            "Probe::Main::Int32 Main(System.String[])"
+          ],
+          "only_core_literal_changed": false,
+          "channel_literals": [
+            128,
+            256
+          ],
+          "all_branch_exception_targets_preserved": true
+        },
+        "layers": {
+          "passed": true,
+          "mode": "layers",
+          "methods": 134,
+          "unchanged": 133,
+          "changed": [
+            "ModelProbe::Main::Int32 Main(System.String[])"
+          ],
+          "only_core_literal_changed": true,
+          "channel_literals": null,
+          "all_branch_exception_targets_preserved": true
+        }
+      },
+      "reports": {
+        "raw-256": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0
+        },
+        "raw-512": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0
+        },
+        "wide-256": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0
+        },
+        "wide-512": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0
+        },
+        "span-256": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0
+        },
+        "span-512": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0
+        },
+        "channels64-256": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0,
+          "channel_census": {
+            "channels": [
+              64,
+              80
+            ],
+            "geometries": 312,
+            "complete_cases": 2648,
+            "independent_scalar_and_production": true
+          }
+        },
+        "channels64-512": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0,
+          "channel_census": {
+            "channels": [
+              64,
+              80
+            ],
+            "geometries": 312,
+            "complete_cases": 2648,
+            "independent_scalar_and_production": true
+          }
+        },
+        "channels128-256": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0,
+          "channel_census": {
+            "channels": [
+              128,
+              256
+            ],
+            "geometries": 312,
+            "complete_cases": 2648,
+            "independent_scalar_and_production": true
+          }
+        },
+        "channels128-512": {
+          "passed": true,
+          "raw_cases": 2648,
+          "supplemental": 20,
+          "rejected": 10,
+          "graph_cases": 2668,
+          "control_requests": 2668,
+          "candidate_requests": 5336,
+          "finite_graphs": 2504,
+          "fallback_graphs": 164,
+          "differences": 0,
+          "nan_payload_differences": 0,
+          "raw_nan_payload_differences": 0,
+          "channel_census": {
+            "channels": [
+              128,
+              256
+            ],
+            "geometries": 312,
+            "complete_cases": 2648,
+            "independent_scalar_and_production": true
+          }
+        },
+        "layers-256": {
+          "passed": true,
+          "cases": 108,
+          "values": 119823360,
+          "graph_calls": 216,
+          "native_maximum": 3.814697265625e-06,
+          "lanes": 8
+        },
+        "layers-512": {
+          "passed": true,
+          "cases": 108,
+          "values": 119823360,
+          "graph_calls": 216,
+          "native_maximum": 3.814697265625e-06,
+          "lanes": 16
+        }
+      },
+      "resources": [
+        {
+          "name": "raw-restore",
+          "samples": 4,
+          "peak_rss": 153006080,
+          "seconds": 1.0214099129661918
+        },
+        {
+          "name": "raw-build",
+          "samples": 15,
+          "peak_rss": 329113600,
+          "seconds": 3.838909050973598
+        },
+        {
+          "name": "raw-inventory",
+          "samples": 1,
+          "peak_rss": 10076160,
+          "seconds": 0.26328107295557857
+        },
+        {
+          "name": "wide-restore",
+          "samples": 4,
+          "peak_rss": 128983040,
+          "seconds": 1.0249741119914688
+        },
+        {
+          "name": "wide-build",
+          "samples": 13,
+          "peak_rss": 306352128,
+          "seconds": 3.336161582963541
+        },
+        {
+          "name": "wide-inventory",
+          "samples": 1,
+          "peak_rss": 10080256,
+          "seconds": 0.26274325198028237
+        },
+        {
+          "name": "span-restore",
+          "samples": 4,
+          "peak_rss": 152305664,
+          "seconds": 1.0293556220130995
+        },
+        {
+          "name": "span-build",
+          "samples": 13,
+          "peak_rss": 307126272,
+          "seconds": 3.345551374950446
+        },
+        {
+          "name": "span-inventory",
+          "samples": 1,
+          "peak_rss": 10162176,
+          "seconds": 0.2630275110132061
+        },
+        {
+          "name": "channels64-restore",
+          "samples": 4,
+          "peak_rss": 152694784,
+          "seconds": 1.0296063759597018
+        },
+        {
+          "name": "channels64-build",
+          "samples": 13,
+          "peak_rss": 306724864,
+          "seconds": 3.354213726997841
+        },
+        {
+          "name": "channels64-inventory",
+          "samples": 1,
+          "peak_rss": 10162176,
+          "seconds": 0.27050208405125886
+        },
+        {
+          "name": "channels128-restore",
+          "samples": 4,
+          "peak_rss": 153505792,
+          "seconds": 1.0355750520247966
+        },
+        {
+          "name": "channels128-build",
+          "samples": 13,
+          "peak_rss": 304730112,
+          "seconds": 3.3652177110197954
+        },
+        {
+          "name": "channels128-inventory",
+          "samples": 1,
+          "peak_rss": 11354112,
+          "seconds": 0.27147194801364094
+        },
+        {
+          "name": "layers-restore",
+          "samples": 4,
+          "peak_rss": 152649728,
+          "seconds": 1.0372935329796746
+        },
+        {
+          "name": "layers-build",
+          "samples": 14,
+          "peak_rss": 306536448,
+          "seconds": 3.6402859250083566
+        },
+        {
+          "name": "layers-inventory",
+          "samples": 1,
+          "peak_rss": 8192000,
+          "seconds": 0.2644766200101003
+        },
+        {
+          "name": "raw-256",
+          "samples": 6,
+          "peak_rss": 80265216,
+          "seconds": 1.6015986070269719
+        },
+        {
+          "name": "raw-512",
+          "samples": 6,
+          "peak_rss": 81788928,
+          "seconds": 1.5955027629970573
+        },
+        {
+          "name": "wide-256",
+          "samples": 9,
+          "peak_rss": 83353600,
+          "seconds": 2.3696760569582693
+        },
+        {
+          "name": "wide-512",
+          "samples": 9,
+          "peak_rss": 84430848,
+          "seconds": 2.3726410230156034
+        },
+        {
+          "name": "span-256",
+          "samples": 9,
+          "peak_rss": 82522112,
+          "seconds": 2.375735321023967
+        },
+        {
+          "name": "span-512",
+          "samples": 10,
+          "peak_rss": 82477056,
+          "seconds": 2.6341827670112252
+        },
+        {
+          "name": "channels64-256",
+          "samples": 11,
+          "peak_rss": 82366464,
+          "seconds": 2.882291299989447
+        },
+        {
+          "name": "channels64-512",
+          "samples": 11,
+          "peak_rss": 82169856,
+          "seconds": 2.8822560269618407
+        },
+        {
+          "name": "channels128-256",
+          "samples": 23,
+          "peak_rss": 103981056,
+          "seconds": 6.001683108974248
+        },
+        {
+          "name": "channels128-512",
+          "samples": 23,
+          "peak_rss": 100372480,
+          "seconds": 6.001328024023678
+        },
+        {
+          "name": "layers-256",
+          "samples": 49,
+          "peak_rss": 2777886720,
+          "seconds": 12.74657252599718
+        },
+        {
+          "name": "layers-512",
+          "samples": 39,
+          "peak_rss": 2186031104,
+          "seconds": 10.143918475951068
+        }
+      ],
+      "samples": 316,
+      "peak_rss": 2777886720,
+      "no_performance_measurement": true,
+      "codegen_pending": true,
+      "root_product_changed": false
+    }
+  },
+  "extremes": {
+    "closure": {
+      "bytes": 23223,
+      "sha256": "a2c99e95bdca2919cf3c370c88d55d446398d3ab37462a23433835f6cc4ea8f9"
+    },
+    "analysis": {
+      "passed": true,
+      "products": {
+        "selected": {
+          "Lokad.Onnx.dll": {
+            "bytes": 756736,
+            "sha256": "208371f620fcfce5ff709db54525fa158b4c9442685430afbeb730619e1ded81"
+          },
+          "Lokad.Onnx.Data.dll": {
+            "bytes": 143872,
+            "sha256": "b935837024c3ffd67e322ba1fe44405b24b7da221779cf00856f090df08693f5"
+          }
+        },
+        "candidate": {
+          "Lokad.Onnx.dll": {
+            "bytes": 757248,
+            "sha256": "8e0ff60c62456a83194b14fadd4e49a6aebea3d57d7a6236a8660770c205001b"
+          },
+          "Lokad.Onnx.Data.dll": {
+            "bytes": 143872,
+            "sha256": "d6e5817a68d123f1f83b4ecc328398a86f7c1e115853b2a0e580de1d0a74d818"
+          }
+        }
+      },
+      "probe": {
+        "bytes": 45568,
+        "sha256": "bffad7721b1448cd4083ce20969dc0d4d7b020d94d9c8542b4777338ccc72887"
+      },
+      "consumer": {
+        "bytes": 22016,
+        "sha256": "2d7c8ad19d5d87f3173a05f81e740f13dcc93a2357e639dd01fce46db68c2d8d"
+      },
+      "results": {
+        "selected-256": {
+          "passed": true,
+          "cases": 1280,
+          "graph_calls": 6400,
+          "additional_exact_calls": 2560,
+          "values": 1049600,
+          "nan_payload_differences": 0,
+          "ownership_readonly_scratch": true,
+          "no_performance_measurement": true
+        },
+        "candidate-256": {
+          "passed": true,
+          "cases": 1280,
+          "graph_calls": 6400,
+          "additional_exact_calls": 2560,
+          "values": 1049600,
+          "nan_payload_differences": 0,
+          "ownership_readonly_scratch": true,
+          "no_performance_measurement": true
+        },
+        "selected-512": {
+          "passed": true,
+          "cases": 1280,
+          "graph_calls": 6400,
+          "additional_exact_calls": 2560,
+          "values": 1049600,
+          "nan_payload_differences": 0,
+          "ownership_readonly_scratch": true,
+          "no_performance_measurement": true
+        },
+        "candidate-512": {
+          "passed": true,
+          "cases": 1280,
+          "graph_calls": 6400,
+          "additional_exact_calls": 2560,
+          "values": 1049600,
+          "nan_payload_differences": 0,
+          "ownership_readonly_scratch": true,
+          "no_performance_measurement": true
+        }
+      },
+      "resources": [
+        {
+          "name": "sdk-version",
+          "samples": 1,
+          "peak_rss": 9461760,
+          "seconds": 0.2566090290201828
+        },
+        {
+          "name": "consumer-restore",
+          "samples": 4,
+          "peak_rss": 152899584,
+          "seconds": 1.0210352970170788
+        },
+        {
+          "name": "consumer-build",
+          "samples": 15,
+          "peak_rss": 324165632,
+          "seconds": 3.843763654003851
+        },
+        {
+          "name": "selected-256",
+          "samples": 10,
+          "peak_rss": 78196736,
+          "seconds": 2.5675735810073093
+        },
+        {
+          "name": "candidate-256",
+          "samples": 10,
+          "peak_rss": 78360576,
+          "seconds": 2.5704117930145003
+        },
+        {
+          "name": "selected-512",
+          "samples": 10,
+          "peak_rss": 78213120,
+          "seconds": 2.5692695769830607
+        },
+        {
+          "name": "candidate-512",
+          "samples": 10,
+          "peak_rss": 81080320,
+          "seconds": 2.570128570019733
+        }
+      ],
+      "all_current_candidate_hashes_exact": true,
+      "graph_checks_exact": true,
+      "no_performance_measurement": true
+    }
+  },
+  "codegen": {
+    "closure": {
+      "bytes": 15927,
+      "sha256": "d0cb1cb7791709e20a7d07901119dee6afb82362e293615c072133b71cb42adb"
+    },
+    "analysis": {
+      "passed": true,
+      "reports": {
+        "production": {
+          "passed": true,
+          "calls": 432,
+          "distinct_calls": 108,
+          "calls_with_output_channels_divisible_by_64": 312,
+          "no_performance_measurement": true
+        },
+        "candidate": {
+          "passed": true,
+          "calls": 432,
+          "distinct_calls": 108,
+          "calls_with_output_channels_divisible_by_64": 312,
+          "no_performance_measurement": true
+        }
+      },
+      "resources": [
+        {
+          "name": "production",
+          "samples": 38,
+          "peak_rss": 3312885760,
+          "seconds": 9.655983461008873
+        },
+        {
+          "name": "candidate",
+          "samples": 38,
+          "peak_rss": 3312955392,
+          "seconds": 9.66345095395809
+        }
+      ],
+      "code": {
+        "production": [
+          {
+            "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+            "tier": "Instrumented Tier0",
+            "code_bytes": [
+              3756
+            ],
+            "complete_uninterleaved": true,
+            "line": 1,
+            "reductions": [
+              {
+                "label": "G_M000_IG08",
+                "fma_instructions": 4,
+                "input_broadcasts": 2,
+                "vector_stack_references": [
+                  "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0x630], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0x670], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+                ],
+                "integer_multiplies": 4,
+                "arithmetic_shifts": 3,
+                "scalar_stack_references": [
+                  "       mov      rax, qword ptr [rbp-0x378]",
+                  "       mov      rax, qword ptr [rbp-0x380]",
+                  "       mov      eax, dword ptr [rbp-0x384]",
+                  "       add      eax, dword ptr [rbp-0x384]",
+                  "       imul     eax, dword ptr [rbp-0x50]",
+                  "       mov      ecx, dword ptr [rbp-0x64]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x388]",
+                  "       imul     eax, dword ptr [rbp-0x54]",
+                  "       mov      ecx, dword ptr [rbp-0x68]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x38C]",
+                  "       add      rax, qword ptr [rbp-0x30]",
+                  "       mov      ecx, dword ptr [rbp-0x384]",
+                  "       mov      edx, dword ptr [rbp-0x384]",
+                  "       add      edx, dword ptr [rbp-0x384]",
+                  "       mov      qword ptr [rbp-0x5B8], rax",
+                  "       mov      rax, qword ptr [rbp-0x5B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x5B8]"
+                ]
+              },
+              {
+                "label": "G_M000_IG09",
+                "fma_instructions": 8,
+                "input_broadcasts": 4,
+                "vector_stack_references": [
+                  "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0x6B0], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+                ],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": [
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x5B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x5B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x5B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x5B8]"
+                ]
+              },
+              {
+                "label": "G_M000_IG32",
+                "fma_instructions": 2,
+                "input_broadcasts": 1,
+                "vector_stack_references": [
+                  "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+                  "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+                  "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+                ],
+                "integer_multiplies": 4,
+                "arithmetic_shifts": 3,
+                "scalar_stack_references": [
+                  "       mov      eax, dword ptr [rbp-0x4C8]",
+                  "       add      eax, dword ptr [rbp-0x4C8]",
+                  "       imul     eax, dword ptr [rbp-0x50]",
+                  "       mov      ecx, dword ptr [rbp-0x64]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x4CC]",
+                  "       imul     eax, dword ptr [rbp-0x54]",
+                  "       mov      ecx, dword ptr [rbp-0x68]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x4D0]",
+                  "       mov      ecx, dword ptr [rbp-0x4C8]",
+                  "       mov      edx, dword ptr [rbp-0x4C8]",
+                  "       add      edx, dword ptr [rbp-0x4C8]",
+                  "       mov      rcx, qword ptr [rbp-0x30]",
+                  "       mov      rax, qword ptr [rbp-0x4B8]",
+                  "       mov      rax, qword ptr [rbp-0x4C0]",
+                  "       cmp      dword ptr [rbp-0x4C4], 0"
+                ]
+              }
+            ]
+          },
+          {
+            "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+            "tier": "Tier1-OSR",
+            "code_bytes": [
+              2176
+            ],
+            "complete_uninterleaved": true,
+            "line": 873,
+            "reductions": [
+              {
+                "label": "G_M000_IG08",
+                "fma_instructions": 12,
+                "input_broadcasts": 6,
+                "vector_stack_references": [],
+                "integer_multiplies": 6,
+                "arithmetic_shifts": 3,
+                "scalar_stack_references": [
+                  "       mov      r8d, dword ptr [rbp+0x740]",
+                  "       mov      esi, dword ptr [rbp+0x72C]",
+                  "       mov      dword ptr [rbp+0x72C], esi",
+                  "       mov      dword ptr [rbp+0x740], r8d"
+                ]
+              },
+              {
+                "label": "G_M000_IG42",
+                "fma_instructions": 2,
+                "input_broadcasts": 0,
+                "vector_stack_references": [],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": []
+              },
+              {
+                "label": "G_M000_IG44",
+                "fma_instructions": 2,
+                "input_broadcasts": 0,
+                "vector_stack_references": [],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": []
+              },
+              {
+                "label": "G_M000_IG47",
+                "fma_instructions": 2,
+                "input_broadcasts": 0,
+                "vector_stack_references": [],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": []
+              }
+            ]
+          }
+        ],
+        "candidate": [
+          {
+            "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+            "tier": "Instrumented Tier0",
+            "code_bytes": [
+              5669
+            ],
+            "complete_uninterleaved": true,
+            "line": 1,
+            "reductions": [
+              {
+                "label": "G_M000_IG41",
+                "fma_instructions": 4,
+                "input_broadcasts": 2,
+                "vector_stack_references": [
+                  "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0xA30], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xA30]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xA30]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0xA70], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xA70]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xA70]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+                ],
+                "integer_multiplies": 4,
+                "arithmetic_shifts": 3,
+                "scalar_stack_references": [
+                  "       mov      rax, qword ptr [rbp-0x378]",
+                  "       mov      rax, qword ptr [rbp-0x380]",
+                  "       mov      eax, dword ptr [rbp-0x384]",
+                  "       add      eax, dword ptr [rbp-0x384]",
+                  "       imul     eax, dword ptr [rbp-0x50]",
+                  "       mov      ecx, dword ptr [rbp-0x64]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x388]",
+                  "       imul     eax, dword ptr [rbp-0x54]",
+                  "       mov      ecx, dword ptr [rbp-0x70]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x38C]",
+                  "       add      rax, qword ptr [rbp-0x30]",
+                  "       mov      ecx, dword ptr [rbp-0x384]",
+                  "       mov      edx, dword ptr [rbp-0x384]",
+                  "       add      edx, dword ptr [rbp-0x384]",
+                  "       mov      qword ptr [rbp-0x9B8], rax",
+                  "       mov      rax, qword ptr [rbp-0x9B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x9B8]"
+                ]
+              },
+              {
+                "label": "G_M000_IG42",
+                "fma_instructions": 8,
+                "input_broadcasts": 4,
+                "vector_stack_references": [
+                  "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0xAB0], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0xAF0], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0xB30], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xB30]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xB30]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+                  "       vmovups  zmmword ptr [rbp-0xB70], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                  "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                  "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+                ],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": [
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x9B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x9B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x9B8]",
+                  "       mov      eax, dword ptr [rbp+0x18]",
+                  "       mov      rcx, qword ptr [rbp-0x9B8]"
+                ]
+              },
+              {
+                "label": "G_M000_IG70",
+                "fma_instructions": 2,
+                "input_broadcasts": 1,
+                "vector_stack_references": [
+                  "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+                  "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+                  "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+                  "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                  "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+                  "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+                  "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+                ],
+                "integer_multiplies": 4,
+                "arithmetic_shifts": 3,
+                "scalar_stack_references": [
+                  "       mov      eax, dword ptr [rbp-0x4C8]",
+                  "       add      eax, dword ptr [rbp-0x4C8]",
+                  "       imul     eax, dword ptr [rbp-0x50]",
+                  "       mov      ecx, dword ptr [rbp-0x64]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x4CC]",
+                  "       imul     eax, dword ptr [rbp-0x54]",
+                  "       mov      ecx, dword ptr [rbp-0x70]",
+                  "       imul     ecx, dword ptr [rbp+0x18]",
+                  "       add      eax, dword ptr [rbp-0x4D0]",
+                  "       mov      ecx, dword ptr [rbp-0x4C8]",
+                  "       mov      edx, dword ptr [rbp-0x4C8]",
+                  "       add      edx, dword ptr [rbp-0x4C8]",
+                  "       mov      rcx, qword ptr [rbp-0x30]",
+                  "       mov      rax, qword ptr [rbp-0x4B8]",
+                  "       mov      rax, qword ptr [rbp-0x4C0]",
+                  "       cmp      dword ptr [rbp-0x4C4], 0"
+                ]
+              }
+            ]
+          },
+          {
+            "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+            "tier": "Tier1-OSR",
+            "code_bytes": [
+              3680
+            ],
+            "complete_uninterleaved": true,
+            "line": 1384,
+            "reductions": [
+              {
+                "label": "G_M000_IG08",
+                "fma_instructions": 12,
+                "input_broadcasts": 6,
+                "vector_stack_references": [],
+                "integer_multiplies": 6,
+                "arithmetic_shifts": 3,
+                "scalar_stack_references": [
+                  "       mov      r8d, dword ptr [rbp+0xB40]",
+                  "       mov      esi, dword ptr [rbp+0xB2C]",
+                  "       mov      dword ptr [rbp+0xB2C], esi",
+                  "       mov      dword ptr [rbp+0xB40], r8d"
+                ]
+              },
+              {
+                "label": "G_M000_IG75",
+                "fma_instructions": 2,
+                "input_broadcasts": 0,
+                "vector_stack_references": [],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": []
+              },
+              {
+                "label": "G_M000_IG77",
+                "fma_instructions": 2,
+                "input_broadcasts": 0,
+                "vector_stack_references": [],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": []
+              },
+              {
+                "label": "G_M000_IG80",
+                "fma_instructions": 2,
+                "input_broadcasts": 0,
+                "vector_stack_references": [],
+                "integer_multiplies": 0,
+                "arithmetic_shifts": 0,
+                "scalar_stack_references": []
+              }
+            ]
+          }
+        ]
+      },
+      "no_performance_measurement": true,
+      "manual_codegen_review_pending": true
+    }
+  },
+  "raw-listings-20260923.json": {
+    "bytes": 170891,
+    "sha256": "2461bca3c86711cb95652d768c8a7458d6516f1c426c76367d7b015009e3deba"
+  },
+  "normalized-listings-20260923.json": {
+    "bytes": 170941,
+    "sha256": "b967736e82d347dc856a8d6ff9655121e6a202e89f9aadb497bb5de4b2710172"
+  },
+  "codegen-review-20260923.json": {
+    "bytes": 3847,
+    "sha256": "728f3dafb718ffc004f36fe99dae8d6a5410b6a659fc51e4a8e637c135dd37de"
+  }
+}

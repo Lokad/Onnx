@@ -1,0 +1,2051 @@
+{
+  "closure": {
+    "bytes": 19388,
+    "sha256": "ba80c51c5d00fabaf2ff3944bbebeaff9a2e45cb32f8000460216280cf6b60a9"
+  },
+  "identities": {
+    "production": {
+      "core": {
+        "bytes": 756736,
+        "sha256": "208371f620fcfce5ff709db54525fa158b4c9442685430afbeb730619e1ded81"
+      },
+      "probe": {
+        "bytes": 48640,
+        "sha256": "0c5dabe657a8b4bc57efd686073f7e2d32e7eb240b2167838377e805d8934dd1"
+      }
+    },
+    "candidate": {
+      "core": {
+        "bytes": 757248,
+        "sha256": "8e0ff60c62456a83194b14fadd4e49a6aebea3d57d7a6236a8660770c205001b"
+      },
+      "probe": {
+        "bytes": 48640,
+        "sha256": "0c5dabe657a8b4bc57efd686073f7e2d32e7eb240b2167838377e805d8934dd1"
+      }
+    }
+  },
+  "driver": {
+    "bytes": 35328,
+    "sha256": "fda303b77481d5e7de2d1f62d6131efbc843f1f334182348eec5992286c1973c"
+  },
+  "analysis": {
+    "admitted": false,
+    "controls": [
+      {
+        "role": "production",
+        "form": null,
+        "ratio": {
+          "numerator": 21683040284525,
+          "denominator": 21349629726223,
+          "seconds": 1.0156166904333934
+        },
+        "limit": {
+          "numerator": 11,
+          "denominator": 10,
+          "seconds": 1.1
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 0,
+        "ratio": {
+          "numerator": 3072930347,
+          "denominator": 2972659607,
+          "seconds": 1.0337309861391069
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 1,
+        "ratio": {
+          "numerator": 98201257,
+          "denominator": 95205365,
+          "seconds": 1.0314676804190603
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 2,
+        "ratio": {
+          "numerator": 504691453,
+          "denominator": 484141143,
+          "seconds": 1.042446939899921
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 3,
+        "ratio": {
+          "numerator": 262032310,
+          "denominator": 260285683,
+          "seconds": 1.0067104228702428
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 4,
+        "ratio": {
+          "numerator": 821443949,
+          "denominator": 788175546,
+          "seconds": 1.042209382375332
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 5,
+        "ratio": {
+          "numerator": 1653053353,
+          "denominator": 1626898142,
+          "seconds": 1.0160767354296973
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 6,
+        "ratio": {
+          "numerator": 1195831211,
+          "denominator": 1180148696,
+          "seconds": 1.013288592406325
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 7,
+        "ratio": {
+          "numerator": 418885065,
+          "denominator": 408708902,
+          "seconds": 1.0248983150359665
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 8,
+        "ratio": {
+          "numerator": 867418273,
+          "denominator": 784034454,
+          "seconds": 1.106352238188757
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 9,
+        "ratio": {
+          "numerator": 2394897867,
+          "denominator": 2390106227,
+          "seconds": 1.0020047811874933
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 10,
+        "ratio": {
+          "numerator": 1971224303,
+          "denominator": 1954225597,
+          "seconds": 1.0086984358541282
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 11,
+        "ratio": {
+          "numerator": 83405539,
+          "denominator": 81513960,
+          "seconds": 1.0232055834362606
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 12,
+        "ratio": {
+          "numerator": 545628463,
+          "denominator": 532058791,
+          "seconds": 1.0255040838146776
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 13,
+        "ratio": {
+          "numerator": 175493039,
+          "denominator": 169757157,
+          "seconds": 1.0337887491836353
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "production",
+        "form": 14,
+        "ratio": {
+          "numerator": 22138261,
+          "denominator": 21681249,
+          "seconds": 1.0210786749416512
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": null,
+        "ratio": {
+          "numerator": 33834244058304,
+          "denominator": 33238871937163,
+          "seconds": 1.0179119231924156
+        },
+        "limit": {
+          "numerator": 11,
+          "denominator": 10,
+          "seconds": 1.1
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 0,
+        "ratio": {
+          "numerator": 3551527951,
+          "denominator": 3105498676,
+          "seconds": 1.1436256529255722
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 1,
+        "ratio": {
+          "numerator": 669541533,
+          "denominator": 656091605,
+          "seconds": 1.0205000763574776
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 2,
+        "ratio": {
+          "numerator": 480175669,
+          "denominator": 465570326,
+          "seconds": 1.0313708631851248
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 3,
+        "ratio": {
+          "numerator": 488395727,
+          "denominator": 471338112,
+          "seconds": 1.0361897639204698
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 4,
+        "ratio": {
+          "numerator": 3799135,
+          "denominator": 3551898,
+          "seconds": 1.0696070101112138
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 5,
+        "ratio": {
+          "numerator": 1717881524,
+          "denominator": 1694338841,
+          "seconds": 1.0138949084033895
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 6,
+        "ratio": {
+          "numerator": 1239414077,
+          "denominator": 1214956365,
+          "seconds": 1.0201305270745258
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 7,
+        "ratio": {
+          "numerator": 441755660,
+          "denominator": 430195971,
+          "seconds": 1.0268707514231927
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 8,
+        "ratio": {
+          "numerator": 172099597,
+          "denominator": 168211262,
+          "seconds": 1.023115782818394
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 9,
+        "ratio": {
+          "numerator": 521599291,
+          "denominator": 503680990,
+          "seconds": 1.035574701757158
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 10,
+        "ratio": {
+          "numerator": 2101338192,
+          "denominator": 2029134881,
+          "seconds": 1.0355832979246884
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 11,
+        "ratio": {
+          "numerator": 486715384,
+          "denominator": 440030807,
+          "seconds": 1.106093883103962
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 12,
+        "ratio": {
+          "numerator": 598694673,
+          "denominator": 558363764,
+          "seconds": 1.0722305271228167
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 13,
+        "ratio": {
+          "numerator": 675421225,
+          "denominator": 648699564,
+          "seconds": 1.0411926606443658
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "form": 14,
+        "ratio": {
+          "numerator": 887138304,
+          "denominator": 839769917,
+          "seconds": 1.0564063870842375
+        },
+        "limit": {
+          "numerator": 6,
+          "denominator": 5,
+          "seconds": 1.2
+        },
+        "passed": true
+      }
+    ],
+    "gates": [
+      {
+        "form": null,
+        "ratio": {
+          "numerator": 67073115995467,
+          "denominator": 64549005016122,
+          "seconds": 1.0391037937566128
+        },
+        "limit": {
+          "numerator": 9,
+          "denominator": 10,
+          "seconds": 0.9
+        },
+        "passed": false
+      },
+      {
+        "form": 1,
+        "ratio": {
+          "numerator": 662816569,
+          "denominator": 676923177,
+          "seconds": 0.9791606958081744
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 2,
+        "ratio": {
+          "numerator": 945745995,
+          "denominator": 988832596,
+          "seconds": 0.9564267994660646
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 3,
+        "ratio": {
+          "numerator": 959733839,
+          "denominator": 1044635986,
+          "seconds": 0.9187256152977292
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 5,
+        "ratio": {
+          "numerator": 682444073,
+          "denominator": 655990299,
+          "seconds": 1.0403264713522844
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 6,
+        "ratio": {
+          "numerator": 2454370442,
+          "denominator": 2375979907,
+          "seconds": 1.032992928420417
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": true
+      },
+      {
+        "form": 7,
+        "ratio": {
+          "numerator": 871951631,
+          "denominator": 827593967,
+          "seconds": 1.053598341419519
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": false
+      },
+      {
+        "form": 9,
+        "ratio": {
+          "numerator": 5126401405,
+          "denominator": 4785004094,
+          "seconds": 1.071347339373875
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": false
+      },
+      {
+        "form": 10,
+        "ratio": {
+          "numerator": 4130473073,
+          "denominator": 3925449900,
+          "seconds": 1.0522292165797353
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": false
+      },
+      {
+        "form": 11,
+        "ratio": {
+          "numerator": 926746191,
+          "denominator": 824597495,
+          "seconds": 1.1238770389424964
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": false
+      },
+      {
+        "form": 13,
+        "ratio": {
+          "numerator": 1324120789,
+          "denominator": 1208375686,
+          "seconds": 1.0957856934238248
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": false
+      },
+      {
+        "form": 14,
+        "ratio": {
+          "numerator": 1726908221,
+          "denominator": 1577502360,
+          "seconds": 1.0947103882621132
+        },
+        "limit": {
+          "numerator": 21,
+          "denominator": 20,
+          "seconds": 1.05
+        },
+        "passed": false
+      }
+    ],
+    "rows": [
+      {
+        "form": null,
+        "production": {
+          "numerator": 3586055834229,
+          "denominator": 2491000000000,
+          "seconds": 1.439604911372541
+        },
+        "candidate": {
+          "numerator": 67073115995467,
+          "denominator": 44838000000000,
+          "seconds": 1.4958989249178598
+        },
+        "ratio": {
+          "numerator": 67073115995467,
+          "denominator": 64549005016122,
+          "seconds": 1.0391037937566128
+        },
+        "eligible": true
+      },
+      {
+        "form": 0,
+        "production": {
+          "numerator": 3022794977,
+          "denominator": 282000000000,
+          "seconds": 0.010719131124113475
+        },
+        "candidate": {
+          "numerator": 6657026627,
+          "denominator": 564000000000,
+          "seconds": 0.01180323870035461
+        },
+        "ratio": {
+          "numerator": 6657026627,
+          "denominator": 6045589954,
+          "seconds": 1.1011376354751696
+        },
+        "eligible": false
+      },
+      {
+        "form": 1,
+        "production": {
+          "numerator": 225641059,
+          "denominator": 1500000000,
+          "seconds": 0.15042737266666667
+        },
+        "candidate": {
+          "numerator": 662816569,
+          "denominator": 4500000000,
+          "seconds": 0.1472925708888889
+        },
+        "ratio": {
+          "numerator": 662816569,
+          "denominator": 676923177,
+          "seconds": 0.9791606958081744
+        },
+        "eligible": true
+      },
+      {
+        "form": 2,
+        "production": {
+          "numerator": 247208149,
+          "denominator": 1500000000,
+          "seconds": 0.16480543266666667
+        },
+        "candidate": {
+          "numerator": 63049733,
+          "denominator": 400000000,
+          "seconds": 0.1576243325
+        },
+        "ratio": {
+          "numerator": 945745995,
+          "denominator": 988832596,
+          "seconds": 0.9564267994660646
+        },
+        "eligible": true
+      },
+      {
+        "form": 3,
+        "production": {
+          "numerator": 522317993,
+          "denominator": 18000000000,
+          "seconds": 0.029017666277777777
+        },
+        "candidate": {
+          "numerator": 959733839,
+          "denominator": 36000000000,
+          "seconds": 0.026659273305555557
+        },
+        "ratio": {
+          "numerator": 959733839,
+          "denominator": 1044635986,
+          "seconds": 0.9187256152977292
+        },
+        "eligible": true
+      },
+      {
+        "form": 4,
+        "production": {
+          "numerator": 321923899,
+          "denominator": 31800000000,
+          "seconds": 0.010123393050314466
+        },
+        "candidate": {
+          "numerator": 1639280359,
+          "denominator": 159000000000,
+          "seconds": 0.010309939364779874
+        },
+        "ratio": {
+          "numerator": 1639280359,
+          "denominator": 1609619495,
+          "seconds": 1.01842725196367
+        },
+        "eligible": false
+      },
+      {
+        "form": 5,
+        "production": {
+          "numerator": 72887811,
+          "denominator": 400000000,
+          "seconds": 0.1822195275
+        },
+        "candidate": {
+          "numerator": 682444073,
+          "denominator": 3600000000,
+          "seconds": 0.18956779805555554
+        },
+        "ratio": {
+          "numerator": 682444073,
+          "denominator": 655990299,
+          "seconds": 1.0403264713522844
+        },
+        "eligible": true
+      },
+      {
+        "form": 6,
+        "production": {
+          "numerator": 2375979907,
+          "denominator": 18000000000,
+          "seconds": 0.1319988837222222
+        },
+        "candidate": {
+          "numerator": 1227185221,
+          "denominator": 9000000000,
+          "seconds": 0.13635391344444445
+        },
+        "ratio": {
+          "numerator": 2454370442,
+          "denominator": 2375979907,
+          "seconds": 1.032992928420417
+        },
+        "eligible": true
+      },
+      {
+        "form": 7,
+        "production": {
+          "numerator": 827593967,
+          "denominator": 36000000000,
+          "seconds": 0.022988721305555557
+        },
+        "candidate": {
+          "numerator": 871951631,
+          "denominator": 36000000000,
+          "seconds": 0.024220878638888887
+        },
+        "ratio": {
+          "numerator": 871951631,
+          "denominator": 827593967,
+          "seconds": 1.053598341419519
+        },
+        "eligible": true
+      },
+      {
+        "form": 8,
+        "production": {
+          "numerator": 1651452727,
+          "denominator": 318000000000,
+          "seconds": 0.00519324756918239
+        },
+        "candidate": {
+          "numerator": 113436953,
+          "denominator": 21200000000,
+          "seconds": 0.005350799669811321
+        },
+        "ratio": {
+          "numerator": 1701554295,
+          "denominator": 1651452727,
+          "seconds": 1.030337875968762
+        },
+        "eligible": false
+      },
+      {
+        "form": 9,
+        "production": {
+          "numerator": 2392502047,
+          "denominator": 9000000000,
+          "seconds": 0.26583356077777776
+        },
+        "candidate": {
+          "numerator": 1025280281,
+          "denominator": 3600000000,
+          "seconds": 0.28480007805555557
+        },
+        "ratio": {
+          "numerator": 5126401405,
+          "denominator": 4785004094,
+          "seconds": 1.071347339373875
+        },
+        "eligible": true
+      },
+      {
+        "form": 10,
+        "production": {
+          "numerator": 4361611,
+          "denominator": 20000000,
+          "seconds": 0.21808055
+        },
+        "candidate": {
+          "numerator": 4130473073,
+          "denominator": 18000000000,
+          "seconds": 0.2294707262777778
+        },
+        "ratio": {
+          "numerator": 4130473073,
+          "denominator": 3925449900,
+          "seconds": 1.0522292165797353
+        },
+        "eligible": true
+      },
+      {
+        "form": 11,
+        "production": {
+          "numerator": 164919499,
+          "denominator": 7200000000,
+          "seconds": 0.022905485972222223
+        },
+        "candidate": {
+          "numerator": 102971799,
+          "denominator": 4000000000,
+          "seconds": 0.02574294975
+        },
+        "ratio": {
+          "numerator": 926746191,
+          "denominator": 824597495,
+          "seconds": 1.1238770389424964
+        },
+        "eligible": true
+      },
+      {
+        "form": 12,
+        "production": {
+          "numerator": 538843627,
+          "denominator": 159000000000,
+          "seconds": 0.0033889536289308177
+        },
+        "candidate": {
+          "numerator": 1157058437,
+          "denominator": 318000000000,
+          "seconds": 0.003638548544025157
+        },
+        "ratio": {
+          "numerator": 1157058437,
+          "denominator": 1077687254,
+          "seconds": 1.0736495515794604
+        },
+        "eligible": false
+      },
+      {
+        "form": 13,
+        "production": {
+          "numerator": 604187843,
+          "denominator": 4500000000,
+          "seconds": 0.1342639651111111
+        },
+        "candidate": {
+          "numerator": 1324120789,
+          "denominator": 9000000000,
+          "seconds": 0.14712453211111112
+        },
+        "ratio": {
+          "numerator": 1324120789,
+          "denominator": 1208375686,
+          "seconds": 1.0957856934238248
+        },
+        "eligible": true
+      },
+      {
+        "form": 14,
+        "production": {
+          "numerator": 4381951,
+          "denominator": 50000000,
+          "seconds": 0.08763902
+        },
+        "candidate": {
+          "numerator": 1726908221,
+          "denominator": 18000000000,
+          "seconds": 0.09593934561111112
+        },
+        "ratio": {
+          "numerator": 1726908221,
+          "denominator": 1577502360,
+          "seconds": 1.0947103882621132
+        },
+        "eligible": true
+      }
+    ],
+    "process_totals": {
+      "production-a": {
+        "total": {
+          "numerator": 21349629726223,
+          "denominator": 14946000000000,
+          "seconds": 1.428451072275057
+        },
+        "forms": {
+          "0": {
+            "numerator": 2972659607,
+            "denominator": 282000000000,
+            "seconds": 0.010541346124113475
+          },
+          "1": {
+            "numerator": 133287511,
+            "denominator": 900000000,
+            "seconds": 0.14809723444444445
+          },
+          "2": {
+            "numerator": 161380381,
+            "denominator": 1000000000,
+            "seconds": 0.161380381
+          },
+          "3": {
+            "numerator": 26203231,
+            "denominator": 900000000,
+            "seconds": 0.02911470111111111
+          },
+          "4": {
+            "numerator": 131362591,
+            "denominator": 13250000000,
+            "seconds": 0.009914157811320755
+          },
+          "5": {
+            "numerator": 813449071,
+            "denominator": 4500000000,
+            "seconds": 0.18076646022222223
+          },
+          "6": {
+            "numerator": 147518587,
+            "denominator": 1125000000,
+            "seconds": 0.1311276328888889
+          },
+          "7": {
+            "numerator": 204354451,
+            "denominator": 9000000000,
+            "seconds": 0.022706050111111112
+          },
+          "8": {
+            "numerator": 130672409,
+            "denominator": 26500000000,
+            "seconds": 0.004931034301886792
+          },
+          "9": {
+            "numerator": 266099763,
+            "denominator": 1000000000,
+            "seconds": 0.266099763
+          },
+          "10": {
+            "numerator": 1971224303,
+            "denominator": 9000000000,
+            "seconds": 0.21902492255555556
+          },
+          "11": {
+            "numerator": 679283,
+            "denominator": 30000000,
+            "seconds": 0.022642766666666668
+          },
+          "12": {
+            "numerator": 532058791,
+            "denominator": 159000000000,
+            "seconds": 0.003346281704402516
+          },
+          "13": {
+            "numerator": 396100033,
+            "denominator": 3000000000,
+            "seconds": 0.13203334433333333
+          },
+          "14": {
+            "numerator": 21681249,
+            "denominator": 250000000,
+            "seconds": 0.086724996
+          }
+        }
+      },
+      "candidate-a": {
+        "total": {
+          "numerator": 33238871937163,
+          "denominator": 22419000000000,
+          "seconds": 1.4826206314805745
+        },
+        "forms": {
+          "0": {
+            "numerator": 776374669,
+            "denominator": 70500000000,
+            "seconds": 0.01101240665248227
+          },
+          "1": {
+            "numerator": 131218321,
+            "denominator": 900000000,
+            "seconds": 0.14579813444444445
+          },
+          "2": {
+            "numerator": 232785163,
+            "denominator": 1500000000,
+            "seconds": 0.15519010866666666
+          },
+          "3": {
+            "numerator": 1227443,
+            "denominator": 46875000,
+            "seconds": 0.026185450666666665
+          },
+          "4": {
+            "numerator": 132012209,
+            "denominator": 13250000000,
+            "seconds": 0.00996318558490566
+          },
+          "5": {
+            "numerator": 1694338841,
+            "denominator": 9000000000,
+            "seconds": 0.18825987122222224
+          },
+          "6": {
+            "numerator": 80997091,
+            "denominator": 600000000,
+            "seconds": 0.13499515166666667
+          },
+          "7": {
+            "numerator": 143398657,
+            "denominator": 6000000000,
+            "seconds": 0.023899776166666668
+          },
+          "8": {
+            "numerator": 172099597,
+            "denominator": 31800000000,
+            "seconds": 0.0054119370125786164
+          },
+          "9": {
+            "numerator": 50368099,
+            "denominator": 180000000,
+            "seconds": 0.27982277222222224
+          },
+          "10": {
+            "numerator": 2029134881,
+            "denominator": 9000000000,
+            "seconds": 0.22545943122222223
+          },
+          "11": {
+            "numerator": 440030807,
+            "denominator": 18000000000,
+            "seconds": 0.024446155944444443
+          },
+          "12": {
+            "numerator": 139590941,
+            "denominator": 39750000000,
+            "seconds": 0.003511721786163522
+          },
+          "13": {
+            "numerator": 27016849,
+            "denominator": 180000000,
+            "seconds": 0.15009360555555556
+          },
+          "14": {
+            "numerator": 577564,
+            "denominator": 5859375,
+            "seconds": 0.09857092266666667
+          }
+        }
+      },
+      "candidate-b": {
+        "total": {
+          "numerator": 176220021137,
+          "denominator": 116765625000,
+          "seconds": 1.5091772183551453
+        },
+        "forms": {
+          "0": {
+            "numerator": 3551527951,
+            "denominator": 282000000000,
+            "seconds": 0.01259407074822695
+          },
+          "1": {
+            "numerator": 223180511,
+            "denominator": 1500000000,
+            "seconds": 0.14878700733333333
+          },
+          "2": {
+            "numerator": 480175669,
+            "denominator": 3000000000,
+            "seconds": 0.16005855633333332
+          },
+          "3": {
+            "numerator": 488395727,
+            "denominator": 18000000000,
+            "seconds": 0.027133095944444446
+          },
+          "4": {
+            "numerator": 169441421,
+            "denominator": 15900000000,
+            "seconds": 0.010656693144654087
+          },
+          "5": {
+            "numerator": 429470381,
+            "denominator": 2250000000,
+            "seconds": 0.19087572488888888
+          },
+          "6": {
+            "numerator": 1239414077,
+            "denominator": 9000000000,
+            "seconds": 0.13771267522222222
+          },
+          "7": {
+            "numerator": 22087783,
+            "denominator": 900000000,
+            "seconds": 0.02454198111111111
+          },
+          "8": {
+            "numerator": 84105631,
+            "denominator": 15900000000,
+            "seconds": 0.005289662327044025
+          },
+          "9": {
+            "numerator": 521599291,
+            "denominator": 1800000000,
+            "seconds": 0.2897773838888889
+          },
+          "10": {
+            "numerator": 43777879,
+            "denominator": 187500000,
+            "seconds": 0.23348202133333334
+          },
+          "11": {
+            "numerator": 60839423,
+            "denominator": 2250000000,
+            "seconds": 0.027039743555555554
+          },
+          "12": {
+            "numerator": 199564891,
+            "denominator": 53000000000,
+            "seconds": 0.0037653753018867925
+          },
+          "13": {
+            "numerator": 54058297,
+            "denominator": 375000000,
+            "seconds": 0.14415545866666668
+          },
+          "14": {
+            "numerator": 839769917,
+            "denominator": 9000000000,
+            "seconds": 0.09330776855555556
+          }
+        }
+      },
+      "production-b": {
+        "total": {
+          "numerator": 867321611381,
+          "denominator": 597840000000,
+          "seconds": 1.4507587504700254
+        },
+        "forms": {
+          "0": {
+            "numerator": 3072930347,
+            "denominator": 282000000000,
+            "seconds": 0.010896916124113476
+          },
+          "1": {
+            "numerator": 687408799,
+            "denominator": 4500000000,
+            "seconds": 0.1527575108888889
+          },
+          "2": {
+            "numerator": 504691453,
+            "denominator": 3000000000,
+            "seconds": 0.16823048433333335
+          },
+          "3": {
+            "numerator": 260285683,
+            "denominator": 9000000000,
+            "seconds": 0.028920631444444445
+          },
+          "4": {
+            "numerator": 821443949,
+            "denominator": 79500000000,
+            "seconds": 0.010332628289308176
+          },
+          "5": {
+            "numerator": 1653053353,
+            "denominator": 9000000000,
+            "seconds": 0.18367259477777778
+          },
+          "6": {
+            "numerator": 1195831211,
+            "denominator": 9000000000,
+            "seconds": 0.13287013455555555
+          },
+          "7": {
+            "numerator": 9308557,
+            "denominator": 400000000,
+            "seconds": 0.0232713925
+          },
+          "8": {
+            "numerator": 867418273,
+            "denominator": 159000000000,
+            "seconds": 0.005455460836477987
+          },
+          "9": {
+            "numerator": 2390106227,
+            "denominator": 9000000000,
+            "seconds": 0.2655673585555556
+          },
+          "10": {
+            "numerator": 1954225597,
+            "denominator": 9000000000,
+            "seconds": 0.21713617744444444
+          },
+          "11": {
+            "numerator": 83405539,
+            "denominator": 3600000000,
+            "seconds": 0.023168205277777777
+          },
+          "12": {
+            "numerator": 545628463,
+            "denominator": 159000000000,
+            "seconds": 0.0034316255534591195
+          },
+          "13": {
+            "numerator": 1228451273,
+            "denominator": 9000000000,
+            "seconds": 0.13649458588888888
+          },
+          "14": {
+            "numerator": 22138261,
+            "denominator": 250000000,
+            "seconds": 0.088553044
+          }
+        }
+      }
+    },
+    "preparation": {
+      "production-a": {
+        "numerator": 32212683,
+        "denominator": 500000000,
+        "seconds": 0.064425366
+      },
+      "candidate-a": {
+        "numerator": 48622669,
+        "denominator": 750000000,
+        "seconds": 0.06483022533333334
+      },
+      "candidate-b": {
+        "numerator": 48130739,
+        "denominator": 750000000,
+        "seconds": 0.06417431866666666
+      },
+      "production-b": {
+        "numerator": 192823607,
+        "denominator": 3000000000,
+        "seconds": 0.06427453566666666
+      }
+    },
+    "iteration_manifest": {
+      "protocol": "geometry-2pow31-v1",
+      "calls": [
+        {
+          "case": "dialogue-0-10s",
+          "index": 0,
+          "work": 22993920,
+          "iterations": 94
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 1,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 2,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 3,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 4,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 5,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 6,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 7,
+          "work": 367902720,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 8,
+          "work": 40878080,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 9,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 10,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 11,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 12,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 13,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 14,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 15,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 16,
+          "work": 368640000,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 17,
+          "work": 40960000,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 18,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 19,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 20,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 21,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 22,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 23,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 24,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 25,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 26,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 27,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 28,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 29,
+          "work": 368640000,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 30,
+          "work": 40960000,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 31,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 32,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 33,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 34,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-0-10s",
+          "index": 35,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 0,
+          "work": 22993920,
+          "iterations": 94
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 1,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 2,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 3,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 4,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 5,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 6,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 7,
+          "work": 367902720,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 8,
+          "work": 40878080,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 9,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 10,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 11,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 12,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 13,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 14,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 15,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 16,
+          "work": 368640000,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 17,
+          "work": 40960000,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 18,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 19,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 20,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 21,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 22,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 23,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 24,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 25,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 26,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 27,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 28,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 29,
+          "work": 368640000,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 30,
+          "work": 40960000,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 31,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 32,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 33,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 34,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-10-20s",
+          "index": 35,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 0,
+          "work": 22993920,
+          "iterations": 94
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 1,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 2,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 3,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 4,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 5,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 6,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 7,
+          "work": 367902720,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 8,
+          "work": 40878080,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 9,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 10,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 11,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 12,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 13,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 14,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 15,
+          "work": 735805440,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 16,
+          "work": 368640000,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 17,
+          "work": 40960000,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 18,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 19,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 20,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 21,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 22,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 23,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 24,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 25,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 26,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 27,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 28,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 29,
+          "work": 368640000,
+          "iterations": 6
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 30,
+          "work": 40960000,
+          "iterations": 53
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 31,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 32,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 33,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 34,
+          "work": 737280000,
+          "iterations": 3
+        },
+        {
+          "case": "dialogue-20-30s",
+          "index": 35,
+          "work": 737280000,
+          "iterations": 3
+        }
+      ],
+      "per_pass": 1074
+    },
+    "calls": 17184,
+    "warmups": 4296,
+    "measured": 12888,
+    "complete": true,
+    "numerical_and_resource_checks_pass": true,
+    "resources": [
+      {
+        "name": "production-a",
+        "samples": 166,
+        "peak_rss": 4202528768,
+        "seconds": 42.192452766001225
+      },
+      {
+        "name": "candidate-a",
+        "samples": 169,
+        "peak_rss": 4108713984,
+        "seconds": 42.98175060102949
+      },
+      {
+        "name": "candidate-b",
+        "samples": 173,
+        "peak_rss": 4237422592,
+        "seconds": 44.012946639966685
+      },
+      {
+        "name": "production-b",
+        "samples": 167,
+        "peak_rss": 4200763392,
+        "seconds": 42.50737315299921
+      }
+    ],
+    "samples": 675,
+    "peak_rss": 4237422592,
+    "no_application_speed_measurement": true,
+    "no_ort_speed_measurement": true,
+    "boundary": "Both roles use unchanged prepared ordinary graph callers; include caller assertions/recording, scans, rentals, conversions and epilogues; exclude hashes/journal IO. Separate preparation clocks include graph creation and preparation."
+  },
+  "clocks": {
+    "bytes": 2994510,
+    "sha256": "c72e416b40fc138f5b96b04cc3a8f1c603e3e4f2dc1b8a2ff76e13e0bfb59100"
+  },
+  "preparation": {
+    "bytes": 88375,
+    "sha256": "76c1653d46a94ee4af0ba3c342c946cab2120f04288132d0789c5ad3e2be5a8f"
+  }
+}

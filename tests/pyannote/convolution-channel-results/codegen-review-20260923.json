@@ -1,0 +1,101 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 15927,
+    "sha256": "d0cb1cb7791709e20a7d07901119dee6afb82362e293615c072133b71cb42adb"
+  },
+  "listings": {
+    "bytes": 170891,
+    "sha256": "2461bca3c86711cb95652d768c8a7458d6516f1c426c76367d7b015009e3deba"
+  },
+  "reviewer": {
+    "bytes": 6852,
+    "sha256": "c4be62cac89f5f91dc6aa566241dca7bfd52f5147d4d86d89977749c062f76f4"
+  },
+  "normalized_listings": {
+    "bytes": 170941,
+    "sha256": "b967736e82d347dc856a8d6ff9655121e6a202e89f9aadb497bb5de4b2710172"
+  },
+  "stdout_repairs": [
+    {
+      "role": "production",
+      "tier": "Tier1-OSR",
+      "offset": 14637,
+      "removed": "Diagnostic complete: 432 exact ordinary graph outputs.\n",
+      "raw_sha256": "eeecf6d099c7daf22f732783432eb08f841590d3c417fbc936662b0fd62cbe2b",
+      "rejoined_sha256": "682f0f3c1400274394f549d1776e1bf768d91a3a9bcfd01d987f312b1be4d39c"
+    },
+    {
+      "role": "candidate",
+      "tier": "Tier1-OSR",
+      "offset": 29894,
+      "removed": "Diagnostic complete: 432 exact ordinary graph outputs.\n",
+      "raw_sha256": "ce3f5a7e381ecfd63427c300f5ce2afa51f117ec32fedfa29ba5f1e20568aec3",
+      "rejoined_sha256": "0d88f13301e7463d4337de4f533555e3dff3e3ce93bacb2d1d1376655e4ad114"
+    }
+  ],
+  "original_parser_limitation": "complete_uninterleaved only counted code-size footers and did not detect managed stdout interleaved within an instruction. Raw capture remains immutable. Remove only the exact complete driver completion message; no generated instruction is omitted.",
+  "current_optimized_bytes": 2176,
+  "candidate_optimized_bytes": 3680,
+  "current_tier0_bytes": 3756,
+  "candidate_tier0_bytes": 5669,
+  "reduction_instructions_exact_except_stack_offsets": true,
+  "fmas_per_spatial_step": 12,
+  "broadcasts_per_step": 6,
+  "weight_loads_per_step": 2,
+  "optimized_vector_stack_references": [
+    [
+      "G_M000_IG01",
+      "vmovups  zmm0, zmmword ptr [rbp+0xAE0]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm6, zmmword ptr [rbp+0xAA0]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm1, zmmword ptr [rbp+0xA60]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm7, zmmword ptr [rbp+0xA20]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm2, zmmword ptr [rbp+0x9E0]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm8, zmmword ptr [rbp+0x9A0]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm3, zmmword ptr [rbp+0x960]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm9, zmmword ptr [rbp+0x920]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm4, zmmword ptr [rbp+0x8E0]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm10, zmmword ptr [rbp+0x8A0]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm5, zmmword ptr [rbp+0x860]"
+    ],
+    [
+      "G_M000_IG01",
+      "vmovups  zmm11, zmmword ptr [rbp+0x820]"
+    ]
+  ],
+  "vector_spills_in_loop": 0,
+  "manual_review": "IG27-50 choose zero accumulators for firstChannel=0; IG88-110 load partial output on subsequent blocks, with oc+16<m guards for every second output vector. IG51 offsets weights by firstChannel*144 floats and starts ic at firstChannel. IG04 stops at endChannel; IG81-87/115 choose16 channels at c>=64 and finish all spatial tiles before next channel block. IG65-69 preserve single-position initialization/guards. IG54/55/73 keep separate multiply/add beyond fusedEnd. IG08 reduction instructions match current except frame offsets. Twelve entry loads import OSR state; no vector stack references remain in the optimized loop. Tier0 and every emitted Tier1 body are retained. Kernel256 compiled equivalence is established by build inventory, not a new AVX2 code capture.",
+  "all_tiers_retained": true,
+  "no_worker_rerun": true,
+  "no_performance_measurement": true
+}
