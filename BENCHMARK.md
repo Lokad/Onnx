@@ -192,7 +192,12 @@ convolutions. That failure is retained; a separate qualification explicitly
 accounts for this scope while keeping native limits and unaffected-model bits
 unchanged. The [combined shared/e5 qualification](tests/pyannote/winograd-product-results/shared-20260923.md)
 now passes all 166 arrays per product, reusing the three completed jobs and
-running only missing candidate e5. Complete application timing has not started.
+running only missing candidate e5. The [complete application comparison](tests/pyannote/winograd-product-results/application-20260923.md)
+is now **admitted**: full-dialogue latency falls **19.72%**, from 13.020559 s
+to **10.453277 s**, versus **Microsoft ORT 9.040291 s** (ratio **1.156299**).
+All twelve repeatability controls, four speed gates, native checks and both
+long meetings/recovery pass. Every timing sample is retained. The exact
+seven-file change is applied; actual-root build/package verification is next.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
