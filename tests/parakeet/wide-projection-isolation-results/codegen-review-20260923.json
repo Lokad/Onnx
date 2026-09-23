@@ -1,0 +1,274 @@
+{
+  "passed": true,
+  "mechanism_admitted": true,
+  "no_performance_measurement": true,
+  "closure": {
+    "bytes": 19640,
+    "sha256": "e6cc05440ea3a164faef8924da5f9607da471ace1a352daac782e4a25cf65813"
+  },
+  "numerical_values_per_worker": 7575601,
+  "numerical_groups_per_worker": 66,
+  "complete_bodies": 43,
+  "comparisons": [
+    {
+      "method": "ShortWidePackPanelsB",
+      "old_body": 2,
+      "new_body": 2,
+      "bytes": 292,
+      "normalized_instruction_text_equal": true
+    },
+    {
+      "method": "ShortWideMultiply2Rows",
+      "old_body": 30,
+      "new_body": 4,
+      "bytes": 1341,
+      "normalized_instruction_text_equal": true
+    },
+    {
+      "method": "ShortWideMultiply3Rows",
+      "old_body": 3,
+      "new_body": 3,
+      "bytes": 1592,
+      "normalized_instruction_text_equal": true
+    },
+    {
+      "method": "ShortWideMultiplyRemainder",
+      "old_body": 31,
+      "new_body": 5,
+      "bytes": 302,
+      "normalized_instruction_text_equal": true
+    }
+  ],
+  "dispatcher": {
+    "index": 8,
+    "bytes": 273
+  },
+  "helper": {
+    "index": 9,
+    "bytes": 2841
+  },
+  "notes": {
+    "dispatch": "Reviewed all guards and two tail calls; 273-byte Tier1 dispatcher leaves general fallback out of line.",
+    "helper": "Reviewed packed copy, row grouping, calls to copied two/three-row kernels, IG23 call to return finally IG64, then odd original-B remainder IG24-32. Packer/raw remainder inline. AVX512-width moves copy data; accumulation retains AVX2 order.",
+    "arithmetic": "All four FullOpts copied-kernel instruction streams match the previously reviewed M50 copies after address masking/local branch offset resolution. Ordered eight/twelve AVX2 accumulators, no vector stack access in hot reduction loops; masked/scalar tails retain separate multiply/add.",
+    "limits": "Independent diagnostic code capture does not identify versions used in a scored process or establish performance. Shared fallback numerical boundaries and exact compiled bodies/flags passed separately."
+  },
+  "files": {
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-0.txt": {
+      "bytes": 3766,
+      "sha256": "ac3298a75dab6108baad9821632cc123340add7f46f60870eeeadb595a661f86"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-1.txt": {
+      "bytes": 8156,
+      "sha256": "f69445f2f7308e1a5f7e94c47868d026a665d42cd7ad9abeb58b1e907a91d0bb"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-2.txt": {
+      "bytes": 3572,
+      "sha256": "a936a5b13a49fd9f35c785b2998f492106721e46da97dd97bbf9391e51e1fc6a"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-3.txt": {
+      "bytes": 15906,
+      "sha256": "5d271421e2b041fb7e080dcffe39d947f3470ee21c0aadee81c3e0c1f70bb5d8"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-4.txt": {
+      "bytes": 13941,
+      "sha256": "25bba5141b22430d140dfb191fedc6dd427fc1a70aeda7be8b586a89b89abe31"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-5.txt": {
+      "bytes": 3721,
+      "sha256": "44ca2ed3be3d489b8bcae6ccfbe031c9dc1e40338ebe819065c6b377f09bb65d"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-6.txt": {
+      "bytes": 4745,
+      "sha256": "9d6323130e1c352c3cea7da893f5af9fcc0bc73389b317a6ad2a5e6607c3e3c6"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-7.txt": {
+      "bytes": 9348,
+      "sha256": "9f450c0421fd9a463f0bb487847c1859738acbeb49efac39ef223d4420685504"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-8.txt": {
+      "bytes": 3603,
+      "sha256": "b535abc041abde19de6f10c44d30ecdfe4ca876864ef40681f7f040cb6a40299"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/candidate-9.txt": {
+      "bytes": 30764,
+      "sha256": "4903199e7f90f9fd0b9d3ba650d1169cfef9227a8f3154ad7935d0548744839a"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/census.json": {
+      "bytes": 53629,
+      "sha256": "f4e5f638218b43e3e4d8e59b34dc67f00f05ca8dc497cb37823cbecfebc49138"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-0.txt": {
+      "bytes": 23111,
+      "sha256": "f94e50f5687315f07ad9d74e4ffc9007099c8b0a256684a72cc0bb16e86c61e9"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-1.txt": {
+      "bytes": 15462,
+      "sha256": "32e7da9173333ee21c6507a943c468f862a7143d963ef0596f16f334b60bbd4a"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-10.txt": {
+      "bytes": 14752,
+      "sha256": "6dfa9894a6e4142e09ace5d92b3e1591cd3ad9a723472c25d13c08c2c1f0d919"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-11.txt": {
+      "bytes": 9159,
+      "sha256": "f83223f4636b322d84c3c606b8906317782087afc0f07face1154db007cc054b"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-12.txt": {
+      "bytes": 29052,
+      "sha256": "d8676c9cba877b44ce9e92a6c9bc8a3a8e4b4f09916089a367726463367135a6"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-13.txt": {
+      "bytes": 7835,
+      "sha256": "df65762e8484e64d246c3218d0aed06b077ec136e3013b0eda9493dfa154e40f"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-14.txt": {
+      "bytes": 32705,
+      "sha256": "8022b2ec16a302ef7a3a73fa38af3a9a7a689aae46d3ff9aed29def35ee26d8f"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-15.txt": {
+      "bytes": 5593,
+      "sha256": "7da136686e3d1277c7e1e1ff56c52c74ee4adc1f1d8a51f9f01f0ac45d222e8b"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-16.txt": {
+      "bytes": 3864,
+      "sha256": "1634a60b12e0f838a05d860503648e7aca7cb5a7f4f6ea33c8d4f3323231a8bd"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-17.txt": {
+      "bytes": 14752,
+      "sha256": "6dfa9894a6e4142e09ace5d92b3e1591cd3ad9a723472c25d13c08c2c1f0d919"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-18.txt": {
+      "bytes": 3791,
+      "sha256": "f887df62e414e2536e0d5d120d53a3ca5a6f1abc7c65ae537d7930873ffb8946"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-19.txt": {
+      "bytes": 40662,
+      "sha256": "d17ddfdc1844955e8538695017bf2b4fea0e87e8810734d503f7cb81074d720e"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-2.txt": {
+      "bytes": 7771,
+      "sha256": "41d453e29dd333adbba8a689cb5d6ab483a85743c81325f8b849a61bb173613d"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-20.txt": {
+      "bytes": 3568,
+      "sha256": "14510cf5706a9bcd85caecf885ff3edf0763ae2eadce61b63d1d38e526c17fd4"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-21.txt": {
+      "bytes": 13605,
+      "sha256": "c150e75bde8a99731afb96c9f31245bdba7e52696556f0687f0c2272b42c7e96"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-22.txt": {
+      "bytes": 37663,
+      "sha256": "a397051c2d9415a31f30fb5b54ef405060fee87bd2b5b99e065727d0af36755e"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-23.txt": {
+      "bytes": 16578,
+      "sha256": "4c2141e5ed06b14445a03f81a926e35335ac198d7fdc769ae882027dca1c1a50"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-24.txt": {
+      "bytes": 37663,
+      "sha256": "a397051c2d9415a31f30fb5b54ef405060fee87bd2b5b99e065727d0af36755e"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-25.txt": {
+      "bytes": 16578,
+      "sha256": "4c2141e5ed06b14445a03f81a926e35335ac198d7fdc769ae882027dca1c1a50"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-26.txt": {
+      "bytes": 16125,
+      "sha256": "233f2c63f341f9974c87382d96be569d5f9ab66fd87995db248c41df9d77fa6c"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-27.txt": {
+      "bytes": 15462,
+      "sha256": "32e7da9173333ee21c6507a943c468f862a7143d963ef0596f16f334b60bbd4a"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-28.txt": {
+      "bytes": 7843,
+      "sha256": "17b5b02242fe3a5ad1ee0a732f533ac5fbb88fff18dc2dffe43dd7371b4ab312"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-29.txt": {
+      "bytes": 6984,
+      "sha256": "e180a53127133cc4b860be4d0a734d3b947e536ec504651b98b02ac6ef88a8e9"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-3.txt": {
+      "bytes": 9159,
+      "sha256": "f83223f4636b322d84c3c606b8906317782087afc0f07face1154db007cc054b"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-30.txt": {
+      "bytes": 19338,
+      "sha256": "4a2ed617bb12a3c4408ae16cd90326377249db589c8b731757ad0f76257c72cc"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-31.txt": {
+      "bytes": 8766,
+      "sha256": "58e7e9dfb72f298b29950a47d709e6ec4a5d50e74c3612523e6ab01e1320538b"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-32.txt": {
+      "bytes": 7756,
+      "sha256": "859615e02da72e0de1aa4d7a6adc0eb630be70f65ed241f107266a8c075459bf"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-4.txt": {
+      "bytes": 5593,
+      "sha256": "99e9f51779431821f7fb28213d0a359d18aac9faa1e143497553fcdb9792ba56"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-5.txt": {
+      "bytes": 19338,
+      "sha256": "4a2ed617bb12a3c4408ae16cd90326377249db589c8b731757ad0f76257c72cc"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-6.txt": {
+      "bytes": 8766,
+      "sha256": "58e7e9dfb72f298b29950a47d709e6ec4a5d50e74c3612523e6ab01e1320538b"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-7.txt": {
+      "bytes": 7835,
+      "sha256": "df65762e8484e64d246c3218d0aed06b077ec136e3013b0eda9493dfa154e40f"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-8.txt": {
+      "bytes": 3864,
+      "sha256": "75f0cdf39837aeb770059d11bf5d84a27ac03157e7aaa3ae27eaf09e3c95ab91"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/current-9.txt": {
+      "bytes": 32705,
+      "sha256": "8022b2ec16a302ef7a3a73fa38af3a9a7a689aae46d3ff9aed29def35ee26d8f"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/mm_unsafe_vectorized_intrinsics.diff": {
+      "bytes": 5144,
+      "sha256": "87f762ac5d3dddf14ec80a421aa08a8c1d9fdff518b84a5a889dcc7682dc0977"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/mm_unsafe_vectorized_intrinsics_2x4packed_bump.diff": {
+      "bytes": 22129,
+      "sha256": "d8ee7a80fb8403b301176575db4b035da0ba903f0b8774fd99712e53fe9cd5fd"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/mm_unsafe_vectorized_intrinsics_3x4packed.diff": {
+      "bytes": 25508,
+      "sha256": "eb5f007043fc9a818b6eb46e8615359bde0b03046af744cc0f931fa14c660cb7"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/PackPanelsB.diff": {
+      "bytes": 1473,
+      "sha256": "9cace59d5523a342ff5a59e1314fadcf1a1ed94a2bed21fbc828ce8d0783f990"
+    },
+    "artifacts/parakeet-wide-projection-isolation-codegen-20260923/structure.json": {
+      "bytes": 9390,
+      "sha256": "e16d60096d67e5305300eba7ce520edf29cde78bb5d8d8d164bd8891c56a5789"
+    },
+    "tests/parakeet/wide-projection-isolation-results/review_codegen.py": {
+      "bytes": 4924,
+      "sha256": "0668256a19320aafd5a7a8ffe9b110ee4ed06c8e38bc27682cc5d1db974d6c16"
+    },
+    "tests/parakeet/wide-projection-isolation-results/inspect_codegen.py": {
+      "bytes": 3785,
+      "sha256": "96ccff0cfd218a77d6e754ce614987c98dbed1cbb25ceb3364887c4eccfe4f9e"
+    },
+    "tests/parakeet/wide-projection-isolation-results/review_structure.py": {
+      "bytes": 2307,
+      "sha256": "01c31b2d96e4c03f546725677c19a2fee27b0640f0f26a4af6f00ca1ee7a23ca"
+    },
+    "tests/parakeet/isolated-short-kernels-results/codegen-review-20260923.json": {
+      "bytes": 110942,
+      "sha256": "43e2f5c5d747159b29ca16133d48ca936b598c0c0cd808dc13da904cffd29ccc"
+    },
+    "artifacts/parakeet-isolated-short-kernels-numerics-amd-20260923/collected/logs/candidate-codegen-512.stdout": {
+      "bytes": 508544,
+      "sha256": "943b9becb7a0d696c75fe0ddad7ff33d2753fc57a18a02c69358321106fb28e3"
+    }
+  }
+}
