@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "numerically_admitted": true,
+  "no_performance_measurement": true,
+  "root_product_changed": false,
+  "consumer": {
+    "bytes": 34816,
+    "sha256": "1a63dc70c85ce254eedfdd749db263f44dc4d9a58d5f27d6c05bf5c0bd9fb9dc"
+  },
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 766976,
+        "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 767488,
+        "sha256": "8dd9e7bf24b2174eeb4e620744e9aea809b1d7dfe4846254ce0edceda1524626"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "20d20d96c5d46d244a1fc2234640f784e76c53f5b3c663b71610a20126d493b0"
+      }
+    }
+  },
+  "resources": 428,
+  "peak_rss": 415514624,
+  "results": {
+    "current-numerics-256": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "current-numerics-512": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "candidate-numerics-256": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "candidate-numerics-512": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "current-codegen-512": {
+      "cases": 21,
+      "values": 0,
+      "full_equality": true
+    },
+    "candidate-codegen-512": {
+      "cases": 21,
+      "values": 0,
+      "full_equality": true
+    }
+  },
+  "codegen_retained": true,
+  "codegen_review_required": true
+}
