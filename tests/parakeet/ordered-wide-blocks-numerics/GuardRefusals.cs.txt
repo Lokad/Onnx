@@ -1,0 +1,20 @@
+    static int GuardRefusals(string role, string mode)
+    {
+        if (mode != "numerics") return 0;
+        var method = typeof(MathOps).GetMethod("TryOrderedWidePackedRows", BindingFlags.Static | BindingFlags.NonPublic);
+        if (role == "current")
+        {
+            Require(method is null, "parent must not contain candidate guard");
+            return 0;
+        }
+        var call = (method ?? throw new MissingMethodException("TryOrderedWidePackedRows")).CreateDelegate<PackedCall>();
+        var cases = new (int m, int n, int k)[]
+        {
+            (-1,1024,1024), (0,1024,1024), (63,1024,1024), (65,1024,1024),
+            (64,-1,1024), (64,0,1024), (64,1023,1024), (64,65537,1024), (64,int.MaxValue,1024),
+            (64,1024,-1), (64,1024,0), (64,1024,1023), (64,1024,1025), (64,1024,int.MaxValue-31)
+        };
+        foreach (var (m,n,k) in cases)
+            Require(!call(m,n,k,null,null,null), $"unsupported guard accepted {m},{n},{k}");
+        return cases.Length;
+    }

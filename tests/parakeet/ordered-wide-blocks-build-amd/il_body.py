@@ -27,4 +27,3 @@ def normalized_body(value):
         if region['filter']!=-1:region['filter']=positions[region['filter']]
         regions.append(region)
     return dict(InitLocals=body['InitLocals'],MaxStackSize=body['MaxStackSize'],locals=body['locals'],exceptions=regions,instructions=result)
-
