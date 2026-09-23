@@ -99,6 +99,12 @@ All 32 repeatability controls and 12 speed gates pass, and both candidate
 processes are faster than both current processes. All 17,184 call clocks and
 512 preparation clocks are retained. This admits full product/application
 qualification; the prototype is not integrated and supplies no new ORT ratio.
+Its [full product and NuGet checks](tests/pyannote/convolution-pointer-results/product-20260923.md)
+also pass: 3,432 backend and 343 tensor tests, the same 41 existing AMD skips,
+all compiled methods/public declarations, and an independent package consumer.
+[Complete Pyannote qualification](tests/pyannote/convolution-pointer-results/models-20260923.md)
+preserves all 2.9 million checked values and 16 complete public results per role,
+including the original Microsoft ORT error limits.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,

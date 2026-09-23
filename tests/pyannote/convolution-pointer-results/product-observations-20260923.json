@@ -1,0 +1,168 @@
+{
+  "closure": {
+    "bytes": 204969,
+    "sha256": "4727eadceb9fb9add889b82fffb4b63a33cc9afb407d974eb6955205f008580f"
+  },
+  "analysis": {
+    "passed": true,
+    "measured": {
+      "Lokad.Onnx.dll": {
+        "bytes": 758784,
+        "sha256": "e776cec27d52baac1c0975949a128057938328c4e866562817a16865cecc3f07"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "0c55b6503c5321d01aceee132fe9ce1fed14c8be270d048de22a73b4126e5064"
+      }
+    },
+    "built": {
+      "Lokad.Onnx.dll": {
+        "bytes": 758784,
+        "sha256": "7c9a4707fa5cadf9af9e14f11d3e53fbd179ab50f985e2ace4c43cc82e1978cb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "4bf76360d6ae6739b167a5b36075d377ac491d5377ec58164cb732be7f4cbcd3"
+      }
+    },
+    "inventory": {
+      "passed": true,
+      "core_methods": 3163,
+      "data_methods": 697,
+      "public_surface_equal": true
+    },
+    "suites": {
+      "backend": {
+        "passed": 3432,
+        "skipped": 41,
+        "census_exact": true,
+        "trx": {
+          "bytes": 5242904,
+          "sha256": "733995011ed4cd7b5950fb42abd84e393ab4025adc5baa042c6e6b693ba7cb66"
+        }
+      },
+      "tensors": {
+        "passed": 343,
+        "skipped": 0,
+        "census_exact": true,
+        "trx": {
+          "bytes": 502329,
+          "sha256": "2831a99165fec9503f6d6b11d0c7e28cbe1274afe3916dc08e2ff05bf427b533"
+        }
+      }
+    },
+    "package": {
+      "passed": true,
+      "package": {
+        "bytes": 561647,
+        "sha256": "ebc84d17397a2f7c52ca2e14f72c297f8ac0d593c7aa610b26f51fe822ccc700"
+      },
+      "core": {
+        "bytes": 758784,
+        "sha256": "7c9a4707fa5cadf9af9e14f11d3e53fbd179ab50f985e2ace4c43cc82e1978cb"
+      },
+      "dependencies": [
+        {
+          "id": "Google.Protobuf",
+          "version": "3.33.5",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "consumer": {
+      "passed": true,
+      "prepared_graph_values": 1056,
+      "prepared_graph_calls": 2,
+      "retained_weights": 18432,
+      "scratch": 8384,
+      "ownership": true
+    },
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "peak_rss": 9957376,
+        "seconds": 0.2606830589938909
+      },
+      {
+        "name": "cli-restore",
+        "samples": 6,
+        "peak_rss": 171163648,
+        "seconds": 1.5545709970174357
+      },
+      {
+        "name": "cli-build",
+        "samples": 68,
+        "peak_rss": 504918016,
+        "seconds": 17.937422816990875
+      },
+      {
+        "name": "backend-restore",
+        "samples": 7,
+        "peak_rss": 169930752,
+        "seconds": 1.8601228540064767
+      },
+      {
+        "name": "backend-build",
+        "samples": 66,
+        "peak_rss": 592822272,
+        "seconds": 17.97636406205129
+      },
+      {
+        "name": "tensors-restore",
+        "samples": 4,
+        "peak_rss": 156045312,
+        "seconds": 1.095394516014494
+      },
+      {
+        "name": "tensors-build",
+        "samples": 22,
+        "peak_rss": 367071232,
+        "seconds": 6.122213848982938
+      },
+      {
+        "name": "inventory",
+        "samples": 4,
+        "peak_rss": 130879488,
+        "seconds": 1.1625061020022258
+      },
+      {
+        "name": "backend-tests",
+        "samples": 95,
+        "peak_rss": 892272640,
+        "seconds": 26.327952621970326
+      },
+      {
+        "name": "tensors-tests",
+        "samples": 28,
+        "peak_rss": 339181568,
+        "seconds": 7.7344083929783665
+      },
+      {
+        "name": "package",
+        "samples": 3,
+        "peak_rss": 129265664,
+        "seconds": 0.8322943830280565
+      },
+      {
+        "name": "consumer-restore",
+        "samples": 4,
+        "peak_rss": 154288128,
+        "seconds": 1.1063533929991536
+      },
+      {
+        "name": "consumer-build",
+        "samples": 12,
+        "peak_rss": 297443328,
+        "seconds": 3.3227860059705563
+      },
+      {
+        "name": "consumer-run",
+        "samples": 1,
+        "peak_rss": 8757248,
+        "seconds": 0.27929666702402756
+      }
+    ],
+    "no_performance_measurement": true
+  }
+}
