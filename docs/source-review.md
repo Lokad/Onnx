@@ -47,9 +47,11 @@ The [padding/selection source review](../tests/parakeet/current-profile-results/
 adds a distinct follow-up: all 48 encoder Pad nodes use nonnegative last-axis
 padding, which permits contiguous row copies instead of per-element coordinate
 division. PadCore accounts for about 3.8% of current sampled request weight.
-The helper and six targeted tests are drafted but uncompiled; following the
-matrix candidate's rejection, padding will use selected source `94a550de`
-directly. No candidate gain follows from this static census. The same review records 72 scalar-branch
+The [padding build and behavior checks](../tests/parakeet/last-axis-pad-results/build-20260923.md)
+now pass against selected source `94a550de` directly: six public tests in each
+of two instruction modes, exact unchanged matrix methods, and preserved
+PadCore fallback instructions. Complete operator/model performance remains
+unmeasured. The same source review records 72 scalar-branch
 Where nodes and ORT's 256-term packed reduction blocks as separate hypotheses.
 
 The original e5 review used Microsoft ONNX Runtime 1.23.2 at

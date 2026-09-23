@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "original_instructions": 255,
+  "candidate_instructions": 266,
+  "retained_original_instructions": 255,
+  "added_source_store_reload": 2,
+  "added_guard_instructions": 9,
+  "branch_targets_preserved": true,
+  "locals_preserved_except_saved_dense_source": true,
+  "original_fill_materialization_fallback_exact": true,
+  "build": {
+    "bytes": 200120,
+    "sha256": "62043d100a96d418b02e25d09a65d8f89655ea21147c27d15a5efd861cce7e1c"
+  },
+  "inventory": {
+    "bytes": 26859805,
+    "sha256": "57ab1fa678caa3f4ab23f957c5ed66eca27539a0a688f88f5338495bc5ae7143"
+  },
+  "candidate": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "5cf89ae34b7a81f164f17ab95b74c5fb13a1a96a08e515af180a97c132cd7f68"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "fa5b1a61585a373c96bd4077ab234970053e2b0cc090d4d690480498e67e4014"
+    }
+  },
+  "helper_instructions": 127,
+  "helper_calls": [
+    "Lokad.Onnx.Tensor`1[T]::Int32 get_Rank()",
+    "Lokad.Onnx.Tensor`1[T]::Boolean get_IsReversedStride()",
+    "Lokad.Onnx.Tensor`1[T]::System.ReadOnlySpan`1[System.Int32] get_Dimensions()",
+    "System.ReadOnlySpan`1[System.Int32]::Int32& get_Item(Int32)",
+    "Lokad.Onnx.DenseTensor`1[T]::System.Memory`1[T] get_Buffer()",
+    "System.Memory`1[T]::System.Span`1[T] get_Span()",
+    "System.Span`1[T]::Int32 get_Length()",
+    "Lokad.Onnx.Tensor`1[T]::System.ReadOnlySpan`1[System.Int32] get_Dimensions()",
+    "System.ReadOnlySpan`1[System.Int32]::Int32& get_Item(Int32)",
+    "System.Span`1[T]::Int32 get_Length()",
+    "Lokad.Onnx.DenseTensor`1[T]::System.Memory`1[T] get_Buffer()",
+    "System.Memory`1[T]::System.Span`1[T] get_Span()",
+    "System.Span`1[T]::System.Span`1[T] Slice(Int32, Int32)",
+    "System.Span`1[T]::System.Span`1[T] Slice(Int32, Int32)",
+    "System.Span`1[T]::Void CopyTo(System.Span`1[T])"
+  ],
+  "helper_review": "Validated nonnegative last-axis pads and zero outer pads; width/length zero returns before division; bounded row-index offsets and Span.CopyTo preserve exact bytes. No unsafe instructions or new API.",
+  "generator": {
+    "bytes": 5246,
+    "sha256": "d8c33aa58e640762c91ea8833f3e5ea7d038680c253a49c0b6222e3445d37c7f"
+  },
+  "root_product_changed": false,
+  "model_qualification_pending": true,
+  "performance_pending": true
+}
