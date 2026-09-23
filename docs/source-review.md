@@ -50,8 +50,13 @@ division. PadCore accounts for about 3.8% of current sampled request weight.
 The [padding build and behavior checks](../tests/parakeet/last-axis-pad-results/build-20260923.md)
 now pass against selected source `94a550de` directly: six public tests in each
 of two instruction modes, exact unchanged matrix methods, and preserved
-PadCore fallback instructions. Complete operator/model performance remains
-unmeasured. The same source review records 72 scalar-branch
+PadCore fallback instructions. Its [complete operator screen](../tests/parakeet/last-axis-pad-results/screen-20260923.md)
+reduces the eight primary cases' sum by 92.6867%, but rejects admission:
+crop/outer-pad/reflection regress by 24.45%/17.80%/6.71%, and four candidate
+repeatability controls fail. Complete model timing therefore does not run.
+Keeping the original fallback method intact is the next distinct design to
+investigate; the clocks alone do not identify the runtime cause.
+The same source review records 72 scalar-branch
 Where nodes and ORT's 256-term packed reduction blocks as separate hypotheses.
 
 The original e5 review used Microsoft ONNX Runtime 1.23.2 at
