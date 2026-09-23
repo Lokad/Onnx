@@ -3,6 +3,12 @@
 Parakeet is now the first performance priority. The
 [current AMD profile](../tests/parakeet/current-profile-results/results-20260923.md)
 puts about 44% of sampled execution in the two packed AVX2 matrix consumers.
+The selected release is source `94a550de`: complete Parakeet is 1.914728 times
+Microsoft ORT and Pyannote is 1.156299 times ORT. The latter includes the
+[qualified Winograd integration](../tests/pyannote/winograd-product-results/root-20260923.md).
+The [release benchmark table](../BENCHMARK.md) is authoritative for selected
+performance; the experiment records below retain their original verdicts.
+
 The [wide per-call dispatch experiment](../tests/parakeet/wide-per-call-results/screen-20260923.md)
 preserves numerical behavior but makes complete large-matrix calls 5.14% slower;
 it is rejected. A separate
@@ -15,9 +21,32 @@ preserves the general kernel's compiled instructions and passes numerical and
 generated-code checks, but also fails admission: the same longer case regresses
 9.18%, and one current-product repeatability control fails. Its
 [complete clock chronology](../tests/parakeet/short-dispatch-results/chronology-20260923.md)
-shows transitions and spikes that now require compilation/GC event attribution.
-Neither rejected candidate is integrated; the cause remains unproven.
-The current published complete Parakeet ratio remains 1.914728 to ORT.
+shows transitions and spikes. The subsequent
+[runtime-event diagnosis](../tests/parakeet/dispatch-events-results/report-20260923.md)
+identifies differing compilation schedules, without assigning every earlier
+slowdown to a single cause. Both rejected candidates remain unselected.
+
+The distinct [first-use-kernel candidate](../tests/parakeet/first-use-kernels-results/qualification-20260923.md)
+passes numerical and generated-code checks. Its
+[complete Parakeet comparison](../tests/parakeet/first-use-kernels-app-amd/results-20260923.md)
+admits a **3.2035% latency reduction**, 76.928211 to 74.463788 seconds against
+contemporary ORT at 39.716362 seconds. All 63 repeatability controls and 21
+performance checks pass. It is still isolated: shared/native correctness passes,
+but the original graph comparison has an inconclusive GPT-2 baseline control.
+Independent [longer baseline traces](../tests/benchmarks/startup-diagnostic-results/report-20260923.md)
+find graph compilation through calls 345/350. The separate
+[warmed comparison](../tests/benchmarks/warmed-release-amd-v2/README.md) uses
+600 fixed warmups and 180 measurements for all engines and cases and is still
+running. Pyannote application and actual-root/package qualification follow only
+if that comparison is admitted.
+
+The [padding/selection source review](../tests/parakeet/current-profile-results/memory-source-review-20260923.md)
+adds a distinct follow-up: all 48 encoder Pad nodes use nonnegative last-axis
+padding, which permits contiguous row copies instead of per-element coordinate
+division. PadCore accounts for about 3.8% of current sampled request weight.
+The helper and six targeted tests are drafted but uncompiled; no candidate
+gain follows from this static census. The same review records 72 scalar-branch
+Where nodes and ORT's 256-term packed reduction blocks as separate hypotheses.
 
 The original e5 review used Microsoft ONNX Runtime 1.23.2 at
 `a83fc4d58cb48eb68890dd689f94f28288cf2278`. The later audio review uses ORT 1.29
@@ -32,6 +61,7 @@ The selective import review uses
 `2b1138fe6f5d085e3749f6867d1603b1131ff029`. The voice branch contains 149 commits
 after the common release ancestor `4495fc6`. Integration follows behaviors and
 their necessary fixes; it does not merge the branch or replay every experiment.
+The remote branch tip was rechecked on 2026-09-23 and remains this exact commit.
 
 The preceding selected Pyannote source is the
 [prepared spatial convolution integration](../tests/pyannote/blocked-spatial-root-results/results-20260922.md).
