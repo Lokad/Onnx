@@ -134,7 +134,11 @@ passes all 87 eligible captured Pyannote convolutions in AVX2 and AVX512,
 retaining the original ORT error limit. Its
 [generated-code review](tests/pyannote/winograd-results/codegen-20260923.md)
 also passes. It changes floating-point rounding and is not integrated.
-A separate performance screen is next; neither application ratio above changes.
+Its [complete-call screen](tests/pyannote/winograd-results/screen-20260923.md)
+is **rejected**: 30.82% slower overall, from 1.273528 s to 1.666004 s.
+All 18 repeatability controls pass; seven of nine speed gates fail.
+All 4,176 call clocks and 464 preparation clocks remain. Neither application
+ratio above changes; no unchanged timing retry follows.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
