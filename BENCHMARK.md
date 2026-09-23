@@ -16,7 +16,7 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
-Latest matched comparisons for the current product on AMD:
+Latest matched AMD comparisons (product versions noted below):
 
 | Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---:|---:|---:|
