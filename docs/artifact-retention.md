@@ -8,9 +8,10 @@ requested 50 GB limit; units here are decimal GB.
 
 The latest inventory is **40.69 GB**, including **27.25 GB** in artifacts,
 after retaining M54's build, numerical, component and complete Parakeet
-correctness evidence and staging its application comparison. It has about
+correctness evidence, staging its application comparison and adding the local
+shared-model qualification tools. It has about
 **9.31 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m54-app-started-size.json`.
+`artifacts/repository-retention-20260923/m54-regression-tools-size.json`.
 Counting the model junction again gives 51.48 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
