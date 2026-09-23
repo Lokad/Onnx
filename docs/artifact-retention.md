@@ -6,18 +6,15 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-After retaining the next Parakeet candidate's build, numerical, component,
-application, cross-model and follow-up diagnostic evidence, the inventory
-measured **38.62 GB**. After collecting and publishing the complete warmed
-comparison and the closed padding build/screen, the latest inventory is
-**40.22 GB**, including **26.77 GB** in artifacts, after closing the isolated
-Parakeet runtime diagnostic and wide-projection build, numerical and component
-lanes and the complete M53 runtime diagnostic. Counting the model junction again produces **51.00 GB**, but that includes the same 10.79 GB of canonical
-models twice; it is not another stored copy. The actual repository remains
-below 50 GB. Its receipt is
-`artifacts/repository-retention-20260923/m53-closed-size.json`. The padding
-diagnostic reused existing binaries and copied no models. Recheck after
-subsequent collections; the actual repository has about 9.78 GB of headroom.
+The latest inventory is **40.69 GB**, including **27.25 GB** in artifacts,
+after retaining M54's build, numerical, component and complete Parakeet
+correctness evidence and staging its application comparison. It has about
+**9.31 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m54-app-started-size.json`.
+Counting the model junction again gives 51.48 GB, which counts the same 10.79 GB
+of canonical models twice. The inventory excludes that directory alias and
+counts each actual file path, including hidden Git files and retained worktrees.
+No new model copies were needed. Recheck after subsequent collections.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
@@ -73,3 +70,13 @@ M52 VM maintenance retired another 17.94 MB of generated build packages.
 Seven archives matched the protected offline feed; all immutable payloads and
 current runtime files remained intact. Receipt:
 `artifacts/parakeet-wide-projection-cache-retention-20260923`.
+
+M54 VM maintenance retired 17.94 MB of generated build packages and 111.88 MB of
+six duplicate inventory/event exports, each retained and verified locally.
+All raw traces and immutable inputs remain. It also replaced 284 identical
+runtime binaries with hardlinks after verifying 1,784 file hashes and every
+terminal owner, freeing 77.55 MB of tmpfs without changing file bytes or paths.
+Receipts: artifacts/parakeet-wide-entry-cache-retention-20260923,
+artifacts/parakeet-redundant-wide-entry-export-retention-20260923 and
+artifacts/parakeet-wide-entry-runtime-links-20260923. The application timing
+run starts after this maintenance; no cleanup overlaps its measurements.
