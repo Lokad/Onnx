@@ -183,7 +183,9 @@ unchanged pending complete model and application qualification.
 now passes all 18 graph arrays (2,917,107 values), 16 public requests and the
 original Microsoft ORT accuracy limits. Segmentation and public speaker
 timelines are exact; embedding and centroid floats change within the existing
-bounds. Parakeet/shared/e5 regressions and complete application timing follow.
+bounds. The [Parakeet regression](tests/pyannote/winograd-product-results/parakeet-20260923.md)
+also passes: all 784 tensor arrays and 20 public results remain exact, with
+unchanged ORT limits. Shared/e5 regressions and complete application timing follow.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
