@@ -6,15 +6,15 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **41.49 GB**, including **28.05 GB** in artifacts,
+The latest inventory is **41.63 GB**, including **28.19 GB** in artifacts,
 after retaining M54's build, numerical, component and complete Parakeet
 correctness evidence, closing its application and cross-model correctness
 comparisons, closing graph and Pyannote application checks, qualifying the actual
-root and package, and preparing the next matrix-blocking build bundle.
-A fresh inventory at 22:40 UTC confirms **41,494,101,907 bytes**, with **8.51 GB**
+root and package, closing the next matrix-blocking build and preparing its
+numerical qualification. A fresh inventory confirms **41,633,454,014 bytes**, with **8.37 GB**
 of headroom. Receipt:
-`artifacts/repository-retention-20260923/m55-build-prepared-size.json`.
-Counting the model junction again gives 52.28 GB, which counts the same 10.79 GB
+`artifacts/repository-retention-20260923/m55-numerics-prepared-size.json`.
+Counting the model junction again gives 52.42 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
 No new model copies were needed. Recheck after subsequent collections.
@@ -103,3 +103,9 @@ duplicate inspection files, totaling **243.53 MB** and freeing **185.32 MB of
 tmpfs**. Every removed export has a verified local copy; all 47 package archives,
 immutable inputs, runtimes and source remain. Receipt:
 `artifacts/parakeet-wide-entry-root-retention-20260923`.
+
+After the ordered-block build closed, retirement removed its generated package
+cache and duplicate instruction export: **45.20 MB across 184 files**, freeing
+45.57 MB of tmpfs. All seven package archives and the complete local export
+remain verified. Receipt:
+`artifacts/parakeet-ordered-wide-blocks-build-retention-20260923`.
