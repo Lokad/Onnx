@@ -10,14 +10,14 @@ After retaining the next Parakeet candidate's build, numerical, component,
 application, cross-model and follow-up diagnostic evidence, the inventory
 measured **38.62 GB**. After collecting and publishing the complete warmed
 comparison and the closed padding build/screen, the latest inventory is
-**39.50 GB**, including **26.07 GB** in artifacts, after preparing the isolated
-Parakeet matrix build and numerical lane. Counting the model junction
-again produces **50.29 GB**, but that includes the same 10.79 GB of canonical
+**39.70 GB**, including **26.26 GB** in artifacts, after closing the isolated
+Parakeet matrix build, numerical and component lanes. Counting the model junction
+again produces **50.48 GB**, but that includes the same 10.79 GB of canonical
 models twice; it is not another stored copy. The actual repository remains
 below 50 GB. Its receipt is
-`artifacts/repository-retention-20260923/m50-prepared-size.json`. The padding
+`artifacts/repository-retention-20260923/m50-closed-size.json`. The padding
 diagnostic reused existing binaries and copied no models. Recheck after
-subsequent collections; the actual repository has about 10.50 GB of headroom.
+subsequent collections; the actual repository has about 10.30 GB of headroom.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
@@ -60,3 +60,11 @@ It sums regular file lengths, counting hardlinked paths separately, and reports
 directory aliases without traversing them. This is logical size, not allocated
 filesystem space. Known aliases to top-level directories also get an explicit
 duplicate-count total. The inventory never deletes files.
+
+M50 VM maintenance additionally retired 269.17 MB: 17.94 MB of regenerable
+build packages and 251.23 MB of duplicate inventory/event exports. All removed
+exports have verified complete local copies, all owners were terminal, and
+every immutable VM payload path was protected. No model or raw trace was removed.
+Receipts are in artifacts/parakeet-isolated-short-kernels-cache-retention-20260923,
+artifacts/parakeet-redundant-padding-export-retention-20260923 and
+artifacts/parakeet-redundant-matrix-inventory-retention-20260923.
