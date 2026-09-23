@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 767488,
+      "sha256": "8dd9e7bf24b2174eeb4e620744e9aea809b1d7dfe4846254ce0edceda1524626"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "20d20d96c5d46d244a1fc2234640f784e76c53f5b3c663b71610a20126d493b0"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "original_core_methods": 3179,
+    "candidate_core_methods": 3181,
+    "unchanged_core_methods": 3178,
+    "data_methods": 697,
+    "changed": "Lokad.Onnx.Tensor`1[T]::RunFloatMatMulKernel::Void RunFloatMatMulKernel(Int32, Int32, Int32, Single*, Single*, Single*, Lokad.Onnx.TensorExecutionOptions)",
+    "added": [
+      "Lokad.Onnx.Tensor`1[T]::RunGeneralFloatMatMulKernel::Void RunGeneralFloatMatMulKernel(Int32, Int32, Int32, Single*, Single*, Single*, Lokad.Onnx.TensorExecutionOptions)",
+      "Lokad.Onnx.Tensor`1[T]::RunShortWidePackedRows::Void RunShortWidePackedRows(Int32, Int32, Int32, Single*, Single*, Single*, Lokad.Onnx.TensorExecutionOptions)"
+    ],
+    "original_general_body_exact": true,
+    "public_surface_equal": true,
+    "static_initializer_name_remap": "536to538"
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 5419008,
+      "seconds": 0.25919467001222074
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 173023232,
+      "seconds": 1.5539731699973345
+    },
+    {
+      "name": "cli-build",
+      "samples": 62,
+      "peak_rss": 509448192,
+      "seconds": 16.349652066943236
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 176685056,
+      "seconds": 1.116405618027784
+    }
+  ],
+  "source_prepared": {
+    "bytes": 147440,
+    "sha256": "4d43f53f61ddf2c4c08896bf75362c35ac635c45a2b3bde53b43cbd2a4efa6e2"
+  },
+  "root_product_changed": false,
+  "numerically_qualified": false,
+  "no_performance_measurement": true
+}
