@@ -1,0 +1,224 @@
+{
+  "passed": true,
+  "mechanism_admitted": true,
+  "no_performance_measurement": true,
+  "closure": {
+    "bytes": 18841,
+    "sha256": "ae1ef134bcca57dc098bb26d2e484dc7427a546e74b6d26598908bc790706a24"
+  },
+  "numerical_groups_per_worker": 76,
+  "numerical_values_per_worker": 8416305,
+  "complete_bodies": 26,
+  "comparisons": [
+    {
+      "method": "ShortWidePackPanelsB",
+      "current": 4,
+      "candidate": 4,
+      "bytes": 292,
+      "normalized_instructions_equal": true
+    },
+    {
+      "method": "ShortWideMultiply2Rows",
+      "current": 6,
+      "candidate": 13,
+      "bytes": 1341,
+      "normalized_instructions_equal": true
+    },
+    {
+      "method": "ShortWideMultiply3Rows",
+      "current": 5,
+      "candidate": 5,
+      "bytes": 1592,
+      "normalized_instructions_equal": true
+    },
+    {
+      "method": "ShortWideMultiplyRemainder",
+      "current": 7,
+      "candidate": 7,
+      "bytes": 302,
+      "normalized_instructions_equal": true
+    }
+  ],
+  "kernels": [
+    {
+      "method": "OrderedWideMultiply2Rows",
+      "index": 6,
+      "bytes": 615,
+      "fma": [
+        "vfmadd231ps ymm0, ymm12, ymm8",
+        "vfmadd231ps ymm4, ymm13, ymm8",
+        "vfmadd231ps ymm1, ymm12, ymm9",
+        "vfmadd231ps ymm5, ymm13, ymm9",
+        "vfmadd231ps ymm2, ymm12, ymm10",
+        "vfmadd231ps ymm6, ymm13, ymm10",
+        "vfmadd231ps ymm3, ymm12, ymm11",
+        "vfmadd231ps ymm7, ymm13, ymm11"
+      ],
+      "separate_multiply_add": [],
+      "stack_vector_access": []
+    },
+    {
+      "method": "OrderedWideMultiply3Rows",
+      "index": 12,
+      "bytes": 739,
+      "fma": [
+        "vfmadd231ps ymm0, ymm12, ymm15",
+        "vfmadd231ps ymm4, ymm13, ymm15",
+        "vfmadd231ps ymm8, ymm14, ymm15",
+        "vfmadd231ps ymm1, ymm12, ymm15",
+        "vfmadd231ps ymm5, ymm13, ymm15",
+        "vfmadd231ps ymm9, ymm14, ymm15",
+        "vfmadd231ps ymm2, ymm12, ymm15",
+        "vfmadd231ps ymm6, ymm13, ymm15",
+        "vfmadd231ps ymm10, ymm14, ymm15",
+        "vfmadd231ps ymm3, ymm12, ymm15",
+        "vfmadd231ps ymm7, ymm13, ymm15",
+        "vfmadd231ps ymm11, ymm14, ymm15"
+      ],
+      "separate_multiply_add": [],
+      "stack_vector_access": []
+    }
+  ],
+  "helper": {
+    "index": 3,
+    "bytes": 746
+  },
+  "notes": {
+    "traversal": "Two-row IG17 and three-row IG17 form each 32-column packed panel. Begin starts at zero; IG08/IG07 computes begin+256 and min(N,end). Each block visits every row group before loading the next begin. Panel advancement follows completion of all reduction blocks.",
+    "arithmetic": "Two-row IG11 loads eight incoming C vectors; IG12 traverses ascending j with four B loads, two broadcasts and eight ordered FMA updates; IG13 stores all eight. Three-row IG10 loads twelve C vectors; IG11 traverses ascending j with three broadcasts, four B loads and twelve ordered FMA updates; IG12 stores all twelve. No vector stack spill, reduction split, scalar tail or horizontal reassociation appears in either new loop.",
+    "dispatch": "The 746-byte FullOpts helper inlines the eligibility guard after the unchanged optional AVX512 branch. Rows>=64, divisibility, positive dimensions>=1024, complete 32-column panels and 64-bit N*K<=67108864 precede the ordered calls. Refusals retain the old two/three-row calls. FMA support folds true on this CPU.",
+    "ownership": "Packing and scratch rental remain outside the guard. IG28 returns scratch before IG29 computes the odd-row pointers and reloads original B. Exceptional finally IG39 also returns scratch. Exact compiled scope and numerical ownership/accumulator checks support these paths.",
+    "unchanged": "All four emitted original packer/arithmetic/remainder instruction streams remain identical after address and local-label normalization.",
+    "scope": "All 26 complete emitted bodies have resolved labels. This separate diagnostic capture establishes the generated mechanism and admission to a fixed screen; it does not establish which tier runs in timed processes or any speedup."
+  },
+  "files": {
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-0.txt": {
+      "bytes": 2623,
+      "sha256": "de433d0f5180959c9c8aabeb38a8f5a39d2f25bec46042188c6ba1d4e64412c7"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-1.txt": {
+      "bytes": 7504,
+      "sha256": "04efc85124271700ed93a8bdb216979f5092ac8851702fb2a08260d51bbffb42"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-10.txt": {
+      "bytes": 6907,
+      "sha256": "addb0a72a06b4bd4e073e5937103e6328d20ba665b2986f7956ea434c4dffcc7"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-11.txt": {
+      "bytes": 6614,
+      "sha256": "95864cd08fb43069af0576f911432a1ef02760ce21da06e9346f052fc0f730a2"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-12.txt": {
+      "bytes": 7707,
+      "sha256": "128da1b0f271e6ff7dbeb0b85a8b0ad7ba01c5cf053fb8702b0113039b5f94e1"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-13.txt": {
+      "bytes": 13941,
+      "sha256": "8986ed8e67e887cedf1560dd5de8d7a1a5ae2021afb5a73132a5be13a8e759c8"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-2.txt": {
+      "bytes": 64775,
+      "sha256": "19a7470c36d124fd286f51182818617ae76c2718c3f98538df7c817c12a6e97e"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-3.txt": {
+      "bytes": 9624,
+      "sha256": "e854ccb90453264b817245ca65b092f5842d68926a07847899fb44644eb9b8ff"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-4.txt": {
+      "bytes": 3572,
+      "sha256": "a936a5b13a49fd9f35c785b2998f492106721e46da97dd97bbf9391e51e1fc6a"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-5.txt": {
+      "bytes": 15906,
+      "sha256": "7fa409eef81fbe8cb514441498521e2a1b6e906607122b757635fff308d341c4"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-6.txt": {
+      "bytes": 6540,
+      "sha256": "b851e3faecd8e382ce7e09464bebbe87dcb62fd9f912c6fd9b093fc7ada0f277"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-7.txt": {
+      "bytes": 3721,
+      "sha256": "44ca2ed3be3d489b8bcae6ccfbe031c9dc1e40338ebe819065c6b377f09bb65d"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-8.txt": {
+      "bytes": 2649,
+      "sha256": "9b714885edb23e43712509a2db74bc0c7438c8e42666061d8276558f6d3b5147"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/candidate-9.txt": {
+      "bytes": 9141,
+      "sha256": "4f48e9eccec47df881c5994ed6bfefcafaff4313ce857a5550fb17118e07a747"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/census.json": {
+      "bytes": 51858,
+      "sha256": "7121f8c7689467d5293a4d5933f9fc255c431c1fe9cda17e9f2c3e3e2cd71a30"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-0.txt": {
+      "bytes": 2623,
+      "sha256": "fcf66a85a3be526858395986f7e81f8c5c8ac9a095af3bcbac1a492d9b07fab4"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-1.txt": {
+      "bytes": 7504,
+      "sha256": "04efc85124271700ed93a8bdb216979f5092ac8851702fb2a08260d51bbffb42"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-10.txt": {
+      "bytes": 6907,
+      "sha256": "e3e96fd341761b687f0fda9839b31399f580b63f7b86a1586ff816d410edf401"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-11.txt": {
+      "bytes": 6614,
+      "sha256": "c6f3dc4c959788b211df3d00f0c92989bdaa156442161f8b02a72d38d194f672"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-2.txt": {
+      "bytes": 64775,
+      "sha256": "982105c085b428e54bba18e50a15e0ad3c03497fd4b18c8c4397381da1fdd18d"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-3.txt": {
+      "bytes": 7659,
+      "sha256": "aa1dec609174c80068f1aaafedf751becc2bd71f16c7079ebfed151d77aa3a03"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-4.txt": {
+      "bytes": 3572,
+      "sha256": "a936a5b13a49fd9f35c785b2998f492106721e46da97dd97bbf9391e51e1fc6a"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-5.txt": {
+      "bytes": 15906,
+      "sha256": "58d3ab4418dc6c9da987be861c1b20e433e49f4e697d2991584927414889a555"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-6.txt": {
+      "bytes": 13941,
+      "sha256": "2e9bba95ad220b0acb554cf880f096dd6498ffb1375a097e38d45e23ce1b77eb"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-7.txt": {
+      "bytes": 3721,
+      "sha256": "44ca2ed3be3d489b8bcae6ccfbe031c9dc1e40338ebe819065c6b377f09bb65d"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-8.txt": {
+      "bytes": 2649,
+      "sha256": "7e5fd3578787f8e85b8337780da677a8c6d91afbf622a211aa2e7bf31b644bdd"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-codegen-20260923/current-9.txt": {
+      "bytes": 9141,
+      "sha256": "97539bb844db62776ee797974bd5c18d771788b3c48785c180486dc1dc0f39fc"
+    },
+    "tests/parakeet/ordered-wide-blocks-results/review_codegen.py": {
+      "bytes": 5643,
+      "sha256": "051d6831c92be0fdfe4e7da33e935ebe38b0924e6791bbcb3a9b78547a601b36"
+    },
+    "tests/parakeet/ordered-wide-blocks-results/inspect_codegen.py": {
+      "bytes": 4173,
+      "sha256": "8ed999d4bac27b79f5d89f40784aa2d8334df71231da9a0a89f7fa5c647cfe1c"
+    },
+    "tests/parakeet/wide-entry-first-use-results/inspect_codegen.py": {
+      "bytes": 3507,
+      "sha256": "56751966a8d4f999fe45ae35eea629bc8d77416406e5cb3c2a3de8ed1ee57b4b"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923/closed.json": {
+      "bytes": 18841,
+      "sha256": "ae1ef134bcca57dc098bb26d2e484dc7427a546e74b6d26598908bc790706a24"
+    },
+    "artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923/analysis.json": {
+      "bytes": 1745,
+      "sha256": "245bfd33dc6d4bf1fe78b96588bdd212d047c715a4acf3c5fbafaaf7233da07b"
+    }
+  }
+}

@@ -26,8 +26,9 @@ complete-clock accounting. This validates the scorer, not candidate performance.
 
 The conditional AMD controller binds the normally built products, complete
 numerical closure and independent machine-code review before execution. It also
-requires the parent's complete root/release qualification. None of these
-ordered-block prerequisites has run yet, so no timing is claimed.
+requires the parent's complete root/release qualification. Build, numerical and
+machine-code prerequisites now pass, recorded in `ordered-wide-blocks-results`.
+No candidate timing is yet claimed.
 
 Reuse the compiled consumer `e1a75f61a0cb69064dd5e9a87a91feea1df0c42f173e054bf6fada5a16c1d78a`
 (20,480 bytes), its exact source/project and runtime configuration from the
