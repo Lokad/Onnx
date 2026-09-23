@@ -1,0 +1,11 @@
+/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/Program.cs(40,20): error CS1061: 'ITensor' does not contain a definition for 'Dimensions' and no accessible extension method 'Dimensions' accepting a first argument of type 'ITensor' could be found (are you missing a using directive or an assembly reference?) [/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/ReleaseBenchmark.csproj]
+/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/Program.cs(64,58): error CS1061: 'ITensor' does not contain a definition for 'Dimensions' and no accessible extension method 'Dimensions' accepting a first argument of type 'ITensor' could be found (are you missing a using directive or an assembly reference?) [/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/ReleaseBenchmark.csproj]
+
+Build FAILED.
+
+/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/Program.cs(40,20): error CS1061: 'ITensor' does not contain a definition for 'Dimensions' and no accessible extension method 'Dimensions' accepting a first argument of type 'ITensor' could be found (are you missing a using directive or an assembly reference?) [/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/ReleaseBenchmark.csproj]
+/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/Program.cs(64,58): error CS1061: 'ITensor' does not contain a definition for 'Dimensions' and no accessible extension method 'Dimensions' accepting a first argument of type 'ITensor' could be found (are you missing a using directive or an assembly reference?) [/dev/shm/lokad-release-graph-baseline-20260923/source/consumer/ReleaseBenchmark.csproj]
+    0 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:03.08

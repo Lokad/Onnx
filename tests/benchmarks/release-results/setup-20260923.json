@@ -1,0 +1,194 @@
+[
+  {
+    "process": "verify-e5-8tok-current",
+    "seconds": 0.6164097
+  },
+  {
+    "process": "verify-e5-8tok-ort",
+    "seconds": 0.278746486
+  },
+  {
+    "process": "verify-e5-30tok-current",
+    "seconds": 0.63696
+  },
+  {
+    "process": "verify-e5-30tok-ort",
+    "seconds": 0.277728363
+  },
+  {
+    "process": "verify-e5-30pad128-current",
+    "seconds": 0.6307807
+  },
+  {
+    "process": "verify-e5-30pad128-ort",
+    "seconds": 0.282798772
+  },
+  {
+    "process": "verify-e5-128tok-current",
+    "seconds": 0.6404143
+  },
+  {
+    "process": "verify-e5-128tok-ort",
+    "seconds": 0.288067088
+  },
+  {
+    "process": "verify-e5-512tok-current",
+    "seconds": 0.662177
+  },
+  {
+    "process": "verify-e5-512tok-ort",
+    "seconds": 0.288189994
+  },
+  {
+    "process": "verify-dinov3-current",
+    "seconds": 0.1938287
+  },
+  {
+    "process": "verify-dinov3-ort",
+    "seconds": 0.108628526
+  },
+  {
+    "process": "verify-resnet50-current",
+    "seconds": 0.2829779
+  },
+  {
+    "process": "verify-resnet50-ort",
+    "seconds": 0.119599029
+  },
+  {
+    "process": "verify-gpt2-current",
+    "seconds": 0.8691207
+  },
+  {
+    "process": "verify-gpt2-ort",
+    "seconds": 0.542158377
+  },
+  {
+    "process": "timing-e5-8tok-current-a",
+    "seconds": 0.6479697
+  },
+  {
+    "process": "timing-e5-8tok-ort-a",
+    "seconds": 0.280669312
+  },
+  {
+    "process": "timing-e5-8tok-ort-b",
+    "seconds": 0.2771862
+  },
+  {
+    "process": "timing-e5-8tok-current-b",
+    "seconds": 0.6364034
+  },
+  {
+    "process": "timing-e5-30tok-current-a",
+    "seconds": 0.6492315
+  },
+  {
+    "process": "timing-e5-30tok-ort-a",
+    "seconds": 0.278752637
+  },
+  {
+    "process": "timing-e5-30tok-ort-b",
+    "seconds": 0.28084979
+  },
+  {
+    "process": "timing-e5-30tok-current-b",
+    "seconds": 0.6634065
+  },
+  {
+    "process": "timing-e5-30pad128-current-a",
+    "seconds": 0.6442941
+  },
+  {
+    "process": "timing-e5-30pad128-ort-a",
+    "seconds": 0.290709216
+  },
+  {
+    "process": "timing-e5-30pad128-ort-b",
+    "seconds": 0.279636277
+  },
+  {
+    "process": "timing-e5-30pad128-current-b",
+    "seconds": 0.6418131
+  },
+  {
+    "process": "timing-e5-128tok-current-a",
+    "seconds": 0.6384135
+  },
+  {
+    "process": "timing-e5-128tok-ort-a",
+    "seconds": 0.286529619
+  },
+  {
+    "process": "timing-e5-128tok-ort-b",
+    "seconds": 0.293180887
+  },
+  {
+    "process": "timing-e5-128tok-current-b",
+    "seconds": 0.6403155
+  },
+  {
+    "process": "timing-e5-512tok-current-a",
+    "seconds": 0.6358347
+  },
+  {
+    "process": "timing-e5-512tok-ort-a",
+    "seconds": 0.298490098
+  },
+  {
+    "process": "timing-e5-512tok-ort-b",
+    "seconds": 0.284023342
+  },
+  {
+    "process": "timing-e5-512tok-current-b",
+    "seconds": 0.6363735
+  },
+  {
+    "process": "timing-dinov3-current-a",
+    "seconds": 0.1939378
+  },
+  {
+    "process": "timing-dinov3-ort-a",
+    "seconds": 0.110962165
+  },
+  {
+    "process": "timing-dinov3-ort-b",
+    "seconds": 0.115898385
+  },
+  {
+    "process": "timing-dinov3-current-b",
+    "seconds": 0.1944087
+  },
+  {
+    "process": "timing-resnet50-current-a",
+    "seconds": 0.2945662
+  },
+  {
+    "process": "timing-resnet50-ort-a",
+    "seconds": 0.113845064
+  },
+  {
+    "process": "timing-resnet50-ort-b",
+    "seconds": 0.123556878
+  },
+  {
+    "process": "timing-resnet50-current-b",
+    "seconds": 0.2950787
+  },
+  {
+    "process": "timing-gpt2-current-a",
+    "seconds": 0.9481268
+  },
+  {
+    "process": "timing-gpt2-ort-a",
+    "seconds": 0.540801429
+  },
+  {
+    "process": "timing-gpt2-ort-b",
+    "seconds": 0.520699764
+  },
+  {
+    "process": "timing-gpt2-current-b",
+    "seconds": 0.9386914
+  }
+]
