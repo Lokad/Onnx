@@ -163,6 +163,18 @@ All 18 repeatability controls and strict process separation pass; eight of nine
 speed gates pass. Every call and preparation clock is retained. Product source
 and the application/Microsoft ORT comparisons above remain unchanged.
 
+The [vector range-guard candidate](tests/pyannote/winograd-range-results/numerics-20260923.md)
+preserves every M32 numerical row and passes 10,566 independent guard cases
+per instruction width. Its [generated-code review](tests/pyannote/winograd-range-results/codegen-20260923.md)
+retains all 56 bodies and verifies vector bounds, threshold and scalar tails.
+The [complete-call screen](tests/pyannote/winograd-range-results/screen-20260923.md)
+is **admitted for product qualification**: aggregate latency falls **28.44%**,
+from 1.281574 s to 0.917072 s. All eight forms improve, including residual
+form 2 (ratio 0.986720). All 18 repeatability controls, nine speed gates and
+strict process separation pass. Every one of 4,176 call clocks and 464
+preparation clocks is retained. This is a component result; product integration
+and complete application/Microsoft ORT qualification remain to be done.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
