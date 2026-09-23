@@ -10,7 +10,7 @@ BUILD=ROOT/'artifacts/parakeet-first-use-kernels-build-amd-20260923'
 SELECTED=ROOT/'artifacts/pyannote-winograd-product-root-amd-20260923'
 PRIOR=dict(build=BUILD,parakeet=ROOT/'artifacts/parakeet-first-use-kernels-app-amd-20260923',
     pyannote=ROOT/'artifacts/parakeet-first-use-kernels-pyannote-app-amd-20260923',
-    graphs=ROOT/'artifacts/parakeet-first-use-kernels-graphs-amd-20260923',selected=SELECTED)
+    graphs=ROOT/'artifacts/warmed-release-amd-v2-20260923',selected=SELECTED)
 MONITOR=ROOT/'tests/parakeet/packing-budgets/common.py'
 spec=importlib.util.spec_from_file_location('product_monitor',MONITOR)
 monitor=importlib.util.module_from_spec(spec);spec.loader.exec_module(monitor)
@@ -23,6 +23,10 @@ def gates():
         proof=read(folder/'closed.json');assert proof['passed']
         if label in ['parakeet','pyannote','graphs']:assert proof['admitted']
         for name,wanted in proof['files'].items():assert pin(folder/name)==wanted,name
+    graph=PRIOR['graphs'];assert pin(graph/'payload.json')['sha256']=='813e9d3df0924779e65a3ec272ffc3558e50c86b362c19e5dc5a0d2383266ff1'
+    analysis=read(graph/'analysis.json');assert analysis['clocks']==37512 and analysis['measured']==8640
+    assert analysis['consumer']['implementation_flags_equal'] and analysis['consumer']['branches_locals_exceptions_equal']
+    assert read(graph/'closed.json')['all_controls_passed']
     assert pin(BUILD/'closed.json')['sha256']=='2fb4e3e587ab463a965d7cd4290ffe3f37674182bb47b7ee529d040825c3f243'
     assert pin(SELECTED/'closed.json')['sha256']=='62141a2a722548697c106e42b2c0d9425b4f0c6ce166611a5bc3ca26a4fccdd0'
     return source

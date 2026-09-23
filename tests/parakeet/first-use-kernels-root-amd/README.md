@@ -31,3 +31,9 @@ and actual source before transfer. CPU 2 computes and CPU 0 monitors; preflight
 10 GiB available/3 GiB tmpfs, 8 GiB RSS and 900 seconds per job, four-hour
 campaign bound. Preserve failures and do not relax any gate. Update release
 benchmarks only after this lane closes successfully.
+
+The graph prerequisite is the separate warmed M45 v2 comparison: 600 fixed
+warmups and 180 measurements per timing process, with unchanged 1.10 stability
+and 1.05 regression limits. Require its exact frozen payload and admitted
+closure. The original M43 graph result remains inconclusive and cannot admit
+root integration. No root source change has occurred merely by preparing tools.

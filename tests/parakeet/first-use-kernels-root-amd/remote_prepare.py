@@ -8,7 +8,7 @@ BUILD=Path('/dev/shm/lokad-parakeet-first-use-kernels-build-20260923')
 FEED=Path('/dev/shm/lokad-pyannote-blocked-spatial-app-20260922')
 PRIOR=dict(build=BUILD,parakeet=Path('/dev/shm/lokad-parakeet-first-use-kernels-app-20260923'),
     pyannote=Path('/dev/shm/lokad-parakeet-first-use-kernels-pyannote-app-20260923'),
-    graphs=Path('/dev/shm/lokad-parakeet-first-use-kernels-graphs-20260923'))
+    graphs=Path('/dev/shm/lokad-warmed-release-v2-20260923'))
 
 def main():
     psutil.Process().cpu_affinity([0]);idle();assert not (BASE/'payload.json').exists()

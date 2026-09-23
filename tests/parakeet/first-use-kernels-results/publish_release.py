@@ -128,7 +128,9 @@ def benchmark():
     rb,rp,ra=closed('parakeet-first-use-kernels-root-amd-20260923')
     pb,pp,pa=closed('parakeet-first-use-kernels-app-amd-20260923')
     yb,yp,ya=closed('parakeet-first-use-kernels-pyannote-app-amd-20260923')
-    gb,gp,ga=closed('parakeet-first-use-kernels-graphs-amd-20260923')
+    gb,gp,ga=closed('warmed-release-amd-v2-20260923')
+    assert pin(gb/'payload.json')['sha256']=='813e9d3df0924779e65a3ec272ffc3558e50c86b362c19e5dc5a0d2383266ff1'
+    assert ga['clocks']==37512 and ga['measured']==8640 and ga['consumer']['branches_locals_exceptions_equal']
     assert pp['admitted'] and yp['admitted'] and gp['admitted'] and ra['root_source_verified']
     assert pa['identities']['candidate']==ya['identities']['candidate']==ra['measured']
     assert read(gb/'payload.json')['products']['candidate']['Lokad.Onnx.dll']==ra['measured']['Lokad.Onnx.dll']
@@ -159,11 +161,13 @@ skip census in each mode is recorded in that report.
         'Each comparison also includes the previous selected product: six fresh\nprocesses run previous, candidate, ORT, ORT, candidate, previous. The table\nreports the qualified candidate, which is the current repository product.')
     document=document.replace('tests/pyannote/winograd-product-results/application-20260923.md','tests/parakeet/first-use-kernels-results/pyannote-20260923.md')
     document=document.replace('tests/parakeet/winograd-baseline-amd/results-20260923.md','tests/parakeet/first-use-kernels-app-amd/results-20260923.md').replace('All 42 repeatability controls','All 63 repeatability controls')
-    document=document.replace('tests/benchmarks/release-results/results-20260923.md','tests/parakeet/first-use-kernels-results/graphs-20260923.md')
-    document=document.replace('tests/benchmarks/release-amd-v2/README.md','tests/parakeet/first-use-kernels-graphs-amd/README.md')
+    document=document.replace('tests/benchmarks/release-results/results-20260923.md','tests/benchmarks/warmed-release-results/results-20260923.md')
+    document=document.replace('uses 60 fixed warmups and 60 measurements.', 'uses 600 fixed warmups and 180 measurements.')
+    document=document.replace('tests/benchmarks/release-amd-v2/README.md','tests/benchmarks/warmed-release-amd-v2/README.md')
     document=document.replace('tests/pyannote/winograd-product-app-amd/README.md','tests/parakeet/first-use-kernels-pyannote-app-amd/README.md')
     document=document.replace('tests/parakeet/winograd-baseline-amd/README.md','tests/parakeet/first-use-kernels-app-amd/README.md')
-    for name in ['graphs-20260923.md','pyannote-20260923.md','root-20260923.md']:assert (OUT/name).exists()
+    assert (ROOT/'tests/benchmarks/warmed-release-results/results-20260923.md').exists()
+    for name in ['pyannote-20260923.md','root-20260923.md']:assert (OUT/name).exists()
     path.write_text(document,encoding='utf8')
 
 if __name__=='__main__':
