@@ -1,0 +1,299 @@
+{
+  "passed": true,
+  "mechanism_admitted": true,
+  "no_performance_measurement": true,
+  "closure": {
+    "bytes": 19641,
+    "sha256": "f5613c62f9bda671777ec0e0efca867a887400029339cc022cf7e8ef14ff0e7e"
+  },
+  "numerical_values_per_worker": 7749681,
+  "numerical_groups_per_worker": 68,
+  "complete_bodies": 51,
+  "comparisons": [
+    {
+      "method": "ShortWidePackPanelsB",
+      "old_body": 2,
+      "new_body": 4,
+      "bytes": 292,
+      "normalized_instruction_text_equal": true
+    },
+    {
+      "method": "ShortWideMultiply2Rows",
+      "old_body": 4,
+      "new_body": 6,
+      "bytes": 1341,
+      "normalized_instruction_text_equal": true
+    },
+    {
+      "method": "ShortWideMultiply3Rows",
+      "old_body": 3,
+      "new_body": 5,
+      "bytes": 1592,
+      "normalized_instruction_text_equal": true
+    },
+    {
+      "method": "ShortWideMultiplyRemainder",
+      "old_body": 5,
+      "new_body": 7,
+      "bytes": 302,
+      "normalized_instruction_text_equal": true
+    }
+  ],
+  "entry": {
+    "index": 2,
+    "bytes": 5625
+  },
+  "helper": {
+    "index": 3,
+    "bytes": 567
+  },
+  "dispatcher": {
+    "index": 11,
+    "bytes": 563
+  },
+  "notes": {
+    "entry": "5625-byte first-use FullOpts exact IL clone. Reviewed validation before clearing, prepared-weight resolution, densification, pin/disposal paths, parallel setup and isolated-guard/fallback calls. New parallel callback proven by exact IL and complete Parallel(2) numerics.",
+    "helper": "567-byte first-use FullOpts keeps packer and arithmetic as calls. IG18 returns scratch before IG19 reads original B at rbp-0x30 and calls odd-row remainder. Exceptional finally IG29 also returns scratch. Optional AVX512 branch and two/three-row grouping retained.",
+    "arithmetic": "All four standalone FullOpts copied-kernel instruction streams equal the reviewed M52 copies after address masking/local branch-offset resolution. Ordered AVX2 accumulation and separate multiply/add tails remain.",
+    "dispatcher": "563-byte Tier1 dispatcher retains null/rank/axis/budget/options guards and two tail calls; first-use Tier0 and instrumented versions are also retained. FMA hardware check folds true on this AMD CPU.",
+    "scope": "All 51 emitted bodies retained with complete label checks. Manual focus is new entry/helper/dispatcher; arithmetic verified against prior complete review. This independent capture does not identify code executed in a scored process or prove a performance improvement."
+  },
+  "files": {
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-0.txt": {
+      "bytes": 2623,
+      "sha256": "9f6b42b3acbfd70796dee76f28534b88cc767404148edded6606c8e1be2fcbe5"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-1.txt": {
+      "bytes": 7504,
+      "sha256": "04efc85124271700ed93a8bdb216979f5092ac8851702fb2a08260d51bbffb42"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-10.txt": {
+      "bytes": 6907,
+      "sha256": "24b7d48e545d7fe38e639bfd95dfa5081d1ad4b48f594bc06fdf529bd9764fe7"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-11.txt": {
+      "bytes": 6614,
+      "sha256": "c6f3dc4c959788b211df3d00f0c92989bdaa156442161f8b02a72d38d194f672"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-2.txt": {
+      "bytes": 64775,
+      "sha256": "9daeaef1e722a2590c99f3af95eaeb92fbf73d40683562f0f2acce4fccf9e906"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-3.txt": {
+      "bytes": 7659,
+      "sha256": "8eec0e8fe69657a8c2f1d1df559c0f7c040a88d747311febc057e69f02cbc982"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-4.txt": {
+      "bytes": 3572,
+      "sha256": "a936a5b13a49fd9f35c785b2998f492106721e46da97dd97bbf9391e51e1fc6a"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-5.txt": {
+      "bytes": 15906,
+      "sha256": "f11a9ef5eaf40727f8145be87c1deb5737638a27ff764ba860b6c553964896ab"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-6.txt": {
+      "bytes": 13941,
+      "sha256": "106139632a02f5ee135000a2d4e668ca63f5823522dc72ea0a459f1d1528b31d"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-7.txt": {
+      "bytes": 3721,
+      "sha256": "44ca2ed3be3d489b8bcae6ccfbe031c9dc1e40338ebe819065c6b377f09bb65d"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-8.txt": {
+      "bytes": 2649,
+      "sha256": "a91f3a0dc5701543b11d13426af51497b57b919530dfdbec056ba6858fbb8780"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/candidate-9.txt": {
+      "bytes": 9141,
+      "sha256": "ff704c15a16381c666c0458edef50e254233fb55ab3bbb61a931174e312eb81d"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/census.json": {
+      "bytes": 102616,
+      "sha256": "f69b8bbaf263e87d55c8524d9ffb69750ff8a29741b75d195e6803384d1670bf"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-0.txt": {
+      "bytes": 2601,
+      "sha256": "efc6db405c41bd5d4fc1f23954aac450692e0cf11c70dfe364eb048b458f8245"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-1.txt": {
+      "bytes": 35898,
+      "sha256": "0e8c8c027acac76757d5c0fb8cade5f3a04379340c0bd1b8db366d0e5962e68e"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-10.txt": {
+      "bytes": 3864,
+      "sha256": "75f0cdf39837aeb770059d11bf5d84a27ac03157e7aaa3ae27eaf09e3c95ab91"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-11.txt": {
+      "bytes": 32705,
+      "sha256": "a4b9504bb9489c4a3c157541ac4214ca5a93dd908f627db16c44ceca6de2aa12"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-12.txt": {
+      "bytes": 14752,
+      "sha256": "6dfa9894a6e4142e09ace5d92b3e1591cd3ad9a723472c25d13c08c2c1f0d919"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-13.txt": {
+      "bytes": 9159,
+      "sha256": "d5887a5efa12372f929345f6cc2cb5c448da1500a2a6d8e9c8bd543027654c48"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-14.txt": {
+      "bytes": 2627,
+      "sha256": "1c9747e6c09253541c1233f24f203b8ac8ac28b2ce3189e42c59ea57149deb8f"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-15.txt": {
+      "bytes": 37679,
+      "sha256": "2bd934942021b7027052820a99b3880e16559c61fd586f5e231b4121ac089939"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-16.txt": {
+      "bytes": 29052,
+      "sha256": "031a0a6532e1e24d55b0e0f668be797680c4e5b2427af51d027fe5d93a7fed2e"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-17.txt": {
+      "bytes": 7835,
+      "sha256": "41b6973ee20032ee1b09a2fa17329a781dfc3a4a3762d32a4bce99e328edccc4"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-18.txt": {
+      "bytes": 32705,
+      "sha256": "a4b9504bb9489c4a3c157541ac4214ca5a93dd908f627db16c44ceca6de2aa12"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-19.txt": {
+      "bytes": 5593,
+      "sha256": "7da136686e3d1277c7e1e1ff56c52c74ee4adc1f1d8a51f9f01f0ac45d222e8b"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-2.txt": {
+      "bytes": 23111,
+      "sha256": "31ea33001297615f955b08046877beb17a9d7e9d715f73360761a77248586c1b"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-20.txt": {
+      "bytes": 3864,
+      "sha256": "1634a60b12e0f838a05d860503648e7aca7cb5a7f4f6ea33c8d4f3323231a8bd"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-21.txt": {
+      "bytes": 14752,
+      "sha256": "6dfa9894a6e4142e09ace5d92b3e1591cd3ad9a723472c25d13c08c2c1f0d919"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-22.txt": {
+      "bytes": 3827,
+      "sha256": "ceceee8dadc1ef2bf1fdc8e3e7822173947dde41581a9b7a17b5a1bf6ce358b6"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-23.txt": {
+      "bytes": 2378,
+      "sha256": "824340035fcc0e051b7ae5227e4f182f627d20d3e4f8c633b3f9bba44f70b00b"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-24.txt": {
+      "bytes": 90065,
+      "sha256": "8a27c095a74def18484b52d0a052062ccf85d459ae35181da1e1b409be9a63e1"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-25.txt": {
+      "bytes": 40662,
+      "sha256": "b92286398d6601f9c6d5fdf3cdd0cf0a2c6e40de40c79ca3b80cd31f0e96a027"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-26.txt": {
+      "bytes": 3568,
+      "sha256": "14510cf5706a9bcd85caecf885ff3edf0763ae2eadce61b63d1d38e526c17fd4"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-27.txt": {
+      "bytes": 13605,
+      "sha256": "24efb017b18d41f872b5e9e2e3cd0111bb8016573091288007dc2b397ecc4a5d"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-28.txt": {
+      "bytes": 37663,
+      "sha256": "5835af58fe05b02d9fdb0171a208096ff4b733d4d623675c336c8965463b30c8"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-29.txt": {
+      "bytes": 16578,
+      "sha256": "4c2141e5ed06b14445a03f81a926e35335ac198d7fdc769ae882027dca1c1a50"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-3.txt": {
+      "bytes": 15462,
+      "sha256": "7b0f50e5d12bf757ffa5f61de326e44f02c15dfb708754e6ff9fb42475fd9ad2"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-30.txt": {
+      "bytes": 37663,
+      "sha256": "5835af58fe05b02d9fdb0171a208096ff4b733d4d623675c336c8965463b30c8"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-31.txt": {
+      "bytes": 16578,
+      "sha256": "4c2141e5ed06b14445a03f81a926e35335ac198d7fdc769ae882027dca1c1a50"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-32.txt": {
+      "bytes": 16125,
+      "sha256": "532f47a39dd327af1c632255231d66451babf5449471fd67aace84783bfcc63f"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-33.txt": {
+      "bytes": 15462,
+      "sha256": "7b0f50e5d12bf757ffa5f61de326e44f02c15dfb708754e6ff9fb42475fd9ad2"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-34.txt": {
+      "bytes": 7843,
+      "sha256": "17b5b02242fe3a5ad1ee0a732f533ac5fbb88fff18dc2dffe43dd7371b4ab312"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-35.txt": {
+      "bytes": 7002,
+      "sha256": "9c46f36d1c42f19d48c59292610212257b95a0bff6beb8616e884728cdce0b9d"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-36.txt": {
+      "bytes": 19338,
+      "sha256": "75ec929ed21497411e9a9c3a1edcf9d80a389e89f8e85daea87e7265afb2efe9"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-37.txt": {
+      "bytes": 8766,
+      "sha256": "58e7e9dfb72f298b29950a47d709e6ec4a5d50e74c3612523e6ab01e1320538b"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-38.txt": {
+      "bytes": 7756,
+      "sha256": "7749e39400603d3971772b7f50bb32299afd95aa5e0566a340ee6b60ee0461db"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-4.txt": {
+      "bytes": 7771,
+      "sha256": "41d453e29dd333adbba8a689cb5d6ab483a85743c81325f8b849a61bb173613d"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-5.txt": {
+      "bytes": 9159,
+      "sha256": "d5887a5efa12372f929345f6cc2cb5c448da1500a2a6d8e9c8bd543027654c48"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-6.txt": {
+      "bytes": 5593,
+      "sha256": "99e9f51779431821f7fb28213d0a359d18aac9faa1e143497553fcdb9792ba56"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-7.txt": {
+      "bytes": 19338,
+      "sha256": "75ec929ed21497411e9a9c3a1edcf9d80a389e89f8e85daea87e7265afb2efe9"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-8.txt": {
+      "bytes": 8766,
+      "sha256": "58e7e9dfb72f298b29950a47d709e6ec4a5d50e74c3612523e6ab01e1320538b"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/current-9.txt": {
+      "bytes": 7835,
+      "sha256": "41b6973ee20032ee1b09a2fa17329a781dfc3a4a3762d32a4bce99e328edccc4"
+    },
+    "artifacts/parakeet-wide-entry-first-use-codegen-20260923/structure.json": {
+      "bytes": 10450,
+      "sha256": "60ae56a4f4be0e19583c75908a6e0201193cf911479dffa8c084b5e49ac100f0"
+    },
+    "tests/parakeet/wide-entry-first-use-results/review_codegen.py": {
+      "bytes": 5827,
+      "sha256": "722ff1ceb454b2a30f1ba1b92bfa19be02fab76a0f299d785595fc41fc619bce"
+    },
+    "tests/parakeet/wide-entry-first-use-results/inspect_codegen.py": {
+      "bytes": 3507,
+      "sha256": "56751966a8d4f999fe45ae35eea629bc8d77416406e5cb3c2a3de8ed1ee57b4b"
+    },
+    "tests/parakeet/wide-entry-first-use-results/review_structure.py": {
+      "bytes": 2312,
+      "sha256": "7f9533c28b0eee166aa3d7e284b549b8ce579710d129fef26d23ff0e0f04ce6f"
+    },
+    "tests/parakeet/wide-entry-first-use-results/entry-il-review-20260923.json": {
+      "bytes": 2290,
+      "sha256": "a125db5f2046a01d86b159c51222b4c3f0d80200584132c16bee1d07dd060702"
+    },
+    "tests/parakeet/wide-projection-isolation-results/codegen-review-20260923.json": {
+      "bytes": 13080,
+      "sha256": "3176d6cc3312083ae2ccdc34e23d9647016f960a2276d94e30c226699b364f67"
+    },
+    "artifacts/parakeet-wide-projection-isolation-numerics-amd-v2-20260923/collected/logs/candidate-codegen-512.stdout": {
+      "bytes": 94580,
+      "sha256": "9f20077adc32b72f7b4866ea821267e5909dcb1222cf5af7c5cfc03478627ae6"
+    }
+  }
+}

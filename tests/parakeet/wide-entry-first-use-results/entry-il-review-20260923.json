@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "body_instructions": 81,
+  "all_guard_failures_target_original": true,
+  "branches": [
+    {
+      "offset": 1,
+      "opcode": "brfalse",
+      "target": 183
+    },
+    {
+      "offset": 7,
+      "opcode": "brfalse",
+      "target": 183
+    },
+    {
+      "offset": 19,
+      "opcode": "bne.un",
+      "target": 183
+    },
+    {
+      "offset": 31,
+      "opcode": "bne.un",
+      "target": 183
+    },
+    {
+      "offset": 54,
+      "opcode": "blt.s",
+      "target": 183
+    },
+    {
+      "offset": 77,
+      "opcode": "blt.s",
+      "target": 183
+    },
+    {
+      "offset": 100,
+      "opcode": "blt.s",
+      "target": 183
+    },
+    {
+      "offset": 144,
+      "opcode": "bgt.s",
+      "target": 183
+    },
+    {
+      "offset": 153,
+      "opcode": "brfalse.s",
+      "target": 183
+    },
+    {
+      "offset": 162,
+      "opcode": "brfalse.s",
+      "target": 183
+    },
+    {
+      "offset": 169,
+      "opcode": "brfalse.s",
+      "target": 183
+    }
+  ],
+  "notes": "Reviewed null x/y, rank2 x/y, m48, reduction1024, columns1024, signed64 product budget67108864, SIMD/intrinsics/FMA. All eleven branches target offset183 loading five unchanged args and calling original at189. Eligible call177 returns182. No destination touched in guard; clone retains complete original validation.",
+  "initializer_old": "Lokad.Onnx.Tensor`1+<>c[T]::<.cctor>b__538_0::System.Numerics.Vector`1[System.Single] <.cctor>b__538_0(System.Numerics.Vector`1[System.Single])",
+  "initializer_new": "Lokad.Onnx.Tensor`1+<>c[T]::<.cctor>b__540_0::System.Numerics.Vector`1[System.Single] <.cctor>b__540_0(System.Numerics.Vector`1[System.Single])",
+  "closure": {
+    "bytes": 200986,
+    "sha256": "da923692f2c97cbff2774006f4a3dc911aaca39e0af5b35a89639443a75ead58"
+  },
+  "inventory": {
+    "bytes": 27221624,
+    "sha256": "162d34775a67bf9c0e6be06d85336d6908dc675be3b82d26c4bdaa4059994fe3"
+  },
+  "candidate": {
+    "Lokad.Onnx.dll": {
+      "bytes": 773632,
+      "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+    }
+  }
+}
