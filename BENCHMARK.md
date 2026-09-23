@@ -86,6 +86,10 @@ repeatability controls pass; seven of twelve speed gates fail. All 17,184
 call clocks remain. The candidate is not integrated and supplies no new
 application or ORT timing.
 
+The distinct [row-pointer and fixed-step prototype](tests/pyannote/convolution-pointer-unroll/build-20260923.md)
+passes its normal AMD build with compiled changes confined to Kernel512.
+Numerical and performance qualification remain pending; it is not integrated.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
