@@ -122,6 +122,13 @@ three crop speed gates, fresh native checks, both ten-minute meetings and
 recovery pass. All 96 timing requests and six setup intervals are retained.
 The candidate remains unmerged; no unchanged timing retry follows.
 
+The separate [four-output-block screen](tests/pyannote/convolution-four-results/results-20260923.md)
+is also **not admitted**: complete-call latency falls 1.15%, below its fixed
+2% threshold, and the candidate/control process means overlap. All 32
+repeatability controls and per-form speed gates pass. All 17,184 call clocks
+and 512 preparation clocks are retained. This candidate is not integrated
+and supplies no new application or Microsoft ORT timing.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
