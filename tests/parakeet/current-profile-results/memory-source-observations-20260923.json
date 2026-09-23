@@ -1,0 +1,1714 @@
+{
+  "ort_commit": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "product": "94a550de",
+  "graph": {
+    "model": {
+      "bytes": 41770866,
+      "sha256": "98a74b21b4cc0017c1e7030319a4a96f4a9506e50f0708f3a516d02a77c96bb1"
+    },
+    "nodes": 4491,
+    "pads": [
+      {
+        "name": "/layers.0/self_attn/Pad",
+        "data": "/layers.0/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "227e59a3e0213d5b23e14f8c6908c82732193e0e5f80d7829a44dcca5d699c43"
+      },
+      {
+        "name": "/layers.0/conv/depthwise_conv/Pad",
+        "data": "/layers.0/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "3a43f4e1a5aea322eec7800bb76afe00f9a9053ef22f54b2bd1de3f4d6857109"
+      },
+      {
+        "name": "/layers.1/self_attn/Pad",
+        "data": "/layers.1/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "9547eba0dc687948aca0e09db04d2bad48a36c91d7eb92e8c3cc10fd17507089"
+      },
+      {
+        "name": "/layers.1/conv/depthwise_conv/Pad",
+        "data": "/layers.1/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "be94fe706b2e2ecac0c0bb5e1e8986a7f757cfd360a17d6de80be551edcbb484"
+      },
+      {
+        "name": "/layers.2/self_attn/Pad",
+        "data": "/layers.2/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "7ca323a8238dcc5e0d2a0e456d7dc2816da66c26fe5ad85cbd2af5e553ba3a2a"
+      },
+      {
+        "name": "/layers.2/conv/depthwise_conv/Pad",
+        "data": "/layers.2/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "2b3a007d04e089e652482e3abb10dc60589015af8679f67ea9f1e9c3ae6cc25e"
+      },
+      {
+        "name": "/layers.3/self_attn/Pad",
+        "data": "/layers.3/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "9db688897a959c5fd77073ffb4367a1c5637959c372246494a3b537da2413c37"
+      },
+      {
+        "name": "/layers.3/conv/depthwise_conv/Pad",
+        "data": "/layers.3/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "2888e6e879ab54e2612f53023b97cf9571b08149e512f70a7032dc085901c619"
+      },
+      {
+        "name": "/layers.4/self_attn/Pad",
+        "data": "/layers.4/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "ba71a0c31041582f75066ac36295d4a3890f6e41ee8be56b7c691804470dd670"
+      },
+      {
+        "name": "/layers.4/conv/depthwise_conv/Pad",
+        "data": "/layers.4/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "70b16f184615a33eef250053e81ec9a3add4b5bc92ecafc161b6f273168e6069"
+      },
+      {
+        "name": "/layers.5/self_attn/Pad",
+        "data": "/layers.5/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "67a23ae134ed20b9b0256e762b4932eb4a4f80d8c89b6685e4e5fbb538159cbb"
+      },
+      {
+        "name": "/layers.5/conv/depthwise_conv/Pad",
+        "data": "/layers.5/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "e082885aafd35a79580bd7f1fb53912e3151043837ef929a44af81be2d6e68f9"
+      },
+      {
+        "name": "/layers.6/self_attn/Pad",
+        "data": "/layers.6/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "aef4a82aa7f458c32eef388284bcf9444a76e1537a10993133758949a491f7a7"
+      },
+      {
+        "name": "/layers.6/conv/depthwise_conv/Pad",
+        "data": "/layers.6/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "ee8ff4471243aa7db3dc0646a4215e52b790b4d66885a89d680660a40058a98e"
+      },
+      {
+        "name": "/layers.7/self_attn/Pad",
+        "data": "/layers.7/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "64eca0806d9820face220933dbc50423e31baa91b8e9da38487493a217b8e776"
+      },
+      {
+        "name": "/layers.7/conv/depthwise_conv/Pad",
+        "data": "/layers.7/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "5a15d658131ef1be8daa7b8e3a204be7841af7ba23cac75cbcafca5fe05f2d4a"
+      },
+      {
+        "name": "/layers.8/self_attn/Pad",
+        "data": "/layers.8/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "5e4893bcc3b6780b2a0299afe7ff08ef589768fbe62a20058043ab99da96e33e"
+      },
+      {
+        "name": "/layers.8/conv/depthwise_conv/Pad",
+        "data": "/layers.8/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "d28f0a00d3d966bfbf32e8e7729c547cab0b0f41ce661e040ce239972b2eb326"
+      },
+      {
+        "name": "/layers.9/self_attn/Pad",
+        "data": "/layers.9/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "c7f3056c860eba6fa36b146f16c5bbb664b878ee9ef2933692569fe9596c12e5"
+      },
+      {
+        "name": "/layers.9/conv/depthwise_conv/Pad",
+        "data": "/layers.9/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "0c4a07d55355c7e28e6a1db6ee5464a441f66783760e4b507722165d07af622a"
+      },
+      {
+        "name": "/layers.10/self_attn/Pad",
+        "data": "/layers.10/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "0c99cfd029a0abeb5e16a27bcaad70ed9f9fd746d6fd670c435e35eaea199ce3"
+      },
+      {
+        "name": "/layers.10/conv/depthwise_conv/Pad",
+        "data": "/layers.10/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "ae1b7f9bde009f883f7001d75371823da23fce0243242d69601f17ca59dc0a7d"
+      },
+      {
+        "name": "/layers.11/self_attn/Pad",
+        "data": "/layers.11/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "e1fff9b4dfccc5ca4fbbe9a61b63082108bdf429baa6c795f807cd2b02df21e5"
+      },
+      {
+        "name": "/layers.11/conv/depthwise_conv/Pad",
+        "data": "/layers.11/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "f3d2d86ac2017c7c0c2503749df26a662da3958840554bbe02862ab0a073f7ce"
+      },
+      {
+        "name": "/layers.12/self_attn/Pad",
+        "data": "/layers.12/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "7715707b1025803ece05d764c19790127bffff30cc1cb088acce0bcf43bf9df2"
+      },
+      {
+        "name": "/layers.12/conv/depthwise_conv/Pad",
+        "data": "/layers.12/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "a5a407e4661e70ff77b2aef26e00acb0aba7b59f705209e1a35149f35bbb18e2"
+      },
+      {
+        "name": "/layers.13/self_attn/Pad",
+        "data": "/layers.13/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "0a202346c3ccf6bd80428bd4155f1822f961c1d99455081cee661a3119a7e464"
+      },
+      {
+        "name": "/layers.13/conv/depthwise_conv/Pad",
+        "data": "/layers.13/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "d7ab2dd6feafc7413f61fa5366b3cdb4c22b8f698e5524c2b173c76cadcac20b"
+      },
+      {
+        "name": "/layers.14/self_attn/Pad",
+        "data": "/layers.14/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "7ded355239e9e1370cbc7ec7da1c18d0f0a883847deb4df52d9523d773034b1f"
+      },
+      {
+        "name": "/layers.14/conv/depthwise_conv/Pad",
+        "data": "/layers.14/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "760a57448947ac8b863a20e06c821ea67075a0e17c4aa580690954b1536ddbd5"
+      },
+      {
+        "name": "/layers.15/self_attn/Pad",
+        "data": "/layers.15/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "0a42bf855612f82aa94619b7d57f8abb999a2d9bfef3e0991f021130d48be171"
+      },
+      {
+        "name": "/layers.15/conv/depthwise_conv/Pad",
+        "data": "/layers.15/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "e52e689b146523ba2e5fb173478a4b789de99ba05b1b937898bc592b91674802"
+      },
+      {
+        "name": "/layers.16/self_attn/Pad",
+        "data": "/layers.16/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "9e0f5237287628a57a83e0630767ffa7b8fcabb8d6315f6366b3788cdd74710e"
+      },
+      {
+        "name": "/layers.16/conv/depthwise_conv/Pad",
+        "data": "/layers.16/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "1afbaff4e3bcbc59c2bdf8440dbe1a7071b2b2068469ab6a11d1f01e2b8a1a93"
+      },
+      {
+        "name": "/layers.17/self_attn/Pad",
+        "data": "/layers.17/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "7b8ffd873f496e6c7af5eae8f5b874bb1bec1887d47b0a7a8023fc861a399155"
+      },
+      {
+        "name": "/layers.17/conv/depthwise_conv/Pad",
+        "data": "/layers.17/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "7b81fc34528ca847bb9c76772e11418bda190672b6982b2bda17bf3a81cb8502"
+      },
+      {
+        "name": "/layers.18/self_attn/Pad",
+        "data": "/layers.18/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "ad3317cd998841393a2814bf2469fa6719ea8823cbcf0fca9f6a5242bd687490"
+      },
+      {
+        "name": "/layers.18/conv/depthwise_conv/Pad",
+        "data": "/layers.18/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "085aa860cf26086c9f68bccce2bd422a432f4fba98ed0003670809f79daf4743"
+      },
+      {
+        "name": "/layers.19/self_attn/Pad",
+        "data": "/layers.19/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "35692a7a6265c6d0eabbfa2d0721e2252383fabb9fe767a23c99df1adfe8508d"
+      },
+      {
+        "name": "/layers.19/conv/depthwise_conv/Pad",
+        "data": "/layers.19/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "6e796a01cdb0295c22ac2e8aea4934c037c6147ca3e994ac6afea7142c41b55e"
+      },
+      {
+        "name": "/layers.20/self_attn/Pad",
+        "data": "/layers.20/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "d47ed523bee11bb28839449160fd9a055d0eebad8bb8d571389a3db897750057"
+      },
+      {
+        "name": "/layers.20/conv/depthwise_conv/Pad",
+        "data": "/layers.20/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "ae6ea8e6859e2d0c04be5b797d370a7d112a6e628938fd70e21f7cf217a4ce42"
+      },
+      {
+        "name": "/layers.21/self_attn/Pad",
+        "data": "/layers.21/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "03dde0ed33dc71c121486a3a4e23a977349ff0fe603b90be20153cc5f8787d69"
+      },
+      {
+        "name": "/layers.21/conv/depthwise_conv/Pad",
+        "data": "/layers.21/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "d54d6e48ec962ba38ad1c5bef1bf4f4c8f9e8bcf22fc2d11e8726d47d85287a0"
+      },
+      {
+        "name": "/layers.22/self_attn/Pad",
+        "data": "/layers.22/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "b52911c76bdb9c57ae78a160842c2d8dd9b4aa2ba0e1e936ee0de75ab9e532ea"
+      },
+      {
+        "name": "/layers.22/conv/depthwise_conv/Pad",
+        "data": "/layers.22/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "0648683b889bc5089b720290ad01342be30dc6f0c9469dc5bb7fc2fb5fc60962"
+      },
+      {
+        "name": "/layers.23/self_attn/Pad",
+        "data": "/layers.23/self_attn/MatMul_output_0",
+        "pads": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "12d778f7eb7dedfbb2b071ddf1df5a10855eff7665b43d1ffcd7550ca999c8e5"
+      },
+      {
+        "name": "/layers.23/conv/depthwise_conv/Pad",
+        "data": "/layers.23/conv/Where_output_0",
+        "pads": [
+          0,
+          0,
+          4,
+          0,
+          0,
+          4
+        ],
+        "mode": "constant",
+        "fill": "omitted (zero)",
+        "node_sha256": "c01074a010aabd10c0fe29e24725b56b7476f53e794c0f206abae5bfa2aa2e71"
+      }
+    ],
+    "wheres": [
+      {
+        "name": "/Where",
+        "inputs": [
+          "/Equal_output_0",
+          "/ConstantOfShape_1_output_0",
+          "/Reshape_output_0"
+        ],
+        "x_scalar": null
+      },
+      {
+        "name": "/layers.0/self_attn/Where",
+        "inputs": [
+          "/layers.0/self_attn/Cast_1_output_0",
+          "/layers.0/self_attn/Constant_111_output_0",
+          "/layers.0/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.0/self_attn/Where_1",
+        "inputs": [
+          "/layers.0/self_attn/Cast_2_output_0",
+          "/layers.0/self_attn/Constant_112_output_0",
+          "/layers.0/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.0/conv/Where",
+        "inputs": [
+          "/layers.0/conv/Cast_output_0",
+          "/layers.0/conv/Constant_1_output_0",
+          "/layers.0/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.1/self_attn/Where",
+        "inputs": [
+          "/layers.1/self_attn/Cast_1_output_0",
+          "/layers.1/self_attn/Constant_37_output_0",
+          "/layers.1/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.1/self_attn/Where_1",
+        "inputs": [
+          "/layers.1/self_attn/Cast_2_output_0",
+          "/layers.1/self_attn/Constant_38_output_0",
+          "/layers.1/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.1/conv/Where",
+        "inputs": [
+          "/layers.1/conv/Cast_output_0",
+          "/layers.1/conv/Constant_output_0",
+          "/layers.1/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.2/self_attn/Where",
+        "inputs": [
+          "/layers.2/self_attn/Cast_1_output_0",
+          "/layers.2/self_attn/Constant_37_output_0",
+          "/layers.2/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.2/self_attn/Where_1",
+        "inputs": [
+          "/layers.2/self_attn/Cast_2_output_0",
+          "/layers.2/self_attn/Constant_38_output_0",
+          "/layers.2/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.2/conv/Where",
+        "inputs": [
+          "/layers.2/conv/Cast_output_0",
+          "/layers.2/conv/Constant_output_0",
+          "/layers.2/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.3/self_attn/Where",
+        "inputs": [
+          "/layers.3/self_attn/Cast_1_output_0",
+          "/layers.3/self_attn/Constant_37_output_0",
+          "/layers.3/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.3/self_attn/Where_1",
+        "inputs": [
+          "/layers.3/self_attn/Cast_2_output_0",
+          "/layers.3/self_attn/Constant_38_output_0",
+          "/layers.3/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.3/conv/Where",
+        "inputs": [
+          "/layers.3/conv/Cast_output_0",
+          "/layers.3/conv/Constant_output_0",
+          "/layers.3/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.4/self_attn/Where",
+        "inputs": [
+          "/layers.4/self_attn/Cast_1_output_0",
+          "/layers.4/self_attn/Constant_37_output_0",
+          "/layers.4/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.4/self_attn/Where_1",
+        "inputs": [
+          "/layers.4/self_attn/Cast_2_output_0",
+          "/layers.4/self_attn/Constant_38_output_0",
+          "/layers.4/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.4/conv/Where",
+        "inputs": [
+          "/layers.4/conv/Cast_output_0",
+          "/layers.4/conv/Constant_output_0",
+          "/layers.4/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.5/self_attn/Where",
+        "inputs": [
+          "/layers.5/self_attn/Cast_1_output_0",
+          "/layers.5/self_attn/Constant_37_output_0",
+          "/layers.5/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.5/self_attn/Where_1",
+        "inputs": [
+          "/layers.5/self_attn/Cast_2_output_0",
+          "/layers.5/self_attn/Constant_38_output_0",
+          "/layers.5/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.5/conv/Where",
+        "inputs": [
+          "/layers.5/conv/Cast_output_0",
+          "/layers.5/conv/Constant_output_0",
+          "/layers.5/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.6/self_attn/Where",
+        "inputs": [
+          "/layers.6/self_attn/Cast_1_output_0",
+          "/layers.6/self_attn/Constant_37_output_0",
+          "/layers.6/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.6/self_attn/Where_1",
+        "inputs": [
+          "/layers.6/self_attn/Cast_2_output_0",
+          "/layers.6/self_attn/Constant_38_output_0",
+          "/layers.6/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.6/conv/Where",
+        "inputs": [
+          "/layers.6/conv/Cast_output_0",
+          "/layers.6/conv/Constant_output_0",
+          "/layers.6/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.7/self_attn/Where",
+        "inputs": [
+          "/layers.7/self_attn/Cast_1_output_0",
+          "/layers.7/self_attn/Constant_37_output_0",
+          "/layers.7/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.7/self_attn/Where_1",
+        "inputs": [
+          "/layers.7/self_attn/Cast_2_output_0",
+          "/layers.7/self_attn/Constant_38_output_0",
+          "/layers.7/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.7/conv/Where",
+        "inputs": [
+          "/layers.7/conv/Cast_output_0",
+          "/layers.7/conv/Constant_output_0",
+          "/layers.7/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.8/self_attn/Where",
+        "inputs": [
+          "/layers.8/self_attn/Cast_1_output_0",
+          "/layers.8/self_attn/Constant_37_output_0",
+          "/layers.8/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.8/self_attn/Where_1",
+        "inputs": [
+          "/layers.8/self_attn/Cast_2_output_0",
+          "/layers.8/self_attn/Constant_38_output_0",
+          "/layers.8/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.8/conv/Where",
+        "inputs": [
+          "/layers.8/conv/Cast_output_0",
+          "/layers.8/conv/Constant_output_0",
+          "/layers.8/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.9/self_attn/Where",
+        "inputs": [
+          "/layers.9/self_attn/Cast_1_output_0",
+          "/layers.9/self_attn/Constant_37_output_0",
+          "/layers.9/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.9/self_attn/Where_1",
+        "inputs": [
+          "/layers.9/self_attn/Cast_2_output_0",
+          "/layers.9/self_attn/Constant_38_output_0",
+          "/layers.9/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.9/conv/Where",
+        "inputs": [
+          "/layers.9/conv/Cast_output_0",
+          "/layers.9/conv/Constant_output_0",
+          "/layers.9/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.10/self_attn/Where",
+        "inputs": [
+          "/layers.10/self_attn/Cast_1_output_0",
+          "/layers.10/self_attn/Constant_37_output_0",
+          "/layers.10/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.10/self_attn/Where_1",
+        "inputs": [
+          "/layers.10/self_attn/Cast_2_output_0",
+          "/layers.10/self_attn/Constant_38_output_0",
+          "/layers.10/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.10/conv/Where",
+        "inputs": [
+          "/layers.10/conv/Cast_output_0",
+          "/layers.10/conv/Constant_output_0",
+          "/layers.10/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.11/self_attn/Where",
+        "inputs": [
+          "/layers.11/self_attn/Cast_1_output_0",
+          "/layers.11/self_attn/Constant_37_output_0",
+          "/layers.11/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.11/self_attn/Where_1",
+        "inputs": [
+          "/layers.11/self_attn/Cast_2_output_0",
+          "/layers.11/self_attn/Constant_38_output_0",
+          "/layers.11/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.11/conv/Where",
+        "inputs": [
+          "/layers.11/conv/Cast_output_0",
+          "/layers.11/conv/Constant_output_0",
+          "/layers.11/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.12/self_attn/Where",
+        "inputs": [
+          "/layers.12/self_attn/Cast_1_output_0",
+          "/layers.12/self_attn/Constant_37_output_0",
+          "/layers.12/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.12/self_attn/Where_1",
+        "inputs": [
+          "/layers.12/self_attn/Cast_2_output_0",
+          "/layers.12/self_attn/Constant_38_output_0",
+          "/layers.12/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.12/conv/Where",
+        "inputs": [
+          "/layers.12/conv/Cast_output_0",
+          "/layers.12/conv/Constant_output_0",
+          "/layers.12/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.13/self_attn/Where",
+        "inputs": [
+          "/layers.13/self_attn/Cast_1_output_0",
+          "/layers.13/self_attn/Constant_37_output_0",
+          "/layers.13/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.13/self_attn/Where_1",
+        "inputs": [
+          "/layers.13/self_attn/Cast_2_output_0",
+          "/layers.13/self_attn/Constant_38_output_0",
+          "/layers.13/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.13/conv/Where",
+        "inputs": [
+          "/layers.13/conv/Cast_output_0",
+          "/layers.13/conv/Constant_output_0",
+          "/layers.13/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.14/self_attn/Where",
+        "inputs": [
+          "/layers.14/self_attn/Cast_1_output_0",
+          "/layers.14/self_attn/Constant_37_output_0",
+          "/layers.14/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.14/self_attn/Where_1",
+        "inputs": [
+          "/layers.14/self_attn/Cast_2_output_0",
+          "/layers.14/self_attn/Constant_38_output_0",
+          "/layers.14/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.14/conv/Where",
+        "inputs": [
+          "/layers.14/conv/Cast_output_0",
+          "/layers.14/conv/Constant_output_0",
+          "/layers.14/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.15/self_attn/Where",
+        "inputs": [
+          "/layers.15/self_attn/Cast_1_output_0",
+          "/layers.15/self_attn/Constant_37_output_0",
+          "/layers.15/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.15/self_attn/Where_1",
+        "inputs": [
+          "/layers.15/self_attn/Cast_2_output_0",
+          "/layers.15/self_attn/Constant_38_output_0",
+          "/layers.15/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.15/conv/Where",
+        "inputs": [
+          "/layers.15/conv/Cast_output_0",
+          "/layers.15/conv/Constant_output_0",
+          "/layers.15/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.16/self_attn/Where",
+        "inputs": [
+          "/layers.16/self_attn/Cast_1_output_0",
+          "/layers.16/self_attn/Constant_37_output_0",
+          "/layers.16/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.16/self_attn/Where_1",
+        "inputs": [
+          "/layers.16/self_attn/Cast_2_output_0",
+          "/layers.16/self_attn/Constant_38_output_0",
+          "/layers.16/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.16/conv/Where",
+        "inputs": [
+          "/layers.16/conv/Cast_output_0",
+          "/layers.16/conv/Constant_output_0",
+          "/layers.16/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.17/self_attn/Where",
+        "inputs": [
+          "/layers.17/self_attn/Cast_1_output_0",
+          "/layers.17/self_attn/Constant_37_output_0",
+          "/layers.17/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.17/self_attn/Where_1",
+        "inputs": [
+          "/layers.17/self_attn/Cast_2_output_0",
+          "/layers.17/self_attn/Constant_38_output_0",
+          "/layers.17/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.17/conv/Where",
+        "inputs": [
+          "/layers.17/conv/Cast_output_0",
+          "/layers.17/conv/Constant_output_0",
+          "/layers.17/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.18/self_attn/Where",
+        "inputs": [
+          "/layers.18/self_attn/Cast_1_output_0",
+          "/layers.18/self_attn/Constant_37_output_0",
+          "/layers.18/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.18/self_attn/Where_1",
+        "inputs": [
+          "/layers.18/self_attn/Cast_2_output_0",
+          "/layers.18/self_attn/Constant_38_output_0",
+          "/layers.18/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.18/conv/Where",
+        "inputs": [
+          "/layers.18/conv/Cast_output_0",
+          "/layers.18/conv/Constant_output_0",
+          "/layers.18/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.19/self_attn/Where",
+        "inputs": [
+          "/layers.19/self_attn/Cast_1_output_0",
+          "/layers.19/self_attn/Constant_37_output_0",
+          "/layers.19/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.19/self_attn/Where_1",
+        "inputs": [
+          "/layers.19/self_attn/Cast_2_output_0",
+          "/layers.19/self_attn/Constant_38_output_0",
+          "/layers.19/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.19/conv/Where",
+        "inputs": [
+          "/layers.19/conv/Cast_output_0",
+          "/layers.19/conv/Constant_output_0",
+          "/layers.19/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.20/self_attn/Where",
+        "inputs": [
+          "/layers.20/self_attn/Cast_1_output_0",
+          "/layers.20/self_attn/Constant_37_output_0",
+          "/layers.20/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.20/self_attn/Where_1",
+        "inputs": [
+          "/layers.20/self_attn/Cast_2_output_0",
+          "/layers.20/self_attn/Constant_38_output_0",
+          "/layers.20/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.20/conv/Where",
+        "inputs": [
+          "/layers.20/conv/Cast_output_0",
+          "/layers.20/conv/Constant_output_0",
+          "/layers.20/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.21/self_attn/Where",
+        "inputs": [
+          "/layers.21/self_attn/Cast_1_output_0",
+          "/layers.21/self_attn/Constant_37_output_0",
+          "/layers.21/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.21/self_attn/Where_1",
+        "inputs": [
+          "/layers.21/self_attn/Cast_2_output_0",
+          "/layers.21/self_attn/Constant_38_output_0",
+          "/layers.21/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.21/conv/Where",
+        "inputs": [
+          "/layers.21/conv/Cast_output_0",
+          "/layers.21/conv/Constant_output_0",
+          "/layers.21/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.22/self_attn/Where",
+        "inputs": [
+          "/layers.22/self_attn/Cast_1_output_0",
+          "/layers.22/self_attn/Constant_37_output_0",
+          "/layers.22/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.22/self_attn/Where_1",
+        "inputs": [
+          "/layers.22/self_attn/Cast_2_output_0",
+          "/layers.22/self_attn/Constant_38_output_0",
+          "/layers.22/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.22/conv/Where",
+        "inputs": [
+          "/layers.22/conv/Cast_output_0",
+          "/layers.22/conv/Constant_output_0",
+          "/layers.22/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.23/self_attn/Where",
+        "inputs": [
+          "/layers.23/self_attn/Cast_1_output_0",
+          "/layers.23/self_attn/Constant_37_output_0",
+          "/layers.23/self_attn/Div_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": -10000.0
+        }
+      },
+      {
+        "name": "/layers.23/self_attn/Where_1",
+        "inputs": [
+          "/layers.23/self_attn/Cast_2_output_0",
+          "/layers.23/self_attn/Constant_38_output_0",
+          "/layers.23/self_attn/Softmax_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      },
+      {
+        "name": "/layers.23/conv/Where",
+        "inputs": [
+          "/layers.23/conv/Cast_output_0",
+          "/layers.23/conv/Constant_output_0",
+          "/layers.23/conv/Mul_output_0"
+        ],
+        "x_scalar": {
+          "dtype": "float32",
+          "value": 0.0
+        }
+      }
+    ],
+    "constant_expression_values": 720,
+    "external_weights_loaded": false,
+    "inference_executed": false
+  },
+  "sources": {
+    "ort/onnxruntime/core/providers/cpu/tensor/pad.cc": {
+      "bytes": 33229,
+      "sha256": "64b7c3367a2d080fd1d88e6c5a4a66320eb1835d6b58a1b1825add4916b63052"
+    },
+    "ort/onnxruntime/core/providers/cpu/tensor/where_op.cc": {
+      "bytes": 12469,
+      "sha256": "1f34fc25892f558d36b43309548849bcd616f03a1461a6de4f9bce9f40aeae2d"
+    },
+    "ort/onnxruntime/core/mlas/lib/mlasi.h": {
+      "bytes": 98181,
+      "sha256": "24f65d23f6ab83b812049c55d19583f27c471bde077a1d66f1db42e0b5e8ab97"
+    },
+    "ort/onnxruntime/core/mlas/lib/sgemm.cpp": {
+      "bytes": 43141,
+      "sha256": "1554aa0b046c3c02734613ef8ab1105bd55449f7d76116d342d17e1c630cb523"
+    },
+    "lokad/src/Lokad.Onnx/CPUExecutionProvider.Shape.cs": {
+      "bytes": 61192,
+      "sha256": "532d26594643fdf97fad2973e05e6a603335509f36ed13da110a3e713ae6d768"
+    },
+    "lokad/src/Lokad.Onnx/TensorOps.Elementwise.cs": {
+      "bytes": 139471,
+      "sha256": "78fb682e983598663e415e43460d70a97dea6e52ed5055870b7890fe52d946e8"
+    },
+    "lokad/src/Lokad.Onnx/Tensor.cs": {
+      "bytes": 72103,
+      "sha256": "ee9502fa47f606436beea769975ff6bc02a07ddf29e05fe9ad3cb35530619f03"
+    },
+    "lokad/src/Lokad.Onnx/TensorSlice.cs": {
+      "bytes": 7271,
+      "sha256": "4ac4b7b769adf7a7857138c181fa108a6ead7b69b9d4a64aa2cd9d615aa0a019"
+    },
+    "lokad/src/Lokad.Onnx/BroadcastedTensor.cs": {
+      "bytes": 7755,
+      "sha256": "ffdc2b46f6bcf84f857c98fa82b9de83aedbf1b4568c99ef363c2cf84e754134"
+    },
+    "lokad/src/Lokad.Onnx/MathOps.cs": {
+      "bytes": 215579,
+      "sha256": "f09ec95f8ba1aba3e235988ebddab54032dc69fac5013cc288ffae5f4ebfe30b"
+    },
+    "lokad/tests/parakeet/wide-matmul/Blocked.cs": {
+      "bytes": 5441,
+      "sha256": "9b3ba676a1125174612e94194e85e16648bee36ad03d051bba48f442ac18e7c5"
+    }
+  },
+  "profile": {
+    "bytes": 22621,
+    "sha256": "2b61578aab9e4112725f09608d8227c3a154786aa586dc9ce925d271a2ff1d82"
+  },
+  "generator": {
+    "bytes": 6128,
+    "sha256": "b004f4509952ae3657de5ef8e38ac45c2ca19626d3f2b60c3c7fe14a387e87bf"
+  },
+  "scope": "Static graph/constants and source inspection; no new timings or native dispatch claim."
+}
