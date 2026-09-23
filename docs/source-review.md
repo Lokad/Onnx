@@ -54,8 +54,11 @@ PadCore fallback instructions. Its [complete operator screen](../tests/parakeet/
 reduces the eight primary cases' sum by 92.6867%, but rejects admission:
 crop/outer-pad/reflection regress by 24.45%/17.80%/6.71%, and four candidate
 repeatability controls fail. Complete model timing therefore does not run.
-Keeping the original fallback method intact is the next distinct design to
-investigate; the clocks alone do not identify the runtime cause.
+The distinct [dispatcher build](../tests/parakeet/pad-dispatch-results/build-20260923.md)
+now preserves the original fallback method completely and changes only four
+private call targets in public Pad. Its targeted tests pass in both instruction
+modes. It will use the same complete-call protocol; the preceding clocks alone
+do not identify the runtime cause or establish this candidate's performance.
 The same source review records 72 scalar-branch
 Where nodes and ORT's 256-term packed reduction blocks as separate hypotheses.
 
