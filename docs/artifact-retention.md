@@ -97,3 +97,9 @@ After all M54 qualification workers finished, idle VM deduplication linked
 1,275 identical files after verifying 16,059 hashes, freeing **180.28 MB of
 tmpfs**. All recorded owners were terminal and file bytes remained exact.
 Receipt: `artifacts/parakeet-wide-entry-shared-vm-maintenance-20260923`.
+
+Before the next build, idle retirement removed 1,243 closed-root cache and
+duplicate inspection files, totaling **243.53 MB** and freeing **185.32 MB of
+tmpfs**. Every removed export has a verified local copy; all 47 package archives,
+immutable inputs, runtimes and source remain. Receipt:
+`artifacts/parakeet-wide-entry-root-retention-20260923`.

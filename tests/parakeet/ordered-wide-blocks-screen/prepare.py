@@ -59,7 +59,8 @@ def prepare():
     for name in ['Screen.cs', 'Prototype.csproj']: copy(TOOLS / name, bundle / 'source/consumer' / name)
     for name in ['protocol.py', 'remote.py', 'remote_prepare.py']: copy(TOOLS / name, bundle / 'tools' / name)
     copy(TOOLS / 'README.md', bundle / 'README.md')
-    copy(ROOT / '.agent/m55-ordered-wide-blocks-20260923.md', bundle / 'prospective-plan.md')
+    # Freeze the prospective snapshot in stage.json while the living plan advances.
+    shutil.copy2(ROOT / '.agent/m55-ordered-wide-blocks-20260923.md', bundle / 'prospective-plan.md')
     products = {}; consumer_files = {}
     for role, folder in [('current', CURRENT / 'collected/runtime'), ('candidate', BUILD / 'collected/runtime')]:
         for p in folder.iterdir():

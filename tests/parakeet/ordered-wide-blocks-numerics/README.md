@@ -39,5 +39,6 @@ CPU 2 computes, CPU 0 monitors; memory preflight 12 GiB, tmpfs 3 GiB, RSS cap
 900 seconds/job and four hours total. All owners must finish and every monitoring
 gap must stay below ten seconds. Failures remain recorded.
 
-These tools are prepared locally only. No ordered-block build, numerical
-qualification or timing has run.
+The ordered-block build passed at closure
+`262b47af000e1af998b866a05cd9252303c2d868a7df3e747e270deeb55b3744`.
+Numerical qualification, generated-code review and timing remain pending.
