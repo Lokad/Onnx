@@ -1,0 +1,198 @@
+{
+  "passed": true,
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "7ca850ae5e3391a6224ae03883351415c273d9ea3fdf0f0c021288a0a6696816"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "f14f8c5d05a1faa58d0b3bb875d7f48718a900a219c69db0d53e03905bd8b2de"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "core_methods": 3179,
+    "data_methods": 697,
+    "public_surface_equal": true
+  },
+  "suites": {
+    "backend": {
+      "passed": 3449,
+      "skipped": 41,
+      "census_exact": true,
+      "trx": {
+        "bytes": 5170439,
+        "sha256": "b029264517049f167c3938ab5366585a965add7549b32aa6516ae041ff0c7bb9"
+      }
+    },
+    "tensors": {
+      "passed": 343,
+      "skipped": 0,
+      "census_exact": true,
+      "trx": {
+        "bytes": 492725,
+        "sha256": "10a50b30693dc4facd7fc29492e0a8cea77cf8a6ce386e03bc1be646bd022811"
+      }
+    }
+  },
+  "focused": {
+    "256": {
+      "passed": true,
+      "cases": 48,
+      "census_exact": true,
+      "trx": {
+        "bytes": 72944,
+        "sha256": "db073a0381a4ea76c4bc2b67b3468fe3ed6ddd2e3e20b993d811bb12bc43ca0d"
+      }
+    },
+    "512": {
+      "passed": true,
+      "cases": 48,
+      "census_exact": true,
+      "trx": {
+        "bytes": 72944,
+        "sha256": "54a8067a531b0cb30c91b77a3d5dfdd8bb64537b897fe5973fa95de622a2a039"
+      }
+    }
+  },
+  "package": {
+    "passed": true,
+    "package": {
+      "bytes": 565065,
+      "sha256": "1406479324c792c12eab2ca563811c6d4ad28d7772140a740d2dbde30479348d"
+    },
+    "core": {
+      "bytes": 766976,
+      "sha256": "7ca850ae5e3391a6224ae03883351415c273d9ea3fdf0f0c021288a0a6696816"
+    },
+    "dependencies": [
+      {
+        "id": "Google.Protobuf",
+        "version": "3.33.5",
+        "exclude": "Build,Analyzers"
+      }
+    ]
+  },
+  "consumer": {
+    "passed": true,
+    "winograd_values": 1056,
+    "winograd_calls": 2,
+    "winograd_weights": 51200,
+    "winograd_scratch": 28800,
+    "prepared_graph_values": 1056,
+    "prepared_graph_calls": 2,
+    "retained_weights": 18432,
+    "scratch": 8384,
+    "ownership": true
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 8925184,
+      "seconds": 0.2596367300138809
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 172453888,
+      "seconds": 1.5539973969571292
+    },
+    {
+      "name": "cli-build",
+      "samples": 63,
+      "peak_rss": 499630080,
+      "seconds": 16.608340626000427
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 168128512,
+      "seconds": 1.5924965319572948
+    },
+    {
+      "name": "backend-build",
+      "samples": 62,
+      "peak_rss": 593211392,
+      "seconds": 16.863198104023468
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 4,
+      "peak_rss": 157917184,
+      "seconds": 1.0937526720226742
+    },
+    {
+      "name": "tensors-build",
+      "samples": 21,
+      "peak_rss": 366612480,
+      "seconds": 5.79341534501873
+    },
+    {
+      "name": "inventory",
+      "samples": 3,
+      "peak_rss": 134995968,
+      "seconds": 0.8862087720190175
+    },
+    {
+      "name": "backend-tests",
+      "samples": 91,
+      "peak_rss": 1062125568,
+      "seconds": 25.225858521996997
+    },
+    {
+      "name": "tensors-tests",
+      "samples": 28,
+      "peak_rss": 328232960,
+      "seconds": 7.729350341018289
+    },
+    {
+      "name": "focused-256",
+      "samples": 9,
+      "peak_rss": 343330816,
+      "seconds": 2.5418781979824416
+    },
+    {
+      "name": "focused-512",
+      "samples": 9,
+      "peak_rss": 343408640,
+      "seconds": 2.542653558019083
+    },
+    {
+      "name": "package",
+      "samples": 4,
+      "peak_rss": 150839296,
+      "seconds": 1.1088639550143853
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 153554944,
+      "seconds": 1.1062976839602925
+    },
+    {
+      "name": "consumer-build",
+      "samples": 12,
+      "peak_rss": 304005120,
+      "seconds": 3.3252137370291166
+    },
+    {
+      "name": "consumer-run",
+      "samples": 1,
+      "peak_rss": 9805824,
+      "seconds": 0.2801514599705115
+    }
+  ],
+  "no_performance_measurement": true
+}

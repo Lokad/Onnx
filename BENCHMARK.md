@@ -174,6 +174,11 @@ form 2 (ratio 0.986720). All 18 repeatability controls, nine speed gates and
 strict process separation pass. Every one of 4,176 call clocks and 464
 preparation clocks is retained. This is a component result; product integration
 and complete application/Microsoft ORT qualification remain to be done.
+The [isolated product build](tests/pyannote/winograd-product-results/build-20260923.md)
+and [full suites/NuGet qualification](tests/pyannote/winograd-product-results/product-20260923.md)
+now pass: 3,449 backend and 343 tensor tests, 48 focused graph cases in each
+instruction width, and actual packaged Winograd dispatch. The root remains
+unchanged pending complete model and application qualification.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
