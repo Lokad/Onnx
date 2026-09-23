@@ -367,6 +367,7 @@ me5s.model.onnx
 *.onnx
 *.onnx_data
 Bench*/
+!tests/benchmarks/
 external/
 
 # Local-only large model assets (never commit; see tests/README.md local-model
