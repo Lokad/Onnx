@@ -1,0 +1,13 @@
+--- src/Lokad.Onnx/TensorOps.MatMul.cs
++++ src/Lokad.Onnx/TensorOps.MatMul.cs
+@@ -177,7 +177,9 @@
+         // packed kernel also beats the old kernel at any width (the old output
+         // traffic dominates once panels fix the strided reads), so wide axes
+         // route packed too; the pool-size guard keeps rental sane.
+-        const int TiledPackMinRows = 64;
++        // Short, wide projections reuse the same AVX2 panel consumers.
++        // Keep the original threshold for smaller axes and every other route.
++        int TiledPackMinRows = n >= 1024 && k >= 1024 ? 48 : 64;
+         const long TiledPackMaxElements = 67108864;
+         // E94: small-NK per-call pack budget (elements). Delivers the rem-tail
+         // twin to QK-tiny shapes the M>=64 probe never covered; the race proof

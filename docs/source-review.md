@@ -1,5 +1,16 @@
 # CPU engine review and selective voice-branch integration
 
+Parakeet is now the first performance priority. The
+[current AMD profile](../tests/parakeet/current-profile-results/results-20260923.md)
+puts about 44% of sampled execution in the two packed AVX2 matrix consumers.
+The [wide per-call dispatch experiment](../tests/parakeet/wide-per-call-results/screen-20260923.md)
+preserves numerical behavior but makes complete large-matrix calls 5.14% slower;
+it is rejected. A separate
+[short, wide packing candidate](../tests/parakeet/short-wide-pack-results/build-20260923.md)
+has built with only one private method changed. It targets the existing packing
+threshold at 48–63 rows and still requires numerical and performance admission.
+The current published complete Parakeet ratio remains 1.914728 to ORT.
+
 The original e5 review used Microsoft ONNX Runtime 1.23.2 at
 `a83fc4d58cb48eb68890dd689f94f28288cf2278`. The later audio review uses ORT 1.29
 at `2e2543fbe9fae542f921d47a72d21d5a4ef0b710`, matching the audio baseline
@@ -80,7 +91,7 @@ ORT 39.229 seconds**, ratio **1.900259**, for all twenty clips. All 320 requests
 and 42 repeatability controls pass. It supplies a current matched baseline,
 with no cross-campaign speedup claim.
 
-Pyannote remains first, Parakeet second, Whisper deferred.
+Current priority: Parakeet first, Pyannote second, Whisper deferred.
 
 The preceding selected Pyannote source is the
 [single-panel convolution integration](../tests/pyannote/single-panel-root-results/results-20260922.md).

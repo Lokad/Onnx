@@ -1,0 +1,215 @@
+{
+  "passed": true,
+  "rows": [
+    {
+      "name": "121-121726-0000",
+      "frames": 106,
+      "current_seconds": 2.9088074626666667,
+      "ort_seconds": 1.5596763818333332
+    },
+    {
+      "name": "121-123852-0000",
+      "frames": 222,
+      "current_seconds": 5.911252777166666,
+      "ort_seconds": 3.2686550835
+    },
+    {
+      "name": "237-126133-0002",
+      "frames": 112,
+      "current_seconds": 3.0478179361666666,
+      "ort_seconds": 1.6520835958333333
+    },
+    {
+      "name": "237-126133-0000",
+      "frames": 167,
+      "current_seconds": 4.716646181333333,
+      "ort_seconds": 2.495825909666667
+    },
+    {
+      "name": "260-123286-0000",
+      "frames": 89,
+      "current_seconds": 2.5461628185,
+      "ort_seconds": 1.3100533241666668
+    },
+    {
+      "name": "260-123288-0005",
+      "frames": 157,
+      "current_seconds": 4.5659824895,
+      "ort_seconds": 2.3303104256666667
+    },
+    {
+      "name": "672-122797-0000",
+      "frames": 51,
+      "current_seconds": 2.592208233,
+      "ort_seconds": 0.7714665273333333
+    },
+    {
+      "name": "672-122797-0001",
+      "frames": 190,
+      "current_seconds": 5.2428734,
+      "ort_seconds": 2.7795523908333335
+    },
+    {
+      "name": "908-157963-0005",
+      "frames": 88,
+      "current_seconds": 2.381756402666667,
+      "ort_seconds": 1.292883297
+    },
+    {
+      "name": "908-157963-0000",
+      "frames": 158,
+      "current_seconds": 4.332594773833334,
+      "ort_seconds": 2.3245169491666666
+    },
+    {
+      "name": "1089-134686-0002",
+      "frames": 83,
+      "current_seconds": 2.4782695938333332,
+      "ort_seconds": 1.2405580631666666
+    },
+    {
+      "name": "1089-134686-0011",
+      "frames": 156,
+      "current_seconds": 4.1258364893333335,
+      "ort_seconds": 2.310831374166667
+    },
+    {
+      "name": "1188-133604-0001",
+      "frames": 114,
+      "current_seconds": 2.8922585118333335,
+      "ort_seconds": 1.6877651866666668
+    },
+    {
+      "name": "1188-133604-0002",
+      "frames": 225,
+      "current_seconds": 6.084804839666667,
+      "ort_seconds": 3.3792809181666668
+    },
+    {
+      "name": "1221-135766-0002",
+      "frames": 61,
+      "current_seconds": 3.1702374966666667,
+      "ort_seconds": 0.922250444
+    },
+    {
+      "name": "1221-135766-0000",
+      "frames": 156,
+      "current_seconds": 4.200183473666667,
+      "ort_seconds": 2.3199971385
+    },
+    {
+      "name": "1284-1180-0000",
+      "frames": 102,
+      "current_seconds": 2.706838218,
+      "ort_seconds": 1.539607921
+    },
+    {
+      "name": "1284-1180-0018",
+      "frames": 151,
+      "current_seconds": 4.3360714693333335,
+      "ort_seconds": 2.266949970166667
+    },
+    {
+      "name": "1320-122612-0001",
+      "frames": 120,
+      "current_seconds": 3.1499197315,
+      "ort_seconds": 1.7919854871666667
+    },
+    {
+      "name": "1320-122612-0000",
+      "frames": 169,
+      "current_seconds": 4.7823035795,
+      "ort_seconds": 2.5383416705
+    }
+  ],
+  "shape_sources": {
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0001.json": {
+      "bytes": 1479,
+      "sha256": "419ccf95b637232017eef6570ad41bd4b57c14ac22edbfee24224e8d8f278dfa"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0046.json": {
+      "bytes": 1481,
+      "sha256": "bd94d295f754f502ed2e0f8a899d17cf6cd573de865592fde58fcbc4d43d68b8"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0123.json": {
+      "bytes": 1479,
+      "sha256": "c08b91404c26ab62b91bfabe86fee0c8f125f15e62b0b8152ff0ce8d6af953b9"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0178.json": {
+      "bytes": 1480,
+      "sha256": "452754fc8bff9b25fc0513d30215c1d28a14911ae342bf62d569c55809faf41a"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0265.json": {
+      "bytes": 1476,
+      "sha256": "480f961173e9176dbf4c3d1377917f4dce5ae411970c16aa555902b2312e3b37"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0304.json": {
+      "bytes": 1480,
+      "sha256": "be38ffc4f9acdbb0818b956b76356764093c76eca00f07419c2c72b283c946f6"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0377.json": {
+      "bytes": 1476,
+      "sha256": "1c658909730e5816cc81d5a2981890d875fea5b0d55027493284c6d761e2277f"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0400.json": {
+      "bytes": 1480,
+      "sha256": "9b57b81cc4471484871b76de396c1a17c11a5a7b2e6cc20a173818fd253c1ebe"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0468.json": {
+      "bytes": 1477,
+      "sha256": "de28498a5f553e445e1512d99168861edc8094dae4499b5370b16424c8cf28a5"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0502.json": {
+      "bytes": 1482,
+      "sha256": "488a7dcb23cfe267083f58a16dca1e92602b6c66161cfe9819cc9d5d1d56b26d"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0569.json": {
+      "bytes": 1479,
+      "sha256": "ce3069fdf16643001f2157624f039e057d6599056f4b65085f2946457e833870"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0614.json": {
+      "bytes": 1483,
+      "sha256": "0865884cae7a3bb69f5afd3a2ed488c0caa72f25dda4d28b5dff706913c726e2"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0690.json": {
+      "bytes": 1482,
+      "sha256": "3a4e9ed7de04bcb76eec2719835f9b293c3d09c1822870f0a5c759e0cff22798"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0742.json": {
+      "bytes": 1484,
+      "sha256": "73e75ecf2312c82674c6cc8b073d39ad241d11f35f578e0d9b118f0563015917"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0845.json": {
+      "bytes": 1479,
+      "sha256": "4ed0f77fd56fd9f189af87257d4de377e2edfab96b2ca42b2e5ece8cf3fa1651"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0879.json": {
+      "bytes": 1483,
+      "sha256": "5a5a480b66a94eac5f649cd0ecc3449bc148d05ad90a1d343e4e9fd3adb5c731"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/0956.json": {
+      "bytes": 1480,
+      "sha256": "82c4092c83be2faa0271f3edd52282ec7d7c6fb98f5e60996d16372c5f4fe737"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/1016.json": {
+      "bytes": 1481,
+      "sha256": "2d36713b531683d9565863198bcb664f9e8ddf51d6b83ad3bfe5cdff707505f3"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/1094.json": {
+      "bytes": 1482,
+      "sha256": "93817f9e2d59ff75065164907c15d6fad051a7bb0e3222d1c33343e3a4fe69ca"
+    },
+    "artifacts/parakeet-performance-profile-v2-20260921/trace-output/1158.json": {
+      "bytes": 1483,
+      "sha256": "c8dcdc95b0fedfdcb7a4915bc3731729ea39be74371c12700d3fc35945d84877"
+    }
+  },
+  "trace_closure": {
+    "bytes": 5029112,
+    "sha256": "6d8ce878f99acf291cb20348bba948bd1de7f128298c774cf94adf84e855700d"
+  },
+  "baseline_closure": {
+    "bytes": 86078,
+    "sha256": "2e75c249ca3f76fc90c0179e2244cd677e829cf14da18029ec73f0a2ed03abf3"
+  }
+}
