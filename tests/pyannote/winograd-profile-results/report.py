@@ -65,7 +65,7 @@ def main():
         '| Exclusive sampled leaf, complete dialogue | Capture A | Capture B |',
         '|---|---:|---:|']
     for method in ranked[:16]:
-        label = method.replace('|','\\|')
+        label = method.split('!',1)[-1].split('(',1)[0].removeprefix('Lokad.Onnx.').replace('|','\\|')
         lines.append(f"| {label} | {100*leaves['sampled-a'].get(method,0):.3f}% | {100*leaves['sampled-b'].get(method,0):.3f}% |")
     lines += ['', 'The sixteen largest leaves are ranked by their combined share across',
         'both captures. [Every exclusive and inclusive stack](stacks-20260923.csv)',

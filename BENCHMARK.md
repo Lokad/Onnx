@@ -41,12 +41,21 @@ its current ORT gap; separate campaigns do not establish a product speedup
 or regression. Earlier results remain historical. The full application parity
 target remains <=1.05.
 
+The [current Pyannote profile](tests/pyannote/winograd-profile-results/results-20260923.md)
+passes all 48 public requests, both trace exports and 721 resource observations.
+Two captures place 42.4–43.1% of sampled time in `ExecuteWinograd` and
+10.3–11.1% in its input-transform helpers. Inlining prevents treating the
+caller percentage as an exact multiplication cost. Profiling adds 14.5–17.6%
+dialogue wall time versus the diagnostic control. The next source/generated-code
+review targets this remaining convolution work; these diagnostic clocks do
+not replace either matched ORT comparison above.
+
 The [pre-Winograd Pyannote profile](tests/pyannote/current-profile-results/results-20260922.md)
 passes all48 public requests and846 resource observations. Two captures
 attribute about64.9% of full-request sampled thread time to blocked convolution
 and8.1–8.5% to the two LSTM projection helpers. Profiling adds about12.2% wall
-time versus its unprofiled control. These diagnostic samples guide a distinct
-wider-projection experiment; the matched application and Microsoft ORT figures
+time versus its unprofiled control. These diagnostic samples guided the
+wider-projection experiment below; the matched application and Microsoft ORT figures
 above remain unchanged.
 The [isolated wider LSTM prototype](tests/pyannote/lstm-wide-results/build-20260922.md)
 builds with its compiled changes confined to four dispatch methods and two

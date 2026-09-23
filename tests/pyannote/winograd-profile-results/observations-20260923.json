@@ -1,0 +1,490 @@
+{
+  "closed": {
+    "bytes": 78467,
+    "sha256": "8d960999ebda0a6f82f3548c89d4b01ec302ce2802bb9454b3fa371f2a5de126"
+  },
+  "analysis": {
+    "bytes": 664041,
+    "sha256": "3096ace6a6b87be4dfb06be9f1bf56c6334bd7933426f6349cc123fd3f90b5e3"
+  },
+  "generator": {
+    "bytes": 7440,
+    "sha256": "14be92696aaf8dc5c86ffbee497f4daade7a8bbb58d3dbfd489716d9eee8cec1"
+  },
+  "observations": [
+    {
+      "name": "dialogue-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 10.310969462333333,
+          "process_cpu_mean": 10.308963,
+          "allocated_mean": 1007015557.3333334
+        },
+        "sampled-a": {
+          "wall_mean": 11.802986645666666,
+          "process_cpu_mean": 11.268155333333334,
+          "allocated_mean": 1006993581.3333334
+        },
+        "sampled-b": {
+          "wall_mean": 12.127507003333333,
+          "process_cpu_mean": 11.579558666666665,
+          "allocated_mean": 1006999610.6666666
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1447019301903447,
+        "sampled-b": 1.1761752420697138
+      }
+    },
+    {
+      "name": "dialogue-0-10s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.4856143273333333,
+          "process_cpu_mean": 0.4858133333333334,
+          "allocated_mean": 104508565.33333333
+        },
+        "sampled-a": {
+          "wall_mean": 0.5542354039999999,
+          "process_cpu_mean": 0.5278619999999999,
+          "allocated_mean": 104510989.33333333
+        },
+        "sampled-b": {
+          "wall_mean": 0.571963132,
+          "process_cpu_mean": 0.5435986666666667,
+          "allocated_mean": 104508157.33333333
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1413077679225143,
+        "sampled-b": 1.1778135442190023
+      }
+    },
+    {
+      "name": "dialogue-10-20s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.4861477586666667,
+          "process_cpu_mean": 0.48607,
+          "allocated_mean": 104530634.66666667
+        },
+        "sampled-a": {
+          "wall_mean": 0.551629482,
+          "process_cpu_mean": 0.5252706666666667,
+          "allocated_mean": 104533237.33333333
+        },
+        "sampled-b": {
+          "wall_mean": 0.5569176596666666,
+          "process_cpu_mean": 0.5297533333333333,
+          "allocated_mean": 104531152.0
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1346951048646747,
+        "sampled-b": 1.1455728217159675
+      }
+    },
+    {
+      "name": "dialogue-20-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.483053948,
+          "process_cpu_mean": 0.48297366666666663,
+          "allocated_mean": 104525693.33333333
+        },
+        "sampled-a": {
+          "wall_mean": 0.542286083,
+          "process_cpu_mean": 0.5160866666666667,
+          "allocated_mean": 104528040.0
+        },
+        "sampled-b": {
+          "wall_mean": 0.560433529,
+          "process_cpu_mean": 0.5328463333333333,
+          "allocated_mean": 104535941.33333333
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1226201239949292,
+        "sampled-b": 1.1601882798399155
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "name": "sampled-a",
+      "exports": {
+        "passed": true,
+        "profiles": 3,
+        "events": 85298
+      },
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 35.408959937,
+          "sampled_thread_seconds": 35.41496513407564,
+          "process_cpu_seconds": 33.804466,
+          "sampled_to_wall": 1.0001695954099281,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 1.6627062119999998,
+          "sampled_thread_seconds": 1.663791281511594,
+          "process_cpu_seconds": 1.583586,
+          "sampled_to_wall": 1.0006525924446321,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 1.654888446,
+          "sampled_thread_seconds": 1.649701175210421,
+          "process_cpu_seconds": 1.575812,
+          "sampled_to_wall": 0.9968654861286167,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 1.626858249,
+          "sampled_thread_seconds": 1.627565307607416,
+          "process_cpu_seconds": 1.54826,
+          "sampled_to_wall": 1.0004346159893467,
+          "marker_intervals": 3
+        }
+      ],
+      "selected_seconds": {
+        "dialogue-30s": 35.41496513407564,
+        "dialogue-0-10s": 1.663791281511594,
+        "dialogue-10-20s": 1.649701175210421,
+        "dialogue-20-30s": 1.627565307607416
+      },
+      "outside_marker_seconds": 7.07049193097284,
+      "profiles": [
+        {
+          "name": "Thread (798730)",
+          "seconds": 40.58676171874996,
+          "selected_seconds": 40.35602289840515,
+          "events": 85188
+        },
+        {
+          "name": "Thread (798732)",
+          "seconds": 0.00553143094051361,
+          "selected_seconds": 0.0,
+          "events": 90
+        },
+        {
+          "name": "Thread (798735) (.NET Finalizer Thread)",
+          "seconds": 6.8342216796875,
+          "selected_seconds": 0.0,
+          "events": 20
+        }
+      ],
+      "intervals": {
+        "dialogue-30s": [
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 173.899135,
+            "end_ms": 12348.4801896875
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 14029.704156,
+            "end_ms": 25632.116265375
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 27275.997137096587,
+            "end_ms": 38913.969107109835
+          }
+        ],
+        "dialogue-0-10s": [
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 12353.980264,
+            "end_ms": 12922.531899742187
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 25634.54316401805,
+            "end_ms": 26171.56357901113
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 38915.14369305766,
+            "end_ms": 39473.362923833985
+          }
+        ],
+        "dialogue-10-20s": [
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 12926.981038,
+            "end_ms": 13479.06869083902
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 26179.083642,
+            "end_ms": 26724.627132235353
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 39476.897561049496,
+            "end_ms": 40028.967593185545
+          }
+        ],
+        "dialogue-20-30s": [
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 13483.715311,
+            "end_ms": 14025.079019496094
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 26730.517318,
+            "end_ms": 27270.13597034375
+          },
+          {
+            "thread": "Thread (798730)",
+            "start_ms": 40032.42013200977,
+            "end_ms": 40579.00307877734
+          }
+        ]
+      },
+      "rounding_adjustments_ms": [],
+      "scope": "Estimated sampled thread time under explicit markers; CPU_TIME is an exporter label, not independently measured CPU time."
+    },
+    {
+      "name": "sampled-b",
+      "exports": {
+        "passed": true,
+        "profiles": 2,
+        "events": 86994
+      },
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 36.38252101,
+          "sampled_thread_seconds": 36.38189129728486,
+          "process_cpu_seconds": 34.738676,
+          "sampled_to_wall": 0.9999826918889165,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 1.7158893960000001,
+          "sampled_thread_seconds": 1.7119165120211932,
+          "process_cpu_seconds": 1.630796,
+          "sampled_to_wall": 0.997684650311338,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 1.670752979,
+          "sampled_thread_seconds": 1.6712888951184377,
+          "process_cpu_seconds": 1.58926,
+          "sampled_to_wall": 1.0003207632278224,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 1.681300587,
+          "sampled_thread_seconds": 1.6808145818090587,
+          "process_cpu_seconds": 1.598539,
+          "sampled_to_wall": 0.9997109349781359,
+          "marker_intervals": 3
+        }
+      ],
+      "selected_seconds": {
+        "dialogue-30s": 36.38189129728486,
+        "dialogue-0-10s": 1.7119165120211932,
+        "dialogue-10-20s": 1.6712888951184377,
+        "dialogue-20-30s": 1.6808145818090587
+      },
+      "outside_marker_seconds": 0.24230137321447365,
+      "profiles": [
+        {
+          "name": "Thread (798770)",
+          "seconds": 41.68305468749982,
+          "selected_seconds": 41.445911286233574,
+          "events": 86912
+        },
+        {
+          "name": "Thread (798772)",
+          "seconds": 0.00515797194820404,
+          "selected_seconds": 0.0,
+          "events": 82
+        }
+      ],
+      "intervals": {
+        "dialogue-30s": [
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 171.958374,
+            "end_ms": 12592.454880396423
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 14321.023606030938,
+            "end_ms": 26285.342941937502
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 27970.103137043883,
+            "end_ms": 39967.178592025935
+          }
+        ],
+        "dialogue-0-10s": [
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 12599.504518,
+            "end_ms": 13179.194482045776
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 26295.03956802597,
+            "end_ms": 26851.772356085938
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 39973.01806910603,
+            "end_ms": 40548.51182902148
+          }
+        ],
+        "dialogue-10-20s": [
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 13182.770949,
+            "end_ms": 13744.5570818125
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 26856.469731118865,
+            "end_ms": 27404.885024453124
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 40550.76071802235,
+            "end_ms": 41111.84818699403
+          }
+        ],
+        "dialogue-20-30s": [
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 13749.337292043907,
+            "end_ms": 14316.434643074219
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 27410.96686124115,
+            "end_ms": 27964.244010037477
+          },
+          {
+            "thread": "Thread (798770)",
+            "start_ms": 41115.277106,
+            "end_ms": 41675.717187982424
+          }
+        ]
+      },
+      "rounding_adjustments_ms": [],
+      "scope": "Estimated sampled thread time under explicit markers; CPU_TIME is an exporter label, not independently measured CPU time."
+    }
+  ],
+  "resources": [
+    {
+      "name": "control",
+      "samples": 207,
+      "peak_rss": 958799872,
+      "seconds": 52.62950083101168
+    },
+    {
+      "name": "sampled-a",
+      "samples": 227,
+      "peak_rss": 1002639360,
+      "seconds": 58.23528235103004
+    },
+    {
+      "name": "sampled-b",
+      "samples": 232,
+      "peak_rss": 993906688,
+      "seconds": 59.624494895979296
+    },
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 5013504,
+      "seconds": 0.2563262599869631
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 149921792,
+      "seconds": 1.0218088109977543
+    },
+    {
+      "name": "consumer-build",
+      "samples": 29,
+      "peak_rss": 375148544,
+      "seconds": 7.422127822996117
+    },
+    {
+      "name": "inventory",
+      "samples": 1,
+      "peak_rss": 10190848,
+      "seconds": 0.2616883279988542
+    },
+    {
+      "name": "sampled-a-speedscope",
+      "samples": 5,
+      "peak_rss": 93601792,
+      "seconds": 1.3143700799555518
+    },
+    {
+      "name": "sampled-a-chromium",
+      "samples": 5,
+      "peak_rss": 93872128,
+      "seconds": 1.326749190047849
+    },
+    {
+      "name": "sampled-b-speedscope",
+      "samples": 5,
+      "peak_rss": 89894912,
+      "seconds": 1.315997640020214
+    },
+    {
+      "name": "sampled-b-chromium",
+      "samples": 5,
+      "peak_rss": 93777920,
+      "seconds": 1.3277320810011588
+    }
+  ],
+  "consumer": {
+    "existing_methods": 160,
+    "unchanged_methods": 159,
+    "added_imports": 0,
+    "changed_hash_literals": 2
+  },
+  "outputs": {
+    "results-20260923.md": {
+      "bytes": 4435,
+      "sha256": "c59a14dd13a73329e0a0599fb2984c217c9ddea5808cab5b69378ab44f717dcd"
+    },
+    "clocks-20260923.csv": {
+      "bytes": 6450,
+      "sha256": "975339d146ea3c584fc6b78df3384c145a3113728ab785d701fe281860ef7662"
+    },
+    "setup-20260923.csv": {
+      "bytes": 74,
+      "sha256": "39dbe8f53068c7d8e01e2fbe6128424a9a9bbec0aebcb761a9219f69e8b857f8"
+    },
+    "stacks-20260923.csv": {
+      "bytes": 498367,
+      "sha256": "e213da337227de91def4b7d7adb449878f2826167b4cb901c292de7294795ed7"
+    }
+  }
+}
