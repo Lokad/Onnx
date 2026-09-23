@@ -185,7 +185,12 @@ original Microsoft ORT accuracy limits. Segmentation and public speaker
 timelines are exact; embedding and centroid floats change within the existing
 bounds. The [Parakeet regression](tests/pyannote/winograd-product-results/parakeet-20260923.md)
 also passes: all 784 tensor arrays and 20 public results remain exact, with
-unchanged ORT limits. Shared/e5 regressions and complete application timing follow.
+unchanged ORT limits. The [initial shared-model check](tests/pyannote/winograd-product-results/shared-failure-20260923.md)
+failed exactness for two ResNet-50 feature vectors, although both pass the
+original ORT tolerance. The generic arithmetic also affects eligible ResNet
+convolutions. That failure is retained; a separate qualification explicitly
+accounts for this scope while keeping native limits and unaffected-model bits
+unchanged. Complete application timing has not started.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
