@@ -6,15 +6,15 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **41.48 GB**, including **28.03 GB** in artifacts,
+The latest inventory is **41.49 GB**, including **28.05 GB** in artifacts,
 after retaining M54's build, numerical, component and complete Parakeet
 correctness evidence, closing its application and cross-model correctness
 comparisons, closing graph and Pyannote application checks, qualifying the actual
-root and package, and drafting the next matrix-blocking source and controllers.
-A fresh inventory at 22:31 UTC confirms **41,477,218,292 bytes**, with **8.52 GB**
+root and package, and preparing the next matrix-blocking build bundle.
+A fresh inventory at 22:40 UTC confirms **41,494,101,907 bytes**, with **8.51 GB**
 of headroom. Receipt:
-`artifacts/repository-retention-20260923/m54-release-qualified-size.json`.
-Counting the model junction again gives 52.26 GB, which counts the same 10.79 GB
+`artifacts/repository-retention-20260923/m55-build-prepared-size.json`.
+Counting the model junction again gives 52.28 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
 No new model copies were needed. Recheck after subsequent collections.
