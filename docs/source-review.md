@@ -6,9 +6,12 @@ puts about 44% of sampled execution in the two packed AVX2 matrix consumers.
 The [wide per-call dispatch experiment](../tests/parakeet/wide-per-call-results/screen-20260923.md)
 preserves numerical behavior but makes complete large-matrix calls 5.14% slower;
 it is rejected. A separate
-[short, wide packing candidate](../tests/parakeet/short-wide-pack-results/build-20260923.md)
-has built with only one private method changed. It targets the existing packing
-threshold at 48–63 rows and still requires numerical and performance admission.
+[short, wide packing candidate](../tests/parakeet/short-wide-pack-results/screen-20260923.md)
+passes numerical checks and reduces complete-call latency by 68.27% across its
+twelve short cases. It is rejected because a longer case regresses by 11.31%,
+exceeding the fixed 5% limit. All 48 repeatability controls pass. A distinct
+implementation will isolate short-case dispatch while retaining the original
+general kernel body; the cause of the measured regression remains unproven.
 The current published complete Parakeet ratio remains 1.914728 to ORT.
 
 The original e5 review used Microsoft ONNX Runtime 1.23.2 at

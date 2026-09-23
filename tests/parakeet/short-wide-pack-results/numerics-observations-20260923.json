@@ -1,0 +1,72 @@
+{
+  "closure": {
+    "bytes": 19294,
+    "sha256": "335cb9bc6727f3845f12aeaf47e2c0e207f8b6992bfdd2b2c9bb35595b008335"
+  },
+  "passed": true,
+  "numerically_admitted": true,
+  "no_performance_measurement": true,
+  "root_product_changed": false,
+  "consumer": {
+    "bytes": 34816,
+    "sha256": "3cb1f2647810ad21c1811a1c6e826ed9cc94957f11ddf5ae24b51f17b63b71cd"
+  },
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 766976,
+        "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 766976,
+        "sha256": "6a71a16db504ceb2c98e5af40d5b9b4b166e5c650bc29c984daca9bc42c2aa8f"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "417fac56ca7f7d8039997ad7a9de6c728851d3c25b8ca9160109b1d5b993dd0c"
+      }
+    }
+  },
+  "resources": 437,
+  "peak_rss": 433143808,
+  "results": {
+    "current-numerics-256": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "current-numerics-512": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "candidate-numerics-256": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "candidate-numerics-512": {
+      "cases": 66,
+      "values": 7575601,
+      "full_equality": true
+    },
+    "current-codegen-512": {
+      "cases": 21,
+      "values": 0,
+      "full_equality": true
+    },
+    "candidate-codegen-512": {
+      "cases": 21,
+      "values": 0,
+      "full_equality": true
+    }
+  },
+  "codegen_retained": true,
+  "codegen_review_required": true
+}

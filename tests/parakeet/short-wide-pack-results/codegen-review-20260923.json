@@ -1,0 +1,214 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 19294,
+    "sha256": "335cb9bc6727f3845f12aeaf47e2c0e207f8b6992bfdd2b2c9bb35595b008335"
+  },
+  "inputs": {
+    "current": {
+      "bytes": 316717,
+      "sha256": "31a76520b7c4f0dfa82941b0d697d5e6724fdf1ee87a8169978f61f573678313"
+    },
+    "candidate": {
+      "bytes": 319096,
+      "sha256": "f82ebcd53e585138943b96fb09a40d0ae27bc32d85833d004ecb338f72021f7e"
+    }
+  },
+  "bodies": [
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 1885
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4105
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1577
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2713
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4105
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1577
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 3712
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 1327
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4796
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1846
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4796
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1846
+    },
+    {
+      "role": "current",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 1629
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier0",
+      "bytes": 1947
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4796
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1846
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4105
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1577
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Instrumented Tier0",
+      "bytes": 2790
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4105
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1577
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.Tensor`1[float]:RunFloatMatMulKernel(int,int,int,ptr,ptr,ptr,Lokad.Onnx.TensorExecutionOptions)",
+      "tier": "Tier1",
+      "bytes": 3850
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 1327
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Instrumented Tier0",
+      "bytes": 4796
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1-OSR",
+      "bytes": 1846
+    },
+    {
+      "role": "candidate",
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "tier": "Tier1",
+      "bytes": 1629
+    }
+  ],
+  "packed_consumers_equal_except_exception_handle_relocations": [
+    "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+    "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)"
+  ],
+  "relocations": [
+    {
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "instruction": 371,
+      "current": "mov      rdi, 0x7869C726CD28",
+      "candidate": "mov      rdi, 0x74A01D29CD28",
+      "next": "call     CORINFO_HELP_NEWSFAST",
+      "delta": 4164675239936
+    },
+    {
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_2x4packed_bump(int,int,int,ptr,ptr,ptr)",
+      "instruction": 375,
+      "current": "mov      rsi, 0x7869C762EE10",
+      "candidate": "mov      rsi, 0x74A01D65EE10",
+      "next": "call     [CORINFO_HELP_STRCNS]",
+      "delta": 4164675239936
+    },
+    {
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "instruction": 437,
+      "current": "mov      rdi, 0x7869C726CD28",
+      "candidate": "mov      rdi, 0x74A01D29CD28",
+      "next": "call     CORINFO_HELP_NEWSFAST",
+      "delta": 4164675239936
+    },
+    {
+      "method": "Lokad.Onnx.MathOps:mm_unsafe_vectorized_intrinsics_3x4packed(int,int,int,ptr,ptr,ptr)",
+      "instruction": 441,
+      "current": "mov      rsi, 0x7869C762EE10",
+      "candidate": "mov      rsi, 0x74A01D65EE10",
+      "next": "call     [CORINFO_HELP_STRCNS]",
+      "delta": 4164675239936
+    }
+  ],
+  "review": "All26emittedbodiesretained. CandidateTier1 selects48onlywhenbothaxes>=1024, otherwise64; allthreecomparisonsreuse thelocal, includingexact-three-rowtail suppression. Poolreturn,fallback,odd-rowfixup remain. OptimizedAVX2consumerinstructionlists differ onlyat two relocatedexception/type/stringhandle operands perbody, withidenticalrelocationdelta. DispatchTier1 grows3712to3850bytes. No speedclaim."
+}
