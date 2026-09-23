@@ -6,13 +6,13 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **40.97 GB**, including **27.52 GB** in artifacts,
+The latest inventory is **40.98 GB**, including **27.53 GB** in artifacts,
 after retaining M54's build, numerical, component and complete Parakeet
 correctness evidence, closing its application and cross-model correctness
-comparisons, and staging the graph performance comparison. It has about
-**9.03 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m54-cross-models-closed-size.json`.
-Counting the model junction again gives 51.75 GB, which counts the same 10.79 GB
+comparisons, staging the graph performance comparison and drafting the next
+isolated matrix-blocking source. It has about **9.02 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m55-source-draft-size.json`.
+Counting the model junction again gives 51.76 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
 No new model copies were needed. Recheck after subsequent collections.
