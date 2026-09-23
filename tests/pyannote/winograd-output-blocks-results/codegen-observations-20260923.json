@@ -1,0 +1,3163 @@
+{
+  "passed": true,
+  "mechanism_admitted": true,
+  "no_performance_measurement": true,
+  "first_capture_remains_failed": true,
+  "first_closure": {
+    "bytes": 26725,
+    "sha256": "116194a103a73afba346d03d6325fe2bf7a011404b4ae905325b884b401512c9"
+  },
+  "correction_closure": {
+    "bytes": 27467,
+    "sha256": "74a30abd4d5c61502c9f737991cf9bdd49a25addcd1c8ea17fbd4b4aea034b9d"
+  },
+  "reviewer": {
+    "bytes": 8447,
+    "sha256": "859a628892ee97ee55d62ba7e7a68a758e9658d1deb782db9631cdda15a8cf7d"
+  },
+  "sizes": {
+    "current-captured-256": {
+      "multiply": 329,
+      "inverse": 588,
+      "execute": 4743,
+      "inline_fmas": 8,
+      "multiply512_calls": 0
+    },
+    "current-captured-512": {
+      "multiply": 295,
+      "inverse": 650,
+      "execute": 5792,
+      "inline_fmas": 8,
+      "multiply512_calls": 0
+    },
+    "candidate-captured-256": {
+      "multiply": 329,
+      "inverse": 588,
+      "execute": 4740,
+      "inline_fmas": 8,
+      "multiply512_calls": 0
+    },
+    "candidate-captured-512": {
+      "multiply": 732,
+      "inverse": 650,
+      "execute": 5507,
+      "inline_fmas": 0,
+      "multiply512_calls": 1
+    }
+  },
+  "reductions": [
+    {
+      "stream": "current-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        1731
+      ],
+      "body_sha256": "ba65a30014da902502cda237e70d30d51c0f685df61a6624ab221b61d717579d",
+      "loops": [
+        {
+          "label": "G_M000_IG23",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        4743
+      ],
+      "body_sha256": "2974508938e1b38d1077aa3aac0818091172aea91bbfcc466f60d2e5d7ebc9dc",
+      "loops": [
+        {
+          "label": "G_M000_IG89",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "body_sha256": "580625ab409a77b87fcd1217f8b2104b5f65107ce8b670b8f1d5168464e57b15",
+      "loops": [
+        {
+          "label": "G_M000_IG04",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "inc",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "body_sha256": "9cf89db43811da1a173a12931b9e9bcf98d54539ba0cff2e8d7d91b1657a0e7f",
+      "loops": [
+        {
+          "label": "G_M000_IG04",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "inc",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        329
+      ],
+      "body_sha256": "70d156a41f48d9e5c4fb36a87a84235a5f13c8250550db86598174c371a5937e",
+      "loops": [
+        {
+          "label": "G_M000_IG07",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        1662
+      ],
+      "body_sha256": "97bf6f2585ec02a91404e6112a5020d988e25f40be7cf4abcf552ace44f1ccc5",
+      "loops": [
+        {
+          "label": "G_M000_IG15",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        },
+        {
+          "label": "G_M000_IG52",
+          "fmas": 8,
+          "vector_width": 512,
+          "counter": "dec",
+          "accumulators": [
+            "zmm0",
+            "zmm1",
+            "zmm2",
+            "zmm3",
+            "zmm4",
+            "zmm5",
+            "zmm6",
+            "zmm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2327
+      ],
+      "body_sha256": "969e356daef6d4d334ca05a8ec97e2c49a76c758aa2a6dd369e00b723c248100",
+      "loops": [
+        {
+          "label": "G_M000_IG28",
+          "fmas": 8,
+          "vector_width": 512,
+          "counter": "dec",
+          "accumulators": [
+            "zmm0",
+            "zmm1",
+            "zmm2",
+            "zmm3",
+            "zmm4",
+            "zmm5",
+            "zmm6",
+            "zmm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        5792
+      ],
+      "body_sha256": "e889beeed24b297d4746a65aca93ef452c198a6851715247e8c31ac37ce0979a",
+      "loops": [
+        {
+          "label": "G_M000_IG92",
+          "fmas": 8,
+          "vector_width": 512,
+          "counter": "dec",
+          "accumulators": [
+            "zmm0",
+            "zmm1",
+            "zmm2",
+            "zmm3",
+            "zmm4",
+            "zmm5",
+            "zmm6",
+            "zmm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "body_sha256": "844912a28863a8a0109355728c1163508a87ae7a8fa3953c9c26c0db55f93cd0",
+      "loops": [
+        {
+          "label": "G_M000_IG04",
+          "fmas": 8,
+          "vector_width": 512,
+          "counter": "inc",
+          "accumulators": [
+            "zmm0",
+            "zmm1",
+            "zmm2",
+            "zmm3",
+            "zmm4",
+            "zmm5",
+            "zmm6",
+            "zmm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "body_sha256": "f0993cb35950dad9c1010e3e660a440b5b9bb792cc9b471f0c9070f30b989e5f",
+      "loops": [
+        {
+          "label": "G_M000_IG04",
+          "fmas": 8,
+          "vector_width": 512,
+          "counter": "inc",
+          "accumulators": [
+            "zmm0",
+            "zmm1",
+            "zmm2",
+            "zmm3",
+            "zmm4",
+            "zmm5",
+            "zmm6",
+            "zmm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "current-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        295
+      ],
+      "body_sha256": "5e25913ee1d9b20a7c58ee086ad9afd7679d4ebcaba95674ef4672102ea32338",
+      "loops": [
+        {
+          "label": "G_M000_IG07",
+          "fmas": 8,
+          "vector_width": 512,
+          "counter": "dec",
+          "accumulators": [
+            "zmm0",
+            "zmm1",
+            "zmm2",
+            "zmm3",
+            "zmm4",
+            "zmm5",
+            "zmm6",
+            "zmm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "body_sha256": "580625ab409a77b87fcd1217f8b2104b5f65107ce8b670b8f1d5168464e57b15",
+      "loops": [
+        {
+          "label": "G_M000_IG04",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "inc",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        1712
+      ],
+      "body_sha256": "67655838dc36bcc4d0a5e4fba9542d2465c453c433a1c8d2be3e639e61224165",
+      "loops": [
+        {
+          "label": "G_M000_IG16",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "body_sha256": "9cf89db43811da1a173a12931b9e9bcf98d54539ba0cff2e8d7d91b1657a0e7f",
+      "loops": [
+        {
+          "label": "G_M000_IG04",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "inc",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        329
+      ],
+      "body_sha256": "70d156a41f48d9e5c4fb36a87a84235a5f13c8250550db86598174c371a5937e",
+      "loops": [
+        {
+          "label": "G_M000_IG07",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-256",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        4740
+      ],
+      "body_sha256": "6504ef535d604bc9efcee9daca75a3e603287549dc0f36291b2c8e11e2bd78db",
+      "loops": [
+        {
+          "label": "G_M000_IG91",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2354
+      ],
+      "body_sha256": "e7a38f9f02e9c64a60ef52164f6216a42954adab38314003780d4aca5ad8ef9a",
+      "loops": [
+        {
+          "label": "G_M000_IG10",
+          "fmas": 8,
+          "vector_width": 256,
+          "counter": "dec",
+          "accumulators": [
+            "ymm0",
+            "ymm1",
+            "ymm2",
+            "ymm3",
+            "ymm4",
+            "ymm5",
+            "ymm6",
+            "ymm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        732
+      ],
+      "body_sha256": "2f9b13b495dee7b60dba4a4b9bc3f5ae41d4703992c1f4cb91a4bfdebdf7aa92",
+      "loops": [
+        {
+          "label": "G_M000_IG07",
+          "fmas": 16,
+          "vector_width": 512,
+          "counter": "inc",
+          "accumulators": [
+            "zmm0",
+            "zmm8",
+            "zmm1",
+            "zmm9",
+            "zmm2",
+            "zmm10",
+            "zmm3",
+            "zmm11",
+            "zmm4",
+            "zmm12",
+            "zmm5",
+            "zmm13",
+            "zmm6",
+            "zmm14",
+            "zmm7",
+            "zmm15"
+          ],
+          "weight_vectors": 2,
+          "explicit_broadcasts": 8,
+          "embedded_broadcasts": 0,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        },
+        {
+          "label": "G_M000_IG11",
+          "fmas": 8,
+          "vector_width": 512,
+          "counter": "inc",
+          "accumulators": [
+            "zmm0",
+            "zmm1",
+            "zmm2",
+            "zmm3",
+            "zmm4",
+            "zmm5",
+            "zmm6",
+            "zmm7"
+          ],
+          "weight_vectors": 1,
+          "explicit_broadcasts": 0,
+          "embedded_broadcasts": 8,
+          "reduction_loop_frame_references": 0,
+          "reduction_loop_calls": 0,
+          "input_offsets_bytes": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            28
+          ],
+          "input_step_bytes": 32
+        }
+      ]
+    },
+    {
+      "stream": "candidate-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2040
+      ],
+      "body_sha256": "c68a06b0c259e607c09c1eaff1209d3bce2d196d01e09fca459b66f70bdffd54",
+      "loops": []
+    },
+    {
+      "stream": "candidate-captured-512",
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        5507
+      ],
+      "body_sha256": "37090d7478f7851e53e4f21d085360731fbcdd1e8b4abcc54f540ccb3fe477a2",
+      "loops": []
+    }
+  ],
+  "all_bodies": [
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 0,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0",
+      "bytes": [
+        92
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "a4f56bb2564587fb7fe78a7ede544f8b8db9a21cfb324d6471a5be1a1bf20b75"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        746
+      ],
+      "line": 42,
+      "complete": true,
+      "raw_sha256": "e06af2d6fa28059ee56399b5c00d67bf8ab3c13d15c978667ae8da85d028befa"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3521
+      ],
+      "line": 293,
+      "complete": true,
+      "raw_sha256": "1f71ce1de98d09b10e6c5e7828767795d1433fa1085f5a8609547a437ab98bfa"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 3,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2050
+      ],
+      "line": 1154,
+      "complete": true,
+      "raw_sha256": "92446b3be5db036ec7ea04a5c87cce55f17e16f36c9c54bc9a0ac5b9f24f7eda"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 4,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        109
+      ],
+      "line": 1727,
+      "complete": true,
+      "raw_sha256": "70de60b2631633e25a2352c69798c1a7375ccf3c32e4e78a26598b17d5995060"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 5,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        278
+      ],
+      "line": 1773,
+      "complete": true,
+      "raw_sha256": "74105977ce5f6a62841fdbd5db0e77c33b128ef0fb8851ac10e81f050de64bbc"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 6,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier0",
+      "bytes": [
+        313
+      ],
+      "line": 1894,
+      "complete": true,
+      "raw_sha256": "7ead51e733f68034479069b41aa3e7476fc6ac87b20b5a15e661a82fab42e007"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 7,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4544
+      ],
+      "line": 1990,
+      "complete": true,
+      "raw_sha256": "a0eefdf9f18b0152c25ffe86602c8bd7dfa8cc598a1a912fbef0fc912efd2803"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 8,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInput(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        1153
+      ],
+      "line": 3036,
+      "complete": true,
+      "raw_sha256": "124e1f9d050952e592d2e3fe736679144615272c4f4d7b0a0d5f4e1e5d3818b7"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 9,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1108
+      ],
+      "line": 3439,
+      "complete": true,
+      "raw_sha256": "1c22dcdd259de52660e3699270427bfbfc82495cbdf66533f922bc0a61cff539"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 10,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1219
+      ],
+      "line": 3674,
+      "complete": true,
+      "raw_sha256": "416203ffc5ee57f7529e4c1585753103b42d16ce8f52355671f5b8f5f3cbcd84"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 11,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 3999,
+      "complete": true,
+      "raw_sha256": "580625ab409a77b87fcd1217f8b2104b5f65107ce8b670b8f1d5168464e57b15"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 12,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInputContiguous(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        598
+      ],
+      "line": 4131,
+      "complete": true,
+      "raw_sha256": "75122fb1c9b631003302bee7a67b2b04ae1ef7e1b762831a0306558291e6b835"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 13,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        515
+      ],
+      "line": 4321,
+      "complete": true,
+      "raw_sha256": "5526d44f8a99d491536695a66e5ae931e4933d98e3a9d06caa3abcbc15ab9c56"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 14,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        224
+      ],
+      "line": 4476,
+      "complete": true,
+      "raw_sha256": "940a6800d18a37da8b45a67f27d05423f2a6993052704ae233993045a6b4d79d"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 15,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        1731
+      ],
+      "line": 4586,
+      "complete": true,
+      "raw_sha256": "ba65a30014da902502cda237e70d30d51c0f685df61a6624ab221b61d717579d"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 16,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1108
+      ],
+      "line": 5096,
+      "complete": true,
+      "raw_sha256": "1c22dcdd259de52660e3699270427bfbfc82495cbdf66533f922bc0a61cff539"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 17,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [],
+      "line": 5331,
+      "complete": false,
+      "raw_sha256": "140b0ba7343ff70ca7dd3ea25570ecbb490173b00cc4824f0e33fc5f9d1a44ba"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 18,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483,
+        1219
+      ],
+      "line": 5337,
+      "complete": false,
+      "raw_sha256": "6cdb35331dead416f3b503d8f5964becc3fd221ca4067c5fd04e17d83e450b0a"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 19,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        329
+      ],
+      "line": 5788,
+      "complete": true,
+      "raw_sha256": "70d156a41f48d9e5c4fb36a87a84235a5f13c8250550db86598174c371a5937e"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 20,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        588
+      ],
+      "line": 5899,
+      "complete": true,
+      "raw_sha256": "a12734b7b05d300c4ad07a694b802151f6806f7b8a600747cf7c0c30ad9f6f17"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 21,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        515
+      ],
+      "line": 6101,
+      "complete": true,
+      "raw_sha256": "5526d44f8a99d491536695a66e5ae931e4933d98e3a9d06caa3abcbc15ab9c56"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 22,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        214
+      ],
+      "line": 6256,
+      "complete": true,
+      "raw_sha256": "4bd6b353f3d869cf0e307fc2d47d9bfe016508192ae26971bc393a38ee41a878"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 23,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        387
+      ],
+      "line": 6363,
+      "complete": true,
+      "raw_sha256": "fc4de151ad7fe1a0974efe016cdefc74a8af43caa1ba1213cabafa981d2a9a8c"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 24,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        140
+      ],
+      "line": 6506,
+      "complete": true,
+      "raw_sha256": "1db3fd13bd8e60fec98b4fa301b7a7103c6ffe6dbc0d2aa5a16fb932d5bb738a"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 25,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        344
+      ],
+      "line": 6558,
+      "complete": true,
+      "raw_sha256": "7633bb79cd7ba2c0204c0b8fa115759ada24f4595bc860fc0578574aa066f182"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 26,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4544
+      ],
+      "line": 6660,
+      "complete": true,
+      "raw_sha256": "a0eefdf9f18b0152c25ffe86602c8bd7dfa8cc598a1a912fbef0fc912efd2803"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 27,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1",
+      "bytes": [
+        209
+      ],
+      "line": 7706,
+      "complete": true,
+      "raw_sha256": "563dcc94c3a4d30e93d292fc946906b5a83a8f993d73a38efa386d9a9d2e6f7c"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 28,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        176
+      ],
+      "line": 7816,
+      "complete": true,
+      "raw_sha256": "f01dff323f29a724fd31b8fd0c6e06bd417f9dfe90f27daab23a5bbfc5e7d5dd"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 29,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        123
+      ],
+      "line": 7919,
+      "complete": true,
+      "raw_sha256": "e645f7567304e2ffec84514d2ebc3195eb1b89c240de9d7917c11126e0719515"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 30,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3521
+      ],
+      "line": 7966,
+      "complete": true,
+      "raw_sha256": "1f71ce1de98d09b10e6c5e7828767795d1433fa1085f5a8609547a437ab98bfa"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 31,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2066
+      ],
+      "line": 8827,
+      "complete": true,
+      "raw_sha256": "6497d031f7aae2778a3043caa6ef163ef6e6b19e0aaa7fa3eb74a292093523c2"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 32,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        72
+      ],
+      "line": 9399,
+      "complete": true,
+      "raw_sha256": "2734235c78d3801be57266525ae80c003b3e49a3280db787af478936759e9982"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 33,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        202
+      ],
+      "line": 9436,
+      "complete": true,
+      "raw_sha256": "054185f0f3c064d2e45f8797ef962093c793b65a3194d123b8b3128cae1b68b1"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 34,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        4743
+      ],
+      "line": 9501,
+      "complete": true,
+      "raw_sha256": "2974508938e1b38d1077aa3aac0818091172aea91bbfcc466f60d2e5d7ebc9dc"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 35,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier1",
+      "bytes": [
+        43
+      ],
+      "line": 10884,
+      "complete": true,
+      "raw_sha256": "27efdb4e562476ee745a76399695b23464631af8fe957e806008cc27f6380fdf"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "index": 36,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        1845
+      ],
+      "line": 10911,
+      "complete": true,
+      "raw_sha256": "8368657379528ae6175ddf60f1e6c48c395a783ef7f3e505f900c3a56cdc1af2"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 0,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0",
+      "bytes": [
+        92
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "5e3bebf4c6c27c68253ecbe3f8065a3ba8ce2083f3809ae128ae86b07c88ad78"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        746
+      ],
+      "line": 42,
+      "complete": true,
+      "raw_sha256": "7dad2d0f738883e74572f23ef585371c01eaf68b414c74fc728cc0f2a4b60186"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3756
+      ],
+      "line": 293,
+      "complete": true,
+      "raw_sha256": "92903ec341a9e9007bec61fe7c599b0270475efaa89a16d306989e1b0144fdd2"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 3,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2176
+      ],
+      "line": 1165,
+      "complete": true,
+      "raw_sha256": "682f0f3c1400274394f549d1776e1bf768d91a3a9bcfd01d987f312b1be4d39c"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 4,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        109
+      ],
+      "line": 1750,
+      "complete": true,
+      "raw_sha256": "e4e0a17fc7a2c66e2de0dbba1ff272844b81a98291b4e501db77831abc295eef"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 5,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        278
+      ],
+      "line": 1796,
+      "complete": true,
+      "raw_sha256": "b245895ac2626c65cf7ed5d213fa4ca2dace48b5abebd5b7584dd6a6c6a1221f"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 6,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier0",
+      "bytes": [
+        313
+      ],
+      "line": 1917,
+      "complete": true,
+      "raw_sha256": "d339cd8bfb53e5768259d0c469827ac48f61b8465fdd142739e693f0df210b41"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 7,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4478
+      ],
+      "line": 2013,
+      "complete": true,
+      "raw_sha256": "2d93f418129a7597b87daa0a67656702102e080c06f021fa86ce260ad2eeff47"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 8,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInput(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        1170
+      ],
+      "line": 3048,
+      "complete": true,
+      "raw_sha256": "ac17b96ae9f2d46fe411358e1de0c468545dd4f71285c39b256bb1fcdd00f851"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 9,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1192
+      ],
+      "line": 3431,
+      "complete": true,
+      "raw_sha256": "12e15b92e648d7613078b06d12dc8b116c80c8060c4f74245db1d3df3ef13d30"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 10,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1340
+      ],
+      "line": 3664,
+      "complete": true,
+      "raw_sha256": "92d5651ad5e15ad337372ed030547535916c471c2b5a611c08246ba1457e7483"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 11,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 3991,
+      "complete": true,
+      "raw_sha256": "844912a28863a8a0109355728c1163508a87ae7a8fa3953c9c26c0db55f93cd0"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 12,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInputContiguous(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        598
+      ],
+      "line": 4115,
+      "complete": true,
+      "raw_sha256": "ec8b5dd475b3fcceedd816bee0228ae6c5b0da1b74a0d8b34db895bba26be9ec"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 13,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        510
+      ],
+      "line": 4303,
+      "complete": true,
+      "raw_sha256": "b29fb77e6cfc5950f534a4dd88d239974644631c300ff7026258116186b277c3"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 14,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        224
+      ],
+      "line": 4452,
+      "complete": true,
+      "raw_sha256": "cf018157fca62bd4f950f8075dfbe45c9c1aa930f95e6ec1651307b062362463"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 15,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        1662
+      ],
+      "line": 4562,
+      "complete": true,
+      "raw_sha256": "97bf6f2585ec02a91404e6112a5020d988e25f40be7cf4abcf552ace44f1ccc5"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 16,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1192
+      ],
+      "line": 5072,
+      "complete": true,
+      "raw_sha256": "12e15b92e648d7613078b06d12dc8b116c80c8060c4f74245db1d3df3ef13d30"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 17,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [],
+      "line": 5305,
+      "complete": false,
+      "raw_sha256": "3093a2c10337f94efbd72196d59a9cffd8224edcf974721f64cd9fc7b373f8d8"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 18,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483,
+        1340
+      ],
+      "line": 5311,
+      "complete": false,
+      "raw_sha256": "d946802bbb18807865ba09857910c5f02462130970fe65d3e2aa59e124392ec1"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 19,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        295
+      ],
+      "line": 5756,
+      "complete": true,
+      "raw_sha256": "e1f0073a12039491e633b8feedec369fb16277db80b9005fbee68e7a4a60ad7f"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 20,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        650
+      ],
+      "line": 5859,
+      "complete": true,
+      "raw_sha256": "689a369335180121d7be3c2d550464ae8cd39ca7e3e76a9fa49fdc1f716857aa"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 21,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        510
+      ],
+      "line": 6064,
+      "complete": true,
+      "raw_sha256": "b29fb77e6cfc5950f534a4dd88d239974644631c300ff7026258116186b277c3"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 22,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        225
+      ],
+      "line": 6213,
+      "complete": true,
+      "raw_sha256": "8880758239173f96e5efaf63b7dfff8ff9cf50e22f15ca21c911e15a1fefe1f5"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 23,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        387
+      ],
+      "line": 6320,
+      "complete": true,
+      "raw_sha256": "0a0c7e262613fb282d38559893b0e919080f8a7dd4246a3cab067a90cab62563"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 24,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        140
+      ],
+      "line": 6463,
+      "complete": true,
+      "raw_sha256": "278dc7c665da275e516a8432ab9859bdc414d1e3f7e4f0e24b1e65fbc7044dbd"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 25,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        344
+      ],
+      "line": 6515,
+      "complete": true,
+      "raw_sha256": "ca107a52ad145fd65b984787b50f292f01276cb9ea7533e47da8003079c8fc76"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 26,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4478
+      ],
+      "line": 6617,
+      "complete": true,
+      "raw_sha256": "2d93f418129a7597b87daa0a67656702102e080c06f021fa86ce260ad2eeff47"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 27,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1",
+      "bytes": [
+        205
+      ],
+      "line": 7652,
+      "complete": true,
+      "raw_sha256": "32259c2b7bebee6296b53bdefaecfb6300d1e58d175b7b01a3410ca8463aae51"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 28,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3756
+      ],
+      "line": 7762,
+      "complete": true,
+      "raw_sha256": "92903ec341a9e9007bec61fe7c599b0270475efaa89a16d306989e1b0144fdd2"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 29,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        123
+      ],
+      "line": 8634,
+      "complete": true,
+      "raw_sha256": "7a4bcc7c7ecb301f6f99a15dee010b1be1219b6806d10d55e33249fd213120ef"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 30,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2168
+      ],
+      "line": 8681,
+      "complete": true,
+      "raw_sha256": "71edf379134d618ffee126f66bdfe4108324c017feea2fb4aab1f95aff048df1"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 31,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2327
+      ],
+      "line": 9262,
+      "complete": true,
+      "raw_sha256": "969e356daef6d4d334ca05a8ec97e2c49a76c758aa2a6dd369e00b723c248100"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 32,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        176
+      ],
+      "line": 9916,
+      "complete": true,
+      "raw_sha256": "eb539870dc05df157511ef165bb3c5779cdf7fc2cca53c0966f851c2ae9d333a"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 33,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        72
+      ],
+      "line": 10019,
+      "complete": true,
+      "raw_sha256": "8c2816b068570178ffacdc9cb6f49808a0c5c1d8851bafae0d986b272575d256"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 34,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        202
+      ],
+      "line": 10056,
+      "complete": true,
+      "raw_sha256": "66e5020b96578d9719e88394490c92ea444649206cb0ac71d178746057674900"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 35,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        5792
+      ],
+      "line": 10121,
+      "complete": true,
+      "raw_sha256": "e889beeed24b297d4746a65aca93ef452c198a6851715247e8c31ac37ce0979a"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 36,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        1955
+      ],
+      "line": 11730,
+      "complete": true,
+      "raw_sha256": "d8fca17c613a4b68dfb10b7dd824db2bb615fa19e854d321bea0925687744b5d"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "index": 37,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier1",
+      "bytes": [
+        43
+      ],
+      "line": 12311,
+      "complete": true,
+      "raw_sha256": "e94179529d6e5d017ac6e7af281fd176bf6c8c59b6b95fbaad3488c9184a9a67"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 0,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0",
+      "bytes": [
+        92
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "ffcb88283af566104bbe2e16a5efa4d60390448129b8ec70c9db1b58e40f625e"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        746
+      ],
+      "line": 42,
+      "complete": true,
+      "raw_sha256": "1f16ac86ea4ceec09db130c313c7a02a2799964347d18aaf5b77fc24813cfb6c"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3521
+      ],
+      "line": 293,
+      "complete": true,
+      "raw_sha256": "efa5925136d55247c631899ee8e9aa747c945ba0ad5dedcd9853bc90e188a4e7"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 3,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2050
+      ],
+      "line": 1154,
+      "complete": true,
+      "raw_sha256": "92446b3be5db036ec7ea04a5c87cce55f17e16f36c9c54bc9a0ac5b9f24f7eda"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 4,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        109
+      ],
+      "line": 1727,
+      "complete": true,
+      "raw_sha256": "23ef667bea0467d5e8462b244e1ec56f2bf67f9337ad78411b578893ae50ab8e"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 5,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        278
+      ],
+      "line": 1773,
+      "complete": true,
+      "raw_sha256": "74105977ce5f6a62841fdbd5db0e77c33b128ef0fb8851ac10e81f050de64bbc"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 6,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier0",
+      "bytes": [
+        313
+      ],
+      "line": 1894,
+      "complete": true,
+      "raw_sha256": "d2da5bc5cc00512436ba10ec4a11bee467f10220ad2264c14e9b189760ee25c3"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 7,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4544
+      ],
+      "line": 1990,
+      "complete": true,
+      "raw_sha256": "f0962d8e6075f67956ec532c1c3a37776d8d317a42cf8086c9d32ba60bc948d0"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 8,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInput(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        1153
+      ],
+      "line": 3036,
+      "complete": true,
+      "raw_sha256": "242cb5427a2343de7db1e36b483ae4f27c0343c37230716894166643a9d00ab7"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 9,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1108
+      ],
+      "line": 3439,
+      "complete": true,
+      "raw_sha256": "f74ce6dac02661f6ec2049d7033ee76451e2f8ee1570571f285650e66a904d6d"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 10,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1219
+      ],
+      "line": 3674,
+      "complete": true,
+      "raw_sha256": "ff08e1710b907bc08d93fffd7bd5e683546a8751122f16a149f77026340bf46d"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 11,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 3999,
+      "complete": true,
+      "raw_sha256": "580625ab409a77b87fcd1217f8b2104b5f65107ce8b670b8f1d5168464e57b15"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 12,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInputContiguous(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        598
+      ],
+      "line": 4131,
+      "complete": true,
+      "raw_sha256": "d257a05250689472928ac9b07f3a647c9590ff8ddab031e89642c5d2f475212c"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 13,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        515
+      ],
+      "line": 4321,
+      "complete": true,
+      "raw_sha256": "099c6fdfc45c774ae43504d4530e8a02158aa56f46ce3d8387c6f7f3f7c1891e"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 14,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        224
+      ],
+      "line": 4476,
+      "complete": true,
+      "raw_sha256": "940a6800d18a37da8b45a67f27d05423f2a6993052704ae233993045a6b4d79d"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 15,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        1712
+      ],
+      "line": 4586,
+      "complete": true,
+      "raw_sha256": "67655838dc36bcc4d0a5e4fba9542d2465c453c433a1c8d2be3e639e61224165"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 16,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1108
+      ],
+      "line": 5122,
+      "complete": true,
+      "raw_sha256": "f74ce6dac02661f6ec2049d7033ee76451e2f8ee1570571f285650e66a904d6d"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 17,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 5357,
+      "complete": true,
+      "raw_sha256": "9cf89db43811da1a173a12931b9e9bcf98d54539ba0cff2e8d7d91b1657a0e7f"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 18,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1219
+      ],
+      "line": 5489,
+      "complete": true,
+      "raw_sha256": "ff08e1710b907bc08d93fffd7bd5e683546a8751122f16a149f77026340bf46d"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 19,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        329
+      ],
+      "line": 5814,
+      "complete": true,
+      "raw_sha256": "70d156a41f48d9e5c4fb36a87a84235a5f13c8250550db86598174c371a5937e"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 20,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        588
+      ],
+      "line": 5925,
+      "complete": true,
+      "raw_sha256": "bac034c416a069dac2bcdadc4e81aab3ae70af91cf832aa2cbe1f8ad02071081"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 21,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        515
+      ],
+      "line": 6127,
+      "complete": true,
+      "raw_sha256": "099c6fdfc45c774ae43504d4530e8a02158aa56f46ce3d8387c6f7f3f7c1891e"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 22,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        214
+      ],
+      "line": 6282,
+      "complete": true,
+      "raw_sha256": "3e152c9638cba79ec6f03d47755ee15e911b0c66aef9674153e618a673a62f10"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 23,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        387
+      ],
+      "line": 6389,
+      "complete": true,
+      "raw_sha256": "e69213333d9d5907374e7ea5f288d3ae6db988d6d3150db5efcdb9f468fd2e6f"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 24,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        140
+      ],
+      "line": 6532,
+      "complete": true,
+      "raw_sha256": "c9da903ac3f7019e32b5c05c5727a910cc8691e493212ca8cbc9990927f5e4f4"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 25,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        344
+      ],
+      "line": 6584,
+      "complete": true,
+      "raw_sha256": "13744b11e94ebec0e4e1e6b40a2ede4d40423564527741785bf1ee939dd8f887"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 26,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4544
+      ],
+      "line": 6686,
+      "complete": true,
+      "raw_sha256": "f0962d8e6075f67956ec532c1c3a37776d8d317a42cf8086c9d32ba60bc948d0"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 27,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1",
+      "bytes": [
+        209
+      ],
+      "line": 7732,
+      "complete": true,
+      "raw_sha256": "9b68f010fff8dfabc6bdefb02fa28c98b519c3e531976c7ca30e826e4a86c7c7"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 28,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        123
+      ],
+      "line": 7842,
+      "complete": true,
+      "raw_sha256": "a1caa8ddaffe336ffcc69e6e0483d8ccc271f29a4ae52b6f80994818c805d8e5"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 29,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3521
+      ],
+      "line": 7889,
+      "complete": true,
+      "raw_sha256": "efa5925136d55247c631899ee8e9aa747c945ba0ad5dedcd9853bc90e188a4e7"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 30,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2062
+      ],
+      "line": 8750,
+      "complete": true,
+      "raw_sha256": "68275ed4e71add62bb6e3959f0e24f45e2bd3e0cfa0a180e859b64d8f4a101e6"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 31,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        176
+      ],
+      "line": 9322,
+      "complete": true,
+      "raw_sha256": "5b7b5b9b64fcc07b1f12690f071dd64732e189c4d57742388143fa46ab786012"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 32,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        72
+      ],
+      "line": 9425,
+      "complete": true,
+      "raw_sha256": "10a3ab87f29780ad22cbbfc57dc3f7e14213bf245f5e5b138a5b95eb2b6ed4f2"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 33,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        202
+      ],
+      "line": 9462,
+      "complete": true,
+      "raw_sha256": "b44e00aa000edee203dc27594871b20c9433bb3aed19091552fc16bc494a2378"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 34,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        4740
+      ],
+      "line": 9527,
+      "complete": true,
+      "raw_sha256": "6504ef535d604bc9efcee9daca75a3e603287549dc0f36291b2c8e11e2bd78db"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 35,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier1",
+      "bytes": [
+        43
+      ],
+      "line": 10908,
+      "complete": true,
+      "raw_sha256": "063ad5185a41b675ca7d94bf9deff73bc0dc1c77b3ea5a1adeb2a39fb0f22891"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "index": 36,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel256(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        1855
+      ],
+      "line": 10935,
+      "complete": true,
+      "raw_sha256": "0c57e2f920fc4b541863d751bc21f72c6fa2706128e9941f4faeff809a9ba2cf"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 0,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0",
+      "bytes": [
+        92
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "a3f7febe5ad74d3aee20c6070e496e4907c49b75b52dcc42e29ccf805b052771"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        746
+      ],
+      "line": 42,
+      "complete": true,
+      "raw_sha256": "bad153cf309dab9665337efd15015156789564d662f5403ff590d2f0a37b0a12"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3756
+      ],
+      "line": 293,
+      "complete": true,
+      "raw_sha256": "9453860b07ea1aceb4a3274a4466cf3fc9f5ec1506b6800f85754f95f9ce4ad0"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 3,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2176
+      ],
+      "line": 1165,
+      "complete": true,
+      "raw_sha256": "682f0f3c1400274394f549d1776e1bf768d91a3a9bcfd01d987f312b1be4d39c"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 4,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        109
+      ],
+      "line": 1750,
+      "complete": true,
+      "raw_sha256": "09dd93a1dd2612cda8e244941a142640374817984490345b97fcd1bbde4cc0a0"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 5,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier0",
+      "bytes": [
+        278
+      ],
+      "line": 1796,
+      "complete": true,
+      "raw_sha256": "b245895ac2626c65cf7ed5d213fa4ca2dace48b5abebd5b7584dd6a6c6a1221f"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 6,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier0",
+      "bytes": [
+        313
+      ],
+      "line": 1917,
+      "complete": true,
+      "raw_sha256": "c928edf9f8b5bdcc521a0f7ec8f8c1e3518a07298f5220a4ae9e909613764188"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 7,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4478
+      ],
+      "line": 2013,
+      "complete": true,
+      "raw_sha256": "764301f5712de5a0d0eabd90be0eae050681464e17ce0e6aefea35b41a8b55cd"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 8,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInput(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        1170
+      ],
+      "line": 3048,
+      "complete": true,
+      "raw_sha256": "4302f7238c305107098d42e9274ecd062c63963e23789421feaeeedcb05ead9a"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 9,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3017
+      ],
+      "line": 3431,
+      "complete": true,
+      "raw_sha256": "12cb02666a1f8cfee4e50a3d009aea4da10e3524da1f0368a8dc98655d2dd722"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 10,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1340
+      ],
+      "line": 3930,
+      "complete": true,
+      "raw_sha256": "248e5bec3c1ae9eb0e8350ab399d0490dc3c4b64f883fc318c1f51af87aa6122"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 11,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:TransformWinogradInputContiguous(System.ReadOnlySpan`1[float],System.Span`1[float],int,int,int,int,int)",
+      "tier": "Tier0-FullOpts",
+      "bytes": [
+        598
+      ],
+      "line": 4257,
+      "complete": true,
+      "raw_sha256": "cf1c37eee53c39333c5a218b959fa30f2a5772cad197812453d86a0cce0c81ab"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 12,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        510
+      ],
+      "line": 4445,
+      "complete": true,
+      "raw_sha256": "406424eade83cb1b075096bc2720b6a528824d59c9c8be0605e3e5a104c6a506"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 13,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        224
+      ],
+      "line": 4594,
+      "complete": true,
+      "raw_sha256": "cf018157fca62bd4f950f8075dfbe45c9c1aa930f95e6ec1651307b062362463"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 14,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2354
+      ],
+      "line": 4704,
+      "complete": true,
+      "raw_sha256": "e7a38f9f02e9c64a60ef52164f6216a42954adab38314003780d4aca5ad8ef9a"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 15,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1340
+      ],
+      "line": 5399,
+      "complete": true,
+      "raw_sha256": "248e5bec3c1ae9eb0e8350ab399d0490dc3c4b64f883fc318c1f51af87aa6122"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 16,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3017
+      ],
+      "line": 5726,
+      "complete": true,
+      "raw_sha256": "12cb02666a1f8cfee4e50a3d009aea4da10e3524da1f0368a8dc98655d2dd722"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 17,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        650
+      ],
+      "line": 6225,
+      "complete": true,
+      "raw_sha256": "cf3ec593dc13abdd5e8a8c71bf30b5d8b918dd8bcf0f1148ce153b5b6069ffa6"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 18,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        732
+      ],
+      "line": 6428,
+      "complete": true,
+      "raw_sha256": "2f9b13b495dee7b60dba4a4b9bc3f5ae41d4703992c1f4cb91a4bfdebdf7aa92"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 19,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        510
+      ],
+      "line": 6621,
+      "complete": true,
+      "raw_sha256": "406424eade83cb1b075096bc2720b6a528824d59c9c8be0605e3e5a104c6a506"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 20,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        225
+      ],
+      "line": 6770,
+      "complete": true,
+      "raw_sha256": "0ec914772a5c82f56663f32181aee818f8f0ab8e5fe2be0c94f4abd4aef4655b"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 21,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        387
+      ],
+      "line": 6877,
+      "complete": true,
+      "raw_sha256": "762cff27e548049e4e2fb047eb6774788aa43607d8cc2bea1ff8818d16efc5ec"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 22,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        140
+      ],
+      "line": 7020,
+      "complete": true,
+      "raw_sha256": "d1cd374ca43e2dc0917e9eceaa3de29115c06c2e1c1f0e479cbccc089ccda53b"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 23,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        344
+      ],
+      "line": 7072,
+      "complete": true,
+      "raw_sha256": "3c8c126035e6a13fab8dcace40ce92dca647f823453891c266dede72892ba0de"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 24,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        4478
+      ],
+      "line": 7174,
+      "complete": true,
+      "raw_sha256": "764301f5712de5a0d0eabd90be0eae050681464e17ce0e6aefea35b41a8b55cd"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 25,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:EpilogueRange(System.ReadOnlySpan`1[float]):bool",
+      "tier": "Tier1",
+      "bytes": [
+        205
+      ],
+      "line": 8209,
+      "complete": true,
+      "raw_sha256": "ddfc139dd6d5a852b6b49053eacb26300eae5c89c44c7524ee4c148db26b3df1"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 26,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        176
+      ],
+      "line": 8319,
+      "complete": true,
+      "raw_sha256": "647edc1966a6a96a792548434be105f36fc47bb419e26c2df9df155e7c24037c"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 27,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2040
+      ],
+      "line": 8422,
+      "complete": true,
+      "raw_sha256": "c68a06b0c259e607c09c1eaff1209d3bce2d196d01e09fca459b66f70bdffd54"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 28,
+      "method": "KernelAccess:PrepareWinograd(System.ReadOnlySpan`1[float],int,int,int):float[]",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        123
+      ],
+      "line": 8998,
+      "complete": true,
+      "raw_sha256": "ea70b9815956c1eb5fdc636dceb9e5bc2c6747215b2176794a04c0eb0b516070"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 29,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        3756
+      ],
+      "line": 9045,
+      "complete": true,
+      "raw_sha256": "9453860b07ea1aceb4a3274a4466cf3fc9f5ec1506b6800f85754f95f9ce4ad0"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 30,
+      "method": "KernelAccess:PlanWinograd(int,int,int,int,byref,byref,byref):bool",
+      "tier": "Tier1",
+      "bytes": [
+        72
+      ],
+      "line": 9917,
+      "complete": true,
+      "raw_sha256": "de05bcdf960244cda49df50aec65c4e24bb0181fb01484c853c15883b667fb20"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 31,
+      "method": "KernelAccess:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        202
+      ],
+      "line": 9954,
+      "complete": true,
+      "raw_sha256": "ed1b1e06a95d6064ecef950318ef68858e40d33fc77199ab1e1324d42451bcc2"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 32,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:ExecuteWinograd(System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.ReadOnlySpan`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],System.Span`1[float],int,int,int,int,int,bool):bool",
+      "tier": "Tier1",
+      "bytes": [
+        5507
+      ],
+      "line": 10019,
+      "complete": true,
+      "raw_sha256": "37090d7478f7851e53e4f21d085360731fbcdd1e8b4abcc54f540ccb3fe477a2"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "index": 33,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        2176
+      ],
+      "line": 11512,
+      "complete": true,
+      "raw_sha256": "4c011d425c84336480daf43ecd7f16a69daddf8c7f00ed5b14a52266b5cf7dce"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-256",
+      "index": 0,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1108
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "d8e18c58e0214a640164449de8fc5ab19c1a5e46287c3821e0389b48598af89e"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-256",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 236,
+      "complete": true,
+      "raw_sha256": "580625ab409a77b87fcd1217f8b2104b5f65107ce8b670b8f1d5168464e57b15"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-256",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1108
+      ],
+      "line": 368,
+      "complete": true,
+      "raw_sha256": "d8e18c58e0214a640164449de8fc5ab19c1a5e46287c3821e0389b48598af89e"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-256",
+      "index": 3,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 603,
+      "complete": true,
+      "raw_sha256": "9cf89db43811da1a173a12931b9e9bcf98d54539ba0cff2e8d7d91b1657a0e7f"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-256",
+      "index": 4,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd256(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        329
+      ],
+      "line": 735,
+      "complete": true,
+      "raw_sha256": "70d156a41f48d9e5c4fb36a87a84235a5f13c8250550db86598174c371a5937e"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-256",
+      "index": 0,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1219
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "84bad34f3961b17959b4d3dfe2f5b2bb1206b0055cd0b334f5a0ee02a572711b"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-256",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1219
+      ],
+      "line": 326,
+      "complete": true,
+      "raw_sha256": "84bad34f3961b17959b4d3dfe2f5b2bb1206b0055cd0b334f5a0ee02a572711b"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-256",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd256(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        588
+      ],
+      "line": 651,
+      "complete": true,
+      "raw_sha256": "3622d27c037d78e65d9036093b59ca4af2ab17c4f85249d9e07f3eeb410ae6a9"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-512",
+      "index": 0,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1192
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "d5871f4ed83e37a96a12e1a883b218c7325822625a2c152a7fbab354604ed1f4"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-512",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 234,
+      "complete": true,
+      "raw_sha256": "844912a28863a8a0109355728c1163508a87ae7a8fa3953c9c26c0db55f93cd0"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-512",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1192
+      ],
+      "line": 358,
+      "complete": true,
+      "raw_sha256": "d5871f4ed83e37a96a12e1a883b218c7325822625a2c152a7fbab354604ed1f4"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-512",
+      "index": 3,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1-OSR",
+      "bytes": [
+        483
+      ],
+      "line": 591,
+      "complete": true,
+      "raw_sha256": "f0993cb35950dad9c1010e3e660a440b5b9bb792cc9b471f0c9070f30b989e5f"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-512",
+      "index": 4,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:MultiplyWinograd512(ptr,ptr,ptr,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        295
+      ],
+      "line": 715,
+      "complete": true,
+      "raw_sha256": "5e25913ee1d9b20a7c58ee086ad9afd7679d4ebcaba95674ef4672102ea32338"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-512",
+      "index": 0,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1340
+      ],
+      "line": 1,
+      "complete": true,
+      "raw_sha256": "cc254d40b107a81b24ab3688173e664cc31c3adcf9ae3649827b18deb7c27b18"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-512",
+      "index": 1,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Instrumented Tier0",
+      "bytes": [
+        1340
+      ],
+      "line": 328,
+      "complete": true,
+      "raw_sha256": "cc254d40b107a81b24ab3688173e664cc31c3adcf9ae3649827b18deb7c27b18"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-512",
+      "index": 2,
+      "method": "Lokad.Onnx.ConvBlockedSpatial:OutputWinograd512(ptr,ptr,int,int,int,int,int,int)",
+      "tier": "Tier1",
+      "bytes": [
+        650
+      ],
+      "line": 655,
+      "complete": true,
+      "raw_sha256": "f9931f31c8312cb383fa5b8b07bb7786d816ff11e3cfce842ab0bec7e1fbc276"
+    }
+  ],
+  "raw_files": [
+    {
+      "origin": "original",
+      "stream": "current-captured-256",
+      "file": "original-current-captured-256.asm",
+      "pin": {
+        "bytes": 392915,
+        "sha256": "0713ca637058b378f31a2f709fdc6208800dab8289bbdad7a3f7f11201ff850c"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-20260923/collected/current-captured-256/jit.asm"
+    },
+    {
+      "origin": "original",
+      "stream": "current-captured-512",
+      "file": "original-current-captured-512.asm",
+      "pin": {
+        "bytes": 421889,
+        "sha256": "b2b4b9bf597e124da876d8ef00a825dc8cf4a6199355e8c28c3727901d792c8f"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-20260923/collected/current-captured-512/jit.asm"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-256",
+      "file": "original-candidate-captured-256.asm",
+      "pin": {
+        "bytes": 393583,
+        "sha256": "ff79dbbae0feae788a5fd43e72e8a2dd1b285d34c47b7023ffcb283ddecde608"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-20260923/collected/candidate-captured-256/jit.asm"
+    },
+    {
+      "origin": "original",
+      "stream": "candidate-captured-512",
+      "file": "original-candidate-captured-512.asm",
+      "pin": {
+        "bytes": 419247,
+        "sha256": "e97f211bc6adfc348f32dfdd96159a3710b43dbb00fd574e52758b8a79d18186"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-20260923/collected/candidate-captured-512/jit.asm"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-256",
+      "file": "correction-current-multiply-256.asm",
+      "pin": {
+        "bytes": 29264,
+        "sha256": "52b30ae95b51fd4c17c579173e217611d5354f1d98c6268e0407c3011494a193"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-v2-20260923/collected/current-multiply-256/jit.asm"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-256",
+      "file": "correction-current-output-256.asm",
+      "pin": {
+        "bytes": 29268,
+        "sha256": "d119d4ed36e0443a6241b5a4149e6ecc3063910c9db0aaf24cff5f4018ba9b28"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-v2-20260923/collected/current-output-256/jit.asm"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-multiply-512",
+      "file": "correction-current-multiply-512.asm",
+      "pin": {
+        "bytes": 28623,
+        "sha256": "52146fdebcfa9cb626adbd91f1204b7ec41340421ddcac6aefd0361c86dd9db4"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-v2-20260923/collected/current-multiply-512/jit.asm"
+    },
+    {
+      "origin": "correction",
+      "stream": "current-output-512",
+      "file": "correction-current-output-512.asm",
+      "pin": {
+        "bytes": 29495,
+        "sha256": "42be8e306adf6b8a368cd544068596f3d5d24a4ebf296038cb402e1f246ffc4f"
+      },
+      "source": "artifacts/pyannote-winograd-output-blocks-codegen-amd-v2-20260923/collected/current-output-512/jit.asm"
+    }
+  ],
+  "selected_body_counts": {
+    "current-captured-256": 37,
+    "current-captured-512": 38,
+    "candidate-captured-256": 37,
+    "candidate-captured-512": 34
+  },
+  "first_resources": [
+    {
+      "name": "current-captured-256",
+      "samples": 45,
+      "peak_rss": 492965888,
+      "bodies": 37
+    },
+    {
+      "name": "current-captured-512",
+      "samples": 39,
+      "peak_rss": 542089216,
+      "bodies": 38
+    },
+    {
+      "name": "candidate-captured-256",
+      "samples": 46,
+      "peak_rss": 558288896,
+      "bodies": 37
+    },
+    {
+      "name": "candidate-captured-512",
+      "samples": 42,
+      "peak_rss": 535310336,
+      "bodies": 34
+    }
+  ],
+  "correction_resources": [
+    {
+      "name": "current-multiply-256",
+      "samples": 45,
+      "peak_rss": 573214720,
+      "bodies": 5
+    },
+    {
+      "name": "current-output-256",
+      "samples": 45,
+      "peak_rss": 549912576,
+      "bodies": 3
+    },
+    {
+      "name": "current-multiply-512",
+      "samples": 39,
+      "peak_rss": 546488320,
+      "bodies": 5
+    },
+    {
+      "name": "current-output-512",
+      "samples": 40,
+      "peak_rss": 506208256,
+      "bodies": 3
+    }
+  ],
+  "limitations": "The candidate needs eight separate broadcasts per paired reduction and a larger non-inlined helper. Both costs are retained. Diagnostic assembly proves the mechanism, not a complete-call or application gain. Damaged original bodies remain failed and are never reconstructed."
+}
