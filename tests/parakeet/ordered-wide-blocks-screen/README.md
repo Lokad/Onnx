@@ -24,6 +24,22 @@ Eleven scorer tests pass, including the exact 10% threshold, target isolation,
 fallback regression, per-case/aggregate repeatability, process separation and
 complete-clock accounting. This validates the scorer, not candidate performance.
 
-The AMD controller still needs to bind the normally built products, complete
-numerical closure and independent machine-code review before execution. It must
-also require the parent's complete root/release qualification. No timing has run.
+The conditional AMD controller binds the normally built products, complete
+numerical closure and independent machine-code review before execution. It also
+requires the parent's complete root/release qualification. None of these
+ordered-block prerequisites has run yet, so no timing is claimed.
+
+Reuse the compiled consumer `e1a75f61a0cb69064dd5e9a87a91feea1df0c42f173e054bf6fada5a16c1d78a`
+(20,480 bytes), its exact source/project and runtime configuration from the
+closed wide-entry screen. The worker is unchanged and the four timed jobs are
+unchanged; SDK/restore/build jobs are omitted because the consumer is reused.
+An immutable `built.json` binds that consumer before the campaign starts.
+Collection materializes verified hardlinks to ordinary archive files.
+
+Run `C:/Python313/python.exe -X utf8 -B run.py prepare`, stage, launch, observe,
+collect and `audit.py` only after all prerequisites close. Existing namespaces
+are refused. CPU 2 computes and CPU 0 monitors. Preflight requires 12 GiB
+available memory and 3 GiB tmpfs; retain the 8 GiB RSS cap, 1 GiB free-memory
+and tmpfs minima, 1 GiB/job and 2 GiB/campaign output caps, 900 seconds/job and
+four hours overall. Check every monitoring gap below ten seconds and all exact
+process identities terminal. Preserve failed controls and scores.
