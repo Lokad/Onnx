@@ -12,7 +12,7 @@ APP=ROOT/'artifacts/pyannote-winograd-product-app-amd-20260923'
 def previous_closed():
     for folder,digest,root_relative in [
         (PREVIOUS,'87446536bf2ca97f398ec2407c57269e9bc72caf883aaff2a573f520a95a99a4',True),
-        (BUILD,'PENDING_CONSUMER_BUILD_CLOSURE',False),
+        (BUILD,'96143e786b96223d70f6b3bf6d9be549b00a064c3dd9444349a976551c1e3cb6',False),
         (APP,'dc2c7b9f5086ab9b4ee615b9dad7643eaf4c1ed65c1cc71b3e76ee794237d88e',False)]:
         assert pin(folder/'closed.json')['sha256']==digest
         proof=read(folder/'closed.json');assert proof['passed']

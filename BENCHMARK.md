@@ -9,7 +9,7 @@ revisions or protocols. [Model support](docs/model-support.md) describes the
 available APIs and their remaining qualification limits.
 
 Microsoft ONNX Runtime audio baselines are listed below for
-[Parakeet](#audio-amd-current-parakeet-versus-microsoft-ort) and
+[Parakeet](#audio-amd-winograd-parakeet-versus-microsoft-ort) and
 [pyannote](#audio-amd-winograd-pyannote-versus-microsoft-ort) on the AMD VM,
 and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-runtime-baselines).
 
@@ -21,7 +21,7 @@ Latest matched AMD comparisons (product versions noted below):
 | Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---:|---:|---:|
 | Pyannote, complete 30-second dialogue | 10.453 | 9.040 | 1.156 |
-| Parakeet, 20 clips / 213.265 seconds of audio | 74.545 | 39.229 | 1.900 |
+| Parakeet, 20 clips / 213.265 seconds of audio | 76.173 | 39.783 | 1.915 |
 
 Each row comes from its own matched campaign on AMD EPYC 9V74, CPU2, with
 ORT 1.29.0. Complete application timers include frontend, inference and owned
@@ -34,12 +34,12 @@ including 3,449 backend and 343 tensor tests, both instruction widths and
 independent NuGet consumption. The measured product is Core `521bae17` /
 Data `f3b9aa81`; the root build matches all 3,179 Core / 697 Data methods.
 
-The [retained Parakeet baseline](#audio-amd-current-parakeet-versus-microsoft-ort)
-currently measures the preceding Core `208371f6` / Data `b9358370`. All 320
-requests and 42 repeatability controls pass. A fresh comparison for the newly
-integrated product follows its passing Parakeet tensor/public regression;
-this table does not yet claim new-product Parakeet timing. Earlier campaigns
-remain historical. The full application parity target remains <=1.05.
+The [fresh Parakeet baseline](#audio-amd-winograd-parakeet-versus-microsoft-ort)
+measures the same qualified Core `521bae17` / Data `f3b9aa81`. All 320 requests,
+42 repeatability controls and 1,881 resource observations pass. This establishes
+its current ORT gap; separate campaigns do not establish a product speedup
+or regression. Earlier results remain historical. The full application parity
+target remains <=1.05.
 
 The [pre-Winograd Pyannote profile](tests/pyannote/current-profile-results/results-20260922.md)
 passes all48 public requests and846 resource observations. Two captures
@@ -746,9 +746,48 @@ The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
 
+### Audio: AMD Winograd Parakeet versus Microsoft ORT
+
+The integrated M34 product, Core `521bae17` / Data `f3b9aa81`, runs on AMD
+EPYC 9V74, CPU2, .NET 10.0.8 / SDK 10.0.204, against ORT 1.29.0.
+
+| Workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
+|---|---:|---:|---:|
+| All 20 clips / 213.265 seconds of audio | 76.172826 | 39.782592 | 1.914728 |
+
+**Valid current baseline.** All 42 repeatability controls pass: corpus
+process-mean max/min is 1.003988 for Lokad and 1.008156 for ORT, below 1.10;
+the largest clip ratio is 1.094848, below 1.20. Four fresh processes run
+Lokad, ORT, ORT, Lokad, with one warmup and three measured passes each:
+**320 requests, 80 warmups and 240 measurements**. Exact integer-clock
+fractions give each process equal weight. Every sample is retained.
+
+The timer includes frontend, neural inference, greedy decoding and owned
+results. Loading/setup, file access and external validation are separate.
+ORT uses sequential CPU execution, one intra/inter-op thread, full graph
+optimization and disabled spinning. Neither engine uses a profiler or numerical
+override. All threads inherit CPU2 before startup; monitoring uses CPU0.
+
+All complete transcript/token/duration, input and output-ownership checks pass;
+all 160 managed public results exactly match the admitted M34 reference.
+Its already closed tensor, Pyannote/shared/e5, native, long-meeting and actual
+root/package evidence is independently verified. All **1,881 resource samples**
+pass, with peak owned RSS **9,500,626,944 bytes**. The <=1.05 parity target is
+unmet. Comparing this result with older campaigns does not establish a
+product speedup or regression.
+
+[All twenty clip comparisons](tests/parakeet/winograd-baseline-amd/results-20260923.md),
+[every raw clock](tests/parakeet/winograd-baseline-amd/clocks-20260923.csv),
+[setup intervals](tests/parakeet/winograd-baseline-amd/setup-20260923.csv) and
+[complete controls/observations](tests/parakeet/winograd-baseline-amd/observations-20260923.json)
+are retained. A local disk-space failure interrupted extraction after successful
+transfer; [recovery used the same verified archive](tests/parakeet/winograd-baseline-amd/collection-recovery-20260923.md),
+preserving the partial files and all samples without repeating inference.
+Closure: `2e75c249ca3f76fc90c0179e2244cd677e829cf14da18029ec73f0a2ed03abf3`.
+
 ### Audio: AMD current Parakeet versus Microsoft ORT
 
-This fresh comparison measures the integrated M22 product, Core `208371f6` /
+Historical pre-Winograd comparison: this measures the integrated M22 product, Core `208371f6` /
 Data `b9358370`, on AMD EPYC 9V74, CPU2, .NET 10.0.8 / SDK 10.0.204 and ORT 1.29.0.
 
 | Workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
