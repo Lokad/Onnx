@@ -284,7 +284,7 @@ where T : unmanaged
     {
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
-        return MatMul2DCore(x, y, DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] }), options, clearDestination: false);
+        return DispatchWideProjectionMatMul2DCore(x, y, DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] }), options, clearDestination: false);
     }
 
     /// <summary>
@@ -296,7 +296,7 @@ where T : unmanaged
     public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
-        return MatMul2DCore(x, y, destination, options, clearDestination: true);
+        return DispatchWideProjectionMatMul2DCore(x, y, destination, options, clearDestination: true);
     }
 
     static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)
@@ -347,7 +347,7 @@ where T : unmanaged
                 using var oh = destination.Buffer.Pin();
                 unsafe
                 {
-                    RunFloatMatMulKernel(rows, n, k,
+                    RunIsolatedShortWideKernel(rows, n, k,
                         (float*)xh.Pointer + start * n,
                         (float*)yh.Pointer,
                         (float*)oh.Pointer + start * k, options);
@@ -361,7 +361,7 @@ where T : unmanaged
             using var oh = destination.Buffer.Pin();
             unsafe
             {
-                RunFloatMatMulKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options);
+                RunIsolatedShortWideKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options);
             }
         }
         return destination;
@@ -377,7 +377,7 @@ where T : unmanaged
         int flat;
         checked { flat = dims[0] * dims[1]; }
         var destination = new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>(flat)), dims);
-        return MatMul2DCore(x, y, destination, options, clearDestination: false);
+        return DispatchWideProjectionMatMul2DCore(x, y, destination, options, clearDestination: false);
     }
 
     public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y) => MatMul2D(x, y, TensorExecutionOptions.Auto);
@@ -615,7 +615,7 @@ where T : unmanaged
             {
                 unsafe
                 {
-                    RunFloatMatMulKernel(m, n, k,
+                    RunIsolatedShortWideKernel(m, n, k,
                         (float*)xp0 + xOff[bi],
                         (float*)yp0 + yOff[bi],
                         (float*)zp0 + zOff[bi], options);
@@ -634,7 +634,7 @@ where T : unmanaged
                 int ox = 0, oy = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    RunFloatMatMulKernel(m, n, k, xp + ox, yp + oy, zp + oz, options);
+                    RunIsolatedShortWideKernel(m, n, k, xp + ox, yp + oy, zp + oz, options);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;
@@ -737,7 +737,7 @@ where T : unmanaged
             var destView = dd.Length == 2 && dd[0] == px.dimensions[0] && dd[1] == py.dimensions[1]
                 ? destination
                 : new DenseTensor<float>(destination.Buffer, new int[] { px.dimensions[0], py.dimensions[1] });
-            MatMul2DCore(px, py, destView, options, clearDestination);
+            DispatchWideProjectionMatMul2DCore(px, py, destView, options, clearDestination);
             return destination;
         }
         var xdl = px.Dimensions[^2..];
