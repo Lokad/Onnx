@@ -1,0 +1,100 @@
+{
+  "closure": {
+    "bytes": 197253,
+    "sha256": "cc8d46c59b8ee1328f99c781b9fdc4f2f3ae0ff0d1592fef752f888a250558dc"
+  },
+  "analysis": {
+    "passed": true,
+    "measured": {
+      "Lokad.Onnx.dll": {
+        "bytes": 766976,
+        "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+      }
+    },
+    "built": {
+      "Lokad.Onnx.dll": {
+        "bytes": 767488,
+        "sha256": "90b2164bbb93419bda814d76d51dca448d5204d3893294564ff07cb7580c8108"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "fc78c908846dd178331edc4fd8d63334b1030587f31c74c12424644bfd9e6f1b"
+      }
+    },
+    "inventory": {
+      "passed": true,
+      "core_methods": 3179,
+      "unchanged_core_methods": 3178,
+      "data_methods": 697,
+      "changed": "Lokad.Onnx.ConvBlockedSpatial::MultiplyWinograd512::Void MultiplyWinograd512(Single*, Single*, Single*, Int32, Int32)",
+      "public_surface_equal": true
+    },
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "peak_rss": 14360576,
+        "seconds": 0.26373163901735097
+      },
+      {
+        "name": "cli-restore",
+        "samples": 6,
+        "peak_rss": 173928448,
+        "seconds": 1.5531451110146008
+      },
+      {
+        "name": "cli-build",
+        "samples": 64,
+        "peak_rss": 499093504,
+        "seconds": 16.877407055988442
+      },
+      {
+        "name": "inventory",
+        "samples": 4,
+        "peak_rss": 174751744,
+        "seconds": 1.1166955700027756
+      }
+    ],
+    "source_prepared": {
+      "bytes": 146947,
+      "sha256": "0a067addcd7425a0079ab1389d4c7d7aaa0e6b3e4a04f34ff1c85d686f0389e1"
+    },
+    "root_product_changed": false,
+    "numerically_qualified": false,
+    "no_performance_measurement": true
+  },
+  "artifacts": {
+    "prepared.json": {
+      "bytes": 104978,
+      "sha256": "96260cd4e21d62e83cc81686b097dd24cbf492e072cd9d2565a9cf893a510703"
+    },
+    "staged.json": {
+      "bytes": 189,
+      "sha256": "84a2e8c1209b8ae5dbded21b6cd02cdd5650ea665d703cd64b762a31727ead7d"
+    },
+    "payload.json": {
+      "bytes": 1324452,
+      "sha256": "e049aeb197f63a6dcbf22e94413fbe5008ec27e8db1448d7686b070a86285b21"
+    },
+    "deployment.json": {
+      "bytes": 50,
+      "sha256": "250d7c480984093a9acbe3a641f00d87b27c9834aa24464ced409d14ed9e1d40"
+    },
+    "payload.tar.gz": {
+      "bytes": 3048451,
+      "sha256": "5b437c7fd04a15f78a811d6de56798593e4b7635cc87db4545c3969a418ca2a4"
+    },
+    "results.tar.gz": {
+      "bytes": 4694501,
+      "sha256": "9572e9bc5ae39aec2036bc9181d14cd309a95a8c565eeda72d1796f48af5b859"
+    },
+    "collection-transfer.json": {
+      "bytes": 275,
+      "sha256": "273058b67b446f808c61ec9b071484729f76c060ca014e7d6e3c563da694c096"
+    }
+  }
+}
