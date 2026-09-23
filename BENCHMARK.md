@@ -179,6 +179,11 @@ and [full suites/NuGet qualification](tests/pyannote/winograd-product-results/pr
 now pass: 3,449 backend and 343 tensor tests, 48 focused graph cases in each
 instruction width, and actual packaged Winograd dispatch. The root remains
 unchanged pending complete model and application qualification.
+[Complete Pyannote qualification](tests/pyannote/winograd-product-results/models-20260923.md)
+now passes all 18 graph arrays (2,917,107 values), 16 public requests and the
+original Microsoft ORT accuracy limits. Segmentation and public speaker
+timelines are exact; embedding and centroid floats change within the existing
+bounds. Parakeet/shared/e5 regressions and complete application timing follow.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
