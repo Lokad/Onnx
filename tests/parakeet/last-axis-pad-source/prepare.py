@@ -1,4 +1,4 @@
-"""Draft M46 source preparation, gated on fully qualified and committed M43."""
+"""Prepare M46 against qualified selected source 94a550de after M43 rejection."""
 import difflib
 import hashlib
 import json
@@ -9,8 +9,8 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = Path(__file__).resolve().parent
 BASE = ROOT / 'artifacts/parakeet-last-axis-pad-source-20260923'
-PARENT = ROOT / 'artifacts/parakeet-first-use-kernels-source-20260923'
-QUALIFIED = ROOT / 'artifacts/parakeet-first-use-kernels-root-amd-20260923'
+PARENT = ROOT / 'artifacts/pyannote-winograd-product-root-integration-20260923'
+QUALIFIED = ROOT / 'artifacts/pyannote-winograd-product-root-amd-20260923'
 FILE = 'src/Lokad.Onnx/CPUExecutionProvider.Shape.cs'
 HELPER = 'src/Lokad.Onnx/Zzz.LastAxisPad.cs'
 TESTS = 'tests/Lokad.Onnx.Backend.Tests/LastAxisPadTests.cs'
@@ -40,28 +40,27 @@ def transform(source):
 
 def main():
     assert not BASE.exists()
-    assert pin(PARENT / 'prepared.json')['sha256'] == '829e26d7acd55ccf969f4292949abc19385a014f562517344a3265d42a0f51c0'
-    parent = read(PARENT / 'prepared.json')
-    assert parent['passed'] and len(parent['source']) == 421
-    # This proof does not yet exist when the draft is written. No preparation,
-    # build or timing is authorized by a source hypothesis alone.
+    assert pin(PARENT / 'applied.json')['sha256'] == 'f367e28d3180fc0bf7d17600c353db534c7b8188b5c3e5457942bed7c83000eb'
+    parent = read(PARENT / 'applied.json')
+    assert parent['passed'] and len(parent['source_files']) == 420
+    assert pin(QUALIFIED / 'closed.json')['sha256'] == '62141a2a722548697c106e42b2c0d9425b4f0c6ce166611a5bc3ca26a4fccdd0'
     proof = read(QUALIFIED / 'closed.json')
     assert proof['passed']
     for name, wanted in proof['files'].items():
         assert pin(QUALIFIED / name) == wanted, name
     analysis = read(QUALIFIED / 'analysis.json')
     assert analysis['passed'] and analysis['root_source_verified']
+    assert analysis['root_integration'] == pin(PARENT / 'applied.json')
     subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', 'src'], cwd=ROOT, check=True)
-    for name, wanted in parent['source'].items():
+    for name, wanted in parent['source_files'].items():
         assert pin(ROOT / name) == wanted, name
-        assert pin(PARENT / 'source' / name) == wanted, name
     assert not (ROOT / HELPER).exists()
     assert not (ROOT / TESTS).exists()
     before = (ROOT / FILE).read_text(encoding='utf8')
     after = transform(before)
     BASE.mkdir()
     source = BASE / 'source'
-    for name in parent['source']:
+    for name in parent['source_files']:
         path = source / name
         path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / name, path)
@@ -76,19 +75,19 @@ def main():
                                             fromfile='/dev/null', tofile=name))
     (BASE / 'candidate.patch').write_text(patch, encoding='utf8')
     shutil.copy2(ROOT / '.agent/m46-parakeet-last-axis-pad-20260923.md', BASE / 'prospective-plan.md')
-    changed = [name for name, wanted in parent['source'].items() if pin(source / name) != wanted]
+    changed = [name for name, wanted in parent['source_files'].items() if pin(source / name) != wanted]
     assert changed == [FILE]
-    for name, wanted in parent['source'].items():
+    for name, wanted in parent['source_files'].items():
         assert pin(ROOT / name) == wanted, name
     result = dict(passed=True, built=False, numerically_qualified=False,
-                  root_product_changed=False, parent=pin(PARENT / 'prepared.json'),
+                  root_product_changed=False, parent=pin(PARENT / 'applied.json'),
                   qualified_parent=pin(QUALIFIED / 'closed.json'),
-                  before=parent['source'], changed=[FILE, HELPER, TESTS],
+                  before=parent['source_files'], changed=[FILE, HELPER, TESTS],
                   source={p.relative_to(source).as_posix(): pin(p)
                           for p in source.rglob('*') if p.is_file()},
                   patch=pin(BASE / 'candidate.patch'), plan=pin(BASE / 'prospective-plan.md'),
                   tools={p.name: pin(p) for p in TOOLS.iterdir() if p.is_file()})
-    assert len(result['source']) == 423
+    assert len(result['source']) == 422
     (BASE / 'prepared.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf8')
     print(json.dumps(dict(prepared=pin(BASE / 'prepared.json'), changed=result['changed'],
                          root_product_changed=False)))

@@ -1,4 +1,4 @@
-"""Link the closed actual M43 root and reuse its offline build environment."""
+"""Link the selected actual root and reuse its offline build environment."""
 import json
 import os
 from pathlib import Path
@@ -7,7 +7,7 @@ from protocol import JOBS, LIMITS, pin, read, save, verify
 from remote import idle, live
 
 BASE = Path(__file__).resolve().parents[1]
-QUALIFIED = Path('/dev/shm/lokad-parakeet-first-use-kernels-root-20260923')
+QUALIFIED = Path('/dev/shm/lokad-pyannote-winograd-product-root-20260923')
 
 
 def main():

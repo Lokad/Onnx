@@ -1,8 +1,8 @@
 # Draft Parakeet last-axis padding candidate
 
-Not prepared, built, measured or selected. Finish M43/M45 qualification first.
-`prepare.py` requires the complete M43 root proof, all 421 exact parent inputs
-and committed product source before creating an isolated 423-file snapshot.
+Not prepared, built, measured or selected. M43 failed release qualification.
+`prepare.py` requires the qualified selected root 94a550de, all 420 exact inputs
+and committed product source before creating an isolated 422-file snapshot.
 
 The candidate inserts one guarded call in PadCore after the existing fill and
 empty-output return. A new private helper copies contiguous source rows for
@@ -21,7 +21,7 @@ All 48 actual encoder Pad nodes resolve to this family. The current profile
 assigns PadCore about 3.8% of request samples; this is no measured candidate gain.
 See the [source review](../current-profile-results/memory-source-review-20260923.md).
 
-After the parent qualifies, use `C:/Python313/python.exe -X utf8 -B` with
+Against this qualified parent, use `C:/Python313/python.exe -X utf8 -B` with
 `prepare.py`, then qualify a normal AMD build, independent bitwise numerics,
 complete public Pad cost and complete model/application performance. No root
 integration or BENCHMARK.md update follows source preparation alone.

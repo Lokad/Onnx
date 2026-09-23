@@ -17,7 +17,7 @@ TESTS = [
 
 def inventory(value, measured, built):
     assert value['inventory_complete'] and len(value['observations']) == 2
-    for row, (name, count) in zip(value['observations'], [('Lokad.Onnx.dll', 3181), ('Lokad.Onnx.Data.dll', 697)], strict=True):
+    for row, (name, count) in zip(value['observations'], [('Lokad.Onnx.dll', 3179), ('Lokad.Onnx.Data.dll', 697)], strict=True):
         assert row['assembly'] == name and row['methods'] == count
         assert row['before_sha256'] == measured[name]['sha256'] and row['after_sha256'] == built[name]['sha256']
         assert row['public_surface_equal'] and row['compiler_rename'] is None
@@ -27,7 +27,7 @@ def inventory(value, measured, built):
         assert len(before) == count and all(after[k] == v for k, v in before.items())
         if name == 'Lokad.Onnx.dll':
             assert row['differences'] == [PAD] and row['added'] == [HELPER]
-            assert row['unchanged_methods'] == 3180
+            assert row['unchanged_methods'] == 3178
             assert set(row['candidate_methods']) == {PAD, HELPER}
             assert row['candidate_methods'][PAD] != row['normalized_methods'][PAD]
             assert set(after) == set(before) | {HELPER} and after[HELPER] == 0
@@ -35,7 +35,7 @@ def inventory(value, measured, built):
             assert row['unchanged_methods'] == 697
             assert not row['differences'] and not row['added'] and not row['candidate_methods']
             assert after == before
-    return dict(passed=True, core_existing_methods=3181, core_unchanged_methods=3180,
+    return dict(passed=True, core_existing_methods=3179, core_unchanged_methods=3178,
                 data_unchanged_methods=697, only_padcore_changed=True,
                 added_private_helper=HELPER, public_surface_equal=True,
                 existing_implementation_flags_equal=True, generated_names_exact=True,

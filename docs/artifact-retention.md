@@ -8,11 +8,11 @@ requested 50 GB limit; units here are decimal GB.
 
 After retaining the next Parakeet candidate's build, numerical, component,
 application, cross-model and follow-up diagnostic evidence, the inventory
-measured **38.62 GB**. With the warmed comparison staged and the next source
-review retained, the latest inventory is **38.75 GB**, including **25.33 GB**
-in artifacts, or **49.53 GB** counting the model junction twice. Its receipt is
-`artifacts/repository-retention-20260923/m45-running-size.json`; collection of
-the running comparison still requires another check.
+measured **38.62 GB**. After collecting and publishing the complete warmed
+comparison, the latest inventory is **38.86 GB**, including **25.44 GB**
+in artifacts, or **49.64 GB** counting the model junction twice. Its receipt is
+`artifacts/repository-retention-20260923/m45-closed-size.json`. Recheck after
+subsequent collections; the duplicate-count margin is now about 0.36 GB.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,

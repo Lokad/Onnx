@@ -35,17 +35,21 @@ performance checks pass. It is still isolated: shared/native correctness passes,
 but the original graph comparison has an inconclusive GPT-2 baseline control.
 Independent [longer baseline traces](../tests/benchmarks/startup-diagnostic-results/report-20260923.md)
 find graph compilation through calls 345/350. The separate
-[warmed comparison](../tests/benchmarks/warmed-release-amd-v2/README.md) uses
-600 fixed warmups and 180 measurements for all engines and cases and is still
-running. Pyannote application and actual-root/package qualification follow only
-if that comparison is admitted.
+[warmed comparison](../tests/benchmarks/warmed-release-results/results-20260923.md)
+uses 600 fixed warmups and 180 measurements for all engines and cases. It
+**rejects release admission**: e5-30 regresses 18.7383% with all three case
+repeatability controls passing; separately, the e5-8 selected control fails.
+All numerical checks pass and all 37,512 clocks remain. Large within-process
+e5-30 block variations leave the cause unresolved. The candidate remains
+isolated; its prepared Pyannote application and actual-root lanes do not run.
 
 The [padding/selection source review](../tests/parakeet/current-profile-results/memory-source-review-20260923.md)
 adds a distinct follow-up: all 48 encoder Pad nodes use nonnegative last-axis
 padding, which permits contiguous row copies instead of per-element coordinate
 division. PadCore accounts for about 3.8% of current sampled request weight.
-The helper and six targeted tests are drafted but uncompiled; no candidate
-gain follows from this static census. The same review records 72 scalar-branch
+The helper and six targeted tests are drafted but uncompiled; following the
+matrix candidate's rejection, padding will use selected source `94a550de`
+directly. No candidate gain follows from this static census. The same review records 72 scalar-branch
 Where nodes and ORT's 256-term packed reduction blocks as separate hypotheses.
 
 The original e5 review used Microsoft ONNX Runtime 1.23.2 at

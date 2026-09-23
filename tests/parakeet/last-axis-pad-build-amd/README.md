@@ -1,11 +1,11 @@
 # Draft M46 padding build and targeted tests
 
-Not prepared or run. Requires fully qualified, committed M43 root and the
-isolated 423-input source from `../last-axis-pad-source/prepare.py`.
+Not prepared or run. Uses qualified selected root 94a550de and the
+isolated 422-input source from `../last-axis-pad-source/prepare.py`.
 
 Eight fixed jobs: SDK 10.0.204, normal CLI restore/build, backend restore/build,
 full Core/Data metadata inspection, six targeted public Pad tests, then those
-six tests with AVX512 disabled. All existing 3,181 Core and 697 Data methods
+six tests with AVX512 disabled. All existing 3,179 Core and 697 Data methods
 must stay exact except PadCore; only one private helper may be added. Public
 surface, method flags and all generated names must remain exact. A separate
 composition review of PadCore is still required after the actual build.
@@ -24,6 +24,7 @@ commands under source/ containing global.json and use `--tl:off`.
 
 Preflight: 10 GiB available / 3 GiB tmpfs; each job below 8 GiB RSS and 900
 seconds, with at least 1 GiB available/tmpfs, 1 GiB output and 2 GiB campaign
-files. Maximum campaign four hours. Reuse the closed parent's offline feed,
-metadata inspector and immutable runtime binaries. No model copies, inference,
+files. Maximum campaign four hours. Reuse the selected root's offline feed and runtime binaries, plus the already
+qualified M43 metadata inspector (including method flags). The inspector's
+correctness is independent of the rejected product's speed verdict. No model copies, inference,
 score, root edit or BENCHMARK.md update occurs in this build lane.

@@ -11,7 +11,7 @@ class GateTests(unittest.TestCase):
     def fixture(self):
         products = {name: dict(bytes=1, sha256=name) for name in ['Lokad.Onnx.dll', 'Lokad.Onnx.Data.dll']}
         rows = []
-        for name, count in [('Lokad.Onnx.dll', 3181), ('Lokad.Onnx.Data.dll', 697)]:
+        for name, count in [('Lokad.Onnx.dll', 3179), ('Lokad.Onnx.Data.dll', 697)]:
             core = name == 'Lokad.Onnx.dll'
             methods = {str(i): 'old-body' for i in range(count - int(core))}
             if core:
