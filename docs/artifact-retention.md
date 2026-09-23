@@ -7,10 +7,12 @@ to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
 After retaining the next Parakeet candidate's build, numerical, component,
-application, cross-model and follow-up diagnostic evidence, a fresh inventory
-measured **38.62 GB**, including **25.21 GB** in artifacts, or **49.41 GB**
-counting that junction twice. Its receipt is
-`artifacts/repository-retention-20260923/m44-diagnostic-size.json`.
+application, cross-model and follow-up diagnostic evidence, the inventory
+measured **38.62 GB**. With the warmed comparison staged and the next source
+review retained, the latest inventory is **38.75 GB**, including **25.33 GB**
+in artifacts, or **49.53 GB** counting the model junction twice. Its receipt is
+`artifacts/repository-retention-20260923/m45-running-size.json`; collection of
+the running comparison still requires another check.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
@@ -45,3 +47,11 @@ For subsequent experiments, reuse retained inputs, avoid whole-model copies,
 and check the total repository size before preparing large bundles. A new cleanup
 requires a fresh dependency review and an explicit manifest; the one-time scripts
 in `eng` are not an automatic age-based deletion policy.
+
+Run `C:/Python313/python.exe -X utf8 -B eng/measure-repository-size.py` for a
+read-only fresh inventory. Add `--output artifacts/<new-receipt>.json` to retain
+it in an existing directory; the command refuses an existing output file.
+It sums regular file lengths, counting hardlinked paths separately, and reports
+directory aliases without traversing them. This is logical size, not allocated
+filesystem space. Known aliases to top-level directories also get an explicit
+duplicate-count total. The inventory never deletes files.
