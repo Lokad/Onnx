@@ -1,0 +1,5352 @@
+{
+  "diagnostic_only": true,
+  "no_score": true,
+  "capture_closure": {
+    "bytes": 26121,
+    "sha256": "c6e1e4d42d3f377f77382a4091ad1150c1a62335a72c7d63a38c728d7a753e19"
+  },
+  "complete_export_closure": {
+    "bytes": 9839,
+    "sha256": "35b18e874e1e0c47a7b9e1fe6f2608b0940c1eb431c289c32ba05855cb2b5afa"
+  },
+  "reports": {
+    "current": {
+      "records": 168906,
+      "compilations": 810,
+      "gc_pauses": 16,
+      "gc_pause_overlap_ms": 0,
+      "gc_calls": 0,
+      "allocation_positive_calls": 954,
+      "total_allocation_delta": 21626872,
+      "suspension_reasons": {
+        "SuspendOther": 30391,
+        "SuspendForGC": 8,
+        "SuspendForGCPrep": 8
+      },
+      "stack_profile_ms": {
+        "Thread (823759)": 40354.01381785206,
+        "Thread (823761)": 7.162505626678467
+      },
+      "stack_inside_ms": 39649.63045300004,
+      "stack_outside_ms": 711.5458704786898,
+      "stack_attribution": [
+        {
+          "fixture": 0,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 5.563029943062247
+        },
+        {
+          "fixture": 0,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1301.0932815105593
+        },
+        {
+          "fixture": 0,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 49.20060054637838
+        },
+        {
+          "fixture": 0,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 13.45400238846618
+        },
+        {
+          "fixture": 0,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1334.9016113515772
+        },
+        {
+          "fixture": 0,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 41.68079025995665
+        },
+        {
+          "fixture": 1,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 3.5033185425190823
+        },
+        {
+          "fixture": 1,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1201.5794467606593
+        },
+        {
+          "fixture": 1,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 42.646332696824174
+        },
+        {
+          "fixture": 1,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 7.103067776014996
+        },
+        {
+          "fixture": 1,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1191.5336547023007
+        },
+        {
+          "fixture": 1,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 41.54318052168537
+        },
+        {
+          "fixture": 2,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 2.331767821685389
+        },
+        {
+          "fixture": 2,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 246.93371620088237
+        },
+        {
+          "fixture": 2,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 9.376274977432331
+        },
+        {
+          "fixture": 2,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 7.101556999878994
+        },
+        {
+          "fixture": 2,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 249.62725719137688
+        },
+        {
+          "fixture": 2,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 9.427821808754743
+        },
+        {
+          "fixture": 3,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 3.9066113180952016
+        },
+        {
+          "fixture": 3,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 692.8393261353885
+        },
+        {
+          "fixture": 3,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 127.59181754652127
+        },
+        {
+          "fixture": 3,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 8.922137958257736
+        },
+        {
+          "fixture": 3,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 681.0751514047279
+        },
+        {
+          "fixture": 3,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 141.4571096370155
+        },
+        {
+          "fixture": 4,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 14.061982587911189
+        },
+        {
+          "fixture": 4,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 718.6916483693221
+        },
+        {
+          "fixture": 4,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 143.55212404276608
+        },
+        {
+          "fixture": 4,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 3.2090468387441433
+        },
+        {
+          "fixture": 4,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 668.3397653478223
+        },
+        {
+          "fixture": 4,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 143.7083218134385
+        },
+        {
+          "fixture": 5,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 2.9493912734324113e-06
+        },
+        {
+          "fixture": 5,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 171.75401486574992
+        },
+        {
+          "fixture": 5,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 22.794138184861367
+        },
+        {
+          "fixture": 5,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 1.671280045155072
+        },
+        {
+          "fixture": 5,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 160.83654294128974
+        },
+        {
+          "fixture": 5,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 31.718064013557523
+        },
+        {
+          "fixture": 6,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 122.71304162019987
+        },
+        {
+          "fixture": 6,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1011.7729989929685
+        },
+        {
+          "fixture": 6,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 41.40825938682792
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 73.07651201950284
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1102.5676131333785
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 71.5599103732693
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 59.696927473838514
+        },
+        {
+          "fixture": 7,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 131.9847883471848
+        },
+        {
+          "fixture": 7,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1005.5916727908552
+        },
+        {
+          "fixture": 7,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 48.81635386196103
+        },
+        {
+          "fixture": 7,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 124.37491469523047
+        },
+        {
+          "fixture": 7,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 990.5374439701081
+        },
+        {
+          "fixture": 7,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 35.1850173346611
+        },
+        {
+          "fixture": 8,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 32.351953992782
+        },
+        {
+          "fixture": 8,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 241.39204754110688
+        },
+        {
+          "fixture": 8,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 4.673321466110792
+        },
+        {
+          "fixture": 8,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 28.00509927688654
+        },
+        {
+          "fixture": 8,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 258.96806807503344
+        },
+        {
+          "fixture": 8,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 9.431777648080242
+        },
+        {
+          "fixture": 9,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 11.146690137931728
+        },
+        {
+          "fixture": 9,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1155.2476522639372
+        },
+        {
+          "fixture": 9,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 131.18433359812843
+        },
+        {
+          "fixture": 9,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 4.180278799107327
+        },
+        {
+          "fixture": 9,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1173.669032876247
+        },
+        {
+          "fixture": 9,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 143.22768332465057
+        },
+        {
+          "fixture": 10,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 0.8377113160022418
+        },
+        {
+          "fixture": 10,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1122.454382005817
+        },
+        {
+          "fixture": 10,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 142.07477367818865
+        },
+        {
+          "fixture": 10,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 5.844280636039912
+        },
+        {
+          "fixture": 10,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1126.8705668826406
+        },
+        {
+          "fixture": 10,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 152.2814894812982
+        },
+        {
+          "fixture": 11,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 1.1819521297002211
+        },
+        {
+          "fixture": 11,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 292.44958843723
+        },
+        {
+          "fixture": 11,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 21.43246743306372
+        },
+        {
+          "fixture": 11,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 1.6595074169963482
+        },
+        {
+          "fixture": 11,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 290.0765061967395
+        },
+        {
+          "fixture": 11,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 22.37361138626511
+        },
+        {
+          "fixture": 12,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 1.3916022070297913
+        },
+        {
+          "fixture": 12,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1249.0403487929652
+        },
+        {
+          "fixture": 12,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 6.703348921255383
+        },
+        {
+          "fixture": 12,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1252.7513490787496
+        },
+        {
+          "fixture": 13,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 1.1631636640631768
+        },
+        {
+          "fixture": 13,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1151.6405983359437
+        },
+        {
+          "fixture": 13,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 2.3416168212279445
+        },
+        {
+          "fixture": 13,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1143.0479101787714
+        },
+        {
+          "fixture": 14,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 3.865909940424899
+        },
+        {
+          "fixture": 14,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 227.71843605955655
+        },
+        {
+          "fixture": 14,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 2.3927943357266486
+        },
+        {
+          "fixture": 14,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 218.02159066427703
+        },
+        {
+          "fixture": 15,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 2.334597769895481
+        },
+        {
+          "fixture": 15,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1504.9050841734934
+        },
+        {
+          "fixture": 15,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 19.27450305662569
+        },
+        {
+          "fixture": 15,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 3.693341294536367
+        },
+        {
+          "fixture": 15,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1517.0519525537384
+        },
+        {
+          "fixture": 15,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 20.968203151722264
+        },
+        {
+          "fixture": 16,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 4.689647539635189e-05
+        },
+        {
+          "fixture": 16,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1388.997580477837
+        },
+        {
+          "fixture": 16,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 11.676547625709645
+        },
+        {
+          "fixture": 16,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 3.9348464448594314
+        },
+        {
+          "fixture": 16,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1423.62421557364
+        },
+        {
+          "fixture": 16,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 19.894895981502486
+        },
+        {
+          "fixture": 17,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 1.1178752724772494
+        },
+        {
+          "fixture": 17,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 294.82241511556276
+        },
+        {
+          "fixture": 17,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 7.021909611976298
+        },
+        {
+          "fixture": 17,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 2.157013469684898
+        },
+        {
+          "fixture": 17,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 292.49061268953665
+        },
+        {
+          "fixture": 17,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 3.474733840794215
+        },
+        {
+          "fixture": 18,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 5.869434689717309
+        },
+        {
+          "fixture": 18,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1753.4412866260245
+        },
+        {
+          "fixture": 18,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 30.751215684285853
+        },
+        {
+          "fixture": 18,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 4.606970850370999
+        },
+        {
+          "fixture": 18,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1685.367572945921
+        },
+        {
+          "fixture": 18,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 28.606433203698543
+        },
+        {
+          "fixture": 19,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 1.185640824798611
+        },
+        {
+          "fixture": 19,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1482.6097520402618
+        },
+        {
+          "fixture": 19,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 29.44293613492482
+        },
+        {
+          "fixture": 19,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 0.2309322687870008
+        },
+        {
+          "fixture": 19,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 1478.0333434436034
+        },
+        {
+          "fixture": 19,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 27.646309287607437
+        },
+        {
+          "fixture": 20,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 0.1817538700561272
+        },
+        {
+          "fixture": 20,
+          "phase": "recorded",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 309.95417736961826
+        },
+        {
+          "fixture": 20,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 3.5187307603118825
+        },
+        {
+          "fixture": 20,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 6.521306357899448
+        },
+        {
+          "fixture": 20,
+          "phase": "warmup",
+          "category": "unpacked-consumption",
+          "estimated_thread_ms": 337.1135846420948
+        }
+      ],
+      "method_loads": [
+        {
+          "role": "current",
+          "ms": 45.437619,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 66,
+          "address": "127062472596928"
+        },
+        {
+          "role": "current",
+          "ms": 45.877104,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 713,
+          "address": "127062472597024"
+        },
+        {
+          "role": "current",
+          "ms": 46.228375,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 1019,
+          "address": "127062472597776"
+        },
+        {
+          "role": "current",
+          "ms": 46.336028,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "GetTypeInfo",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJitted",
+          "bytes": 81,
+          "address": "127062472598832"
+        },
+        {
+          "role": "current",
+          "ms": 47.402171,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".cctor",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJitted",
+          "bytes": 1923,
+          "address": "127062472598944"
+        },
+        {
+          "role": "current",
+          "ms": 47.458176,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 63,
+          "address": "127062472600912"
+        },
+        {
+          "role": "current",
+          "ms": 47.482042,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "set_ElementType",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "127062472601008"
+        },
+        {
+          "role": "current",
+          "ms": 47.496964,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "set_TypeSize",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "127062472601072"
+        },
+        {
+          "role": "current",
+          "ms": 47.817419,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "get_ElementType",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "127062472601344"
+        },
+        {
+          "role": "current",
+          "ms": 47.85085,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "get_TypeSize",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "127062472601392"
+        },
+        {
+          "role": "current",
+          "ms": 47.894215,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 97,
+          "address": "127062472601440"
+        },
+        {
+          "role": "current",
+          "ms": 47.934326,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "set_TensorType",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 42,
+          "address": "127062472601568"
+        },
+        {
+          "role": "current",
+          "ms": 47.955488,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "set_TypeSize",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "127062472601632"
+        },
+        {
+          "role": "current",
+          "ms": 47.971242,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "set_IsString",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "127062472601696"
+        },
+        {
+          "role": "current",
+          "ms": 48.888489,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJitted",
+          "bytes": 52,
+          "address": "127062472604976"
+        },
+        {
+          "role": "current",
+          "ms": 49.151868,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJitted",
+          "bytes": 905,
+          "address": "127062472605056"
+        },
+        {
+          "role": "current",
+          "ms": 49.689261,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "get_Length",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "127062472606848"
+        },
+        {
+          "role": "current",
+          "ms": 52.166889,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "get_Intrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 89,
+          "address": "127062472609360"
+        },
+        {
+          "role": "current",
+          "ms": 52.283705,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 114,
+          "address": "127062472609472"
+        },
+        {
+          "role": "current",
+          "ms": 52.533303,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823759,
+          "method": "get_Buffer",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 48,
+          "address": "127062472610016"
+        },
+        {
+          "role": "current",
+          "ms": 53.195715,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "MatMul2D",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 210,
+          "address": "127062472611344"
+        },
+        {
+          "role": "current",
+          "ms": 54.390032,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "MatMul2DCore",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 3662,
+          "address": "127062472611584"
+        },
+        {
+          "role": "current",
+          "ms": 54.431134,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 31,
+          "address": "127062472615344"
+        },
+        {
+          "role": "current",
+          "ms": 54.500419,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "Validate",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 290,
+          "address": "127062472615408"
+        },
+        {
+          "role": "current",
+          "ms": 54.542903,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_MaxDegreeOfParallelism",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "127062472615728"
+        },
+        {
+          "role": "current",
+          "ms": 54.557715,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_UseIntrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "127062472615776"
+        },
+        {
+          "role": "current",
+          "ms": 54.572117,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_UseSimd",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "127062472615824"
+        },
+        {
+          "role": "current",
+          "ms": 54.616174,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJitted",
+          "bytes": 51,
+          "address": "127062472615872"
+        },
+        {
+          "role": "current",
+          "ms": 54.681352,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_Current",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJitted",
+          "bytes": 119,
+          "address": "127062472615952"
+        },
+        {
+          "role": "current",
+          "ms": 54.723286,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": ".cctor",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJitted",
+          "bytes": 135,
+          "address": "127062472616096"
+        },
+        {
+          "role": "current",
+          "ms": 55.04316,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.ProfilerContext",
+          "tier": "QuickJitted",
+          "bytes": 296,
+          "address": "127062472616256"
+        },
+        {
+          "role": "current",
+          "ms": 55.409684,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.ProfilerContext",
+          "tier": "QuickJitted",
+          "bytes": 244,
+          "address": "127062472616736"
+        },
+        {
+          "role": "current",
+          "ms": 55.44013,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_Rank",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 31,
+          "address": "127062472617024"
+        },
+        {
+          "role": "current",
+          "ms": 55.475824,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_Dimensions",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 56,
+          "address": "127062472617088"
+        },
+        {
+          "role": "current",
+          "ms": 55.852885,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "HasStandardStrides",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 162,
+          "address": "127062472617168"
+        },
+        {
+          "role": "current",
+          "ms": 55.883221,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_IsReversedStride",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "127062472617360"
+        },
+        {
+          "role": "current",
+          "ms": 55.906265,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJitted",
+          "bytes": 41,
+          "address": "127062472617408"
+        },
+        {
+          "role": "current",
+          "ms": 56.157175,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "SharesBackingMemory",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJitted",
+          "bytes": 212,
+          "address": "127062472617728"
+        },
+        {
+          "role": "current",
+          "ms": 56.805025,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "TryGetTouchedRange",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJitted",
+          "bytes": 1306,
+          "address": "127062472617968"
+        },
+        {
+          "role": "current",
+          "ms": 58.094666,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_Storage",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 356,
+          "address": "127062472619312"
+        },
+        {
+          "role": "current",
+          "ms": 58.23623,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "GetStorageIndex",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 366,
+          "address": "127062472619792"
+        },
+        {
+          "role": "current",
+          "ms": 58.615994,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "GetIndex",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "Optimized",
+          "bytes": 121,
+          "address": "127062472620192"
+        },
+        {
+          "role": "current",
+          "ms": 59.034457,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "ResolvePackedKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 367,
+          "address": "127062472620688"
+        },
+        {
+          "role": "current",
+          "ms": 59.064463,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_PackedMatMulWeights",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "127062472621088"
+        },
+        {
+          "role": "current",
+          "ms": 59.434242,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "ResolvePacked",
+          "namespace": "Lokad.Onnx.GraphPacking",
+          "tier": "QuickJitted",
+          "bytes": 1760,
+          "address": "127062472621136"
+        },
+        {
+          "role": "current",
+          "ms": 59.468684,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_CopyReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "127062472622944"
+        },
+        {
+          "role": "current",
+          "ms": 59.593733,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "DensifyFloatOperands",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 323,
+          "address": "127062472622992"
+        },
+        {
+          "role": "current",
+          "ms": 60.185769,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "RunFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 1885,
+          "address": "127062472623344"
+        },
+        {
+          "role": "current",
+          "ms": 61.121515,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 1851,
+          "address": "127062472625328"
+        },
+        {
+          "role": "current",
+          "ms": 61.906552,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 870,
+          "address": "127062472627232"
+        },
+        {
+          "role": "current",
+          "ms": 85.769525,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 966,
+          "address": "127062472628160"
+        },
+        {
+          "role": "current",
+          "ms": 86.829128,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 564,
+          "address": "127062472629408"
+        },
+        {
+          "role": "current",
+          "ms": 2698.902536,
+          "fixture": 0,
+          "iteration": 115,
+          "where": "inside",
+          "thread": 823765,
+          "method": "GetStorageIndex",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 571,
+          "address": "127062472642272"
+        },
+        {
+          "role": "current",
+          "ms": 2716.739935,
+          "fixture": 0,
+          "iteration": 116,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Dimensions",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 56,
+          "address": "127062472642928"
+        },
+        {
+          "role": "current",
+          "ms": 2739.086133,
+          "fixture": 0,
+          "iteration": 117,
+          "where": "inside",
+          "thread": 823765,
+          "method": "GetStorageIndex",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 452,
+          "address": "127062472643104"
+        },
+        {
+          "role": "current",
+          "ms": 2741.6101,
+          "fixture": 0,
+          "iteration": 117,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Buffer",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 48,
+          "address": "127062472643584"
+        },
+        {
+          "role": "current",
+          "ms": 2765.662459,
+          "fixture": 0,
+          "iteration": 118,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Rank",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 31,
+          "address": "127062472643904"
+        },
+        {
+          "role": "current",
+          "ms": 2785.116833,
+          "fixture": 0,
+          "iteration": 119,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Dimensions",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 31,
+          "address": "127062472643968"
+        },
+        {
+          "role": "current",
+          "ms": 2785.16157,
+          "fixture": 0,
+          "iteration": 119,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_UseIntrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "127062472644032"
+        },
+        {
+          "role": "current",
+          "ms": 3826.298653,
+          "fixture": 1,
+          "iteration": 47,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Length",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "127062472647968"
+        },
+        {
+          "role": "current",
+          "ms": 3827.068807,
+          "fixture": 1,
+          "iteration": 47,
+          "where": "inside",
+          "thread": 823765,
+          "method": "TryGetTouchedRange",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 1306,
+          "address": "127062472648512"
+        },
+        {
+          "role": "current",
+          "ms": 3827.212845,
+          "fixture": 1,
+          "iteration": 47,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Storage",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 567,
+          "address": "127062472649856"
+        },
+        {
+          "role": "current",
+          "ms": 3827.278364,
+          "fixture": 1,
+          "iteration": 47,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Buffer",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 37,
+          "address": "127062472650448"
+        },
+        {
+          "role": "current",
+          "ms": 3827.333247,
+          "fixture": 1,
+          "iteration": 47,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_UseSimd",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "127062472650544"
+        },
+        {
+          "role": "current",
+          "ms": 3835.991413,
+          "fixture": 1,
+          "iteration": 48,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Rank",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 8,
+          "address": "127062472651136"
+        },
+        {
+          "role": "current",
+          "ms": 3836.026115,
+          "fixture": 1,
+          "iteration": 48,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_IsReversedStride",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "127062472651168"
+        },
+        {
+          "role": "current",
+          "ms": 3839.900475,
+          "fixture": 1,
+          "iteration": 48,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_UseIntrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "127062472652608"
+        },
+        {
+          "role": "current",
+          "ms": 3855.179504,
+          "fixture": 1,
+          "iteration": 48,
+          "where": "inside",
+          "thread": 823765,
+          "method": "SharesBackingMemory",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 368,
+          "address": "127062472656784"
+        },
+        {
+          "role": "current",
+          "ms": 3855.210962,
+          "fixture": 1,
+          "iteration": 48,
+          "where": "inside",
+          "thread": 823765,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 51,
+          "address": "127062472657184"
+        },
+        {
+          "role": "current",
+          "ms": 3855.258404,
+          "fixture": 1,
+          "iteration": 48,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Current",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 117,
+          "address": "127062472657264"
+        },
+        {
+          "role": "current",
+          "ms": 5348.040386,
+          "fixture": 2,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4tiled",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 2330,
+          "address": "127062472658688"
+        },
+        {
+          "role": "current",
+          "ms": 5349.166319,
+          "fixture": 2,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4tiled",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 957,
+          "address": "127062472661056"
+        },
+        {
+          "role": "current",
+          "ms": 5904.604029,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "RentScratch",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 150,
+          "address": "127062472662064"
+        },
+        {
+          "role": "current",
+          "ms": 5905.577771,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "get_ScratchReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "127062472664080"
+        },
+        {
+          "role": "current",
+          "ms": 5905.816603,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 794,
+          "address": "127062472664128"
+        },
+        {
+          "role": "current",
+          "ms": 5906.805899,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 334,
+          "address": "127062472664960"
+        },
+        {
+          "role": "current",
+          "ms": 5909.872137,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": ".cctor",
+          "namespace": "Lokad.Onnx.AblationSwitches",
+          "tier": "QuickJitted",
+          "bytes": 512,
+          "address": "127062472665344"
+        },
+        {
+          "role": "current",
+          "ms": 5909.968172,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "EnvDefaultOn",
+          "namespace": "Lokad.Onnx.AblationSwitches",
+          "tier": "QuickJitted",
+          "bytes": 73,
+          "address": "127062472665888"
+        },
+        {
+          "role": "current",
+          "ms": 5910.025649,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "EnvIsSet",
+          "namespace": "Lokad.Onnx.AblationSwitches",
+          "tier": "QuickJitted",
+          "bytes": 66,
+          "address": "127062472665984"
+        },
+        {
+          "role": "current",
+          "ms": 5911.314668,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 4105,
+          "address": "127062472666080"
+        },
+        {
+          "role": "current",
+          "ms": 5912.66459,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1577,
+          "address": "127062472670240"
+        },
+        {
+          "role": "current",
+          "ms": 8867.805722,
+          "fixture": 4,
+          "iteration": 92,
+          "where": "inside",
+          "thread": 823765,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.ProfilerContext",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 321,
+          "address": "127062472677072"
+        },
+        {
+          "role": "current",
+          "ms": 8867.840394,
+          "fixture": 4,
+          "iteration": 92,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_MaxDegreeOfParallelism",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 27,
+          "address": "127062472677440"
+        },
+        {
+          "role": "current",
+          "ms": 8868.100928,
+          "fixture": 4,
+          "iteration": 92,
+          "where": "inside",
+          "thread": 823765,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 905,
+          "address": "127062472677600"
+        },
+        {
+          "role": "current",
+          "ms": 8868.867928,
+          "fixture": 4,
+          "iteration": 92,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 966,
+          "address": "127062472679168"
+        },
+        {
+          "role": "current",
+          "ms": 8869.076734,
+          "fixture": 4,
+          "iteration": 92,
+          "where": "inside",
+          "thread": 823765,
+          "method": "MatMul2D",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 210,
+          "address": "127062472680544"
+        },
+        {
+          "role": "current",
+          "ms": 8877.155124,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "MatMul2DCore",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 3948,
+          "address": "127062472680784"
+        },
+        {
+          "role": "current",
+          "ms": 8879.69125,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 31,
+          "address": "127062472684832"
+        },
+        {
+          "role": "current",
+          "ms": 8879.846465,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "Validate",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 340,
+          "address": "127062472684896"
+        },
+        {
+          "role": "current",
+          "ms": 8880.023773,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "HasStandardStrides",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 192,
+          "address": "127062472685264"
+        },
+        {
+          "role": "current",
+          "ms": 8880.09402,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 41,
+          "address": "127062472685488"
+        },
+        {
+          "role": "current",
+          "ms": 8883.890633,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "ResolvePackedKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 494,
+          "address": "127062472686720"
+        },
+        {
+          "role": "current",
+          "ms": 8883.919927,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_PackedMatMulWeights",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "127062472687248"
+        },
+        {
+          "role": "current",
+          "ms": 8884.258449,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "ResolvePacked",
+          "namespace": "Lokad.Onnx.GraphPacking",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 1756,
+          "address": "127062472687296"
+        },
+        {
+          "role": "current",
+          "ms": 8884.294333,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_CopyReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "127062472689088"
+        },
+        {
+          "role": "current",
+          "ms": 8884.422016,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "DensifyFloatOperands",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 495,
+          "address": "127062472689136"
+        },
+        {
+          "role": "current",
+          "ms": 8884.958278,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "RunFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 2713,
+          "address": "127062472689728"
+        },
+        {
+          "role": "current",
+          "ms": 8885.299684,
+          "fixture": 4,
+          "iteration": 93,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 1851,
+          "address": "127062472692544"
+        },
+        {
+          "role": "current",
+          "ms": 8896.789655,
+          "fixture": 4,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823765,
+          "method": "TryGetTouchedRange",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "OptimizedTier1",
+          "bytes": 1503,
+          "address": "127062472694592"
+        },
+        {
+          "role": "current",
+          "ms": 8899.905037,
+          "fixture": 4,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Storage",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 251,
+          "address": "127062472696144"
+        },
+        {
+          "role": "current",
+          "ms": 8903.806509,
+          "fixture": 4,
+          "iteration": 95,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Length",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "127062472697040"
+        },
+        {
+          "role": "current",
+          "ms": 8903.84072,
+          "fixture": 4,
+          "iteration": 95,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_UseSimd",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "127062472697072"
+        },
+        {
+          "role": "current",
+          "ms": 8904.650706,
+          "fixture": 4,
+          "iteration": 95,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_IsReversedStride",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "127062472697616"
+        },
+        {
+          "role": "current",
+          "ms": 8930.431864,
+          "fixture": 4,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823765,
+          "method": "SharesBackingMemory",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "OptimizedTier1",
+          "bytes": 180,
+          "address": "127062472701648"
+        },
+        {
+          "role": "current",
+          "ms": 8930.999673,
+          "fixture": 4,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823765,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "OptimizedTier1",
+          "bytes": 392,
+          "address": "127062472701856"
+        },
+        {
+          "role": "current",
+          "ms": 8931.239906,
+          "fixture": 4,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_Current",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "OptimizedTier1",
+          "bytes": 196,
+          "address": "127062472702288"
+        },
+        {
+          "role": "current",
+          "ms": 9117.915559,
+          "fixture": 4,
+          "iteration": 107,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_MaxDegreeOfParallelism",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 4,
+          "address": "127062472738064"
+        },
+        {
+          "role": "current",
+          "ms": 9759.114391,
+          "fixture": 6,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 564,
+          "address": "127062472738656"
+        },
+        {
+          "role": "current",
+          "ms": 10336.551259,
+          "fixture": 6,
+          "iteration": 27,
+          "where": "inside",
+          "thread": 823765,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "OptimizedTier1",
+          "bytes": 470,
+          "address": "127062472744128"
+        },
+        {
+          "role": "current",
+          "ms": 10340.624861,
+          "fixture": 6,
+          "iteration": 27,
+          "where": "inside",
+          "thread": 823765,
+          "method": "MatMul2D",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 179,
+          "address": "127062472746592"
+        },
+        {
+          "role": "current",
+          "ms": 10340.742369,
+          "fixture": 6,
+          "iteration": 27,
+          "where": "inside",
+          "thread": 823765,
+          "method": "RentScratch",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 251,
+          "address": "127062472746800"
+        },
+        {
+          "role": "current",
+          "ms": 10341.441746,
+          "fixture": 6,
+          "iteration": 27,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_ScratchReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 27,
+          "address": "127062472748656"
+        },
+        {
+          "role": "current",
+          "ms": 10343.051431,
+          "fixture": 6,
+          "iteration": 27,
+          "where": "inside",
+          "thread": 823765,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 794,
+          "address": "127062472748704"
+        },
+        {
+          "role": "current",
+          "ms": 10349.326483,
+          "fixture": 6,
+          "iteration": 27,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 4105,
+          "address": "127062472749536"
+        },
+        {
+          "role": "current",
+          "ms": 10351.266418,
+          "fixture": 6,
+          "iteration": 28,
+          "where": "inside",
+          "thread": 823759,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 334,
+          "address": "127062472753696"
+        },
+        {
+          "role": "current",
+          "ms": 10358.693172,
+          "fixture": 6,
+          "iteration": 28,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1577,
+          "address": "127062472754080"
+        },
+        {
+          "role": "current",
+          "ms": 10382.248033,
+          "fixture": 6,
+          "iteration": 28,
+          "where": "inside",
+          "thread": 823765,
+          "method": "MatMul2DCore",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 8532,
+          "address": "127062472755712"
+        },
+        {
+          "role": "current",
+          "ms": 10386.660627,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 1,
+          "address": "127062472764784"
+        },
+        {
+          "role": "current",
+          "ms": 10386.936034,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "Validate",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 206,
+          "address": "127062472764816"
+        },
+        {
+          "role": "current",
+          "ms": 10390.637583,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "HasStandardStrides",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 587,
+          "address": "127062472765056"
+        },
+        {
+          "role": "current",
+          "ms": 10391.874574,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "OptimizedTier1",
+          "bytes": 8,
+          "address": "127062472765712"
+        },
+        {
+          "role": "current",
+          "ms": 10397.626725,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "ResolvePackedKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 189,
+          "address": "127062472766848"
+        },
+        {
+          "role": "current",
+          "ms": 10397.68894,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_PackedMatMulWeights",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "127062472767072"
+        },
+        {
+          "role": "current",
+          "ms": 10398.3836,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "ResolvePacked",
+          "namespace": "Lokad.Onnx.GraphPacking",
+          "tier": "OptimizedTier1",
+          "bytes": 508,
+          "address": "127062472767104"
+        },
+        {
+          "role": "current",
+          "ms": 10398.434678,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_CopyReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "127062472767664"
+        },
+        {
+          "role": "current",
+          "ms": 10399.035547,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "DensifyFloatOperands",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 189,
+          "address": "127062472767696"
+        },
+        {
+          "role": "current",
+          "ms": 10412.591071,
+          "fixture": 6,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823765,
+          "method": "RunFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 3541,
+          "address": "127062472768000"
+        },
+        {
+          "role": "current",
+          "ms": 10446.897786,
+          "fixture": 6,
+          "iteration": 30,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 298,
+          "address": "127062472780352"
+        },
+        {
+          "role": "current",
+          "ms": 10995.624194,
+          "fixture": 6,
+          "iteration": 57,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 1327,
+          "address": "127062472782656"
+        },
+        {
+          "role": "current",
+          "ms": 15237.237535,
+          "fixture": 9,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 4796,
+          "address": "127062472796512"
+        },
+        {
+          "role": "current",
+          "ms": 15238.745426,
+          "fixture": 9,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1846,
+          "address": "127062472801344"
+        },
+        {
+          "role": "current",
+          "ms": 16241.227855,
+          "fixture": 9,
+          "iteration": 45,
+          "where": "inside",
+          "thread": 823765,
+          "method": "RentScratch",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 974,
+          "address": "127062472803264"
+        },
+        {
+          "role": "current",
+          "ms": 16243.591479,
+          "fixture": 9,
+          "iteration": 45,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_ScratchReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 4,
+          "address": "127062472804272"
+        },
+        {
+          "role": "current",
+          "ms": 16244.066647,
+          "fixture": 9,
+          "iteration": 45,
+          "where": "inside",
+          "thread": 823765,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 295,
+          "address": "127062472804320"
+        },
+        {
+          "role": "current",
+          "ms": 16890.475704,
+          "fixture": 9,
+          "iteration": 75,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 4796,
+          "address": "127062472804704"
+        },
+        {
+          "role": "current",
+          "ms": 16903.271421,
+          "fixture": 9,
+          "iteration": 76,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1846,
+          "address": "127062472809536"
+        },
+        {
+          "role": "current",
+          "ms": 17534.809768,
+          "fixture": 9,
+          "iteration": 105,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 1629,
+          "address": "127062472811456"
+        },
+        {
+          "role": "current",
+          "ms": 17936.328816,
+          "fixture": 10,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823765,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 66,
+          "address": "127062472832544"
+        },
+        {
+          "role": "current",
+          "ms": 17936.606436,
+          "fixture": 10,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823765,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 713,
+          "address": "127062472832640"
+        },
+        {
+          "role": "current",
+          "ms": 17938.033213,
+          "fixture": 10,
+          "iteration": 1,
+          "where": "inside",
+          "thread": 823765,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 1019,
+          "address": "127062472833392"
+        },
+        {
+          "role": "current",
+          "ms": 17940.704162,
+          "fixture": 10,
+          "iteration": 1,
+          "where": "inside",
+          "thread": 823765,
+          "method": "GetTypeInfo",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 65,
+          "address": "127062472834448"
+        },
+        {
+          "role": "current",
+          "ms": 17944.445018,
+          "fixture": 10,
+          "iteration": 1,
+          "where": "inside",
+          "thread": 823765,
+          "method": "get_ElementType",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 27,
+          "address": "127062472835552"
+        },
+        {
+          "role": "current",
+          "ms": 17944.475514,
+          "fixture": 10,
+          "iteration": 1,
+          "where": "inside",
+          "thread": 823765,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 52,
+          "address": "127062472835600"
+        },
+        {
+          "role": "current",
+          "ms": 21135.209911,
+          "fixture": 12,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 870,
+          "address": "127062472835872"
+        },
+        {
+          "role": "current",
+          "ms": 22490.443011,
+          "fixture": 12,
+          "iteration": 64,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 679,
+          "address": "127062472839680"
+        },
+        {
+          "role": "current",
+          "ms": 26111.929818,
+          "fixture": 14,
+          "iteration": 31,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4tiled",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 2330,
+          "address": "127062472841552"
+        },
+        {
+          "role": "current",
+          "ms": 26114.862965,
+          "fixture": 14,
+          "iteration": 32,
+          "where": "inside",
+          "thread": 823759,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4tiled",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 957,
+          "address": "127062472843936"
+        },
+        {
+          "role": "current",
+          "ms": 26226.261626,
+          "fixture": 14,
+          "iteration": 61,
+          "where": "inside",
+          "thread": 823765,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4tiled",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 752,
+          "address": "127062472844960"
+        },
+        {
+          "role": "current",
+          "ms": 39734.620992,
+          "fixture": 20,
+          "iteration": 7,
+          "where": "inside",
+          "thread": 823871,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 940,
+          "address": "127062472871536"
+        },
+        {
+          "role": "current",
+          "ms": 39735.634005,
+          "fixture": 20,
+          "iteration": 7,
+          "where": "inside",
+          "thread": 823871,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 701,
+          "address": "127062472872624"
+        },
+        {
+          "role": "current",
+          "ms": 39739.932687,
+          "fixture": 20,
+          "iteration": 8,
+          "where": "inside",
+          "thread": 823871,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 1352,
+          "address": "127062472873472"
+        },
+        {
+          "role": "current",
+          "ms": 39740.778356,
+          "fixture": 20,
+          "iteration": 8,
+          "where": "inside",
+          "thread": 823871,
+          "method": "GetTypeInfo",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "OptimizedTier1",
+          "bytes": 728,
+          "address": "127062472874880"
+        },
+        {
+          "role": "current",
+          "ms": 39753.075378,
+          "fixture": 20,
+          "iteration": 10,
+          "where": "inside",
+          "thread": 823871,
+          "method": "get_ElementType",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "OptimizedTier1",
+          "bytes": 4,
+          "address": "127062472877728"
+        },
+        {
+          "role": "current",
+          "ms": 39753.121037,
+          "fixture": 20,
+          "iteration": 10,
+          "where": "inside",
+          "thread": 823871,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "OptimizedTier1",
+          "bytes": 11,
+          "address": "127062472877760"
+        }
+      ]
+    },
+    "candidate": {
+      "records": 104729,
+      "compilations": 764,
+      "gc_pauses": 14,
+      "gc_pause_overlap_ms": 0,
+      "gc_calls": 0,
+      "allocation_positive_calls": 1008,
+      "total_allocation_delta": 21682936,
+      "suspension_reasons": {
+        "SuspendOther": 17820,
+        "SuspendForGC": 7,
+        "SuspendForGCPrep": 7
+      },
+      "stack_profile_ms": {
+        "Thread (823872)": 23780.92771501446,
+        "Thread (823874)": 8.864126997467043
+      },
+      "stack_inside_ms": 23056.288132000038,
+      "stack_outside_ms": 733.5037100118908,
+      "stack_attribution": [
+        {
+          "fixture": 0,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 2.0733536402970003
+        },
+        {
+          "fixture": 0,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 298.2925404532706
+        },
+        {
+          "fixture": 0,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 109.2219009064329
+        },
+        {
+          "fixture": 0,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 14.200726211830158
+        },
+        {
+          "fixture": 0,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 286.5249106851653
+        },
+        {
+          "fixture": 0,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 117.34179810300445
+        },
+        {
+          "fixture": 1,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 1.9109576378555175
+        },
+        {
+          "fixture": 1,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 278.4758431262446
+        },
+        {
+          "fixture": 1,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 139.40169323590044
+        },
+        {
+          "fixture": 1,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 3.4548848445587055
+        },
+        {
+          "fixture": 1,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 265.5684394749153
+        },
+        {
+          "fixture": 1,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 133.9448896805261
+        },
+        {
+          "fixture": 2,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 1.141417331848288
+        },
+        {
+          "fixture": 2,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 69.32427757615073
+        },
+        {
+          "fixture": 2,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 19.864274092002688
+        },
+        {
+          "fixture": 2,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 1.825081764313154
+        },
+        {
+          "fixture": 2,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 67.90407873494723
+        },
+        {
+          "fixture": 2,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 25.40932950073966
+        },
+        {
+          "fixture": 3,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 7.609824885860235
+        },
+        {
+          "fixture": 3,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 684.1243168347842
+        },
+        {
+          "fixture": 3,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 141.87480527935486
+        },
+        {
+          "fixture": 3,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 9.099409508551844
+        },
+        {
+          "fixture": 3,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 678.5513867966451
+        },
+        {
+          "fixture": 3,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 137.28294769480203
+        },
+        {
+          "fixture": 4,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 5.381318425133941
+        },
+        {
+          "fixture": 4,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 695.2103547077359
+        },
+        {
+          "fixture": 4,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 111.19659986713305
+        },
+        {
+          "fixture": 4,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 5.260540568498527
+        },
+        {
+          "fixture": 4,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 674.2821248579849
+        },
+        {
+          "fixture": 4,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 134.54954257351483
+        },
+        {
+          "fixture": 5,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 2.8871904775178336
+        },
+        {
+          "fixture": 5,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 166.381792260172
+        },
+        {
+          "fixture": 5,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 34.32316326230739
+        },
+        {
+          "fixture": 5,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 1.5073428869245618
+        },
+        {
+          "fixture": 5,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 168.28612724485356
+        },
+        {
+          "fixture": 5,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 24.54111086821922
+        },
+        {
+          "fixture": 6,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 8.023595125023348
+        },
+        {
+          "fixture": 6,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1087.4278740540785
+        },
+        {
+          "fixture": 6,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 115.79663167422495
+        },
+        {
+          "fixture": 6,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 75.65592914667468
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 14.1538051781381
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1043.4680980909725
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 124.10509417090452
+        },
+        {
+          "fixture": 6,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 74.6472535599878
+        },
+        {
+          "fixture": 7,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 184.51333703667842
+        },
+        {
+          "fixture": 7,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 995.1318249633259
+        },
+        {
+          "fixture": 7,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 150.6375552378213
+        },
+        {
+          "fixture": 7,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1039.9478131795258
+        },
+        {
+          "fixture": 7,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 12.364580931174714
+        },
+        {
+          "fixture": 7,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 8.371231651477501
+        },
+        {
+          "fixture": 8,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 27.63965883511264
+        },
+        {
+          "fixture": 8,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 245.63615016488984
+        },
+        {
+          "fixture": 8,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 33.769635104965346
+        },
+        {
+          "fixture": 8,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 241.1415248950252
+        },
+        {
+          "fixture": 9,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 12.99633065663329
+        },
+        {
+          "fixture": 9,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1142.371901905004
+        },
+        {
+          "fixture": 9,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 135.44988543835098
+        },
+        {
+          "fixture": 9,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 5.816031751099217
+        },
+        {
+          "fixture": 9,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1185.6894251463273
+        },
+        {
+          "fixture": 9,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 127.71672010257134
+        },
+        {
+          "fixture": 10,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 4.761501615323141
+        },
+        {
+          "fixture": 10,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1134.4398996221444
+        },
+        {
+          "fixture": 10,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 138.89435176253755
+        },
+        {
+          "fixture": 10,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 0.8868366336246254
+        },
+        {
+          "fixture": 10,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 1125.7741780151173
+        },
+        {
+          "fixture": 10,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 145.19111135125058
+        },
+        {
+          "fixture": 11,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 2.3446094913706474
+        },
+        {
+          "fixture": 11,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 287.6251940492948
+        },
+        {
+          "fixture": 11,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 26.493949459370924
+        },
+        {
+          "fixture": 11,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 1.9951514931271959
+        },
+        {
+          "fixture": 11,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 310.80503033162313
+        },
+        {
+          "fixture": 11,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 21.11620517524716
+        },
+        {
+          "fixture": 12,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 105.45184765152953
+        },
+        {
+          "fixture": 12,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 282.0941202742906
+        },
+        {
+          "fixture": 12,
+          "phase": "recorded",
+          "category": "packing",
+          "estimated_thread_ms": 3.5698580741882324
+        },
+        {
+          "fixture": 12,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 3.8141943249756878
+        },
+        {
+          "fixture": 12,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 276.24597236694535
+        },
+        {
+          "fixture": 12,
+          "phase": "warmup",
+          "category": "packing",
+          "estimated_thread_ms": 131.0388943080834
+        },
+        {
+          "fixture": 13,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 132.15903846095898
+        },
+        {
+          "fixture": 13,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 257.55818953906055
+        },
+        {
+          "fixture": 13,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 143.77527582116818
+        },
+        {
+          "fixture": 13,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 270.0659071788541
+        },
+        {
+          "fixture": 14,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 20.238922565105895
+        },
+        {
+          "fixture": 14,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 58.6691384348851
+        },
+        {
+          "fixture": 14,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 17.839475697233866
+        },
+        {
+          "fixture": 14,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 63.04048330275691
+        },
+        {
+          "fixture": 15,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 120.55394762464857
+        },
+        {
+          "fixture": 15,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 372.0525552794752
+        },
+        {
+          "fixture": 15,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 68.86613809588016
+        },
+        {
+          "fixture": 15,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 117.19559115940501
+        },
+        {
+          "fixture": 15,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 372.9706706483339
+        },
+        {
+          "fixture": 15,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 72.19170119225237
+        },
+        {
+          "fixture": 16,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 127.07919453806244
+        },
+        {
+          "fixture": 16,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 389.4502837906766
+        },
+        {
+          "fixture": 16,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 35.52248367125139
+        },
+        {
+          "fixture": 16,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 121.58244405498408
+        },
+        {
+          "fixture": 16,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 379.76822614326375
+        },
+        {
+          "fixture": 16,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 44.44761280176681
+        },
+        {
+          "fixture": 17,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 20.52946209648144
+        },
+        {
+          "fixture": 17,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 86.70134882583807
+        },
+        {
+          "fixture": 17,
+          "phase": "recorded",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 5.885846077690076
+        },
+        {
+          "fixture": 17,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 20.251866420305305
+        },
+        {
+          "fixture": 17,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 84.15441400858253
+        },
+        {
+          "fixture": 17,
+          "phase": "warmup",
+          "category": "unpacked-row",
+          "estimated_thread_ms": 9.360385571122606
+        },
+        {
+          "fixture": 18,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 133.79561306395772
+        },
+        {
+          "fixture": 18,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 333.61954993604013
+        },
+        {
+          "fixture": 18,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 114.29902405739631
+        },
+        {
+          "fixture": 18,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 348.08664194259836
+        },
+        {
+          "fixture": 19,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 127.97125177196722
+        },
+        {
+          "fixture": 19,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 321.85513622803774
+        },
+        {
+          "fixture": 19,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 125.27720845078875
+        },
+        {
+          "fixture": 19,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 326.9191305492095
+        },
+        {
+          "fixture": 20,
+          "phase": "recorded",
+          "category": "other",
+          "estimated_thread_ms": 20.137561681960506
+        },
+        {
+          "fixture": 20,
+          "phase": "recorded",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 80.05191231801291
+        },
+        {
+          "fixture": 20,
+          "phase": "warmup",
+          "category": "other",
+          "estimated_thread_ms": 23.39994563957589
+        },
+        {
+          "fixture": 20,
+          "phase": "warmup",
+          "category": "packed-consumption",
+          "estimated_thread_ms": 75.71946336041947
+        }
+      ],
+      "method_loads": [
+        {
+          "role": "candidate",
+          "ms": 49.715569,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 66,
+          "address": "139166493646272"
+        },
+        {
+          "role": "candidate",
+          "ms": 50.105238,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 713,
+          "address": "139166493646368"
+        },
+        {
+          "role": "candidate",
+          "ms": 50.453565,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 1019,
+          "address": "139166493647120"
+        },
+        {
+          "role": "candidate",
+          "ms": 50.557782,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "GetTypeInfo",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJitted",
+          "bytes": 81,
+          "address": "139166493648176"
+        },
+        {
+          "role": "candidate",
+          "ms": 51.602633,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".cctor",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJitted",
+          "bytes": 1923,
+          "address": "139166493648288"
+        },
+        {
+          "role": "candidate",
+          "ms": 51.659719,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 63,
+          "address": "139166493650256"
+        },
+        {
+          "role": "candidate",
+          "ms": 51.682834,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "set_ElementType",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "139166493650352"
+        },
+        {
+          "role": "candidate",
+          "ms": 51.697196,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "set_TypeSize",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "139166493650416"
+        },
+        {
+          "role": "candidate",
+          "ms": 52.016779,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "get_ElementType",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "139166493650688"
+        },
+        {
+          "role": "candidate",
+          "ms": 52.044061,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "get_TypeSize",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "139166493650736"
+        },
+        {
+          "role": "candidate",
+          "ms": 52.084912,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 97,
+          "address": "139166493650784"
+        },
+        {
+          "role": "candidate",
+          "ms": 52.122439,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "set_TensorType",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 42,
+          "address": "139166493650912"
+        },
+        {
+          "role": "candidate",
+          "ms": 52.143151,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "set_TypeSize",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "139166493650976"
+        },
+        {
+          "role": "candidate",
+          "ms": 52.158684,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "set_IsString",
+          "namespace": "Lokad.Onnx.TensorElementTypeInfo",
+          "tier": "QuickJitted",
+          "bytes": 33,
+          "address": "139166493651040"
+        },
+        {
+          "role": "candidate",
+          "ms": 53.066778,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJitted",
+          "bytes": 52,
+          "address": "139166493654320"
+        },
+        {
+          "role": "candidate",
+          "ms": 53.31959,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJitted",
+          "bytes": 905,
+          "address": "139166493654400"
+        },
+        {
+          "role": "candidate",
+          "ms": 53.858756,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "get_Length",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "139166493656192"
+        },
+        {
+          "role": "candidate",
+          "ms": 56.40018,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "get_Intrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 89,
+          "address": "139166493658704"
+        },
+        {
+          "role": "candidate",
+          "ms": 56.511518,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 114,
+          "address": "139166493658816"
+        },
+        {
+          "role": "candidate",
+          "ms": 56.73753,
+          "fixture": -1,
+          "iteration": -1,
+          "where": "outside",
+          "thread": 823872,
+          "method": "get_Buffer",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 48,
+          "address": "139166493659360"
+        },
+        {
+          "role": "candidate",
+          "ms": 57.400002,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "MatMul2D",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 210,
+          "address": "139166493660688"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.540908,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "MatMul2DCore",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 3662,
+          "address": "139166493660928"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.581589,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 31,
+          "address": "139166493664688"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.650604,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "Validate",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 290,
+          "address": "139166493664752"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.669582,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_MaxDegreeOfParallelism",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "139166493665072"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.68106,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_UseIntrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "139166493665120"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.698586,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_UseSimd",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "139166493665168"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.739638,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJitted",
+          "bytes": 51,
+          "address": "139166493665216"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.80018,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_Current",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJitted",
+          "bytes": 119,
+          "address": "139166493665296"
+        },
+        {
+          "role": "candidate",
+          "ms": 58.857697,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": ".cctor",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJitted",
+          "bytes": 135,
+          "address": "139166493665440"
+        },
+        {
+          "role": "candidate",
+          "ms": 59.17024,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.ProfilerContext",
+          "tier": "QuickJitted",
+          "bytes": 296,
+          "address": "139166493665600"
+        },
+        {
+          "role": "candidate",
+          "ms": 59.533179,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.ProfilerContext",
+          "tier": "QuickJitted",
+          "bytes": 244,
+          "address": "139166493666080"
+        },
+        {
+          "role": "candidate",
+          "ms": 59.564616,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_Rank",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 31,
+          "address": "139166493666368"
+        },
+        {
+          "role": "candidate",
+          "ms": 59.598758,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_Dimensions",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 56,
+          "address": "139166493666432"
+        },
+        {
+          "role": "candidate",
+          "ms": 59.964341,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "HasStandardStrides",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 162,
+          "address": "139166493666512"
+        },
+        {
+          "role": "candidate",
+          "ms": 59.994356,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_IsReversedStride",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "139166493666704"
+        },
+        {
+          "role": "candidate",
+          "ms": 60.017471,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJitted",
+          "bytes": 41,
+          "address": "139166493666752"
+        },
+        {
+          "role": "candidate",
+          "ms": 60.255892,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "SharesBackingMemory",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJitted",
+          "bytes": 212,
+          "address": "139166493667072"
+        },
+        {
+          "role": "candidate",
+          "ms": 60.888569,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "TryGetTouchedRange",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJitted",
+          "bytes": 1306,
+          "address": "139166493667312"
+        },
+        {
+          "role": "candidate",
+          "ms": 62.153732,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_Storage",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 356,
+          "address": "139166493668656"
+        },
+        {
+          "role": "candidate",
+          "ms": 62.289578,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "GetStorageIndex",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 366,
+          "address": "139166493669136"
+        },
+        {
+          "role": "candidate",
+          "ms": 62.630734,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "GetIndex",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "Optimized",
+          "bytes": 121,
+          "address": "139166493669536"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.022707,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "ResolvePackedKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 367,
+          "address": "139166493670032"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.05129,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_PackedMatMulWeights",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "139166493670432"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.399126,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "ResolvePacked",
+          "namespace": "Lokad.Onnx.GraphPacking",
+          "tier": "QuickJitted",
+          "bytes": 1760,
+          "address": "139166493670480"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.432987,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_CopyReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 28,
+          "address": "139166493672288"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.53419,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "DensifyFloatOperands",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 323,
+          "address": "139166493672336"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.617987,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "RunFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 343,
+          "address": "139166493672688"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.897039,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "RunShortWidePackedRows",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 605,
+          "address": "139166493673056"
+        },
+        {
+          "role": "candidate",
+          "ms": 63.999705,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "RentScratch",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 150,
+          "address": "139166493673712"
+        },
+        {
+          "role": "candidate",
+          "ms": 64.698882,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "get_ScratchReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJitted",
+          "bytes": 27,
+          "address": "139166493675728"
+        },
+        {
+          "role": "candidate",
+          "ms": 65.446683,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 794,
+          "address": "139166493675776"
+        },
+        {
+          "role": "candidate",
+          "ms": 66.434918,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 334,
+          "address": "139166493676608"
+        },
+        {
+          "role": "candidate",
+          "ms": 68.991756,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": ".cctor",
+          "namespace": "Lokad.Onnx.AblationSwitches",
+          "tier": "QuickJitted",
+          "bytes": 512,
+          "address": "139166493676992"
+        },
+        {
+          "role": "candidate",
+          "ms": 69.085377,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "EnvDefaultOn",
+          "namespace": "Lokad.Onnx.AblationSwitches",
+          "tier": "QuickJitted",
+          "bytes": 73,
+          "address": "139166493677536"
+        },
+        {
+          "role": "candidate",
+          "ms": 69.11387,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "EnvIsSet",
+          "namespace": "Lokad.Onnx.AblationSwitches",
+          "tier": "QuickJitted",
+          "bytes": 66,
+          "address": "139166493677632"
+        },
+        {
+          "role": "candidate",
+          "ms": 70.478955,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 4796,
+          "address": "139166493677728"
+        },
+        {
+          "role": "candidate",
+          "ms": 71.952634,
+          "fixture": 0,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1846,
+          "address": "139166493682560"
+        },
+        {
+          "role": "candidate",
+          "ms": 1985.194581,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "RunGeneralFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJitted",
+          "bytes": 1853,
+          "address": "139166493698032"
+        },
+        {
+          "role": "candidate",
+          "ms": 1988.472059,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 4105,
+          "address": "139166493699984"
+        },
+        {
+          "role": "candidate",
+          "ms": 1989.783933,
+          "fixture": 3,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1577,
+          "address": "139166493704128"
+        },
+        {
+          "role": "candidate",
+          "ms": 5688.944751,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "GetStorageIndex",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 574,
+          "address": "139166493712976"
+        },
+        {
+          "role": "candidate",
+          "ms": 5688.989448,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Dimensions",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 56,
+          "address": "139166493713584"
+        },
+        {
+          "role": "candidate",
+          "ms": 5689.117312,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Buffer",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 48,
+          "address": "139166493713744"
+        },
+        {
+          "role": "candidate",
+          "ms": 5689.140366,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Rank",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 31,
+          "address": "139166493713824"
+        },
+        {
+          "role": "candidate",
+          "ms": 5692.182117,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_UseIntrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "139166493714208"
+        },
+        {
+          "role": "candidate",
+          "ms": 5692.531105,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Length",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "139166493715312"
+        },
+        {
+          "role": "candidate",
+          "ms": 5693.024712,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "TryGetTouchedRange",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 1306,
+          "address": "139166493715472"
+        },
+        {
+          "role": "candidate",
+          "ms": 5693.204744,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Storage",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 570,
+          "address": "139166493716816"
+        },
+        {
+          "role": "candidate",
+          "ms": 5693.229572,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_UseSimd",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "139166493717424"
+        },
+        {
+          "role": "candidate",
+          "ms": 5693.328251,
+          "fixture": 5,
+          "iteration": 110,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_IsReversedStride",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "139166493717536"
+        },
+        {
+          "role": "candidate",
+          "ms": 5706.981993,
+          "fixture": 5,
+          "iteration": 114,
+          "where": "inside",
+          "thread": 823878,
+          "method": "SharesBackingMemory",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 368,
+          "address": "139166493720864"
+        },
+        {
+          "role": "candidate",
+          "ms": 5709.898535,
+          "fixture": 5,
+          "iteration": 115,
+          "where": "inside",
+          "thread": 823878,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 51,
+          "address": "139166493721264"
+        },
+        {
+          "role": "candidate",
+          "ms": 5712.932755,
+          "fixture": 5,
+          "iteration": 116,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Current",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 117,
+          "address": "139166493721344"
+        },
+        {
+          "role": "candidate",
+          "ms": 5713.756571,
+          "fixture": 5,
+          "iteration": 116,
+          "where": "inside",
+          "thread": 823878,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.ProfilerContext",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 321,
+          "address": "139166493721968"
+        },
+        {
+          "role": "candidate",
+          "ms": 5713.781238,
+          "fixture": 5,
+          "iteration": 116,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_MaxDegreeOfParallelism",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 27,
+          "address": "139166493722336"
+        },
+        {
+          "role": "candidate",
+          "ms": 5784.160653,
+          "fixture": 6,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJitted",
+          "bytes": 966,
+          "address": "139166493726352"
+        },
+        {
+          "role": "candidate",
+          "ms": 5785.183731,
+          "fixture": 6,
+          "iteration": 0,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 564,
+          "address": "139166493727616"
+        },
+        {
+          "role": "candidate",
+          "ms": 7729.053483,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 905,
+          "address": "139166493728576"
+        },
+        {
+          "role": "candidate",
+          "ms": 7732.212151,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "MatMul2D",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 210,
+          "address": "139166493729760"
+        },
+        {
+          "role": "candidate",
+          "ms": 7733.111291,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "MatMul2DCore",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 3948,
+          "address": "139166493730000"
+        },
+        {
+          "role": "candidate",
+          "ms": 7733.179504,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 31,
+          "address": "139166493734048"
+        },
+        {
+          "role": "candidate",
+          "ms": 7733.270532,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "Validate",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 340,
+          "address": "139166493734112"
+        },
+        {
+          "role": "candidate",
+          "ms": 7733.445727,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "HasStandardStrides",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 192,
+          "address": "139166493734480"
+        },
+        {
+          "role": "candidate",
+          "ms": 7733.471766,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 41,
+          "address": "139166493734704"
+        },
+        {
+          "role": "candidate",
+          "ms": 7742.906017,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "ResolvePackedKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 494,
+          "address": "139166493736416"
+        },
+        {
+          "role": "candidate",
+          "ms": 7744.133483,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_PackedMatMulWeights",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "139166493736944"
+        },
+        {
+          "role": "candidate",
+          "ms": 7744.515802,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "ResolvePacked",
+          "namespace": "Lokad.Onnx.GraphPacking",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 1760,
+          "address": "139166493736992"
+        },
+        {
+          "role": "candidate",
+          "ms": 7744.549312,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_CopyReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 28,
+          "address": "139166493738800"
+        },
+        {
+          "role": "candidate",
+          "ms": 7744.675774,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "DensifyFloatOperands",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 497,
+          "address": "139166493738848"
+        },
+        {
+          "role": "candidate",
+          "ms": 7744.905481,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RunFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 477,
+          "address": "139166493739440"
+        },
+        {
+          "role": "candidate",
+          "ms": 7745.37403,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RunGeneralFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 2713,
+          "address": "139166493739952"
+        },
+        {
+          "role": "candidate",
+          "ms": 7747.956376,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RentScratch",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 251,
+          "address": "139166493742768"
+        },
+        {
+          "role": "candidate",
+          "ms": 7748.23654,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_ScratchReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 27,
+          "address": "139166493744320"
+        },
+        {
+          "role": "candidate",
+          "ms": 7748.456793,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 794,
+          "address": "139166493744368"
+        },
+        {
+          "role": "candidate",
+          "ms": 7749.04967,
+          "fixture": 6,
+          "iteration": 94,
+          "where": "inside",
+          "thread": 823878,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 4105,
+          "address": "139166493745200"
+        },
+        {
+          "role": "candidate",
+          "ms": 7755.193213,
+          "fixture": 6,
+          "iteration": 95,
+          "where": "inside",
+          "thread": 823872,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 334,
+          "address": "139166493751232"
+        },
+        {
+          "role": "candidate",
+          "ms": 7758.862102,
+          "fixture": 6,
+          "iteration": 95,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1577,
+          "address": "139166493752352"
+        },
+        {
+          "role": "candidate",
+          "ms": 7790.5342,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "GetStorageIndex",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 452,
+          "address": "139166493763136"
+        },
+        {
+          "role": "candidate",
+          "ms": 7790.728595,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Dimensions",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 31,
+          "address": "139166493763616"
+        },
+        {
+          "role": "candidate",
+          "ms": 7790.840203,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Buffer",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 37,
+          "address": "139166493763712"
+        },
+        {
+          "role": "candidate",
+          "ms": 7791.152726,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Rank",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 8,
+          "address": "139166493763952"
+        },
+        {
+          "role": "candidate",
+          "ms": 7791.292808,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_UseIntrinsics",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "139166493764032"
+        },
+        {
+          "role": "candidate",
+          "ms": 7796.791666,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "TryGetTouchedRange",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "OptimizedTier1",
+          "bytes": 1534,
+          "address": "139166493764064"
+        },
+        {
+          "role": "candidate",
+          "ms": 7797.14473,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Storage",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 251,
+          "address": "139166493765648"
+        },
+        {
+          "role": "candidate",
+          "ms": 7800.290028,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Length",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "139166493766544"
+        },
+        {
+          "role": "candidate",
+          "ms": 7801.479597,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_UseSimd",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "139166493766576"
+        },
+        {
+          "role": "candidate",
+          "ms": 7816.959452,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_IsReversedStride",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "139166493768752"
+        },
+        {
+          "role": "candidate",
+          "ms": 7818.962152,
+          "fixture": 6,
+          "iteration": 96,
+          "where": "inside",
+          "thread": 823878,
+          "method": "SharesBackingMemory",
+          "namespace": "Lokad.Onnx.TensorAlias",
+          "tier": "OptimizedTier1",
+          "bytes": 180,
+          "address": "139166493770112"
+        },
+        {
+          "role": "candidate",
+          "ms": 7822.582317,
+          "fixture": 6,
+          "iteration": 97,
+          "where": "inside",
+          "thread": 823878,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "OptimizedTier1",
+          "bytes": 391,
+          "address": "139166493770320"
+        },
+        {
+          "role": "candidate",
+          "ms": 7822.900068,
+          "fixture": 6,
+          "iteration": 97,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_Current",
+          "namespace": "Lokad.Onnx.Profiler",
+          "tier": "OptimizedTier1",
+          "bytes": 196,
+          "address": "139166493770784"
+        },
+        {
+          "role": "candidate",
+          "ms": 7823.39696,
+          "fixture": 6,
+          "iteration": 97,
+          "where": "inside",
+          "thread": 823878,
+          "method": "StartOpStage",
+          "namespace": "Lokad.Onnx.ProfilerContext",
+          "tier": "OptimizedTier1",
+          "bytes": 205,
+          "address": "139166493771216"
+        },
+        {
+          "role": "candidate",
+          "ms": 7823.44329,
+          "fixture": 6,
+          "iteration": 97,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_MaxDegreeOfParallelism",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 4,
+          "address": "139166493771472"
+        },
+        {
+          "role": "candidate",
+          "ms": 8396.145287,
+          "fixture": 7,
+          "iteration": 1,
+          "where": "inside",
+          "thread": 823878,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "OptimizedTier1",
+          "bytes": 470,
+          "address": "139166493794560"
+        },
+        {
+          "role": "candidate",
+          "ms": 8458.987504,
+          "fixture": 7,
+          "iteration": 4,
+          "where": "inside",
+          "thread": 823878,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 966,
+          "address": "139166493795312"
+        },
+        {
+          "role": "candidate",
+          "ms": 8462.163468,
+          "fixture": 7,
+          "iteration": 4,
+          "where": "inside",
+          "thread": 823878,
+          "method": "MatMul2D",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 179,
+          "address": "139166493796352"
+        },
+        {
+          "role": "candidate",
+          "ms": 8481.841233,
+          "fixture": 7,
+          "iteration": 4,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 564,
+          "address": "139166493796576"
+        },
+        {
+          "role": "candidate",
+          "ms": 8490.229582,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "MatMul2DCore",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 6949,
+          "address": "139166493797216"
+        },
+        {
+          "role": "candidate",
+          "ms": 8491.565613,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 1,
+          "address": "139166493804608"
+        },
+        {
+          "role": "candidate",
+          "ms": 8494.147558,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "Validate",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 206,
+          "address": "139166493804640"
+        },
+        {
+          "role": "candidate",
+          "ms": 8500.063567,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "HasStandardStrides",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 595,
+          "address": "139166493804896"
+        },
+        {
+          "role": "candidate",
+          "ms": 8501.321099,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "GetStrides",
+          "namespace": "Lokad.Onnx.ArrayUtilities",
+          "tier": "OptimizedTier1",
+          "bytes": 8,
+          "address": "139166493805552"
+        },
+        {
+          "role": "candidate",
+          "ms": 8509.024892,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "ResolvePackedKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 187,
+          "address": "139166493806688"
+        },
+        {
+          "role": "candidate",
+          "ms": 8509.082029,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_CopyReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 5,
+          "address": "139166493806912"
+        },
+        {
+          "role": "candidate",
+          "ms": 8509.362283,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "DensifyFloatOperands",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 189,
+          "address": "139166493806944"
+        },
+        {
+          "role": "candidate",
+          "ms": 8509.614094,
+          "fixture": 7,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RunFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 296,
+          "address": "139166493807232"
+        },
+        {
+          "role": "candidate",
+          "ms": 8528.026064,
+          "fixture": 7,
+          "iteration": 6,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RunGeneralFloatMatMulKernel",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 3712,
+          "address": "139166493807552"
+        },
+        {
+          "role": "candidate",
+          "ms": 8533.246411,
+          "fixture": 7,
+          "iteration": 6,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RentScratch",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 974,
+          "address": "139166493811392"
+        },
+        {
+          "role": "candidate",
+          "ms": 8534.419816,
+          "fixture": 7,
+          "iteration": 6,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_ScratchReporter",
+          "namespace": "Lokad.Onnx.TensorExecutionOptions",
+          "tier": "OptimizedTier1",
+          "bytes": 4,
+          "address": "139166493813312"
+        },
+        {
+          "role": "candidate",
+          "ms": 8540.540644,
+          "fixture": 7,
+          "iteration": 7,
+          "where": "inside",
+          "thread": 823878,
+          "method": "PackPanelsB",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 295,
+          "address": "139166493813344"
+        },
+        {
+          "role": "candidate",
+          "ms": 8548.194131,
+          "fixture": 7,
+          "iteration": 7,
+          "where": "inside",
+          "thread": 823878,
+          "method": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 1327,
+          "address": "139166493813696"
+        },
+        {
+          "role": "candidate",
+          "ms": 12010.263793,
+          "fixture": 9,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823878,
+          "method": "ResolvePacked",
+          "namespace": "Lokad.Onnx.GraphPacking",
+          "tier": "OptimizedTier1",
+          "bytes": 508,
+          "address": "139166493834784"
+        },
+        {
+          "role": "candidate",
+          "ms": 12013.557686,
+          "fixture": 9,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823878,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 4796,
+          "address": "139166493835344"
+        },
+        {
+          "role": "candidate",
+          "ms": 12033.230794,
+          "fixture": 9,
+          "iteration": 30,
+          "where": "inside",
+          "thread": 823872,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1OSR",
+          "bytes": 1846,
+          "address": "139166493840192"
+        },
+        {
+          "role": "candidate",
+          "ms": 12663.155653,
+          "fixture": 9,
+          "iteration": 59,
+          "where": "inside",
+          "thread": 823878,
+          "method": "mm_unsafe_vectorized_intrinsics_3x4packed",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 1629,
+          "address": "139166493842112"
+        },
+        {
+          "role": "candidate",
+          "ms": 17470.359612,
+          "fixture": 12,
+          "iteration": 29,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RunShortWidePackedRows",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 772,
+          "address": "139166493854832"
+        },
+        {
+          "role": "candidate",
+          "ms": 17685.354689,
+          "fixture": 12,
+          "iteration": 60,
+          "where": "inside",
+          "thread": 823878,
+          "method": "RunShortWidePackedRows",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "OptimizedTier1",
+          "bytes": 2642,
+          "address": "139166493855776"
+        },
+        {
+          "role": "candidate",
+          "ms": 18167.49576,
+          "fixture": 13,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 66,
+          "address": "139166493877664"
+        },
+        {
+          "role": "candidate",
+          "ms": 18167.724586,
+          "fixture": 13,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.DenseTensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 713,
+          "address": "139166493877760"
+        },
+        {
+          "role": "candidate",
+          "ms": 18167.989677,
+          "fixture": 13,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.Tensor`1[System.Single]",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 1019,
+          "address": "139166493878512"
+        },
+        {
+          "role": "candidate",
+          "ms": 18168.046312,
+          "fixture": 13,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "GetTypeInfo",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 65,
+          "address": "139166493879568"
+        },
+        {
+          "role": "candidate",
+          "ms": 18171.659717,
+          "fixture": 13,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": "get_ElementType",
+          "namespace": "Lokad.Onnx.TensorTypeInfo",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 27,
+          "address": "139166493880672"
+        },
+        {
+          "role": "candidate",
+          "ms": 18171.685365,
+          "fixture": 13,
+          "iteration": 5,
+          "where": "inside",
+          "thread": 823878,
+          "method": ".ctor",
+          "namespace": "Lokad.Onnx.TensorBase",
+          "tier": "QuickJittedInstrumented",
+          "bytes": 52,
+          "address": "139166493880720"
+        },
+        {
+          "role": "candidate",
+          "ms": 20954.27385,
+          "fixture": 16,
+          "iteration": 72,
+          "where": "inside",
+          "thread": 823878,
+          "method": "mm_unsafe_vectorized_intrinsics",
+          "namespace": "Lokad.Onnx.MathOps",
+          "tier": "OptimizedTier1",
+          "bytes": 316,
+          "address": "139166493883296"
+        }
+      ]
+    }
+  }
+}
