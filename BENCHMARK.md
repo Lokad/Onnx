@@ -1,16 +1,16 @@
 # CPU benchmarks for the upcoming release
 
-Current repository product, measured on 2026-09-23. **Lower is better.** Times
-are seconds; Lokad / ORT is the latency ratio, so 1.156 means 15.6% more time.
+Current repository product, measured on 2026-09-23 UTC. **Lower is better.** Times
+are seconds; Lokad / ORT is the latency ratio, so 1.154 means 15.4% more time.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT | Status |
 |---|---|---:|---:|---:|---|
-| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 76.172826 | 39.782592 | **1.915** | Qualified |
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 10.453277 | 9.040291 | **1.156** | Qualified |
-| multilingual-e5-small | One 30-token forward pass | 0.026403 | 0.015958 | **1.655** | Qualified |
-| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.135218 | 0.104708 | **1.291** | Qualified |
-| ResNet50 | One 224x224 image, feature export | 0.117725 | 0.073213 | **1.608** | Qualified |
-| GPT-2 | Four-token prefill, empty past state | 0.048727 | 0.020836 | **2.339** | Qualified |
+| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 73.816787 | 39.605085 | **1.864** | Qualified |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 10.409171 | 9.022426 | **1.154** | Qualified |
+| multilingual-e5-small | One 30-token forward pass | 0.016795 | 0.016292 | **1.031** | Qualified |
+| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.118048 | 0.102414 | **1.153** | Qualified |
+| ResNet50 | One 224x224 image, feature export | 0.105688 | 0.073183 | **1.444** | Qualified |
+| GPT-2 | Four-token prefill, empty past state | 0.036097 | 0.020871 | **1.730** | Qualified |
 | DINOv2-small | 224x224 image | — | — | — | Excluded: numerical agreement gate |
 | Whisper Large V3 Turbo | Speech transcription | — | — | — | Supported; current-release comparison deferred |
 
@@ -20,11 +20,12 @@ Each row is a matched comparison for that workload. Audio rows measure complete
 applications; the embedding, vision and GPT-2 rows measure prepared graph calls.
 The workloads differ, so their absolute times should not be compared to each other.
 
-The selected product is source `94a550de`, measured as Core `521bae17` and
-Data `f3b9aa81`. The [normal root and package qualification](tests/pyannote/winograd-product-results/root-20260923.md)
-verifies the same compiled methods and public interfaces, 3,449 backend tests,
-343 tensor tests, both instruction widths and independent NuGet consumption.
-The 41 existing AMD test skips are recorded in that report.
+The selected product is source `81f75c38`, measured as Core `672e5f30` and
+Data `065b7a7f`. The [normal root and package qualification](tests/parakeet/wide-entry-first-use-results/root-20260923.md)
+verifies all compiled methods, implementation flags and public interfaces, full
+backend/tensor suites in both instruction modes and independent NuGet consumption.
+Ordinary mode passes 3,449 backend and 343 tensor tests; the hardware-dependent
+skip census in each mode is recorded in that report.
 
 ## What is timed
 
@@ -38,8 +39,10 @@ two fresh timed processes with one warmup and three measured passes per fixture.
 Graph timings include a complete forward call returning all owned float arrays:
 `Reset`, `Execute` and output materialization for Lokad.Onnx, and `session.run`
 for ORT. Inputs are already tensors, batch size is one, and each timed process
-uses 60 fixed warmups and 60 measurements. Separate numerical workers run first.
-Each case uses four fresh processes in Lokad,ORT,ORT,Lokad order.
+uses 600 fixed warmups and 180 measurements. Separate numerical workers run first.
+Each comparison also includes the previous selected product: six fresh
+processes run previous, candidate, ORT, ORT, candidate, previous. The table
+reports the qualified candidate, which is the current repository product.
 
 Model loading/preparation, file IO, fixture creation, validation and reporting
 are outside these timers. ORT uses one intra/inter-op thread, sequential execution
@@ -48,13 +51,13 @@ disabled. All clocks are retained; no measurements are trimmed or retried.
 
 ## Evidence and coverage
 
-- [Pyannote comparison and complete clocks](tests/pyannote/winograd-product-results/application-20260923.md):
+- [Pyannote comparison and complete clocks](tests/parakeet/wide-entry-first-use-results/pyannote-20260923.md):
   six measured calls per engine for the dialogue. All repeatability, native-result,
   ownership and resource checks pass; both ten-minute meetings and recovery pass.
-- [Parakeet comparison, all twenty clips and complete clocks](tests/parakeet/winograd-baseline-amd/results-20260923.md):
-  six measured calls per engine per clip. All 42 repeatability controls, native/public
+- [Parakeet comparison, all twenty clips and complete clocks](tests/parakeet/wide-entry-first-use-results/application-20260923.md):
+  six measured calls per engine per clip. All 63 repeatability controls, native/public
   result checks and resource checks pass.
-- [Current graph comparisons and complete clocks](tests/benchmarks/release-results/results-20260923.md):
+- [Current graph comparisons and complete clocks](tests/parakeet/wide-entry-first-use-results/graphs-20260923.md):
   includes e5 at 8, 30, 30 padded to 128, 128 and 512 tokens, DINOv3, ResNet50 and GPT-2.
   Every output is checked against fresh ORT at the unchanged scaled-error bound
   `abs(actual-reference) / max(1, abs(reference)) <= 1e-4`, with exact shapes,
@@ -75,9 +78,9 @@ package contains `Lokad.Onnx` only.
 
 ## Running comparisons
 
-The [frozen graph protocol](tests/benchmarks/release-amd-v2/README.md),
-[Pyannote protocol](tests/pyannote/winograd-product-app-amd/README.md) and
-[Parakeet protocol](tests/parakeet/winograd-baseline-amd/README.md) specify the
+The [frozen graph protocol](tests/parakeet/wide-entry-first-use-graphs-amd/README.md),
+[Pyannote protocol](tests/parakeet/wide-entry-first-use-pyannote-app-amd/README.md) and
+[Parakeet protocol](tests/parakeet/wide-entry-first-use-app-amd-v2/README.md) specify the
 assets, inputs, process order, boundaries and checks behind these tables.
 Use the already downloaded `models/multilingual-e5-small/model.onnx` for e5.
 

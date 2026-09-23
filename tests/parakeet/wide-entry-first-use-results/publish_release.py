@@ -89,7 +89,8 @@ def root():
         f"Built Data `{a['built']['Lokad.Onnx.Data.dll']['sha256']}`.",'',
         f"All workers are terminal. {sum(r['samples'] for r in a['resources']):,} resource observations pass; peak RSS {max(r['peak_rss'] for r in a['resources']):,} bytes.",
         'This qualification provides no new performance measurement.','',
-        '[Full census, package and resource evidence](root-observations-20260923.json).','',
+        '[Full census, package and resource evidence](root-observations-20260923.json).',
+        '[Hardware census verification](root-census-correction-20260923.md).','',
         'Closure: `'+pin(base/'closed.json')['sha256']+'`.'])
 
 def benchmark():
