@@ -82,6 +82,14 @@ guard. That trial supplies no admitted speedup and must not be recycled as one.
 Likewise, the conditioned wide-kernel Windows trial failed its control limits.
 Neither result authorizes a blanket import or an unchanged favorable retry.
 
+The existing dynamic switch also has an earlier e5 trial, retained in
+`artifacts/dynamic-packed-core-20260918`. Its twenty-worker complete-model
+comparison produced only a0.68% median change at512tokens, smaller than the
+repeat spreads, with mixed shorter cases; it stayed default-off. A Parakeet
+candidate must establish value on its distinct wide projection shapes. This
+review does not reopen the earlier e5 verdict or justify enabling the broad
+dynamic switch globally.
+
 Exact reviewed source hashes are in [source observations](source-observations-20260923.json).
 Full source copies are retained under
 `artifacts/parakeet-current-source-review-20260923`. No product edit, VM worker,

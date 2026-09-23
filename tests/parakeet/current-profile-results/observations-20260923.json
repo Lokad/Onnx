@@ -1,0 +1,766 @@
+{
+  "closed": {
+    "bytes": 118889,
+    "sha256": "ea3e6471009edd07f0f20905c5e230f55461d7722126a32fabd227c3286d00ff"
+  },
+  "analysis": {
+    "bytes": 456518,
+    "sha256": "fe0cc84c3b528385aa79860252a341a821ac542c6034c3b4672542276edf27c4"
+  },
+  "generator": {
+    "bytes": 7924,
+    "sha256": "650577b31132b177afe4c633ce7884f6e96558e26567071046bf626fbc5e3192"
+  },
+  "corpus": [
+    {
+      "process": "control",
+      "wall_seconds": 76.486912255,
+      "wall_fraction": "15297382451/200000000",
+      "cpu_seconds": 76.47480333333333,
+      "allocated_bytes": 14902584789.333334
+    },
+    {
+      "process": "sampled-a",
+      "wall_seconds": 86.93088589,
+      "wall_fraction": "8693088589/100000000",
+      "cpu_seconds": 82.77673733333333,
+      "allocated_bytes": 14902588514.666666
+    },
+    {
+      "process": "sampled-b",
+      "wall_seconds": 85.66269453666666,
+      "wall_fraction": "25698808361/300000000",
+      "cpu_seconds": 81.51470733333333,
+      "allocated_bytes": 14902579837.333334
+    }
+  ],
+  "resources": [
+    {
+      "name": "control",
+      "samples": 1227,
+      "peak_rss": 8439279616,
+      "seconds": 313.3698631079751
+    },
+    {
+      "name": "sampled-a",
+      "samples": 1339,
+      "peak_rss": 8833282048,
+      "seconds": 345.4104694640264
+    },
+    {
+      "name": "sampled-b",
+      "samples": 1323,
+      "peak_rss": 9196740608,
+      "seconds": 342.1714010440046
+    },
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9498624,
+      "seconds": 0.2570549179799855
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 153522176,
+      "seconds": 1.0188677089754492
+    },
+    {
+      "name": "consumer-build",
+      "samples": 29,
+      "peak_rss": 370704384,
+      "seconds": 7.424671598011628
+    },
+    {
+      "name": "inventory",
+      "samples": 1,
+      "peak_rss": 9789440,
+      "seconds": 0.2613296990166418
+    },
+    {
+      "name": "sampled-a-speedscope",
+      "samples": 19,
+      "peak_rss": 132157440,
+      "seconds": 5.016532373032533
+    },
+    {
+      "name": "sampled-a-chromium",
+      "samples": 19,
+      "peak_rss": 133148672,
+      "seconds": 5.072989356005564
+    },
+    {
+      "name": "sampled-b-speedscope",
+      "samples": 19,
+      "peak_rss": 132816896,
+      "seconds": 5.018079924047925
+    },
+    {
+      "name": "sampled-b-chromium",
+      "samples": 19,
+      "peak_rss": 133033984,
+      "seconds": 5.071155603975058
+    }
+  ],
+  "diagnostics": [
+    {
+      "name": "sampled-a",
+      "exports": {
+        "passed": true,
+        "profiles": 2,
+        "events": 476380
+      },
+      "coverage": [
+        {
+          "name": "corpus",
+          "calls": 60,
+          "wall_seconds": 260.79265767,
+          "sampled_thread_seconds": 260.800279145924,
+          "process_cpu_seconds": 248.330212,
+          "sampled_to_wall": 1.0000292242733828,
+          "marker_intervals": 54
+        }
+      ],
+      "selected_seconds": {
+        "corpus": 260.800279145924
+      },
+      "outside_marker_seconds": 0.3810835011318787,
+      "profiles": [
+        {
+          "name": "Thread (811299)",
+          "seconds": 261.176812499999,
+          "selected_seconds": 260.800279145924,
+          "events": 476320
+        },
+        {
+          "name": "Thread (811301)",
+          "seconds": 0.00455014705657959,
+          "selected_seconds": 0.0,
+          "events": 60
+        }
+      ],
+      "intervals": {
+        "corpus": [
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 168.323841,
+            "end_ms": 3452.2157900703737
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 3453.393393006363,
+            "end_ms": 10325.22540705661
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 10327.499408050857,
+            "end_ms": 13866.892230265625
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 13871.323324019166,
+            "end_ms": 19342.476560101564
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 19346.491176039734,
+            "end_ms": 22311.957591105347
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 22313.527477,
+            "end_ms": 27498.911798214845
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 27501.203864,
+            "end_ms": 30731.222216356444
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 30732.619579001184,
+            "end_ms": 36591.10737196875
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 36593.41817604955,
+            "end_ms": 39290.333459203124
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 39291.513613,
+            "end_ms": 44155.43651507729
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 44156.621328022615,
+            "end_ms": 47035.21556628125
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 47036.286399,
+            "end_ms": 51776.667258375
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 51778.917203021876,
+            "end_ms": 55075.22701745312
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 55080.385603,
+            "end_ms": 61949.15464596875
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 61952.381376046695,
+            "end_ms": 65640.82903394185
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 65646.44476801257,
+            "end_ms": 70440.26849846875
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 70441.66795205869,
+            "end_ms": 78543.8827331953
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 78546.15958304731,
+            "end_ms": 82219.27286425
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 82221.635724,
+            "end_ms": 87685.37058260181
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 87686.54573802384,
+            "end_ms": 90887.61214425
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 90889.854217,
+            "end_ms": 97575.2758503125
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 97579.4707260826,
+            "end_ms": 101104.65114592187
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 101106.89487,
+            "end_ms": 106527.3024771803
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 106529.549378,
+            "end_ms": 114361.0442881328
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 114365.49967911904,
+            "end_ms": 123398.71622610156
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 123401.075243,
+            "end_ms": 126151.54392489139
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 126154.4704350956,
+            "end_ms": 131142.75559125
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 131144.02256405205,
+            "end_ms": 133922.92310530858
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 133924.10394300605,
+            "end_ms": 138622.8723456056
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 138625.12672503456,
+            "end_ms": 142022.05714492188
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 142025.49337104606,
+            "end_ms": 152845.9995847676
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 152849.48682208406,
+            "end_ms": 160463.72913936328
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 160466.486269,
+            "end_ms": 165289.2096060478
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 165292.469036,
+            "end_ms": 168978.21317943945
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 168984.22377615236,
+            "end_ms": 174530.22504278907
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 174531.495839,
+            "end_ms": 177986.55370032814
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 177993.38637923257,
+            "end_ms": 184768.3092305625
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 184769.47234,
+            "end_ms": 188229.94328726563
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 188232.30361404913,
+            "end_ms": 193403.88886092286
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 193407.31200803633,
+            "end_ms": 196252.07714471876
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 196254.3338300316,
+            "end_ms": 201215.22787296874
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 201216.39247,
+            "end_ms": 204204.98861403344
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 204207.308293,
+            "end_ms": 210068.8961380167
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 210071.14189504454,
+            "end_ms": 212748.225879375
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 212752.204229,
+            "end_ms": 217722.5294243125
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 217724.768162,
+            "end_ms": 220470.56276302456
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 220472.91088503855,
+            "end_ms": 225041.37817015624
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 225043.619124,
+            "end_ms": 228352.63255173436
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 228356.150106,
+            "end_ms": 235223.16552094804
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 235225.37918,
+            "end_ms": 239432.45026307323
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 239436.48489108498,
+            "end_ms": 247135.7163363125
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 247137.945729,
+            "end_ms": 252041.02922509375
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 252043.2782910095,
+            "end_ms": 255655.7148144375
+          },
+          {
+            "thread": "Thread (811299)",
+            "start_ms": 255658.0706370266,
+            "end_ms": 261109.73589502735
+          }
+        ]
+      },
+      "rounding_adjustments_ms": [],
+      "scope": "Estimated sampled thread time under explicit markers; CPU_TIME is an exporter label, not independently measured CPU time."
+    },
+    {
+      "name": "sampled-b",
+      "exports": {
+        "passed": true,
+        "profiles": 3,
+        "events": 476768
+      },
+      "coverage": [
+        {
+          "name": "corpus",
+          "calls": 60,
+          "wall_seconds": 256.98808361,
+          "sampled_thread_seconds": 256.995310369194,
+          "process_cpu_seconds": 244.544122,
+          "sampled_to_wall": 1.0000281209894735,
+          "marker_intervals": 55
+        }
+      ],
+      "selected_seconds": {
+        "corpus": 256.995310369194
+      },
+      "outside_marker_seconds": 201.27988739710895,
+      "profiles": [
+        {
+          "name": "Thread (811704)",
+          "seconds": 257.367468749999,
+          "selected_seconds": 256.995310369194,
+          "events": 476676
+        },
+        {
+          "name": "Thread (811706)",
+          "seconds": 0.004432141304016113,
+          "selected_seconds": 0.0,
+          "events": 68
+        },
+        {
+          "name": "Thread (811709) (.NET Finalizer Thread)",
+          "seconds": 200.903296875,
+          "selected_seconds": 0.0,
+          "events": 24
+        }
+      ],
+      "intervals": {
+        "corpus": [
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 175.32003781933594,
+            "end_ms": 3459.228948546875
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 3460.400305,
+            "end_ms": 10039.803326031493
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 10043.17132300158,
+            "end_ms": 13492.423154173828
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 13495.894601,
+            "end_ms": 18844.87053390657
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 18846.04450005015,
+            "end_ms": 21766.95211783594
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 21772.31045615155,
+            "end_ms": 29460.31615199344
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 29466.574928,
+            "end_ms": 35119.37326784375
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 35120.64433401899,
+            "end_ms": 37711.25297657812
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 37714.705449035515,
+            "end_ms": 42492.20067622266
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 42493.377973,
+            "end_ms": 45430.224936830076
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 45431.296195056915,
+            "end_ms": 50155.93535515625
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 50158.180779001785,
+            "end_ms": 53572.22422198732
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 53574.473483,
+            "end_ms": 60507.03061190625
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 60510.42287503186,
+            "end_ms": 64570.81069638598
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 64573.052385,
+            "end_ms": 69165.35743833204
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 69166.53196900937,
+            "end_ms": 72145.28318970313
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 72149.327647,
+            "end_ms": 76885.0464770228
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 76887.31397403196,
+            "end_ms": 80369.63505705081
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 80371.877446,
+            "end_ms": 85624.0483444375
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 85625.303969,
+            "end_ms": 88804.17384825977
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 88807.676649,
+            "end_ms": 95547.07300305481
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 95550.46596307156,
+            "end_ms": 98988.15232910743
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 98990.48792304126,
+            "end_ms": 104440.49036440624
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 104442.734509,
+            "end_ms": 107417.45301485938
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 107421.476293,
+            "end_ms": 112555.0466055
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 112557.356229,
+            "end_ms": 115460.83938329687
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 115463.20596802498,
+            "end_ms": 121372.82266721874
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 121375.08377601429,
+            "end_ms": 124133.661901
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 124136.01954403118,
+            "end_ms": 128994.32034920313
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 128995.673432,
+            "end_ms": 131718.20858824998
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 131719.38363104837,
+            "end_ms": 136289.06449404408
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 136291.31563803946,
+            "end_ms": 139610.92721026563
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 139613.17156802447,
+            "end_ms": 146638.61829967675
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 146640.87137605294,
+            "end_ms": 150196.0810471797
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 150197.352465,
+            "end_ms": 162865.4492816836
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 162869.360994,
+            "end_ms": 166534.21070502215
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 166540.22642202958,
+            "end_ms": 171975.28905059767
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 171977.5489670208,
+            "end_ms": 175306.3233810625
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 175308.660683,
+            "end_ms": 185282.66402201666
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 185283.86703100937,
+            "end_ms": 190672.83263477735
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 190675.3812010387,
+            "end_ms": 193602.2140827461
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 193604.5640360592,
+            "end_ms": 198574.38971959375
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 198576.6246060409,
+            "end_ms": 201085.68832670312
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 201088.033956,
+            "end_ms": 207024.52180483984
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 207026.78046902278,
+            "end_ms": 209658.89498767236
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 209661.333492,
+            "end_ms": 214494.91294375
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 214497.19734005173,
+            "end_ms": 217203.44270132814
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 217205.718957,
+            "end_ms": 221956.86592965625
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 221959.1077230061,
+            "end_ms": 225363.25008806627
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 225365.4929400501,
+            "end_ms": 232206.70436578125
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 232209.04165604754,
+            "end_ms": 236040.3746638125
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 236043.36143110917,
+            "end_ms": 240612.17604797447
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 240614.3988790236,
+            "end_ms": 243606.97456259374
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 243609.30760505798,
+            "end_ms": 248471.0839721875
+          },
+          {
+            "thread": "Thread (811704)",
+            "start_ms": 248474.605321,
+            "end_ms": 257307.2098131875
+          }
+        ]
+      },
+      "rounding_adjustments_ms": [],
+      "scope": "Estimated sampled thread time under explicit markers; CPU_TIME is an exporter label, not independently measured CPU time."
+    }
+  ],
+  "outputs": {
+    "results-20260923.md": {
+      "bytes": 3986,
+      "sha256": "0cf35d88993918a73684b65b403a9dbba48c599e76c45af31a874faf62bc440e"
+    },
+    "clocks-20260923.csv": {
+      "bytes": 32201,
+      "sha256": "9fb2602cdf466d9c87c455bc3a4663ac4545837316ea439f5450a916e5c2e903"
+    },
+    "setup-20260923.csv": {
+      "bytes": 74,
+      "sha256": "f4b7c2947d30558f0d9828ccb3e61517487f9c0a4cea5e2476cc56e9bcc92b10"
+    },
+    "clips-20260923.csv": {
+      "bytes": 2550,
+      "sha256": "d2f2b930c4df18ed6d78bb6ee11ff4325e07a9e91bf6b693e427c976e3345914"
+    },
+    "stacks-20260923.csv": {
+      "bytes": 304780,
+      "sha256": "0c2cb1936041a8b1ab61ce7a392a85a25548f6bab11f510e0e770104cbcc4015"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+--- src/Lokad.Onnx/TensorOps.MatMul.cs
++++ src/Lokad.Onnx/TensorOps.MatMul.cs
+@@ -197,7 +197,7 @@
+                         PackPanelsB(n, k, y, pp);
+                         // Short reductions did not benefit in the packing-inclusive
+                         // attention probe. Keep their existing consumer.
+-                        if (!AblationSwitches.EnablePackedAvx512Dynamic || n < 64
++                        if (!(AblationSwitches.EnablePackedAvx512Dynamic || (n >= 1024 && k >= 1024)) || n < 64
+                             || !TryPackedAvx512Rows(m, n, k, x, pp, output))
+                             mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
+                     }
+@@ -215,7 +215,7 @@
+                     fixed (float* pp = packed)
+                     {
+                         PackPanelsB(n, k, y, pp);
+-                        if (!AblationSwitches.EnablePackedAvx512Dynamic || n < 64
++                        if (!(AblationSwitches.EnablePackedAvx512Dynamic || (n >= 1024 && k >= 1024)) || n < 64
+                             || !TryPackedAvx512Rows(blocked, n, k, x, pp, output))
+                             mm_unsafe_vectorized_intrinsics_2x4packed_bump(blocked, n, k, x, pp, output);
+                     }
