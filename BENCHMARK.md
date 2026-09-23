@@ -73,8 +73,14 @@ integrated and the application/ORT ratios above remain unchanged.
 
 The next [convolution channel-block prototype](tests/pyannote/convolution-channel-blocks/build-20260923.md)
 passes its normal AMD build and compiled-scope checks. It preserves the
-existing accumulation order while reusing smaller weight ranges. Numerical
-and performance qualification remain pending; this adds no timing result.
+existing accumulation order while reusing smaller weight ranges.
+[AMD numerical checks](tests/pyannote/convolution-channel-blocks/numerics-20260923.md)
+pass expanded channel coverage, 119.8 million captured values per instruction
+mode and 25,600 finite-extreme graph executions.
+[Generated-code inspection](tests/pyannote/convolution-channel-blocks/codegen-20260923.md)
+confirms the intended arithmetic and guards, with no vector spills in the
+optimized loop. The method grows 69.1%; performance qualification remains
+pending. This adds no timing result.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
