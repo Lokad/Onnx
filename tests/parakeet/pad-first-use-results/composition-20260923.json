@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "core_existing_methods": 3179,
+  "core_unchanged_methods": 3178,
+  "data_unchanged_methods": 697,
+  "only_public_pad_body_changed": true,
+  "added_private_helper": "Lokad.Onnx.CPUExecutionProvider::PadDispatch::Lokad.Onnx.DenseTensor`1[T] PadDispatch[T](Lokad.Onnx.Tensor`1[T], Int32[], Int32[], T, Boolean)",
+  "public_surface_equal": true,
+  "only_padcore_implementation_flag_changed": true,
+  "padcore_flag_before": 0,
+  "padcore_flag_after": 512,
+  "generated_names_exact": true,
+  "original_padcore_body_exact": true,
+  "public_pad": {
+    "passed": true,
+    "instructions": 463,
+    "call_targets_changed": 4,
+    "branches_locals_exceptions_equal": true,
+    "original_validation_exact": true
+  },
+  "build": {
+    "bytes": 200137,
+    "sha256": "df197b592b163d6f9333dccf6af0f50b2f3f1a6a11e5b20ef208dc7bb8447837"
+  },
+  "inventory": {
+    "bytes": 26885371,
+    "sha256": "6b057e60b109b90243c86cdfc003e7c9345f61a19531d6c8d1eec1d3c41e80c0"
+  },
+  "source": {
+    "bytes": 148017,
+    "sha256": "e82940ee6dba61226f51989167fcd7e825b582e9e2c5a234160dd7e644070a94"
+  },
+  "candidate": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "f0f9fef6fc4403e1e9dc501f5c3eb37767e21d54f2a62399a20810b48765637e"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "df81efc9884b5503d42677ea91de5271d5f41634e392011a19db8e4cd85a56b8"
+    }
+  },
+  "m47_helper_body_exact": true,
+  "padcore_implementation_flag": 512,
+  "helper_instructions": 149,
+  "helper_calls": [
+    "Lokad.Onnx.Tensor`1[T]::Int32 get_Rank()",
+    "Lokad.Onnx.Tensor`1[T]::Boolean get_IsReversedStride()",
+    "Lokad.Onnx.CPUExecutionProvider::Lokad.Onnx.DenseTensor`1[T] PadCore[T](Lokad.Onnx.Tensor`1[T], Int32[], Int32[], T, Boolean)",
+    "Lokad.Onnx.CPUExecutionProvider::Lokad.Onnx.DenseTensor`1[T] PadCore[T](Lokad.Onnx.Tensor`1[T], Int32[], Int32[], T, Boolean)",
+    "Lokad.Onnx.Tensor`1[T]::Lokad.Onnx.DenseTensor`1[T] ToDenseTensor()",
+    "Lokad.Onnx.DenseTensor`1[T]::Lokad.Onnx.DenseTensor`1[T] OfShape(Int32[])",
+    "Lokad.Onnx.DenseTensor`1[T]::System.Memory`1[T] get_Buffer()",
+    "System.Memory`1[T]::System.Span`1[T] get_Span()",
+    "System.Span`1[T]::Void Fill(T)",
+    "Lokad.Onnx.Tensor`1[T]::Int64 get_Length()",
+    "Lokad.Onnx.Tensor`1[T]::System.ReadOnlySpan`1[System.Int32] get_Dimensions()",
+    "System.ReadOnlySpan`1[System.Int32]::Int32& get_Item(Int32)",
+    "Lokad.Onnx.DenseTensor`1[T]::System.Memory`1[T] get_Buffer()",
+    "System.Memory`1[T]::System.Span`1[T] get_Span()",
+    "System.Span`1[T]::Int32 get_Length()",
+    "System.Span`1[T]::Int32 get_Length()",
+    "System.Span`1[T]::System.Span`1[T] Slice(Int32, Int32)",
+    "System.Span`1[T]::System.Span`1[T] Slice(Int32, Int32)",
+    "System.Span`1[T]::Void CopyTo(System.Span`1[T])"
+  ],
+  "helper_review": "Eligibility is resolved before materialization; two original fallback calls, one materialization and one owned filled allocation on the copy path. Original data dimensions and flat source mapping preserved. Empty destination/width return before division; row offsets are bounded by validated destination length. No unsafe or floating arithmetic added.",
+  "generator": {
+    "bytes": 3995,
+    "sha256": "b14d08667bc7bb7ee21b5b57b52ff0919137f4b077ccffb660e4206708504eba"
+  },
+  "root_product_changed": false,
+  "model_qualification_pending": true,
+  "performance_pending": true
+}
