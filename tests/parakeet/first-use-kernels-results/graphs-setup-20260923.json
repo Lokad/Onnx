@@ -1,0 +1,290 @@
+[
+  {
+    "process": "verify-e5-8tok-current",
+    "seconds": 0.6394618
+  },
+  {
+    "process": "verify-e5-8tok-candidate",
+    "seconds": 0.6317917
+  },
+  {
+    "process": "verify-e5-8tok-ort",
+    "seconds": 0.281728704
+  },
+  {
+    "process": "verify-e5-30tok-current",
+    "seconds": 0.6519418
+  },
+  {
+    "process": "verify-e5-30tok-candidate",
+    "seconds": 0.6282911
+  },
+  {
+    "process": "verify-e5-30tok-ort",
+    "seconds": 0.278851984
+  },
+  {
+    "process": "verify-e5-30pad128-current",
+    "seconds": 0.633046
+  },
+  {
+    "process": "verify-e5-30pad128-candidate",
+    "seconds": 0.6161468
+  },
+  {
+    "process": "verify-e5-30pad128-ort",
+    "seconds": 0.273429101
+  },
+  {
+    "process": "verify-e5-128tok-current",
+    "seconds": 0.6321552
+  },
+  {
+    "process": "verify-e5-128tok-candidate",
+    "seconds": 0.636998
+  },
+  {
+    "process": "verify-e5-128tok-ort",
+    "seconds": 0.280256989
+  },
+  {
+    "process": "verify-e5-512tok-current",
+    "seconds": 0.6338664
+  },
+  {
+    "process": "verify-e5-512tok-candidate",
+    "seconds": 0.6504097
+  },
+  {
+    "process": "verify-e5-512tok-ort",
+    "seconds": 0.28053363
+  },
+  {
+    "process": "verify-dinov3-current",
+    "seconds": 0.1897406
+  },
+  {
+    "process": "verify-dinov3-candidate",
+    "seconds": 0.185404
+  },
+  {
+    "process": "verify-dinov3-ort",
+    "seconds": 0.109041322
+  },
+  {
+    "process": "verify-resnet50-current",
+    "seconds": 0.2872301
+  },
+  {
+    "process": "verify-resnet50-candidate",
+    "seconds": 0.2846936
+  },
+  {
+    "process": "verify-resnet50-ort",
+    "seconds": 0.122760176
+  },
+  {
+    "process": "verify-gpt2-current",
+    "seconds": 0.8838327
+  },
+  {
+    "process": "verify-gpt2-candidate",
+    "seconds": 0.945543
+  },
+  {
+    "process": "verify-gpt2-ort",
+    "seconds": 0.549723727
+  },
+  {
+    "process": "timing-e5-8tok-current-a",
+    "seconds": 0.644503
+  },
+  {
+    "process": "timing-e5-8tok-candidate-a",
+    "seconds": 0.6409764
+  },
+  {
+    "process": "timing-e5-8tok-ort-a",
+    "seconds": 0.279738753
+  },
+  {
+    "process": "timing-e5-8tok-ort-b",
+    "seconds": 0.278711459
+  },
+  {
+    "process": "timing-e5-8tok-candidate-b",
+    "seconds": 0.6405005
+  },
+  {
+    "process": "timing-e5-8tok-current-b",
+    "seconds": 0.6484558
+  },
+  {
+    "process": "timing-e5-30tok-current-a",
+    "seconds": 0.6309161
+  },
+  {
+    "process": "timing-e5-30tok-candidate-a",
+    "seconds": 0.6285489
+  },
+  {
+    "process": "timing-e5-30tok-ort-a",
+    "seconds": 0.279606255
+  },
+  {
+    "process": "timing-e5-30tok-ort-b",
+    "seconds": 0.288523911
+  },
+  {
+    "process": "timing-e5-30tok-candidate-b",
+    "seconds": 0.6311694
+  },
+  {
+    "process": "timing-e5-30tok-current-b",
+    "seconds": 0.6497531
+  },
+  {
+    "process": "timing-e5-30pad128-current-a",
+    "seconds": 0.6499989
+  },
+  {
+    "process": "timing-e5-30pad128-candidate-a",
+    "seconds": 0.6203511
+  },
+  {
+    "process": "timing-e5-30pad128-ort-a",
+    "seconds": 0.277664319
+  },
+  {
+    "process": "timing-e5-30pad128-ort-b",
+    "seconds": 0.288306432
+  },
+  {
+    "process": "timing-e5-30pad128-candidate-b",
+    "seconds": 0.6195753
+  },
+  {
+    "process": "timing-e5-30pad128-current-b",
+    "seconds": 0.6476678
+  },
+  {
+    "process": "timing-e5-128tok-current-a",
+    "seconds": 0.6313405
+  },
+  {
+    "process": "timing-e5-128tok-candidate-a",
+    "seconds": 0.6201694
+  },
+  {
+    "process": "timing-e5-128tok-ort-a",
+    "seconds": 0.282651161
+  },
+  {
+    "process": "timing-e5-128tok-ort-b",
+    "seconds": 0.286207169
+  },
+  {
+    "process": "timing-e5-128tok-candidate-b",
+    "seconds": 0.6392138
+  },
+  {
+    "process": "timing-e5-128tok-current-b",
+    "seconds": 0.6524143
+  },
+  {
+    "process": "timing-e5-512tok-current-a",
+    "seconds": 0.6500128
+  },
+  {
+    "process": "timing-e5-512tok-candidate-a",
+    "seconds": 0.6249515
+  },
+  {
+    "process": "timing-e5-512tok-ort-a",
+    "seconds": 0.281565469
+  },
+  {
+    "process": "timing-e5-512tok-ort-b",
+    "seconds": 0.285224569
+  },
+  {
+    "process": "timing-e5-512tok-candidate-b",
+    "seconds": 0.6500764
+  },
+  {
+    "process": "timing-e5-512tok-current-b",
+    "seconds": 0.6267943
+  },
+  {
+    "process": "timing-dinov3-current-a",
+    "seconds": 0.1957707
+  },
+  {
+    "process": "timing-dinov3-candidate-a",
+    "seconds": 0.1890533
+  },
+  {
+    "process": "timing-dinov3-ort-a",
+    "seconds": 0.110792455
+  },
+  {
+    "process": "timing-dinov3-ort-b",
+    "seconds": 0.112179224
+  },
+  {
+    "process": "timing-dinov3-candidate-b",
+    "seconds": 0.1953885
+  },
+  {
+    "process": "timing-dinov3-current-b",
+    "seconds": 0.1937535
+  },
+  {
+    "process": "timing-resnet50-current-a",
+    "seconds": 0.283522
+  },
+  {
+    "process": "timing-resnet50-candidate-a",
+    "seconds": 0.2914831
+  },
+  {
+    "process": "timing-resnet50-ort-a",
+    "seconds": 0.12764332
+  },
+  {
+    "process": "timing-resnet50-ort-b",
+    "seconds": 0.125370859
+  },
+  {
+    "process": "timing-resnet50-candidate-b",
+    "seconds": 0.2939746
+  },
+  {
+    "process": "timing-resnet50-current-b",
+    "seconds": 0.2912456
+  },
+  {
+    "process": "timing-gpt2-current-a",
+    "seconds": 0.966755
+  },
+  {
+    "process": "timing-gpt2-candidate-a",
+    "seconds": 0.908552
+  },
+  {
+    "process": "timing-gpt2-ort-a",
+    "seconds": 0.541631971
+  },
+  {
+    "process": "timing-gpt2-ort-b",
+    "seconds": 0.550320774
+  },
+  {
+    "process": "timing-gpt2-candidate-b",
+    "seconds": 0.9410719
+  },
+  {
+    "process": "timing-gpt2-current-b",
+    "seconds": 0.94939
+  }
+]

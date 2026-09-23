@@ -6,10 +6,11 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-After retaining the next Parakeet candidate's build, numerical, component and
-complete-model evidence, a fresh inventory measured **37.85 GB**, or
-**48.63 GB** counting that junction twice. Its receipt is
-`artifacts/repository-retention-20260923/m43-during-application-size.json`.
+After retaining the next Parakeet candidate's build, numerical, component,
+application and cross-model evidence, a fresh inventory measured **38.14 GB**,
+including **24.73 GB** in artifacts, or **48.92 GB** counting that junction
+twice. Its receipt is
+`artifacts/repository-retention-20260923/m43-before-release-size.json`.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,

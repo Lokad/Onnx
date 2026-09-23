@@ -32,7 +32,7 @@ def graphs():
     assert len(setup)==72;data('graphs-setup-20260923.json',setup)
     data('graphs-observations-20260923.json',dict(closure=pin(base/'closed.json'),payload=pin(base/'payload.json'),**a))
     lines=['# M43 graph comparison with the selected release and Microsoft ORT','',
-        '**Regression gates pass.**' if proof['admitted'] else '**Regression gates fail; this candidate is not admitted for release.**','',
+        '**Release qualification passes.**' if proof['admitted'] else '**Release qualification is incomplete; inspect the repeatability and regression checks below.**','',
         '| Case | Selected ms | Candidate ms | Microsoft ORT ms | Candidate / ORT | Candidate / selected |',
         '| --- | ---: | ---: | ---: | ---: | ---: |']
     for r in a['performance']:
