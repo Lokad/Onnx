@@ -1,0 +1,215 @@
+process,ms,call,thread,method,namespace,tier,signature,bytes,address,previous_call,next_call,case,iteration
+current,30.665487,-1,846863,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,137686252276800,-1,0,,
+current,30.92534,-1,846863,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,137686252276896,-1,0,,
+current,31.239936,-1,846863,.ctor,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,137686252277648,-1,0,,
+current,31.355731,-1,846863,GetTypeInfo,Lokad.Onnx.TensorBase,QuickJitted,class Lokad.Onnx.TensorTypeInfo  (class System.Type),81,137686252278704,-1,0,,
+current,32.298117,-1,846863,.cctor,Lokad.Onnx.TensorBase,QuickJitted,void  (),1923,137686252278816,-1,0,,
+current,32.346551,-1,846863,.ctor,Lokad.Onnx.TensorTypeInfo,QuickJitted,"instance void  (value class Lokad.Onnx.TensorElementType,int32)",63,137686252280784,-1,0,,
+current,32.368784,-1,846863,set_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (value class Lokad.Onnx.TensorElementType),33,137686252280880,-1,0,,
+current,32.383977,-1,846863,set_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (int32),33,137686252280944,-1,0,,
+current,32.571321,-1,846863,get_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,137686252281216,-1,0,,
+current,32.586524,-1,846863,get_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance int32  (),27,137686252281264,-1,0,,
+current,32.644361,-1,846863,.ctor,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,"instance void  (class System.Type,int32)",97,137686252281312,-1,0,,
+current,32.664682,-1,846863,set_TensorType,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (class System.Type),42,137686252281440,-1,0,,
+current,32.695158,-1,846863,set_TypeSize,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (int32),33,137686252281504,-1,0,,
+current,32.710061,-1,846863,set_IsString,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (bool),33,137686252281568,-1,0,,
+current,33.597083,-1,846863,.ctor,Lokad.Onnx.TensorBase,QuickJitted,instance void  (class System.Type),52,137686252284848,-1,0,,
+current,33.829185,-1,846863,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",905,137686252284928,-1,0,,
+current,34.326818,-1,846863,get_Length,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int64  (),28,137686252286720,-1,0,,
+current,34.444085,-1,846863,.ctor,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,137686252287008,-1,0,,
+current,34.668956,-1,846863,.ctor,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,137686252287104,-1,0,,
+current,34.885794,-1,846863,.ctor,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,137686252287856,-1,0,,
+current,35.208262,-1,846863,get_Length,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance int64  (),28,137686252289760,-1,0,,
+current,35.318469,-1,846863,Scalar,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,class Lokad.Onnx.DenseTensor`1<!0>  (!0),188,137686252289856,-1,0,,
+current,37.396243,0,846863,Pad,Lokad.Onnx.CPUExecutionProvider,QuickJitted,"value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",6955,137686252290640,-1,1,attention-51,0
+current,37.457536,0,846863,get_Default,Lokad.Onnx.ExecutionOptions,QuickJitted,class Lokad.Onnx.ExecutionOptions  (),149,137686252297632,-1,1,attention-51,0
+current,37.511368,0,846863,get_Auto,Lokad.Onnx.TensorExecutionOptions,QuickJitted,value class Lokad.Onnx.TensorExecutionOptions  (),89,137686252297808,-1,1,attention-51,0
+current,37.635105,0,846863,.ctor,Lokad.Onnx.TensorExecutionOptions,QuickJitted,"instance void  (bool,bool,int32)",114,137686252297920,-1,1,attention-51,0
+current,37.669657,0,846863,.ctor,Lokad.Onnx.ExecutionOptions,QuickJitted,"instance void  (value class Lokad.Onnx.OptimizationMode,value class Lokad.Onnx.TensorExecutionOptions)",78,137686252298064,-1,1,attention-51,0
+current,37.716418,0,846863,Validated,Lokad.Onnx.ExecutionOptions,QuickJitted,instance class Lokad.Onnx.ExecutionOptions  (),64,137686252298176,-1,1,attention-51,0
+current,37.744711,0,846863,get_Tensor,Lokad.Onnx.ExecutionOptions,QuickJitted,instance value class Lokad.Onnx.TensorExecutionOptions  (),56,137686252298272,-1,1,attention-51,0
+current,37.805893,0,846863,Validate,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance void  (),290,137686252298352,-1,1,attention-51,0
+current,37.823169,0,846863,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance int32  (),27,137686252298672,-1,1,attention-51,0
+current,37.834306,0,846863,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,137686252298720,-1,1,attention-51,0
+current,37.844101,0,846863,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,137686252298768,-1,1,attention-51,0
+current,37.863601,0,846863,get_Rank,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (),31,137686252298816,-1,1,attention-51,0
+current,37.886135,0,846863,get_ElementType,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,137686252298880,-1,1,attention-51,0
+current,37.90298,0,846863,get_Rank,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance int32  (),31,137686252298928,-1,1,attention-51,0
+current,38.073699,0,846863,GetValue,Lokad.Onnx.DenseTensor`1[System.Int32],Optimized,instance !0  (int32),45,137686252300032,-1,1,attention-51,0
+current,38.134511,0,846863,Lokad.Onnx.ITensor.get_Dims,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32[]  (),67,137686252300112,-1,1,attention-51,0
+current,40.347059,0,846863,get_ElementType,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,137686252302432,-1,1,attention-51,0
+current,40.403084,0,846863,StartOpStage,Lokad.Onnx.Profiler,QuickJitted,void  (value class Lokad.Onnx.OpStage),51,137686252302480,-1,1,attention-51,0
+current,40.467562,0,846863,get_Current,Lokad.Onnx.Profiler,QuickJitted,class Lokad.Onnx.ProfilerContext  (),119,137686252302560,-1,1,attention-51,0
+current,40.513742,0,846863,.cctor,Lokad.Onnx.Profiler,QuickJitted,void  (),135,137686252302704,-1,1,attention-51,0
+current,40.81687,0,846863,.ctor,Lokad.Onnx.ProfilerContext,QuickJitted,"instance void  (bool,class Lokad.Onnx.ProfilerContext,bool,bool)",296,137686252302864,-1,1,attention-51,0
+current,41.146389,0,846863,StartOpStage,Lokad.Onnx.ProfilerContext,QuickJitted,instance void  (value class Lokad.Onnx.OpStage),244,137686252304384,-1,1,attention-51,0
+current,41.301234,0,846863,System.Collections.Generic.ICollection<T>.get_Count,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (),31,137686252304816,-1,1,attention-51,0
+current,41.335385,0,846863,System.Collections.Generic.ICollection<T>.CopyTo,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"instance void  (!0[],int32)",53,137686252304880,-1,1,attention-51,0
+current,41.623361,0,846863,CopyTo,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (!0[],int32)",794,137686252304960,-1,1,attention-51,0
+current,41.658094,0,846863,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance bool  (),28,137686252305792,-1,1,attention-51,0
+current,41.693397,0,846863,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance value class System.Memory`1<!0>  (),48,137686252305840,-1,1,attention-51,0
+current,42.840994,0,846863,PadCore,Lokad.Onnx.CPUExecutionProvider,QuickJitted,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",2089,137686252306528,-1,1,attention-51,0
+current,42.896838,0,846863,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class System.ReadOnlySpan`1<int32>  (),56,137686252308656,-1,1,attention-51,0
+current,43.042639,0,846863,ToDenseTensor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance class Lokad.Onnx.DenseTensor`1<!0>  (),437,137686252308736,-1,1,attention-51,0
+current,43.091944,0,846863,OfShape,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,class Lokad.Onnx.DenseTensor`1<!0>  (int32[]),95,137686252309216,-1,1,attention-51,0
+current,43.118774,0,846863,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance void  (value class System.ReadOnlySpan`1<int32>),49,137686252309344,-1,1,attention-51,0
+current,43.194649,0,846863,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",181,137686252309424,-1,1,attention-51,0
+current,44.259411,0,846863,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,int32[]  (value class System.ReadOnlySpan`1<int32>),41,137686252311552,-1,1,attention-51,0
+current,46.589317,0,846863,PadCore,Lokad.Onnx.CPUExecutionProvider,OptimizedTier1OSR,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",489,137686252311616,-1,1,attention-51,0
+current,47.293793,0,846863,Success,Lokad.Onnx.OpResult,QuickJitted,"value class Lokad.Onnx.OpResult  (value class Lokad.Onnx.OpType,class Lokad.Onnx.ITensor[])",94,137686252312160,-1,1,attention-51,0
+current,47.346463,0,846863,.ctor,Lokad.Onnx.OpResult,QuickJitted,"instance void  (value class Lokad.Onnx.OpType,value class Lokad.Onnx.OpStatus)",131,137686252312288,-1,1,attention-51,0
+current,611.058973,-1,846863,System.Collections.Generic.ICollection<T>.get_Count,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance int32  (),31,137686252313488,779,780,attention-51,779
+current,611.134227,-1,846863,System.Collections.Generic.ICollection<T>.CopyTo,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,"instance void  (!0[],int32)",53,137686252313552,779,780,attention-51,779
+current,611.449915,-1,846863,CopyTo,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,"instance void  (!0[],int32)",790,137686252313632,779,780,attention-51,779
+current,611.483746,-1,846863,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance bool  (),28,137686252314464,779,780,attention-51,779
+current,611.514082,-1,846863,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,instance value class System.Memory`1<!0>  (),48,137686252314512,779,780,attention-51,779
+current,612.056723,-1,846863,GetValue,Lokad.Onnx.DenseTensor`1[System.Single],Optimized,instance !0  (int32),47,137686252315136,779,780,attention-51,779
+current,1660.681338,1729,846869,get_Rank,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int32  (),31,137686252316288,1728,1730,attention-106,169
+current,1671.687001,1732,846869,get_Rank,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int32  (),8,137686252317904,1731,1733,attention-106,172
+current,1671.711879,1732,846869,get_Length,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int64  (),28,137686252317936,1731,1733,attention-106,172
+current,1677.924931,1734,846869,Lokad.Onnx.ITensor.get_Dims,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int32[]  (),98,137686252318272,1733,1735,attention-106,174
+current,1684.946716,1736,846869,get_ElementType,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance value class Lokad.Onnx.TensorElementType  (),27,137686252319568,1735,1737,attention-106,176
+current,1685.540414,1736,846869,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,instance value class System.Memory`1<!0>  (),48,137686252320096,1735,1737,attention-106,176
+current,1687.924381,1737,846869,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJittedInstrumented,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",905,137686252320640,1736,1738,attention-106,177
+current,1693.685158,1738,846869,get_Length,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int64  (),5,137686252321584,1737,1739,attention-106,178
+current,3714.911203,2500,846869,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance bool  (),28,137686252326832,2499,2501,convolution-106,160
+current,3719.666869,2503,846869,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance bool  (),28,137686252327536,2502,2504,convolution-106,163
+current,3719.708842,2503,846869,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJittedInstrumented,int32[]  (value class System.ReadOnlySpan`1<int32>),41,137686252327584,2502,2504,convolution-106,163
+current,3720.014415,2503,846869,Lokad.Onnx.ITensor.get_Dims,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int32[]  (),20,137686252327760,2502,2504,convolution-106,163
+current,3720.537617,2503,846869,get_ElementType,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance value class Lokad.Onnx.TensorElementType  (),4,137686252328272,2502,2504,convolution-106,163
+current,3720.741555,2503,846869,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,instance value class System.Memory`1<!0>  (),37,137686252328384,2502,2504,convolution-106,163
+current,3721.564561,2503,846869,GetStrides,Lokad.Onnx.ArrayUtilities,OptimizedTier1,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",455,137686252328576,2502,2504,convolution-106,163
+current,3725.589361,2505,846869,Success,Lokad.Onnx.OpResult,QuickJittedInstrumented,"value class Lokad.Onnx.OpResult  (value class Lokad.Onnx.OpType,class Lokad.Onnx.ITensor[])",94,137686252329600,2504,2506,convolution-106,165
+current,3725.675952,2505,846869,.ctor,Lokad.Onnx.OpResult,QuickJittedInstrumented,"instance void  (value class Lokad.Onnx.OpType,value class Lokad.Onnx.OpStatus)",131,137686252329728,2504,2506,convolution-106,165
+current,3730.584539,2507,846869,Pad,Lokad.Onnx.CPUExecutionProvider,QuickJittedInstrumented,"value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",6941,137686252330960,2506,2508,convolution-106,167
+current,3733.679733,2510,846869,get_Default,Lokad.Onnx.ExecutionOptions,QuickJittedInstrumented,class Lokad.Onnx.ExecutionOptions  (),149,137686252337936,2509,2511,convolution-106,170
+current,3733.7176,2510,846869,get_Auto,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,value class Lokad.Onnx.TensorExecutionOptions  (),89,137686252338112,2509,2511,convolution-106,170
+current,3733.760215,2510,846869,.ctor,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,"instance void  (bool,bool,int32)",114,137686252338224,2509,2511,convolution-106,170
+current,3733.786745,2510,846869,.ctor,Lokad.Onnx.ExecutionOptions,QuickJittedInstrumented,"instance void  (value class Lokad.Onnx.OptimizationMode,value class Lokad.Onnx.TensorExecutionOptions)",78,137686252338368,2509,2511,convolution-106,170
+current,3733.809299,2510,846869,Validated,Lokad.Onnx.ExecutionOptions,QuickJittedInstrumented,instance class Lokad.Onnx.ExecutionOptions  (),64,137686252338480,2509,2511,convolution-106,170
+current,3733.828167,2510,846869,get_Tensor,Lokad.Onnx.ExecutionOptions,QuickJittedInstrumented,instance value class Lokad.Onnx.TensorExecutionOptions  (),56,137686252338576,2509,2511,convolution-106,170
+current,3733.90911,2510,846869,Validate,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance void  (),340,137686252338656,2509,2511,convolution-106,170
+current,3733.930052,2510,846869,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance int32  (),27,137686252339024,2509,2511,convolution-106,170
+current,3733.941869,2510,846869,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance bool  (),28,137686252339072,2509,2511,convolution-106,170
+current,3737.655038,2511,846869,get_ElementType,Lokad.Onnx.Tensor`1[System.Int32],QuickJittedInstrumented,instance value class Lokad.Onnx.TensorElementType  (),27,137686252340352,2510,2512,convolution-106,171
+current,3737.699696,2511,846869,get_Rank,Lokad.Onnx.Tensor`1[System.Int32],QuickJittedInstrumented,instance int32  (),31,137686252340400,2510,2512,convolution-106,171
+current,3737.715389,2511,846869,get_Length,Lokad.Onnx.Tensor`1[System.Int32],QuickJittedInstrumented,instance int64  (),28,137686252340464,2510,2512,convolution-106,171
+current,3738.44255,2511,846869,StartOpStage,Lokad.Onnx.Profiler,QuickJittedInstrumented,void  (value class Lokad.Onnx.OpStage),51,137686252342896,2510,2512,convolution-106,171
+current,3738.485344,2511,846869,get_Current,Lokad.Onnx.Profiler,QuickJittedInstrumented,class Lokad.Onnx.ProfilerContext  (),117,137686252342976,2510,2512,convolution-106,171
+current,3739.170361,2511,846869,StartOpStage,Lokad.Onnx.ProfilerContext,QuickJittedInstrumented,instance void  (value class Lokad.Onnx.OpStage),320,137686252343600,2510,2512,convolution-106,171
+current,3739.468903,2511,846869,System.Collections.Generic.ICollection<T>.get_Count,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int32  (),31,137686252344592,2510,2512,convolution-106,171
+current,3739.593071,2511,846869,System.Collections.Generic.ICollection<T>.CopyTo,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"instance void  (!0[],int32)",98,137686252344656,2510,2512,convolution-106,171
+current,3742.879564,2514,846869,CopyTo,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,"instance void  (!0[],int32)",794,137686252344784,2513,2515,convolution-106,174
+current,3743.548596,2514,846869,PadCore,Lokad.Onnx.CPUExecutionProvider,QuickJittedInstrumented,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",2089,137686252345984,2513,2515,convolution-106,174
+current,3743.635027,2514,846869,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance value class System.ReadOnlySpan`1<int32>  (),56,137686252348112,2513,2515,convolution-106,174
+current,3743.983755,2514,846869,ToDenseTensor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,instance class Lokad.Onnx.DenseTensor`1<!0>  (),437,137686252348336,2513,2515,convolution-106,174
+current,3746.678442,2515,846869,OfShape,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,class Lokad.Onnx.DenseTensor`1<!0>  (int32[]),95,137686252348816,2514,2516,convolution-106,175
+current,3746.720716,2515,846869,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,instance void  (value class System.ReadOnlySpan`1<int32>),49,137686252348944,2514,2516,convolution-106,175
+current,3746.818854,2515,846869,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",181,137686252349024,2514,2516,convolution-106,175
+current,3747.023294,2515,846869,.ctor,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,137686252349232,2514,2516,convolution-106,175
+current,3747.070696,2515,846869,GetTypeInfo,Lokad.Onnx.TensorBase,QuickJittedInstrumented,class Lokad.Onnx.TensorTypeInfo  (class System.Type),65,137686252350288,2514,2516,convolution-106,175
+current,3748.733221,2515,846863,PadCore,Lokad.Onnx.CPUExecutionProvider,OptimizedTier1OSR,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",489,137686252351040,2514,2516,convolution-106,175
+current,3750.959059,2516,846869,get_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJittedInstrumented,instance value class Lokad.Onnx.TensorElementType  (),27,137686252351936,2515,2517,convolution-106,176
+current,3750.984908,2516,846869,.ctor,Lokad.Onnx.TensorBase,QuickJittedInstrumented,instance void  (class System.Type),52,137686252351984,2515,2517,convolution-106,176
+current,4787.161998,3147,846869,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance bool  (),5,137686252366832,3146,3148,attention-167,27
+current,4787.435072,3147,846869,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance bool  (),5,137686252367040,3146,3148,attention-167,27
+current,4787.482403,3147,846869,GetStrides,Lokad.Onnx.ArrayUtilities,OptimizedTier1,int32[]  (value class System.ReadOnlySpan`1<int32>),8,137686252367072,3146,3148,attention-167,27
+current,4787.620672,3147,846869,Success,Lokad.Onnx.OpResult,OptimizedTier1,"value class Lokad.Onnx.OpResult  (value class Lokad.Onnx.OpType,class Lokad.Onnx.ITensor[])",64,137686252367104,3146,3148,attention-167,27
+current,4787.714014,3147,846869,.ctor,Lokad.Onnx.OpResult,OptimizedTier1,"instance void  (value class Lokad.Onnx.OpType,value class Lokad.Onnx.OpStatus)",100,137686252367200,3146,3148,attention-167,27
+current,4806.502424,3148,846869,Pad,Lokad.Onnx.CPUExecutionProvider,OptimizedTier1,"value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",6400,137686252367744,3147,3149,attention-167,28
+current,4809.864872,3148,846869,get_Default,Lokad.Onnx.ExecutionOptions,OptimizedTier1,class Lokad.Onnx.ExecutionOptions  (),61,137686252374256,3147,3149,attention-167,28
+current,4810.986529,3148,846869,get_Auto,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,value class Lokad.Onnx.TensorExecutionOptions  (),35,137686252374352,3147,3149,attention-167,28
+current,4811.038447,3148,846869,.ctor,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,"instance void  (bool,bool,int32)",36,137686252374416,3147,3149,attention-167,28
+current,4811.111157,3148,846869,.ctor,Lokad.Onnx.ExecutionOptions,OptimizedTier1,"instance void  (value class Lokad.Onnx.OptimizationMode,value class Lokad.Onnx.TensorExecutionOptions)",36,137686252374480,3147,3149,attention-167,28
+current,4811.328306,3148,846869,Validated,Lokad.Onnx.ExecutionOptions,OptimizedTier1,instance class Lokad.Onnx.ExecutionOptions  (),218,137686252374544,3147,3149,attention-167,28
+current,4811.380044,3148,846869,get_Tensor,Lokad.Onnx.ExecutionOptions,OptimizedTier1,instance value class Lokad.Onnx.TensorExecutionOptions  (),24,137686252374800,3147,3149,attention-167,28
+current,4811.521889,3148,846869,Validate,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance void  (),206,137686252374848,3147,3149,attention-167,28
+current,4811.552505,3148,846869,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance int32  (),4,137686252375088,3147,3149,attention-167,28
+current,4811.570062,3148,846869,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance bool  (),5,137686252375120,3147,3149,attention-167,28
+current,4815.271363,3149,846869,get_ElementType,Lokad.Onnx.Tensor`1[System.Int32],OptimizedTier1,instance value class Lokad.Onnx.TensorElementType  (),4,137686252375840,3148,3150,attention-167,29
+current,4815.304453,3149,846869,get_Rank,Lokad.Onnx.Tensor`1[System.Int32],OptimizedTier1,instance int32  (),8,137686252375872,3148,3150,attention-167,29
+current,4815.342871,3149,846869,get_Length,Lokad.Onnx.Tensor`1[System.Int32],OptimizedTier1,instance int64  (),5,137686252375904,3148,3150,attention-167,29
+current,4824.129687,3149,846869,StartOpStage,Lokad.Onnx.Profiler,OptimizedTier1,void  (value class Lokad.Onnx.OpStage),390,137686252377504,3148,3150,attention-167,29
+current,4824.360336,3149,846869,get_Current,Lokad.Onnx.Profiler,OptimizedTier1,class Lokad.Onnx.ProfilerContext  (),195,137686252377936,3148,3150,attention-167,29
+current,4824.815905,3149,846869,StartOpStage,Lokad.Onnx.ProfilerContext,OptimizedTier1,instance void  (value class Lokad.Onnx.OpStage),205,137686252378368,3148,3150,attention-167,29
+current,4833.114232,3150,846869,System.Collections.Generic.ICollection<T>.get_Count,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int32  (),4,137686252380560,3149,3151,attention-167,30
+current,4833.184578,3150,846869,System.Collections.Generic.ICollection<T>.CopyTo,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"instance void  (!0[],int32)",11,137686252380592,3149,3151,attention-167,30
+current,4837.158902,3150,846869,CopyTo,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,"instance void  (!0[],int32)",615,137686252380640,3149,3151,attention-167,30
+current,4844.587232,3151,846869,PadCore,Lokad.Onnx.CPUExecutionProvider,OptimizedTier1,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",3328,137686252381440,3150,3152,attention-167,31
+current,4847.780865,3151,846869,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance value class System.ReadOnlySpan`1<int32>  (),31,137686252384800,3150,3152,attention-167,31
+current,4848.867199,3151,846869,ToDenseTensor,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,instance class Lokad.Onnx.DenseTensor`1<!0>  (),432,137686252384992,3150,3152,attention-167,31
+current,4853.228007,3152,846869,OfShape,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,class Lokad.Onnx.DenseTensor`1<!0>  (int32[]),1406,137686252385472,3151,3153,attention-167,32
+current,4857.762549,3152,846869,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,instance void  (value class System.ReadOnlySpan`1<int32>),1373,137686252386912,3151,3153,attention-167,32
+current,4859.302138,3152,846869,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1424,137686252388320,3151,3153,attention-167,32
+current,4862.863377,3153,846869,.ctor,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1352,137686252389792,3152,3154,attention-167,33
+current,4866.415933,3153,846869,GetTypeInfo,Lokad.Onnx.TensorBase,OptimizedTier1,class Lokad.Onnx.TensorTypeInfo  (class System.Type),728,137686252391200,3152,3154,attention-167,33
+current,4873.889892,3154,846869,get_ElementType,Lokad.Onnx.TensorTypeInfo,OptimizedTier1,instance value class Lokad.Onnx.TensorElementType  (),4,137686252394048,3153,3155,attention-167,34
+current,4873.951716,3154,846869,.ctor,Lokad.Onnx.TensorBase,OptimizedTier1,instance void  (class System.Type),11,137686252394080,3153,3155,attention-167,34
+candidate,28.10134,-1,846965,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,126413370313792,-1,0,,
+candidate,28.369826,-1,846965,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,126413370313888,-1,0,,
+candidate,28.673996,-1,846965,.ctor,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,126413370314640,-1,0,,
+candidate,28.814068,-1,846965,GetTypeInfo,Lokad.Onnx.TensorBase,QuickJitted,class Lokad.Onnx.TensorTypeInfo  (class System.Type),81,126413370315696,-1,0,,
+candidate,29.741993,-1,846965,.cctor,Lokad.Onnx.TensorBase,QuickJitted,void  (),1923,126413370315808,-1,0,,
+candidate,29.791578,-1,846965,.ctor,Lokad.Onnx.TensorTypeInfo,QuickJitted,"instance void  (value class Lokad.Onnx.TensorElementType,int32)",63,126413370317776,-1,0,,
+candidate,29.813611,-1,846965,set_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (value class Lokad.Onnx.TensorElementType),33,126413370317872,-1,0,,
+candidate,29.828704,-1,846965,set_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (int32),33,126413370317936,-1,0,,
+candidate,30.003038,-1,846965,get_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,126413370318208,-1,0,,
+candidate,30.018211,-1,846965,get_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance int32  (),27,126413370318256,-1,0,,
+candidate,30.06404,-1,846965,.ctor,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,"instance void  (class System.Type,int32)",97,126413370318304,-1,0,,
+candidate,30.0835,-1,846965,set_TensorType,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (class System.Type),42,126413370318432,-1,0,,
+candidate,30.108808,-1,846965,set_TypeSize,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (int32),33,126413370318496,-1,0,,
+candidate,30.122689,-1,846965,set_IsString,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (bool),33,126413370318560,-1,0,,
+candidate,31.032306,-1,846965,.ctor,Lokad.Onnx.TensorBase,QuickJitted,instance void  (class System.Type),52,126413370321840,-1,0,,
+candidate,31.244587,-1,846965,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",905,126413370321920,-1,0,,
+candidate,31.775781,-1,846965,get_Length,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int64  (),28,126413370323712,-1,0,,
+candidate,31.895742,-1,846965,.ctor,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,126413370324000,-1,0,,
+candidate,32.086531,-1,846965,.ctor,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,126413370324096,-1,0,,
+candidate,32.29719,-1,846965,.ctor,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,126413370324848,-1,0,,
+candidate,32.61458,-1,846965,get_Length,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance int64  (),28,126413370326752,-1,0,,
+candidate,32.740912,-1,846965,Scalar,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,class Lokad.Onnx.DenseTensor`1<!0>  (!0),188,126413370326848,-1,0,,
+candidate,34.919118,0,846965,Pad,Lokad.Onnx.CPUExecutionProvider,QuickJitted,"value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",6955,126413370327632,-1,1,attention-51,0
+candidate,34.981593,0,846965,get_Default,Lokad.Onnx.ExecutionOptions,QuickJitted,class Lokad.Onnx.ExecutionOptions  (),149,126413370334624,-1,1,attention-51,0
+candidate,35.034383,0,846965,get_Auto,Lokad.Onnx.TensorExecutionOptions,QuickJitted,value class Lokad.Onnx.TensorExecutionOptions  (),89,126413370334800,-1,1,attention-51,0
+candidate,35.14527,0,846965,.ctor,Lokad.Onnx.TensorExecutionOptions,QuickJitted,"instance void  (bool,bool,int32)",114,126413370334912,-1,1,attention-51,0
+candidate,35.17827,0,846965,.ctor,Lokad.Onnx.ExecutionOptions,QuickJitted,"instance void  (value class Lokad.Onnx.OptimizationMode,value class Lokad.Onnx.TensorExecutionOptions)",78,126413370335056,-1,1,attention-51,0
+candidate,35.222117,0,846965,Validated,Lokad.Onnx.ExecutionOptions,QuickJitted,instance class Lokad.Onnx.ExecutionOptions  (),64,126413370335168,-1,1,attention-51,0
+candidate,35.249368,0,846965,get_Tensor,Lokad.Onnx.ExecutionOptions,QuickJitted,instance value class Lokad.Onnx.TensorExecutionOptions  (),56,126413370335264,-1,1,attention-51,0
+candidate,35.308688,0,846965,Validate,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance void  (),290,126413370335344,-1,1,attention-51,0
+candidate,35.325042,0,846965,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance int32  (),27,126413370335664,-1,1,attention-51,0
+candidate,35.335799,0,846965,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,126413370335712,-1,1,attention-51,0
+candidate,35.345333,0,846965,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,126413370335760,-1,1,attention-51,0
+candidate,35.364452,0,846965,get_Rank,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (),31,126413370335808,-1,1,attention-51,0
+candidate,35.382059,0,846965,get_ElementType,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,126413370335872,-1,1,attention-51,0
+candidate,35.398764,0,846965,get_Rank,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance int32  (),31,126413370335920,-1,1,attention-51,0
+candidate,35.564545,0,846965,GetValue,Lokad.Onnx.DenseTensor`1[System.Int32],Optimized,instance !0  (int32),45,126413370337024,-1,1,attention-51,0
+candidate,35.624646,0,846965,Lokad.Onnx.ITensor.get_Dims,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32[]  (),67,126413370337104,-1,1,attention-51,0
+candidate,37.893259,0,846965,get_ElementType,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,126413370339424,-1,1,attention-51,0
+candidate,37.950155,0,846965,StartOpStage,Lokad.Onnx.Profiler,QuickJitted,void  (value class Lokad.Onnx.OpStage),51,126413370339472,-1,1,attention-51,0
+candidate,38.031338,0,846965,get_Current,Lokad.Onnx.Profiler,QuickJitted,class Lokad.Onnx.ProfilerContext  (),119,126413370339552,-1,1,attention-51,0
+candidate,38.079511,0,846965,.cctor,Lokad.Onnx.Profiler,QuickJitted,void  (),135,126413370339696,-1,1,attention-51,0
+candidate,38.35609,0,846965,.ctor,Lokad.Onnx.ProfilerContext,QuickJitted,"instance void  (bool,class Lokad.Onnx.ProfilerContext,bool,bool)",296,126413370339856,-1,1,attention-51,0
+candidate,38.684677,0,846965,StartOpStage,Lokad.Onnx.ProfilerContext,QuickJitted,instance void  (value class Lokad.Onnx.OpStage),244,126413370341376,-1,1,attention-51,0
+candidate,38.869897,0,846965,System.Collections.Generic.ICollection<T>.get_Count,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (),31,126413370341808,-1,1,attention-51,0
+candidate,38.903999,0,846965,System.Collections.Generic.ICollection<T>.CopyTo,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"instance void  (!0[],int32)",53,126413370341872,-1,1,attention-51,0
+candidate,39.188129,0,846965,CopyTo,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (!0[],int32)",794,126413370341952,-1,1,attention-51,0
+candidate,39.219937,0,846965,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance bool  (),28,126413370342784,-1,1,attention-51,0
+candidate,39.250744,0,846965,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance value class System.Memory`1<!0>  (),48,126413370342832,-1,1,attention-51,0
+candidate,40.348094,0,846965,PadDispatch,Lokad.Onnx.CPUExecutionProvider,QuickJitted,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",1343,126413370343520,-1,1,attention-51,0
+candidate,40.5037,0,846965,ToDenseTensor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance class Lokad.Onnx.DenseTensor`1<!0>  (),437,126413370344896,-1,1,attention-51,0
+candidate,40.553545,0,846965,OfShape,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,class Lokad.Onnx.DenseTensor`1<!0>  (int32[]),95,126413370345376,-1,1,attention-51,0
+candidate,40.581077,0,846965,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance void  (value class System.ReadOnlySpan`1<int32>),49,126413370345504,-1,1,attention-51,0
+candidate,40.657322,0,846965,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",181,126413370345584,-1,1,attention-51,0
+candidate,41.74608,0,846965,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class System.ReadOnlySpan`1<int32>  (),56,126413370347712,-1,1,attention-51,0
+candidate,41.809275,0,846965,Success,Lokad.Onnx.OpResult,QuickJitted,"value class Lokad.Onnx.OpResult  (value class Lokad.Onnx.OpType,class Lokad.Onnx.ITensor[])",94,126413370347792,-1,1,attention-51,0
+candidate,41.85218,0,846965,.ctor,Lokad.Onnx.OpResult,QuickJitted,"instance void  (value class Lokad.Onnx.OpType,value class Lokad.Onnx.OpStatus)",131,126413370347920,-1,1,attention-51,0
+candidate,100.876967,-1,846965,System.Collections.Generic.ICollection<T>.get_Count,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance int32  (),31,126413370349104,779,780,attention-51,779
+candidate,100.951199,-1,846965,System.Collections.Generic.ICollection<T>.CopyTo,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,"instance void  (!0[],int32)",53,126413370349168,779,780,attention-51,779
+candidate,101.261619,-1,846965,CopyTo,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,"instance void  (!0[],int32)",790,126413370349248,779,780,attention-51,779
+candidate,101.29528,-1,846965,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Int32],QuickJitted,instance bool  (),28,126413370350080,779,780,attention-51,779
+candidate,101.324284,-1,846965,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Int32],QuickJitted,instance value class System.Memory`1<!0>  (),48,126413370350128,779,780,attention-51,779
+candidate,101.80436,-1,846965,GetValue,Lokad.Onnx.DenseTensor`1[System.Single],Optimized,instance !0  (int32),47,126413370350752,779,780,attention-51,779
+candidate,106.323528,789,846965,PadDispatch,Lokad.Onnx.CPUExecutionProvider,OptimizedTier1OSR,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",262,126413370351104,788,790,convolution-51,9
+candidate,1812.242163,7020,846965,PadCore,Lokad.Onnx.CPUExecutionProvider,QuickJitted,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",2089,126413370351424,7019,7021,cropping,0
+candidate,1812.37245,7020,846965,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,int32[]  (value class System.ReadOnlySpan`1<int32>),41,126413370353552,7019,7021,cropping,0
+candidate,1814.469643,7020,846965,PadCore,Lokad.Onnx.CPUExecutionProvider,OptimizedTier1OSR,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",489,126413370353632,7019,7021,cropping,0
+candidate,2116.396376,8580,846965,PadCore,Lokad.Onnx.CPUExecutionProvider,OptimizedTier1OSR,"generic class Lokad.Onnx.DenseTensor`1<!!0>  (class Lokad.Onnx.Tensor`1<!!0>,int32[],int32[],!!0,bool)",607,126413370354176,8579,8581,reflection,0
