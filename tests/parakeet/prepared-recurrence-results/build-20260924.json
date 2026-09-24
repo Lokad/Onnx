@@ -1,0 +1,552 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 2628,
+    "sha256": "1b7f8e2130d490851e861790b2e051edfca3308be6d6d9e1067cda8b97f9869f"
+  },
+  "analysis": {
+    "passed": true,
+    "measured": {
+      "Lokad.Onnx.dll": {
+        "bytes": 773632,
+        "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+      }
+    },
+    "built": {
+      "Lokad.Onnx.dll": {
+        "bytes": 781824,
+        "sha256": "3c23b44a53736938f241302a6a8258605c2f57da57f5009c83e979337df957f5"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "cc37b19eb41cf728061c35bcdb7e06a6ab4d370bfd4c47555eec86c86b2ef6d6"
+      }
+    },
+    "inventory": {
+      "passed": true,
+      "original_core_methods": 3189,
+      "candidate_core_methods": 3250,
+      "data_methods": 697,
+      "existing_method_changes": [
+        "Lokad.Onnx.ComputationalGraph::InvalidatePreparation::Void InvalidatePreparation()",
+        "Lokad.Onnx.ComputationalGraph::RunCoreInner::Boolean RunCoreInner(System.Object, Boolean, Lokad.Onnx.ExecutionProvider)",
+        "Lokad.Onnx.ComputationalGraph::RefreshLifetimeAnalysis::Void RefreshLifetimeAnalysis()",
+        "Lokad.Onnx.ComputationalGraph::.ctor::Void .ctor(Int64)",
+        "Lokad.Onnx.CPUExecutionProvider::Lstm::Lokad.Onnx.OpResult Lstm(Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, System.String, System.String[], Single[], Single[], System.Nullable`1[System.Single], Int32, Boolean, Int32, Int32, Lokad.Onnx.ExecutionOptions, Lokad.Onnx.TensorBufferPool)",
+        "Lokad.Onnx.GraphExecution::.ctor::Void .ctor(Lokad.Onnx.ComputationalGraph, Lokad.Onnx.ExecutionOptions, Boolean, Int64, System.String, Boolean)",
+        "Lokad.Onnx.GraphPacking::PackMatMulWeights::Int32 PackMatMulWeights(Lokad.Onnx.ComputationalGraph)",
+        "Lokad.Onnx.TensorExecutionOptions::GetHashCode::Int32 GetHashCode()",
+        "Lokad.Onnx.TensorExecutionOptions::Equals::Boolean Equals(Lokad.Onnx.TensorExecutionOptions)",
+        "Lokad.Onnx.TensorExecutionOptions::.ctor::Void .ctor(Boolean, Boolean, Int32)"
+      ],
+      "added_methods": [
+        "Lokad.Onnx.PackedLstmWeight::get_EqualityContract::System.Type get_EqualityContract()",
+        "Lokad.Onnx.PackedLstmWeight::get_SourceName::System.String get_SourceName()",
+        "Lokad.Onnx.PackedLstmWeight::set_SourceName::Void set_SourceName(System.String)",
+        "Lokad.Onnx.PackedLstmWeight::get_Source::Lokad.Onnx.DenseTensor`1[System.Single] get_Source()",
+        "Lokad.Onnx.PackedLstmWeight::set_Source::Void set_Source(Lokad.Onnx.DenseTensor`1[System.Single])",
+        "Lokad.Onnx.PackedLstmWeight::get_SourceArray::Single[] get_SourceArray()",
+        "Lokad.Onnx.PackedLstmWeight::set_SourceArray::Void set_SourceArray(Single[])",
+        "Lokad.Onnx.PackedLstmWeight::get_Shape::Int32[] get_Shape()",
+        "Lokad.Onnx.PackedLstmWeight::set_Shape::Void set_Shape(Int32[])",
+        "Lokad.Onnx.PackedLstmWeight::get_Values::Single[] get_Values()",
+        "Lokad.Onnx.PackedLstmWeight::set_Values::Void set_Values(Single[])",
+        "Lokad.Onnx.PackedLstmWeight::ToString::System.String ToString()",
+        "Lokad.Onnx.PackedLstmWeight::PrintMembers::Boolean PrintMembers(System.Text.StringBuilder)",
+        "Lokad.Onnx.PackedLstmWeight::op_Inequality::Boolean op_Inequality(Lokad.Onnx.PackedLstmWeight, Lokad.Onnx.PackedLstmWeight)",
+        "Lokad.Onnx.PackedLstmWeight::op_Equality::Boolean op_Equality(Lokad.Onnx.PackedLstmWeight, Lokad.Onnx.PackedLstmWeight)",
+        "Lokad.Onnx.PackedLstmWeight::GetHashCode::Int32 GetHashCode()",
+        "Lokad.Onnx.PackedLstmWeight::Equals::Boolean Equals(System.Object)",
+        "Lokad.Onnx.PackedLstmWeight::Equals::Boolean Equals(Lokad.Onnx.PackedLstmWeight)",
+        "Lokad.Onnx.PackedLstmWeight::<Clone>$::Lokad.Onnx.PackedLstmWeight <Clone>$()",
+        "Lokad.Onnx.PackedLstmWeight::Deconstruct::Void Deconstruct(System.String ByRef, Lokad.Onnx.DenseTensor`1[System.Single] ByRef, Single[] ByRef, Int32[] ByRef, Single[] ByRef)",
+        "Lokad.Onnx.PackedLstmWeight::.ctor::Void .ctor(System.String, Lokad.Onnx.DenseTensor`1[System.Single], Single[], Int32[], Single[])",
+        "Lokad.Onnx.PackedLstmWeight::.ctor::Void .ctor(Lokad.Onnx.PackedLstmWeight)",
+        "Lokad.Onnx.GraphLstmPacking::Eligible::Boolean Eligible(Lokad.Onnx.Node)",
+        "Lokad.Onnx.GraphLstmPacking::Storage::Single[] Storage(Lokad.Onnx.DenseTensor`1[System.Single])",
+        "Lokad.Onnx.GraphLstmPacking::Candidates::System.Collections.Generic.List`1[Lokad.Onnx.GraphLstmPacking+Pair] Candidates(Lokad.Onnx.ComputationalGraph)",
+        "Lokad.Onnx.GraphLstmPacking::Fresh::Boolean Fresh(Lokad.Onnx.PackedLstmWeight, Source)",
+        "Lokad.Onnx.GraphLstmPacking::PruneAndBytes::Int64 PruneAndBytes(Lokad.Onnx.ComputationalGraph, Int64)",
+        "Lokad.Onnx.GraphLstmPacking::Prepare::Lokad.Onnx.PackedLstmWeight Prepare(Source)",
+        "Lokad.Onnx.GraphLstmPacking::PackWeights::Void PackWeights(Lokad.Onnx.ComputationalGraph)",
+        "Lokad.Onnx.GraphLstmPacking::Resolve::Single[] Resolve(System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedLstmWeight], Lokad.Onnx.Tensor`1[System.Single])",
+        "Lokad.Onnx.GraphLstmPacking::<PruneAndBytes>g__Valid|9_0::Boolean <PruneAndBytes>g__Valid|9_0(Source, <>c__DisplayClass9_0 ByRef)",
+        "Lokad.Onnx.TensorExecutionOptions::get_PackedLstmWeights::System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedLstmWeight] get_PackedLstmWeights()",
+        "Lokad.Onnx.TensorExecutionOptions::set_PackedLstmWeights::Void set_PackedLstmWeights(System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedLstmWeight])",
+        "Lokad.Onnx.GraphLstmPacking+Source::get_Name::System.String get_Name()",
+        "Lokad.Onnx.GraphLstmPacking+Source::set_Name::Void set_Name(System.String)",
+        "Lokad.Onnx.GraphLstmPacking+Source::get_Tensor::Lokad.Onnx.DenseTensor`1[System.Single] get_Tensor()",
+        "Lokad.Onnx.GraphLstmPacking+Source::set_Tensor::Void set_Tensor(Lokad.Onnx.DenseTensor`1[System.Single])",
+        "Lokad.Onnx.GraphLstmPacking+Source::get_Array::Single[] get_Array()",
+        "Lokad.Onnx.GraphLstmPacking+Source::set_Array::Void set_Array(Single[])",
+        "Lokad.Onnx.GraphLstmPacking+Source::ToString::System.String ToString()",
+        "Lokad.Onnx.GraphLstmPacking+Source::PrintMembers::Boolean PrintMembers(System.Text.StringBuilder)",
+        "Lokad.Onnx.GraphLstmPacking+Source::op_Inequality::Boolean op_Inequality(Source, Source)",
+        "Lokad.Onnx.GraphLstmPacking+Source::op_Equality::Boolean op_Equality(Source, Source)",
+        "Lokad.Onnx.GraphLstmPacking+Source::GetHashCode::Int32 GetHashCode()",
+        "Lokad.Onnx.GraphLstmPacking+Source::Equals::Boolean Equals(System.Object)",
+        "Lokad.Onnx.GraphLstmPacking+Source::Equals::Boolean Equals(Source)",
+        "Lokad.Onnx.GraphLstmPacking+Source::Deconstruct::Void Deconstruct(System.String ByRef, Lokad.Onnx.DenseTensor`1[System.Single] ByRef, Single[] ByRef)",
+        "Lokad.Onnx.GraphLstmPacking+Source::.ctor::Void .ctor(System.String, Lokad.Onnx.DenseTensor`1[System.Single], Single[])",
+        "Lokad.Onnx.GraphLstmPacking+Pair::get_W::Source get_W()",
+        "Lokad.Onnx.GraphLstmPacking+Pair::set_W::Void set_W(Source)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::get_R::Source get_R()",
+        "Lokad.Onnx.GraphLstmPacking+Pair::set_R::Void set_R(Source)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::ToString::System.String ToString()",
+        "Lokad.Onnx.GraphLstmPacking+Pair::PrintMembers::Boolean PrintMembers(System.Text.StringBuilder)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::op_Inequality::Boolean op_Inequality(Pair, Pair)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::op_Equality::Boolean op_Equality(Pair, Pair)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::GetHashCode::Int32 GetHashCode()",
+        "Lokad.Onnx.GraphLstmPacking+Pair::Equals::Boolean Equals(System.Object)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::Equals::Boolean Equals(Pair)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::Deconstruct::Void Deconstruct(Source ByRef, Source ByRef)",
+        "Lokad.Onnx.GraphLstmPacking+Pair::.ctor::Void .ctor(Source, Source)"
+      ],
+      "unchanged_core_methods": 3179,
+      "existing_flags_exact": true,
+      "new_flags": {
+        "Lokad.Onnx.PackedLstmWeight::get_EqualityContract::System.Type get_EqualityContract()": 0,
+        "Lokad.Onnx.PackedLstmWeight::get_SourceName::System.String get_SourceName()": 0,
+        "Lokad.Onnx.PackedLstmWeight::set_SourceName::Void set_SourceName(System.String)": 0,
+        "Lokad.Onnx.PackedLstmWeight::get_Source::Lokad.Onnx.DenseTensor`1[System.Single] get_Source()": 0,
+        "Lokad.Onnx.PackedLstmWeight::set_Source::Void set_Source(Lokad.Onnx.DenseTensor`1[System.Single])": 0,
+        "Lokad.Onnx.PackedLstmWeight::get_SourceArray::Single[] get_SourceArray()": 0,
+        "Lokad.Onnx.PackedLstmWeight::set_SourceArray::Void set_SourceArray(Single[])": 0,
+        "Lokad.Onnx.PackedLstmWeight::get_Shape::Int32[] get_Shape()": 0,
+        "Lokad.Onnx.PackedLstmWeight::set_Shape::Void set_Shape(Int32[])": 0,
+        "Lokad.Onnx.PackedLstmWeight::get_Values::Single[] get_Values()": 0,
+        "Lokad.Onnx.PackedLstmWeight::set_Values::Void set_Values(Single[])": 0,
+        "Lokad.Onnx.PackedLstmWeight::ToString::System.String ToString()": 0,
+        "Lokad.Onnx.PackedLstmWeight::PrintMembers::Boolean PrintMembers(System.Text.StringBuilder)": 0,
+        "Lokad.Onnx.PackedLstmWeight::op_Inequality::Boolean op_Inequality(Lokad.Onnx.PackedLstmWeight, Lokad.Onnx.PackedLstmWeight)": 0,
+        "Lokad.Onnx.PackedLstmWeight::op_Equality::Boolean op_Equality(Lokad.Onnx.PackedLstmWeight, Lokad.Onnx.PackedLstmWeight)": 0,
+        "Lokad.Onnx.PackedLstmWeight::GetHashCode::Int32 GetHashCode()": 0,
+        "Lokad.Onnx.PackedLstmWeight::Equals::Boolean Equals(System.Object)": 0,
+        "Lokad.Onnx.PackedLstmWeight::Equals::Boolean Equals(Lokad.Onnx.PackedLstmWeight)": 0,
+        "Lokad.Onnx.PackedLstmWeight::<Clone>$::Lokad.Onnx.PackedLstmWeight <Clone>$()": 0,
+        "Lokad.Onnx.PackedLstmWeight::Deconstruct::Void Deconstruct(System.String ByRef, Lokad.Onnx.DenseTensor`1[System.Single] ByRef, Single[] ByRef, Int32[] ByRef, Single[] ByRef)": 0,
+        "Lokad.Onnx.PackedLstmWeight::.ctor::Void .ctor(System.String, Lokad.Onnx.DenseTensor`1[System.Single], Single[], Int32[], Single[])": 0,
+        "Lokad.Onnx.PackedLstmWeight::.ctor::Void .ctor(Lokad.Onnx.PackedLstmWeight)": 0,
+        "Lokad.Onnx.GraphLstmPacking::Eligible::Boolean Eligible(Lokad.Onnx.Node)": 0,
+        "Lokad.Onnx.GraphLstmPacking::Storage::Single[] Storage(Lokad.Onnx.DenseTensor`1[System.Single])": 0,
+        "Lokad.Onnx.GraphLstmPacking::Candidates::System.Collections.Generic.List`1[Lokad.Onnx.GraphLstmPacking+Pair] Candidates(Lokad.Onnx.ComputationalGraph)": 0,
+        "Lokad.Onnx.GraphLstmPacking::Fresh::Boolean Fresh(Lokad.Onnx.PackedLstmWeight, Source)": 0,
+        "Lokad.Onnx.GraphLstmPacking::PruneAndBytes::Int64 PruneAndBytes(Lokad.Onnx.ComputationalGraph, Int64)": 0,
+        "Lokad.Onnx.GraphLstmPacking::Prepare::Lokad.Onnx.PackedLstmWeight Prepare(Source)": 0,
+        "Lokad.Onnx.GraphLstmPacking::PackWeights::Void PackWeights(Lokad.Onnx.ComputationalGraph)": 0,
+        "Lokad.Onnx.GraphLstmPacking::Resolve::Single[] Resolve(System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedLstmWeight], Lokad.Onnx.Tensor`1[System.Single])": 0,
+        "Lokad.Onnx.GraphLstmPacking::<PruneAndBytes>g__Valid|9_0::Boolean <PruneAndBytes>g__Valid|9_0(Source, <>c__DisplayClass9_0 ByRef)": 0,
+        "Lokad.Onnx.TensorExecutionOptions::get_PackedLstmWeights::System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedLstmWeight] get_PackedLstmWeights()": 0,
+        "Lokad.Onnx.TensorExecutionOptions::set_PackedLstmWeights::Void set_PackedLstmWeights(System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedLstmWeight])": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::get_Name::System.String get_Name()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::set_Name::Void set_Name(System.String)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::get_Tensor::Lokad.Onnx.DenseTensor`1[System.Single] get_Tensor()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::set_Tensor::Void set_Tensor(Lokad.Onnx.DenseTensor`1[System.Single])": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::get_Array::Single[] get_Array()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::set_Array::Void set_Array(Single[])": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::ToString::System.String ToString()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::PrintMembers::Boolean PrintMembers(System.Text.StringBuilder)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::op_Inequality::Boolean op_Inequality(Source, Source)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::op_Equality::Boolean op_Equality(Source, Source)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::GetHashCode::Int32 GetHashCode()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::Equals::Boolean Equals(System.Object)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::Equals::Boolean Equals(Source)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::Deconstruct::Void Deconstruct(System.String ByRef, Lokad.Onnx.DenseTensor`1[System.Single] ByRef, Single[] ByRef)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Source::.ctor::Void .ctor(System.String, Lokad.Onnx.DenseTensor`1[System.Single], Single[])": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::get_W::Source get_W()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::set_W::Void set_W(Source)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::get_R::Source get_R()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::set_R::Void set_R(Source)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::ToString::System.String ToString()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::PrintMembers::Boolean PrintMembers(System.Text.StringBuilder)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::op_Inequality::Boolean op_Inequality(Pair, Pair)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::op_Equality::Boolean op_Equality(Pair, Pair)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::GetHashCode::Int32 GetHashCode()": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::Equals::Boolean Equals(System.Object)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::Equals::Boolean Equals(Pair)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::Deconstruct::Void Deconstruct(Source ByRef, Source ByRef)": 0,
+        "Lokad.Onnx.GraphLstmPacking+Pair::.ctor::Void .ctor(Source, Source)": 0
+      },
+      "public_surface_equal": true,
+      "ordered_projection_exact": true,
+      "existing_panels_exact": true,
+      "source_prepared": {
+        "bytes": 149433,
+        "sha256": "b52a89c1043165de1c376b37fc5307cd003a7c8b76f0f52508c4cdefcc669eab"
+      },
+      "numerically_qualified": false
+    },
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "peak_rss": 8388608,
+        "seconds": 0.25982263998594135
+      },
+      {
+        "name": "cli-restore",
+        "samples": 6,
+        "peak_rss": 171155456,
+        "seconds": 1.5527882099850103
+      },
+      {
+        "name": "cli-build",
+        "samples": 64,
+        "peak_rss": 511041536,
+        "seconds": 16.877198623027653
+      },
+      {
+        "name": "inventory",
+        "samples": 4,
+        "peak_rss": 178999296,
+        "seconds": 1.1843821649672464
+      }
+    ],
+    "source_prepared": {
+      "bytes": 149433,
+      "sha256": "b52a89c1043165de1c376b37fc5307cd003a7c8b76f0f52508c4cdefcc669eab"
+    },
+    "original_refusal": {
+      "bytes": 202634,
+      "sha256": "b2d46d3b37e0df3d2df3828ab186760574feaaeb221c53f2346f8272dd5fdd6f"
+    },
+    "raw_inventory": {
+      "bytes": 28141040,
+      "sha256": "ae5361cad1658b20193a70464dd9cd7cf1c5482abd0daad81b711ef812f32fd0"
+    },
+    "renames": {
+      "bytes": 22616,
+      "sha256": "56679decf4b19a33db5fea099763a7c48931f8c7ec309bb2dee8a413b89bbf7d"
+    },
+    "renamed_methods": 28,
+    "name_only_methods": 35,
+    "rebuilds": 0,
+    "root_product_changed": false,
+    "numerically_qualified": false,
+    "no_performance_measurement": true
+  },
+  "renames": {
+    "renamed_methods": [
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__183_0::System.String <ResolveInputs>b__183_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])",
+        "after": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__184_0::System.String <ResolveInputs>b__184_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__184_0::System.String <ResolveInputs>b__184_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])",
+        "after": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__185_0::System.String <ResolveInputs>b__185_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixUlong|211_0::Void <ComputeStructureFingerprint>g__MixUlong|211_0(UInt64, <>c__DisplayClass211_1 ByRef)",
+        "after": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixUlong|212_0::Void <ComputeStructureFingerprint>g__MixUlong|212_0(UInt64, <>c__DisplayClass212_1 ByRef)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixInt|211_1::Void <ComputeStructureFingerprint>g__MixInt|211_1(Int32, <>c__DisplayClass211_1 ByRef)",
+        "after": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixInt|212_1::Void <ComputeStructureFingerprint>g__MixInt|212_1(Int32, <>c__DisplayClass212_1 ByRef)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixString|211_2::Void <ComputeStructureFingerprint>g__MixString|211_2(System.String, <>c__DisplayClass211_0 ByRef, <>c__DisplayClass211_1 ByRef)",
+        "after": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixString|212_2::Void <ComputeStructureFingerprint>g__MixString|212_2(System.String, <>c__DisplayClass212_0 ByRef, <>c__DisplayClass212_1 ByRef)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveInputs>b__183_1::System.String <ResolveInputs>b__183_1(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveInputs>b__184_1::System.String <ResolveInputs>b__184_1(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__185_0::System.String <ResolveNodeExecuteInputs>b__185_0(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__186_0::System.String <ResolveNodeExecuteInputs>b__186_0(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__186_0::System.String <ResolveNodeExecuteInputs>b__186_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__187_0::System.String <ResolveNodeExecuteInputs>b__187_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__190_0::System.String <RunCoreInner>b__190_0(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__191_0::System.String <RunCoreInner>b__191_0(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__190_2::System.String <RunCoreInner>b__190_2(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__191_2::System.String <RunCoreInner>b__191_2(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<RunNodeCoreInner>b__200_1::System.String <RunNodeCoreInner>b__200_1(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<RunNodeCoreInner>b__201_1::System.String <RunNodeCoreInner>b__201_1(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass190_0::<RunCoreInner>b__1::System.String <RunCoreInner>b__1()",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass191_0::<RunCoreInner>b__1::System.String <RunCoreInner>b__1()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass190_0::.ctor::Void .ctor()",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass191_0::.ctor::Void .ctor()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass200_0::<RunNodeCoreInner>b__0::Boolean <RunNodeCoreInner>b__0(Lokad.Onnx.Node)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass201_0::<RunNodeCoreInner>b__0::Boolean <RunNodeCoreInner>b__0(Lokad.Onnx.Node)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass200_0::.ctor::Void .ctor()",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass201_0::.ctor::Void .ctor()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.IDisposable.Dispose::Void System.IDisposable.Dispose()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.IDisposable.Dispose::Void System.IDisposable.Dispose()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::MoveNext::Boolean MoveNext()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::MoveNext::Boolean MoveNext()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally1::Void <>m__Finally1()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally1::Void <>m__Finally1()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally2::Void <>m__Finally2()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally2::Void <>m__Finally2()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally3::Void <>m__Finally3()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally3::Void <>m__Finally3()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally4::Void <>m__Finally4()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally4::Void <>m__Finally4()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally5::Void <>m__Finally5()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally5::Void <>m__Finally5()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current::Lokad.Onnx.ITensor System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current::Lokad.Onnx.ITensor System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.IEnumerator.Reset::Void System.Collections.IEnumerator.Reset()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.IEnumerator.Reset::Void System.Collections.IEnumerator.Reset()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.IEnumerator.get_Current::System.Object System.Collections.IEnumerator.get_Current()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.IEnumerator.get_Current::System.Object System.Collections.IEnumerator.get_Current()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator::System.Collections.Generic.IEnumerator`1[Lokad.Onnx.ITensor] System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator::System.Collections.Generic.IEnumerator`1[Lokad.Onnx.ITensor] System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.IEnumerable.GetEnumerator::System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.IEnumerable.GetEnumerator::System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::.ctor::Void .ctor(Int32)",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::.ctor::Void .ctor(Int32)"
+      }
+    ],
+    "name_only_methods": [
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::ResolveInputs::Boolean ResolveInputs(Lokad.Onnx.ITensor[], Boolean)",
+        "after": "Lokad.Onnx.ComputationalGraph::ResolveInputs::Boolean ResolveInputs(Lokad.Onnx.ITensor[], Boolean)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::ResolveInputs::Boolean ResolveInputs(System.Collections.Generic.Dictionary`2[System.String,Lokad.Onnx.ITensor], Boolean)",
+        "after": "Lokad.Onnx.ComputationalGraph::ResolveInputs::Boolean ResolveInputs(System.Collections.Generic.Dictionary`2[System.String,Lokad.Onnx.ITensor], Boolean)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::ResolveNodeExecuteInputs::Boolean ResolveNodeExecuteInputs(Lokad.Onnx.Node, Lokad.Onnx.ITensor[], Boolean)",
+        "after": "Lokad.Onnx.ComputationalGraph::ResolveNodeExecuteInputs::Boolean ResolveNodeExecuteInputs(Lokad.Onnx.Node, Lokad.Onnx.ITensor[], Boolean)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::ResolveNodeExecuteInputs::Boolean ResolveNodeExecuteInputs(Lokad.Onnx.Node, System.Collections.Generic.Dictionary`2[System.String,Lokad.Onnx.ITensor], Boolean)",
+        "after": "Lokad.Onnx.ComputationalGraph::ResolveNodeExecuteInputs::Boolean ResolveNodeExecuteInputs(Lokad.Onnx.Node, System.Collections.Generic.Dictionary`2[System.String,Lokad.Onnx.ITensor], Boolean)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::RunNodeCoreInner::Boolean RunNodeCoreInner(System.Object, System.String, Boolean, Lokad.Onnx.ExecutionProvider)",
+        "after": "Lokad.Onnx.ComputationalGraph::RunNodeCoreInner::Boolean RunNodeCoreInner(System.Object, System.String, Boolean, Lokad.Onnx.ExecutionProvider)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::ComputeStructureFingerprint::Int64 ComputeStructureFingerprint(System.Collections.Generic.HashSet`1[Lokad.Onnx.ComputationalGraph], System.Collections.Generic.List`1[Lokad.Onnx.ComputationalGraph+FingerprintString])",
+        "after": "Lokad.Onnx.ComputationalGraph::ComputeStructureFingerprint::Int64 ComputeStructureFingerprint(System.Collections.Generic.HashSet`1[Lokad.Onnx.ComputationalGraph], System.Collections.Generic.List`1[Lokad.Onnx.ComputationalGraph+FingerprintString])"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::EnumerateAttributeTensors::System.Collections.Generic.IEnumerable`1[Lokad.Onnx.ITensor] EnumerateAttributeTensors()",
+        "after": "Lokad.Onnx.ComputationalGraph::EnumerateAttributeTensors::System.Collections.Generic.IEnumerable`1[Lokad.Onnx.ITensor] EnumerateAttributeTensors()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__183_0::System.String <ResolveInputs>b__183_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])",
+        "after": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__184_0::System.String <ResolveInputs>b__184_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__184_0::System.String <ResolveInputs>b__184_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])",
+        "after": "Lokad.Onnx.ComputationalGraph::<ResolveInputs>b__185_0::System.String <ResolveInputs>b__185_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixUlong|211_0::Void <ComputeStructureFingerprint>g__MixUlong|211_0(UInt64, <>c__DisplayClass211_1 ByRef)",
+        "after": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixUlong|212_0::Void <ComputeStructureFingerprint>g__MixUlong|212_0(UInt64, <>c__DisplayClass212_1 ByRef)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixInt|211_1::Void <ComputeStructureFingerprint>g__MixInt|211_1(Int32, <>c__DisplayClass211_1 ByRef)",
+        "after": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixInt|212_1::Void <ComputeStructureFingerprint>g__MixInt|212_1(Int32, <>c__DisplayClass212_1 ByRef)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixString|211_2::Void <ComputeStructureFingerprint>g__MixString|211_2(System.String, <>c__DisplayClass211_0 ByRef, <>c__DisplayClass211_1 ByRef)",
+        "after": "Lokad.Onnx.ComputationalGraph::<ComputeStructureFingerprint>g__MixString|212_2::Void <ComputeStructureFingerprint>g__MixString|212_2(System.String, <>c__DisplayClass212_0 ByRef, <>c__DisplayClass212_1 ByRef)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveInputs>b__183_1::System.String <ResolveInputs>b__183_1(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveInputs>b__184_1::System.String <ResolveInputs>b__184_1(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__185_0::System.String <ResolveNodeExecuteInputs>b__185_0(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__186_0::System.String <ResolveNodeExecuteInputs>b__186_0(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__186_0::System.String <ResolveNodeExecuteInputs>b__186_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<ResolveNodeExecuteInputs>b__187_0::System.String <ResolveNodeExecuteInputs>b__187_0(System.Collections.Generic.KeyValuePair`2[System.String,Lokad.Onnx.ITensor])"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__190_0::System.String <RunCoreInner>b__190_0(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__191_0::System.String <RunCoreInner>b__191_0(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__190_2::System.String <RunCoreInner>b__190_2(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<RunCoreInner>b__191_2::System.String <RunCoreInner>b__191_2(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c::<RunNodeCoreInner>b__200_1::System.String <RunNodeCoreInner>b__200_1(Lokad.Onnx.ITensor)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c::<RunNodeCoreInner>b__201_1::System.String <RunNodeCoreInner>b__201_1(Lokad.Onnx.ITensor)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass190_0::<RunCoreInner>b__1::System.String <RunCoreInner>b__1()",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass191_0::<RunCoreInner>b__1::System.String <RunCoreInner>b__1()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass190_0::.ctor::Void .ctor()",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass191_0::.ctor::Void .ctor()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass200_0::<RunNodeCoreInner>b__0::Boolean <RunNodeCoreInner>b__0(Lokad.Onnx.Node)",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass201_0::<RunNodeCoreInner>b__0::Boolean <RunNodeCoreInner>b__0(Lokad.Onnx.Node)"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass200_0::.ctor::Void .ctor()",
+        "after": "Lokad.Onnx.ComputationalGraph+<>c__DisplayClass201_0::.ctor::Void .ctor()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.IDisposable.Dispose::Void System.IDisposable.Dispose()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.IDisposable.Dispose::Void System.IDisposable.Dispose()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::MoveNext::Boolean MoveNext()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::MoveNext::Boolean MoveNext()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally1::Void <>m__Finally1()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally1::Void <>m__Finally1()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally2::Void <>m__Finally2()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally2::Void <>m__Finally2()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally3::Void <>m__Finally3()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally3::Void <>m__Finally3()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally4::Void <>m__Finally4()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally4::Void <>m__Finally4()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::<>m__Finally5::Void <>m__Finally5()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::<>m__Finally5::Void <>m__Finally5()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current::Lokad.Onnx.ITensor System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current::Lokad.Onnx.ITensor System.Collections.Generic.IEnumerator<Lokad.Onnx.ITensor>.get_Current()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.IEnumerator.Reset::Void System.Collections.IEnumerator.Reset()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.IEnumerator.Reset::Void System.Collections.IEnumerator.Reset()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.IEnumerator.get_Current::System.Object System.Collections.IEnumerator.get_Current()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.IEnumerator.get_Current::System.Object System.Collections.IEnumerator.get_Current()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator::System.Collections.Generic.IEnumerator`1[Lokad.Onnx.ITensor] System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator::System.Collections.Generic.IEnumerator`1[Lokad.Onnx.ITensor] System.Collections.Generic.IEnumerable<Lokad.Onnx.ITensor>.GetEnumerator()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::System.Collections.IEnumerable.GetEnumerator::System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::System.Collections.IEnumerable.GetEnumerator::System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()"
+      },
+      {
+        "before": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__233::.ctor::Void .ctor(Int32)",
+        "after": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234::.ctor::Void .ctor(Int32)"
+      }
+    ],
+    "identifier_substitutions": {
+      "<ResolveInputs>b__183_0": "<ResolveInputs>b__184_0",
+      "<ResolveInputs>b__184_0": "<ResolveInputs>b__185_0",
+      "<ResolveInputs>b__183_1": "<ResolveInputs>b__184_1",
+      "<ResolveNodeExecuteInputs>b__185_0": "<ResolveNodeExecuteInputs>b__186_0",
+      "<ResolveNodeExecuteInputs>b__186_0": "<ResolveNodeExecuteInputs>b__187_0",
+      "<RunCoreInner>b__190_0": "<RunCoreInner>b__191_0",
+      "<RunCoreInner>b__190_2": "<RunCoreInner>b__191_2",
+      "<RunNodeCoreInner>b__200_1": "<RunNodeCoreInner>b__201_1",
+      "<>c__DisplayClass190_0": "<>c__DisplayClass191_0",
+      "<>c__DisplayClass200_0": "<>c__DisplayClass201_0",
+      "<>c__DisplayClass211_0": "<>c__DisplayClass212_0",
+      "<>c__DisplayClass211_1": "<>c__DisplayClass212_1",
+      "<ComputeStructureFingerprint>g__MixUlong|211_0": "<ComputeStructureFingerprint>g__MixUlong|212_0",
+      "<ComputeStructureFingerprint>g__MixInt|211_1": "<ComputeStructureFingerprint>g__MixInt|212_1",
+      "<ComputeStructureFingerprint>g__MixString|211_2": "<ComputeStructureFingerprint>g__MixString|212_2",
+      "<EnumerateAttributeTensors>d__233": "<EnumerateAttributeTensors>d__234",
+      "<>9__183_1": "<>9__184_1",
+      "<>9__185_0": "<>9__186_0",
+      "<>9__186_0": "<>9__187_0",
+      "<>9__190_0": "<>9__191_0",
+      "<>9__190_2": "<>9__191_2",
+      "<>9__200_1": "<>9__201_1"
+    }
+  },
+  "terminal": [
+    {
+      "pid": 919207,
+      "birth": 1790234820.4
+    },
+    {
+      "pid": 919208,
+      "birth": 1790234822.65
+    },
+    {
+      "pid": 919216,
+      "birth": 1790234824.0
+    },
+    {
+      "pid": 919233,
+      "birth": 1790234826.65
+    },
+    {
+      "pid": 919252,
+      "birth": 1790234827.63
+    },
+    {
+      "pid": 919268,
+      "birth": 1790234836.5
+    },
+    {
+      "pid": 919285,
+      "birth": 1790234840.54
+    },
+    {
+      "pid": 919296,
+      "birth": 1790234844.63
+    }
+  ],
+  "publisher": {
+    "bytes": 4427,
+    "sha256": "84cdaef3b67ccaabc1ec4f93ef03f613930c97f91273172d3c555f4b36d87e9c"
+  }
+}

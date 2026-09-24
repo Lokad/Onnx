@@ -6,19 +6,23 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **44.63 GB**, including **31.16 GB** in artifacts,
-after retaining the complete selected-release profile, isolated inclusive-packing
-build, focused contracts, actual-model residency, complete model correctness in
-both modes and the six-process application comparison.
-All raw traces, clocks, trace exports, failed attempts and qualification evidence
-remain retained. The inventory totals **44,629,304,923 bytes**, with **5.37 GB**
-of headroom. Receipt:
-`artifacts/repository-retention-20260923/m63-application-closed-size.json`.
-Counting the model junction again gives 55.41 GB, which counts the same 10.79 GB
+The latest inventory is **44.89 GB**, including **31.42 GB** in artifacts,
+after retaining the selected-release profile, rejected inclusive-packing trial,
+actual decoder LSTM capture, isolated recurrent preparation build and focused
+contracts in both instruction modes. All raw traces, clocks, native arrays,
+failed checks and qualification evidence remain retained. The inventory totals
+**44,894,453,705 bytes**, with **5.11 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m64-contracts-closed-size.json`.
+Counting the model junction again gives 55.68 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
-No new model copies were needed. Raw clocks remain in verified local collections
-and archives; compact tracked reports reference them without another raw copy.
+
+The new decoder capture stores all 380 complete LSTM calls in only **27.37 MB**
+of unique tensors by deduplicating constants and repeated values. It reuses the
+canonical decoder and saved encoder outputs. No model copy or download was
+needed. The compiler-name review reused the original binary and instruction
+inventory without another build. Compact tracked reports refer to the retained
+raw artifacts. No further deletion is necessary to meet the current 50 GB cap.
 
 Before the selected-release profile, another **195.49 MB** in eight closed VM
 output duplicates was retired after verifying the complete local control proof
