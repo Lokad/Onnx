@@ -1,0 +1,483 @@
+{
+  "passed": true,
+  "original_request_checks": true,
+  "requests": 160,
+  "pairs": {
+    "layers": 24,
+    "nodes": 48,
+    "selected_seconds": 2.932883781,
+    "candidate_seconds": 0.17667692633333332,
+    "gain": 0.9397599974885151,
+    "rows": [
+      {
+        "layer": 0,
+        "selected_seconds": 0.12322580233333333,
+        "candidate_seconds": 0.0061737703333333335,
+        "nodes": [
+          {
+            "name": "/layers.0/self_attn/Slice_1",
+            "selected_seconds": 0.00019374333333333334,
+            "candidate_seconds": 0.000190007
+          },
+          {
+            "name": "/layers.0/self_attn/Reshape_7",
+            "selected_seconds": 0.123032059,
+            "candidate_seconds": 0.005983763333333334
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "selected_seconds": 0.12270910566666667,
+        "candidate_seconds": 0.006785577333333333,
+        "nodes": [
+          {
+            "name": "/layers.1/self_attn/Slice_1",
+            "selected_seconds": 0.000215764,
+            "candidate_seconds": 0.00020527866666666668
+          },
+          {
+            "name": "/layers.1/self_attn/Reshape_7",
+            "selected_seconds": 0.12249334166666667,
+            "candidate_seconds": 0.006580298666666666
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "selected_seconds": 0.12358275766666667,
+        "candidate_seconds": 0.0058367336666666665,
+        "nodes": [
+          {
+            "name": "/layers.2/self_attn/Slice_1",
+            "selected_seconds": 0.00021587666666666666,
+            "candidate_seconds": 0.000199311
+          },
+          {
+            "name": "/layers.2/self_attn/Reshape_7",
+            "selected_seconds": 0.123366881,
+            "candidate_seconds": 0.005637422666666667
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "selected_seconds": 0.121909195,
+        "candidate_seconds": 0.005799535999999999,
+        "nodes": [
+          {
+            "name": "/layers.3/self_attn/Slice_1",
+            "selected_seconds": 0.00021084433333333334,
+            "candidate_seconds": 0.000211349
+          },
+          {
+            "name": "/layers.3/self_attn/Reshape_7",
+            "selected_seconds": 0.12169835066666666,
+            "candidate_seconds": 0.005588187
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "selected_seconds": 0.124243241,
+        "candidate_seconds": 0.006156103666666667,
+        "nodes": [
+          {
+            "name": "/layers.4/self_attn/Slice_1",
+            "selected_seconds": 0.000212826,
+            "candidate_seconds": 0.000203959
+          },
+          {
+            "name": "/layers.4/self_attn/Reshape_7",
+            "selected_seconds": 0.124030415,
+            "candidate_seconds": 0.005952144666666667
+          }
+        ]
+      },
+      {
+        "layer": 5,
+        "selected_seconds": 0.12294083466666667,
+        "candidate_seconds": 0.0063759513333333335,
+        "nodes": [
+          {
+            "name": "/layers.5/self_attn/Slice_1",
+            "selected_seconds": 0.000218607,
+            "candidate_seconds": 0.00020608333333333335
+          },
+          {
+            "name": "/layers.5/self_attn/Reshape_7",
+            "selected_seconds": 0.12272222766666667,
+            "candidate_seconds": 0.006169868
+          }
+        ]
+      },
+      {
+        "layer": 6,
+        "selected_seconds": 0.12186748466666666,
+        "candidate_seconds": 0.006203034666666667,
+        "nodes": [
+          {
+            "name": "/layers.6/self_attn/Slice_1",
+            "selected_seconds": 0.00021323766666666666,
+            "candidate_seconds": 0.00021361733333333333
+          },
+          {
+            "name": "/layers.6/self_attn/Reshape_7",
+            "selected_seconds": 0.121654247,
+            "candidate_seconds": 0.0059894173333333335
+          }
+        ]
+      },
+      {
+        "layer": 7,
+        "selected_seconds": 0.122572157,
+        "candidate_seconds": 0.005868069,
+        "nodes": [
+          {
+            "name": "/layers.7/self_attn/Slice_1",
+            "selected_seconds": 0.00022192066666666666,
+            "candidate_seconds": 0.00021162066666666668
+          },
+          {
+            "name": "/layers.7/self_attn/Reshape_7",
+            "selected_seconds": 0.12235023633333333,
+            "candidate_seconds": 0.005656448333333334
+          }
+        ]
+      },
+      {
+        "layer": 8,
+        "selected_seconds": 0.121808341,
+        "candidate_seconds": 0.00609496,
+        "nodes": [
+          {
+            "name": "/layers.8/self_attn/Slice_1",
+            "selected_seconds": 0.00021302433333333335,
+            "candidate_seconds": 0.00020141333333333332
+          },
+          {
+            "name": "/layers.8/self_attn/Reshape_7",
+            "selected_seconds": 0.12159531666666666,
+            "candidate_seconds": 0.005893546666666667
+          }
+        ]
+      },
+      {
+        "layer": 9,
+        "selected_seconds": 0.12236641966666667,
+        "candidate_seconds": 0.006134852,
+        "nodes": [
+          {
+            "name": "/layers.9/self_attn/Slice_1",
+            "selected_seconds": 0.00020753033333333333,
+            "candidate_seconds": 0.00020174633333333334
+          },
+          {
+            "name": "/layers.9/self_attn/Reshape_7",
+            "selected_seconds": 0.12215888933333334,
+            "candidate_seconds": 0.0059331056666666665
+          }
+        ]
+      },
+      {
+        "layer": 10,
+        "selected_seconds": 0.121286926,
+        "candidate_seconds": 0.0066206749999999995,
+        "nodes": [
+          {
+            "name": "/layers.10/self_attn/Slice_1",
+            "selected_seconds": 0.000216034,
+            "candidate_seconds": 0.00020436366666666666
+          },
+          {
+            "name": "/layers.10/self_attn/Reshape_7",
+            "selected_seconds": 0.121070892,
+            "candidate_seconds": 0.006416311333333333
+          }
+        ]
+      },
+      {
+        "layer": 11,
+        "selected_seconds": 0.121009383,
+        "candidate_seconds": 0.006134438666666666,
+        "nodes": [
+          {
+            "name": "/layers.11/self_attn/Slice_1",
+            "selected_seconds": 0.00021315033333333332,
+            "candidate_seconds": 0.000200947
+          },
+          {
+            "name": "/layers.11/self_attn/Reshape_7",
+            "selected_seconds": 0.12079623266666667,
+            "candidate_seconds": 0.005933491666666666
+          }
+        ]
+      },
+      {
+        "layer": 12,
+        "selected_seconds": 0.120768905,
+        "candidate_seconds": 0.005728201,
+        "nodes": [
+          {
+            "name": "/layers.12/self_attn/Slice_1",
+            "selected_seconds": 0.00021130766666666666,
+            "candidate_seconds": 0.00020242366666666666
+          },
+          {
+            "name": "/layers.12/self_attn/Reshape_7",
+            "selected_seconds": 0.12055759733333334,
+            "candidate_seconds": 0.005525777333333333
+          }
+        ]
+      },
+      {
+        "layer": 13,
+        "selected_seconds": 0.12162316,
+        "candidate_seconds": 0.0058453866666666665,
+        "nodes": [
+          {
+            "name": "/layers.13/self_attn/Slice_1",
+            "selected_seconds": 0.00020505833333333333,
+            "candidate_seconds": 0.00020359633333333333
+          },
+          {
+            "name": "/layers.13/self_attn/Reshape_7",
+            "selected_seconds": 0.12141810166666667,
+            "candidate_seconds": 0.005641790333333333
+          }
+        ]
+      },
+      {
+        "layer": 14,
+        "selected_seconds": 0.12093876433333334,
+        "candidate_seconds": 0.006256454,
+        "nodes": [
+          {
+            "name": "/layers.14/self_attn/Slice_1",
+            "selected_seconds": 0.00020752533333333334,
+            "candidate_seconds": 0.00020093033333333334
+          },
+          {
+            "name": "/layers.14/self_attn/Reshape_7",
+            "selected_seconds": 0.120731239,
+            "candidate_seconds": 0.0060555236666666665
+          }
+        ]
+      },
+      {
+        "layer": 15,
+        "selected_seconds": 0.12142274,
+        "candidate_seconds": 0.006322646666666667,
+        "nodes": [
+          {
+            "name": "/layers.15/self_attn/Slice_1",
+            "selected_seconds": 0.000211403,
+            "candidate_seconds": 0.00019943966666666665
+          },
+          {
+            "name": "/layers.15/self_attn/Reshape_7",
+            "selected_seconds": 0.121211337,
+            "candidate_seconds": 0.006123207
+          }
+        ]
+      },
+      {
+        "layer": 16,
+        "selected_seconds": 0.12379923,
+        "candidate_seconds": 0.006715557333333333,
+        "nodes": [
+          {
+            "name": "/layers.16/self_attn/Slice_1",
+            "selected_seconds": 0.00021108266666666666,
+            "candidate_seconds": 0.00020035566666666666
+          },
+          {
+            "name": "/layers.16/self_attn/Reshape_7",
+            "selected_seconds": 0.12358814733333333,
+            "candidate_seconds": 0.006515201666666666
+          }
+        ]
+      },
+      {
+        "layer": 17,
+        "selected_seconds": 0.121724178,
+        "candidate_seconds": 0.006418813000000001,
+        "nodes": [
+          {
+            "name": "/layers.17/self_attn/Slice_1",
+            "selected_seconds": 0.000211453,
+            "candidate_seconds": 0.00019675733333333333
+          },
+          {
+            "name": "/layers.17/self_attn/Reshape_7",
+            "selected_seconds": 0.121512725,
+            "candidate_seconds": 0.006222055666666667
+          }
+        ]
+      },
+      {
+        "layer": 18,
+        "selected_seconds": 0.121861488,
+        "candidate_seconds": 0.030219084666666667,
+        "nodes": [
+          {
+            "name": "/layers.18/self_attn/Slice_1",
+            "selected_seconds": 0.00020869866666666667,
+            "candidate_seconds": 0.0001992
+          },
+          {
+            "name": "/layers.18/self_attn/Reshape_7",
+            "selected_seconds": 0.12165278933333333,
+            "candidate_seconds": 0.030019884666666666
+          }
+        ]
+      },
+      {
+        "layer": 19,
+        "selected_seconds": 0.12154366033333333,
+        "candidate_seconds": 0.00700546,
+        "nodes": [
+          {
+            "name": "/layers.19/self_attn/Slice_1",
+            "selected_seconds": 0.00020954766666666667,
+            "candidate_seconds": 0.000200481
+          },
+          {
+            "name": "/layers.19/self_attn/Reshape_7",
+            "selected_seconds": 0.12133411266666666,
+            "candidate_seconds": 0.006804979
+          }
+        ]
+      },
+      {
+        "layer": 20,
+        "selected_seconds": 0.12310835499999999,
+        "candidate_seconds": 0.006636903333333333,
+        "nodes": [
+          {
+            "name": "/layers.20/self_attn/Slice_1",
+            "selected_seconds": 0.00021375866666666668,
+            "candidate_seconds": 0.00020558266666666667
+          },
+          {
+            "name": "/layers.20/self_attn/Reshape_7",
+            "selected_seconds": 0.12289459633333333,
+            "candidate_seconds": 0.006431320666666666
+          }
+        ]
+      },
+      {
+        "layer": 21,
+        "selected_seconds": 0.12166817233333334,
+        "candidate_seconds": 0.006737741,
+        "nodes": [
+          {
+            "name": "/layers.21/self_attn/Slice_1",
+            "selected_seconds": 0.00022603166666666666,
+            "candidate_seconds": 0.00021786
+          },
+          {
+            "name": "/layers.21/self_attn/Reshape_7",
+            "selected_seconds": 0.12144214066666667,
+            "candidate_seconds": 0.006519881
+          }
+        ]
+      },
+      {
+        "layer": 22,
+        "selected_seconds": 0.12233488966666667,
+        "candidate_seconds": 0.007250953,
+        "nodes": [
+          {
+            "name": "/layers.22/self_attn/Slice_1",
+            "selected_seconds": 0.00021787933333333333,
+            "candidate_seconds": 0.00020800566666666668
+          },
+          {
+            "name": "/layers.22/self_attn/Reshape_7",
+            "selected_seconds": 0.12211701033333333,
+            "candidate_seconds": 0.007042947333333333
+          }
+        ]
+      },
+      {
+        "layer": 23,
+        "selected_seconds": 0.12256859066666667,
+        "candidate_seconds": 0.007356024,
+        "nodes": [
+          {
+            "name": "/layers.23/self_attn/Slice_1",
+            "selected_seconds": 0.000213615,
+            "candidate_seconds": 0.000202
+          },
+          {
+            "name": "/layers.23/self_attn/Reshape_7",
+            "selected_seconds": 0.12235497566666667,
+            "candidate_seconds": 0.007154024
+          }
+        ]
+      }
+    ]
+  },
+  "threshold": 0.8,
+  "resources": [
+    {
+      "name": "control",
+      "samples": 599,
+      "peak_rss": 8826306560
+    },
+    {
+      "name": "wall",
+      "samples": 572,
+      "peak_rss": 7752339456
+    }
+  ],
+  "attribution_only": true,
+  "application_gain_admitted": false,
+  "overhead_subtracted": false,
+  "independent_candidate_overhead_measured": false,
+  "phases": {
+    "selected": {
+      "corpus_seconds": 73.620235263,
+      "phase_seconds": {
+        "frontend": 0.6528457236666667,
+        "encoder": 63.92463619833333,
+        "decoder": 8.908213115333334
+      },
+      "remainder_seconds": 0.13454022566666668,
+      "call_counts": {
+        "frontend": 60,
+        "encoder": 60,
+        "decoder": 3600
+      },
+      "frequency": 1000000000
+    },
+    "candidate": {
+      "corpus_seconds": 70.48875884033333,
+      "phase_seconds": {
+        "frontend": 0.6530680683333333,
+        "encoder": 60.81202900966667,
+        "decoder": 8.892591471666666
+      },
+      "remainder_seconds": 0.13107029066666667,
+      "call_counts": {
+        "frontend": 60,
+        "encoder": 60,
+        "decoder": 3600
+      },
+      "frequency": 1000000000
+    }
+  },
+  "closure": {
+    "bytes": 883,
+    "sha256": "69693be5e42f0dfa3bd66ea36e42c714e63a1d50a020dd9ec04aa81fbda9b48d"
+  },
+  "analysis": {
+    "bytes": 3857203,
+    "sha256": "d626948ded0dcf217f776e6fb07a1b90cc3e49d75b641652316a43c704a392dc"
+  },
+  "build_review": {
+    "bytes": 1721,
+    "sha256": "d42bbafb84b647e933170c51f9508d0bc591d3e31c121d9bae61829a640e0fbc"
+  }
+}
