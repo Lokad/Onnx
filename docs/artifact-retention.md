@@ -25,6 +25,20 @@ archives remain. Receipt: `artifacts/parakeet-balanced-control-remote-retention-
 This maintenance followed a memory-preflight refusal before any profiling worker;
 the original failure and recovery are retained with unchanged inputs and limits.
 
+After that profile closed, four duplicate VM trace exports totaling **279.62 MB**
+were retired before the inclusive-packing build. Complete local Speedscope and
+Chromium exports, their archive and raw traces remain hash-verified. Every
+capture/export owner was terminal and immutable VM dependencies were protected.
+Receipt: `artifacts/parakeet-selected-profile-remote-retention-20260924`.
+A transport import failure occurred during the initial read-only check, before
+deletion; its record is retained in the adjacent `-transport-refusal` directory.
+
+Before the focused packing contracts, another **132.35 MB** in four closed VM
+duplicates was retired: two instruction inventories and two older startup
+traces. Complete local inventories, raw traces and archives remain verified,
+and all immutable VM inputs are protected. Receipt:
+`artifacts/parakeet-inclusive-packing-precontract-retention-20260924`.
+
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
 canonical models and worktrees were retained. Removed files were older duplicate
