@@ -1,0 +1,13 @@
+--- qualified/Program.cs
++++ selected/Program.cs
+@@ -16,8 +16,8 @@
+ using var document=JsonDocument.Parse(File.ReadAllBytes(manifestPath));var manifest=document.RootElement;
+ Require(manifest.GetProperty("schema").GetInt32()==1,"Schema");
+ string family=manifest.GetProperty("family").GetString()!;Require(family=="parakeet" && !conformance,"Only the current Parakeet timing workload");
+-Require(Sha(typeof(ComputationalGraph).Assembly.Location)=="521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb","Qualified Core");
+-Require(Sha(typeof(Community1Diarizer).Assembly.Location)=="f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a","Qualified Data");
++Require(Sha(typeof(ComputationalGraph).Assembly.Location)=="672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35","Qualified Core");
++Require(Sha(typeof(Community1Diarizer).Assembly.Location)=="065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5","Qualified Data");
+ string PathOf(JsonElement spec)
+ {
+     string path=Path.GetFullPath(Path.Combine(root,spec.GetProperty("path").GetString()!));

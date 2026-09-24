@@ -1,0 +1,93 @@
+{
+  "closed": {
+    "bytes": 49135,
+    "sha256": "b5364b30098c9fa7b375d4d8b404292d7085a315336100e725b451d395cb09b2"
+  },
+  "analysis_identity": {
+    "bytes": 1910,
+    "sha256": "617423aa39b72ad279099d9524943ca72125193ab74c16840a48453d05e40777"
+  },
+  "inventory_identity": {
+    "bytes": 1228289,
+    "sha256": "9a780e8e0878cece691ebd68b7ef2da342e7d2f5cfe1e19239fd15edf990e2ca"
+  },
+  "source_patch": {
+    "bytes": 1113,
+    "sha256": "a9f6d67e95abe692e2e4549c7a96b2e4b5da64f50d7c79d24d30ed0a2cf2e700"
+  },
+  "source_exact_except_two_hashes": true,
+  "passed": true,
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 773632,
+      "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+    }
+  },
+  "consumer": {
+    "bytes": 49664,
+    "sha256": "a196f652296db675c47947e2de969711b19356ddf505687c9df2b0ceb48fbbd5"
+  },
+  "inventory": {
+    "passed": true,
+    "methods": 162,
+    "unchanged": 161,
+    "changed": [
+      "Program::<Main>$::Int32 <Main>$(System.String[])"
+    ],
+    "added": [],
+    "public_surface_equal": true,
+    "implementation_flags_equal": true,
+    "changed_hash_literals": 2,
+    "main_instructions": 890,
+    "changed_offsets": [
+      374,
+      419
+    ],
+    "scope": "Only the two selected-product hash operands change; all other compiled instructions and implementation flags match."
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9363456,
+      "seconds": 0.257352705928497
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 4,
+      "peak_rss": 152768512,
+      "seconds": 1.019922001985833
+    },
+    {
+      "name": "bridge-build",
+      "samples": 14,
+      "peak_rss": 327536640,
+      "seconds": 3.5800100510241464
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 152231936,
+      "seconds": 1.0246959530049935
+    },
+    {
+      "name": "consumer-build",
+      "samples": 28,
+      "peak_rss": 346628096,
+      "seconds": 7.190884472918697
+    },
+    {
+      "name": "inventory",
+      "samples": 1,
+      "peak_rss": 10158080,
+      "seconds": 0.26422275009099394
+    }
+  ],
+  "root_product_changed": false,
+  "no_profile_capture": true,
+  "no_performance_measurement": true
+}
