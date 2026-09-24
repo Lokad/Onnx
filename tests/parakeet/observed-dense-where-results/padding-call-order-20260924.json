@@ -1,0 +1,2595 @@
+{
+  "closure": {
+    "bytes": 305,
+    "sha256": "c1300e9f93ae2c870a1c3845ae7065b1d280f2038ffc83c11e0991ba781c77b1"
+  },
+  "passed": true,
+  "profile": {
+    "bytes": 1968,
+    "sha256": "8a6f509a210641650a9c057f472417dde7b4acc320f86eeb3d34ecbced4cc2e6"
+  },
+  "routes": {
+    "bytes": 305,
+    "sha256": "eedc796f9c2982a969212e486a9e83913877320688762b90cfe8ae6b73de87ef"
+  },
+  "collections": {
+    "selected": {
+      "bytes": 21292,
+      "sha256": "cbb015d321733a200e1afa7bead8b54eb0e21a569719ac88e3e4a6d3bf075c4f"
+    },
+    "candidate": {
+      "bytes": 21125,
+      "sha256": "09f4729183c8259f77ebc3b54a4a185340849a18ec864902baa0b925f02a790a"
+    }
+  },
+  "manifest": {
+    "bytes": 66340,
+    "sha256": "6c8b77f315e0e04e93a868da7c0c335fef826d72ede3ea6636a3238a354a7866"
+  },
+  "managed_pad_source": {
+    "bytes": 61192,
+    "sha256": "532d26594643fdf97fad2973e05e6a603335509f36ed13da110a3e713ae6d768"
+  },
+  "original_census": {
+    "bytes": 1214,
+    "sha256": "bce71bd735f39366ecf967f56ebc0670f7a7a237ef87bc751d07c40c3b6d8ce3"
+  },
+  "requests": 160,
+  "observed_pad_calls": 7840,
+  "order": [
+    [
+      "nemo128.onnx",
+      "n6_2"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.0/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.0/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.1/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.1/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.2/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.2/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.3/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.3/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.4/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.4/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.5/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.5/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.6/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.6/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.7/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.7/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.8/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.8/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.9/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.9/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.10/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.10/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.11/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.11/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.12/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.12/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.13/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.13/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.14/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.14/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.15/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.15/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.16/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.16/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.17/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.17/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.18/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.18/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.19/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.19/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.20/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.20/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.21/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.21/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.22/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.22/conv/depthwise_conv/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.23/self_attn/Pad"
+    ],
+    [
+      "encoder-model.onnx",
+      "/layers.23/conv/depthwise_conv/Pad"
+    ]
+  ],
+  "rows": [
+    {
+      "role": "selected",
+      "request": 0,
+      "name": "121-121726-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 7960087,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.007960087,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 0,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 0
+    },
+    {
+      "role": "selected",
+      "request": 1,
+      "name": "121-123852-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2857640,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00285764,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 49,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 1
+    },
+    {
+      "role": "selected",
+      "request": 2,
+      "name": "237-126133-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1479002,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001479002,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 98,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 2
+    },
+    {
+      "role": "selected",
+      "request": 3,
+      "name": "237-126133-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2090115,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002090115,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 147,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 3
+    },
+    {
+      "role": "selected",
+      "request": 4,
+      "name": "260-123286-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1125442,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001125442,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 196,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 4
+    },
+    {
+      "role": "selected",
+      "request": 5,
+      "name": "260-123288-0005",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1754307,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001754307,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 245,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 5
+    },
+    {
+      "role": "selected",
+      "request": 6,
+      "name": "672-122797-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 582238,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000582238,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 294,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 6
+    },
+    {
+      "role": "selected",
+      "request": 7,
+      "name": "672-122797-0001",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2413602,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002413602,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 343,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 7
+    },
+    {
+      "role": "selected",
+      "request": 8,
+      "name": "908-157963-0005",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1466493,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001466493,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 392,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 8
+    },
+    {
+      "role": "selected",
+      "request": 9,
+      "name": "908-157963-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1772254,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001772254,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 441,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 9
+    },
+    {
+      "role": "selected",
+      "request": 10,
+      "name": "1089-134686-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 940499,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000940499,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 490,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 10
+    },
+    {
+      "role": "selected",
+      "request": 11,
+      "name": "1089-134686-0011",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1967253,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001967253,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 539,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 11
+    },
+    {
+      "role": "selected",
+      "request": 12,
+      "name": "1188-133604-0001",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1429794,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001429794,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 588,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 12
+    },
+    {
+      "role": "selected",
+      "request": 13,
+      "name": "1188-133604-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2801186,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002801186,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 637,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 13
+    },
+    {
+      "role": "selected",
+      "request": 14,
+      "name": "1221-135766-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 675559,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000675559,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 686,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 14
+    },
+    {
+      "role": "selected",
+      "request": 15,
+      "name": "1221-135766-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 3201049,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.003201049,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 735,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 15
+    },
+    {
+      "role": "selected",
+      "request": 16,
+      "name": "1284-1180-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1138903,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001138903,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 784,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 16
+    },
+    {
+      "role": "selected",
+      "request": 17,
+      "name": "1284-1180-0018",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1672958,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001672958,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 833,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 17
+    },
+    {
+      "role": "selected",
+      "request": 18,
+      "name": "1320-122612-0001",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1526833,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001526833,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 882,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 18
+    },
+    {
+      "role": "selected",
+      "request": 19,
+      "name": "1320-122612-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2105075,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002105075,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 931,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 19
+    },
+    {
+      "role": "selected",
+      "request": 20,
+      "name": "121-121726-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1194401,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001194401,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 980,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 20
+    },
+    {
+      "role": "selected",
+      "request": 21,
+      "name": "121-123852-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2481302,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002481302,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1029,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 21
+    },
+    {
+      "role": "selected",
+      "request": 22,
+      "name": "237-126133-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1259699,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001259699,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1078,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 22
+    },
+    {
+      "role": "selected",
+      "request": 23,
+      "name": "237-126133-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1850111,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001850111,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1127,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 23
+    },
+    {
+      "role": "selected",
+      "request": 24,
+      "name": "260-123286-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1138327,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001138327,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1176,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 24
+    },
+    {
+      "role": "selected",
+      "request": 25,
+      "name": "260-123288-0005",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1991232,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001991232,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1225,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 25
+    },
+    {
+      "role": "selected",
+      "request": 26,
+      "name": "672-122797-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 657281,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000657281,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1274,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 26
+    },
+    {
+      "role": "selected",
+      "request": 27,
+      "name": "672-122797-0001",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2132144,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002132144,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1323,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 27
+    },
+    {
+      "role": "selected",
+      "request": 28,
+      "name": "908-157963-0005",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1000676,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001000676,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1372,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 28
+    },
+    {
+      "role": "selected",
+      "request": 29,
+      "name": "908-157963-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1990511,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001990511,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1421,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 29
+    },
+    {
+      "role": "selected",
+      "request": 30,
+      "name": "1089-134686-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1092738,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001092738,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1470,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 30
+    },
+    {
+      "role": "selected",
+      "request": 31,
+      "name": "1089-134686-0011",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 3758526,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.003758526,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1519,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 31
+    },
+    {
+      "role": "selected",
+      "request": 32,
+      "name": "1188-133604-0001",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1258415,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001258415,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1568,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 32
+    },
+    {
+      "role": "selected",
+      "request": 33,
+      "name": "1188-133604-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2869796,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002869796,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1617,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 33
+    },
+    {
+      "role": "selected",
+      "request": 34,
+      "name": "1221-135766-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 671651,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000671651,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1666,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 34
+    },
+    {
+      "role": "selected",
+      "request": 35,
+      "name": "1221-135766-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1738416,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001738416,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1715,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 35
+    },
+    {
+      "role": "selected",
+      "request": 36,
+      "name": "1284-1180-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1135050,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00113505,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1764,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 36
+    },
+    {
+      "role": "selected",
+      "request": 37,
+      "name": "1284-1180-0018",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1914384,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001914384,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1813,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 37
+    },
+    {
+      "role": "selected",
+      "request": 38,
+      "name": "1320-122612-0001",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1507911,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001507911,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1862,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 38
+    },
+    {
+      "role": "selected",
+      "request": 39,
+      "name": "1320-122612-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1880392,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001880392,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1911,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 39
+    },
+    {
+      "role": "selected",
+      "request": 40,
+      "name": "121-121726-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1188977,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001188977,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1960,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 40
+    },
+    {
+      "role": "selected",
+      "request": 41,
+      "name": "121-123852-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2493036,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002493036,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2009,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 41
+    },
+    {
+      "role": "selected",
+      "request": 42,
+      "name": "237-126133-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1422007,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001422007,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2058,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 42
+    },
+    {
+      "role": "selected",
+      "request": 43,
+      "name": "237-126133-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2103509,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002103509,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2107,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 43
+    },
+    {
+      "role": "selected",
+      "request": 44,
+      "name": "260-123286-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 988869,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000988869,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2156,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 44
+    },
+    {
+      "role": "selected",
+      "request": 45,
+      "name": "260-123288-0005",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1982806,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001982806,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2205,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 45
+    },
+    {
+      "role": "selected",
+      "request": 46,
+      "name": "672-122797-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 668897,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000668897,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2254,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 46
+    },
+    {
+      "role": "selected",
+      "request": 47,
+      "name": "672-122797-0001",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2124348,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002124348,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2303,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 47
+    },
+    {
+      "role": "selected",
+      "request": 48,
+      "name": "908-157963-0005",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 988167,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000988167,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2352,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 48
+    },
+    {
+      "role": "selected",
+      "request": 49,
+      "name": "908-157963-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2085990,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00208599,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2401,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 49
+    },
+    {
+      "role": "selected",
+      "request": 50,
+      "name": "1089-134686-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1193617,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001193617,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2450,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 50
+    },
+    {
+      "role": "selected",
+      "request": 51,
+      "name": "1089-134686-0011",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1741323,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001741323,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2499,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 51
+    },
+    {
+      "role": "selected",
+      "request": 52,
+      "name": "1188-133604-0001",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1271168,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001271168,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2548,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 52
+    },
+    {
+      "role": "selected",
+      "request": 53,
+      "name": "1188-133604-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2510480,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00251048,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2597,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 53
+    },
+    {
+      "role": "selected",
+      "request": 54,
+      "name": "1221-135766-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 683121,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000683121,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2646,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 54
+    },
+    {
+      "role": "selected",
+      "request": 55,
+      "name": "1221-135766-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1975655,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001975655,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2695,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 55
+    },
+    {
+      "role": "selected",
+      "request": 56,
+      "name": "1284-1180-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1273398,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001273398,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2744,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 56
+    },
+    {
+      "role": "selected",
+      "request": 57,
+      "name": "1284-1180-0018",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1676895,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001676895,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2793,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 57
+    },
+    {
+      "role": "selected",
+      "request": 58,
+      "name": "1320-122612-0001",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1332797,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001332797,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2842,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 58
+    },
+    {
+      "role": "selected",
+      "request": 59,
+      "name": "1320-122612-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2152701,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002152701,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2891,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 59
+    },
+    {
+      "role": "selected",
+      "request": 60,
+      "name": "121-121726-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1342241,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001342241,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2940,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 60
+    },
+    {
+      "role": "selected",
+      "request": 61,
+      "name": "121-123852-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 4338961,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.004338961,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2989,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 61
+    },
+    {
+      "role": "selected",
+      "request": 62,
+      "name": "237-126133-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1258995,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001258995,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3038,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 62
+    },
+    {
+      "role": "selected",
+      "request": 63,
+      "name": "237-126133-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2094822,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002094822,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3087,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 63
+    },
+    {
+      "role": "selected",
+      "request": 64,
+      "name": "260-123286-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1115599,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001115599,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3136,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 64
+    },
+    {
+      "role": "selected",
+      "request": 65,
+      "name": "260-123288-0005",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1965500,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.0019655,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3185,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 65
+    },
+    {
+      "role": "selected",
+      "request": 66,
+      "name": "672-122797-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 570990,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00057099,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3234,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 66
+    },
+    {
+      "role": "selected",
+      "request": 67,
+      "name": "672-122797-0001",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2109096,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002109096,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3283,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 67
+    },
+    {
+      "role": "selected",
+      "request": 68,
+      "name": "908-157963-0005",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 990731,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000990731,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3332,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 68
+    },
+    {
+      "role": "selected",
+      "request": 69,
+      "name": "908-157963-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1997366,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001997366,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3381,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 69
+    },
+    {
+      "role": "selected",
+      "request": 70,
+      "name": "1089-134686-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1074117,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001074117,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3430,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 70
+    },
+    {
+      "role": "selected",
+      "request": 71,
+      "name": "1089-134686-0011",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2001251,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002001251,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3479,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 71
+    },
+    {
+      "role": "selected",
+      "request": 72,
+      "name": "1188-133604-0001",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1273767,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001273767,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3528,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 72
+    },
+    {
+      "role": "selected",
+      "request": 73,
+      "name": "1188-133604-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2922068,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002922068,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3577,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 73
+    },
+    {
+      "role": "selected",
+      "request": 74,
+      "name": "1221-135766-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 673754,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000673754,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3626,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 74
+    },
+    {
+      "role": "selected",
+      "request": 75,
+      "name": "1221-135766-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1999785,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001999785,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3675,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 75
+    },
+    {
+      "role": "selected",
+      "request": 76,
+      "name": "1284-1180-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1296489,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001296489,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3724,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 76
+    },
+    {
+      "role": "selected",
+      "request": 77,
+      "name": "1284-1180-0018",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1675883,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001675883,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3773,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 77
+    },
+    {
+      "role": "selected",
+      "request": 78,
+      "name": "1320-122612-0001",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1345926,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001345926,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3822,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 78
+    },
+    {
+      "role": "selected",
+      "request": 79,
+      "name": "1320-122612-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1889624,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001889624,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3871,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 79
+    },
+    {
+      "role": "candidate",
+      "request": 0,
+      "name": "121-121726-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 7937762,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.007937762,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 0,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 0
+    },
+    {
+      "role": "candidate",
+      "request": 1,
+      "name": "121-123852-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2999959,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002999959,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 49,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 1
+    },
+    {
+      "role": "candidate",
+      "request": 2,
+      "name": "237-126133-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 3438447,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.003438447,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 98,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 2
+    },
+    {
+      "role": "candidate",
+      "request": 3,
+      "name": "237-126133-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2148078,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002148078,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 147,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 3
+    },
+    {
+      "role": "candidate",
+      "request": 4,
+      "name": "260-123286-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1106198,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001106198,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 196,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 4
+    },
+    {
+      "role": "candidate",
+      "request": 5,
+      "name": "260-123288-0005",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2041200,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.0020412,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 245,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 5
+    },
+    {
+      "role": "candidate",
+      "request": 6,
+      "name": "672-122797-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2365377,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002365377,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 294,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 6
+    },
+    {
+      "role": "candidate",
+      "request": 7,
+      "name": "672-122797-0001",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2398907,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002398907,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 343,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 7
+    },
+    {
+      "role": "candidate",
+      "request": 8,
+      "name": "908-157963-0005",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1503453,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001503453,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 392,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 8
+    },
+    {
+      "role": "candidate",
+      "request": 9,
+      "name": "908-157963-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1995213,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001995213,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 441,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 9
+    },
+    {
+      "role": "candidate",
+      "request": 10,
+      "name": "1089-134686-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1059137,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001059137,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 490,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 10
+    },
+    {
+      "role": "candidate",
+      "request": 11,
+      "name": "1089-134686-0011",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2012895,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002012895,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 539,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 11
+    },
+    {
+      "role": "candidate",
+      "request": 12,
+      "name": "1188-133604-0001",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1412389,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001412389,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 588,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 12
+    },
+    {
+      "role": "candidate",
+      "request": 13,
+      "name": "1188-133604-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 2914545,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002914545,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 637,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 13
+    },
+    {
+      "role": "candidate",
+      "request": 14,
+      "name": "1221-135766-0002",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 681727,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000681727,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 686,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 14
+    },
+    {
+      "role": "candidate",
+      "request": 15,
+      "name": "1221-135766-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1946225,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001946225,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 735,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 15
+    },
+    {
+      "role": "candidate",
+      "request": 16,
+      "name": "1284-1180-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1152098,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001152098,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 784,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 16
+    },
+    {
+      "role": "candidate",
+      "request": 17,
+      "name": "1284-1180-0018",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1928390,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00192839,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 833,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 17
+    },
+    {
+      "role": "candidate",
+      "request": 18,
+      "name": "1320-122612-0001",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1349933,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001349933,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 882,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 18
+    },
+    {
+      "role": "candidate",
+      "request": 19,
+      "name": "1320-122612-0000",
+      "iteration": 0,
+      "phase": "warmup",
+      "frontend_ticks": 1904478,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001904478,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 931,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 19
+    },
+    {
+      "role": "candidate",
+      "request": 20,
+      "name": "121-121726-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1192598,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001192598,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 980,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 20
+    },
+    {
+      "role": "candidate",
+      "request": 21,
+      "name": "121-123852-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2524955,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002524955,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1029,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 21
+    },
+    {
+      "role": "candidate",
+      "request": 22,
+      "name": "237-126133-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1261300,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.0012613,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1078,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 22
+    },
+    {
+      "role": "candidate",
+      "request": 23,
+      "name": "237-126133-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2099243,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002099243,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1127,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 23
+    },
+    {
+      "role": "candidate",
+      "request": 24,
+      "name": "260-123286-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1112657,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001112657,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1176,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 24
+    },
+    {
+      "role": "candidate",
+      "request": 25,
+      "name": "260-123288-0005",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1765540,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00176554,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1225,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 25
+    },
+    {
+      "role": "candidate",
+      "request": 26,
+      "name": "672-122797-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 579773,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000579773,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1274,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 26
+    },
+    {
+      "role": "candidate",
+      "request": 27,
+      "name": "672-122797-0001",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2147566,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002147566,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1323,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 27
+    },
+    {
+      "role": "candidate",
+      "request": 28,
+      "name": "908-157963-0005",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1001229,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001001229,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1372,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 28
+    },
+    {
+      "role": "candidate",
+      "request": 29,
+      "name": "908-157963-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1970110,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00197011,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1421,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 29
+    },
+    {
+      "role": "candidate",
+      "request": 30,
+      "name": "1089-134686-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1060327,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001060327,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1470,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 30
+    },
+    {
+      "role": "candidate",
+      "request": 31,
+      "name": "1089-134686-0011",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 4787198,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.004787198,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1519,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 31
+    },
+    {
+      "role": "candidate",
+      "request": 32,
+      "name": "1188-133604-0001",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1271104,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001271104,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1568,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 32
+    },
+    {
+      "role": "candidate",
+      "request": 33,
+      "name": "1188-133604-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2891586,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002891586,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1617,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 33
+    },
+    {
+      "role": "candidate",
+      "request": 34,
+      "name": "1221-135766-0002",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 795408,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000795408,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1666,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 34
+    },
+    {
+      "role": "candidate",
+      "request": 35,
+      "name": "1221-135766-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1776847,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001776847,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1715,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 35
+    },
+    {
+      "role": "candidate",
+      "request": 36,
+      "name": "1284-1180-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1131655,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001131655,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1764,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 36
+    },
+    {
+      "role": "candidate",
+      "request": 37,
+      "name": "1284-1180-0018",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1700863,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001700863,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1813,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 37
+    },
+    {
+      "role": "candidate",
+      "request": 38,
+      "name": "1320-122612-0001",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 1327219,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001327219,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1862,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 38
+    },
+    {
+      "role": "candidate",
+      "request": 39,
+      "name": "1320-122612-0000",
+      "iteration": 1,
+      "phase": "measured",
+      "frontend_ticks": 2139552,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002139552,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1911,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 39
+    },
+    {
+      "role": "candidate",
+      "request": 40,
+      "name": "121-121726-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1355971,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001355971,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 1960,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 40
+    },
+    {
+      "role": "candidate",
+      "request": 41,
+      "name": "121-123852-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2534945,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002534945,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2009,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 41
+    },
+    {
+      "role": "candidate",
+      "request": 42,
+      "name": "237-126133-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1265207,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001265207,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2058,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 42
+    },
+    {
+      "role": "candidate",
+      "request": 43,
+      "name": "237-126133-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2154834,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002154834,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2107,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 43
+    },
+    {
+      "role": "candidate",
+      "request": 44,
+      "name": "260-123286-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1119435,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001119435,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2156,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 44
+    },
+    {
+      "role": "candidate",
+      "request": 45,
+      "name": "260-123288-0005",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1758265,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001758265,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2205,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 45
+    },
+    {
+      "role": "candidate",
+      "request": 46,
+      "name": "672-122797-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 581795,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000581795,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2254,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 46
+    },
+    {
+      "role": "candidate",
+      "request": 47,
+      "name": "672-122797-0001",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2137710,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00213771,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2303,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 47
+    },
+    {
+      "role": "candidate",
+      "request": 48,
+      "name": "908-157963-0005",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1005845,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001005845,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2352,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 48
+    },
+    {
+      "role": "candidate",
+      "request": 49,
+      "name": "908-157963-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2021274,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002021274,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2401,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 49
+    },
+    {
+      "role": "candidate",
+      "request": 50,
+      "name": "1089-134686-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 939814,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000939814,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2450,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 50
+    },
+    {
+      "role": "candidate",
+      "request": 51,
+      "name": "1089-134686-0011",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1981763,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001981763,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2499,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 51
+    },
+    {
+      "role": "candidate",
+      "request": 52,
+      "name": "1188-133604-0001",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1416002,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001416002,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2548,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 52
+    },
+    {
+      "role": "candidate",
+      "request": 53,
+      "name": "1188-133604-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 2532233,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002532233,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2597,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 53
+    },
+    {
+      "role": "candidate",
+      "request": 54,
+      "name": "1221-135766-0002",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 669208,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000669208,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2646,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 54
+    },
+    {
+      "role": "candidate",
+      "request": 55,
+      "name": "1221-135766-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1958418,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001958418,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2695,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 55
+    },
+    {
+      "role": "candidate",
+      "request": 56,
+      "name": "1284-1180-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1171824,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001171824,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2744,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 56
+    },
+    {
+      "role": "candidate",
+      "request": 57,
+      "name": "1284-1180-0018",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1698256,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001698256,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2793,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 57
+    },
+    {
+      "role": "candidate",
+      "request": 58,
+      "name": "1320-122612-0001",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 1346516,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001346516,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2842,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 58
+    },
+    {
+      "role": "candidate",
+      "request": 59,
+      "name": "1320-122612-0000",
+      "iteration": 2,
+      "phase": "measured",
+      "frontend_ticks": 3498144,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.003498144,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2891,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 59
+    },
+    {
+      "role": "candidate",
+      "request": 60,
+      "name": "121-121726-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1193536,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001193536,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2940,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 60
+    },
+    {
+      "role": "candidate",
+      "request": 61,
+      "name": "121-123852-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 6026818,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.006026818,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 2989,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 61
+    },
+    {
+      "role": "candidate",
+      "request": 62,
+      "name": "237-126133-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1456072,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001456072,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3038,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 62
+    },
+    {
+      "role": "candidate",
+      "request": 63,
+      "name": "237-126133-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2097687,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002097687,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3087,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 63
+    },
+    {
+      "role": "candidate",
+      "request": 64,
+      "name": "260-123286-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 993636,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000993636,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3136,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 64
+    },
+    {
+      "role": "candidate",
+      "request": 65,
+      "name": "260-123288-0005",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1971388,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001971388,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3185,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 65
+    },
+    {
+      "role": "candidate",
+      "request": 66,
+      "name": "672-122797-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 671271,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000671271,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3234,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 66
+    },
+    {
+      "role": "candidate",
+      "request": 67,
+      "name": "672-122797-0001",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2345130,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.00234513,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3283,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 67
+    },
+    {
+      "role": "candidate",
+      "request": 68,
+      "name": "908-157963-0005",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 988378,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000988378,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3332,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 68
+    },
+    {
+      "role": "candidate",
+      "request": 69,
+      "name": "908-157963-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2008332,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002008332,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3381,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 69
+    },
+    {
+      "role": "candidate",
+      "request": 70,
+      "name": "1089-134686-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1067384,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001067384,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3430,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 70
+    },
+    {
+      "role": "candidate",
+      "request": 71,
+      "name": "1089-134686-0011",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1745124,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001745124,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3479,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 71
+    },
+    {
+      "role": "candidate",
+      "request": 72,
+      "name": "1188-133604-0001",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1292916,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001292916,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3528,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 72
+    },
+    {
+      "role": "candidate",
+      "request": 73,
+      "name": "1188-133604-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2528392,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002528392,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3577,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 73
+    },
+    {
+      "role": "candidate",
+      "request": 74,
+      "name": "1221-135766-0002",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 689077,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.000689077,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3626,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 74
+    },
+    {
+      "role": "candidate",
+      "request": 75,
+      "name": "1221-135766-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1941716,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001941716,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3675,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 75
+    },
+    {
+      "role": "candidate",
+      "request": 76,
+      "name": "1284-1180-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1290632,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001290632,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3724,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 76
+    },
+    {
+      "role": "candidate",
+      "request": 77,
+      "name": "1284-1180-0018",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 2004397,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.002004397,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3773,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 77
+    },
+    {
+      "role": "candidate",
+      "request": 78,
+      "name": "1320-122612-0001",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1349951,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001349951,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3822,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 78
+    },
+    {
+      "role": "candidate",
+      "request": 79,
+      "name": "1320-122612-0000",
+      "iteration": 3,
+      "phase": "measured",
+      "frontend_ticks": 1904626,
+      "frequency": 1000000000,
+      "frontend_seconds": 0.001904626,
+      "observed_pad_calls": 49,
+      "source_predicted_original_padcore_calls_before_frontend": 3871,
+      "source_predicted_dispatcher_padcore_calls_before_frontend": 79
+    }
+  ],
+  "synthetic_case_order": [
+    {
+      "name": "attention-51",
+      "shape": [
+        1,
+        8,
+        51,
+        101
+      ],
+      "pads": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "eligible": true,
+      "original_calls_before_case": 0,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 600,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "convolution-51",
+      "shape": [
+        1,
+        1024,
+        51
+      ],
+      "pads": [
+        0,
+        0,
+        4,
+        0,
+        0,
+        4
+      ],
+      "eligible": true,
+      "original_calls_before_case": 780,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 1380,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "attention-106",
+      "shape": [
+        1,
+        8,
+        106,
+        211
+      ],
+      "pads": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "eligible": true,
+      "original_calls_before_case": 1560,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 2160,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "convolution-106",
+      "shape": [
+        1,
+        1024,
+        106
+      ],
+      "pads": [
+        0,
+        0,
+        4,
+        0,
+        0,
+        4
+      ],
+      "eligible": true,
+      "original_calls_before_case": 2340,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 2940,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "attention-167",
+      "shape": [
+        1,
+        8,
+        167,
+        333
+      ],
+      "pads": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "eligible": true,
+      "original_calls_before_case": 3120,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 3720,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "convolution-167",
+      "shape": [
+        1,
+        1024,
+        167
+      ],
+      "pads": [
+        0,
+        0,
+        4,
+        0,
+        0,
+        4
+      ],
+      "eligible": true,
+      "original_calls_before_case": 3900,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 4500,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "attention-225",
+      "shape": [
+        1,
+        8,
+        225,
+        449
+      ],
+      "pads": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "eligible": true,
+      "original_calls_before_case": 4680,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 5280,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "convolution-225",
+      "shape": [
+        1,
+        1024,
+        225
+      ],
+      "pads": [
+        0,
+        0,
+        4,
+        0,
+        0,
+        4
+      ],
+      "eligible": true,
+      "original_calls_before_case": 5460,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 6060,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "zero-padding",
+      "shape": [
+        1,
+        1024,
+        106
+      ],
+      "pads": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "eligible": true,
+      "original_calls_before_case": 6240,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 6840,
+      "dispatcher_fallback_calls_before_measurement": 0
+    },
+    {
+      "name": "cropping",
+      "shape": [
+        1,
+        64,
+        225
+      ],
+      "pads": [
+        0,
+        0,
+        -4,
+        0,
+        0,
+        -4
+      ],
+      "eligible": false,
+      "original_calls_before_case": 7020,
+      "dispatcher_fallback_calls_before_case": 0,
+      "original_calls_before_measurement": 7620,
+      "dispatcher_fallback_calls_before_measurement": 600
+    },
+    {
+      "name": "outer-padding",
+      "shape": [
+        1,
+        64,
+        225
+      ],
+      "pads": [
+        0,
+        1,
+        0,
+        0,
+        2,
+        0
+      ],
+      "eligible": false,
+      "original_calls_before_case": 7800,
+      "dispatcher_fallback_calls_before_case": 780,
+      "original_calls_before_measurement": 8400,
+      "dispatcher_fallback_calls_before_measurement": 1380
+    },
+    {
+      "name": "reflection",
+      "shape": [
+        1,
+        64,
+        225
+      ],
+      "pads": [
+        0,
+        0,
+        4,
+        0,
+        0,
+        4
+      ],
+      "eligible": false,
+      "original_calls_before_case": 8580,
+      "dispatcher_fallback_calls_before_case": 1560,
+      "original_calls_before_measurement": 9180,
+      "dispatcher_fallback_calls_before_measurement": 2160
+    }
+  ],
+  "first_measured_application_frontend": {
+    "request": 20,
+    "original_padcore_calls_before": 980,
+    "dispatcher_fallback_calls_before": 20
+  },
+  "new_inference_calls": 0,
+  "source_predicted_dispatcher_counts": true,
+  "dispatcher_executed_on_current_product": false,
+  "jit_state_observed": false,
+  "new_optimization_selected": false
+}
