@@ -25,7 +25,7 @@ uses that exact default and preserves every other attribute check.
 | Second pointwise projection |24|2.074602|1.460995|0.613607|
 
 The convolution operators themselves explain3.343256s of the module difference.
-The remaining2.558683s belongs to surrounding work and requires its own
+The remaining2.558682s belongs to surrounding work and requires its own
 attribution. ORT fuses24 sigmoid/multiply pairs into QuickGelu inside these
 modules; comparisons that omit the corresponding managed multiply are incomplete.
 
@@ -43,6 +43,8 @@ and tensor views. Actual managed route/count observations are still needed;
 packing alone does not explain the difference. No variant is selected from this
 report, and the depthwise rows alone offer less than2% of whole-request latency
 as an optimistic saving. Any experiment must justify its complete-call ceiling.
+The [source dispatch note](depthwise-dispatch-20260924.md) records the exact
+panel arithmetic, predicted call counts and observations still required.
 
 Source revision: `2e2543fbe9fae542f921d47a72d21d5a4ef0b710`.
 Closure: `3ddc33493522d9f2fd240fad5d5b610c33e80887c3404f0163b254f6e54de9b3`.
