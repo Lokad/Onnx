@@ -6,13 +6,13 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **43.53 GB**, including **30.06 GB** in artifacts,
-after retaining the balanced-warmup qualification (343,200 clocks, 440 setups
-and 74 native bodies) and preparing its fixed identical-binary control. Earlier rejected controls,
+The latest inventory is **43.76 GB**, including **30.29 GB** in artifacts,
+after retaining the balanced-warmup qualification and its rejected fixed control
+(686,400 clocks, 880 setups and all 11,440 descriptive phase blocks). Earlier rejected controls,
 Boolean counterexamples and complete qualification evidence remain retained.
-The inventory totals **43,525,996,302 bytes**, with **6.47 GB** of headroom.
-Receipt: `artifacts/repository-retention-20260923/m61-codegen-closed-size.json`.
-Counting the model junction again gives 54.31 GB, which counts the same 10.79 GB
+The inventory totals **43,764,913,871 bytes**, with **6.24 GB** of headroom.
+Receipt: `artifacts/repository-retention-20260923/m61-control-closed-size.json`.
+Counting the model junction again gives 54.55 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 No new model copies were needed. Raw clocks remain in verified local collections

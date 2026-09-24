@@ -1,0 +1,7210 @@
+{
+  "closed": {
+    "bytes": 38949,
+    "sha256": "e9c296b8cc4c3be86a8e8447225e5254fae2f264741da8dcc128ade8d6d6db9c"
+  },
+  "analysis": {
+    "bytes": 190787,
+    "sha256": "1692957b6ba715cedc0b0009f71755b6574b1d811c0a0d494c74638927f37229"
+  },
+  "raw": {
+    "current-screen0-512": {
+      "result.json": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/current-screen0-512/result.json",
+        "identity": {
+          "bytes": 32200401,
+          "sha256": "5b9971c19299d040d39c139ee063e92e80046a1c56ea43fc79fc75bc171459ae"
+        }
+      },
+      "clocks.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/current-screen0-512/clocks.jsonl",
+        "identity": {
+          "bytes": 16672246,
+          "sha256": "7951897daf8e6224bcfa9651e4127ff14de27be77f3862465ece9098f4dcf75d"
+        }
+      },
+      "setups.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/current-screen0-512/setups.jsonl",
+        "identity": {
+          "bytes": 90906,
+          "sha256": "3ce65939eeed129a689b66ecf6fed4df031a5839919f4483ebc5f2df374370b3"
+        }
+      }
+    },
+    "candidate-screen1-512": {
+      "result.json": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/candidate-screen1-512/result.json",
+        "identity": {
+          "bytes": 32200201,
+          "sha256": "94f3f7c5a10ab7fca419d5f0f21b2ab7725424bfa12e8c55621eeba16af3da24"
+        }
+      },
+      "clocks.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/candidate-screen1-512/clocks.jsonl",
+        "identity": {
+          "bytes": 16672044,
+          "sha256": "f6c7d59014d44c4bbe35186e620ed74b432d1ee33ddf68005129a51db9e93e13"
+        }
+      },
+      "setups.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/candidate-screen1-512/setups.jsonl",
+        "identity": {
+          "bytes": 90908,
+          "sha256": "b54598d381bb2d20063bbb9e276fb4cfcb5b1e2bcb8a055d4b87aad46fb2c2cb"
+        }
+      }
+    },
+    "candidate-screen2-512": {
+      "result.json": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/candidate-screen2-512/result.json",
+        "identity": {
+          "bytes": 32200435,
+          "sha256": "2156ab999118f56e7c3cd8d1fb9c983244d2ab0760e2955fbcb1bef33869637d"
+        }
+      },
+      "clocks.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/candidate-screen2-512/clocks.jsonl",
+        "identity": {
+          "bytes": 16672278,
+          "sha256": "8fff91fe6bea24cdb5977f70c969fdefb11646b4e87e20f26cc17071c0c6c92f"
+        }
+      },
+      "setups.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/candidate-screen2-512/setups.jsonl",
+        "identity": {
+          "bytes": 90906,
+          "sha256": "92d8ff616464d242f3b35b1544eac3dc7bda1ed2a15cf96ee919b30eb6b64fbd"
+        }
+      }
+    },
+    "current-screen3-512": {
+      "result.json": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/current-screen3-512/result.json",
+        "identity": {
+          "bytes": 32200542,
+          "sha256": "5c248499260127d2ea37c156ed1e9de4fde39da00350bb1dcb9363a03280d234"
+        }
+      },
+      "clocks.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/current-screen3-512/clocks.jsonl",
+        "identity": {
+          "bytes": 16672387,
+          "sha256": "b5485b287c7ed4519bd0a4fa72a92a3e737c30b949cdcc1635d221c1acea40bf"
+        }
+      },
+      "setups.jsonl": {
+        "path": "artifacts/parakeet-dense-scalar-where-balanced-control-amd-20260924/collected/current-screen3-512/setups.jsonl",
+        "identity": {
+          "bytes": 90905,
+          "sha256": "e8dd9001e65ee1fcdce36a922e33bd6732f3299f3ff4de31cf0c296098b250ba"
+        }
+      }
+    }
+  },
+  "comparison": {
+    "admitted": false,
+    "controls": [
+      {
+        "scope": "all220",
+        "ratio": {
+          "numerator": 160622061428897,
+          "denominator": 158055425249356,
+          "value": 1.0162388363163855
+        },
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "scope": "target6",
+        "ratio": {
+          "numerator": 457753,
+          "denominator": 447184,
+          "value": 1.0236345665318973
+        },
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "scope": "other_uniform42",
+        "ratio": {
+          "numerator": 37278866203,
+          "denominator": 35515199006,
+          "value": 1.0496595048419142
+        },
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "scope": "fallback74",
+        "ratio": {
+          "numerator": 2734739966610,
+          "denominator": 2662904500411,
+          "value": 1.0269763584041083
+        },
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "scope": "added98",
+        "ratio": {
+          "numerator": 99973880522,
+          "denominator": 95526318677,
+          "value": 1.0465584972455433
+        },
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "scope": "capture-0",
+        "ratio": {
+          "numerator": 28155563,
+          "denominator": 16668519,
+          "value": 1.689146048308191
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "capture-1",
+        "ratio": {
+          "numerator": 119462726,
+          "denominator": 116487403,
+          "value": 1.0255420150451804
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-1-true",
+        "ratio": {
+          "numerator": 135268008,
+          "denominator": 133971043,
+          "value": 1.009680935304803
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-1-first",
+        "ratio": {
+          "numerator": 159215610,
+          "denominator": 134954393,
+          "value": 1.1797734513169942
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-1-last",
+        "ratio": {
+          "numerator": 5168107,
+          "denominator": 3885744,
+          "value": 1.3300173660436714
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "capture-1-alternating",
+        "ratio": {
+          "numerator": 4306503,
+          "denominator": 3773954,
+          "value": 1.1411116828662988
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-2",
+        "ratio": {
+          "numerator": 145523534,
+          "denominator": 133536489,
+          "value": 1.0897660638658846
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-2-true",
+        "ratio": {
+          "numerator": 136001491,
+          "denominator": 132584917,
+          "value": 1.0257689492689428
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-2-first",
+        "ratio": {
+          "numerator": 134639051,
+          "denominator": 129932398,
+          "value": 1.0362238600414349
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-2-last",
+        "ratio": {
+          "numerator": 148350033,
+          "denominator": 124283509,
+          "value": 1.1936421347742925
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-2-alternating",
+        "ratio": {
+          "numerator": 19767985,
+          "denominator": 18498858,
+          "value": 1.068605694470437
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-3",
+        "ratio": {
+          "numerator": 192143558,
+          "denominator": 176401307,
+          "value": 1.089241124500285
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-3-true",
+        "ratio": {
+          "numerator": 42053363,
+          "denominator": 37249793,
+          "value": 1.1289556159412752
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-3-first",
+        "ratio": {
+          "numerator": 192342847,
+          "denominator": 177630676,
+          "value": 1.0828244947961578
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-3-last",
+        "ratio": {
+          "numerator": 200303755,
+          "denominator": 186004302,
+          "value": 1.0768770014792453
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-3-alternating",
+        "ratio": {
+          "numerator": 195865600,
+          "denominator": 175361139,
+          "value": 1.1169270518937493
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-4",
+        "ratio": {
+          "numerator": 2081981,
+          "denominator": 1318499,
+          "value": 1.5790539090283724
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "capture-5",
+        "ratio": {
+          "numerator": 478684361,
+          "denominator": 457905553,
+          "value": 1.0453779340824023
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-5-true",
+        "ratio": {
+          "numerator": 470754783,
+          "denominator": 451761595,
+          "value": 1.0420425025283524
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-5-first",
+        "ratio": {
+          "numerator": 474405956,
+          "denominator": 459842963,
+          "value": 1.031669491917396
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-5-last",
+        "ratio": {
+          "numerator": 467178286,
+          "denominator": 455048467,
+          "value": 1.0266561034255721
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-5-alternating",
+        "ratio": {
+          "numerator": 467496997,
+          "denominator": 453179099,
+          "value": 1.0315943476466465
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-6",
+        "ratio": {
+          "numerator": 473126908,
+          "denominator": 457864973,
+          "value": 1.033332829327392
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-6-true",
+        "ratio": {
+          "numerator": 474575869,
+          "denominator": 452091098,
+          "value": 1.0497350447718836
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-6-first",
+        "ratio": {
+          "numerator": 463298870,
+          "denominator": 454230897,
+          "value": 1.0199633557732204
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-6-last",
+        "ratio": {
+          "numerator": 477960412,
+          "denominator": 456035765,
+          "value": 1.0480765954836897
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-6-alternating",
+        "ratio": {
+          "numerator": 236310695,
+          "denominator": 226551911,
+          "value": 1.0430752667542054
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-7",
+        "ratio": {
+          "numerator": 175470064,
+          "denominator": 170741507,
+          "value": 1.0276942442589545
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-7-true",
+        "ratio": {
+          "numerator": 179291917,
+          "denominator": 163729807,
+          "value": 1.0950475071408348
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-7-first",
+        "ratio": {
+          "numerator": 184434016,
+          "denominator": 174138171,
+          "value": 1.0591245729806131
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-7-last",
+        "ratio": {
+          "numerator": 361345885,
+          "denominator": 350392604,
+          "value": 1.0312600233993523
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "capture-7-alternating",
+        "ratio": {
+          "numerator": 364336873,
+          "denominator": 345892268,
+          "value": 1.053324710340157
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "vector-false",
+        "ratio": {
+          "numerator": 76237315,
+          "denominator": 63105587,
+          "value": 1.208091369152465
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-mask-false",
+        "ratio": {
+          "numerator": 35874383,
+          "denominator": 34557471,
+          "value": 1.038107881216192
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "outer-mask-false",
+        "ratio": {
+          "numerator": 168139487,
+          "denominator": 165024083,
+          "value": 1.0188784809063294
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "inner-broadcast-false",
+        "ratio": {
+          "numerator": 84071349,
+          "denominator": 80755408,
+          "value": 1.0410615348510157
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "rank8-false",
+        "ratio": {
+          "numerator": 188462144,
+          "denominator": 184490933,
+          "value": 1.021525236690087
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "vector-true",
+        "ratio": {
+          "numerator": 37878107,
+          "denominator": 31855886,
+          "value": 1.1890457857615386
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "scalar-mask-true",
+        "ratio": {
+          "numerator": 311944573,
+          "denominator": 309784603,
+          "value": 1.006972489849665
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "outer-mask-true",
+        "ratio": {
+          "numerator": 164995837,
+          "denominator": 162425126,
+          "value": 1.0158270525214184
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "inner-broadcast-true",
+        "ratio": {
+          "numerator": 275069581,
+          "denominator": 273626368,
+          "value": 1.0052743930000196
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "rank8-true",
+        "ratio": {
+          "numerator": 189505265,
+          "denominator": 178103678,
+          "value": 1.064016572414636
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "vector-first",
+        "ratio": {
+          "numerator": 38817394,
+          "denominator": 32153043,
+          "value": 1.2072696820639963
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-mask-first",
+        "ratio": {
+          "numerator": 313565950,
+          "denominator": 307600897,
+          "value": 1.019392183371949
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "outer-mask-first",
+        "ratio": {
+          "numerator": 166810571,
+          "denominator": 161044273,
+          "value": 1.0358056694136524
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "inner-broadcast-first",
+        "ratio": {
+          "numerator": 165526791,
+          "denominator": 161484860,
+          "value": 1.0250297829777975
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "rank8-first",
+        "ratio": {
+          "numerator": 189354479,
+          "denominator": 173937517,
+          "value": 1.088635058530817
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "vector-last",
+        "ratio": {
+          "numerator": 73927511,
+          "denominator": 60737207,
+          "value": 1.2171700783014274
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-mask-last",
+        "ratio": {
+          "numerator": 314262655,
+          "denominator": 308327983,
+          "value": 1.0192479188630763
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "outer-mask-last",
+        "ratio": {
+          "numerator": 166974927,
+          "denominator": 164444759,
+          "value": 1.0153861273255902
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "inner-broadcast-last",
+        "ratio": {
+          "numerator": 165901393,
+          "denominator": 162060991,
+          "value": 1.0236972634580521
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "rank8-last",
+        "ratio": {
+          "numerator": 187827228,
+          "denominator": 177644063,
+          "value": 1.057323418683573
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "vector-alternating",
+        "ratio": {
+          "numerator": 74354516,
+          "denominator": 59354681,
+          "value": 1.2527152828940316
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-mask-alternating",
+        "ratio": {
+          "numerator": 63057733,
+          "denominator": 61650344,
+          "value": 1.0228285668608759
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "outer-mask-alternating",
+        "ratio": {
+          "numerator": 83104786,
+          "denominator": 82040515,
+          "value": 1.0129725051092133
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "inner-broadcast-alternating",
+        "ratio": {
+          "numerator": 217349559,
+          "denominator": 215944303,
+          "value": 1.0065074928140152
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "rank8-alternating",
+        "ratio": {
+          "numerator": 187947362,
+          "denominator": 182476643,
+          "value": 1.0299803794614963
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "scalar-result-false",
+        "ratio": {
+          "numerator": 14427496,
+          "denominator": 13189931,
+          "value": 1.0938264953774208
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "scalar-result-true",
+        "ratio": {
+          "numerator": 2932789,
+          "denominator": 2589674,
+          "value": 1.13249351076622
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "rank9-false",
+        "ratio": {
+          "numerator": 236738605,
+          "denominator": 209132746,
+          "value": 1.1320016091597631
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "rank9-true",
+        "ratio": {
+          "numerator": 122011198,
+          "denominator": 109571623,
+          "value": 1.1135291662148694
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-outranks-false",
+        "ratio": {
+          "numerator": 63175709,
+          "denominator": 57856690,
+          "value": 1.0919343813135525
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-outranks-true",
+        "ratio": {
+          "numerator": 121236101,
+          "denominator": 108215635,
+          "value": 1.1203196377307216
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-outranks-false",
+        "ratio": {
+          "numerator": 69826537,
+          "denominator": 67053076,
+          "value": 1.0413621740485104
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-outranks-true",
+        "ratio": {
+          "numerator": 216995063,
+          "denominator": 206660755,
+          "value": 1.0500061465467887
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "nonscalar-x-false",
+        "ratio": {
+          "numerator": 20089201,
+          "denominator": 19223885,
+          "value": 1.0450125455910706
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "nonscalar-x-true",
+        "ratio": {
+          "numerator": 96119896,
+          "denominator": 86286439,
+          "value": 1.1139629484535802
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "empty-0",
+        "ratio": {
+          "numerator": 7437693,
+          "denominator": 6672836,
+          "value": 1.114622478358527
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "empty-1",
+        "ratio": {
+          "numerator": 159407039,
+          "denominator": 142849523,
+          "value": 1.1159087944591877
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "empty-2",
+        "ratio": {
+          "numerator": 184932618,
+          "denominator": 171996043,
+          "value": 1.0752143757167716
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "empty-3",
+        "ratio": {
+          "numerator": 234836097,
+          "denominator": 218350772,
+          "value": 1.0754992750838546
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "offset-false",
+        "ratio": {
+          "numerator": 179992778,
+          "denominator": 177858701,
+          "value": 1.0119987213895147
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "offset-true",
+        "ratio": {
+          "numerator": 294049136,
+          "denominator": 291889595,
+          "value": 1.0073984857185472
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-custom-false",
+        "ratio": {
+          "numerator": 97745527,
+          "denominator": 95775754,
+          "value": 1.0205665099749568
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-custom-true",
+        "ratio": {
+          "numerator": 35963392,
+          "denominator": 35473257,
+          "value": 1.0138170284166463
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-custom-false",
+        "ratio": {
+          "numerator": 75613222,
+          "denominator": 63453087,
+          "value": 1.1916397700241124
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-custom-true",
+        "ratio": {
+          "numerator": 45029632,
+          "denominator": 41147277,
+          "value": 1.0943526591079162
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "y-custom-false",
+        "ratio": {
+          "numerator": 38362037,
+          "denominator": 34800181,
+          "value": 1.1023516515618124
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "y-custom-true",
+        "ratio": {
+          "numerator": 89637397,
+          "denominator": 80999617,
+          "value": 1.1066397634941902
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-reverse-false",
+        "ratio": {
+          "numerator": 72661471,
+          "denominator": 62691156,
+          "value": 1.1590386210137837
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-reverse-true",
+        "ratio": {
+          "numerator": 88982131,
+          "denominator": 80657697,
+          "value": 1.1032069388244496
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-reverse-false",
+        "ratio": {
+          "numerator": 24160691,
+          "denominator": 20274539,
+          "value": 1.191676466725088
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-reverse-true",
+        "ratio": {
+          "numerator": 90235134,
+          "denominator": 80815985,
+          "value": 1.116550568553981
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "y-reverse-false",
+        "ratio": {
+          "numerator": 74595893,
+          "denominator": 63430202,
+          "value": 1.1760311436498343
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "y-reverse-true",
+        "ratio": {
+          "numerator": 17830931,
+          "denominator": 16174043,
+          "value": 1.1024411768906512
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-view-false",
+        "ratio": {
+          "numerator": 212736844,
+          "denominator": 209627211,
+          "value": 1.0148341094897264
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-view-true",
+        "ratio": {
+          "numerator": 162056537,
+          "denominator": 160736565,
+          "value": 1.008212020706054
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-view-false",
+        "ratio": {
+          "numerator": 189219581,
+          "denominator": 186056742,
+          "value": 1.0169993248618747
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "x-view-true",
+        "ratio": {
+          "numerator": 59922165,
+          "denominator": 59288584,
+          "value": 1.010686391160902
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "y-view-false",
+        "ratio": {
+          "numerator": 356335387,
+          "denominator": 336629614,
+          "value": 1.0585384416000905
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "y-view-true",
+        "ratio": {
+          "numerator": 292528663,
+          "denominator": 290752647,
+          "value": 1.006108339918226
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-broadcast-false",
+        "ratio": {
+          "numerator": 181230637,
+          "denominator": 179420194,
+          "value": 1.0100905196881016
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "condition-broadcast-true",
+        "ratio": {
+          "numerator": 295002835,
+          "denominator": 292665811,
+          "value": 1.007985298972964
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "alias-false",
+        "ratio": {
+          "numerator": 89868109,
+          "denominator": 88510444,
+          "value": 1.0153390372779059
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "alias-true",
+        "ratio": {
+          "numerator": 145662813,
+          "denominator": 145008433,
+          "value": 1.0045127030646555
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-Bool",
+        "ratio": {
+          "numerator": 118738618,
+          "denominator": 115844719,
+          "value": 1.0249808452640814
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-Byte",
+        "ratio": {
+          "numerator": 124469119,
+          "denominator": 112486862,
+          "value": 1.1065213909158564
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-Int32",
+        "ratio": {
+          "numerator": 11584052,
+          "denominator": 10679081,
+          "value": 1.084742404332358
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-Int64",
+        "ratio": {
+          "numerator": 136664999,
+          "denominator": 122816154,
+          "value": 1.1127607773811252
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-UInt32",
+        "ratio": {
+          "numerator": 64110669,
+          "denominator": 58004018,
+          "value": 1.1052797928584879
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-UInt64",
+        "ratio": {
+          "numerator": 65442815,
+          "denominator": 57864091,
+          "value": 1.130974562444954
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-Double",
+        "ratio": {
+          "numerator": 67033010,
+          "denominator": 61205879,
+          "value": 1.0952054131924158
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "dtype-Half",
+        "ratio": {
+          "numerator": 68984936,
+          "denominator": 61499987,
+          "value": 1.1217065135314581
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "scalar-bits-0",
+        "ratio": {
+          "numerator": 74129055,
+          "denominator": 57897097,
+          "value": 1.280358754429432
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-1",
+        "ratio": {
+          "numerator": 4390787,
+          "denominator": 3590868,
+          "value": 1.2227648022706488
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-2",
+        "ratio": {
+          "numerator": 451009,
+          "denominator": 389986,
+          "value": 1.1564748478150497
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "scalar-bits-3",
+        "ratio": {
+          "numerator": 23836105,
+          "denominator": 19701234,
+          "value": 1.2098787822123223
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-4",
+        "ratio": {
+          "numerator": 72482339,
+          "denominator": 57740129,
+          "value": 1.2553200045673607
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-5",
+        "ratio": {
+          "numerator": 70858793,
+          "denominator": 57413948,
+          "value": 1.2341738457003515
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-6",
+        "ratio": {
+          "numerator": 73088722,
+          "denominator": 58378821,
+          "value": 1.251973245571369
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-7",
+        "ratio": {
+          "numerator": 74649487,
+          "denominator": 57132143,
+          "value": 1.306611008797622
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-8",
+        "ratio": {
+          "numerator": 73393371,
+          "denominator": 57455044,
+          "value": 1.277405183085405
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-9",
+        "ratio": {
+          "numerator": 70983539,
+          "denominator": 56857809,
+          "value": 1.2484395766991303
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "scalar-bits-10",
+        "ratio": {
+          "numerator": 72850499,
+          "denominator": 57721767,
+          "value": 1.2620975203340534
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "raw-bool-0",
+        "ratio": {
+          "numerator": 22511865,
+          "denominator": 19754552,
+          "value": 1.1395786145896905
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "raw-bool-1",
+        "ratio": {
+          "numerator": 43876748,
+          "denominator": 39743041,
+          "value": 1.10401083802319
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "raw-bool-2",
+        "ratio": {
+          "numerator": 46079085,
+          "denominator": 42713009,
+          "value": 1.0788068103560673
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "raw-bool-3",
+        "ratio": {
+          "numerator": 46617931,
+          "denominator": 40480114,
+          "value": 1.1516254870230849
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "raw-bool-4",
+        "ratio": {
+          "numerator": 43743899,
+          "denominator": 40181337,
+          "value": 1.0886621069876297
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "raw-bool-5",
+        "ratio": {
+          "numerator": 46100572,
+          "denominator": 43181423,
+          "value": 1.0676019639278678
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "raw-bool-6",
+        "ratio": {
+          "numerator": 52974679,
+          "denominator": 40735461,
+          "value": 1.3004561062902908
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "raw-bool-7",
+        "ratio": {
+          "numerator": 54265980,
+          "denominator": 40854391,
+          "value": 1.3282777853670613
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4095-false",
+        "ratio": {
+          "numerator": 61169385,
+          "denominator": 42973577,
+          "value": 1.4234185113331386
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4095-true",
+        "ratio": {
+          "numerator": 59279386,
+          "denominator": 39427893,
+          "value": 1.5034885582143585
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4095-first",
+        "ratio": {
+          "numerator": 59161721,
+          "denominator": 39522937,
+          "value": 1.4968958658107823
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4095-last",
+        "ratio": {
+          "numerator": 7367298,
+          "denominator": 5026453,
+          "value": 1.465705140384283
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4095-alternating",
+        "ratio": {
+          "numerator": 35232727,
+          "denominator": 20607020,
+          "value": 1.7097439125113676
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4096-false",
+        "ratio": {
+          "numerator": 9806067,
+          "denominator": 6702538,
+          "value": 1.463037882067957
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4096-true",
+        "ratio": {
+          "numerator": 11274905,
+          "denominator": 7507129,
+          "value": 1.5018930672431499
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4096-first",
+        "ratio": {
+          "numerator": 8403217,
+          "denominator": 5672672,
+          "value": 1.481350763802314
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4096-last",
+        "ratio": {
+          "numerator": 58598914,
+          "denominator": 41043863,
+          "value": 1.4277143942323363
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4096-alternating",
+        "ratio": {
+          "numerator": 34844133,
+          "denominator": 20393530,
+          "value": 1.7085876255851733
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4097-false",
+        "ratio": {
+          "numerator": 27545889,
+          "denominator": 19324742,
+          "value": 1.4254207895763886
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4097-true",
+        "ratio": {
+          "numerator": 52951069,
+          "denominator": 36527098,
+          "value": 1.4496379920463431
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4097-first",
+        "ratio": {
+          "numerator": 55155163,
+          "denominator": 38423363,
+          "value": 1.4354590200758846
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4097-last",
+        "ratio": {
+          "numerator": 13792963,
+          "denominator": 9548712,
+          "value": 1.444484135661438
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "boundary-4097-alternating",
+        "ratio": {
+          "numerator": 65833549,
+          "denominator": 37686820,
+          "value": 1.7468586895896232
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-nonscalar-false",
+        "ratio": {
+          "numerator": 4690909,
+          "denominator": 2772416,
+          "value": 1.691993192940742
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-nonscalar-true",
+        "ratio": {
+          "numerator": 40076537,
+          "denominator": 22906038,
+          "value": 1.7496058026272374
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-raw-bool-0",
+        "ratio": {
+          "numerator": 34303625,
+          "denominator": 33214036,
+          "value": 1.0328050767452652
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-raw-bool-1",
+        "ratio": {
+          "numerator": 101069667,
+          "denominator": 99971686,
+          "value": 1.0109829197038849
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-raw-bool-2",
+        "ratio": {
+          "numerator": 101266766,
+          "denominator": 99988317,
+          "value": 1.0127859837864859
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-raw-bool-3",
+        "ratio": {
+          "numerator": 7136405,
+          "denominator": 7085412,
+          "value": 1.007196899770966
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-raw-bool-4",
+        "ratio": {
+          "numerator": 101134489,
+          "denominator": 100105290,
+          "value": 1.010281164961412
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-raw-bool-5",
+        "ratio": {
+          "numerator": 101369470,
+          "denominator": 100365397,
+          "value": 1.0100041750445126
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-raw-bool-6",
+        "ratio": {
+          "numerator": 99997408,
+          "denominator": 99232387,
+          "value": 1.0077093882665547
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-raw-bool-7",
+        "ratio": {
+          "numerator": 33407746,
+          "denominator": 33133711,
+          "value": 1.008270579772969
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-offset-false",
+        "ratio": {
+          "numerator": 21019601,
+          "denominator": 13730976,
+          "value": 1.5308162362238489
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-offset-true",
+        "ratio": {
+          "numerator": 36561969,
+          "denominator": 31009298,
+          "value": 1.1790647114939525
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-condition-custom-false",
+        "ratio": {
+          "numerator": 74588165,
+          "denominator": 72638343,
+          "value": 1.0268428755320038
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-condition-custom-true",
+        "ratio": {
+          "numerator": 44843101,
+          "denominator": 41863585,
+          "value": 1.071172022176314
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-x-custom-false",
+        "ratio": {
+          "numerator": 41812782,
+          "denominator": 27255205,
+          "value": 1.5341209871655708
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-x-custom-true",
+        "ratio": {
+          "numerator": 75368243,
+          "denominator": 62399951,
+          "value": 1.207825355503885
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-y-custom-false",
+        "ratio": {
+          "numerator": 26707339,
+          "denominator": 19542452,
+          "value": 1.3666319354398313
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-y-custom-true",
+        "ratio": {
+          "numerator": 72853364,
+          "denominator": 62501351,
+          "value": 1.1656286277715822
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-condition-reverse-false",
+        "ratio": {
+          "numerator": 42497446,
+          "denominator": 27356787,
+          "value": 1.55345165351472
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-condition-reverse-true",
+        "ratio": {
+          "numerator": 36555029,
+          "denominator": 31058304,
+          "value": 1.1769808486644988
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-x-reverse-false",
+        "ratio": {
+          "numerator": 21004799,
+          "denominator": 13670851,
+          "value": 1.536466091247721
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-x-reverse-true",
+        "ratio": {
+          "numerator": 36359047,
+          "denominator": 30921386,
+          "value": 1.1758543747036436
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-y-reverse-false",
+        "ratio": {
+          "numerator": 41815231,
+          "denominator": 27340198,
+          "value": 1.529441410775445
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-y-reverse-true",
+        "ratio": {
+          "numerator": 24449605,
+          "denominator": 20684539,
+          "value": 1.1820232010005154
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-condition-view-false",
+        "ratio": {
+          "numerator": 129461526,
+          "denominator": 127450741,
+          "value": 1.0157769580955203
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-condition-view-true",
+        "ratio": {
+          "numerator": 80524682,
+          "denominator": 80308745,
+          "value": 1.0026888354437615
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-x-view-false",
+        "ratio": {
+          "numerator": 21048670,
+          "denominator": 13771499,
+          "value": 1.528422577672917
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-x-view-true",
+        "ratio": {
+          "numerator": 5234001,
+          "denominator": 4447931,
+          "value": 1.1767271119988147
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-y-view-false",
+        "ratio": {
+          "numerator": 17570681,
+          "denominator": 16057014,
+          "value": 1.0942682742881087
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-y-view-true",
+        "ratio": {
+          "numerator": 73336103,
+          "denominator": 61901830,
+          "value": 1.1847162353681628
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-condition-broadcast-false",
+        "ratio": {
+          "numerator": 16533799,
+          "denominator": 13729186,
+          "value": 1.2042810841079725
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-condition-broadcast-true",
+        "ratio": {
+          "numerator": 96365399,
+          "denominator": 89472971,
+          "value": 1.0770336328722112
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-alias-false",
+        "ratio": {
+          "numerator": 43847573,
+          "denominator": 27571498,
+          "value": 1.590322477219047
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-alias-true",
+        "ratio": {
+          "numerator": 12480616,
+          "denominator": 10329133,
+          "value": 1.2082926998810064
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-rank9-false",
+        "ratio": {
+          "numerator": 31415399,
+          "denominator": 22188953,
+          "value": 1.4158125892645768
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-rank9-true",
+        "ratio": {
+          "numerator": 58977551,
+          "denominator": 42180129,
+          "value": 1.3982306929407446
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-condition-outranks-false",
+        "ratio": {
+          "numerator": 70656,
+          "denominator": 49679,
+          "value": 1.422250850459953
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-condition-outranks-true",
+        "ratio": {
+          "numerator": 56828252,
+          "denominator": 39774481,
+          "value": 1.4287616223075292
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-x-outranks-false",
+        "ratio": {
+          "numerator": 127183321,
+          "denominator": 125731762,
+          "value": 1.011544887122476
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-x-outranks-true",
+        "ratio": {
+          "numerator": 25393597,
+          "denominator": 25124770,
+          "value": 1.010699680036872
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "large-scalar-bits-0",
+        "ratio": {
+          "numerator": 18795565,
+          "denominator": 13081524,
+          "value": 1.436802393971834
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-1",
+        "ratio": {
+          "numerator": 28081670,
+          "denominator": 19338683,
+          "value": 1.4520983667812333
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-2",
+        "ratio": {
+          "numerator": 9810667,
+          "denominator": 6701888,
+          "value": 1.4638661523439365
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-3",
+        "ratio": {
+          "numerator": 56404039,
+          "denominator": 39026877,
+          "value": 1.4452614028019717
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-4",
+        "ratio": {
+          "numerator": 2440899,
+          "denominator": 1693031,
+          "value": 1.4417331992148992
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-5",
+        "ratio": {
+          "numerator": 58205225,
+          "denominator": 39266946,
+          "value": 1.4822956947046506
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-6",
+        "ratio": {
+          "numerator": 57015785,
+          "denominator": 39198956,
+          "value": 1.4545230490322243
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-7",
+        "ratio": {
+          "numerator": 427289,
+          "denominator": 294937,
+          "value": 1.448746681494692
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-8",
+        "ratio": {
+          "numerator": 56395921,
+          "denominator": 38849672,
+          "value": 1.4516447140145738
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-9",
+        "ratio": {
+          "numerator": 18808761,
+          "denominator": 12971723,
+          "value": 1.4499817025078319
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "large-scalar-bits-10",
+        "ratio": {
+          "numerator": 57104852,
+          "denominator": 38879595,
+          "value": 1.4687614930145234
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank1-full",
+        "ratio": {
+          "numerator": 58917949,
+          "denominator": 40619158,
+          "value": 1.45049656125319
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank1-last-scalar",
+        "ratio": {
+          "numerator": 321841,
+          "denominator": 280674,
+          "value": 1.1466719396880367
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank1-trailing",
+        "ratio": {
+          "numerator": 68712650,
+          "denominator": 39665151,
+          "value": 1.7323178726837571
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank1-alternating-axes",
+        "ratio": {
+          "numerator": 79788672,
+          "denominator": 68884349,
+          "value": 1.1582989918363022
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank2-full",
+        "ratio": {
+          "numerator": 58803644,
+          "denominator": 41330145,
+          "value": 1.4227785554587336
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank2-last-scalar",
+        "ratio": {
+          "numerator": 102183484,
+          "denominator": 100642443,
+          "value": 1.0153120388780705
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank2-trailing",
+        "ratio": {
+          "numerator": 25447792,
+          "denominator": 25072359,
+          "value": 1.0149739799115034
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank2-alternating-axes",
+        "ratio": {
+          "numerator": 6305827,
+          "denominator": 6229900,
+          "value": 1.0121875150483957
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank3-full",
+        "ratio": {
+          "numerator": 58807954,
+          "denominator": 41231715,
+          "value": 1.4262796005453569
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank3-last-scalar",
+        "ratio": {
+          "numerator": 35558313,
+          "denominator": 35054395,
+          "value": 1.0143753158484121
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank3-trailing",
+        "ratio": {
+          "numerator": 141209333,
+          "denominator": 139614385,
+          "value": 1.0114239517654287
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank3-alternating-axes",
+        "ratio": {
+          "numerator": 28122579,
+          "denominator": 27821492,
+          "value": 1.0108221011295873
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank4-full",
+        "ratio": {
+          "numerator": 2416358,
+          "denominator": 1696221,
+          "value": 1.424553758030351
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank4-last-scalar",
+        "ratio": {
+          "numerator": 175510197,
+          "denominator": 174504743,
+          "value": 1.005761757432576
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank4-trailing",
+        "ratio": {
+          "numerator": 175957181,
+          "denominator": 174909689,
+          "value": 1.0059887591475851
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank4-alternating-axes",
+        "ratio": {
+          "numerator": 175669906,
+          "denominator": 173589567,
+          "value": 1.0119842398132142
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank5-full",
+        "ratio": {
+          "numerator": 57998333,
+          "denominator": 40565762,
+          "value": 1.4297360665873846
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank5-last-scalar",
+        "ratio": {
+          "numerator": 30911216,
+          "denominator": 30411849,
+          "value": 1.0164201459766553
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank5-trailing",
+        "ratio": {
+          "numerator": 216385259,
+          "denominator": 213683095,
+          "value": 1.0126456610898489
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank5-alternating-axes",
+        "ratio": {
+          "numerator": 2724888,
+          "denominator": 2700127,
+          "value": 1.009170309396558
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank6-full",
+        "ratio": {
+          "numerator": 57834457,
+          "denominator": 40061555,
+          "value": 1.4436398437354716
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank6-last-scalar",
+        "ratio": {
+          "numerator": 129023537,
+          "denominator": 125718517,
+          "value": 1.0262890469826333
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank6-trailing",
+        "ratio": {
+          "numerator": 256511057,
+          "denominator": 251784169,
+          "value": 1.018773571105656
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank6-alternating-axes",
+        "ratio": {
+          "numerator": 256611307,
+          "denominator": 251688780,
+          "value": 1.0195579914209922
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank7-full",
+        "ratio": {
+          "numerator": 57178519,
+          "denominator": 39979627,
+          "value": 1.4301914072384918
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank7-last-scalar",
+        "ratio": {
+          "numerator": 309199233,
+          "denominator": 300537784,
+          "value": 1.028819833848246
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank7-trailing",
+        "ratio": {
+          "numerator": 153615477,
+          "denominator": 150483581,
+          "value": 1.020812210735469
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank7-alternating-axes",
+        "ratio": {
+          "numerator": 313861489,
+          "denominator": 302050632,
+          "value": 1.0391022423022112
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank8-full",
+        "ratio": {
+          "numerator": 91666531,
+          "denominator": 48020033,
+          "value": 1.9089226989910648
+        },
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "scope": "run-rank8-last-scalar",
+        "ratio": {
+          "numerator": 379439536,
+          "denominator": 367487061,
+          "value": 1.0325248866381176
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank8-trailing",
+        "ratio": {
+          "numerator": 134019801,
+          "denominator": 119619518,
+          "value": 1.1203840580598226
+        },
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "scope": "run-rank8-alternating-axes",
+        "ratio": {
+          "numerator": 378218500,
+          "denominator": 367291923,
+          "value": 1.0297490260900728
+        },
+        "limit": 1.2,
+        "passed": true
+      }
+    ],
+    "gates": [
+      {
+        "name": "every-identical-case-within-symmetric-five-percent",
+        "passed": false
+      },
+      {
+        "name": "every-identical-aggregate-within-symmetric-five-percent",
+        "passed": true
+      }
+    ],
+    "rows": [
+      {
+        "index": 0,
+        "name": "capture-0",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 90837461,
+          "denominator": 368640000000000,
+          "value": 2.464123833550347e-07
+        },
+        "middle": {
+          "numerator": 34963199,
+          "denominator": 184320000000000,
+          "value": 1.896874945746528e-07
+        },
+        "ratio": {
+          "numerator": 69926398,
+          "denominator": 90837461,
+          "value": 0.7697969233199946
+        },
+        "passed": false
+      },
+      {
+        "index": 1,
+        "name": "capture-1",
+        "partition": "target6",
+        "outer": {
+          "numerator": 26216681,
+          "denominator": 40000000000,
+          "value": 0.000655417025
+        },
+        "middle": {
+          "numerator": 3288409,
+          "denominator": 5000000000,
+          "value": 0.0006576818
+        },
+        "ratio": {
+          "numerator": 26307272,
+          "denominator": 26216681,
+          "value": 1.0034554717280955
+        },
+        "passed": true
+      },
+      {
+        "index": 2,
+        "name": "capture-1-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 33700861,
+          "denominator": 45000000000,
+          "value": 0.0007489080222222222
+        },
+        "middle": {
+          "numerator": 14932223,
+          "denominator": 20000000000,
+          "value": 0.00074661115
+        },
+        "ratio": {
+          "numerator": 134390007,
+          "denominator": 134803444,
+          "value": 0.996933038298339
+        },
+        "passed": true
+      },
+      {
+        "index": 3,
+        "name": "capture-1-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 288954481,
+          "denominator": 360000000000,
+          "value": 0.0008026513361111111
+        },
+        "middle": {
+          "numerator": 105901103,
+          "denominator": 120000000000,
+          "value": 0.0008825091916666667
+        },
+        "ratio": {
+          "numerator": 317703309,
+          "denominator": 288954481,
+          "value": 1.099492584093202
+        },
+        "passed": false
+      },
+      {
+        "index": 4,
+        "name": "capture-1-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 153915467,
+          "denominator": 180000000000,
+          "value": 0.0008550859277777778
+        },
+        "middle": {
+          "numerator": 101700349,
+          "denominator": 120000000000,
+          "value": 0.0008475029083333333
+        },
+        "ratio": {
+          "numerator": 305101047,
+          "denominator": 307830934,
+          "value": 0.9911318626606902
+        },
+        "passed": true
+      },
+      {
+        "index": 5,
+        "name": "capture-1-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 88206553,
+          "denominator": 120000000000,
+          "value": 0.0007350546083333333
+        },
+        "middle": {
+          "numerator": 7773289,
+          "denominator": 10000000000,
+          "value": 0.0007773289
+        },
+        "ratio": {
+          "numerator": 93279468,
+          "denominator": 88206553,
+          "value": 1.0575117701289154
+        },
+        "passed": false
+      },
+      {
+        "index": 6,
+        "name": "capture-2",
+        "partition": "target6",
+        "outer": {
+          "numerator": 28182133,
+          "denominator": 36000000000,
+          "value": 0.0007828370277777778
+        },
+        "middle": {
+          "numerator": 58629,
+          "denominator": 78125000,
+          "value": 0.0007504512
+        },
+        "ratio": {
+          "numerator": 135081216,
+          "denominator": 140910665,
+          "value": 0.9586301789151304
+        },
+        "passed": true
+      },
+      {
+        "index": 7,
+        "name": "capture-2-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 265705811,
+          "denominator": 360000000000,
+          "value": 0.0007380716972222222
+        },
+        "middle": {
+          "numerator": 135276779,
+          "denominator": 180000000000,
+          "value": 0.0007515376611111111
+        },
+        "ratio": {
+          "numerator": 270553558,
+          "denominator": 265705811,
+          "value": 1.0182447910407197
+        },
+        "passed": true
+      },
+      {
+        "index": 8,
+        "name": "capture-2-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 131436817,
+          "denominator": 180000000000,
+          "value": 0.0007302045388888888
+        },
+        "middle": {
+          "numerator": 14935231,
+          "denominator": 20000000000,
+          "value": 0.00074676155
+        },
+        "ratio": {
+          "numerator": 134417079,
+          "denominator": 131436817,
+          "value": 1.022674483968978
+        },
+        "passed": true
+      },
+      {
+        "index": 9,
+        "name": "capture-2-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 136316771,
+          "denominator": 180000000000,
+          "value": 0.0007573153944444445
+        },
+        "middle": {
+          "numerator": 27190687,
+          "denominator": 36000000000,
+          "value": 0.0007552968611111112
+        },
+        "ratio": {
+          "numerator": 135953435,
+          "denominator": 136316771,
+          "value": 0.9973346199639661
+        },
+        "passed": true
+      },
+      {
+        "index": 10,
+        "name": "capture-2-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 267867901,
+          "denominator": 360000000000,
+          "value": 0.0007440775027777777
+        },
+        "middle": {
+          "numerator": 303837,
+          "denominator": 400000000,
+          "value": 0.0007595925
+        },
+        "ratio": {
+          "numerator": 273453300,
+          "denominator": 267867901,
+          "value": 1.0208513187998587
+        },
+        "passed": true
+      },
+      {
+        "index": 11,
+        "name": "capture-3",
+        "partition": "target6",
+        "outer": {
+          "numerator": 3929713,
+          "denominator": 3750000000,
+          "value": 0.0010479234666666668
+        },
+        "middle": {
+          "numerator": 88923041,
+          "denominator": 90000000000,
+          "value": 0.0009880337888888888
+        },
+        "ratio": {
+          "numerator": 88923041,
+          "denominator": 94313112,
+          "value": 0.9428491872900981
+        },
+        "passed": false
+      },
+      {
+        "index": 12,
+        "name": "capture-3-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 24121463,
+          "denominator": 22500000000,
+          "value": 0.0010720650222222222
+        },
+        "middle": {
+          "numerator": 82837753,
+          "denominator": 72000000000,
+          "value": 0.0011505243472222223
+        },
+        "ratio": {
+          "numerator": 414188765,
+          "denominator": 385943408,
+          "value": 1.0731852297889228
+        },
+        "passed": false
+      },
+      {
+        "index": 13,
+        "name": "capture-3-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 75906191,
+          "denominator": 72000000000,
+          "value": 0.0010542526527777777
+        },
+        "middle": {
+          "numerator": 358628971,
+          "denominator": 360000000000,
+          "value": 0.000996191586111111
+        },
+        "ratio": {
+          "numerator": 358628971,
+          "denominator": 379530955,
+          "value": 0.944926800503005
+        },
+        "passed": false
+      },
+      {
+        "index": 14,
+        "name": "capture-3-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 379824697,
+          "denominator": 360000000000,
+          "value": 0.0010550686027777777
+        },
+        "middle": {
+          "numerator": 19719329,
+          "denominator": 18000000000,
+          "value": 0.0010955182777777777
+        },
+        "ratio": {
+          "numerator": 56340940,
+          "denominator": 54260671,
+          "value": 1.0383384311631532
+        },
+        "passed": true
+      },
+      {
+        "index": 15,
+        "name": "capture-3-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 1951699,
+          "denominator": 1875000000,
+          "value": 0.0010409061333333334
+        },
+        "middle": {
+          "numerator": 9786431,
+          "denominator": 10000000000,
+          "value": 0.0009786431
+        },
+        "ratio": {
+          "numerator": 29359293,
+          "denominator": 31227184,
+          "value": 0.940183815485892
+        },
+        "passed": false
+      },
+      {
+        "index": 16,
+        "name": "capture-4",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 35008169,
+          "denominator": 184320000000000,
+          "value": 1.899314724392361e-07
+        },
+        "middle": {
+          "numerator": 18629923,
+          "denominator": 73728000000000,
+          "value": 2.5268450249565973e-07
+        },
+        "ratio": {
+          "numerator": 93149615,
+          "denominator": 70016338,
+          "value": 1.3303982707578907
+        },
+        "passed": false
+      },
+      {
+        "index": 17,
+        "name": "capture-5",
+        "partition": "target6",
+        "outer": {
+          "numerator": 52032773,
+          "denominator": 20000000000,
+          "value": 0.00260163865
+        },
+        "middle": {
+          "numerator": 924723757,
+          "denominator": 360000000000,
+          "value": 0.0025686771027777777
+        },
+        "ratio": {
+          "numerator": 924723757,
+          "denominator": 936589914,
+          "value": 0.9873304668108993
+        },
+        "passed": true
+      },
+      {
+        "index": 18,
+        "name": "capture-5-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 230186869,
+          "denominator": 90000000000,
+          "value": 0.002557631877777778
+        },
+        "middle": {
+          "numerator": 115872311,
+          "denominator": 45000000000,
+          "value": 0.0025749402444444442
+        },
+        "ratio": {
+          "numerator": 231744622,
+          "denominator": 230186869,
+          "value": 1.0067673408425395
+        },
+        "passed": true
+      },
+      {
+        "index": 19,
+        "name": "capture-5-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 104747469,
+          "denominator": 40000000000,
+          "value": 0.002618686725
+        },
+        "middle": {
+          "numerator": 465148879,
+          "denominator": 180000000000,
+          "value": 0.002584160438888889
+        },
+        "ratio": {
+          "numerator": 930297758,
+          "denominator": 942727221,
+          "value": 0.9868154194308557
+        },
+        "passed": true
+      },
+      {
+        "index": 20,
+        "name": "capture-5-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 926632133,
+          "denominator": 360000000000,
+          "value": 0.002573978147222222
+        },
+        "middle": {
+          "numerator": 304578961,
+          "denominator": 120000000000,
+          "value": 0.002538158008333333
+        },
+        "ratio": {
+          "numerator": 913736883,
+          "denominator": 926632133,
+          "value": 0.9860837439791222
+        },
+        "passed": true
+      },
+      {
+        "index": 21,
+        "name": "capture-5-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 20237797,
+          "denominator": 8000000000,
+          "value": 0.002529724625
+        },
+        "middle": {
+          "numerator": 103276831,
+          "denominator": 40000000000,
+          "value": 0.002581920775
+        },
+        "ratio": {
+          "numerator": 103276831,
+          "denominator": 101188985,
+          "value": 1.0206331351184124
+        },
+        "passed": true
+      },
+      {
+        "index": 22,
+        "name": "capture-6",
+        "partition": "target6",
+        "outer": {
+          "numerator": 310330627,
+          "denominator": 120000000000,
+          "value": 0.0025860885583333334
+        },
+        "middle": {
+          "numerator": 935389733,
+          "denominator": 360000000000,
+          "value": 0.002598304813888889
+        },
+        "ratio": {
+          "numerator": 935389733,
+          "denominator": 930991881,
+          "value": 1.0047238349654308
+        },
+        "passed": true
+      },
+      {
+        "index": 23,
+        "name": "capture-6-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 308888989,
+          "denominator": 120000000000,
+          "value": 0.0025740749083333334
+        },
+        "middle": {
+          "numerator": 457636481,
+          "denominator": 180000000000,
+          "value": 0.0025424248944444445
+        },
+        "ratio": {
+          "numerator": 915272962,
+          "denominator": 926666967,
+          "value": 0.9877043151361194
+        },
+        "passed": true
+      },
+      {
+        "index": 24,
+        "name": "capture-6-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 459061687,
+          "denominator": 180000000000,
+          "value": 0.0025503427055555555
+        },
+        "middle": {
+          "numerator": 917529767,
+          "denominator": 360000000000,
+          "value": 0.002548693797222222
+        },
+        "ratio": {
+          "numerator": 131075681,
+          "denominator": 131160482,
+          "value": 0.9993534561728737
+        },
+        "passed": true
+      },
+      {
+        "index": 25,
+        "name": "capture-6-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 105420899,
+          "denominator": 40000000000,
+          "value": 0.002635522475
+        },
+        "middle": {
+          "numerator": 38902453,
+          "denominator": 15000000000,
+          "value": 0.0025934968666666666
+        },
+        "ratio": {
+          "numerator": 311219624,
+          "denominator": 316262697,
+          "value": 0.9840541643139152
+        },
+        "passed": true
+      },
+      {
+        "index": 26,
+        "name": "capture-6-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 231431303,
+          "denominator": 90000000000,
+          "value": 0.002571458922222222
+        },
+        "middle": {
+          "numerator": 930203011,
+          "denominator": 360000000000,
+          "value": 0.002583897252777778
+        },
+        "ratio": {
+          "numerator": 930203011,
+          "denominator": 925725212,
+          "value": 1.0048370714570103
+        },
+        "passed": true
+      },
+      {
+        "index": 27,
+        "name": "capture-7",
+        "partition": "target6",
+        "outer": {
+          "numerator": 701153923,
+          "denominator": 360000000000,
+          "value": 0.0019476497861111112
+        },
+        "middle": {
+          "numerator": 115176721,
+          "denominator": 60000000000,
+          "value": 0.0019196120166666668
+        },
+        "ratio": {
+          "numerator": 691060326,
+          "denominator": 701153923,
+          "value": 0.9856043064598242
+        },
+        "passed": true
+      },
+      {
+        "index": 28,
+        "name": "capture-7-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 85755431,
+          "denominator": 45000000000,
+          "value": 0.0019056762444444445
+        },
+        "middle": {
+          "numerator": 695058127,
+          "denominator": 360000000000,
+          "value": 0.0019307170194444445
+        },
+        "ratio": {
+          "numerator": 695058127,
+          "denominator": 686043448,
+          "value": 1.0131400992550548
+        },
+        "passed": true
+      },
+      {
+        "index": 29,
+        "name": "capture-7-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 358572187,
+          "denominator": 180000000000,
+          "value": 0.0019920677055555555
+        },
+        "middle": {
+          "numerator": 59186137,
+          "denominator": 30000000000,
+          "value": 0.0019728712333333333
+        },
+        "ratio": {
+          "numerator": 355116822,
+          "denominator": 358572187,
+          "value": 0.99036354428683
+        },
+        "passed": true
+      },
+      {
+        "index": 30,
+        "name": "capture-7-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 44394973,
+          "denominator": 22500000000,
+          "value": 0.0019731099111111113
+        },
+        "middle": {
+          "numerator": 59329739,
+          "denominator": 30000000000,
+          "value": 0.0019776579666666667
+        },
+        "ratio": {
+          "numerator": 25427031,
+          "denominator": 25368556,
+          "value": 1.0023050188587794
+        },
+        "passed": true
+      },
+      {
+        "index": 31,
+        "name": "capture-7-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 78914349,
+          "denominator": 40000000000,
+          "value": 0.001972858725
+        },
+        "middle": {
+          "numerator": 703440217,
+          "denominator": 360000000000,
+          "value": 0.001954000602777778
+        },
+        "ratio": {
+          "numerator": 703440217,
+          "denominator": 710229141,
+          "value": 0.990441220152638
+        },
+        "passed": true
+      },
+      {
+        "index": 32,
+        "name": "vector-false",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 3782473,
+          "denominator": 10240000000000,
+          "value": 3.6938212890625e-07
+        },
+        "middle": {
+          "numerator": 140139359,
+          "denominator": 368640000000000,
+          "value": 3.801523410373264e-07
+        },
+        "ratio": {
+          "numerator": 140139359,
+          "denominator": 136169028,
+          "value": 1.0291573719686096
+        },
+        "passed": true
+      },
+      {
+        "index": 33,
+        "name": "scalar-mask-false",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 3324523,
+          "denominator": 737280000000,
+          "value": 4.5091729058159725e-06
+        },
+        "middle": {
+          "numerator": 70773919,
+          "denominator": 15360000000000,
+          "value": 4.607677018229167e-06
+        },
+        "ratio": {
+          "numerator": 424643514,
+          "denominator": 415565375,
+          "value": 1.021845272840645
+        },
+        "passed": true
+      },
+      {
+        "index": 34,
+        "name": "outer-mask-false",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 66425399,
+          "denominator": 18432000000000,
+          "value": 3.6038085394965276e-06
+        },
+        "middle": {
+          "numerator": 66915181,
+          "denominator": 18432000000000,
+          "value": 3.6303809136284723e-06
+        },
+        "ratio": {
+          "numerator": 66915181,
+          "denominator": 66425399,
+          "value": 1.0073734144976683
+        },
+        "passed": true
+      },
+      {
+        "index": 35,
+        "name": "inner-broadcast-false",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 332230597,
+          "denominator": 92160000000000,
+          "value": 3.604932693142361e-06
+        },
+        "middle": {
+          "numerator": 53877443,
+          "denominator": 15360000000000,
+          "value": 3.507646028645833e-06
+        },
+        "ratio": {
+          "numerator": 323264658,
+          "denominator": 332230597,
+          "value": 0.973012904046282
+        },
+        "passed": true
+      },
+      {
+        "index": 36,
+        "name": "rank8-false",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 37085723,
+          "denominator": 36864000000000,
+          "value": 1.0060146213107639e-06
+        },
+        "middle": {
+          "numerator": 376140443,
+          "denominator": 368640000000000,
+          "value": 1.020346253797743e-06
+        },
+        "ratio": {
+          "numerator": 376140443,
+          "denominator": 370857230,
+          "value": 1.0142459485015298
+        },
+        "passed": true
+      },
+      {
+        "index": 37,
+        "name": "vector-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 138371107,
+          "denominator": 368640000000000,
+          "value": 3.7535565049913194e-07
+        },
+        "middle": {
+          "numerator": 69733993,
+          "denominator": 184320000000000,
+          "value": 3.783311252170139e-07
+        },
+        "ratio": {
+          "numerator": 19923998,
+          "denominator": 19767301,
+          "value": 1.0079270811933303
+        },
+        "passed": true
+      },
+      {
+        "index": 38,
+        "name": "scalar-mask-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 207479867,
+          "denominator": 30720000000000,
+          "value": 6.753901920572917e-06
+        },
+        "middle": {
+          "numerator": 77716147,
+          "denominator": 11520000000000,
+          "value": 6.746193315972222e-06
+        },
+        "ratio": {
+          "numerator": 621729176,
+          "denominator": 622439601,
+          "value": 0.9988586442783225
+        },
+        "passed": true
+      },
+      {
+        "index": 39,
+        "name": "outer-mask-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 326334217,
+          "denominator": 92160000000000,
+          "value": 3.5409528754340276e-06
+        },
+        "middle": {
+          "numerator": 9104121,
+          "denominator": 2560000000000,
+          "value": 3.556297265625e-06
+        },
+        "ratio": {
+          "numerator": 327748356,
+          "denominator": 326334217,
+          "value": 1.0043334070604064
+        },
+        "passed": true
+      },
+      {
+        "index": 40,
+        "name": "inner-broadcast-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 273959393,
+          "denominator": 46080000000000,
+          "value": 5.945299327256944e-06
+        },
+        "middle": {
+          "numerator": 548695949,
+          "denominator": 92160000000000,
+          "value": 5.953732085503472e-06
+        },
+        "ratio": {
+          "numerator": 548695949,
+          "denominator": 547918786,
+          "value": 1.0014183908634955
+        },
+        "passed": true
+      },
+      {
+        "index": 41,
+        "name": "rank8-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 90621421,
+          "denominator": 92160000000000,
+          "value": 9.833053493923611e-07
+        },
+        "middle": {
+          "numerator": 125002687,
+          "denominator": 122880000000000,
+          "value": 1.0172744710286458e-06
+        },
+        "ratio": {
+          "numerator": 375008061,
+          "denominator": 362485684,
+          "value": 1.034545852574967
+        },
+        "passed": true
+      },
+      {
+        "index": 42,
+        "name": "vector-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 70387703,
+          "denominator": 184320000000000,
+          "value": 3.818777289496528e-07
+        },
+        "middle": {
+          "numerator": 144172801,
+          "denominator": 368640000000000,
+          "value": 3.910937527126736e-07
+        },
+        "ratio": {
+          "numerator": 144172801,
+          "denominator": 140775406,
+          "value": 1.0241334413199987
+        },
+        "passed": true
+      },
+      {
+        "index": 43,
+        "name": "scalar-mask-first",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 155162491,
+          "denominator": 23040000000000,
+          "value": 6.734483116319445e-06
+        },
+        "middle": {
+          "numerator": 624721301,
+          "denominator": 92160000000000,
+          "value": 6.778659950086805e-06
+        },
+        "ratio": {
+          "numerator": 624721301,
+          "denominator": 620649964,
+          "value": 1.0065597957563082
+        },
+        "passed": true
+      },
+      {
+        "index": 44,
+        "name": "outer-mask-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 4525057,
+          "denominator": 1280000000000,
+          "value": 3.53520078125e-06
+        },
+        "middle": {
+          "numerator": 330644651,
+          "denominator": 92160000000000,
+          "value": 3.587724077690972e-06
+        },
+        "ratio": {
+          "numerator": 330644651,
+          "denominator": 325804104,
+          "value": 1.0148572315098892
+        },
+        "passed": true
+      },
+      {
+        "index": 45,
+        "name": "inner-broadcast-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 18078123,
+          "denominator": 5120000000000,
+          "value": 3.5308833984375e-06
+        },
+        "middle": {
+          "numerator": 328845749,
+          "denominator": 92160000000000,
+          "value": 3.5682047417534724e-06
+        },
+        "ratio": {
+          "numerator": 328845749,
+          "denominator": 325406214,
+          "value": 1.010569973319563
+        },
+        "passed": true
+      },
+      {
+        "index": 46,
+        "name": "rank8-first",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 59885081,
+          "denominator": 61440000000000,
+          "value": 9.746920735677083e-07
+        },
+        "middle": {
+          "numerator": 188767699,
+          "denominator": 184320000000000,
+          "value": 1.0241303114149305e-06
+        },
+        "ratio": {
+          "numerator": 188767699,
+          "denominator": 179655243,
+          "value": 1.0507219040637739
+        },
+        "passed": false
+      },
+      {
+        "index": 47,
+        "name": "vector-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 66973571,
+          "denominator": 184320000000000,
+          "value": 3.6335487738715276e-07
+        },
+        "middle": {
+          "numerator": 15262943,
+          "denominator": 40960000000000,
+          "value": 3.726304443359375e-07
+        },
+        "ratio": {
+          "numerator": 137366487,
+          "denominator": 133947142,
+          "value": 1.025527569673715
+        },
+        "passed": true
+      },
+      {
+        "index": 48,
+        "name": "scalar-mask-last",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 622473127,
+          "denominator": 92160000000000,
+          "value": 6.7542657009548615e-06
+        },
+        "middle": {
+          "numerator": 157107443,
+          "denominator": 23040000000000,
+          "value": 6.818899435763889e-06
+        },
+        "ratio": {
+          "numerator": 628429772,
+          "denominator": 622473127,
+          "value": 1.009569320733102
+        },
+        "passed": true
+      },
+      {
+        "index": 49,
+        "name": "outer-mask-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 109858733,
+          "denominator": 30720000000000,
+          "value": 3.5761306315104168e-06
+        },
+        "middle": {
+          "numerator": 166877713,
+          "denominator": 46080000000000,
+          "value": 3.6214781467013887e-06
+        },
+        "ratio": {
+          "numerator": 333755426,
+          "denominator": 329576199,
+          "value": 1.0126806092572238
+        },
+        "passed": true
+      },
+      {
+        "index": 50,
+        "name": "inner-broadcast-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 81896879,
+          "denominator": 23040000000000,
+          "value": 3.5545520399305555e-06
+        },
+        "middle": {
+          "numerator": 20497649,
+          "denominator": 5760000000000,
+          "value": 3.5586196180555555e-06
+        },
+        "ratio": {
+          "numerator": 81990596,
+          "denominator": 81896879,
+          "value": 1.001144329321756
+        },
+        "passed": true
+      },
+      {
+        "index": 51,
+        "name": "rank8-last",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 365471291,
+          "denominator": 368640000000000,
+          "value": 9.914043267144098e-07
+        },
+        "middle": {
+          "numerator": 41554399,
+          "denominator": 40960000000000,
+          "value": 1.0145116943359376e-06
+        },
+        "ratio": {
+          "numerator": 373989591,
+          "denominator": 365471291,
+          "value": 1.0233077131084423
+        },
+        "passed": true
+      },
+      {
+        "index": 52,
+        "name": "vector-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 13021949,
+          "denominator": 36864000000000,
+          "value": 3.532429741753472e-07
+        },
+        "middle": {
+          "numerator": 379547,
+          "denominator": 1024000000000,
+          "value": 3.706513671875e-07
+        },
+        "ratio": {
+          "numerator": 231588,
+          "denominator": 220711,
+          "value": 1.0492816397914013
+        },
+        "passed": true
+      },
+      {
+        "index": 53,
+        "name": "scalar-mask-alternating",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 13856453,
+          "denominator": 2048000000000,
+          "value": 6.76584619140625e-06
+        },
+        "middle": {
+          "numerator": 62200651,
+          "denominator": 9216000000000,
+          "value": 6.749202582465278e-06
+        },
+        "ratio": {
+          "numerator": 124401302,
+          "denominator": 124708077,
+          "value": 0.9975400550840023
+        },
+        "passed": true
+      },
+      {
+        "index": 54,
+        "name": "outer-mask-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 165145301,
+          "denominator": 46080000000000,
+          "value": 3.583882400173611e-06
+        },
+        "middle": {
+          "numerator": 18340341,
+          "denominator": 5120000000000,
+          "value": 3.5820978515625e-06
+        },
+        "ratio": {
+          "numerator": 165063069,
+          "denominator": 165145301,
+          "value": 0.999502062732018
+        },
+        "passed": true
+      },
+      {
+        "index": 55,
+        "name": "inner-broadcast-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 43193831,
+          "denominator": 9216000000000,
+          "value": 4.686830620659722e-06
+        },
+        "middle": {
+          "numerator": 1444633,
+          "denominator": 307200000000,
+          "value": 4.702581380208333e-06
+        },
+        "ratio": {
+          "numerator": 43338990,
+          "denominator": 43193831,
+          "value": 1.0033606419398178
+        },
+        "passed": true
+      },
+      {
+        "index": 56,
+        "name": "rank8-alternating",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 122486689,
+          "denominator": 122880000000000,
+          "value": 9.967992268880207e-07
+        },
+        "middle": {
+          "numerator": 373362277,
+          "denominator": 368640000000000,
+          "value": 1.012809996202257e-06
+        },
+        "ratio": {
+          "numerator": 373362277,
+          "denominator": 367460067,
+          "value": 1.0160621807103736
+        },
+        "passed": true
+      },
+      {
+        "index": 57,
+        "name": "scalar-result-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 3068603,
+          "denominator": 20480000000000,
+          "value": 1.49834130859375e-07
+        },
+        "middle": {
+          "numerator": 5564713,
+          "denominator": 36864000000000,
+          "value": 1.5095250108506946e-07
+        },
+        "ratio": {
+          "numerator": 27823565,
+          "denominator": 27617427,
+          "value": 1.0074640552141225
+        },
+        "passed": true
+      },
+      {
+        "index": 58,
+        "name": "scalar-result-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 613607,
+          "denominator": 4096000000000,
+          "value": 1.49806396484375e-07
+        },
+        "middle": {
+          "numerator": 58111579,
+          "denominator": 368640000000000,
+          "value": 1.576377468532986e-07
+        },
+        "ratio": {
+          "numerator": 58111579,
+          "denominator": 55224630,
+          "value": 1.0522764751886975
+        },
+        "passed": false
+      },
+      {
+        "index": 59,
+        "name": "rank9-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 445871351,
+          "denominator": 368640000000000,
+          "value": 1.2095034478081598e-06
+        },
+        "middle": {
+          "numerator": 112676393,
+          "denominator": 92160000000000,
+          "value": 1.2226171115451388e-06
+        },
+        "ratio": {
+          "numerator": 450705572,
+          "denominator": 445871351,
+          "value": 1.0108421879745308
+        },
+        "passed": true
+      },
+      {
+        "index": 60,
+        "name": "rank9-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 231582821,
+          "denominator": 184320000000000,
+          "value": 1.2564172146267361e-06
+        },
+        "middle": {
+          "numerator": 234236051,
+          "denominator": 184320000000000,
+          "value": 1.2708119086371528e-06
+        },
+        "ratio": {
+          "numerator": 234236051,
+          "denominator": 231582821,
+          "value": 1.0114569379047333
+        },
+        "passed": true
+      },
+      {
+        "index": 61,
+        "name": "condition-outranks-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 26863759,
+          "denominator": 40960000000000,
+          "value": 6.558534912109375e-07
+        },
+        "middle": {
+          "numerator": 252501283,
+          "denominator": 368640000000000,
+          "value": 6.849535671657986e-07
+        },
+        "ratio": {
+          "numerator": 252501283,
+          "denominator": 241773831,
+          "value": 1.0443697812771142
+        },
+        "passed": true
+      },
+      {
+        "index": 62,
+        "name": "condition-outranks-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 9560489,
+          "denominator": 15360000000000,
+          "value": 6.224276692708333e-07
+        },
+        "middle": {
+          "numerator": 29688649,
+          "denominator": 46080000000000,
+          "value": 6.442849175347222e-07
+        },
+        "ratio": {
+          "numerator": 29688649,
+          "denominator": 28681467,
+          "value": 1.035116125684924
+        },
+        "passed": true
+      },
+      {
+        "index": 63,
+        "name": "x-outranks-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 136879613,
+          "denominator": 122880000000000,
+          "value": 1.1139291422526042e-06
+        },
+        "middle": {
+          "numerator": 136802743,
+          "denominator": 122880000000000,
+          "value": 1.1133035725911458e-06
+        },
+        "ratio": {
+          "numerator": 136802743,
+          "denominator": 136879613,
+          "value": 0.9994384116208744
+        },
+        "passed": true
+      },
+      {
+        "index": 64,
+        "name": "x-outranks-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 70609303,
+          "denominator": 61440000000000,
+          "value": 1.1492399576822918e-06
+        },
+        "middle": {
+          "numerator": 213393799,
+          "denominator": 184320000000000,
+          "value": 1.1577354546440972e-06
+        },
+        "ratio": {
+          "numerator": 213393799,
+          "denominator": 211827909,
+          "value": 1.007392274263539
+        },
+        "passed": true
+      },
+      {
+        "index": 65,
+        "name": "nonscalar-x-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 4309467,
+          "denominator": 8192000000000,
+          "value": 5.260579833984375e-07
+        },
+        "middle": {
+          "numerator": 199357963,
+          "denominator": 368640000000000,
+          "value": 5.407930853949653e-07
+        },
+        "ratio": {
+          "numerator": 199357963,
+          "denominator": 193926015,
+          "value": 1.0280104141777986
+        },
+        "passed": true
+      },
+      {
+        "index": 66,
+        "name": "nonscalar-x-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 29635127,
+          "denominator": 61440000000000,
+          "value": 4.823425618489583e-07
+        },
+        "middle": {
+          "numerator": 189194323,
+          "denominator": 368640000000000,
+          "value": 5.132224473741319e-07
+        },
+        "ratio": {
+          "numerator": 189194323,
+          "denominator": 177810762,
+          "value": 1.0640206524732176
+        },
+        "passed": false
+      },
+      {
+        "index": 67,
+        "name": "empty-0",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 28085759,
+          "denominator": 122880000000000,
+          "value": 2.2856249186197917e-07
+        },
+        "middle": {
+          "numerator": 22010711,
+          "denominator": 92160000000000,
+          "value": 2.3883149956597223e-07
+        },
+        "ratio": {
+          "numerator": 88042844,
+          "denominator": 84257277,
+          "value": 1.0449286653305923
+        },
+        "passed": true
+      },
+      {
+        "index": 68,
+        "name": "empty-1",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 300296491,
+          "denominator": 368640000000000,
+          "value": 8.146063666449653e-07
+        },
+        "middle": {
+          "numerator": 157385473,
+          "denominator": 184320000000000,
+          "value": 8.538708387586805e-07
+        },
+        "ratio": {
+          "numerator": 314770946,
+          "denominator": 300296491,
+          "value": 1.0482005465724873
+        },
+        "passed": true
+      },
+      {
+        "index": 69,
+        "name": "empty-2",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 355368449,
+          "denominator": 368640000000000,
+          "value": 9.639986138237848e-07
+        },
+        "middle": {
+          "numerator": 40612507,
+          "denominator": 40960000000000,
+          "value": 9.915162841796876e-07
+        },
+        "ratio": {
+          "numerator": 365512563,
+          "denominator": 355368449,
+          "value": 1.0285453422456197
+        },
+        "passed": true
+      },
+      {
+        "index": 70,
+        "name": "empty-3",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 150484367,
+          "denominator": 122880000000000,
+          "value": 1.224644913736979e-06
+        },
+        "middle": {
+          "numerator": 5179609,
+          "denominator": 4096000000000,
+          "value": 1.264552978515625e-06
+        },
+        "ratio": {
+          "numerator": 155388270,
+          "denominator": 150484367,
+          "value": 1.0325874580713092
+        },
+        "passed": true
+      },
+      {
+        "index": 71,
+        "name": "offset-false",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 89331173,
+          "denominator": 23040000000000,
+          "value": 3.877221050347222e-06
+        },
+        "middle": {
+          "numerator": 359119241,
+          "denominator": 92160000000000,
+          "value": 3.896693153211805e-06
+        },
+        "ratio": {
+          "numerator": 359119241,
+          "denominator": 357324692,
+          "value": 1.0050221802192165
+        },
+        "passed": true
+      },
+      {
+        "index": 72,
+        "name": "offset-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 585399539,
+          "denominator": 92160000000000,
+          "value": 6.3519915256076386e-06
+        },
+        "middle": {
+          "numerator": 73388389,
+          "denominator": 11520000000000,
+          "value": 6.370519878472222e-06
+        },
+        "ratio": {
+          "numerator": 587107112,
+          "denominator": 585399539,
+          "value": 1.0029169360176076
+        },
+        "passed": true
+      },
+      {
+        "index": 73,
+        "name": "condition-custom-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 31943357,
+          "denominator": 61440000000000,
+          "value": 5.199114095052083e-07
+        },
+        "middle": {
+          "numerator": 194037089,
+          "denominator": 368640000000000,
+          "value": 5.26359290907118e-07
+        },
+        "ratio": {
+          "numerator": 194037089,
+          "denominator": 191660142,
+          "value": 1.0124018847904224
+        },
+        "passed": true
+      },
+      {
+        "index": 74,
+        "name": "condition-custom-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 4444387,
+          "denominator": 11520000000000,
+          "value": 3.857974826388889e-07
+        },
+        "middle": {
+          "numerator": 4784897,
+          "denominator": 12288000000000,
+          "value": 3.8939591471354165e-07
+        },
+        "ratio": {
+          "numerator": 71773455,
+          "denominator": 71110192,
+          "value": 1.0093272564922902
+        },
+        "passed": true
+      },
+      {
+        "index": 75,
+        "name": "x-custom-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 137579141,
+          "denominator": 368640000000000,
+          "value": 3.7320730523003473e-07
+        },
+        "middle": {
+          "numerator": 71899091,
+          "denominator": 184320000000000,
+          "value": 3.900775336371528e-07
+        },
+        "ratio": {
+          "numerator": 143798182,
+          "denominator": 137579141,
+          "value": 1.04520337134537
+        },
+        "passed": true
+      },
+      {
+        "index": 76,
+        "name": "x-custom-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 169546463,
+          "denominator": 368640000000000,
+          "value": 4.599242160373264e-07
+        },
+        "middle": {
+          "numerator": 9675423,
+          "denominator": 20480000000000,
+          "value": 4.72432763671875e-07
+        },
+        "ratio": {
+          "numerator": 174157614,
+          "denominator": 169546463,
+          "value": 1.027196975498097
+        },
+        "passed": true
+      },
+      {
+        "index": 77,
+        "name": "y-custom-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 16198019,
+          "denominator": 40960000000000,
+          "value": 3.954594482421875e-07
+        },
+        "middle": {
+          "numerator": 14725421,
+          "denominator": 36864000000000,
+          "value": 3.994526095920139e-07
+        },
+        "ratio": {
+          "numerator": 147254210,
+          "denominator": 145782171,
+          "value": 1.0100975242027368
+        },
+        "passed": true
+      },
+      {
+        "index": 78,
+        "name": "y-custom-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 42035977,
+          "denominator": 92160000000000,
+          "value": 4.5611954210069445e-07
+        },
+        "middle": {
+          "numerator": 120579,
+          "denominator": 256000000000,
+          "value": 4.7101171875e-07
+        },
+        "ratio": {
+          "numerator": 43408440,
+          "denominator": 42035977,
+          "value": 1.0326497228790472
+        },
+        "passed": true
+      },
+      {
+        "index": 79,
+        "name": "condition-reverse-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 33174533,
+          "denominator": 92160000000000,
+          "value": 3.599667209201389e-07
+        },
+        "middle": {
+          "numerator": 34045559,
+          "denominator": 92160000000000,
+          "value": 3.6941795789930556e-07
+        },
+        "ratio": {
+          "numerator": 34045559,
+          "denominator": 33174533,
+          "value": 1.0262558631948187
+        },
+        "passed": true
+      },
+      {
+        "index": 80,
+        "name": "condition-reverse-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 13873777,
+          "denominator": 30720000000000,
+          "value": 4.516203450520833e-07
+        },
+        "middle": {
+          "numerator": 2272181,
+          "denominator": 4915200000000,
+          "value": 4.622764078776042e-07
+        },
+        "ratio": {
+          "numerator": 56804525,
+          "denominator": 55495108,
+          "value": 1.023595178875947
+        },
+        "passed": true
+      },
+      {
+        "index": 81,
+        "name": "x-reverse-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 130747957,
+          "denominator": 368640000000000,
+          "value": 3.5467653266059027e-07
+        },
+        "middle": {
+          "numerator": 135966539,
+          "denominator": 368640000000000,
+          "value": 3.6883284233940974e-07
+        },
+        "ratio": {
+          "numerator": 135966539,
+          "denominator": 130747957,
+          "value": 1.0399132966949534
+        },
+        "passed": true
+      },
+      {
+        "index": 82,
+        "name": "x-reverse-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 167113907,
+          "denominator": 368640000000000,
+          "value": 4.533254855685764e-07
+        },
+        "middle": {
+          "numerator": 19143891,
+          "denominator": 40960000000000,
+          "value": 4.673801513671875e-07
+        },
+        "ratio": {
+          "numerator": 172295019,
+          "denominator": 167113907,
+          "value": 1.031003475970435
+        },
+        "passed": true
+      },
+      {
+        "index": 83,
+        "name": "y-reverse-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 15322921,
+          "denominator": 40960000000000,
+          "value": 3.740947509765625e-07
+        },
+        "middle": {
+          "numerator": 70254427,
+          "denominator": 184320000000000,
+          "value": 3.8115466037326387e-07
+        },
+        "ratio": {
+          "numerator": 140508854,
+          "denominator": 137906289,
+          "value": 1.018871981973208
+        },
+        "passed": true
+      },
+      {
+        "index": 84,
+        "name": "y-reverse-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 33622951,
+          "denominator": 73728000000000,
+          "value": 4.5604045952690973e-07
+        },
+        "middle": {
+          "numerator": 19095857,
+          "denominator": 40960000000000,
+          "value": 4.662074462890625e-07
+        },
+        "ratio": {
+          "numerator": 171862713,
+          "denominator": 168114755,
+          "value": 1.0222940455167067
+        },
+        "passed": true
+      },
+      {
+        "index": 85,
+        "name": "condition-view-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 46719071,
+          "denominator": 10240000000000,
+          "value": 4.56240927734375e-06
+        },
+        "middle": {
+          "numerator": 84472811,
+          "denominator": 18432000000000,
+          "value": 4.582943305121528e-06
+        },
+        "ratio": {
+          "numerator": 422364055,
+          "denominator": 420471639,
+          "value": 1.004500698321772
+        },
+        "passed": true
+      },
+      {
+        "index": 86,
+        "name": "condition-view-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 643957867,
+          "denominator": 92160000000000,
+          "value": 6.987390049913195e-06
+        },
+        "middle": {
+          "numerator": 161396551,
+          "denominator": 23040000000000,
+          "value": 7.0050586371527775e-06
+        },
+        "ratio": {
+          "numerator": 645586204,
+          "denominator": 643957867,
+          "value": 1.002528639035945
+        },
+        "passed": true
+      },
+      {
+        "index": 87,
+        "name": "x-view-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 24930133,
+          "denominator": 6144000000000,
+          "value": 4.057638834635417e-06
+        },
+        "middle": {
+          "numerator": 15643573,
+          "denominator": 3840000000000,
+          "value": 4.073847135416667e-06
+        },
+        "ratio": {
+          "numerator": 125148584,
+          "denominator": 124650665,
+          "value": 1.0039945153922765
+        },
+        "passed": true
+      },
+      {
+        "index": 88,
+        "name": "x-view-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 23722103,
+          "denominator": 3686400000000,
+          "value": 6.435032280815972e-06
+        },
+        "middle": {
+          "numerator": 596786729,
+          "denominator": 92160000000000,
+          "value": 6.475550444878472e-06
+        },
+        "ratio": {
+          "numerator": 596786729,
+          "denominator": 593052575,
+          "value": 1.006296497405816
+        },
+        "passed": true
+      },
+      {
+        "index": 89,
+        "name": "y-view-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 690866773,
+          "denominator": 92160000000000,
+          "value": 7.496384255642361e-06
+        },
+        "middle": {
+          "numerator": 699888863,
+          "denominator": 92160000000000,
+          "value": 7.594280197482639e-06
+        },
+        "ratio": {
+          "numerator": 699888863,
+          "denominator": 690866773,
+          "value": 1.0130590880218813
+        },
+        "passed": true
+      },
+      {
+        "index": 90,
+        "name": "y-view-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 64899089,
+          "denominator": 10240000000000,
+          "value": 6.33780166015625e-06
+        },
+        "middle": {
+          "numerator": 582419089,
+          "denominator": 92160000000000,
+          "value": 6.319651573350695e-06
+        },
+        "ratio": {
+          "numerator": 582419089,
+          "denominator": 584091801,
+          "value": 0.9971362172912953
+        },
+        "passed": true
+      },
+      {
+        "index": 91,
+        "name": "condition-broadcast-false",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 45029767,
+          "denominator": 11520000000000,
+          "value": 3.908833940972222e-06
+        },
+        "middle": {
+          "numerator": 45086597,
+          "denominator": 11520000000000,
+          "value": 3.913767100694444e-06
+        },
+        "ratio": {
+          "numerator": 45086597,
+          "denominator": 45029767,
+          "value": 1.0012620540541548
+        },
+        "passed": true
+      },
+      {
+        "index": 92,
+        "name": "condition-broadcast-true",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 293218763,
+          "denominator": 46080000000000,
+          "value": 6.363254405381944e-06
+        },
+        "middle": {
+          "numerator": 294296599,
+          "denominator": 46080000000000,
+          "value": 6.386644943576389e-06
+        },
+        "ratio": {
+          "numerator": 294296599,
+          "denominator": 293218763,
+          "value": 1.0036758766354934
+        },
+        "passed": true
+      },
+      {
+        "index": 93,
+        "name": "alias-false",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 358767631,
+          "denominator": 92160000000000,
+          "value": 3.892877940538194e-06
+        },
+        "middle": {
+          "numerator": 178378553,
+          "denominator": 46080000000000,
+          "value": 3.871062348090278e-06
+        },
+        "ratio": {
+          "numerator": 356757106,
+          "denominator": 358767631,
+          "value": 0.9943960245399062
+        },
+        "passed": true
+      },
+      {
+        "index": 94,
+        "name": "alias-true",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 290556689,
+          "denominator": 46080000000000,
+          "value": 6.3054837022569445e-06
+        },
+        "middle": {
+          "numerator": 145335623,
+          "denominator": 23040000000000,
+          "value": 6.307969748263889e-06
+        },
+        "ratio": {
+          "numerator": 290671246,
+          "denominator": 290556689,
+          "value": 1.0003942672956325
+        },
+        "passed": true
+      },
+      {
+        "index": 95,
+        "name": "dtype-Bool",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 234583337,
+          "denominator": 368640000000000,
+          "value": 6.363480278862848e-07
+        },
+        "middle": {
+          "numerator": 25974059,
+          "denominator": 40960000000000,
+          "value": 6.341322998046875e-07
+        },
+        "ratio": {
+          "numerator": 233766531,
+          "denominator": 234583337,
+          "value": 0.996518056182311
+        },
+        "passed": true
+      },
+      {
+        "index": 96,
+        "name": "dtype-Byte",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 58387813,
+          "denominator": 92160000000000,
+          "value": 6.335483181423611e-07
+        },
+        "middle": {
+          "numerator": 61261753,
+          "denominator": 92160000000000,
+          "value": 6.647325629340278e-07
+        },
+        "ratio": {
+          "numerator": 61261753,
+          "denominator": 58387813,
+          "value": 1.0492215730018866
+        },
+        "passed": true
+      },
+      {
+        "index": 97,
+        "name": "dtype-Int32",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 244894463,
+          "denominator": 368640000000000,
+          "value": 6.643187472873264e-07
+        },
+        "middle": {
+          "numerator": 28104043,
+          "denominator": 40960000000000,
+          "value": 6.861338623046875e-07
+        },
+        "ratio": {
+          "numerator": 22994217,
+          "denominator": 22263133,
+          "value": 1.0328383251359996
+        },
+        "passed": true
+      },
+      {
+        "index": 98,
+        "name": "dtype-Int64",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 83525549,
+          "denominator": 122880000000000,
+          "value": 6.797326578776042e-07
+        },
+        "middle": {
+          "numerator": 3361273,
+          "denominator": 4608000000000,
+          "value": 7.294429253472222e-07
+        },
+        "ratio": {
+          "numerator": 268901840,
+          "denominator": 250576647,
+          "value": 1.0731320864070786
+        },
+        "passed": false
+      },
+      {
+        "index": 99,
+        "name": "dtype-UInt32",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 81280109,
+          "denominator": 122880000000000,
+          "value": 6.614592203776041e-07
+        },
+        "middle": {
+          "numerator": 14017123,
+          "denominator": 20480000000000,
+          "value": 6.84429833984375e-07
+        },
+        "ratio": {
+          "numerator": 84102738,
+          "denominator": 81280109,
+          "value": 1.034727180299426
+        },
+        "passed": true
+      },
+      {
+        "index": 100,
+        "name": "dtype-UInt64",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 20551151,
+          "denominator": 30720000000000,
+          "value": 6.689827799479167e-07
+        },
+        "middle": {
+          "numerator": 13856447,
+          "denominator": 20480000000000,
+          "value": 6.76584326171875e-07
+        },
+        "ratio": {
+          "numerator": 41569341,
+          "denominator": 41102302,
+          "value": 1.0113628428889456
+        },
+        "passed": true
+      },
+      {
+        "index": 101,
+        "name": "dtype-Double",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 31732153,
+          "denominator": 46080000000000,
+          "value": 6.886317925347222e-07
+        },
+        "middle": {
+          "numerator": 8267393,
+          "denominator": 11520000000000,
+          "value": 7.176556423611111e-07
+        },
+        "ratio": {
+          "numerator": 33069572,
+          "denominator": 31732153,
+          "value": 1.042147124400919
+        },
+        "passed": true
+      },
+      {
+        "index": 102,
+        "name": "dtype-Half",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 131999311,
+          "denominator": 184320000000000,
+          "value": 7.161420952690972e-07
+        },
+        "middle": {
+          "numerator": 250905317,
+          "denominator": 368640000000000,
+          "value": 6.80624232313368e-07
+        },
+        "ratio": {
+          "numerator": 250905317,
+          "denominator": 263998622,
+          "value": 0.9504038888506017
+        },
+        "passed": false
+      },
+      {
+        "index": 103,
+        "name": "scalar-bits-0",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 16503269,
+          "denominator": 46080000000000,
+          "value": 3.581438585069444e-07
+        },
+        "middle": {
+          "numerator": 133155061,
+          "denominator": 368640000000000,
+          "value": 3.612062201605903e-07
+        },
+        "ratio": {
+          "numerator": 133155061,
+          "denominator": 132026152,
+          "value": 1.0085506468445737
+        },
+        "passed": true
+      },
+      {
+        "index": 104,
+        "name": "scalar-bits-1",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 126838303,
+          "denominator": 368640000000000,
+          "value": 3.4407091742621525e-07
+        },
+        "middle": {
+          "numerator": 131633287,
+          "denominator": 368640000000000,
+          "value": 3.5707814398871525e-07
+        },
+        "ratio": {
+          "numerator": 131633287,
+          "denominator": 126838303,
+          "value": 1.0378039116464686
+        },
+        "passed": true
+      },
+      {
+        "index": 105,
+        "name": "scalar-bits-2",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 44469521,
+          "denominator": 122880000000000,
+          "value": 3.6189388834635414e-07
+        },
+        "middle": {
+          "numerator": 9000529,
+          "denominator": 24576000000000,
+          "value": 3.6623246256510417e-07
+        },
+        "ratio": {
+          "numerator": 45002645,
+          "denominator": 44469521,
+          "value": 1.0119885258039996
+        },
+        "passed": true
+      },
+      {
+        "index": 106,
+        "name": "scalar-bits-3",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 25893547,
+          "denominator": 73728000000000,
+          "value": 3.512037082248264e-07
+        },
+        "middle": {
+          "numerator": 33411419,
+          "denominator": 92160000000000,
+          "value": 3.6253709852430553e-07
+        },
+        "ratio": {
+          "numerator": 133645676,
+          "denominator": 129467735,
+          "value": 1.0322701327863657
+        },
+        "passed": true
+      },
+      {
+        "index": 107,
+        "name": "scalar-bits-4",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 7212579,
+          "denominator": 20480000000000,
+          "value": 3.52176708984375e-07
+        },
+        "middle": {
+          "numerator": 134009461,
+          "denominator": 368640000000000,
+          "value": 3.635239284939236e-07
+        },
+        "ratio": {
+          "numerator": 134009461,
+          "denominator": 129826422,
+          "value": 1.0322202440424646
+        },
+        "passed": true
+      },
+      {
+        "index": 108,
+        "name": "scalar-bits-5",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 3990511,
+          "denominator": 11520000000000,
+          "value": 3.4639852430555557e-07
+        },
+        "middle": {
+          "numerator": 43688473,
+          "denominator": 122880000000000,
+          "value": 3.5553770345052084e-07
+        },
+        "ratio": {
+          "numerator": 131065419,
+          "denominator": 127696352,
+          "value": 1.02638342401512
+        },
+        "passed": true
+      },
+      {
+        "index": 109,
+        "name": "scalar-bits-6",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 130378679,
+          "denominator": 368640000000000,
+          "value": 3.536748019748264e-07
+        },
+        "middle": {
+          "numerator": 45263653,
+          "denominator": 122880000000000,
+          "value": 3.683565511067708e-07
+        },
+        "ratio": {
+          "numerator": 135790959,
+          "denominator": 130378679,
+          "value": 1.0415120021272803
+        },
+        "passed": true
+      },
+      {
+        "index": 110,
+        "name": "scalar-bits-7",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 13088587,
+          "denominator": 36864000000000,
+          "value": 3.5505064561631944e-07
+        },
+        "middle": {
+          "numerator": 46267573,
+          "denominator": 122880000000000,
+          "value": 3.7652647298177086e-07
+        },
+        "ratio": {
+          "numerator": 138802719,
+          "denominator": 130885870,
+          "value": 1.0604866591023157
+        },
+        "passed": false
+      },
+      {
+        "index": 111,
+        "name": "scalar-bits-8",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 129127993,
+          "denominator": 368640000000000,
+          "value": 3.502820990668403e-07
+        },
+        "middle": {
+          "numerator": 15040953,
+          "denominator": 40960000000000,
+          "value": 3.672107666015625e-07
+        },
+        "ratio": {
+          "numerator": 135368577,
+          "denominator": 129127993,
+          "value": 1.048328668749618
+        },
+        "passed": true
+      },
+      {
+        "index": 112,
+        "name": "scalar-bits-9",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 126809477,
+          "denominator": 368640000000000,
+          "value": 3.439927218967014e-07
+        },
+        "middle": {
+          "numerator": 26405339,
+          "denominator": 73728000000000,
+          "value": 3.5814533148871526e-07
+        },
+        "ratio": {
+          "numerator": 132026695,
+          "denominator": 126809477,
+          "value": 1.0411421774099738
+        },
+        "passed": true
+      },
+      {
+        "index": 113,
+        "name": "scalar-bits-10",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 8636873,
+          "denominator": 24576000000000,
+          "value": 3.5143526204427086e-07
+        },
+        "middle": {
+          "numerator": 44925727,
+          "denominator": 122880000000000,
+          "value": 3.6560650227864585e-07
+        },
+        "ratio": {
+          "numerator": 6417961,
+          "denominator": 6169195,
+          "value": 1.0403238996335826
+        },
+        "passed": true
+      },
+      {
+        "index": 114,
+        "name": "raw-bool-0",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 16497763,
+          "denominator": 73728000000000,
+          "value": 2.2376523166232638e-07
+        },
+        "middle": {
+          "numerator": 88125559,
+          "denominator": 368640000000000,
+          "value": 2.3905587836371526e-07
+        },
+        "ratio": {
+          "numerator": 88125559,
+          "denominator": 82488815,
+          "value": 1.0683334340540593
+        },
+        "passed": false
+      },
+      {
+        "index": 115,
+        "name": "raw-bool-1",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 82434919,
+          "denominator": 368640000000000,
+          "value": 2.2361902940538193e-07
+        },
+        "middle": {
+          "numerator": 28591669,
+          "denominator": 122880000000000,
+          "value": 2.3267959798177083e-07
+        },
+        "ratio": {
+          "numerator": 85775007,
+          "denominator": 82434919,
+          "value": 1.0405178781093969
+        },
+        "passed": true
+      },
+      {
+        "index": 116,
+        "name": "raw-bool-2",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 88146473,
+          "denominator": 368640000000000,
+          "value": 2.3911261121961804e-07
+        },
+        "middle": {
+          "numerator": 22631431,
+          "denominator": 92160000000000,
+          "value": 2.4556674262152777e-07
+        },
+        "ratio": {
+          "numerator": 90525724,
+          "denominator": 88146473,
+          "value": 1.026992015891549
+        },
+        "passed": true
+      },
+      {
+        "index": 117,
+        "name": "raw-bool-3",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 41671979,
+          "denominator": 184320000000000,
+          "value": 2.2608495551215278e-07
+        },
+        "middle": {
+          "numerator": 44433707,
+          "denominator": 184320000000000,
+          "value": 2.410682888454861e-07
+        },
+        "ratio": {
+          "numerator": 44433707,
+          "denominator": 41671979,
+          "value": 1.0662730224547292
+        },
+        "passed": false
+      },
+      {
+        "index": 118,
+        "name": "raw-bool-4",
+        "partition": "fallback74",
+        "outer": {
+          "numerator": 82435631,
+          "denominator": 368640000000000,
+          "value": 2.2362096082899305e-07
+        },
+        "middle": {
+          "numerator": 28581533,
+          "denominator": 122880000000000,
+          "value": 2.3259711100260416e-07
+        },
+        "ratio": {
+          "numerator": 85744599,
+          "denominator": 82435631,
+          "value": 1.040140021491435
+        },
+        "passed": true
+      },
+      {
+        "index": 119,
+        "name": "raw-bool-5",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 44055793,
+          "denominator": 184320000000000,
+          "value": 2.3901797417534724e-07
+        },
+        "middle": {
+          "numerator": 89692283,
+          "denominator": 368640000000000,
+          "value": 2.433058892144097e-07
+        },
+        "ratio": {
+          "numerator": 89692283,
+          "denominator": 88111586,
+          "value": 1.0179397179390233
+        },
+        "passed": true
+      },
+      {
+        "index": 120,
+        "name": "raw-bool-6",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 14445203,
+          "denominator": 61440000000000,
+          "value": 2.3511072591145833e-07
+        },
+        "middle": {
+          "numerator": 6399817,
+          "denominator": 24576000000000,
+          "value": 2.604092203776042e-07
+        },
+        "ratio": {
+          "numerator": 31999085,
+          "denominator": 28890406,
+          "value": 1.1076024684457533
+        },
+        "passed": false
+      },
+      {
+        "index": 121,
+        "name": "raw-bool-7",
+        "partition": "other_uniform42",
+        "outer": {
+          "numerator": 95120371,
+          "denominator": 368640000000000,
+          "value": 2.580305202907986e-07
+        },
+        "middle": {
+          "numerator": 92604413,
+          "denominator": 368640000000000,
+          "value": 2.512055474175347e-07
+        },
+        "ratio": {
+          "numerator": 92604413,
+          "denominator": 95120371,
+          "value": 0.9735497457216604
+        },
+        "passed": true
+      },
+      {
+        "index": 122,
+        "name": "boundary-4095-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 103683521,
+          "denominator": 5760000000000,
+          "value": 1.8000611284722223e-05
+        },
+        "middle": {
+          "numerator": 105829057,
+          "denominator": 5760000000000,
+          "value": 1.837310017361111e-05
+        },
+        "ratio": {
+          "numerator": 105829057,
+          "denominator": 103683521,
+          "value": 1.0206931244165598
+        },
+        "passed": true
+      },
+      {
+        "index": 123,
+        "name": "boundary-4095-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 96985777,
+          "denominator": 5760000000000,
+          "value": 1.6837808506944444e-05
+        },
+        "middle": {
+          "numerator": 9525127,
+          "denominator": 480000000000,
+          "value": 1.9844014583333332e-05
+        },
+        "ratio": {
+          "numerator": 114301524,
+          "denominator": 96985777,
+          "value": 1.1785390346462863
+        },
+        "passed": false
+      },
+      {
+        "index": 124,
+        "name": "boundary-4095-first",
+        "partition": "added98",
+        "outer": {
+          "numerator": 49150571,
+          "denominator": 2880000000000,
+          "value": 1.706617048611111e-05
+        },
+        "middle": {
+          "numerator": 25441469,
+          "denominator": 1440000000000,
+          "value": 1.7667686805555555e-05
+        },
+        "ratio": {
+          "numerator": 50882938,
+          "denominator": 49150571,
+          "value": 1.0352461215557394
+        },
+        "passed": true
+      },
+      {
+        "index": 125,
+        "name": "boundary-4095-last",
+        "partition": "added98",
+        "outer": {
+          "numerator": 10977969,
+          "denominator": 640000000000,
+          "value": 1.71530765625e-05
+        },
+        "middle": {
+          "numerator": 101089043,
+          "denominator": 5760000000000,
+          "value": 1.755018107638889e-05
+        },
+        "ratio": {
+          "numerator": 101089043,
+          "denominator": 98801721,
+          "value": 1.023150629127199
+        },
+        "passed": true
+      },
+      {
+        "index": 126,
+        "name": "boundary-4095-alternating",
+        "partition": "added98",
+        "outer": {
+          "numerator": 18435659,
+          "denominator": 960000000000,
+          "value": 1.9203811458333333e-05
+        },
+        "middle": {
+          "numerator": 18613249,
+          "denominator": 960000000000,
+          "value": 1.9388801041666668e-05
+        },
+        "ratio": {
+          "numerator": 18613249,
+          "denominator": 18435659,
+          "value": 1.009632961859405
+        },
+        "passed": true
+      },
+      {
+        "index": 127,
+        "name": "boundary-4096-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 98336231,
+          "denominator": 5760000000000,
+          "value": 1.7072262326388888e-05
+        },
+        "middle": {
+          "numerator": 100993019,
+          "denominator": 5760000000000,
+          "value": 1.7533510243055557e-05
+        },
+        "ratio": {
+          "numerator": 100993019,
+          "denominator": 98336231,
+          "value": 1.027017386907985
+        },
+        "passed": true
+      },
+      {
+        "index": 128,
+        "name": "boundary-4096-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 3130339,
+          "denominator": 192000000000,
+          "value": 1.6303848958333333e-05
+        },
+        "middle": {
+          "numerator": 24170303,
+          "denominator": 1440000000000,
+          "value": 1.6784932638888888e-05
+        },
+        "ratio": {
+          "numerator": 48340606,
+          "denominator": 46955085,
+          "value": 1.0295073685842544
+        },
+        "passed": true
+      },
+      {
+        "index": 129,
+        "name": "boundary-4096-first",
+        "partition": "added98",
+        "outer": {
+          "numerator": 24513199,
+          "denominator": 1440000000000,
+          "value": 1.702305486111111e-05
+        },
+        "middle": {
+          "numerator": 11218937,
+          "denominator": 640000000000,
+          "value": 1.75295890625e-05
+        },
+        "ratio": {
+          "numerator": 100970433,
+          "denominator": 98052796,
+          "value": 1.029755775653761
+        },
+        "passed": true
+      },
+      {
+        "index": 130,
+        "name": "boundary-4096-last",
+        "partition": "added98",
+        "outer": {
+          "numerator": 495911,
+          "denominator": 28800000000,
+          "value": 1.7219131944444444e-05
+        },
+        "middle": {
+          "numerator": 20102713,
+          "denominator": 1152000000000,
+          "value": 1.745027170138889e-05
+        },
+        "ratio": {
+          "numerator": 20102713,
+          "denominator": 19836440,
+          "value": 1.0134234267842415
+        },
+        "passed": true
+      },
+      {
+        "index": 131,
+        "name": "boundary-4096-alternating",
+        "partition": "added98",
+        "outer": {
+          "numerator": 99312011,
+          "denominator": 5760000000000,
+          "value": 1.724166857638889e-05
+        },
+        "middle": {
+          "numerator": 12330747,
+          "denominator": 640000000000,
+          "value": 1.92667921875e-05
+        },
+        "ratio": {
+          "numerator": 110976723,
+          "denominator": 99312011,
+          "value": 1.1174551988480024
+        },
+        "passed": false
+      },
+      {
+        "index": 132,
+        "name": "boundary-4097-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 46745501,
+          "denominator": 2700000000000,
+          "value": 1.731314851851852e-05
+        },
+        "middle": {
+          "numerator": 94427561,
+          "denominator": 5400000000000,
+          "value": 1.748658537037037e-05
+        },
+        "ratio": {
+          "numerator": 94427561,
+          "denominator": 93491002,
+          "value": 1.010017637847116
+        },
+        "passed": true
+      },
+      {
+        "index": 133,
+        "name": "boundary-4097-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 89478167,
+          "denominator": 5400000000000,
+          "value": 1.6570030925925926e-05
+        },
+        "middle": {
+          "numerator": 89961649,
+          "denominator": 5400000000000,
+          "value": 1.665956462962963e-05
+        },
+        "ratio": {
+          "numerator": 89961649,
+          "denominator": 89478167,
+          "value": 1.005403351635489
+        },
+        "passed": true
+      },
+      {
+        "index": 134,
+        "name": "boundary-4097-first",
+        "partition": "added98",
+        "outer": {
+          "numerator": 15575191,
+          "denominator": 900000000000,
+          "value": 1.7305767777777778e-05
+        },
+        "middle": {
+          "numerator": 4728089,
+          "denominator": 270000000000,
+          "value": 1.751144074074074e-05
+        },
+        "ratio": {
+          "numerator": 47280890,
+          "denominator": 46725573,
+          "value": 1.0118846482631685
+        },
+        "passed": true
+      },
+      {
+        "index": 135,
+        "name": "boundary-4097-last",
+        "partition": "added98",
+        "outer": {
+          "numerator": 46646537,
+          "denominator": 2700000000000,
+          "value": 1.7276495185185186e-05
+        },
+        "middle": {
+          "numerator": 94522577,
+          "denominator": 5400000000000,
+          "value": 1.7504180925925927e-05
+        },
+        "ratio": {
+          "numerator": 94522577,
+          "denominator": 93293074,
+          "value": 1.0131789311605275
+        },
+        "passed": true
+      },
+      {
+        "index": 136,
+        "name": "boundary-4097-alternating",
+        "partition": "added98",
+        "outer": {
+          "numerator": 92211803,
+          "denominator": 5400000000000,
+          "value": 1.7076259814814815e-05
+        },
+        "middle": {
+          "numerator": 2614609,
+          "denominator": 135000000000,
+          "value": 1.9367474074074074e-05
+        },
+        "ratio": {
+          "numerator": 104584360,
+          "denominator": 92211803,
+          "value": 1.134175415700309
+        },
+        "passed": false
+      },
+      {
+        "index": 137,
+        "name": "large-nonscalar-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 22388807,
+          "denominator": 1920000000000,
+          "value": 1.1660836979166667e-05
+        },
+        "middle": {
+          "numerator": 3385469,
+          "denominator": 288000000000,
+          "value": 1.1755100694444445e-05
+        },
+        "ratio": {
+          "numerator": 67709380,
+          "denominator": 67166421,
+          "value": 1.0080837863908216
+        },
+        "passed": true
+      },
+      {
+        "index": 138,
+        "name": "large-nonscalar-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 2519303,
+          "denominator": 230400000000,
+          "value": 1.0934474826388888e-05
+        },
+        "middle": {
+          "numerator": 1755203,
+          "denominator": 160000000000,
+          "value": 1.097001875e-05
+        },
+        "ratio": {
+          "numerator": 63187308,
+          "denominator": 62982575,
+          "value": 1.0032506292415004
+        },
+        "passed": true
+      },
+      {
+        "index": 139,
+        "name": "large-raw-bool-0",
+        "partition": "added98",
+        "outer": {
+          "numerator": 22505887,
+          "denominator": 640000000000,
+          "value": 3.51654484375e-05
+        },
+        "middle": {
+          "numerator": 11368183,
+          "denominator": 320000000000,
+          "value": 3.5525571875e-05
+        },
+        "ratio": {
+          "numerator": 22736366,
+          "denominator": 22505887,
+          "value": 1.0102408316544023
+        },
+        "passed": true
+      },
+      {
+        "index": 140,
+        "name": "large-raw-bool-1",
+        "partition": "added98",
+        "outer": {
+          "numerator": 50237603,
+          "denominator": 1440000000000,
+          "value": 3.4887224305555554e-05
+        },
+        "middle": {
+          "numerator": 201041353,
+          "denominator": 5760000000000,
+          "value": 3.490301267361111e-05
+        },
+        "ratio": {
+          "numerator": 201041353,
+          "denominator": 200950412,
+          "value": 1.0004525544341756
+        },
+        "passed": true
+      },
+      {
+        "index": 141,
+        "name": "large-raw-bool-2",
+        "partition": "added98",
+        "outer": {
+          "numerator": 201467047,
+          "denominator": 5760000000000,
+          "value": 3.497691788194445e-05
+        },
+        "middle": {
+          "numerator": 40250797,
+          "denominator": 1152000000000,
+          "value": 3.493992795138889e-05
+        },
+        "ratio": {
+          "numerator": 201253985,
+          "denominator": 201467047,
+          "value": 0.9989424473968689
+        },
+        "passed": true
+      },
+      {
+        "index": 142,
+        "name": "large-raw-bool-3",
+        "partition": "added98",
+        "outer": {
+          "numerator": 99552719,
+          "denominator": 2880000000000,
+          "value": 3.456691631944444e-05
+        },
+        "middle": {
+          "numerator": 66374059,
+          "denominator": 1920000000000,
+          "value": 3.456982239583333e-05
+        },
+        "ratio": {
+          "numerator": 199122177,
+          "denominator": 199105438,
+          "value": 1.0000840710337606
+        },
+        "passed": true
+      },
+      {
+        "index": 143,
+        "name": "large-raw-bool-4",
+        "partition": "added98",
+        "outer": {
+          "numerator": 200392753,
+          "denominator": 5760000000000,
+          "value": 3.479040850694444e-05
+        },
+        "middle": {
+          "numerator": 201239779,
+          "denominator": 5760000000000,
+          "value": 3.493746163194444e-05
+        },
+        "ratio": {
+          "numerator": 201239779,
+          "denominator": 200392753,
+          "value": 1.0042268295001666
+        },
+        "passed": true
+      },
+      {
+        "index": 144,
+        "name": "large-raw-bool-5",
+        "partition": "added98",
+        "outer": {
+          "numerator": 22413879,
+          "denominator": 640000000000,
+          "value": 3.50216859375e-05
+        },
+        "middle": {
+          "numerator": 201734867,
+          "denominator": 5760000000000,
+          "value": 3.502341440972222e-05
+        },
+        "ratio": {
+          "numerator": 201734867,
+          "denominator": 201724911,
+          "value": 1.0000493543407736
+        },
+        "passed": true
+      },
+      {
+        "index": 145,
+        "name": "large-raw-bool-6",
+        "partition": "added98",
+        "outer": {
+          "numerator": 33257561,
+          "denominator": 960000000000,
+          "value": 3.4643292708333334e-05
+        },
+        "middle": {
+          "numerator": 199092277,
+          "denominator": 5760000000000,
+          "value": 3.4564631423611113e-05
+        },
+        "ratio": {
+          "numerator": 199092277,
+          "denominator": 199545366,
+          "value": 0.9977293935254803
+        },
+        "passed": true
+      },
+      {
+        "index": 146,
+        "name": "large-raw-bool-7",
+        "partition": "added98",
+        "outer": {
+          "numerator": 199709273,
+          "denominator": 5760000000000,
+          "value": 3.467174878472222e-05
+        },
+        "middle": {
+          "numerator": 66304783,
+          "denominator": 1920000000000,
+          "value": 3.4533741145833334e-05
+        },
+        "ratio": {
+          "numerator": 198914349,
+          "denominator": 199709273,
+          "value": 0.9960195939424406
+        },
+        "passed": true
+      },
+      {
+        "index": 147,
+        "name": "large-offset-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 34750577,
+          "denominator": 1440000000000,
+          "value": 2.413234513888889e-05
+        },
+        "middle": {
+          "numerator": 8661689,
+          "denominator": 360000000000,
+          "value": 2.4060247222222223e-05
+        },
+        "ratio": {
+          "numerator": 34646756,
+          "denominator": 34750577,
+          "value": 0.9970123949308813
+        },
+        "passed": true
+      },
+      {
+        "index": 148,
+        "name": "large-offset-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 22533413,
+          "denominator": 480000000000,
+          "value": 4.6944610416666666e-05
+        },
+        "middle": {
+          "numerator": 7454979,
+          "denominator": 160000000000,
+          "value": 4.659361875e-05
+        },
+        "ratio": {
+          "numerator": 3194991,
+          "denominator": 3219059,
+          "value": 0.9925232808718324
+        },
+        "passed": true
+      },
+      {
+        "index": 149,
+        "name": "large-condition-custom-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 16438071,
+          "denominator": 320000000000,
+          "value": 5.1368971875e-05
+        },
+        "middle": {
+          "numerator": 36806627,
+          "denominator": 720000000000,
+          "value": 5.112031527777778e-05
+        },
+        "ratio": {
+          "numerator": 11325116,
+          "denominator": 11380203,
+          "value": 0.9951594009351151
+        },
+        "passed": true
+      },
+      {
+        "index": 150,
+        "name": "large-condition-custom-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 43353343,
+          "denominator": 1440000000000,
+          "value": 3.0106488194444444e-05
+        },
+        "middle": {
+          "numerator": 41948321,
+          "denominator": 1440000000000,
+          "value": 2.9130778472222222e-05
+        },
+        "ratio": {
+          "numerator": 41948321,
+          "denominator": 43353343,
+          "value": 0.9675913804386435
+        },
+        "passed": true
+      },
+      {
+        "index": 151,
+        "name": "large-x-custom-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 69067987,
+          "denominator": 2880000000000,
+          "value": 2.3981939930555554e-05
+        },
+        "middle": {
+          "numerator": 17307691,
+          "denominator": 720000000000,
+          "value": 2.4038459722222224e-05
+        },
+        "ratio": {
+          "numerator": 69230764,
+          "denominator": 69067987,
+          "value": 1.0023567647917695
+        },
+        "passed": true
+      },
+      {
+        "index": 152,
+        "name": "large-x-custom-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 68884097,
+          "denominator": 1440000000000,
+          "value": 4.7836178472222224e-05
+        },
+        "middle": {
+          "numerator": 7642031,
+          "denominator": 160000000000,
+          "value": 4.776269375e-05
+        },
+        "ratio": {
+          "numerator": 68778279,
+          "denominator": 68884097,
+          "value": 0.9984638254022551
+        },
+        "passed": true
+      },
+      {
+        "index": 153,
+        "name": "large-y-custom-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 18423679,
+          "denominator": 576000000000,
+          "value": 3.1985553819444446e-05
+        },
+        "middle": {
+          "numerator": 97282289,
+          "denominator": 2880000000000,
+          "value": 3.377857256944445e-05
+        },
+        "ratio": {
+          "numerator": 97282289,
+          "denominator": 92118395,
+          "value": 1.0560571425500846
+        },
+        "passed": false
+      },
+      {
+        "index": 154,
+        "name": "large-y-custom-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 27070943,
+          "denominator": 576000000000,
+          "value": 4.6998164930555554e-05
+        },
+        "middle": {
+          "numerator": 45109129,
+          "denominator": 960000000000,
+          "value": 4.698867604166667e-05
+        },
+        "ratio": {
+          "numerator": 135327387,
+          "denominator": 135354715,
+          "value": 0.9997981008640888
+        },
+        "passed": true
+      },
+      {
+        "index": 155,
+        "name": "large-condition-reverse-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 69854233,
+          "denominator": 2880000000000,
+          "value": 2.425494201388889e-05
+        },
+        "middle": {
+          "numerator": 17440741,
+          "denominator": 720000000000,
+          "value": 2.4223251388888887e-05
+        },
+        "ratio": {
+          "numerator": 69762964,
+          "denominator": 69854233,
+          "value": 0.9986934363734263
+        },
+        "passed": true
+      },
+      {
+        "index": 156,
+        "name": "large-condition-reverse-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 67613333,
+          "denominator": 1440000000000,
+          "value": 4.695370347222222e-05
+        },
+        "middle": {
+          "numerator": 135152587,
+          "denominator": 2880000000000,
+          "value": 4.692798159722222e-05
+        },
+        "ratio": {
+          "numerator": 135152587,
+          "denominator": 135226666,
+          "value": 0.9994521864496756
+        },
+        "passed": true
+      },
+      {
+        "index": 157,
+        "name": "large-x-reverse-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 34566167,
+          "denominator": 1440000000000,
+          "value": 2.400428263888889e-05
+        },
+        "middle": {
+          "numerator": 17378831,
+          "denominator": 720000000000,
+          "value": 2.4137265277777778e-05
+        },
+        "ratio": {
+          "numerator": 34757662,
+          "denominator": 34566167,
+          "value": 1.005539954719307
+        },
+        "passed": true
+      },
+      {
+        "index": 158,
+        "name": "large-x-reverse-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 22426811,
+          "denominator": 480000000000,
+          "value": 4.6722522916666664e-05
+        },
+        "middle": {
+          "numerator": 67267043,
+          "denominator": 1440000000000,
+          "value": 4.671322430555555e-05
+        },
+        "ratio": {
+          "numerator": 67267043,
+          "denominator": 67280433,
+          "value": 0.9998009822558663
+        },
+        "passed": true
+      },
+      {
+        "index": 159,
+        "name": "large-y-reverse-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 69155429,
+          "denominator": 2880000000000,
+          "value": 2.401230173611111e-05
+        },
+        "middle": {
+          "numerator": 11538517,
+          "denominator": 480000000000,
+          "value": 2.4038577083333332e-05
+        },
+        "ratio": {
+          "numerator": 69231102,
+          "denominator": 69155429,
+          "value": 1.001094245254411
+        },
+        "passed": true
+      },
+      {
+        "index": 160,
+        "name": "large-y-reverse-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 705221,
+          "denominator": 15000000000,
+          "value": 4.7014733333333336e-05
+        },
+        "middle": {
+          "numerator": 134728631,
+          "denominator": 2880000000000,
+          "value": 4.678077465277778e-05
+        },
+        "ratio": {
+          "numerator": 134728631,
+          "denominator": 135402432,
+          "value": 0.9950237156744718
+        },
+        "passed": true
+      },
+      {
+        "index": 161,
+        "name": "large-condition-view-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 256912267,
+          "denominator": 2880000000000,
+          "value": 8.920564826388888e-05
+        },
+        "middle": {
+          "numerator": 10691693,
+          "denominator": 120000000000,
+          "value": 8.909744166666666e-05
+        },
+        "ratio": {
+          "numerator": 256600632,
+          "denominator": 256912267,
+          "value": 0.9987869983646985
+        },
+        "passed": true
+      },
+      {
+        "index": 162,
+        "name": "large-condition-view-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 321841787,
+          "denominator": 2880000000000,
+          "value": 0.0001117506204861111
+        },
+        "middle": {
+          "numerator": 80379173,
+          "denominator": 720000000000,
+          "value": 0.00011163774027777777
+        },
+        "ratio": {
+          "numerator": 321516692,
+          "denominator": 321841787,
+          "value": 0.9989898918874696
+        },
+        "passed": true
+      },
+      {
+        "index": 163,
+        "name": "large-x-view-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 11606723,
+          "denominator": 480000000000,
+          "value": 2.4180672916666666e-05
+        },
+        "middle": {
+          "numerator": 5761937,
+          "denominator": 240000000000,
+          "value": 2.4008070833333334e-05
+        },
+        "ratio": {
+          "numerator": 11523874,
+          "denominator": 11606723,
+          "value": 0.9928619818014094
+        },
+        "passed": true
+      },
+      {
+        "index": 164,
+        "name": "large-x-view-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 16943381,
+          "denominator": 360000000000,
+          "value": 4.7064947222222224e-05
+        },
+        "middle": {
+          "numerator": 5652341,
+          "denominator": 120000000000,
+          "value": 4.7102841666666664e-05
+        },
+        "ratio": {
+          "numerator": 16957023,
+          "denominator": 16943381,
+          "value": 1.0008051521712225
+        },
+        "passed": true
+      },
+      {
+        "index": 165,
+        "name": "large-y-view-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 92488939,
+          "denominator": 960000000000,
+          "value": 9.634264479166667e-05
+        },
+        "middle": {
+          "numerator": 53697883,
+          "denominator": 576000000000,
+          "value": 9.322549131944444e-05
+        },
+        "ratio": {
+          "numerator": 268489415,
+          "denominator": 277466817,
+          "value": 0.9676451328592565
+        },
+        "passed": true
+      },
+      {
+        "index": 166,
+        "name": "large-y-view-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 15026437,
+          "denominator": 320000000000,
+          "value": 4.6957615625e-05
+        },
+        "middle": {
+          "numerator": 16851023,
+          "denominator": 360000000000,
+          "value": 4.680839722222222e-05
+        },
+        "ratio": {
+          "numerator": 134808184,
+          "denominator": 135237933,
+          "value": 0.9968222747089753
+        },
+        "passed": true
+      },
+      {
+        "index": 167,
+        "name": "large-condition-broadcast-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 121722373,
+          "denominator": 2880000000000,
+          "value": 4.2264712847222223e-05
+        },
+        "middle": {
+          "numerator": 9721847,
+          "denominator": 240000000000,
+          "value": 4.050769583333333e-05
+        },
+        "ratio": {
+          "numerator": 116662164,
+          "denominator": 121722373,
+          "value": 0.9584282751372256
+        },
+        "passed": true
+      },
+      {
+        "index": 168,
+        "name": "large-condition-broadcast-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 185919467,
+          "denominator": 2880000000000,
+          "value": 6.455537048611112e-05
+        },
+        "middle": {
+          "numerator": 18583837,
+          "denominator": 288000000000,
+          "value": 6.452721180555556e-05
+        },
+        "ratio": {
+          "numerator": 185838370,
+          "denominator": 185919467,
+          "value": 0.9995638057632771
+        },
+        "passed": true
+      },
+      {
+        "index": 169,
+        "name": "large-alias-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 23806357,
+          "denominator": 960000000000,
+          "value": 2.4798288541666667e-05
+        },
+        "middle": {
+          "numerator": 37009777,
+          "denominator": 1440000000000,
+          "value": 2.5701234027777778e-05
+        },
+        "ratio": {
+          "numerator": 74019554,
+          "denominator": 71419071,
+          "value": 1.0364116049619296
+        },
+        "passed": true
+      },
+      {
+        "index": 170,
+        "name": "large-alias-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 33786643,
+          "denominator": 720000000000,
+          "value": 4.6925893055555554e-05
+        },
+        "middle": {
+          "numerator": 137243479,
+          "denominator": 2880000000000,
+          "value": 4.765398576388889e-05
+        },
+        "ratio": {
+          "numerator": 137243479,
+          "denominator": 135146572,
+          "value": 1.0155157986545156
+        },
+        "passed": true
+      },
+      {
+        "index": 171,
+        "name": "large-rank9-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 13087,
+          "denominator": 703125000,
+          "value": 1.8612622222222223e-05
+        },
+        "middle": {
+          "numerator": 106273859,
+          "denominator": 5760000000000,
+          "value": 1.8450322743055555e-05
+        },
+        "ratio": {
+          "numerator": 106273859,
+          "denominator": 107208704,
+          "value": 0.9912801389708059
+        },
+        "passed": true
+      },
+      {
+        "index": 172,
+        "name": "large-rank9-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 1264471,
+          "denominator": 72000000000,
+          "value": 1.7562097222222222e-05
+        },
+        "middle": {
+          "numerator": 100198253,
+          "denominator": 5760000000000,
+          "value": 1.7395530034722224e-05
+        },
+        "ratio": {
+          "numerator": 100198253,
+          "denominator": 101157680,
+          "value": 0.9905155298144441
+        },
+        "passed": true
+      },
+      {
+        "index": 173,
+        "name": "large-condition-outranks-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 10084073,
+          "denominator": 576000000000,
+          "value": 1.7507071180555557e-05
+        },
+        "middle": {
+          "numerator": 101031067,
+          "denominator": 5760000000000,
+          "value": 1.7540115798611112e-05
+        },
+        "ratio": {
+          "numerator": 101031067,
+          "denominator": 100840730,
+          "value": 1.0018875012110682
+        },
+        "passed": true
+      },
+      {
+        "index": 174,
+        "name": "large-condition-outranks-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 10733637,
+          "denominator": 640000000000,
+          "value": 1.67713078125e-05
+        },
+        "middle": {
+          "numerator": 48358087,
+          "denominator": 2880000000000,
+          "value": 1.6791002430555556e-05
+        },
+        "ratio": {
+          "numerator": 96716174,
+          "denominator": 96602733,
+          "value": 1.0011743042507917
+        },
+        "passed": true
+      },
+      {
+        "index": 175,
+        "name": "large-x-outranks-false",
+        "partition": "added98",
+        "outer": {
+          "numerator": 252915083,
+          "denominator": 5760000000000,
+          "value": 4.3908868576388887e-05
+        },
+        "middle": {
+          "numerator": 7899043,
+          "denominator": 180000000000,
+          "value": 4.388357222222222e-05
+        },
+        "ratio": {
+          "numerator": 252769376,
+          "denominator": 252915083,
+          "value": 0.9994238896380885
+        },
+        "passed": true
+      },
+      {
+        "index": 176,
+        "name": "large-x-outranks-true",
+        "partition": "added98",
+        "outer": {
+          "numerator": 50518367,
+          "denominator": 1152000000000,
+          "value": 4.3852749131944445e-05
+        },
+        "middle": {
+          "numerator": 16850357,
+          "denominator": 384000000000,
+          "value": 4.388113802083333e-05
+        },
+        "ratio": {
+          "numerator": 50551071,
+          "denominator": 50518367,
+          "value": 1.000647368510546
+        },
+        "passed": true
+      },
+      {
+        "index": 177,
+        "name": "large-scalar-bits-0",
+        "partition": "added98",
+        "outer": {
+          "numerator": 31877089,
+          "denominator": 1920000000000,
+          "value": 1.6602650520833332e-05
+        },
+        "middle": {
+          "numerator": 3196829,
+          "denominator": 192000000000,
+          "value": 1.6650151041666667e-05
+        },
+        "ratio": {
+          "numerator": 31968290,
+          "denominator": 31877089,
+          "value": 1.002861020339718
+        },
+        "passed": true
+      },
+      {
+        "index": 178,
+        "name": "large-scalar-bits-1",
+        "partition": "added98",
+        "outer": {
+          "numerator": 47420353,
+          "denominator": 2880000000000,
+          "value": 1.6465400347222224e-05
+        },
+        "middle": {
+          "numerator": 9552313,
+          "denominator": 576000000000,
+          "value": 1.658387673611111e-05
+        },
+        "ratio": {
+          "numerator": 47761565,
+          "denominator": 47420353,
+          "value": 1.0071954757485673
+        },
+        "passed": true
+      },
+      {
+        "index": 179,
+        "name": "large-scalar-bits-2",
+        "partition": "added98",
+        "outer": {
+          "numerator": 57588077,
+          "denominator": 2880000000000,
+          "value": 1.9995860069444443e-05
+        },
+        "middle": {
+          "numerator": 47868971,
+          "denominator": 2880000000000,
+          "value": 1.662117048611111e-05
+        },
+        "ratio": {
+          "numerator": 47868971,
+          "denominator": 57588077,
+          "value": 0.8312305861506715
+        },
+        "passed": false
+      },
+      {
+        "index": 180,
+        "name": "large-scalar-bits-3",
+        "partition": "added98",
+        "outer": {
+          "numerator": 23857729,
+          "denominator": 1440000000000,
+          "value": 1.6567867361111112e-05
+        },
+        "middle": {
+          "numerator": 95685641,
+          "denominator": 5760000000000,
+          "value": 1.6612090451388888e-05
+        },
+        "ratio": {
+          "numerator": 95685641,
+          "denominator": 95430916,
+          "value": 1.002669208372683
+        },
+        "passed": true
+      },
+      {
+        "index": 181,
+        "name": "large-scalar-bits-4",
+        "partition": "added98",
+        "outer": {
+          "numerator": 9508039,
+          "denominator": 576000000000,
+          "value": 1.6507012152777777e-05
+        },
+        "middle": {
+          "numerator": 48063863,
+          "denominator": 2880000000000,
+          "value": 1.6688841319444443e-05
+        },
+        "ratio": {
+          "numerator": 48063863,
+          "denominator": 47540195,
+          "value": 1.0110152682377513
+        },
+        "passed": true
+      },
+      {
+        "index": 182,
+        "name": "large-scalar-bits-5",
+        "partition": "added98",
+        "outer": {
+          "numerator": 97472171,
+          "denominator": 5760000000000,
+          "value": 1.6922251909722223e-05
+        },
+        "middle": {
+          "numerator": 496903,
+          "denominator": 28800000000,
+          "value": 1.725357638888889e-05
+        },
+        "ratio": {
+          "numerator": 99380600,
+          "denominator": 97472171,
+          "value": 1.019579219180416
+        },
+        "passed": true
+      },
+      {
+        "index": 183,
+        "name": "large-scalar-bits-6",
+        "partition": "added98",
+        "outer": {
+          "numerator": 96214741,
+          "denominator": 5760000000000,
+          "value": 1.6703948090277777e-05
+        },
+        "middle": {
+          "numerator": 96646679,
+          "denominator": 5760000000000,
+          "value": 1.677893732638889e-05
+        },
+        "ratio": {
+          "numerator": 96646679,
+          "denominator": 96214741,
+          "value": 1.0044893120899219
+        },
+        "passed": true
+      },
+      {
+        "index": 184,
+        "name": "large-scalar-bits-7",
+        "partition": "added98",
+        "outer": {
+          "numerator": 16009343,
+          "denominator": 960000000000,
+          "value": 1.6676398958333334e-05
+        },
+        "middle": {
+          "numerator": 96840823,
+          "denominator": 5760000000000,
+          "value": 1.6812642881944444e-05
+        },
+        "ratio": {
+          "numerator": 96840823,
+          "denominator": 96056058,
+          "value": 1.0081698647262831
+        },
+        "passed": true
+      },
+      {
+        "index": 185,
+        "name": "large-scalar-bits-8",
+        "partition": "added98",
+        "outer": {
+          "numerator": 31748531,
+          "denominator": 1920000000000,
+          "value": 1.6535693229166667e-05
+        },
+        "middle": {
+          "numerator": 47804563,
+          "denominator": 2880000000000,
+          "value": 1.6598806597222224e-05
+        },
+        "ratio": {
+          "numerator": 95609126,
+          "denominator": 95245593,
+          "value": 1.0038167960170084
+        },
+        "passed": true
+      },
+      {
+        "index": 186,
+        "name": "large-scalar-bits-9",
+        "partition": "added98",
+        "outer": {
+          "numerator": 7945121,
+          "denominator": 480000000000,
+          "value": 1.6552335416666667e-05
+        },
+        "middle": {
+          "numerator": 7986073,
+          "denominator": 480000000000,
+          "value": 1.6637652083333334e-05
+        },
+        "ratio": {
+          "numerator": 7986073,
+          "denominator": 7945121,
+          "value": 1.005154358253323
+        },
+        "passed": true
+      },
+      {
+        "index": 187,
+        "name": "large-scalar-bits-10",
+        "partition": "added98",
+        "outer": {
+          "numerator": 95984447,
+          "denominator": 5760000000000,
+          "value": 1.6663966493055556e-05
+        },
+        "middle": {
+          "numerator": 48148081,
+          "denominator": 2880000000000,
+          "value": 1.6718083680555556e-05
+        },
+        "ratio": {
+          "numerator": 96296162,
+          "denominator": 95984447,
+          "value": 1.0032475573881257
+        },
+        "passed": true
+      },
+      {
+        "index": 188,
+        "name": "run-rank1-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 99537107,
+          "denominator": 5760000000000,
+          "value": 1.7280747743055554e-05
+        },
+        "middle": {
+          "numerator": 20110901,
+          "denominator": 1152000000000,
+          "value": 1.745737934027778e-05
+        },
+        "ratio": {
+          "numerator": 100554505,
+          "denominator": 99537107,
+          "value": 1.0102212936528283
+        },
+        "passed": true
+      },
+      {
+        "index": 189,
+        "name": "run-rank1-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 147831557,
+          "denominator": 5760000000000,
+          "value": 2.5665200868055556e-05
+        },
+        "middle": {
+          "numerator": 4940623,
+          "denominator": 192000000000,
+          "value": 2.5732411458333334e-05
+        },
+        "ratio": {
+          "numerator": 148218690,
+          "denominator": 147831557,
+          "value": 1.0026187439803533
+        },
+        "passed": true
+      },
+      {
+        "index": 190,
+        "name": "run-rank1-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 48974111,
+          "denominator": 2880000000000,
+          "value": 1.7004899652777777e-05
+        },
+        "middle": {
+          "numerator": 22025299,
+          "denominator": 1152000000000,
+          "value": 1.9119183159722223e-05
+        },
+        "ratio": {
+          "numerator": 110126495,
+          "denominator": 97948222,
+          "value": 1.1243337832104803
+        },
+        "passed": false
+      },
+      {
+        "index": 191,
+        "name": "run-rank1-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 148214071,
+          "denominator": 5760000000000,
+          "value": 2.573160954861111e-05
+        },
+        "middle": {
+          "numerator": 148673021,
+          "denominator": 5760000000000,
+          "value": 2.5811288368055557e-05
+        },
+        "ratio": {
+          "numerator": 148673021,
+          "denominator": 148214071,
+          "value": 1.0030965346063532
+        },
+        "passed": true
+      },
+      {
+        "index": 192,
+        "name": "run-rank2-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 100133789,
+          "denominator": 5760000000000,
+          "value": 1.7384338368055554e-05
+        },
+        "middle": {
+          "numerator": 3989359,
+          "denominator": 230400000000,
+          "value": 1.7314926215277778e-05
+        },
+        "ratio": {
+          "numerator": 99733975,
+          "denominator": 100133789,
+          "value": 0.9960072019246171
+        },
+        "passed": true
+      },
+      {
+        "index": 193,
+        "name": "run-rank2-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 201337831,
+          "denominator": 5760000000000,
+          "value": 3.495448454861111e-05
+        },
+        "middle": {
+          "numerator": 67721839,
+          "denominator": 1920000000000,
+          "value": 3.5271791145833336e-05
+        },
+        "ratio": {
+          "numerator": 203165517,
+          "denominator": 201337831,
+          "value": 1.0090777078054447
+        },
+        "passed": true
+      },
+      {
+        "index": 194,
+        "name": "run-rank2-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 50520151,
+          "denominator": 1440000000000,
+          "value": 3.5083438194444444e-05
+        },
+        "middle": {
+          "numerator": 6321179,
+          "denominator": 180000000000,
+          "value": 3.511766111111111e-05
+        },
+        "ratio": {
+          "numerator": 50569432,
+          "denominator": 50520151,
+          "value": 1.000975472143779
+        },
+        "passed": true
+      },
+      {
+        "index": 195,
+        "name": "run-rank2-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 13429913,
+          "denominator": 384000000000,
+          "value": 3.497373177083333e-05
+        },
+        "middle": {
+          "numerator": 33420247,
+          "denominator": 960000000000,
+          "value": 3.481275729166667e-05
+        },
+        "ratio": {
+          "numerator": 9548642,
+          "denominator": 9592795,
+          "value": 0.995397274725458
+        },
+        "passed": true
+      },
+      {
+        "index": 196,
+        "name": "run-rank3-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 100039669,
+          "denominator": 5760000000000,
+          "value": 1.736799809027778e-05
+        },
+        "middle": {
+          "numerator": 16716217,
+          "denominator": 960000000000,
+          "value": 1.7412726041666667e-05
+        },
+        "ratio": {
+          "numerator": 100297302,
+          "denominator": 100039669,
+          "value": 1.0025753084009104
+        },
+        "passed": true
+      },
+      {
+        "index": 197,
+        "name": "run-rank3-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 23479151,
+          "denominator": 480000000000,
+          "value": 4.8914897916666665e-05
+        },
+        "middle": {
+          "numerator": 141627479,
+          "denominator": 2880000000000,
+          "value": 4.917620798611111e-05
+        },
+        "ratio": {
+          "numerator": 141627479,
+          "denominator": 140874906,
+          "value": 1.0053421366613016
+        },
+        "passed": true
+      },
+      {
+        "index": 198,
+        "name": "run-rank3-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 35127223,
+          "denominator": 720000000000,
+          "value": 4.878780972222222e-05
+        },
+        "middle": {
+          "numerator": 46803953,
+          "denominator": 960000000000,
+          "value": 4.8754117708333336e-05
+        },
+        "ratio": {
+          "numerator": 140411859,
+          "denominator": 140508892,
+          "value": 0.9993094173712508
+        },
+        "passed": true
+      },
+      {
+        "index": 199,
+        "name": "run-rank3-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 27947917,
+          "denominator": 576000000000,
+          "value": 4.852068923611111e-05
+        },
+        "middle": {
+          "numerator": 55944071,
+          "denominator": 1152000000000,
+          "value": 4.856256163194444e-05
+        },
+        "ratio": {
+          "numerator": 55944071,
+          "denominator": 55895834,
+          "value": 1.0008629802357005
+        },
+        "passed": true
+      },
+      {
+        "index": 200,
+        "name": "run-rank4-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 4112579,
+          "denominator": 120000000000,
+          "value": 3.427149166666667e-05
+        },
+        "middle": {
+          "numerator": 49177943,
+          "denominator": 1440000000000,
+          "value": 3.4151349305555555e-05
+        },
+        "ratio": {
+          "numerator": 49177943,
+          "denominator": 49350948,
+          "value": 0.9964943935828751
+        },
+        "passed": true
+      },
+      {
+        "index": 201,
+        "name": "run-rank4-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 17500747,
+          "denominator": 144000000000,
+          "value": 0.00012153296527777778
+        },
+        "middle": {
+          "numerator": 116359009,
+          "denominator": 960000000000,
+          "value": 0.00012120730104166667
+        },
+        "ratio": {
+          "numerator": 349077027,
+          "denominator": 350014940,
+          "value": 0.9973203629536499
+        },
+        "passed": true
+      },
+      {
+        "index": 202,
+        "name": "run-rank4-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 35086687,
+          "denominator": 288000000000,
+          "value": 0.00012182877430555556
+        },
+        "middle": {
+          "numerator": 350564869,
+          "denominator": 2880000000000,
+          "value": 0.00012172391284722222
+        },
+        "ratio": {
+          "numerator": 350564869,
+          "denominator": 350866870,
+          "value": 0.9991392718269468
+        },
+        "passed": true
+      },
+      {
+        "index": 203,
+        "name": "run-rank4-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 58306639,
+          "denominator": 480000000000,
+          "value": 0.00012147216458333334
+        },
+        "middle": {
+          "numerator": 349259473,
+          "denominator": 2880000000000,
+          "value": 0.00012127065034722222
+        },
+        "ratio": {
+          "numerator": 349259473,
+          "denominator": 349839834,
+          "value": 0.9983410665579038
+        },
+        "passed": true
+      },
+      {
+        "index": 204,
+        "name": "run-rank5-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 19712819,
+          "denominator": 576000000000,
+          "value": 3.422364409722222e-05
+        },
+        "middle": {
+          "numerator": 96495337,
+          "denominator": 2880000000000,
+          "value": 3.3505325347222225e-05
+        },
+        "ratio": {
+          "numerator": 96495337,
+          "denominator": 98564095,
+          "value": 0.9790110384516796
+        },
+        "passed": true
+      },
+      {
+        "index": 205,
+        "name": "run-rank5-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 85852291,
+          "denominator": 576000000000,
+          "value": 0.00014904911631944445
+        },
+        "middle": {
+          "numerator": 53391019,
+          "denominator": 360000000000,
+          "value": 0.00014830838611111112
+        },
+        "ratio": {
+          "numerator": 427128152,
+          "denominator": 429261455,
+          "value": 0.9950302945322682
+        },
+        "passed": true
+      },
+      {
+        "index": 206,
+        "name": "run-rank5-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 430217453,
+          "denominator": 2880000000000,
+          "value": 0.00014938106006944445
+        },
+        "middle": {
+          "numerator": 142714333,
+          "denominator": 960000000000,
+          "value": 0.00014866076354166666
+        },
+        "ratio": {
+          "numerator": 428142999,
+          "denominator": 430217453,
+          "value": 0.9951781268157895
+        },
+        "passed": true
+      },
+      {
+        "index": 207,
+        "name": "run-rank5-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 85715237,
+          "denominator": 576000000000,
+          "value": 0.00014881117534722222
+        },
+        "middle": {
+          "numerator": 213867071,
+          "denominator": 1440000000000,
+          "value": 0.00014851879930555554
+        },
+        "ratio": {
+          "numerator": 427734142,
+          "denominator": 428576185,
+          "value": 0.9980352548053971
+        },
+        "passed": true
+      },
+      {
+        "index": 208,
+        "name": "run-rank6-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 8158001,
+          "denominator": 120000000000,
+          "value": 6.798334166666667e-05
+        },
+        "middle": {
+          "numerator": 19349401,
+          "denominator": 288000000000,
+          "value": 6.718542013888889e-05
+        },
+        "ratio": {
+          "numerator": 96747005,
+          "denominator": 97896012,
+          "value": 0.988262984604521
+        },
+        "passed": true
+      },
+      {
+        "index": 209,
+        "name": "run-rank6-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 42457009,
+          "denominator": 120000000000,
+          "value": 0.00035380840833333334
+        },
+        "middle": {
+          "numerator": 253571683,
+          "denominator": 720000000000,
+          "value": 0.00035218289305555554
+        },
+        "ratio": {
+          "numerator": 253571683,
+          "denominator": 254742054,
+          "value": 0.9954056623881976
+        },
+        "passed": true
+      },
+      {
+        "index": 210,
+        "name": "run-rank6-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 84715871,
+          "denominator": 240000000000,
+          "value": 0.0003529827958333333
+        },
+        "middle": {
+          "numerator": 10584641,
+          "denominator": 30000000000,
+          "value": 0.00035282136666666666
+        },
+        "ratio": {
+          "numerator": 84677128,
+          "denominator": 84715871,
+          "value": 0.9995426712900113
+        },
+        "passed": true
+      },
+      {
+        "index": 211,
+        "name": "run-rank6-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 508300087,
+          "denominator": 1440000000000,
+          "value": 0.0003529861715277778
+        },
+        "middle": {
+          "numerator": 508742593,
+          "denominator": 1440000000000,
+          "value": 0.0003532934673611111
+        },
+        "ratio": {
+          "numerator": 508742593,
+          "denominator": 508300087,
+          "value": 1.0008705605435004
+        },
+        "passed": true
+      },
+      {
+        "index": 212,
+        "name": "run-rank7-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 32232517,
+          "denominator": 480000000000,
+          "value": 6.715107708333334e-05
+        },
+        "middle": {
+          "numerator": 19491559,
+          "denominator": 288000000000,
+          "value": 6.767902430555556e-05
+        },
+        "ratio": {
+          "numerator": 97457795,
+          "denominator": 96697551,
+          "value": 1.0078620812227188
+        },
+        "passed": true
+      },
+      {
+        "index": 213,
+        "name": "run-rank7-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 203277911,
+          "denominator": 480000000000,
+          "value": 0.0004234956479166667
+        },
+        "middle": {
+          "numerator": 609737017,
+          "denominator": 1440000000000,
+          "value": 0.00042342848402777776
+        },
+        "ratio": {
+          "numerator": 609737017,
+          "denominator": 609833733,
+          "value": 0.9998414059525303
+        },
+        "passed": true
+      },
+      {
+        "index": 214,
+        "name": "run-rank7-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 607419929,
+          "denominator": 1440000000000,
+          "value": 0.0004218193951388889
+        },
+        "middle": {
+          "numerator": 608412389,
+          "denominator": 1440000000000,
+          "value": 0.0004225086034722222
+        },
+        "ratio": {
+          "numerator": 608412389,
+          "denominator": 607419929,
+          "value": 1.001633894366347
+        },
+        "passed": true
+      },
+      {
+        "index": 215,
+        "name": "run-rank7-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 76705733,
+          "denominator": 180000000000,
+          "value": 0.0004261429611111111
+        },
+        "middle": {
+          "numerator": 6164693,
+          "denominator": 14400000000,
+          "value": 0.00042810368055555553
+        },
+        "ratio": {
+          "numerator": 154117325,
+          "denominator": 153411466,
+          "value": 1.0046010837286439
+        },
+        "passed": true
+      },
+      {
+        "index": 216,
+        "name": "run-rank8-full",
+        "partition": "added98",
+        "outer": {
+          "numerator": 11640547,
+          "denominator": 60000000000,
+          "value": 0.00019400911666666668
+        },
+        "middle": {
+          "numerator": 20184853,
+          "denominator": 90000000000,
+          "value": 0.00022427614444444445
+        },
+        "ratio": {
+          "numerator": 40369706,
+          "denominator": 34921641,
+          "value": 1.1560082757852073
+        },
+        "passed": false
+      },
+      {
+        "index": 217,
+        "name": "run-rank8-last-scalar",
+        "partition": "added98",
+        "outer": {
+          "numerator": 746926597,
+          "denominator": 720000000000,
+          "value": 0.001037398051388889
+        },
+        "middle": {
+          "numerator": 125394469,
+          "denominator": 120000000000,
+          "value": 0.0010449539083333334
+        },
+        "ratio": {
+          "numerator": 752366814,
+          "denominator": 746926597,
+          "value": 1.0072834693821995
+        },
+        "passed": true
+      },
+      {
+        "index": 218,
+        "name": "run-rank8-trailing",
+        "partition": "added98",
+        "outer": {
+          "numerator": 253639319,
+          "denominator": 240000000000,
+          "value": 0.0010568304958333333
+        },
+        "middle": {
+          "numerator": 724068707,
+          "denominator": 720000000000,
+          "value": 0.0010056509819444445
+        },
+        "ratio": {
+          "numerator": 724068707,
+          "denominator": 760917957,
+          "value": 0.9515726371535742
+        },
+        "passed": false
+      },
+      {
+        "index": 219,
+        "name": "run-rank8-alternating-axes",
+        "partition": "added98",
+        "outer": {
+          "numerator": 37011209,
+          "denominator": 36000000000,
+          "value": 0.001028089138888889
+        },
+        "middle": {
+          "numerator": 250412453,
+          "denominator": 240000000000,
+          "value": 0.0010433852208333334
+        },
+        "ratio": {
+          "numerator": 751237359,
+          "denominator": 740224180,
+          "value": 1.0148781670439353
+        },
+        "passed": true
+      }
+    ],
+    "scopes": {
+      "all220": {
+        "outer": {
+          "numerator": 35408609630917,
+          "denominator": 614400000000000,
+          "value": 0.05763120057115397
+        },
+        "middle": {
+          "numerator": 159207584596889,
+          "denominator": 2764800000000000,
+          "value": 0.057583761789962745
+        },
+        "ratio": {
+          "numerator": 318415169193778,
+          "denominator": 318677486678253,
+          "value": 0.9991768559266321
+        },
+        "passed": true
+      },
+      "target6": {
+        "outer": {
+          "numerator": 27710077,
+          "denominator": 2880000000,
+          "value": 0.009621554513888889
+        },
+        "middle": {
+          "numerator": 170689693,
+          "denominator": 18000000000,
+          "value": 0.009482760722222223
+        },
+        "ratio": {
+          "numerator": 682758772,
+          "denominator": 692751925,
+          "value": 0.985574701939659
+        },
+        "passed": true
+      },
+      "other_uniform42": {
+        "outer": {
+          "numerator": 1188969731747,
+          "denominator": 122880000000000,
+          "value": 0.009675860447159831
+        },
+        "middle": {
+          "numerator": 1201360045217,
+          "denominator": 122880000000000,
+          "value": 0.009776693076310222
+        },
+        "ratio": {
+          "numerator": 1201360045217,
+          "denominator": 1188969731747,
+          "value": 1.0104210503759372
+        },
+        "passed": true
+      },
+      "fallback74": {
+        "outer": {
+          "numerator": 5397644467021,
+          "denominator": 184320000000000,
+          "value": 0.02928409541569553
+        },
+        "middle": {
+          "numerator": 10788930261323,
+          "denominator": 368640000000000,
+          "value": 0.029266846412009006
+        },
+        "ratio": {
+          "numerator": 10788930261323,
+          "denominator": 10795288934042,
+          "value": 0.999410977069919
+        },
+        "passed": true
+      },
+      "added98": {
+        "outer": {
+          "numerator": 260631077599,
+          "denominator": 28800000000000,
+          "value": 0.009049690194409722
+        },
+        "middle": {
+          "numerator": 391282340231,
+          "denominator": 43200000000000,
+          "value": 0.009057461579421297
+        },
+        "ratio": {
+          "numerator": 782564680462,
+          "denominator": 781893232797,
+          "value": 1.0008587459730252
+        },
+        "passed": true
+      }
+    },
+    "processes": {
+      "current-screen0-512": {
+        "all220": {
+          "numerator": 160622061428897,
+          "denominator": 2764800000000000,
+          "value": 0.05809536365339157
+        },
+        "target6": {
+          "numerator": 579973051,
+          "denominator": 60000000000,
+          "value": 0.009666217516666667
+        },
+        "other_uniform42": {
+          "numerator": 1826664443947,
+          "denominator": 184320000000000,
+          "value": 0.009910288866899956
+        },
+        "fallback74": {
+          "numerator": 30385999629,
+          "denominator": 1024000000000,
+          "value": 0.029673827762695313
+        },
+        "added98": {
+          "numerator": 95526318677,
+          "denominator": 10800000000000,
+          "value": 0.008845029507129629
+        }
+      },
+      "candidate-screen1-512": {
+        "all220": {
+          "numerator": 79347782645041,
+          "denominator": 1382400000000000,
+          "value": 0.05739856962170211
+        },
+        "target6": {
+          "numerator": 35411383,
+          "denominator": 3750000000,
+          "value": 0.009443035466666666
+        },
+        "other_uniform42": {
+          "numerator": 55914301781,
+          "denominator": 5760000000000,
+          "value": 0.009707344059201388
+        },
+        "fallback74": {
+          "numerator": 2671842752111,
+          "denominator": 92160000000000,
+          "value": 0.02899134930675998
+        },
+        "added98": {
+          "numerator": 49986940261,
+          "denominator": 5400000000000,
+          "value": 0.009256840789074074
+        }
+      },
+      "candidate-screen2-512": {
+        "all220": {
+          "numerator": 9982475243981,
+          "denominator": 172800000000000,
+          "value": 0.05776895395822338
+        },
+        "target6": {
+          "numerator": 428511869,
+          "denominator": 45000000000,
+          "value": 0.009522485977777778
+        },
+        "other_uniform42": {
+          "numerator": 1814822478659,
+          "denominator": 184320000000000,
+          "value": 0.009846042093419053
+        },
+        "fallback74": {
+          "numerator": 5445244757101,
+          "denominator": 184320000000000,
+          "value": 0.02954234351725803
+        },
+        "added98": {
+          "numerator": 191334579187,
+          "denominator": 21600000000000,
+          "value": 0.00885808236976852
+        }
+      },
+      "current-screen3-512": {
+        "all220": {
+          "numerator": 39513856312339,
+          "denominator": 691200000000000,
+          "value": 0.05716703748891638
+        },
+        "target6": {
+          "numerator": 215480059,
+          "denominator": 22500000000,
+          "value": 0.00957689151111111
+        },
+        "other_uniform42": {
+          "numerator": 870122375647,
+          "denominator": 92160000000000,
+          "value": 0.009441432027419705
+        },
+        "fallback74": {
+          "numerator": 2662904500411,
+          "denominator": 92160000000000,
+          "value": 0.028894363068695746
+        },
+        "added98": {
+          "numerator": 399787958089,
+          "denominator": 43200000000000,
+          "value": 0.009254350881689815
+        }
+      }
+    },
+    "sample_clocks": 686400,
+    "warmup_clocks": 528000,
+    "measured_clocks": 158400,
+    "public_calls": 232929840,
+    "measured_public_calls": 53753040,
+    "identical_binary_control": true
+  },
+  "summary_files": {
+    "balanced-control-cases-20260924.csv": {
+      "bytes": 22212,
+      "sha256": "3d48707cf9452b2d1dac3b55292a635216dbec6547393b43f90792ba80aff3e5"
+    },
+    "balanced-control-blocks-20260924.csv": {
+      "bytes": 1331766,
+      "sha256": "c2d1130b0801741145f5a867b8d73241c8ace8c2918a2b832cfab5367064ee4b"
+    }
+  },
+  "note": "Every case and all thirteen blocks per process are retained. Blocks are descriptive; the fixed score uses every measured clock with equal process weights."
+}
