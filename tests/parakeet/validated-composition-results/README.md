@@ -14,8 +14,10 @@ and the seven retained passing cases: all24controls and8regression gates pass.
 The [Pyannote application and meetings](pyannote-application-20260924.md) also
 pass all 12 repeatability checks and four regression limits. Both ten-minute
 meetings and recovery preserve the selected results exactly. The admitted
-source is integrated; normal root/package qualification and BENCHMARK.md
-publication remain pending.
+source is integrated at `a2ab32e7`; [normal root and package qualification](root-20260924.md)
+passes all compiled comparisons, both full test modes and independent NuGet
+consumption. [BENCHMARK.md](../../../BENCHMARK.md) now describes this qualified
+source and the matched Microsoft ORT comparisons for the full shortlist.
 
 After each relevant campaign closes, run these local reporting actions with
 `C:/Python313/python.exe -X utf8 -B`:
