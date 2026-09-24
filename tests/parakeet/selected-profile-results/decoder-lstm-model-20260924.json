@@ -1,0 +1,143 @@
+{
+  "passed": true,
+  "scope": "Original ONNX metadata and raw constant bytes only; no inference or new prepared map",
+  "model": {
+    "bytes": 72520893,
+    "sha256": "e978ddf6688527182c10fde2eb4b83068421648985ef23f7a86be732be8706c1"
+  },
+  "onnx_parser_version": "1.22.0",
+  "nodes": [
+    {
+      "name": "/decoder/dec_rnn/lstm/LSTM",
+      "inputs": [
+        "/decoder/Transpose_output_0",
+        "onnx::LSTM_205",
+        "onnx::LSTM_206",
+        "onnx::LSTM_207",
+        "",
+        "/decoder/dec_rnn/lstm/Slice_output_0",
+        "/decoder/dec_rnn/lstm/Slice_1_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/LSTM_output_0",
+        "/decoder/dec_rnn/lstm/LSTM_output_1",
+        "/decoder/dec_rnn/lstm/LSTM_output_2"
+      ],
+      "attributes": {
+        "hidden_size": 640
+      },
+      "weights": {
+        "W": "onnx::LSTM_205",
+        "R": "onnx::LSTM_206"
+      }
+    },
+    {
+      "name": "/decoder/dec_rnn/lstm/LSTM_1",
+      "inputs": [
+        "/decoder/dec_rnn/lstm/Squeeze_output_0",
+        "onnx::LSTM_225",
+        "onnx::LSTM_226",
+        "onnx::LSTM_227",
+        "",
+        "/decoder/dec_rnn/lstm/Slice_2_output_0",
+        "/decoder/dec_rnn/lstm/Slice_3_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/LSTM_1_output_0",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_1",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_2"
+      ],
+      "attributes": {
+        "hidden_size": 640
+      },
+      "weights": {
+        "W": "onnx::LSTM_225",
+        "R": "onnx::LSTM_226"
+      }
+    }
+  ],
+  "weights": {
+    "onnx::LSTM_205": {
+      "shape": [
+        1,
+        2560,
+        640
+      ],
+      "dtype": "Float",
+      "bytes": 6553600,
+      "source_sha256": "8221b82cb8144e6f3bd75cc6d690521751beef4dc5bac9766708a0e8b24c9824",
+      "consumers": [
+        {
+          "node": "/decoder/dec_rnn/lstm/LSTM",
+          "op": "LSTM",
+          "input_index": 1
+        }
+      ]
+    },
+    "onnx::LSTM_206": {
+      "shape": [
+        1,
+        2560,
+        640
+      ],
+      "dtype": "Float",
+      "bytes": 6553600,
+      "source_sha256": "fe18a23c4c03b24e641756ec8ecf78a080da37994f80c2450861000734d2bb62",
+      "consumers": [
+        {
+          "node": "/decoder/dec_rnn/lstm/LSTM",
+          "op": "LSTM",
+          "input_index": 2
+        }
+      ]
+    },
+    "onnx::LSTM_225": {
+      "shape": [
+        1,
+        2560,
+        640
+      ],
+      "dtype": "Float",
+      "bytes": 6553600,
+      "source_sha256": "43a99b00fa37b3367b157dbb74bd38162a33ab052cf45a57e718285070c15c28",
+      "consumers": [
+        {
+          "node": "/decoder/dec_rnn/lstm/LSTM_1",
+          "op": "LSTM",
+          "input_index": 1
+        }
+      ]
+    },
+    "onnx::LSTM_226": {
+      "shape": [
+        1,
+        2560,
+        640
+      ],
+      "dtype": "Float",
+      "bytes": 6553600,
+      "source_sha256": "e43f649ecb41fc59852bb2ed2d95784c174d4dd74bf076248dcd8ab0795d2680",
+      "consumers": [
+        {
+          "node": "/decoder/dec_rnn/lstm/LSTM_1",
+          "op": "LSTM",
+          "input_index": 2
+        }
+      ]
+    }
+  },
+  "raw_float_panel_bytes": 26214400,
+  "qualified_existing_decoder_packing_bytes": 25246720,
+  "hypothetical_total_bytes": 51461120,
+  "unchanged_decoder_cap": 67108864,
+  "hypothetical_remaining_bytes": 15647744,
+  "actual_new_residency_qualified": false,
+  "source_residency_report": {
+    "bytes": 6718,
+    "sha256": "69e22b251a88f6c89c30411361e0cfb7577867af3859e23559d2bfa71c39d2db"
+  },
+  "generator": {
+    "bytes": 3575,
+    "sha256": "61740f950a53df7e0295e250a367b0ec31f89fccaec19c55b487ec10f522757b"
+  }
+}

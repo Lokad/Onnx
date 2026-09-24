@@ -730,6 +730,10 @@ also excludes H=640, and its later input-packing change requires a separate
 execution-context propagation fix. A future adaptation must account all clones
 under the current aggregate cap and qualify actual decoder calls; the retained
 branch timings and current method-level profile do not establish a new gain.
+The [original decoder constant census](../tests/parakeet/selected-profile-results/decoder-lstm-model-20260924.md)
+confirms four `[1,2560,640]` float weights totaling 25 MiB. Same-sized panels
+would fit beside the existing decoder packing under 64 MiB; actual preparation
+and execution remain unqualified.
 
 Three concrete hazards made selective adaptation necessary. The branch's
 Conv/Relu fusion could ignore an If capture and change a valid result from
