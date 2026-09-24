@@ -6,13 +6,13 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **43.33 GB**, including **29.86 GB** in artifacts,
-after retaining the complete exact-consumer Where diagnostic: all 686,400
-clocks, 880 setups and 192 native-code bodies. Earlier rejected controls,
+The latest inventory is **43.53 GB**, including **30.06 GB** in artifacts,
+after retaining the balanced-warmup qualification (343,200 clocks, 440 setups
+and 74 native bodies) and preparing its fixed identical-binary control. Earlier rejected controls,
 Boolean counterexamples and complete qualification evidence remain retained.
-The inventory totals **43,329,733,659 bytes**, with **6.67 GB** of headroom.
-Receipt: `artifacts/repository-retention-20260923/m60-final-cleanup-size.json`.
-Counting the model junction again gives 54.12 GB, which counts the same 10.79 GB
+The inventory totals **43,525,996,302 bytes**, with **6.47 GB** of headroom.
+Receipt: `artifacts/repository-retention-20260923/m61-codegen-closed-size.json`.
+Counting the model junction again gives 54.31 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 No new model copies were needed. Raw clocks remain in verified local collections
@@ -179,3 +179,14 @@ After collection, four temporary local inspection copies totaling **4.13 MB**
 were removed after matching them to the complete retained stdout/native bodies.
 No canonical evidence was removed. Receipt:
 `artifacts/parakeet-where-control-live-inspection-retention-20260924.json`.
+
+Before M61 native qualification, idle VM retirement removed **195.44 MB** in
+eight duplicate M60 clock/result files. Every complete local result, journal,
+archive and native body remains hash-verified; immutable VM inputs are protected.
+Receipt: `artifacts/parakeet-where-diagnostic-remote-retention-20260924`.
+
+Before the balanced-warmup control, another **97.74 MB** in four closed VM
+clock/result copies was retired after verifying complete local originals and
+all immutable dependencies. Receipt:
+`artifacts/parakeet-where-balanced-remote-retention-20260924`.
+This maintenance finished before the control was staged or launched.
