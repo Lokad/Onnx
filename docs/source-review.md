@@ -723,6 +723,14 @@ invalidation and held outputs remain covered. Whole-model timing is still needed
 | Prepared recurrent maps, direct/depthwise convolution, tiled expansion, K-blocked projections and region fusions | Candidate material for measured bottlenecks after model correctness. Keep dependency-complete slices and their invalidation/alias tests; avoid importing successive superseded prototypes. No blanket performance acceptance. |
 | Paired runner, historical tables, SDK changes, reverted prefetch/gate experiments and duplicate optimization infrastructure | Do not replace the current runner, source identities, SDK contract or optimizer pipeline. Preserve useful regression cases and historical evidence, but regenerate results for integrated source. |
 
+The [selected-release Parakeet decoder review](../tests/parakeet/selected-profile-results/decoder-lstm-source-review-20260924.md)
+narrows the recurrent import work. Its current one-step H=640 path does not use
+the existing small-hidden-size panels. The branch's recurrent-panel dispatch
+also excludes H=640, and its later input-packing change requires a separate
+execution-context propagation fix. A future adaptation must account all clones
+under the current aggregate cap and qualify actual decoder calls; the retained
+branch timings and current method-level profile do not establish a new gain.
+
 Three concrete hazards made selective adaptation necessary. The branch's
 Conv/Relu fusion could ignore an If capture and change a valid result from
 `[-1, 8]` to `[0, 8]`. Clip had incorrect omitted/reversed-bound behavior in

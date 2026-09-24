@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "selected_source": {
+    "src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs": {
+      "bytes": 18646,
+      "sha256": "fdf3de7c8c87a5298dde439683e7be1ff353529b1b6c7bef4a8d3bb8b4313d29"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs": {
+      "bytes": 5562,
+      "sha256": "edce03ddeab91e529356659dabee301306e146203bf58fb139095d85dd11e450"
+    },
+    "src/Lokad.Onnx/GraphPacking.cs": {
+      "bytes": 10677,
+      "sha256": "2950ca3037a6037a7f576afe9d0ee6389c8ff2718c28add88c78bae441d28804"
+    },
+    "src/Lokad.Onnx/GraphConvPacking.cs": {
+      "bytes": 9031,
+      "sha256": "936d242eafe67e7cf8731b856da94e5e314331c6a43a032e239d42b8c533ee5e"
+    },
+    "src/Lokad.Onnx/ComputationalGraph.cs": {
+      "bytes": 88405,
+      "sha256": "61d3ebabf4068dbfeda4c96839b9d3de59bcdcea7a257430df6d6e3f59cfccaf"
+    },
+    "src/Lokad.Onnx/GraphExecution.cs": {
+      "bytes": 3869,
+      "sha256": "6e8e6bb5cff313a83855c48797e0d9bd2a3ec517c42df27a9f112269dfdae1be"
+    },
+    "src/Lokad.Onnx/TensorExecutionOptions.cs": {
+      "bytes": 4613,
+      "sha256": "43aff16d3a48b0300de8e8649d7baa48b9383937e0694881788203cb4b046f97"
+    }
+  },
+  "ort": {
+    "artifacts/pyannote-lstm-default-gates-20260923/ort-uni_directional_lstm.cc": {
+      "revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+      "path": "onnxruntime/core/providers/cpu/rnn/uni_directional_lstm.cc",
+      "file": {
+        "bytes": 31148,
+        "sha256": "ac3bd9d8eae89de081195f7fc5b95e42d3b654ab25aefb4a6f90ad136cf1c272"
+      }
+    },
+    "artifacts/pyannote-lstm-default-gates-20260923/ort-rnn_helpers.cc": {
+      "revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+      "path": "onnxruntime/core/providers/cpu/rnn/rnn_helpers.cc",
+      "file": {
+        "bytes": 31725,
+        "sha256": "a2e8da6ffd00cdf58e906ebf85dfb469982474e11a161e033e8f4ea7d22b644a"
+      }
+    }
+  },
+  "ort_provenance": {
+    "bytes": 150659,
+    "sha256": "d836e93c0eae60b5c8729685d2097b0257320cdac1f1c536777938dbcbd5ef63"
+  },
+  "voice_branch_patches": {
+    "c51c2bc271c5b33f4dab4159401afb0401393c26": {
+      "path": "artifacts/parakeet-decoder-lstm-source-review-20260924/c51c2bc271c5b33f4dab4159401afb0401393c26.patch",
+      "file": {
+        "bytes": 24470,
+        "sha256": "62188c784bd196a00ec6398b07590d001cc9db5064cb5a7dbab4ca5d5615c141"
+      }
+    },
+    "03af0bf3457697fd0b73c851fd7913455579604a": {
+      "path": "artifacts/parakeet-decoder-lstm-source-review-20260924/03af0bf3457697fd0b73c851fd7913455579604a.patch",
+      "file": {
+        "bytes": 17924,
+        "sha256": "ff7662299f2df5074a1358f456fe4b29091024351f8ebc6635bc2b81c9bc9f9b"
+      }
+    },
+    "c762e7b49b6f5c8457bf47a0197f49fdd02135c7": {
+      "path": "artifacts/parakeet-decoder-lstm-source-review-20260924/c762e7b49b6f5c8457bf47a0197f49fdd02135c7.patch",
+      "file": {
+        "bytes": 7940,
+        "sha256": "cf7c7d26a29a4a6025d896c84ec5461b6f03169dead519c7543ebc2e616f0ea0"
+      }
+    },
+    "4f3a43e5c478f0a40b929bf57b7fc8229e50108f": {
+      "path": "artifacts/parakeet-decoder-lstm-source-review-20260924/4f3a43e5c478f0a40b929bf57b7fc8229e50108f.patch",
+      "file": {
+        "bytes": 24877,
+        "sha256": "456ca49e4ec6d6831f97b247f4c06d9df07b81b2cbb577f655aaf83466848560"
+      }
+    },
+    "9e4c829f3c19739004652982caa4767a297c0a89": {
+      "path": "artifacts/parakeet-decoder-lstm-source-review-20260924/9e4c829f3c19739004652982caa4767a297c0a89.patch",
+      "file": {
+        "bytes": 1197,
+        "sha256": "507e0f93c0e3d636f8848ed359b337a76c1c82f49c46a0b31339e6500578ed5f"
+      }
+    },
+    "6f25493eeeb40c619ca135776dcc6621e3806129": {
+      "path": "artifacts/parakeet-decoder-lstm-source-review-20260924/6f25493eeeb40c619ca135776dcc6621e3806129.patch",
+      "file": {
+        "bytes": 8671,
+        "sha256": "be7fb842c7a1177ac86f5106a9b7c293218dc82d3cb421d2387f5982cd6f8b96"
+      }
+    }
+  },
+  "profile_closure": {
+    "bytes": 121030,
+    "sha256": "e6a94afd464807f625e439bdba4a4b71246e641e98b10a632b66bb068adc5937"
+  },
+  "report": {
+    "bytes": 4982,
+    "sha256": "7ac3147841a76856d08a1091ce04024d7421da89a4dd8045289f821684fb6a89"
+  },
+  "generator": {
+    "bytes": 3198,
+    "sha256": "28ac1778c6d01f1e863c312cc835ecd2a431f928640e3ecd8987e78e22b2fde6"
+  },
+  "product_changed": false,
+  "performance_measurement": false
+}
