@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **48.51 GB**, including **35.01 GB** in artifacts.
+The latest inventory is **48.77 GB**, including **35.28 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -17,15 +17,18 @@ failure, the runtime diagnostic and the admitted focused e5 successor are all
 retained. Complete Pyannote timing/meetings and normal root/package qualification
 have passed. The full Parakeet masking/padding layout capture is closed and
 published; the next isolated composition reuses the qualified dense-mask helper.
-Its build, compiled review and complete operator numerical census have passed.
+Its build, compiled review, complete operator census and full Parakeet native/
+public qualification have passed. The first current-release masking profile is
+collected; a memory preflight refused the candidate before process creation.
+The failure is retained and only the missing candidate is being profiled.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **48,509,877,335 bytes**, with
-**1.49 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m70-numerics-closed-size.json`.
-Counting the model junction again gives59.30GB, which counts the same10.79GB
+remain retained. The inventory totals **48,774,538,429 bytes**, with
+**1.23 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m70-profile-control-collected-size.json`.
+Counting the model junction again gives59.56GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
@@ -37,6 +40,15 @@ every immutable payload dependency stayed intact. Receipt:
 A separate layout-cache retirement refused before deletion because that cache
 was already empty. Its read-only review is retained in
 `artifacts/parakeet-masking-layout-build-cache-retention-refusal-20260924`.
+
+Before the full model checks, sharing 879 identical closed runtime paths
+verified 2,560 hashes and recovered **114.23 MB** of VM tmpfs. After the profile
+preflight refusal, sharing 3,564 identical metadata, array and binary paths
+verified 13,829 hashes and recovered another **400.63 MB**. Every affected owner
+was terminal, and all bytes, paths, permissions and ownership remained intact.
+No successful inference was repeated and no resource limit changed. Receipts:
+`artifacts/parakeet-observed-where-runtime-links-20260924` and
+`artifacts/parakeet-observed-where-profile-input-links-20260924`.
 
 The new decoder capture stores all 380 complete LSTM calls in only **27.37 MB**
 of unique tensors by deduplicating constants and repeated values. It reuses the
