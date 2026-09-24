@@ -1,0 +1,16 @@
+namespace Lokad.Onnx.Tensors.Tests;
+
+// Campaign-only identity assertion; not part of the proposed root test change.
+public class SliceCandidateIdentityTests
+{
+    [Fact]
+    public void ConsumedCoreAndInstructionModeMatch()
+    {
+        string expected = Environment.GetEnvironmentVariable("SLICE_CORE_SHA") ?? throw new InvalidOperationException("Missing Core identity");
+        using var stream = File.OpenRead(typeof(Tensor<>).Assembly.Location);
+        Assert.Equal(expected,Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(stream)));
+        string mode = Environment.GetEnvironmentVariable("SLICE_AVX512") ?? throw new InvalidOperationException("Missing instruction mode");
+        Assert.Equal(mode == "1",System.Runtime.Intrinsics.X86.Avx512F.IsSupported);
+        Assert.Equal(1,Environment.ProcessorCount);
+    }
+}

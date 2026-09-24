@@ -1,0 +1,84 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+
+// Isolated diagnostic Core only. Keep scalar descriptions, never tensor references.
+internal static class SliceLayoutProbe
+{
+    static readonly List<Layout> Records = new();
+
+    internal static void Observe<T>(TensorSlice<T> value, ReadOnlySpan<int> destination) where T : unmanaged
+    {
+        if (!value.Name.StartsWith("/layers.", StringComparison.Ordinal) ||
+            !value.Name.EndsWith("/self_attn/Slice_1_output_0", StringComparison.Ordinal)) return;
+        var parent = value.parent;
+        var dense = parent as DenseTensor<T>;
+        ArraySegment<T> segment = default;
+        bool arrayBacked = dense is not null && MemoryMarshal.TryGetArray((ReadOnlyMemory<T>)dense.Buffer, out segment);
+        var definitions = new Definition[value.slices.Length];
+        for (int i = 0; i < definitions.Length; i++)
+        {
+            var slice = value.slices[i];
+            definitions[i] = new Definition { Start = slice.Start, Step = slice.Step, Count = slice.Count, IsIndex = slice.IsIndex };
+        }
+        Records.Add(new Layout {
+            Name = value.Name, ElementType = typeof(T).FullName!,
+            Dimensions = value.Dimensions.ToArray(), Strides = value.Strides.ToArray(),
+            Reversed = value.IsReversedStride, Destination = destination.ToArray(),
+            ParentType = parent.GetType().FullName!, ParentName = parent.Name,
+            ParentDimensions = parent.Dimensions.ToArray(), ParentStrides = parent.Strides.ToArray(),
+            ParentReversed = parent.IsReversedStride, ParentLength = parent.Length,
+            Dense = dense is not null, BufferLength = dense?.Buffer.Length ?? -1,
+            ArrayBacked = arrayBacked, ArrayOffset = arrayBacked ? segment.Offset : -1,
+            ArrayCount = arrayBacked ? segment.Count : -1, ArrayLength = arrayBacked ? segment.Array!.Length : -1,
+            Definitions = definitions
+        });
+    }
+
+    public static void Save(string output, int index, string name, int pass)
+    {
+        using var stream = new FileStream(Path.Combine(output, $"layout-{index:D3}.json"), FileMode.CreateNew);
+        JsonSerializer.Serialize(stream, new Request { Name = name, Pass = pass, Records = Records.ToArray() });
+        Records.Clear();
+    }
+
+    internal sealed class Request
+    {
+        public string Name { get; set; } = "";
+        public int Pass { get; set; }
+        public Layout[] Records { get; set; } = Array.Empty<Layout>();
+    }
+    internal sealed class Definition
+    {
+        public int Start { get; set; }
+        public int Step { get; set; }
+        public int Count { get; set; }
+        public bool IsIndex { get; set; }
+    }
+    internal sealed class Layout
+    {
+        public string Name { get; set; } = "";
+        public string ElementType { get; set; } = "";
+        public int[] Dimensions { get; set; } = Array.Empty<int>();
+        public int[] Strides { get; set; } = Array.Empty<int>();
+        public bool Reversed { get; set; }
+        public int[] Destination { get; set; } = Array.Empty<int>();
+        public string ParentType { get; set; } = "";
+        public string ParentName { get; set; } = "";
+        public int[] ParentDimensions { get; set; } = Array.Empty<int>();
+        public int[] ParentStrides { get; set; } = Array.Empty<int>();
+        public bool ParentReversed { get; set; }
+        public long ParentLength { get; set; }
+        public bool Dense { get; set; }
+        public int BufferLength { get; set; }
+        public bool ArrayBacked { get; set; }
+        public int ArrayOffset { get; set; }
+        public int ArrayCount { get; set; }
+        public int ArrayLength { get; set; }
+        public Definition[] Definitions { get; set; } = Array.Empty<Definition>();
+    }
+}

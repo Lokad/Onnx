@@ -1,0 +1,14 @@
+using System.Reflection;
+using Lokad.Onnx;
+
+internal static class LayoutConsumer
+{
+    static Action<string, int, string, int>? save;
+    public static void Initialize()
+    {
+        var type = typeof(ComputationalGraph).Assembly.GetType("Lokad.Onnx.SliceLayoutProbe");
+        save = type?.GetMethod("Save", BindingFlags.Static | BindingFlags.Public)?
+            .CreateDelegate<Action<string, int, string, int>>() ?? throw new InvalidDataException("Missing layout observer");
+    }
+    public static void Save(string output, int index, string name, int pass) => save!.Invoke(output, index, name, pass);
+}
