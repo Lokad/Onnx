@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **48.33 GB**, including **34.84 GB** in artifacts.
+The latest inventory is **48.49 GB**, including **34.99 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -16,14 +16,16 @@ correctness are collected and audited. The graph comparison, its retained e5
 failure, the runtime diagnostic and the admitted focused e5 successor are all
 retained. Complete Pyannote timing/meetings and normal root/package qualification
 have passed. The full Parakeet masking/padding layout capture is closed and
-published; the next isolated source snapshot reuses the qualified dense-mask
-helper. No new model copies were needed.
+published; the next isolated composition reuses the qualified dense-mask helper.
+Its build and compiled review have passed; numerical qualification is prepared.
+The first inspection's missing-dependency failure remains recorded. No new
+model copies were needed.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **48,333,977,234 bytes**, with
-**1.67 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m70-source-prepared-size.json`.
-Counting the model junction again gives59.12GB, which counts the same10.79GB
+remain retained. The inventory totals **48,488,989,243 bytes**, with
+**1.51 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m70-numerics-prepared-size.json`.
+Counting the model junction again gives59.27GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 

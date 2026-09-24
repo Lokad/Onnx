@@ -1,0 +1,97 @@
+{
+  "closure": {
+    "bytes": 18439,
+    "sha256": "7d5296b266feeacbf9c52bf57a689de2cdf0a839045130f15912912f5da1b7bd"
+  },
+  "passed": true,
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 782848,
+      "sha256": "37c243756bbe5e5d563e79627a0a4d20ff027598801849da9606549c7ac60286"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "cc37b19eb41cf728061c35bcdb7e06a6ab4d370bfd4c47555eec86c86b2ef6d6"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 815104,
+      "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "original_core_methods": 3251,
+    "candidate_core_methods": 3253,
+    "unchanged_core_methods": 3250,
+    "data_methods": 697,
+    "changed_method": "Lokad.Onnx.CPUExecutionProvider::Where::Lokad.Onnx.OpResult Where(Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ExecutionOptions)",
+    "retained_provider_and_helper_bodies_exact": true,
+    "generic_tensor_where_exact": true,
+    "all_existing_flags_exact": true,
+    "added_flags": {
+      "Lokad.Onnx.DenseScalarWhere::Try::Boolean Try[T](Lokad.Onnx.Tensor`1[System.Boolean], Lokad.Onnx.Tensor`1[T], Lokad.Onnx.Tensor`1[T], Lokad.Onnx.Tensor`1[T] ByRef)": 520,
+      "Lokad.Onnx.DenseScalarWhere::SelectMixed::Void SelectMixed[T](System.ReadOnlySpan`1[System.Byte], T, System.ReadOnlySpan`1[T], System.Span`1[T], System.ReadOnlySpan`1[System.Int32], System.ReadOnlySpan`1[System.Int32], System.ReadOnlySpan`1[System.Int32])": 520
+    },
+    "public_surface_equal": true,
+    "new_composition_numerically_qualified": false
+  },
+  "original_collection": {
+    "bytes": 12817,
+    "sha256": "68ed2e8a43db0782b07ced7b5d42733afd95344fb0efbfc2994675bef72fff82"
+  },
+  "original_resources": [
+    {
+      "name": "sdk-version",
+      "code": 0,
+      "samples": 1,
+      "peak_rss": 5406720,
+      "seconds": 0.2602466290118173
+    },
+    {
+      "name": "cli-restore",
+      "code": 0,
+      "samples": 6,
+      "peak_rss": 169803776,
+      "seconds": 1.5527994059957564
+    },
+    {
+      "name": "cli-build",
+      "code": 0,
+      "samples": 71,
+      "peak_rss": 507514880,
+      "seconds": 18.735594343976118
+    },
+    {
+      "name": "inventory",
+      "code": -6,
+      "samples": 7,
+      "peak_rss": 159371264,
+      "seconds": 1.849898045998998
+    }
+  ],
+  "recovered_resources": [
+    {
+      "name": "inventory",
+      "code": 0,
+      "samples": 4,
+      "peak_rss": 169295872,
+      "seconds": 1.1509317230666056
+    }
+  ],
+  "original_inspection_failed": true,
+  "correction": "Use complete qualified current-product dependency directory; Core/Data/Bridge/checks unchanged.",
+  "source_prepared": {
+    "bytes": 153332,
+    "sha256": "41f2477c7060c3f543471bebe991c77ea3b853d724708fec098a2cbb505cb0a2"
+  },
+  "no_rebuild": true,
+  "root_product_changed": false,
+  "numerically_qualified": false,
+  "no_performance_measurement": true
+}
