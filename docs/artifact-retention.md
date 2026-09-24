@@ -6,17 +6,16 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **42.31 GB**, including **28.85 GB** in artifacts,
-after retaining the qualified release, the rejected uniform-mask screen and its
-untimed code-generation investigation, and preparing the next provider-only
-source candidate. The fresh inventory totals **42,310,229,807 bytes**, with
-**7.69 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m57-source-prepared-size.json`.
-Counting the model junction again gives 53.10 GB, which counts the same 10.79 GB
+The latest inventory is **42.55 GB**, including **29.09 GB** in artifacts,
+after retaining the M57 provider build, complete numerical qualification,
+code-generation review and rejected performance comparison. The fresh inventory
+totals **42,549,519,603 bytes**, with **7.45 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m57-screen-closed-size.json`.
+Counting the model junction again gives 53.34 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
-counts each actual file path, including hidden Git files and retained worktrees.
+counts each actual file path, including hardlinked paths separately.
 No new model copies were needed. All current proof records, complete clocks,
-Boolean counterexamples and superseded drafts remain retained.
+Boolean counterexamples and failed qualification runs remain retained.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
