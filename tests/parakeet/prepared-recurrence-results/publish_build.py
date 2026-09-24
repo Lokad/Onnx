@@ -35,8 +35,10 @@ Public interfaces and every existing implementation flag remain exact. The
 existing ordered projection and panel kernels are byte-identical. No numerical
 or performance result is claimed by this build.
 
-Candidate Core: `{analysis['built']['Lokad.Onnx.dll']['sha256']}`.  
-Candidate Data: `{analysis['built']['Lokad.Onnx.Data.dll']['sha256']}`.  
+Candidate Core: `{analysis['built']['Lokad.Onnx.dll']['sha256']}`.
+
+Candidate Data: `{analysis['built']['Lokad.Onnx.Data.dll']['sha256']}`.
+
 Source receipt: `{analysis['source_prepared']['sha256']}`.
 
 The isolated implementation prepares W/R transposes once, owns them separately
