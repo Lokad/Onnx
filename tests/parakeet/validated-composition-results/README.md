@@ -11,7 +11,11 @@ then confirms compilation continues into the measured window in both products.
 The [focused e5 successor](e5-warmed-20260924.md) passes all unchanged gates.
 The [qualified graph summary](qualified-graphs-20260924.md) binds that case
 and the seven retained passing cases: all24controls and8regression gates pass.
-Pyannote application/meetings, root integration and BENCHMARK.md remain pending.
+The [Pyannote application and meetings](pyannote-application-20260924.md) also
+pass all 12 repeatability checks and four regression limits. Both ten-minute
+meetings and recovery preserve the selected results exactly. The admitted
+source is integrated; normal root/package qualification and BENCHMARK.md
+publication remain pending.
 
 After each relevant campaign closes, run these local reporting actions with
 `C:/Python313/python.exe -X utf8 -B`:
