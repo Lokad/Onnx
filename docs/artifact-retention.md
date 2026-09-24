@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **48.40 GB**, including **34.90 GB** in artifacts.
+The latest inventory is **48.79 GB**, including **35.29 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -28,16 +28,20 @@ comparison is collected and admitted: all 24 repeatability controls and eight
 regression gates pass. Its 41,112 clocks, 8,640 measurements, numerical outputs
 and 72 setup intervals remain. A collection-only correction includes the
 separate e5 runtime and SDK pin; all eleven added inputs match the deployed
-payload. Pyannote application/meeting validation is now running. Normal root
-qualification of the masking candidate remains; the repository product is unchanged.
+payload. Pyannote application/meeting validation and normal root/package
+qualification now pass. The masking change is committed as `dddb60ef`.
+The original root source-policy failure is retained alongside the corrected
+nullable-output source and its complete compiled-equivalence and suite evidence.
+No workload is live. The current-gap review reuses retained profiles without
+model execution or another model copy.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **48,404,175,279 bytes**, with
-**1.60 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m70-graphs-collected-size.json`.
-Counting the model junction again gives 59.19 GB, which counts the same 10.79 GB
+remain retained. The inventory totals **48,791,968,094 bytes**, with
+**1.21 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m70-root-v2-collected-size.json`.
+Counting the model junction again gives 59.58 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 

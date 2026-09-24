@@ -1,0 +1,3251 @@
+{
+  "passed": true,
+  "no_new_inference": true,
+  "new_candidate_selected": false,
+  "ort_profile_is_earlier": true,
+  "profile_times_not_application_scores": true,
+  "overlapping_families_must_not_be_summed": true,
+  "release_source": "dddb60ef",
+  "sources": {
+    "parakeet-observed-dense-where-profile-resume-amd-20260924": {
+      "closure": {
+        "bytes": 1968,
+        "sha256": "8a6f509a210641650a9c057f472417dde7b4acc320f86eeb3d34ecbced4cc2e6"
+      },
+      "analysis": {
+        "bytes": 3912387,
+        "sha256": "3c41545c8d327faa7b16283f14b05830a22d772c0b8ccc9f4150d92e6b1866d2"
+      }
+    },
+    "parakeet-managed-phase-amd-20260924": {
+      "closure": {
+        "bytes": 952,
+        "sha256": "2a9d9342acfffede564e1a6870a8027322049e1b5087c005c260d9a054e0c2a3"
+      },
+      "analysis": {
+        "bytes": 1969372,
+        "sha256": "9eb45bdd52cc112730f879d292e2d6332f1e1a0a2f677829fde7429558f5d1d2"
+      }
+    },
+    "parakeet-ort-diagnosis-amd-20260924": {
+      "closure": {
+        "bytes": 632,
+        "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+      },
+      "analysis": {
+        "bytes": 16849612,
+        "sha256": "f61c0c798bb71be7e6bdb4d88b863b6634c67bc3b1e1abdadd78fff1b5dee82e"
+      }
+    },
+    "parakeet-convolution-attribution-20260924": {
+      "closure": {
+        "bytes": 303,
+        "sha256": "3ddc33493522d9f2fd240fad5d5b610c33e80887c3404f0163b254f6e54de9b3"
+      },
+      "analysis": {
+        "bytes": 108874,
+        "sha256": "d51a77cc43fc4e6c7e6f4c29da4b02cfaa34e8811fc680b961478fc211cfb436"
+      }
+    },
+    "parakeet-observed-dense-where-remaining-padding-20260924": {
+      "closure": {
+        "bytes": 306,
+        "sha256": "c9161db64be4f67061339195862b4680cb9e178c0125adf7ad4f73548e0ce46c"
+      },
+      "analysis": {
+        "bytes": 103349,
+        "sha256": "fd5d7b07a402e1db27d43353e9b58137525e4d0f14e15a464e87d87135556b2a"
+      }
+    },
+    "parakeet-observed-dense-where-root-amd-v2-20260924": {
+      "closure": {
+        "bytes": 206783,
+        "sha256": "dd612e81a85f74aebe4371ca93e6f17216c6779b927caf66bf400f0710af0f8e"
+      },
+      "analysis": {
+        "bytes": 5024,
+        "sha256": "3de7f7340100e54a6e93bddad727b872d58a335003d97dd10588c5c300bd50a6"
+      }
+    }
+  },
+  "projection_mapping": {
+    "bytes": 91785,
+    "sha256": "bf9e2e7946af482069693d8af0291507c10a40df87f46c558111d623864ebaab"
+  },
+  "reviewer": {
+    "bytes": 6005,
+    "sha256": "87ef1cf0b76e8f0970ebb76adaa6b140f153465774df5eede182ed17d7f66a4b"
+  },
+  "encoder_descriptors_checked": 2856,
+  "phases": [
+    {
+      "phase": "frontend",
+      "managed": 0.68351897,
+      "ort": 0.23155344466666666
+    },
+    {
+      "phase": "encoder",
+      "managed": 58.330528017666666,
+      "ort": 37.96114510366667
+    },
+    {
+      "phase": "decoder",
+      "managed": 5.342801962666667,
+      "ort": 2.108862761666667
+    }
+  ],
+  "families": [
+    {
+      "family": "Constant projections including scale",
+      "managed": 37.48422640933333,
+      "ort": 29.442083333333333,
+      "excess": 8.042143075999999
+    },
+    {
+      "family": "Complete convolution modules",
+      "managed": 9.993197623666667,
+      "ort": 4.730614666666667,
+      "excess": 5.262582957
+    },
+    {
+      "family": "All encoder padding groups",
+      "managed": 2.922203933,
+      "ort": 0.050175,
+      "excess": 2.872028933
+    }
+  ],
+  "projection_groups": [
+    {
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 1.0,
+      "nodes": 1,
+      "managed": 0.2742333243333333,
+      "ort": 0.22162166666666666,
+      "excess": 0.052611657666666645
+    },
+    {
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "nodes": 48,
+      "managed": 12.743944042333338,
+      "ort": 10.595550666666666,
+      "excess": 2.1483933756666715
+    },
+    {
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "nodes": 48,
+      "managed": 12.802297978333334,
+      "ort": 10.636331666666667,
+      "excess": 2.1659663116666668
+    },
+    {
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "nodes": 120,
+      "managed": 11.663751064333336,
+      "ort": 7.988579333333336,
+      "excess": 3.6751717310000007
+    }
+  ],
+  "projections": [
+    {
+      "ort_name": "/pre_encode/out/MatMul",
+      "managed_nodes": [
+        "/pre_encode/out/MatMul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.2742333243333333,
+      "ort": 0.22162166666666666,
+      "excess": 0.052611657666666645
+    },
+    {
+      "ort_name": "/layers.0/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.0/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.258451277,
+      "ort": 0.22090266666666666,
+      "excess": 0.037548610333333315
+    },
+    {
+      "ort_name": "/layers.0/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.0/feed_forward1/linear2/MatMul",
+        "/layers.0/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2719735933333333,
+      "ort": 0.22157166666666667,
+      "excess": 0.05040192666666665
+    },
+    {
+      "ort_name": "/layers.0/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.0/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.066708162,
+      "ort": 0.056091666666666665,
+      "excess": 0.010616495333333337
+    },
+    {
+      "ort_name": "/layers.0/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.0/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.066975317,
+      "ort": 0.055279,
+      "excess": 0.011696317000000005
+    },
+    {
+      "ort_name": "/layers.0/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.0/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06477975833333334,
+      "ort": 0.055223,
+      "excess": 0.009556758333333339
+    },
+    {
+      "ort_name": "/layers.0/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.0/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.23063705133333334,
+      "ort": 0.109702,
+      "excess": 0.12093505133333335
+    },
+    {
+      "ort_name": "/layers.0/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.0/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06419952933333334,
+      "ort": 0.05515,
+      "excess": 0.00904952933333334
+    },
+    {
+      "ort_name": "/layers.0/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.0/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.25821888466666665,
+      "ort": 0.22064266666666665,
+      "excess": 0.037576217999999995
+    },
+    {
+      "ort_name": "/layers.0/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.0/feed_forward2/linear2/MatMul",
+        "/layers.0/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26615700200000003,
+      "ort": 0.22135433333333332,
+      "excess": 0.04480266866666671
+    },
+    {
+      "ort_name": "/layers.1/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.1/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2540530733333333,
+      "ort": 0.22051833333333334,
+      "excess": 0.03353473999999998
+    },
+    {
+      "ort_name": "/layers.1/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.1/feed_forward1/linear2/MatMul",
+        "/layers.1/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26685684600000004,
+      "ort": 0.22154166666666666,
+      "excess": 0.04531517933333337
+    },
+    {
+      "ort_name": "/layers.1/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.1/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06350499333333333,
+      "ort": 0.05626966666666667,
+      "excess": 0.00723532666666666
+    },
+    {
+      "ort_name": "/layers.1/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.1/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06357944833333333,
+      "ort": 0.05527066666666667,
+      "excess": 0.00830878166666666
+    },
+    {
+      "ort_name": "/layers.1/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.1/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06317385933333333,
+      "ort": 0.055123,
+      "excess": 0.008050859333333334
+    },
+    {
+      "ort_name": "/layers.1/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.1/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22437024633333333,
+      "ort": 0.10972266666666666,
+      "excess": 0.11464757966666667
+    },
+    {
+      "ort_name": "/layers.1/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.1/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.063366192,
+      "ort": 0.05519633333333333,
+      "excess": 0.008169858666666668
+    },
+    {
+      "ort_name": "/layers.1/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.1/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2557260413333333,
+      "ort": 0.220782,
+      "excess": 0.034944041333333314
+    },
+    {
+      "ort_name": "/layers.1/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.1/feed_forward2/linear2/MatMul",
+        "/layers.1/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26907328233333333,
+      "ort": 0.222342,
+      "excess": 0.04673128233333332
+    },
+    {
+      "ort_name": "/layers.2/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.2/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2541351396666667,
+      "ort": 0.22204333333333334,
+      "excess": 0.032091806333333334
+    },
+    {
+      "ort_name": "/layers.2/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.2/feed_forward1/linear2/MatMul",
+        "/layers.2/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.266255181,
+      "ort": 0.221648,
+      "excess": 0.044607180999999996
+    },
+    {
+      "ort_name": "/layers.2/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.2/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.063230455,
+      "ort": 0.055424666666666664,
+      "excess": 0.007805788333333341
+    },
+    {
+      "ort_name": "/layers.2/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.2/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.062434897333333336,
+      "ort": 0.05549333333333333,
+      "excess": 0.006941564000000004
+    },
+    {
+      "ort_name": "/layers.2/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.2/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06334576533333333,
+      "ort": 0.05531,
+      "excess": 0.008035765333333333
+    },
+    {
+      "ort_name": "/layers.2/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.2/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22273541866666666,
+      "ort": 0.11027566666666666,
+      "excess": 0.112459752
+    },
+    {
+      "ort_name": "/layers.2/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.2/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06257344,
+      "ort": 0.055606333333333334,
+      "excess": 0.00696710666666666
+    },
+    {
+      "ort_name": "/layers.2/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.2/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.255891697,
+      "ort": 0.22087866666666667,
+      "excess": 0.035013030333333306
+    },
+    {
+      "ort_name": "/layers.2/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.2/feed_forward2/linear2/MatMul",
+        "/layers.2/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26584545433333334,
+      "ort": 0.22154033333333334,
+      "excess": 0.044305121
+    },
+    {
+      "ort_name": "/layers.3/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.3/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.254141481,
+      "ort": 0.22078266666666665,
+      "excess": 0.03335881433333335
+    },
+    {
+      "ort_name": "/layers.3/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.3/feed_forward1/linear2/MatMul",
+        "/layers.3/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.266150124,
+      "ort": 0.22137766666666667,
+      "excess": 0.04477245733333332
+    },
+    {
+      "ort_name": "/layers.3/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.3/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.062469569333333336,
+      "ort": 0.055252333333333334,
+      "excess": 0.007217236000000002
+    },
+    {
+      "ort_name": "/layers.3/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.3/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06315595333333333,
+      "ort": 0.055242,
+      "excess": 0.007913953333333335
+    },
+    {
+      "ort_name": "/layers.3/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.3/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06342774966666667,
+      "ort": 0.05590166666666667,
+      "excess": 0.007526083000000003
+    },
+    {
+      "ort_name": "/layers.3/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.3/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.249431512,
+      "ort": 0.10994333333333334,
+      "excess": 0.13948817866666666
+    },
+    {
+      "ort_name": "/layers.3/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.3/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06333401533333333,
+      "ort": 0.055379,
+      "excess": 0.007955015333333329
+    },
+    {
+      "ort_name": "/layers.3/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.3/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.25726642133333333,
+      "ort": 0.220542,
+      "excess": 0.03672442133333334
+    },
+    {
+      "ort_name": "/layers.3/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.3/feed_forward2/linear2/MatMul",
+        "/layers.3/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26581873233333336,
+      "ort": 0.22155233333333332,
+      "excess": 0.04426639900000004
+    },
+    {
+      "ort_name": "/layers.4/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.4/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.25398056133333335,
+      "ort": 0.22057266666666667,
+      "excess": 0.03340789466666669
+    },
+    {
+      "ort_name": "/layers.4/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.4/feed_forward1/linear2/MatMul",
+        "/layers.4/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26606996899999996,
+      "ort": 0.22144633333333333,
+      "excess": 0.04462363566666663
+    },
+    {
+      "ort_name": "/layers.4/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.4/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06285271866666667,
+      "ort": 0.055321666666666665,
+      "excess": 0.007531052000000003
+    },
+    {
+      "ort_name": "/layers.4/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.4/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.063308201,
+      "ort": 0.05529733333333333,
+      "excess": 0.008010867666666664
+    },
+    {
+      "ort_name": "/layers.4/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.4/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.062827204,
+      "ort": 0.055408,
+      "excess": 0.007419203999999999
+    },
+    {
+      "ort_name": "/layers.4/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.4/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22231527766666667,
+      "ort": 0.109749,
+      "excess": 0.11256627766666667
+    },
+    {
+      "ort_name": "/layers.4/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.4/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06331931133333334,
+      "ort": 0.055425,
+      "excess": 0.007894311333333334
+    },
+    {
+      "ort_name": "/layers.4/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.4/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26715861566666665,
+      "ort": 0.22055033333333332,
+      "excess": 0.046608282333333334
+    },
+    {
+      "ort_name": "/layers.4/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.4/feed_forward2/linear2/MatMul",
+        "/layers.4/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2669018323333333,
+      "ort": 0.221476,
+      "excess": 0.045425832333333305
+    },
+    {
+      "ort_name": "/layers.5/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.5/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.267011081,
+      "ort": 0.22081866666666666,
+      "excess": 0.04619241433333332
+    },
+    {
+      "ort_name": "/layers.5/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.5/feed_forward1/linear2/MatMul",
+        "/layers.5/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.267058785,
+      "ort": 0.221693,
+      "excess": 0.04536578500000002
+    },
+    {
+      "ort_name": "/layers.5/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.5/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06336015666666667,
+      "ort": 0.05531,
+      "excess": 0.008050156666666669
+    },
+    {
+      "ort_name": "/layers.5/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.5/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06253511533333334,
+      "ort": 0.055287666666666666,
+      "excess": 0.00724744866666667
+    },
+    {
+      "ort_name": "/layers.5/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.5/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.063397695,
+      "ort": 0.055275333333333336,
+      "excess": 0.008122361666666668
+    },
+    {
+      "ort_name": "/layers.5/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.5/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22161940766666666,
+      "ort": 0.110201,
+      "excess": 0.11141840766666666
+    },
+    {
+      "ort_name": "/layers.5/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.5/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06684258766666666,
+      "ort": 0.055502333333333334,
+      "excess": 0.011340254333333327
+    },
+    {
+      "ort_name": "/layers.5/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.5/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.27027322766666667,
+      "ort": 0.22049733333333332,
+      "excess": 0.04977589433333335
+    },
+    {
+      "ort_name": "/layers.5/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.5/feed_forward2/linear2/MatMul",
+        "/layers.5/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2666629563333333,
+      "ort": 0.221738,
+      "excess": 0.04492495633333332
+    },
+    {
+      "ort_name": "/layers.6/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.6/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2664768533333333,
+      "ort": 0.22063833333333333,
+      "excess": 0.045838519999999994
+    },
+    {
+      "ort_name": "/layers.6/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.6/feed_forward1/linear2/MatMul",
+        "/layers.6/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.265571273,
+      "ort": 0.22147233333333333,
+      "excess": 0.04409893966666667
+    },
+    {
+      "ort_name": "/layers.6/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.6/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06571774133333333,
+      "ort": 0.05543733333333333,
+      "excess": 0.010280407999999998
+    },
+    {
+      "ort_name": "/layers.6/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.6/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06511312666666667,
+      "ort": 0.05536233333333333,
+      "excess": 0.00975079333333334
+    },
+    {
+      "ort_name": "/layers.6/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.6/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06605076566666666,
+      "ort": 0.055328,
+      "excess": 0.010722765666666662
+    },
+    {
+      "ort_name": "/layers.6/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.6/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22043798633333334,
+      "ort": 0.11007666666666667,
+      "excess": 0.11036131966666667
+    },
+    {
+      "ort_name": "/layers.6/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.6/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06582002233333334,
+      "ort": 0.05556,
+      "excess": 0.01026002233333334
+    },
+    {
+      "ort_name": "/layers.6/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.6/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.267805629,
+      "ort": 0.22054266666666666,
+      "excess": 0.047262962333333325
+    },
+    {
+      "ort_name": "/layers.6/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.6/feed_forward2/linear2/MatMul",
+        "/layers.6/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.265354523,
+      "ort": 0.22151333333333334,
+      "excess": 0.04384118966666667
+    },
+    {
+      "ort_name": "/layers.7/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.7/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.265149122,
+      "ort": 0.22065766666666667,
+      "excess": 0.044491455333333346
+    },
+    {
+      "ort_name": "/layers.7/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.7/feed_forward1/linear2/MatMul",
+        "/layers.7/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26605028,
+      "ort": 0.22137666666666667,
+      "excess": 0.044673613333333306
+    },
+    {
+      "ort_name": "/layers.7/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.7/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065007127,
+      "ort": 0.05548466666666667,
+      "excess": 0.00952246033333333
+    },
+    {
+      "ort_name": "/layers.7/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.7/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06531843466666666,
+      "ort": 0.055439,
+      "excess": 0.009879434666666659
+    },
+    {
+      "ort_name": "/layers.7/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.7/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06724960233333334,
+      "ort": 0.055425666666666665,
+      "excess": 0.011823935666666674
+    },
+    {
+      "ort_name": "/layers.7/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.7/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22190001633333334,
+      "ort": 0.11002266666666667,
+      "excess": 0.11187734966666667
+    },
+    {
+      "ort_name": "/layers.7/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.7/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06574783933333334,
+      "ort": 0.05558933333333333,
+      "excess": 0.010158506000000005
+    },
+    {
+      "ort_name": "/layers.7/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.7/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.268174977,
+      "ort": 0.22050833333333333,
+      "excess": 0.04766664366666665
+    },
+    {
+      "ort_name": "/layers.7/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.7/feed_forward2/linear2/MatMul",
+        "/layers.7/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2659547053333333,
+      "ort": 0.22136366666666665,
+      "excess": 0.044591038666666666
+    },
+    {
+      "ort_name": "/layers.8/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.8/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26546555266666666,
+      "ort": 0.22115,
+      "excess": 0.04431555266666665
+    },
+    {
+      "ort_name": "/layers.8/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.8/feed_forward1/linear2/MatMul",
+        "/layers.8/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.265198178,
+      "ort": 0.22151466666666667,
+      "excess": 0.04368351133333334
+    },
+    {
+      "ort_name": "/layers.8/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.8/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06526806366666667,
+      "ort": 0.055584,
+      "excess": 0.009684063666666666
+    },
+    {
+      "ort_name": "/layers.8/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.8/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065790457,
+      "ort": 0.055559,
+      "excess": 0.010231457
+    },
+    {
+      "ort_name": "/layers.8/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.8/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065972253,
+      "ort": 0.055536666666666665,
+      "excess": 0.01043558633333333
+    },
+    {
+      "ort_name": "/layers.8/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.8/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22048803966666666,
+      "ort": 0.11015666666666667,
+      "excess": 0.110331373
+    },
+    {
+      "ort_name": "/layers.8/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.8/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.066993366,
+      "ort": 0.055688666666666664,
+      "excess": 0.011304699333333335
+    },
+    {
+      "ort_name": "/layers.8/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.8/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2681696006666667,
+      "ort": 0.22055366666666668,
+      "excess": 0.047615934
+    },
+    {
+      "ort_name": "/layers.8/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.8/feed_forward2/linear2/MatMul",
+        "/layers.8/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2665926863333334,
+      "ort": 0.22159366666666666,
+      "excess": 0.04499901966666672
+    },
+    {
+      "ort_name": "/layers.9/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.9/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2652084886666667,
+      "ort": 0.22098833333333334,
+      "excess": 0.044220155333333344
+    },
+    {
+      "ort_name": "/layers.9/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.9/feed_forward1/linear2/MatMul",
+        "/layers.9/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26584259433333335,
+      "ort": 0.22143566666666667,
+      "excess": 0.04440692766666668
+    },
+    {
+      "ort_name": "/layers.9/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.9/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065803887,
+      "ort": 0.05566733333333333,
+      "excess": 0.010136553666666673
+    },
+    {
+      "ort_name": "/layers.9/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.9/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06552986366666666,
+      "ort": 0.055683,
+      "excess": 0.009846863666666657
+    },
+    {
+      "ort_name": "/layers.9/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.9/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.066660174,
+      "ort": 0.05572866666666667,
+      "excess": 0.010931507333333333
+    },
+    {
+      "ort_name": "/layers.9/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.9/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.220409493,
+      "ort": 0.110451,
+      "excess": 0.10995849300000002
+    },
+    {
+      "ort_name": "/layers.9/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.9/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06579977633333334,
+      "ort": 0.05587333333333333,
+      "excess": 0.009926443000000007
+    },
+    {
+      "ort_name": "/layers.9/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.9/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.268297384,
+      "ort": 0.22081833333333334,
+      "excess": 0.04747905066666669
+    },
+    {
+      "ort_name": "/layers.9/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.9/feed_forward2/linear2/MatMul",
+        "/layers.9/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.266328459,
+      "ort": 0.22150633333333333,
+      "excess": 0.044822125666666685
+    },
+    {
+      "ort_name": "/layers.10/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.10/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.265649029,
+      "ort": 0.22127666666666668,
+      "excess": 0.044372362333333304
+    },
+    {
+      "ort_name": "/layers.10/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.10/feed_forward1/linear2/MatMul",
+        "/layers.10/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26590959366666667,
+      "ort": 0.22145633333333334,
+      "excess": 0.04445326033333333
+    },
+    {
+      "ort_name": "/layers.10/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.10/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065206889,
+      "ort": 0.05579133333333333,
+      "excess": 0.009415555666666672
+    },
+    {
+      "ort_name": "/layers.10/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.10/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065490115,
+      "ort": 0.055677333333333336,
+      "excess": 0.009812781666666666
+    },
+    {
+      "ort_name": "/layers.10/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.10/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06743101433333333,
+      "ort": 0.055675666666666665,
+      "excess": 0.011755347666666666
+    },
+    {
+      "ort_name": "/layers.10/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.10/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.221748513,
+      "ort": 0.11034933333333333,
+      "excess": 0.11139917966666668
+    },
+    {
+      "ort_name": "/layers.10/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.10/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06570415466666667,
+      "ort": 0.05595666666666667,
+      "excess": 0.009747487999999999
+    },
+    {
+      "ort_name": "/layers.10/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.10/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26790729,
+      "ort": 0.220519,
+      "excess": 0.04738829000000003
+    },
+    {
+      "ort_name": "/layers.10/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.10/feed_forward2/linear2/MatMul",
+        "/layers.10/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2656869396666667,
+      "ort": 0.22134433333333334,
+      "excess": 0.04434260633333334
+    },
+    {
+      "ort_name": "/layers.11/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.11/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26544349733333333,
+      "ort": 0.22051166666666666,
+      "excess": 0.04493183066666667
+    },
+    {
+      "ort_name": "/layers.11/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.11/feed_forward1/linear2/MatMul",
+        "/layers.11/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26559293500000003,
+      "ort": 0.22395466666666666,
+      "excess": 0.04163826833333337
+    },
+    {
+      "ort_name": "/layers.11/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.11/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06503872166666666,
+      "ort": 0.057086,
+      "excess": 0.007952721666666662
+    },
+    {
+      "ort_name": "/layers.11/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.11/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06593189866666667,
+      "ort": 0.05646,
+      "excess": 0.009471898666666666
+    },
+    {
+      "ort_name": "/layers.11/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.11/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06639295766666667,
+      "ort": 0.055958666666666664,
+      "excess": 0.010434291000000005
+    },
+    {
+      "ort_name": "/layers.11/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.11/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.221080649,
+      "ort": 0.110405,
+      "excess": 0.11067564899999999
+    },
+    {
+      "ort_name": "/layers.11/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.11/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06744827733333333,
+      "ort": 0.05593066666666666,
+      "excess": 0.01151761066666667
+    },
+    {
+      "ort_name": "/layers.11/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.11/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2683354513333333,
+      "ort": 0.220488,
+      "excess": 0.04784745133333332
+    },
+    {
+      "ort_name": "/layers.11/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.11/feed_forward2/linear2/MatMul",
+        "/layers.11/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2659821316666667,
+      "ort": 0.22145566666666666,
+      "excess": 0.044526465000000015
+    },
+    {
+      "ort_name": "/layers.12/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.12/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26661470833333334,
+      "ort": 0.22077633333333332,
+      "excess": 0.045838375000000015
+    },
+    {
+      "ort_name": "/layers.12/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.12/feed_forward1/linear2/MatMul",
+        "/layers.12/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26614818199999996,
+      "ort": 0.221825,
+      "excess": 0.04432318199999996
+    },
+    {
+      "ort_name": "/layers.12/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.12/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06586911833333334,
+      "ort": 0.05573433333333333,
+      "excess": 0.010134785000000007
+    },
+    {
+      "ort_name": "/layers.12/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.12/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065160835,
+      "ort": 0.05575366666666667,
+      "excess": 0.009407168333333334
+    },
+    {
+      "ort_name": "/layers.12/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.12/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06636424633333333,
+      "ort": 0.05574433333333333,
+      "excess": 0.010619913000000002
+    },
+    {
+      "ort_name": "/layers.12/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.12/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22052324366666667,
+      "ort": 0.11028366666666667,
+      "excess": 0.110239577
+    },
+    {
+      "ort_name": "/layers.12/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.12/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06701982966666667,
+      "ort": 0.055883666666666665,
+      "excess": 0.011136163000000004
+    },
+    {
+      "ort_name": "/layers.12/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.12/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2690564756666667,
+      "ort": 0.22047066666666668,
+      "excess": 0.04858580900000001
+    },
+    {
+      "ort_name": "/layers.12/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.12/feed_forward2/linear2/MatMul",
+        "/layers.12/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.266861272,
+      "ort": 0.22130966666666665,
+      "excess": 0.04555160533333333
+    },
+    {
+      "ort_name": "/layers.13/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.13/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.266605442,
+      "ort": 0.220739,
+      "excess": 0.045866442000000035
+    },
+    {
+      "ort_name": "/layers.13/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.13/feed_forward1/linear2/MatMul",
+        "/layers.13/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26690510433333337,
+      "ort": 0.22136966666666666,
+      "excess": 0.045535437666666706
+    },
+    {
+      "ort_name": "/layers.13/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.13/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.064943267,
+      "ort": 0.055655333333333334,
+      "excess": 0.009287933666666665
+    },
+    {
+      "ort_name": "/layers.13/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.13/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06547182266666667,
+      "ort": 0.055672,
+      "excess": 0.009799822666666666
+    },
+    {
+      "ort_name": "/layers.13/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.13/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.067042649,
+      "ort": 0.05572133333333333,
+      "excess": 0.011321315666666665
+    },
+    {
+      "ort_name": "/layers.13/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.13/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.223057821,
+      "ort": 0.11019566666666666,
+      "excess": 0.11286215433333333
+    },
+    {
+      "ort_name": "/layers.13/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.13/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06576176466666667,
+      "ort": 0.055794,
+      "excess": 0.009967764666666663
+    },
+    {
+      "ort_name": "/layers.13/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.13/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26863285966666667,
+      "ort": 0.22105533333333333,
+      "excess": 0.04757752633333334
+    },
+    {
+      "ort_name": "/layers.13/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.13/feed_forward2/linear2/MatMul",
+        "/layers.13/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2671744716666667,
+      "ort": 0.22157466666666667,
+      "excess": 0.04559980500000002
+    },
+    {
+      "ort_name": "/layers.14/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.14/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.266925317,
+      "ort": 0.220653,
+      "excess": 0.04627231700000001
+    },
+    {
+      "ort_name": "/layers.14/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.14/feed_forward1/linear2/MatMul",
+        "/layers.14/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26638128666666666,
+      "ort": 0.22145366666666666,
+      "excess": 0.04492762
+    },
+    {
+      "ort_name": "/layers.14/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.14/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065295137,
+      "ort": 0.055715,
+      "excess": 0.009580137000000002
+    },
+    {
+      "ort_name": "/layers.14/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.14/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06671660433333333,
+      "ort": 0.055632,
+      "excess": 0.011084604333333331
+    },
+    {
+      "ort_name": "/layers.14/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.14/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06613626966666666,
+      "ort": 0.055657333333333336,
+      "excess": 0.010478936333333327
+    },
+    {
+      "ort_name": "/layers.14/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.14/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.220734786,
+      "ort": 0.110197,
+      "excess": 0.11053778599999999
+    },
+    {
+      "ort_name": "/layers.14/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.14/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06685983366666666,
+      "ort": 0.05585933333333333,
+      "excess": 0.01100050033333333
+    },
+    {
+      "ort_name": "/layers.14/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.14/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.271839961,
+      "ort": 0.22073,
+      "excess": 0.05110996100000001
+    },
+    {
+      "ort_name": "/layers.14/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.14/feed_forward2/linear2/MatMul",
+        "/layers.14/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26687883566666665,
+      "ort": 0.22169366666666668,
+      "excess": 0.04518516899999997
+    },
+    {
+      "ort_name": "/layers.15/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.15/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26644468266666665,
+      "ort": 0.22084133333333333,
+      "excess": 0.04560334933333332
+    },
+    {
+      "ort_name": "/layers.15/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.15/feed_forward1/linear2/MatMul",
+        "/layers.15/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26673668466666667,
+      "ort": 0.221368,
+      "excess": 0.04536868466666666
+    },
+    {
+      "ort_name": "/layers.15/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.15/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06593662633333333,
+      "ort": 0.05581766666666667,
+      "excess": 0.010118959666666663
+    },
+    {
+      "ort_name": "/layers.15/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.15/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06538286,
+      "ort": 0.05570166666666666,
+      "excess": 0.009681193333333338
+    },
+    {
+      "ort_name": "/layers.15/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.15/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06600021,
+      "ort": 0.055617,
+      "excess": 0.010383210000000004
+    },
+    {
+      "ort_name": "/layers.15/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.15/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22072899933333334,
+      "ort": 0.11010633333333333,
+      "excess": 0.11062266600000001
+    },
+    {
+      "ort_name": "/layers.15/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.15/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06593348066666667,
+      "ort": 0.055767,
+      "excess": 0.010166480666666672
+    },
+    {
+      "ort_name": "/layers.15/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.15/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26864693966666664,
+      "ort": 0.22040833333333334,
+      "excess": 0.048238606333333295
+    },
+    {
+      "ort_name": "/layers.15/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.15/feed_forward2/linear2/MatMul",
+        "/layers.15/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2663695893333334,
+      "ort": 0.221399,
+      "excess": 0.044970589333333366
+    },
+    {
+      "ort_name": "/layers.16/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.16/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.266736935,
+      "ort": 0.220781,
+      "excess": 0.045955935
+    },
+    {
+      "ort_name": "/layers.16/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.16/feed_forward1/linear2/MatMul",
+        "/layers.16/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26669724666666667,
+      "ort": 0.22146566666666667,
+      "excess": 0.04523157999999999
+    },
+    {
+      "ort_name": "/layers.16/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.16/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06501110533333333,
+      "ort": 0.055691333333333336,
+      "excess": 0.009319771999999997
+    },
+    {
+      "ort_name": "/layers.16/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.16/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06574716766666666,
+      "ort": 0.05569266666666667,
+      "excess": 0.010054500999999993
+    },
+    {
+      "ort_name": "/layers.16/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.16/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06728148666666667,
+      "ort": 0.055645,
+      "excess": 0.011636486666666668
+    },
+    {
+      "ort_name": "/layers.16/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.16/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22249910233333334,
+      "ort": 0.11026066666666667,
+      "excess": 0.11223843566666666
+    },
+    {
+      "ort_name": "/layers.16/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.16/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06613905233333334,
+      "ort": 0.055838,
+      "excess": 0.010301052333333338
+    },
+    {
+      "ort_name": "/layers.16/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.16/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2695657163333333,
+      "ort": 0.22059833333333334,
+      "excess": 0.048967382999999975
+    },
+    {
+      "ort_name": "/layers.16/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.16/feed_forward2/linear2/MatMul",
+        "/layers.16/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26823392166666665,
+      "ort": 0.22147933333333333,
+      "excess": 0.04675458833333332
+    },
+    {
+      "ort_name": "/layers.17/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.17/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26748463233333336,
+      "ort": 0.22074566666666667,
+      "excess": 0.04673896566666669
+    },
+    {
+      "ort_name": "/layers.17/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.17/feed_forward1/linear2/MatMul",
+        "/layers.17/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26627988766666666,
+      "ort": 0.22139666666666666,
+      "excess": 0.044883221
+    },
+    {
+      "ort_name": "/layers.17/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.17/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065119082,
+      "ort": 0.055738,
+      "excess": 0.009381081999999992
+    },
+    {
+      "ort_name": "/layers.17/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.17/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06624702566666667,
+      "ort": 0.05577466666666667,
+      "excess": 0.010472359
+    },
+    {
+      "ort_name": "/layers.17/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.17/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.066306604,
+      "ort": 0.05562966666666667,
+      "excess": 0.010676937333333338
+    },
+    {
+      "ort_name": "/layers.17/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.17/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22152593633333334,
+      "ort": 0.110253,
+      "excess": 0.11127293633333334
+    },
+    {
+      "ort_name": "/layers.17/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.17/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.066916679,
+      "ort": 0.055858,
+      "excess": 0.011058679000000009
+    },
+    {
+      "ort_name": "/layers.17/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.17/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.267769884,
+      "ort": 0.22074566666666667,
+      "excess": 0.04702421733333334
+    },
+    {
+      "ort_name": "/layers.17/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.17/feed_forward2/linear2/MatMul",
+        "/layers.17/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.266874182,
+      "ort": 0.22169333333333333,
+      "excess": 0.04518084866666669
+    },
+    {
+      "ort_name": "/layers.18/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.18/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.266261343,
+      "ort": 0.22074466666666667,
+      "excess": 0.04551667633333331
+    },
+    {
+      "ort_name": "/layers.18/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.18/feed_forward1/linear2/MatMul",
+        "/layers.18/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.2657091236666667,
+      "ort": 0.22151833333333334,
+      "excess": 0.04419079033333337
+    },
+    {
+      "ort_name": "/layers.18/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.18/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.065780614,
+      "ort": 0.055762,
+      "excess": 0.010018614000000002
+    },
+    {
+      "ort_name": "/layers.18/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.18/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06514164533333333,
+      "ort": 0.05578266666666667,
+      "excess": 0.009358978666666663
+    },
+    {
+      "ort_name": "/layers.18/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.18/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06612543633333333,
+      "ort": 0.055751666666666665,
+      "excess": 0.010373769666666664
+    },
+    {
+      "ort_name": "/layers.18/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.18/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22108147933333333,
+      "ort": 0.11025766666666667,
+      "excess": 0.11082381266666666
+    },
+    {
+      "ort_name": "/layers.18/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.18/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06578478933333333,
+      "ort": 0.05586,
+      "excess": 0.00992478933333333
+    },
+    {
+      "ort_name": "/layers.18/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.18/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.270198078,
+      "ort": 0.220575,
+      "excess": 0.049623078000000015
+    },
+    {
+      "ort_name": "/layers.18/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.18/feed_forward2/linear2/MatMul",
+        "/layers.18/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.266340238,
+      "ort": 0.22141866666666668,
+      "excess": 0.04492157133333333
+    },
+    {
+      "ort_name": "/layers.19/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.19/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2666743183333333,
+      "ort": 0.220731,
+      "excess": 0.045943318333333316
+    },
+    {
+      "ort_name": "/layers.19/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.19/feed_forward1/linear2/MatMul",
+        "/layers.19/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26603045566666667,
+      "ort": 0.22166966666666665,
+      "excess": 0.04436078900000001
+    },
+    {
+      "ort_name": "/layers.19/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.19/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.064879573,
+      "ort": 0.055830333333333336,
+      "excess": 0.00904923966666666
+    },
+    {
+      "ort_name": "/layers.19/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.19/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06512920166666666,
+      "ort": 0.05581766666666667,
+      "excess": 0.009311534999999996
+    },
+    {
+      "ort_name": "/layers.19/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.19/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06693683333333333,
+      "ort": 0.055766333333333334,
+      "excess": 0.0111705
+    },
+    {
+      "ort_name": "/layers.19/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.19/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22213295266666666,
+      "ort": 0.11035166666666667,
+      "excess": 0.111781286
+    },
+    {
+      "ort_name": "/layers.19/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.19/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06590728366666666,
+      "ort": 0.055859,
+      "excess": 0.010048283666666664
+    },
+    {
+      "ort_name": "/layers.19/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.19/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2679534313333333,
+      "ort": 0.220664,
+      "excess": 0.047289431333333326
+    },
+    {
+      "ort_name": "/layers.19/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.19/feed_forward2/linear2/MatMul",
+        "/layers.19/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26619551566666666,
+      "ort": 0.221481,
+      "excess": 0.04471451566666665
+    },
+    {
+      "ort_name": "/layers.20/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.20/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26887261333333334,
+      "ort": 0.220764,
+      "excess": 0.048108613333333355
+    },
+    {
+      "ort_name": "/layers.20/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.20/feed_forward1/linear2/MatMul",
+        "/layers.20/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26829630466666665,
+      "ort": 0.22157733333333332,
+      "excess": 0.04671897133333333
+    },
+    {
+      "ort_name": "/layers.20/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.20/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06559162166666667,
+      "ort": 0.055696333333333334,
+      "excess": 0.009895288333333335
+    },
+    {
+      "ort_name": "/layers.20/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.20/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.066498815,
+      "ort": 0.055967333333333334,
+      "excess": 0.010531481666666669
+    },
+    {
+      "ort_name": "/layers.20/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.20/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06705228166666667,
+      "ort": 0.055759666666666666,
+      "excess": 0.011292615000000006
+    },
+    {
+      "ort_name": "/layers.20/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.20/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22284678533333332,
+      "ort": 0.11031166666666667,
+      "excess": 0.11253511866666666
+    },
+    {
+      "ort_name": "/layers.20/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.20/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06728279166666666,
+      "ort": 0.05590666666666667,
+      "excess": 0.011376124999999994
+    },
+    {
+      "ort_name": "/layers.20/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.20/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.27029355666666666,
+      "ort": 0.22105333333333332,
+      "excess": 0.04924022333333333
+    },
+    {
+      "ort_name": "/layers.20/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.20/feed_forward2/linear2/MatMul",
+        "/layers.20/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.27010854133333334,
+      "ort": 0.221783,
+      "excess": 0.04832554133333333
+    },
+    {
+      "ort_name": "/layers.21/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.21/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.269582756,
+      "ort": 0.221085,
+      "excess": 0.048497755999999975
+    },
+    {
+      "ort_name": "/layers.21/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.21/feed_forward1/linear2/MatMul",
+        "/layers.21/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26724376233333336,
+      "ort": 0.22197733333333333,
+      "excess": 0.045266429000000025
+    },
+    {
+      "ort_name": "/layers.21/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.21/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06575486766666666,
+      "ort": 0.055815333333333335,
+      "excess": 0.009939534333333326
+    },
+    {
+      "ort_name": "/layers.21/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.21/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06510641166666667,
+      "ort": 0.05574,
+      "excess": 0.009366411666666671
+    },
+    {
+      "ort_name": "/layers.21/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.21/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06606076733333334,
+      "ort": 0.055716666666666664,
+      "excess": 0.010344100666666675
+    },
+    {
+      "ort_name": "/layers.21/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.21/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.221268937,
+      "ort": 0.11045666666666666,
+      "excess": 0.11081227033333334
+    },
+    {
+      "ort_name": "/layers.21/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.21/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06556373966666666,
+      "ort": 0.055851333333333336,
+      "excess": 0.009712406333333326
+    },
+    {
+      "ort_name": "/layers.21/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.21/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2684316583333333,
+      "ort": 0.220726,
+      "excess": 0.04770565833333332
+    },
+    {
+      "ort_name": "/layers.21/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.21/feed_forward2/linear2/MatMul",
+        "/layers.21/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.267676541,
+      "ort": 0.221706,
+      "excess": 0.045970541000000004
+    },
+    {
+      "ort_name": "/layers.22/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.22/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.2680240246666667,
+      "ort": 0.22097133333333333,
+      "excess": 0.04705269133333337
+    },
+    {
+      "ort_name": "/layers.22/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.22/feed_forward1/linear2/MatMul",
+        "/layers.22/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26953728166666663,
+      "ort": 0.221527,
+      "excess": 0.04801028166666663
+    },
+    {
+      "ort_name": "/layers.22/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.22/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06587845533333334,
+      "ort": 0.055799666666666664,
+      "excess": 0.010078788666666672
+    },
+    {
+      "ort_name": "/layers.22/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.22/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06625984866666666,
+      "ort": 0.05578533333333333,
+      "excess": 0.01047451533333333
+    },
+    {
+      "ort_name": "/layers.22/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.22/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06821779366666667,
+      "ort": 0.055803,
+      "excess": 0.012414793666666667
+    },
+    {
+      "ort_name": "/layers.22/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.22/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.24777404,
+      "ort": 0.11041233333333333,
+      "excess": 0.13736170666666667
+    },
+    {
+      "ort_name": "/layers.22/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.22/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06593172,
+      "ort": 0.055896,
+      "excess": 0.010035719999999998
+    },
+    {
+      "ort_name": "/layers.22/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.22/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.268131744,
+      "ort": 0.22051266666666666,
+      "excess": 0.04761907733333334
+    },
+    {
+      "ort_name": "/layers.22/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.22/feed_forward2/linear2/MatMul",
+        "/layers.22/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26654092966666665,
+      "ort": 0.22148233333333334,
+      "excess": 0.04505859633333331
+    },
+    {
+      "ort_name": "/layers.23/feed_forward1/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.23/feed_forward1/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26639920866666666,
+      "ort": 0.22063866666666668,
+      "excess": 0.04576054199999999
+    },
+    {
+      "ort_name": "/layers.23/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.23/feed_forward1/linear2/MatMul",
+        "/layers.23/Mul"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26602689766666665,
+      "ort": 0.22147366666666668,
+      "excess": 0.04455323099999997
+    },
+    {
+      "ort_name": "/layers.23/self_attn/linear_v/MatMul",
+      "managed_nodes": [
+        "/layers.23/self_attn/linear_v/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06551681766666667,
+      "ort": 0.055738333333333334,
+      "excess": 0.009778484333333337
+    },
+    {
+      "ort_name": "/layers.23/self_attn/linear_k/MatMul",
+      "managed_nodes": [
+        "/layers.23/self_attn/linear_k/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06615270466666667,
+      "ort": 0.05572766666666667,
+      "excess": 0.010425038000000005
+    },
+    {
+      "ort_name": "/layers.23/self_attn/linear_q/MatMul",
+      "managed_nodes": [
+        "/layers.23/self_attn/linear_q/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06599477233333334,
+      "ort": 0.05571966666666667,
+      "excess": 0.010275105666666673
+    },
+    {
+      "ort_name": "/layers.23/self_attn/linear_pos/MatMul",
+      "managed_nodes": [
+        "/layers.23/self_attn/linear_pos/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.22106698666666666,
+      "ort": 0.11021,
+      "excess": 0.11085698666666666
+    },
+    {
+      "ort_name": "/layers.23/self_attn/linear_out/MatMul",
+      "managed_nodes": [
+        "/layers.23/self_attn/linear_out/MatMul"
+      ],
+      "shape": [
+        1024,
+        1024
+      ],
+      "alpha": 1.0,
+      "managed": 0.06693621833333334,
+      "ort": 0.055759,
+      "excess": 0.011177218333333336
+    },
+    {
+      "ort_name": "/layers.23/feed_forward2/linear1/MatMul",
+      "managed_nodes": [
+        "/layers.23/feed_forward2/linear1/MatMul"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "managed": 0.26840738033333333,
+      "ort": 0.22035633333333332,
+      "excess": 0.04805104700000001
+    },
+    {
+      "ort_name": "/layers.23/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "managed_nodes": [
+        "/layers.23/feed_forward2/linear2/MatMul",
+        "/layers.23/Mul_1"
+      ],
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "managed": 0.26616366566666666,
+      "ort": 0.22142033333333333,
+      "excess": 0.04474333233333333
+    }
+  ]
+}
