@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **49.12 GB**, including **35.63 GB** in artifacts.
+The latest inventory is **48.25 GB**, including **34.75 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -29,10 +29,10 @@ The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **49,121,832,846 bytes**, with
-**0.88 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m70-pyannote-closed-size.json`.
-Counting the model junction again gives59.91GB, which counts the same10.79GB
+remain retained. The inventory totals **48,246,055,961 bytes**, with
+**1.75 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m70-e5-transfer-retired-size.json`.
+Counting the model junction again gives59.03GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
@@ -326,3 +326,21 @@ collections remain unchanged. These operations provide headroom for the original
 11 GiB capture preflight; no model call was running or retried. Receipts:
 `artifacts/parakeet-composition-root-retention-20260924` and
 `artifacts/parakeet-composition-build-cache-retention-20260924`.
+
+During the current full-shortlist comparison, local cleanup removed one
+**876.10 MB** duplicate transport archive from the closed e5 randomized A/A
+campaign. Before deletion, all **19,840 archive members** matched both the
+original collection manifest and the complete extracted files byte for byte.
+The **1.561 GB extracted collection** remains intact, including all 334,080
+measured calls, 2,708,171 conditioning calls, original reports and both failed
+statistical/diagnostic verdicts. No canonical e5 input or VM file changed.
+
+The retired file is
+`artifacts/e5-randomized-processes-20260921/results-aa.tar.gz`; its original
+SHA-256 and transfer receipt remain as provenance. The archive is no longer
+needed to reproduce the report: its complete extracted contents remain at
+`artifacts/e5-randomized-processes-20260921/collected-aa`. Verification and the
+exact one-file deletion journal are retained under
+`artifacts/e5-randomized-transfer-retention-20260924`. The verifier is
+`eng/prepare-e5-transfer-retirement.py`; removal used the existing bounded
+PowerShell helper. Both operations are complete and must not be rerun.
