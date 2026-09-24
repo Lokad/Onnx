@@ -1,0 +1,224 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 27860,
+    "sha256": "82342a58fddab63974e8bff009916a91376beb1d91f9db264480c2763c8e7b0a"
+  },
+  "analysis": {
+    "bytes": 7441,
+    "sha256": "5f1d357fdf4af4e3714551a2dfd35470f0a8ae16c21e337b411f35e9757aade0"
+  },
+  "products": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 773632,
+        "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 773632,
+        "sha256": "fb58e9b95c1be579083a2154f63e928691dfc5b2363fe3a8b40f65091cdfef92"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "7e3d05b43653748c3af78cdf86302cc85f5162082431abbd7ca28ca6a8dd72c2"
+      }
+    }
+  },
+  "consumer": {
+    "bytes": 23040,
+    "sha256": "86574c04a8f4283aab6ef1e1860013926c593691687c57be8ec67548096f35a5"
+  },
+  "results": {
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/selected-encoder-512/result.json": {
+      "bytes": 32357,
+      "sha256": "0fdc52bd3a947ed73f681b0b90faff7abdf1da521aae2585c6db8637c625ec27"
+    },
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/selected-decoder-512/result.json": {
+      "bytes": 3283,
+      "sha256": "1530981851bd4f059fe078ec954def0d69411607f55e5884a521dd4711326954"
+    },
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/candidate-encoder-512/result.json": {
+      "bytes": 24677,
+      "sha256": "551b40bf7ce381d1a367bb4ddb7c63980c8fa81ad5124f84082027467f59a196"
+    },
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/candidate-decoder-512/result.json": {
+      "bytes": 3283,
+      "sha256": "18c11633ab6b57b7cf89bb1ba13b694b92caac99240b87a85eefa802c9a4407d"
+    },
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/selected-encoder-256/result.json": {
+      "bytes": 32358,
+      "sha256": "5dc4b92da33fe4010ff2e6d63a3f7d956471549f830c92efb0627d27b0025a24"
+    },
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/selected-decoder-256/result.json": {
+      "bytes": 3284,
+      "sha256": "49960a117eb4a7286e78e4b67ca4d4d545a3022aa756d5f16d2a52211c0ddf04"
+    },
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/candidate-encoder-256/result.json": {
+      "bytes": 24678,
+      "sha256": "4f21becac2dcd45c33b11e789e125e52222d1ab48d52abc65cbad6c386a34e42"
+    },
+    "artifacts/parakeet-inclusive-packing-residency-amd-v2-20260924/collected/candidate-decoder-256/result.json": {
+      "bytes": 3284,
+      "sha256": "ca8a5a9d3adfb53d3742ba0e50a5ebf2a4ea0cd6e6a72f1b6a16c0d52bcb5701"
+    }
+  },
+  "comparison": {
+    "passed": true,
+    "both_modes_exact": true,
+    "shared_source_and_packed_bytes_exact": true,
+    "graphs": {
+      "encoder": {
+        "selected": 37,
+        "candidate": 28,
+        "retained": [
+          "onnx::MatMul_6398",
+          "onnx::MatMul_6400",
+          "onnx::MatMul_6410",
+          "onnx::MatMul_6411",
+          "onnx::MatMul_6412",
+          "onnx::MatMul_6500",
+          "onnx::MatMul_6506",
+          "onnx::MatMul_6508",
+          "onnx::MatMul_6510",
+          "onnx::MatMul_6520",
+          "onnx::MatMul_6521",
+          "onnx::MatMul_6522",
+          "onnx::MatMul_6538",
+          "onnx::MatMul_6544",
+          "onnx::MatMul_6546",
+          "onnx::MatMul_6548",
+          "onnx::MatMul_6558",
+          "onnx::MatMul_6559",
+          "onnx::MatMul_6560",
+          "onnx::MatMul_6576",
+          "onnx::MatMul_6582",
+          "onnx::MatMul_6586"
+        ],
+        "displaced": [
+          "onnx::MatMul_6584",
+          "onnx::MatMul_6596",
+          "onnx::MatMul_6597",
+          "onnx::MatMul_6598",
+          "onnx::MatMul_6614",
+          "onnx::MatMul_6620",
+          "onnx::MatMul_6622",
+          "onnx::MatMul_6624",
+          "onnx::MatMul_6634",
+          "onnx::MatMul_6635",
+          "onnx::MatMul_6636",
+          "onnx::MatMul_6652",
+          "onnx::MatMul_6662",
+          "onnx::MatMul_6672",
+          "onnx::MatMul_6673"
+        ],
+        "newly_retained": [
+          "onnx::MatMul_6382",
+          "onnx::MatMul_6399",
+          "onnx::MatMul_6507",
+          "onnx::MatMul_6509",
+          "onnx::MatMul_6545",
+          "onnx::MatMul_6547"
+        ]
+      },
+      "decoder": {
+        "selected": 3,
+        "candidate": 3,
+        "retained": [
+          "onnx::MatMul_228",
+          "onnx::MatMul_229",
+          "onnx::MatMul_230"
+        ],
+        "displaced": [],
+        "newly_retained": []
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 8351744,
+      "seconds": 0.2560868510045111
+    },
+    {
+      "name": "census-restore",
+      "samples": 4,
+      "peak_rss": 153374720,
+      "seconds": 1.0188616439700127
+    },
+    {
+      "name": "census-build",
+      "samples": 15,
+      "peak_rss": 336715776,
+      "seconds": 3.8453152540605515
+    },
+    {
+      "name": "selected-encoder-512",
+      "samples": 8,
+      "peak_rss": 3159769088,
+      "seconds": 2.044847389915958
+    },
+    {
+      "name": "selected-decoder-512",
+      "samples": 2,
+      "peak_rss": 277266432,
+      "seconds": 0.5135215249611065
+    },
+    {
+      "name": "candidate-encoder-512",
+      "samples": 8,
+      "peak_rss": 3159846912,
+      "seconds": 2.0460242859553546
+    },
+    {
+      "name": "candidate-decoder-512",
+      "samples": 2,
+      "peak_rss": 277237760,
+      "seconds": 0.5135937329614535
+    },
+    {
+      "name": "selected-encoder-256",
+      "samples": 8,
+      "peak_rss": 3155820544,
+      "seconds": 2.047431585029699
+    },
+    {
+      "name": "selected-decoder-256",
+      "samples": 2,
+      "peak_rss": 277303296,
+      "seconds": 0.5149700429756194
+    },
+    {
+      "name": "candidate-encoder-256",
+      "samples": 8,
+      "peak_rss": 3157901312,
+      "seconds": 2.049307841109112
+    },
+    {
+      "name": "candidate-decoder-256",
+      "samples": 2,
+      "peak_rss": 277291008,
+      "seconds": 0.515458823996596
+    }
+  ],
+  "outputs": {
+    "residency-weights-20260924.csv": {
+      "bytes": 34370,
+      "sha256": "7080e2f4361991579ef3168fde842a5de9e82caa396e45ed1ad044dc35e0b411"
+    },
+    "residency-20260924.md": {
+      "bytes": 2568,
+      "sha256": "8ad4b7b863f7b543e7e75448fbc20dc018f69478c19d8a3fb26f17f6254695a2"
+    }
+  },
+  "generator": {
+    "bytes": 5655,
+    "sha256": "69fda08e8e4031c72db23abcf5abf6f85ac47f0edb7335dc8ad0d30b8a2e43ef"
+  }
+}

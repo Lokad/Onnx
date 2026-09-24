@@ -6,13 +6,14 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **44.23 GB**, including **30.76 GB** in artifacts,
-after retaining the complete selected-release profile and preparing the isolated
-inclusive-packing candidate. All 240 public calls, raw traces, four trace exports,
-and the earlier rejected controls and qualification evidence remain retained.
-The inventory totals **44,232,213,533 bytes**, with **5.77 GB** of headroom.
-Receipt: `artifacts/repository-retention-20260923/m63-source-prepared-size.json`.
-Counting the model junction again gives 55.02 GB, which counts the same 10.79 GB
+The latest inventory is **44.37 GB**, including **30.89 GB** in artifacts,
+after retaining the complete selected-release profile, isolated inclusive-packing
+build, focused contracts in both modes and all eight actual-model residency loads.
+All raw traces, clocks, trace exports, failed attempts and qualification evidence
+remain retained. The inventory totals **44,365,439,573 bytes**, with **5.63 GB**
+of headroom. Receipt:
+`artifacts/repository-retention-20260923/m63-residency-closed-size.json`.
+Counting the model junction again gives 55.15 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 No new model copies were needed. Raw clocks remain in verified local collections
