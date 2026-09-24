@@ -1,5 +1,6 @@
 """Collect hardlinked model evidence as regular members; all gates stay unchanged."""
 import inspect
+import json
 import subprocess
 import sys
 import tarfile
