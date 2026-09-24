@@ -1,0 +1,413 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 789802,
+    "sha256": "28c7afe448ed16e3bb19d29232c3f90eb2d72c096196ae27792f5261afa5b64f"
+  },
+  "analysis": {
+    "passed": true,
+    "identities": {
+      "Lokad.Onnx.dll": {
+        "bytes": 773632,
+        "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+      },
+      "Google.Protobuf.dll": {
+        "bytes": 497304,
+        "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+      }
+    },
+    "consumer": {
+      "bytes": 44544,
+      "sha256": "38a2d12d33c19f0eb8f04fec7f0756d75d2c40e76314543fb925a8dcafe4a04f"
+    },
+    "capture": {
+      "passed": true,
+      "calls": 380,
+      "original_decoder_executions": 760,
+      "exact_original_arrays": 3040,
+      "captured_output_arrays": 1140,
+      "captured_output_values": 729600,
+      "unique_files": 443,
+      "tensor_bytes": 27374080,
+      "result": {
+        "bytes": 2289811,
+        "sha256": "e159920f2427dffb537ef5c48d84595afa07b2abdbb84e2dd1d24fcf14d47187"
+      },
+      "node_sha256": "dd14717081da18302fcb922ef80a41227e245ceeb956392ac93ecc6795c51d1d",
+      "no_performance_measurement": true
+    },
+    "native": {
+      "passed": true,
+      "calls": 760,
+      "arrays": 2280,
+      "values": 1459200,
+      "max_error": 1.2874603271484375e-05,
+      "native_repeat_exact": true,
+      "result": {
+        "bytes": 1018846,
+        "sha256": "e98a1a4bae4e7fa156a28fc2f1e64e9b12980571a4efe7a556585cd463ff12da"
+      },
+      "no_performance_measurement": true
+    },
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "seconds": 0.3339061699807644,
+        "peak_rss": 8351744
+      },
+      {
+        "name": "capture-restore",
+        "samples": 4,
+        "seconds": 1.0412999249529094,
+        "peak_rss": 152330240
+      },
+      {
+        "name": "capture-build",
+        "samples": 15,
+        "seconds": 3.9224342480301857,
+        "peak_rss": 337534976
+      },
+      {
+        "name": "capture",
+        "samples": 43,
+        "seconds": 11.53213039599359,
+        "peak_rss": 754020352
+      },
+      {
+        "name": "native",
+        "samples": 52,
+        "seconds": 14.979547293041833,
+        "peak_rss": 128454656
+      }
+    ],
+    "source_prepared": {
+      "bytes": 148434,
+      "sha256": "a535266a48631edc8578eeab679df644884d08f1f1cb08e84dbb27415b1cbd7c"
+    },
+    "root_product_changed": false,
+    "no_performance_measurement": true
+  },
+  "cases": [
+    {
+      "name": "english-16k",
+      "steps": 37,
+      "lstm_calls": 74,
+      "decoder_controls": 148,
+      "native_arrays": 444,
+      "max_error": 9.179115295410156e-06
+    },
+    {
+      "name": "french-44k-stereo",
+      "steps": 29,
+      "lstm_calls": 58,
+      "decoder_controls": 116,
+      "native_arrays": 348,
+      "max_error": 6.9141387939453125e-06
+    },
+    {
+      "name": "jfk-48k-stereo",
+      "steps": 46,
+      "lstm_calls": 92,
+      "decoder_controls": 184,
+      "native_arrays": 552,
+      "max_error": 1.2874603271484375e-05
+    },
+    {
+      "name": "english-token-limit",
+      "steps": 4,
+      "lstm_calls": 8,
+      "decoder_controls": 16,
+      "native_arrays": 48,
+      "max_error": 5.69317489862442e-06
+    },
+    {
+      "name": "english-frame-limit",
+      "steps": 37,
+      "lstm_calls": 74,
+      "decoder_controls": 148,
+      "native_arrays": 444,
+      "max_error": 9.179115295410156e-06
+    },
+    {
+      "name": "silence",
+      "steps": 0,
+      "lstm_calls": 0,
+      "decoder_controls": 0,
+      "native_arrays": 0,
+      "max_error": 0
+    },
+    {
+      "name": "english-repeat",
+      "steps": 37,
+      "lstm_calls": 74,
+      "decoder_controls": 148,
+      "native_arrays": 444,
+      "max_error": 9.179115295410156e-06
+    }
+  ],
+  "nodes": [
+    {
+      "index": 0,
+      "name": "/decoder/dec_rnn/lstm/LSTM",
+      "file": "models/lstm-0.onnx",
+      "model": {
+        "bytes": 833,
+        "sha256": "2a228ac4a9a4d28692ce382678048a2ae12f935eb6c2ee25e3b63b7c19d646f2"
+      },
+      "input_names": [
+        "/decoder/Transpose_output_0",
+        "onnx::LSTM_205",
+        "onnx::LSTM_206",
+        "onnx::LSTM_207",
+        "",
+        "/decoder/dec_rnn/lstm/Slice_output_0",
+        "/decoder/dec_rnn/lstm/Slice_1_output_0"
+      ],
+      "output_names": [
+        "/decoder/dec_rnn/lstm/LSTM_output_0",
+        "/decoder/dec_rnn/lstm/LSTM_output_1",
+        "/decoder/dec_rnn/lstm/LSTM_output_2"
+      ],
+      "input_shapes": [
+        [
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          2560,
+          640
+        ],
+        [
+          1,
+          2560,
+          640
+        ],
+        [
+          1,
+          5120
+        ],
+        null,
+        [
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          1,
+          640
+        ]
+      ],
+      "output_shapes": [
+        [
+          1,
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          1,
+          640
+        ]
+      ],
+      "attributes": {
+        "hidden_size": 640
+      },
+      "opset": 17,
+      "weights": {
+        "onnx::LSTM_205": {
+          "shape": [
+            1,
+            2560,
+            640
+          ],
+          "bytes": 6553600,
+          "sha256": "8221b82cb8144e6f3bd75cc6d690521751beef4dc5bac9766708a0e8b24c9824"
+        },
+        "onnx::LSTM_206": {
+          "shape": [
+            1,
+            2560,
+            640
+          ],
+          "bytes": 6553600,
+          "sha256": "fe18a23c4c03b24e641756ec8ecf78a080da37994f80c2450861000734d2bb62"
+        },
+        "onnx::LSTM_207": {
+          "shape": [
+            1,
+            5120
+          ],
+          "bytes": 20480,
+          "sha256": "e0b4ab91dc51ba9ecd9c072470e2bbda9cf1cdf997590baeabb66e21e02ef981"
+        }
+      },
+      "node_sha256": "a30904cc9e637880f733df8b652eac17624ed56e5ef5040d4d57f3d325af0367"
+    },
+    {
+      "index": 1,
+      "name": "/decoder/dec_rnn/lstm/LSTM_1",
+      "file": "models/lstm-1.onnx",
+      "model": {
+        "bytes": 873,
+        "sha256": "6db4d6db5975a03561c75fda2a523a871477b7a04a2e287ae81f31d8fc216ebc"
+      },
+      "input_names": [
+        "/decoder/dec_rnn/lstm/Squeeze_output_0",
+        "onnx::LSTM_225",
+        "onnx::LSTM_226",
+        "onnx::LSTM_227",
+        "",
+        "/decoder/dec_rnn/lstm/Slice_2_output_0",
+        "/decoder/dec_rnn/lstm/Slice_3_output_0"
+      ],
+      "output_names": [
+        "/decoder/dec_rnn/lstm/LSTM_1_output_0",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_1",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_2"
+      ],
+      "input_shapes": [
+        [
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          2560,
+          640
+        ],
+        [
+          1,
+          2560,
+          640
+        ],
+        [
+          1,
+          5120
+        ],
+        null,
+        [
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          1,
+          640
+        ]
+      ],
+      "output_shapes": [
+        [
+          1,
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          1,
+          640
+        ],
+        [
+          1,
+          1,
+          640
+        ]
+      ],
+      "attributes": {
+        "hidden_size": 640
+      },
+      "opset": 17,
+      "weights": {
+        "onnx::LSTM_225": {
+          "shape": [
+            1,
+            2560,
+            640
+          ],
+          "bytes": 6553600,
+          "sha256": "43a99b00fa37b3367b157dbb74bd38162a33ab052cf45a57e718285070c15c28"
+        },
+        "onnx::LSTM_226": {
+          "shape": [
+            1,
+            2560,
+            640
+          ],
+          "bytes": 6553600,
+          "sha256": "e43f649ecb41fc59852bb2ed2d95784c174d4dd74bf076248dcd8ab0795d2680"
+        },
+        "onnx::LSTM_227": {
+          "shape": [
+            1,
+            5120
+          ],
+          "bytes": 20480,
+          "sha256": "9ab377d25173e5bb33f3060ff6bb7f5c06a50e4580ffe8749608b22dfb701e4e"
+        }
+      },
+      "node_sha256": "aaf867bcd4d63518b0c50eae71132df6ac8b71e35ac21ade506123ab435e4cfe"
+    }
+  ],
+  "original_node_count": 29,
+  "initializer_count": 16,
+  "native_libraries": {
+    "/home/vermorel/.local/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_pybind11_state.cpython-312-x86_64-linux-gnu.so": {
+      "bytes": 30112440,
+      "sha256": "ff54b93f257508c8e32a43f3528382b7eb791f0946730187e4767d7292a290ee"
+    },
+    "/home/vermorel/.local/lib/python3.12/site-packages/onnxruntime/capi/libonnxruntime_providers_shared.so": {
+      "bytes": 14632,
+      "sha256": "086ec1d5388f64153d9c63470d126693db9a182c8ce236d3a1119068471b8a0d"
+    }
+  },
+  "terminal": [
+    {
+      "pid": 918291,
+      "birth": 1790233911.17
+    },
+    {
+      "pid": 918292,
+      "birth": 1790233918.68
+    },
+    {
+      "pid": 918300,
+      "birth": 1790233922.73
+    },
+    {
+      "pid": 918319,
+      "birth": 1790233927.48
+    },
+    {
+      "pid": 918336,
+      "birth": 1790233928.37
+    },
+    {
+      "pid": 918426,
+      "birth": 1790233935.1
+    },
+    {
+      "pid": 918435,
+      "birth": 1790233950.34
+    }
+  ],
+  "publisher": {
+    "bytes": 5008,
+    "sha256": "6bfce9a26b12b49fc59d5c3d9dec7f76614a8c5800a5f3ae5be457db7e153ad7"
+  }
+}
