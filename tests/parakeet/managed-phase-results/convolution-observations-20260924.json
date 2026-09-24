@@ -1,0 +1,542 @@
+{
+  "closure": {
+    "bytes": 303,
+    "sha256": "3ddc33493522d9f2fd240fad5d5b610c33e80887c3404f0163b254f6e54de9b3"
+  },
+  "passed": true,
+  "managed_closure": {
+    "bytes": 952,
+    "sha256": "2a9d9342acfffede564e1a6870a8027322049e1b5087c005c260d9a054e0c2a3"
+  },
+  "native_closure": {
+    "bytes": 632,
+    "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+  },
+  "graph_review": {
+    "bytes": 872,
+    "sha256": "d844dcef266c6ea132c58b68d3e6f2dd04f6a98fed55d4d995badbc21542bf5b"
+  },
+  "original_model": {
+    "bytes": 41770866,
+    "sha256": "98a74b21b4cc0017c1e7030319a4a96f4a9506e50f0708f3a516d02a77c96bb1"
+  },
+  "optimized_model": {
+    "bytes": 432574,
+    "sha256": "ed1eca96607258004aa74b4b22751b7a5d4203a2c0e6eb2b586452211f1a0efc"
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "native_sources": {
+    "onnxruntime/core/providers/cpu/nn/conv.cc": {
+      "bytes": 22012,
+      "sha256": "f3487f4a6377c24b7f1a4a014f66d98c5c7461689de23b41c99781cb85256642"
+    },
+    "onnxruntime/core/providers/cpu/nn/conv_attributes.h": {
+      "bytes": 15596,
+      "sha256": "61d45aa7e1355ce9feb9955d01dc695ee74818753ec5c73005c1ec11c78c82ed"
+    },
+    "onnxruntime/core/providers/common.h": {
+      "bytes": 8466,
+      "sha256": "184cb289c233a317d4af1f03c169a7ff527d9fcb8ed992126b65f1d9370a6138"
+    },
+    "onnxruntime/core/mlas/lib/convolve.cpp": {
+      "bytes": 57470,
+      "sha256": "b96bd7e1d7718089cba66edf2da5ee680b9cf9e2b3ea48a2cdbd61de4022724d"
+    },
+    "onnxruntime/core/mlas/lib/sgemm.cpp": {
+      "bytes": 43141,
+      "sha256": "1554aa0b046c3c02734613ef8ab1105bd55449f7d76116d342d17e1c630cb523"
+    },
+    "onnxruntime/core/mlas/lib/platform.cpp": {
+      "bytes": 38692,
+      "sha256": "93f4874452958eedbc6a532031b93c8fb572d39afe101436f04dbd79a0fb0d73"
+    }
+  },
+  "managed_sources": {
+    "src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs": {
+      "bytes": 11634,
+      "sha256": "bf9aa06399239f785ed225bdececeb45a5e8d35a100c27b5381a84a30244b3e4"
+    },
+    "src/Lokad.Onnx/TensorOps.ConvPool.cs": {
+      "bytes": 48804,
+      "sha256": "a05276930549651ea1b2b195407395fcd674b2088a63dfdc903d767a5f610fe2"
+    },
+    "src/Lokad.Onnx/TensorOps.ConvBlocked.cs": {
+      "bytes": 3303,
+      "sha256": "f97ca4648efa3c814e98054ca895dcfefd13cf74b07f7a4113ddec70ccddf09d"
+    },
+    "src/Lokad.Onnx/Zzz.ConvDirectOutput.cs": {
+      "bytes": 2944,
+      "sha256": "3582cad0318cf6928a89fd37a7c626d6fd5859ea77509bb3fe61a49e57db258e"
+    },
+    "src/Lokad.Onnx/Zzz.ConvPortableRows.cs": {
+      "bytes": 2218,
+      "sha256": "cab0c61662c9794e61bb3d8ef1d848db72b32655867cf438feaaf873ff6c1153"
+    }
+  },
+  "groups": [
+    {
+      "kind": "pointwise_conv1",
+      "nodes": 24,
+      "managed_seconds": 4.299340726333333,
+      "ort_seconds": 2.926533,
+      "excess_seconds": 1.372807726333333
+    },
+    {
+      "kind": "depthwise_conv",
+      "nodes": 24,
+      "managed_seconds": 1.5072761909999999,
+      "ort_seconds": 0.15043466666666666,
+      "excess_seconds": 1.3568415243333332
+    },
+    {
+      "kind": "pointwise_conv2",
+      "nodes": 24,
+      "managed_seconds": 2.0746018626666665,
+      "ort_seconds": 1.4609946666666667,
+      "excess_seconds": 0.6136071959999998
+    }
+  ],
+  "frames": {
+    "51": 1,
+    "61": 1,
+    "83": 1,
+    "88": 1,
+    "89": 1,
+    "102": 1,
+    "106": 1,
+    "112": 1,
+    "114": 1,
+    "120": 1,
+    "151": 1,
+    "156": 2,
+    "157": 1,
+    "158": 1,
+    "167": 1,
+    "169": 1,
+    "190": 1,
+    "222": 1,
+    "225": 1
+  },
+  "matched_by_edges_attributes_parameters_and_runtime_shapes": true,
+  "shared_ancestors_counted_once": true,
+  "attribute_normalization": "Only the omitted original auto_pad equals serialized NOTSET, as initialized in the pinned ConvAttributes source.",
+  "source_dispatch_is_prediction": true,
+  "per_node_native_leaf_observed": false,
+  "managed_runtime_route_observed": false,
+  "profiler_clocks_are_diagnostic": true,
+  "new_inference_calls": 0,
+  "new_optimization_selected": false,
+  "caveat": "Inclusive ancestor unions contain shared constant/mask work once; do not add these totals to other attribution groups without removing overlap.",
+  "modules": {
+    "managed": {
+      "unique_nodes": 489,
+      "seconds": 10.632553440333334,
+      "operators": {
+        "Constant": {
+          "nodes": 8,
+          "seconds": 0.000137088
+        },
+        "Unsqueeze": {
+          "nodes": 1,
+          "seconds": 0.00018494333333333334
+        },
+        "Cast": {
+          "nodes": 48,
+          "seconds": 0.003939663333333333
+        },
+        "Transpose": {
+          "nodes": 72,
+          "seconds": 0.4800498330000001
+        },
+        "Conv": {
+          "nodes": 72,
+          "seconds": 7.881218779999999
+        },
+        "Split": {
+          "nodes": 24,
+          "seconds": 0.19232036533333333
+        },
+        "Sigmoid": {
+          "nodes": 48,
+          "seconds": 0.49715305
+        },
+        "Mul": {
+          "nodes": 48,
+          "seconds": 0.030992989999999995
+        },
+        "Where": {
+          "nodes": 24,
+          "seconds": 0.8184579869999999
+        },
+        "ConstantOfShape": {
+          "nodes": 24,
+          "seconds": 0.0020843913333333337
+        },
+        "Concat": {
+          "nodes": 24,
+          "seconds": 0.0026811176666666665
+        },
+        "Reshape": {
+          "nodes": 48,
+          "seconds": 0.0030861420000000005
+        },
+        "Slice": {
+          "nodes": 24,
+          "seconds": 0.006619521333333335
+        },
+        "Pad": {
+          "nodes": 24,
+          "seconds": 0.713627568
+        }
+      },
+      "shared_nodes": [
+        {
+          "name": "/pre_encode/Constant_9",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 2.3465666666666668e-05
+        },
+        {
+          "name": "/layers.0/conv/Unsqueeze",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 0.00018494333333333334
+        },
+        {
+          "name": "/layers.0/self_attn/Constant_112",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 1.5032666666666666e-05
+        },
+        {
+          "name": "/layers.0/conv/depthwise_conv/Constant_1",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 7.992666666666667e-06
+        },
+        {
+          "name": "/layers.0/conv/depthwise_conv/Constant",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 4.840933333333333e-05
+        },
+        {
+          "name": "/layers.0/self_attn/Constant_89",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 6.003e-06
+        },
+        {
+          "name": "/pre_encode/Constant_12",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 1.0679666666666667e-05
+        },
+        {
+          "name": "/layers.0/self_attn/Constant_92",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 9.787333333333334e-06
+        },
+        {
+          "name": "Constant_1704",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 1.5717666666666667e-05
+        }
+      ],
+      "shared_seconds": 0.00032203133333333334
+    },
+    "ort": {
+      "unique_nodes": 265,
+      "seconds": 4.730614666666667,
+      "operators": {
+        "Unsqueeze": {
+          "nodes": 1,
+          "seconds": 9.2e-05
+        },
+        "Transpose": {
+          "nodes": 48,
+          "seconds": 0.06491433333333331
+        },
+        "Conv": {
+          "nodes": 72,
+          "seconds": 4.537962333333333
+        },
+        "Split": {
+          "nodes": 24,
+          "seconds": 0.02336866666666667
+        },
+        "Sigmoid": {
+          "nodes": 24,
+          "seconds": 0.02130233333333334
+        },
+        "Mul": {
+          "nodes": 24,
+          "seconds": 0.012931333333333335
+        },
+        "Where": {
+          "nodes": 24,
+          "seconds": 0.033695333333333334
+        },
+        "Pad": {
+          "nodes": 24,
+          "seconds": 0.015294333333333332
+        },
+        "QuickGelu": {
+          "nodes": 24,
+          "seconds": 0.021054
+        }
+      },
+      "shared_nodes": [
+        {
+          "name": "/layers.0/conv/Unsqueeze",
+          "layers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "seconds": 9.2e-05
+        }
+      ],
+      "shared_seconds": 9.2e-05
+    }
+  }
+}
