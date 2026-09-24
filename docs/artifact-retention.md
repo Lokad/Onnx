@@ -6,18 +6,18 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **46.72 GB**, including **33.24 GB** in artifacts.
+The latest inventory is **46.91 GB**, including **33.43 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
-the corrected two-mode qualification remain recorded. Full-model composition
-checks are running; their completed collection is not included yet.
+the corrected two-mode qualification remain recorded. Complete native/public model qualification in both instruction modes is now
+collected and audited; the combined application comparison is staged.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **46,716,241,617 bytes**, with
-**3.28 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m66-composition-build-size.json`.
-Counting the model junction again gives57.50GB, which counts the same10.79GB
+remain retained. The inventory totals **46,909,595,460 bytes**, with
+**3.09 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m66-composition-models-size.json`.
+Counting the model junction again gives57.70GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
