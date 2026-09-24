@@ -6,14 +6,14 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **42.17 GB**, including **28.72 GB** in artifacts,
+The latest inventory is **42.19 GB**, including **28.74 GB** in artifacts,
 after retaining the selected release proofs, closing the rejected matrix-blocking
 candidate, and qualifying the corrected uniform-mask Where candidate's build,
-numerics and generated code. The Boolean counterexample and superseded drafts
-remain retained. The fresh inventory totals **42,166,158,894 bytes**, with
-**7.83 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m56-v3-qualified-size.json`.
-Counting the model junction again gives 52.95 GB, which counts the same 10.79 GB
+numerics and generated code, then staging its fixed performance screen. The Boolean counterexample and superseded drafts
+remain retained. The fresh inventory totals **42,194,072,754 bytes**, with
+**7.81 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m56-screen-staged-size.json`.
+Counting the model junction again gives 52.98 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
 No new model copies were needed. Recheck after subsequent collections.
@@ -128,3 +128,9 @@ staged numerical run to pass its original memory preflight before any worker
 started. Receipts:artifacts/parakeet-scalar-where-build-retention-20260924 and
 artifacts/parakeet-scalar-where-v3-build-retention-20260924. No active worker or
 model was removed.
+
+Before the uniform-mask performance screen, closed-only deduplication verified
+288 files and shared157 identical binary/evidence copies, freeing **68.54 MB of
+tmpfs**. Every path and byte remains unchanged; all recorded owners were terminal.
+Receipt: `artifacts/parakeet-scalar-where-closed-links-20260924`. This maintenance
+finished before the screen launched.

@@ -1,0 +1,5561 @@
+{
+  "closure": {
+    "bytes": 36923,
+    "sha256": "fd8477677a34b9064fa5294d1834b91a59a2284b6bbfbb0ff470c612a2c4949b"
+  },
+  "analysis": {
+    "passed": true,
+    "performance_admitted": false,
+    "products": {
+      "current": {
+        "Lokad.Onnx.dll": {
+          "bytes": 773632,
+          "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+        }
+      },
+      "candidate": {
+        "Lokad.Onnx.dll": {
+          "bytes": 774656,
+          "sha256": "70275a50560e7b9014dbb5885b34552be574e65498e0309f086e6756714bdc93"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "7d26bf8c85418d9631e2ee1310f44034d0d6db6267d1a8cb2f29d3f4f99ca050"
+        }
+      }
+    },
+    "consumer": {
+      "bytes": 51712,
+      "sha256": "d710d3f7acebc7badaaa7130578f335477383ba7a68230cf369a0a5a952ab9a1"
+    },
+    "comparison": {
+      "admitted": false,
+      "controls": [
+        {
+          "role": "current",
+          "scope": "all122",
+          "ratio": {
+            "numerator": 2908117154784,
+            "denominator": 2904436944577,
+            "value": 1.001267099364602
+          },
+          "limit": 1.1,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "target6",
+          "ratio": {
+            "numerator": 140624737,
+            "denominator": 137603564,
+            "value": 1.0219556304515485
+          },
+          "limit": 1.1,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "other_uniform42",
+          "ratio": {
+            "numerator": 600391481850,
+            "denominator": 579713198771,
+            "value": 1.0356698504067843
+          },
+          "limit": 1.1,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "fallback74",
+          "ratio": {
+            "numerator": 1764779757869,
+            "denominator": 1728046539975,
+            "value": 1.0212570767304285
+          },
+          "limit": 1.1,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-0",
+          "ratio": {
+            "numerator": 13987303,
+            "denominator": 13740279,
+            "value": 1.0179780920023531
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-1",
+          "ratio": {
+            "numerator": 43289914,
+            "denominator": 42901149,
+            "value": 1.0090618785058647
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-1-true",
+          "ratio": {
+            "numerator": 46205840,
+            "denominator": 46184133,
+            "value": 1.000470009905783
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-1-first",
+          "ratio": {
+            "numerator": 23149659,
+            "denominator": 22728778,
+            "value": 1.0185175375464532
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-1-last",
+          "ratio": {
+            "numerator": 46530307,
+            "denominator": 44899599,
+            "value": 1.0363189880604502
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-1-alternating",
+          "ratio": {
+            "numerator": 45383926,
+            "denominator": 44423347,
+            "value": 1.0216232919144972
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-2",
+          "ratio": {
+            "numerator": 46194968,
+            "denominator": 44302949,
+            "value": 1.0427063895904536
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-2-true",
+          "ratio": {
+            "numerator": 45011151,
+            "denominator": 44330677,
+            "value": 1.015349957321879
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-2-first",
+          "ratio": {
+            "numerator": 46509284,
+            "denominator": 44237953,
+            "value": 1.0513434923175582
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-2-last",
+          "ratio": {
+            "numerator": 45183555,
+            "denominator": 44866796,
+            "value": 1.0070599870781947
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-2-alternating",
+          "ratio": {
+            "numerator": 47320571,
+            "denominator": 45423642,
+            "value": 1.0417608301861836
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-3",
+          "ratio": {
+            "numerator": 61940644,
+            "denominator": 60591543,
+            "value": 1.0222654999890002
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-3-true",
+          "ratio": {
+            "numerator": 65324271,
+            "denominator": 59578684,
+            "value": 1.0964369572177861
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-3-first",
+          "ratio": {
+            "numerator": 63111399,
+            "denominator": 62431099,
+            "value": 1.0108968128208027
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-3-last",
+          "ratio": {
+            "numerator": 31529207,
+            "denominator": 29257544,
+            "value": 1.0776436668778486
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-3-alternating",
+          "ratio": {
+            "numerator": 62917807,
+            "denominator": 59521170,
+            "value": 1.0570660321361292
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-4",
+          "ratio": {
+            "numerator": 20211785,
+            "denominator": 19789441,
+            "value": 1.0213418863119983
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-5",
+          "ratio": {
+            "numerator": 152607619,
+            "denominator": 151633763,
+            "value": 1.0064224218982154
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-5-true",
+          "ratio": {
+            "numerator": 76213442,
+            "denominator": 70245507,
+            "value": 1.0849582450874757
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-5-first",
+          "ratio": {
+            "numerator": 146999417,
+            "denominator": 145869101,
+            "value": 1.0077488377747663
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-5-last",
+          "ratio": {
+            "numerator": 75716804,
+            "denominator": 71174361,
+            "value": 1.0638213386980742
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-5-alternating",
+          "ratio": {
+            "numerator": 29871272,
+            "denominator": 28581083,
+            "value": 1.0451413615082397
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-6",
+          "ratio": {
+            "numerator": 29037785,
+            "denominator": 28934712,
+            "value": 1.0035622611346537
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-6-true",
+          "ratio": {
+            "numerator": 154944274,
+            "denominator": 151824901,
+            "value": 1.0205458589431256
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-6-first",
+          "ratio": {
+            "numerator": 149356503,
+            "denominator": 144107692,
+            "value": 1.0364228371654165
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-6-last",
+          "ratio": {
+            "numerator": 73479437,
+            "denominator": 72200007,
+            "value": 1.0177206354010464
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-6-alternating",
+          "ratio": {
+            "numerator": 73701202,
+            "denominator": 71543235,
+            "value": 1.03016311744919
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-7",
+          "ratio": {
+            "numerator": 114766099,
+            "denominator": 104822071,
+            "value": 1.0948657845159346
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-7-true",
+          "ratio": {
+            "numerator": 411887,
+            "denominator": 395725,
+            "value": 1.0408414934613683
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-7-first",
+          "ratio": {
+            "numerator": 109513717,
+            "denominator": 105278359,
+            "value": 1.0402300913523927
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-7-last",
+          "ratio": {
+            "numerator": 56788386,
+            "denominator": 55887841,
+            "value": 1.01611343333159
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "capture-7-alternating",
+          "ratio": {
+            "numerator": 5601245,
+            "denominator": 3659066,
+            "value": 1.530785451806554
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "vector-false",
+          "ratio": {
+            "numerator": 88671587,
+            "denominator": 81340822,
+            "value": 1.0901240584954994
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-mask-false",
+          "ratio": {
+            "numerator": 41579166,
+            "denominator": 38811019,
+            "value": 1.071323739271056
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "outer-mask-false",
+          "ratio": {
+            "numerator": 293590019,
+            "denominator": 288592541,
+            "value": 1.0173167261450462
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "inner-broadcast-false",
+          "ratio": {
+            "numerator": 103708817,
+            "denominator": 100220556,
+            "value": 1.0348058436235377
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "rank8-false",
+          "ratio": {
+            "numerator": 237341081,
+            "denominator": 210488398,
+            "value": 1.1275732213991196
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "vector-true",
+          "ratio": {
+            "numerator": 182642477,
+            "denominator": 168707968,
+            "value": 1.0825954408982035
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-mask-true",
+          "ratio": {
+            "numerator": 265303272,
+            "denominator": 262450853,
+            "value": 1.0108683929482218
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "outer-mask-true",
+          "ratio": {
+            "numerator": 33670574,
+            "denominator": 32942911,
+            "value": 1.02208860655939
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "inner-broadcast-true",
+          "ratio": {
+            "numerator": 113401411,
+            "denominator": 110224726,
+            "value": 1.0288200761778261
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "rank8-true",
+          "ratio": {
+            "numerator": 48250116,
+            "denominator": 42341011,
+            "value": 1.1395598465988448
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "vector-first",
+          "ratio": {
+            "numerator": 179831096,
+            "denominator": 163161157,
+            "value": 1.1021685510602257
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-mask-first",
+          "ratio": {
+            "numerator": 54680785,
+            "denominator": 50027863,
+            "value": 1.0930066111358785
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "outer-mask-first",
+          "ratio": {
+            "numerator": 149913241,
+            "denominator": 146593825,
+            "value": 1.0226436277244284
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "inner-broadcast-first",
+          "ratio": {
+            "numerator": 105467549,
+            "denominator": 100635718,
+            "value": 1.0480130821941371
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "rank8-first",
+          "ratio": {
+            "numerator": 31831237,
+            "denominator": 21132059,
+            "value": 1.5063007821433776
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "vector-last",
+          "ratio": {
+            "numerator": 8221183,
+            "denominator": 7289833,
+            "value": 1.1277601283870289
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-mask-last",
+          "ratio": {
+            "numerator": 124837693,
+            "denominator": 121710998,
+            "value": 1.0256895026035362
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "outer-mask-last",
+          "ratio": {
+            "numerator": 414333303,
+            "denominator": 284838317,
+            "value": 1.4546262854094871
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "inner-broadcast-last",
+          "ratio": {
+            "numerator": 2358536,
+            "denominator": 2277661,
+            "value": 1.0355079179913078
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "rank8-last",
+          "ratio": {
+            "numerator": 175201017,
+            "denominator": 116048102,
+            "value": 1.509727552459238
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "vector-alternating",
+          "ratio": {
+            "numerator": 146359529,
+            "denominator": 31229624,
+            "value": 4.686560715556486
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-mask-alternating",
+          "ratio": {
+            "numerator": 234411854,
+            "denominator": 104845839,
+            "value": 2.2357764145508914
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "outer-mask-alternating",
+          "ratio": {
+            "numerator": 280772690,
+            "denominator": 54637973,
+            "value": 5.138783058441791
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "inner-broadcast-alternating",
+          "ratio": {
+            "numerator": 78959743,
+            "denominator": 71647915,
+            "value": 1.102052209055909
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "rank8-alternating",
+          "ratio": {
+            "numerator": 20397062,
+            "denominator": 19797767,
+            "value": 1.030270838120279
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-result-false",
+          "ratio": {
+            "numerator": 6998508,
+            "denominator": 6730189,
+            "value": 1.039867973990032
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-result-true",
+          "ratio": {
+            "numerator": 7162215,
+            "denominator": 6948757,
+            "value": 1.0307188753326675
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "rank9-false",
+          "ratio": {
+            "numerator": 63581058,
+            "denominator": 38424845,
+            "value": 1.6546861282068932
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "rank9-true",
+          "ratio": {
+            "numerator": 127886911,
+            "denominator": 71671003,
+            "value": 1.7843605593185294
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "condition-outranks-false",
+          "ratio": {
+            "numerator": 58310223,
+            "denominator": 35441633,
+            "value": 1.6452465099449565
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "condition-outranks-true",
+          "ratio": {
+            "numerator": 58052405,
+            "denominator": 35492229,
+            "value": 1.635637057340073
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "x-outranks-false",
+          "ratio": {
+            "numerator": 14697909,
+            "denominator": 9456725,
+            "value": 1.5542282344046168
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "x-outranks-true",
+          "ratio": {
+            "numerator": 100821775,
+            "denominator": 66491961,
+            "value": 1.5163002186083818
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "nonscalar-x-false",
+          "ratio": {
+            "numerator": 41695162,
+            "denominator": 29806729,
+            "value": 1.3988506420815245
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "nonscalar-x-true",
+          "ratio": {
+            "numerator": 40376827,
+            "denominator": 28483743,
+            "value": 1.4175393662272546
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "empty-0",
+          "ratio": {
+            "numerator": 11856892,
+            "denominator": 11208755,
+            "value": 1.0578241740496603
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "empty-1",
+          "ratio": {
+            "numerator": 74852946,
+            "denominator": 50493227,
+            "value": 1.4824353769268896
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "empty-2",
+          "ratio": {
+            "numerator": 42936456,
+            "denominator": 28842989,
+            "value": 1.4886271322296036
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "empty-3",
+          "ratio": {
+            "numerator": 118050859,
+            "denominator": 72488852,
+            "value": 1.628538123351712
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "offset-false",
+          "ratio": {
+            "numerator": 69890428,
+            "denominator": 59320467,
+            "value": 1.17818404902308
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "offset-true",
+          "ratio": {
+            "numerator": 108144719,
+            "denominator": 96956517,
+            "value": 1.1153940172995283
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "condition-custom-false",
+          "ratio": {
+            "numerator": 7733751,
+            "denominator": 7530392,
+            "value": 1.0270051014608537
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "condition-custom-true",
+          "ratio": {
+            "numerator": 25619837,
+            "denominator": 23160620,
+            "value": 1.1061809657945254
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "x-custom-false",
+          "ratio": {
+            "numerator": 3793521,
+            "denominator": 3038110,
+            "value": 1.2486450457685865
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "x-custom-true",
+          "ratio": {
+            "numerator": 30420649,
+            "denominator": 29569184,
+            "value": 1.0287956881055629
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "y-custom-false",
+          "ratio": {
+            "numerator": 14535743,
+            "denominator": 11806811,
+            "value": 1.2311320135470958
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "y-custom-true",
+          "ratio": {
+            "numerator": 28746782,
+            "denominator": 24711893,
+            "value": 1.1632772123123065
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "condition-reverse-false",
+          "ratio": {
+            "numerator": 22627479,
+            "denominator": 18238715,
+            "value": 1.2406290136119786
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "condition-reverse-true",
+          "ratio": {
+            "numerator": 28394902,
+            "denominator": 24455283,
+            "value": 1.16109480311473
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "x-reverse-false",
+          "ratio": {
+            "numerator": 22245943,
+            "denominator": 18343556,
+            "value": 1.2127388495447666
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "x-reverse-true",
+          "ratio": {
+            "numerator": 28195371,
+            "denominator": 24124310,
+            "value": 1.1687534690111343
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "y-reverse-false",
+          "ratio": {
+            "numerator": 22858809,
+            "denominator": 17860252,
+            "value": 1.2798704631939124
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "y-reverse-true",
+          "ratio": {
+            "numerator": 28506467,
+            "denominator": 24335051,
+            "value": 1.1714159547066492
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "condition-view-false",
+          "ratio": {
+            "numerator": 109914177,
+            "denominator": 99177499,
+            "value": 1.1082571965239818
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "condition-view-true",
+          "ratio": {
+            "numerator": 73832328,
+            "denominator": 68131991,
+            "value": 1.0836660857305638
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "x-view-false",
+          "ratio": {
+            "numerator": 4828970,
+            "denominator": 4209507,
+            "value": 1.1471580876335399
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "x-view-true",
+          "ratio": {
+            "numerator": 19195354,
+            "denominator": 17546267,
+            "value": 1.0939850624637137
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "y-view-false",
+          "ratio": {
+            "numerator": 258783658,
+            "denominator": 253391997,
+            "value": 1.0212779450962692
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "y-view-true",
+          "ratio": {
+            "numerator": 9061373,
+            "denominator": 8116836,
+            "value": 1.1163676338908413
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "condition-broadcast-false",
+          "ratio": {
+            "numerator": 14409190,
+            "denominator": 12139457,
+            "value": 1.18697154246685
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "condition-broadcast-true",
+          "ratio": {
+            "numerator": 110143053,
+            "denominator": 97998205,
+            "value": 1.1239292903375118
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "alias-false",
+          "ratio": {
+            "numerator": 35322183,
+            "denominator": 30081185,
+            "value": 1.1742284421308535
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "alias-true",
+          "ratio": {
+            "numerator": 36225126,
+            "denominator": 32563357,
+            "value": 1.1124505989969031
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "dtype-Bool",
+          "ratio": {
+            "numerator": 2339141,
+            "denominator": 1936315,
+            "value": 1.2080374319261071
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "dtype-Byte",
+          "ratio": {
+            "numerator": 50532171,
+            "denominator": 45898268,
+            "value": 1.1009603020314405
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "dtype-Int32",
+          "ratio": {
+            "numerator": 101936344,
+            "denominator": 93885193,
+            "value": 1.085755279855472
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "dtype-Int64",
+          "ratio": {
+            "numerator": 107350111,
+            "denominator": 99547383,
+            "value": 1.0783820504854458
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "dtype-UInt32",
+          "ratio": {
+            "numerator": 679461,
+            "denominator": 616867,
+            "value": 1.1014708194797258
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "dtype-UInt64",
+          "ratio": {
+            "numerator": 102718573,
+            "denominator": 94109634,
+            "value": 1.09147776517758
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "dtype-Double",
+          "ratio": {
+            "numerator": 102040651,
+            "denominator": 93452533,
+            "value": 1.0918981832199242
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "dtype-Half",
+          "ratio": {
+            "numerator": 102212538,
+            "denominator": 93780625,
+            "value": 1.0899110343954308
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-0",
+          "ratio": {
+            "numerator": 24990398,
+            "denominator": 19334009,
+            "value": 1.2925616203033732
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-1",
+          "ratio": {
+            "numerator": 24884807,
+            "denominator": 19722901,
+            "value": 1.261721437429514
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-2",
+          "ratio": {
+            "numerator": 12868904,
+            "denominator": 10045229,
+            "value": 1.2810961303122108
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-3",
+          "ratio": {
+            "numerator": 23352172,
+            "denominator": 19715443,
+            "value": 1.1844609324781594
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-4",
+          "ratio": {
+            "numerator": 23769799,
+            "denominator": 19100209,
+            "value": 1.24447847664913
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-5",
+          "ratio": {
+            "numerator": 12004023,
+            "denominator": 9962027,
+            "value": 1.2049779628182096
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-6",
+          "ratio": {
+            "numerator": 23900516,
+            "denominator": 20010921,
+            "value": 1.1943736122890096
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-7",
+          "ratio": {
+            "numerator": 8027519,
+            "denominator": 6462395,
+            "value": 1.2421894669081663
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-8",
+          "ratio": {
+            "numerator": 23569743,
+            "denominator": 19798508,
+            "value": 1.1904807675406652
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-9",
+          "ratio": {
+            "numerator": 24177025,
+            "denominator": 19773208,
+            "value": 1.2227163644867338
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "scalar-bits-10",
+          "ratio": {
+            "numerator": 6012177,
+            "denominator": 4792393,
+            "value": 1.254525035822396
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-0",
+          "ratio": {
+            "numerator": 12456933,
+            "denominator": 12113578,
+            "value": 1.0283446393790505
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-1",
+          "ratio": {
+            "numerator": 4113425,
+            "denominator": 3895713,
+            "value": 1.0558850202774177
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-2",
+          "ratio": {
+            "numerator": 12602303,
+            "denominator": 12321776,
+            "value": 1.0227667667388207
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-3",
+          "ratio": {
+            "numerator": 12411309,
+            "denominator": 12358954,
+            "value": 1.0042361999243625
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-4",
+          "ratio": {
+            "numerator": 3129548,
+            "denominator": 3088777,
+            "value": 1.0131997227381582
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-5",
+          "ratio": {
+            "numerator": 2487235,
+            "denominator": 2423328,
+            "value": 1.0263715848618098
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-6",
+          "ratio": {
+            "numerator": 12661189,
+            "denominator": 12242196,
+            "value": 1.034225313824415
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "current",
+          "scope": "raw-bool-7",
+          "ratio": {
+            "numerator": 12555457,
+            "denominator": 12427140,
+            "value": 1.0103255455398426
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "all122",
+          "ratio": {
+            "numerator": 604216609947,
+            "denominator": 597342039817,
+            "value": 1.0115085992141222
+          },
+          "limit": 1.1,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "target6",
+          "ratio": {
+            "numerator": 28529597,
+            "denominator": 16888452,
+            "value": 1.6892961533715465
+          },
+          "limit": 1.1,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "other_uniform42",
+          "ratio": {
+            "numerator": 31963779730,
+            "denominator": 28789363291,
+            "value": 1.110263516664586
+          },
+          "limit": 1.1,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "fallback74",
+          "ratio": {
+            "numerator": 1763392275263,
+            "denominator": 1734022448832,
+            "value": 1.0169373968894018
+          },
+          "limit": 1.1,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-0",
+          "ratio": {
+            "numerator": 14290202,
+            "denominator": 13719359,
+            "value": 1.0416085766106127
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-1",
+          "ratio": {
+            "numerator": 2408109,
+            "denominator": 1530613,
+            "value": 1.5732971038400954
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-1-true",
+          "ratio": {
+            "numerator": 1524402,
+            "denominator": 1495759,
+            "value": 1.0191494752831172
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-1-first",
+          "ratio": {
+            "numerator": 4850232,
+            "denominator": 4777075,
+            "value": 1.0153141828420111
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-1-last",
+          "ratio": {
+            "numerator": 47264962,
+            "denominator": 46357309,
+            "value": 1.0195795014762397
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-1-alternating",
+          "ratio": {
+            "numerator": 46413675,
+            "denominator": 45185704,
+            "value": 1.0271760953420135
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-2",
+          "ratio": {
+            "numerator": 2443131,
+            "denominator": 968125,
+            "value": 2.5235697869593285
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-2-true",
+          "ratio": {
+            "numerator": 1396883,
+            "denominator": 1300910,
+            "value": 1.0737737429952878
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-2-first",
+          "ratio": {
+            "numerator": 23170165,
+            "denominator": 22452816,
+            "value": 1.0319491773325893
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-2-last",
+          "ratio": {
+            "numerator": 46535884,
+            "denominator": 45073665,
+            "value": 1.0324406502111598
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-2-alternating",
+          "ratio": {
+            "numerator": 11812619,
+            "denominator": 11212745,
+            "value": 1.053499299234933
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-3",
+          "ratio": {
+            "numerator": 1939781,
+            "denominator": 1447619,
+            "value": 1.3399803401309323
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-3-true",
+          "ratio": {
+            "numerator": 760423,
+            "denominator": 474601,
+            "value": 1.6022364048959021
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-3-first",
+          "ratio": {
+            "numerator": 63582735,
+            "denominator": 61342903,
+            "value": 1.0365133029325333
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-3-last",
+          "ratio": {
+            "numerator": 31524582,
+            "denominator": 30862985,
+            "value": 1.0214365849576768
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-3-alternating",
+          "ratio": {
+            "numerator": 62590992,
+            "denominator": 59779889,
+            "value": 1.0470242258228348
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-4",
+          "ratio": {
+            "numerator": 41566970,
+            "denominator": 40483153,
+            "value": 1.026772050092047
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-5",
+          "ratio": {
+            "numerator": 1035601,
+            "denominator": 357549,
+            "value": 2.896389026399179
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-5-true",
+          "ratio": {
+            "numerator": 8884643,
+            "denominator": 5556510,
+            "value": 1.5989610384935868
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-5-first",
+          "ratio": {
+            "numerator": 48593593,
+            "denominator": 48511939,
+            "value": 1.0016831732905997
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-5-last",
+          "ratio": {
+            "numerator": 39206787,
+            "denominator": 35834674,
+            "value": 1.0941019583434748
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-5-alternating",
+          "ratio": {
+            "numerator": 20543435,
+            "denominator": 20448918,
+            "value": 1.004622102744018
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-6",
+          "ratio": {
+            "numerator": 3365344,
+            "denominator": 3288029,
+            "value": 1.0235140870107897
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-6-true",
+          "ratio": {
+            "numerator": 7537231,
+            "denominator": 6555966,
+            "value": 1.1496751203407705
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-6-first",
+          "ratio": {
+            "numerator": 153173903,
+            "denominator": 144299771,
+            "value": 1.0614978938532065
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-6-last",
+          "ratio": {
+            "numerator": 149859889,
+            "denominator": 148255521,
+            "value": 1.0108216408345427
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-6-alternating",
+          "ratio": {
+            "numerator": 76099418,
+            "denominator": 75144039,
+            "value": 1.0127139692344724
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-7",
+          "ratio": {
+            "numerator": 739917,
+            "denominator": 424489,
+            "value": 1.743076970192396
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-7-true",
+          "ratio": {
+            "numerator": 4033402,
+            "denominator": 3699201,
+            "value": 1.0903441040376016
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-7-first",
+          "ratio": {
+            "numerator": 11639729,
+            "denominator": 11613941,
+            "value": 1.002220434906635
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-7-last",
+          "ratio": {
+            "numerator": 116246392,
+            "denominator": 109807199,
+            "value": 1.05864090022003
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "capture-7-alternating",
+          "ratio": {
+            "numerator": 117771710,
+            "denominator": 108361257,
+            "value": 1.0868433355290443
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "vector-false",
+          "ratio": {
+            "numerator": 16875017,
+            "denominator": 11982712,
+            "value": 1.4082802791221218
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-mask-false",
+          "ratio": {
+            "numerator": 2674759,
+            "denominator": 2082930,
+            "value": 1.284132928134887
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "outer-mask-false",
+          "ratio": {
+            "numerator": 5298982,
+            "denominator": 4201077,
+            "value": 1.2613389376105222
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "inner-broadcast-false",
+          "ratio": {
+            "numerator": 2700185,
+            "denominator": 2194379,
+            "value": 1.2305007475919156
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "rank8-false",
+          "ratio": {
+            "numerator": 20833419,
+            "denominator": 17168818,
+            "value": 1.2134451538830455
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "vector-true",
+          "ratio": {
+            "numerator": 1315827,
+            "denominator": 1054196,
+            "value": 1.2481806039863554
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-mask-true",
+          "ratio": {
+            "numerator": 3254082,
+            "denominator": 2694125,
+            "value": 1.2078437340509443
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "outer-mask-true",
+          "ratio": {
+            "numerator": 6834127,
+            "denominator": 5812584,
+            "value": 1.1757467935087045
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "inner-broadcast-true",
+          "ratio": {
+            "numerator": 6691322,
+            "denominator": 5625285,
+            "value": 1.1895080871458068
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "rank8-true",
+          "ratio": {
+            "numerator": 21717305,
+            "denominator": 18664379,
+            "value": 1.1635696531880326
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "vector-first",
+          "ratio": {
+            "numerator": 91425353,
+            "denominator": 89139199,
+            "value": 1.0256470108060989
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-mask-first",
+          "ratio": {
+            "numerator": 594235,
+            "denominator": 497824,
+            "value": 1.1936648293372758
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "outer-mask-first",
+          "ratio": {
+            "numerator": 300419485,
+            "denominator": 299448998,
+            "value": 1.0032409091580932
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "inner-broadcast-first",
+          "ratio": {
+            "numerator": 216250688,
+            "denominator": 209002975,
+            "value": 1.0346775590156072
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "rank8-first",
+          "ratio": {
+            "numerator": 93536854,
+            "denominator": 85551963,
+            "value": 1.0933338139768927
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "vector-last",
+          "ratio": {
+            "numerator": 37087864,
+            "denominator": 35669321,
+            "value": 1.0397692739931887
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-mask-last",
+          "ratio": {
+            "numerator": 1296583,
+            "denominator": 1010642,
+            "value": 1.2829300583193652
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "outer-mask-last",
+          "ratio": {
+            "numerator": 102812771,
+            "denominator": 100925160,
+            "value": 1.018703076616376
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "inner-broadcast-last",
+          "ratio": {
+            "numerator": 215059937,
+            "denominator": 214845166,
+            "value": 1.000999654793257
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "rank8-last",
+          "ratio": {
+            "numerator": 144427747,
+            "denominator": 137057011,
+            "value": 1.053778613339233
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "vector-alternating",
+          "ratio": {
+            "numerator": 182268008,
+            "denominator": 180731207,
+            "value": 1.0085032409483106
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-mask-alternating",
+          "ratio": {
+            "numerator": 3171223,
+            "denominator": 2973205,
+            "value": 1.066600856651324
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "outer-mask-alternating",
+          "ratio": {
+            "numerator": 333547805,
+            "denominator": 300385057,
+            "value": 1.1104007913416278
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "inner-broadcast-alternating",
+          "ratio": {
+            "numerator": 74434749,
+            "denominator": 73202891,
+            "value": 1.0168279965882767
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "rank8-alternating",
+          "ratio": {
+            "numerator": 243337694,
+            "denominator": 243289597,
+            "value": 1.0001976944373827
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-result-false",
+          "ratio": {
+            "numerator": 30867059,
+            "denominator": 29844511,
+            "value": 1.0342625148054863
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-result-true",
+          "ratio": {
+            "numerator": 30942946,
+            "denominator": 30048657,
+            "value": 1.0297613633780704
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "rank9-false",
+          "ratio": {
+            "numerator": 335945813,
+            "denominator": 326093854,
+            "value": 1.0302120352136412
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "rank9-true",
+          "ratio": {
+            "numerator": 165561576,
+            "denominator": 162958541,
+            "value": 1.0159736027582622
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-outranks-false",
+          "ratio": {
+            "numerator": 78181933,
+            "denominator": 75089579,
+            "value": 1.0411821991970418
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-outranks-true",
+          "ratio": {
+            "numerator": 52271209,
+            "denominator": 50681323,
+            "value": 1.0313702544821097
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "x-outranks-false",
+          "ratio": {
+            "numerator": 117181015,
+            "denominator": 115378146,
+            "value": 1.0156257407707001
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "x-outranks-true",
+          "ratio": {
+            "numerator": 21430307,
+            "denominator": 21253305,
+            "value": 1.0083282106006572
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "nonscalar-x-false",
+          "ratio": {
+            "numerator": 124607357,
+            "denominator": 122052181,
+            "value": 1.0209351113520864
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "nonscalar-x-true",
+          "ratio": {
+            "numerator": 62121534,
+            "denominator": 60672715,
+            "value": 1.0238792511592731
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "empty-0",
+          "ratio": {
+            "numerator": 11188546,
+            "denominator": 10973291,
+            "value": 1.0196162664418542
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "empty-1",
+          "ratio": {
+            "numerator": 6623467,
+            "denominator": 6200819,
+            "value": 1.0681600285381656
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "empty-2",
+          "ratio": {
+            "numerator": 13438024,
+            "denominator": 12584885,
+            "value": 1.0677907664631023
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "empty-3",
+          "ratio": {
+            "numerator": 13488807,
+            "denominator": 12410096,
+            "value": 1.0869220512073396
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "offset-false",
+          "ratio": {
+            "numerator": 5537131,
+            "denominator": 5136575,
+            "value": 1.0779811450236783
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "offset-true",
+          "ratio": {
+            "numerator": 91894,
+            "denominator": 84653,
+            "value": 1.085537429270079
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-custom-false",
+          "ratio": {
+            "numerator": 13631819,
+            "denominator": 12195603,
+            "value": 1.1177650666391814
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-custom-true",
+          "ratio": {
+            "numerator": 141006235,
+            "denominator": 135744353,
+            "value": 1.0387631741852275
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "x-custom-false",
+          "ratio": {
+            "numerator": 134261896,
+            "denominator": 131730809,
+            "value": 1.0192140852942002
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "x-custom-true",
+          "ratio": {
+            "numerator": 148426555,
+            "denominator": 146026068,
+            "value": 1.016438756674596
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "y-custom-false",
+          "ratio": {
+            "numerator": 139897111,
+            "denominator": 136922215,
+            "value": 1.0217269053089741
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "y-custom-true",
+          "ratio": {
+            "numerator": 144785433,
+            "denominator": 139788560,
+            "value": 1.0357459365773565
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-reverse-false",
+          "ratio": {
+            "numerator": 134933833,
+            "denominator": 131869414,
+            "value": 1.02323828480803
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-reverse-true",
+          "ratio": {
+            "numerator": 144345077,
+            "denominator": 139098018,
+            "value": 1.0377220256294377
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "x-reverse-false",
+          "ratio": {
+            "numerator": 63252931,
+            "denominator": 43966082,
+            "value": 1.4386756363689628
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "x-reverse-true",
+          "ratio": {
+            "numerator": 122627741,
+            "denominator": 111142468,
+            "value": 1.1033382936934601
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "y-reverse-false",
+          "ratio": {
+            "numerator": 113121135,
+            "denominator": 103277423,
+            "value": 1.095313299984257
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "y-reverse-true",
+          "ratio": {
+            "numerator": 61167895,
+            "denominator": 55973441,
+            "value": 1.0928021202055453
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-view-false",
+          "ratio": {
+            "numerator": 258685129,
+            "denominator": 253739845,
+            "value": 1.0194895839082743
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-view-true",
+          "ratio": {
+            "numerator": 6795320,
+            "denominator": 6717779,
+            "value": 1.0115426542016341
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "x-view-false",
+          "ratio": {
+            "numerator": 56551992,
+            "denominator": 54940073,
+            "value": 1.0293395860613437
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "x-view-true",
+          "ratio": {
+            "numerator": 245816328,
+            "denominator": 237714373,
+            "value": 1.0340827308746703
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "y-view-false",
+          "ratio": {
+            "numerator": 90946354,
+            "denominator": 63441019,
+            "value": 1.4335575851957862
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "y-view-true",
+          "ratio": {
+            "numerator": 96501183,
+            "denominator": 95938231,
+            "value": 1.0058678588726533
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-broadcast-false",
+          "ratio": {
+            "numerator": 59447710,
+            "denominator": 58567209,
+            "value": 1.0150340269757434
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "condition-broadcast-true",
+          "ratio": {
+            "numerator": 96850877,
+            "denominator": 96276619,
+            "value": 1.0059646672885345
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "alias-false",
+          "ratio": {
+            "numerator": 1025764,
+            "denominator": 842053,
+            "value": 1.2181703526975143
+          },
+          "limit": 1.2,
+          "passed": false
+        },
+        {
+          "role": "candidate",
+          "scope": "alias-true",
+          "ratio": {
+            "numerator": 4249321,
+            "denominator": 4123864,
+            "value": 1.030422196270294
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-Bool",
+          "ratio": {
+            "numerator": 74551588,
+            "denominator": 73420053,
+            "value": 1.0154117976460737
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-Byte",
+          "ratio": {
+            "numerator": 88764941,
+            "denominator": 88335953,
+            "value": 1.0048563239024546
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-Int32",
+          "ratio": {
+            "numerator": 91897719,
+            "denominator": 90695198,
+            "value": 1.0132589268948946
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-Int64",
+          "ratio": {
+            "numerator": 31874896,
+            "denominator": 31538301,
+            "value": 1.0106725787162727
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-UInt32",
+          "ratio": {
+            "numerator": 8237209,
+            "denominator": 8233563,
+            "value": 1.0004428216557035
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-UInt64",
+          "ratio": {
+            "numerator": 45938573,
+            "denominator": 45436381,
+            "value": 1.0110526408342249
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-Double",
+          "ratio": {
+            "numerator": 93194198,
+            "denominator": 90794315,
+            "value": 1.026432084431718
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "dtype-Half",
+          "ratio": {
+            "numerator": 15310705,
+            "denominator": 15190427,
+            "value": 1.0079180131012775
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-0",
+          "ratio": {
+            "numerator": 7055815,
+            "denominator": 6893439,
+            "value": 1.0235551514998538
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-1",
+          "ratio": {
+            "numerator": 3510457,
+            "denominator": 3504720,
+            "value": 1.0016369353329224
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-2",
+          "ratio": {
+            "numerator": 7011791,
+            "denominator": 6918291,
+            "value": 1.0135148984048228
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-3",
+          "ratio": {
+            "numerator": 777923,
+            "denominator": 774278,
+            "value": 1.004707611478048
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-4",
+          "ratio": {
+            "numerator": 6942953,
+            "denominator": 6936489,
+            "value": 1.0009318835508858
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-5",
+          "ratio": {
+            "numerator": 7508287,
+            "denominator": 7436882,
+            "value": 1.009601470078455
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-6",
+          "ratio": {
+            "numerator": 7035425,
+            "denominator": 6882041,
+            "value": 1.022287574282106
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-7",
+          "ratio": {
+            "numerator": 3492248,
+            "denominator": 3479823,
+            "value": 1.0035705839061355
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-8",
+          "ratio": {
+            "numerator": 6992965,
+            "denominator": 6946516,
+            "value": 1.006686661342175
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-9",
+          "ratio": {
+            "numerator": 7047265,
+            "denominator": 6972423,
+            "value": 1.0107340016519364
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "scalar-bits-10",
+          "ratio": {
+            "numerator": 7030283,
+            "denominator": 6799149,
+            "value": 1.0339945484353998
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-0",
+          "ratio": {
+            "numerator": 14061479,
+            "denominator": 13682771,
+            "value": 1.0276777269750403
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-1",
+          "ratio": {
+            "numerator": 13953385,
+            "denominator": 13544271,
+            "value": 1.0302056862270401
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-2",
+          "ratio": {
+            "numerator": 6698729,
+            "denominator": 6626204,
+            "value": 1.0109451806796168
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-3",
+          "ratio": {
+            "numerator": 2111936,
+            "denominator": 2095177,
+            "value": 1.0079988468754668
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-4",
+          "ratio": {
+            "numerator": 6944333,
+            "denominator": 6709171,
+            "value": 1.035050828187268
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-5",
+          "ratio": {
+            "numerator": 4350008,
+            "denominator": 4273667,
+            "value": 1.0178631138083525
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-6",
+          "ratio": {
+            "numerator": 6438483,
+            "denominator": 6235046,
+            "value": 1.03262798702688
+          },
+          "limit": 1.2,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "scope": "raw-bool-7",
+          "ratio": {
+            "numerator": 5744777,
+            "denominator": 5580539,
+            "value": 1.0294304904956313
+          },
+          "limit": 1.2,
+          "passed": true
+        }
+      ],
+      "gates": [
+        {
+          "name": "strict-target-process-sum-separation",
+          "passed": true
+        },
+        {
+          "name": "six-actual-targets-at-least-ten-percent",
+          "passed": true
+        },
+        {
+          "name": "every-case-no-five-percent-regression",
+          "passed": false
+        }
+      ],
+      "rows": [
+        {
+          "index": 0,
+          "name": "capture-0",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 13863791,
+            "denominator": 20480000000000,
+            "value": 6.76942919921875e-07
+          },
+          "candidate": {
+            "numerator": 28009561,
+            "denominator": 40960000000000,
+            "value": 6.838271728515625e-07
+          },
+          "ratio": {
+            "numerator": 28009561,
+            "denominator": 27727582,
+            "value": 1.0101696209932767
+          },
+          "passed": true
+        },
+        {
+          "index": 1,
+          "name": "capture-1",
+          "partition": "target6",
+          "current": {
+            "numerator": 86191063,
+            "denominator": 120000000000,
+            "value": 0.0007182588583333334
+          },
+          "candidate": {
+            "numerator": 1969361,
+            "denominator": 60000000000,
+            "value": 3.282268333333334e-05
+          },
+          "ratio": {
+            "numerator": 3938722,
+            "denominator": 86191063,
+            "value": 0.045697568435836555
+          },
+          "passed": true
+        },
+        {
+          "index": 2,
+          "name": "capture-1-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 92389973,
+            "denominator": 120000000000,
+            "value": 0.0007699164416666667
+          },
+          "candidate": {
+            "numerator": 3020161,
+            "denominator": 120000000000,
+            "value": 2.5168008333333332e-05
+          },
+          "ratio": {
+            "numerator": 3020161,
+            "denominator": 92389973,
+            "value": 0.03268927246033506
+          },
+          "passed": true
+        },
+        {
+          "index": 3,
+          "name": "capture-1-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 45878437,
+            "denominator": 60000000000,
+            "value": 0.0007646406166666666
+          },
+          "candidate": {
+            "numerator": 28881921,
+            "denominator": 40000000000,
+            "value": 0.000722048025
+          },
+          "ratio": {
+            "numerator": 86645763,
+            "denominator": 91756874,
+            "value": 0.9442972414252038
+          },
+          "passed": true
+        },
+        {
+          "index": 4,
+          "name": "capture-1-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 45714953,
+            "denominator": 60000000000,
+            "value": 0.0007619158833333333
+          },
+          "candidate": {
+            "numerator": 93622271,
+            "denominator": 120000000000,
+            "value": 0.0007801855916666667
+          },
+          "ratio": {
+            "numerator": 93622271,
+            "denominator": 91429906,
+            "value": 1.0239786421742576
+          },
+          "passed": true
+        },
+        {
+          "index": 5,
+          "name": "capture-1-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 89807273,
+            "denominator": 120000000000,
+            "value": 0.0007483939416666667
+          },
+          "candidate": {
+            "numerator": 91599379,
+            "denominator": 120000000000,
+            "value": 0.0007633281583333333
+          },
+          "ratio": {
+            "numerator": 91599379,
+            "denominator": 89807273,
+            "value": 1.0199550207921355
+          },
+          "passed": true
+        },
+        {
+          "index": 6,
+          "name": "capture-2",
+          "partition": "target6",
+          "current": {
+            "numerator": 90497917,
+            "denominator": 120000000000,
+            "value": 0.0007541493083333333
+          },
+          "candidate": {
+            "numerator": 426407,
+            "denominator": 15000000000,
+            "value": 2.8427133333333334e-05
+          },
+          "ratio": {
+            "numerator": 3411256,
+            "denominator": 90497917,
+            "value": 0.037694304057849196
+          },
+          "passed": true
+        },
+        {
+          "index": 7,
+          "name": "capture-2-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 22335457,
+            "denominator": 30000000000,
+            "value": 0.0007445152333333333
+          },
+          "candidate": {
+            "numerator": 2697793,
+            "denominator": 120000000000,
+            "value": 2.2481608333333333e-05
+          },
+          "ratio": {
+            "numerator": 2697793,
+            "denominator": 89341828,
+            "value": 0.03019630402010579
+          },
+          "passed": true
+        },
+        {
+          "index": 8,
+          "name": "capture-2-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 30249079,
+            "denominator": 40000000000,
+            "value": 0.000756226975
+          },
+          "candidate": {
+            "numerator": 45622981,
+            "denominator": 60000000000,
+            "value": 0.0007603830166666666
+          },
+          "ratio": {
+            "numerator": 91245962,
+            "denominator": 90747237,
+            "value": 1.0054957596119427
+          },
+          "passed": true
+        },
+        {
+          "index": 9,
+          "name": "capture-2-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 90050351,
+            "denominator": 120000000000,
+            "value": 0.0007504195916666666
+          },
+          "candidate": {
+            "numerator": 91609549,
+            "denominator": 120000000000,
+            "value": 0.0007634129083333333
+          },
+          "ratio": {
+            "numerator": 91609549,
+            "denominator": 90050351,
+            "value": 1.0173147353973113
+          },
+          "passed": true
+        },
+        {
+          "index": 10,
+          "name": "capture-2-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 92744213,
+            "denominator": 120000000000,
+            "value": 0.0007728684416666667
+          },
+          "candidate": {
+            "numerator": 5756341,
+            "denominator": 7500000000,
+            "value": 0.0007675121333333333
+          },
+          "ratio": {
+            "numerator": 92101456,
+            "denominator": 92744213,
+            "value": 0.9930695729770223
+          },
+          "passed": true
+        },
+        {
+          "index": 11,
+          "name": "capture-3",
+          "partition": "target6",
+          "current": {
+            "numerator": 122532187,
+            "denominator": 120000000000,
+            "value": 0.0010211015583333333
+          },
+          "candidate": {
+            "numerator": 16937,
+            "denominator": 300000000,
+            "value": 5.6456666666666664e-05
+          },
+          "ratio": {
+            "numerator": 6774800,
+            "denominator": 122532187,
+            "value": 0.055289962301905214
+          },
+          "passed": true
+        },
+        {
+          "index": 12,
+          "name": "capture-3-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 24980591,
+            "denominator": 24000000000,
+            "value": 0.0010408579583333333
+          },
+          "candidate": {
+            "numerator": 540323,
+            "denominator": 7500000000,
+            "value": 7.204306666666667e-05
+          },
+          "ratio": {
+            "numerator": 8645168,
+            "denominator": 124902955,
+            "value": 0.06921507981936857
+          },
+          "passed": true
+        },
+        {
+          "index": 13,
+          "name": "capture-3-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 62771249,
+            "denominator": 60000000000,
+            "value": 0.0010461874833333333
+          },
+          "candidate": {
+            "numerator": 62462819,
+            "denominator": 60000000000,
+            "value": 0.0010410469833333333
+          },
+          "ratio": {
+            "numerator": 62462819,
+            "denominator": 62771249,
+            "value": 0.995086444751163
+          },
+          "passed": true
+        },
+        {
+          "index": 14,
+          "name": "capture-3-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 60786751,
+            "denominator": 60000000000,
+            "value": 0.0010131125166666667
+          },
+          "candidate": {
+            "numerator": 62387567,
+            "denominator": 60000000000,
+            "value": 0.0010397927833333334
+          },
+          "ratio": {
+            "numerator": 62387567,
+            "denominator": 60786751,
+            "value": 1.0263349492062834
+          },
+          "passed": true
+        },
+        {
+          "index": 15,
+          "name": "capture-3-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 122438977,
+            "denominator": 120000000000,
+            "value": 0.0010203248083333334
+          },
+          "candidate": {
+            "numerator": 122370881,
+            "denominator": 120000000000,
+            "value": 0.0010197573416666666
+          },
+          "ratio": {
+            "numerator": 122370881,
+            "denominator": 122438977,
+            "value": 0.9994438372349355
+          },
+          "passed": true
+        },
+        {
+          "index": 16,
+          "name": "capture-4",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 6666871,
+            "denominator": 10240000000000,
+            "value": 6.5106162109375e-07
+          },
+          "candidate": {
+            "numerator": 27350041,
+            "denominator": 40960000000000,
+            "value": 6.677256103515625e-07
+          },
+          "ratio": {
+            "numerator": 27350041,
+            "denominator": 26667484,
+            "value": 1.0255951030100927
+          },
+          "passed": true
+        },
+        {
+          "index": 17,
+          "name": "capture-5",
+          "partition": "target6",
+          "current": {
+            "numerator": 50706897,
+            "denominator": 20000000000,
+            "value": 0.00253534485
+          },
+          "candidate": {
+            "numerator": 306493,
+            "denominator": 2400000000,
+            "value": 0.00012770541666666668
+          },
+          "ratio": {
+            "numerator": 7662325,
+            "denominator": 152120691,
+            "value": 0.05037003809034762
+          },
+          "passed": true
+        },
+        {
+          "index": 18,
+          "name": "capture-5-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 146458949,
+            "denominator": 60000000000,
+            "value": 0.0024409824833333334
+          },
+          "candidate": {
+            "numerator": 14441153,
+            "denominator": 120000000000,
+            "value": 0.00012034294166666666
+          },
+          "ratio": {
+            "numerator": 14441153,
+            "denominator": 292917898,
+            "value": 0.049301026323765304
+          },
+          "passed": true
+        },
+        {
+          "index": 19,
+          "name": "capture-5-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 146434259,
+            "denominator": 60000000000,
+            "value": 0.002440570983333333
+          },
+          "candidate": {
+            "numerator": 24276383,
+            "denominator": 10000000000,
+            "value": 0.0024276383
+          },
+          "ratio": {
+            "numerator": 145658298,
+            "denominator": 146434259,
+            "value": 0.9947009599713957
+          },
+          "passed": true
+        },
+        {
+          "index": 20,
+          "name": "capture-5-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 29378233,
+            "denominator": 12000000000,
+            "value": 0.0024481860833333335
+          },
+          "candidate": {
+            "numerator": 75041461,
+            "denominator": 30000000000,
+            "value": 0.0025013820333333334
+          },
+          "ratio": {
+            "numerator": 150082922,
+            "denominator": 146891165,
+            "value": 1.0217287200356808
+          },
+          "passed": true
+        },
+        {
+          "index": 21,
+          "name": "capture-5-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 11690471,
+            "denominator": 4800000000,
+            "value": 0.002435514791666667
+          },
+          "candidate": {
+            "numerator": 286946471,
+            "denominator": 120000000000,
+            "value": 0.0023912205916666665
+          },
+          "ratio": {
+            "numerator": 286946471,
+            "denominator": 292261775,
+            "value": 0.9818132083814245
+          },
+          "passed": true
+        },
+        {
+          "index": 22,
+          "name": "capture-6",
+          "partition": "target6",
+          "current": {
+            "numerator": 57972497,
+            "denominator": 24000000000,
+            "value": 0.0024155207083333334
+          },
+          "candidate": {
+            "numerator": 2217791,
+            "denominator": 40000000000,
+            "value": 5.5444775e-05
+          },
+          "ratio": {
+            "numerator": 6653373,
+            "denominator": 289862485,
+            "value": 0.02295354985313122
+          },
+          "passed": true
+        },
+        {
+          "index": 23,
+          "name": "capture-6-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 12270767,
+            "denominator": 4800000000,
+            "value": 0.0025564097916666666
+          },
+          "candidate": {
+            "numerator": 14093197,
+            "denominator": 120000000000,
+            "value": 0.00011744330833333333
+          },
+          "ratio": {
+            "numerator": 14093197,
+            "denominator": 306769175,
+            "value": 0.045940720738972554
+          },
+          "passed": true
+        },
+        {
+          "index": 24,
+          "name": "capture-6-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 58692839,
+            "denominator": 24000000000,
+            "value": 0.0024455349583333333
+          },
+          "candidate": {
+            "numerator": 148736837,
+            "denominator": 60000000000,
+            "value": 0.0024789472833333334
+          },
+          "ratio": {
+            "numerator": 297473674,
+            "denominator": 293464195,
+            "value": 1.0136625832667594
+          },
+          "passed": true
+        },
+        {
+          "index": 25,
+          "name": "capture-6-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 36419861,
+            "denominator": 15000000000,
+            "value": 0.0024279907333333334
+          },
+          "candidate": {
+            "numerator": 29811541,
+            "denominator": 12000000000,
+            "value": 0.0024842950833333334
+          },
+          "ratio": {
+            "numerator": 149057705,
+            "denominator": 145679444,
+            "value": 1.0231896889996368
+          },
+          "passed": true
+        },
+        {
+          "index": 26,
+          "name": "capture-6-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 145244437,
+            "denominator": 60000000000,
+            "value": 0.0024207406166666667
+          },
+          "candidate": {
+            "numerator": 151243457,
+            "denominator": 60000000000,
+            "value": 0.002520724283333333
+          },
+          "ratio": {
+            "numerator": 151243457,
+            "denominator": 145244437,
+            "value": 1.0413029243935863
+          },
+          "passed": true
+        },
+        {
+          "index": 27,
+          "name": "capture-7",
+          "partition": "target6",
+          "current": {
+            "numerator": 21958817,
+            "denominator": 12000000000,
+            "value": 0.0018299014166666668
+          },
+          "candidate": {
+            "numerator": 582203,
+            "denominator": 7500000000,
+            "value": 7.762706666666666e-05
+          },
+          "ratio": {
+            "numerator": 4657624,
+            "denominator": 109794085,
+            "value": 0.04242144738489328
+          },
+          "passed": true
+        },
+        {
+          "index": 28,
+          "name": "capture-7-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 18642377,
+            "denominator": 10000000000,
+            "value": 0.0018642377
+          },
+          "candidate": {
+            "numerator": 7732603,
+            "denominator": 60000000000,
+            "value": 0.00012887671666666668
+          },
+          "ratio": {
+            "numerator": 7732603,
+            "denominator": 111854262,
+            "value": 0.06913105376351238
+          },
+          "passed": true
+        },
+        {
+          "index": 29,
+          "name": "capture-7-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 53698019,
+            "denominator": 30000000000,
+            "value": 0.0017899339666666667
+          },
+          "candidate": {
+            "numerator": 2325367,
+            "denominator": 1200000000,
+            "value": 0.0019378058333333332
+          },
+          "ratio": {
+            "numerator": 58134175,
+            "denominator": 53698019,
+            "value": 1.0826130289834341
+          },
+          "passed": false
+        },
+        {
+          "index": 30,
+          "name": "capture-7-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 112676227,
+            "denominator": 60000000000,
+            "value": 0.0018779371166666667
+          },
+          "candidate": {
+            "numerator": 75351197,
+            "denominator": 40000000000,
+            "value": 0.001883779925
+          },
+          "ratio": {
+            "numerator": 226053591,
+            "denominator": 225352454,
+            "value": 1.0031112907250612
+          },
+          "passed": true
+        },
+        {
+          "index": 31,
+          "name": "capture-7-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 9260311,
+            "denominator": 4000000000,
+            "value": 0.00231507775
+          },
+          "candidate": {
+            "numerator": 226132967,
+            "denominator": 120000000000,
+            "value": 0.0018844413916666667
+          },
+          "ratio": {
+            "numerator": 226132967,
+            "denominator": 277809330,
+            "value": 0.8139862221330003
+          },
+          "passed": true
+        },
+        {
+          "index": 32,
+          "name": "vector-false",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 56670803,
+            "denominator": 20480000000000,
+            "value": 2.767129052734375e-06
+          },
+          "candidate": {
+            "numerator": 9619243,
+            "denominator": 40960000000000,
+            "value": 2.348447998046875e-07
+          },
+          "ratio": {
+            "numerator": 9619243,
+            "denominator": 113341606,
+            "value": 0.08486947855670936
+          },
+          "passed": true
+        },
+        {
+          "index": 33,
+          "name": "scalar-mask-false",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 16078037,
+            "denominator": 1024000000000,
+            "value": 1.57012080078125e-05
+          },
+          "candidate": {
+            "numerator": 4757689,
+            "denominator": 15360000000000,
+            "value": 3.097453776041667e-07
+          },
+          "ratio": {
+            "numerator": 4757689,
+            "denominator": 241170555,
+            "value": 0.019727487047496325
+          },
+          "passed": true
+        },
+        {
+          "index": 34,
+          "name": "outer-mask-false",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 3638641,
+            "denominator": 192000000000,
+            "value": 1.8951255208333333e-05
+          },
+          "candidate": {
+            "numerator": 9500059,
+            "denominator": 30720000000000,
+            "value": 3.0924671223958335e-07
+          },
+          "ratio": {
+            "numerator": 9500059,
+            "denominator": 582182560,
+            "value": 0.0163180068465122
+          },
+          "passed": true
+        },
+        {
+          "index": 35,
+          "name": "inner-broadcast-false",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 203929373,
+            "denominator": 15360000000000,
+            "value": 1.3276651888020833e-05
+          },
+          "candidate": {
+            "numerator": 1223641,
+            "denominator": 3840000000000,
+            "value": 3.186565104166667e-07
+          },
+          "ratio": {
+            "numerator": 4894564,
+            "denominator": 203929373,
+            "value": 0.024001270282922902
+          },
+          "passed": true
+        },
+        {
+          "index": 36,
+          "name": "rank8-false",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 149276493,
+            "denominator": 40960000000000,
+            "value": 3.6444456298828125e-06
+          },
+          "candidate": {
+            "numerator": 38002237,
+            "denominator": 122880000000000,
+            "value": 3.0926299641927085e-07
+          },
+          "ratio": {
+            "numerator": 38002237,
+            "denominator": 447829479,
+            "value": 0.08485872141525547
+          },
+          "passed": true
+        },
+        {
+          "index": 37,
+          "name": "vector-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 23423363,
+            "denominator": 8192000000000,
+            "value": 2.8592972412109374e-06
+          },
+          "candidate": {
+            "numerator": 2370023,
+            "denominator": 10240000000000,
+            "value": 2.3144755859375e-07
+          },
+          "ratio": {
+            "numerator": 9480092,
+            "denominator": 117116815,
+            "value": 0.0809456097316171
+          },
+          "passed": true
+        },
+        {
+          "index": 38,
+          "name": "scalar-mask-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 4222033,
+            "denominator": 245760000000,
+            "value": 1.7179496256510416e-05
+          },
+          "candidate": {
+            "numerator": 5948207,
+            "denominator": 15360000000000,
+            "value": 3.8725305989583333e-07
+          },
+          "ratio": {
+            "numerator": 11896414,
+            "denominator": 527754125,
+            "value": 0.02254158411362488
+          },
+          "passed": true
+        },
+        {
+          "index": 39,
+          "name": "outer-mask-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 39968091,
+            "denominator": 2048000000000,
+            "value": 1.951566943359375e-05
+          },
+          "candidate": {
+            "numerator": 12646711,
+            "denominator": 30720000000000,
+            "value": 4.1167679036458336e-07
+          },
+          "ratio": {
+            "numerator": 12646711,
+            "denominator": 599521365,
+            "value": 0.021094679419806833
+          },
+          "passed": true
+        },
+        {
+          "index": 40,
+          "name": "inner-broadcast-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 223626137,
+            "denominator": 15360000000000,
+            "value": 1.4558993294270833e-05
+          },
+          "candidate": {
+            "numerator": 12316607,
+            "denominator": 30720000000000,
+            "value": 4.009312174479167e-07
+          },
+          "ratio": {
+            "numerator": 12316607,
+            "denominator": 447252274,
+            "value": 0.027538388770718694
+          },
+          "passed": true
+        },
+        {
+          "index": 41,
+          "name": "rank8-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 90591127,
+            "denominator": 24576000000000,
+            "value": 3.686162394205729e-06
+          },
+          "candidate": {
+            "numerator": 10095421,
+            "denominator": 30720000000000,
+            "value": 3.286269856770833e-07
+          },
+          "ratio": {
+            "numerator": 40381684,
+            "denominator": 452955635,
+            "value": 0.08915152142880395
+          },
+          "passed": true
+        },
+        {
+          "index": 42,
+          "name": "vector-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 114330751,
+            "denominator": 40960000000000,
+            "value": 2.7912781005859376e-06
+          },
+          "candidate": {
+            "numerator": 7523523,
+            "denominator": 2560000000000,
+            "value": 2.938876171875e-06
+          },
+          "ratio": {
+            "numerator": 120376368,
+            "denominator": 114330751,
+            "value": 1.0528783109279147
+          },
+          "passed": false
+        },
+        {
+          "index": 43,
+          "name": "scalar-mask-first",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 13088581,
+            "denominator": 768000000000,
+            "value": 1.7042423177083335e-05
+          },
+          "candidate": {
+            "numerator": 12012649,
+            "denominator": 30720000000000,
+            "value": 3.9103675130208335e-07
+          },
+          "ratio": {
+            "numerator": 1092059,
+            "denominator": 47594840,
+            "value": 0.02294490327102686
+          },
+          "passed": true
+        },
+        {
+          "index": 44,
+          "name": "outer-mask-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 148253533,
+            "denominator": 7680000000000,
+            "value": 1.9303845442708332e-05
+          },
+          "candidate": {
+            "numerator": 199956161,
+            "denominator": 10240000000000,
+            "value": 1.952696884765625e-05
+          },
+          "ratio": {
+            "numerator": 599868483,
+            "denominator": 593014132,
+            "value": 1.011558495202944
+          },
+          "passed": true
+        },
+        {
+          "index": 45,
+          "name": "inner-broadcast-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 68701089,
+            "denominator": 5120000000000,
+            "value": 1.34181814453125e-05
+          },
+          "candidate": {
+            "numerator": 141751221,
+            "denominator": 10240000000000,
+            "value": 1.384289267578125e-05
+          },
+          "ratio": {
+            "numerator": 47250407,
+            "denominator": 45800726,
+            "value": 1.0316519218494484
+          },
+          "passed": true
+        },
+        {
+          "index": 46,
+          "name": "rank8-first",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 551701,
+            "denominator": 128000000000,
+            "value": 4.3101640625e-06
+          },
+          "candidate": {
+            "numerator": 179088817,
+            "denominator": 40960000000000,
+            "value": 4.372285571289063e-06
+          },
+          "ratio": {
+            "numerator": 179088817,
+            "denominator": 176544320,
+            "value": 1.014412794475631
+          },
+          "passed": true
+        },
+        {
+          "index": 47,
+          "name": "vector-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 1938877,
+            "denominator": 768000000000,
+            "value": 2.524579427083333e-06
+          },
+          "candidate": {
+            "numerator": 4850479,
+            "denominator": 1638400000000,
+            "value": 2.9604974365234374e-06
+          },
+          "ratio": {
+            "numerator": 72757185,
+            "denominator": 62044064,
+            "value": 1.1726695562689124
+          },
+          "passed": false
+        },
+        {
+          "index": 48,
+          "name": "scalar-mask-last",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 82182897,
+            "denominator": 5120000000000,
+            "value": 1.60513470703125e-05
+          },
+          "candidate": {
+            "numerator": 30763,
+            "denominator": 81920000000,
+            "value": 3.7552490234375e-07
+          },
+          "ratio": {
+            "numerator": 3845375,
+            "denominator": 164365794,
+            "value": 0.023395226624829252
+          },
+          "passed": true
+        },
+        {
+          "index": 49,
+          "name": "outer-mask-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 34958581,
+            "denominator": 1536000000000,
+            "value": 2.2759492838541668e-05
+          },
+          "candidate": {
+            "numerator": 203737931,
+            "denominator": 10240000000000,
+            "value": 1.989628232421875e-05
+          },
+          "ratio": {
+            "numerator": 611213793,
+            "denominator": 699171620,
+            "value": 0.874197086260452
+          },
+          "passed": true
+        },
+        {
+          "index": 50,
+          "name": "inner-broadcast-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 128268117,
+            "denominator": 10240000000000,
+            "value": 1.252618330078125e-05
+          },
+          "candidate": {
+            "numerator": 143301701,
+            "denominator": 10240000000000,
+            "value": 1.399430673828125e-05
+          },
+          "ratio": {
+            "numerator": 143301701,
+            "denominator": 128268117,
+            "value": 1.1172043712156468
+          },
+          "passed": false
+        },
+        {
+          "index": 51,
+          "name": "rank8-last",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 291249119,
+            "denominator": 122880000000000,
+            "value": 2.370191398111979e-06
+          },
+          "candidate": {
+            "numerator": 140742379,
+            "denominator": 30720000000000,
+            "value": 4.5814576497395835e-06
+          },
+          "ratio": {
+            "numerator": 562969516,
+            "denominator": 291249119,
+            "value": 1.932948391167494
+          },
+          "passed": false
+        },
+        {
+          "index": 52,
+          "name": "vector-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 177589153,
+            "denominator": 122880000000000,
+            "value": 1.4452242268880208e-06
+          },
+          "candidate": {
+            "numerator": 72599843,
+            "denominator": 24576000000000,
+            "value": 2.9540951741536457e-06
+          },
+          "ratio": {
+            "numerator": 362999215,
+            "denominator": 177589153,
+            "value": 2.0440393394972722
+          },
+          "passed": false
+        },
+        {
+          "index": 53,
+          "name": "scalar-mask-alternating",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 339257693,
+            "denominator": 30720000000000,
+            "value": 1.1043544694010417e-05
+          },
+          "candidate": {
+            "numerator": 1536107,
+            "denominator": 3840000000000,
+            "value": 4.000278645833333e-07
+          },
+          "ratio": {
+            "numerator": 12288856,
+            "denominator": 339257693,
+            "value": 0.03622277771015792
+          },
+          "passed": true
+        },
+        {
+          "index": 54,
+          "name": "outer-mask-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 335410663,
+            "denominator": 30720000000000,
+            "value": 1.0918315852864584e-05
+          },
+          "candidate": {
+            "numerator": 105655477,
+            "denominator": 5120000000000,
+            "value": 2.06358353515625e-05
+          },
+          "ratio": {
+            "numerator": 633932862,
+            "denominator": 335410663,
+            "value": 1.890020002136903
+          },
+          "passed": false
+        },
+        {
+          "index": 55,
+          "name": "inner-broadcast-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 75303829,
+            "denominator": 15360000000000,
+            "value": 4.9025930338541666e-06
+          },
+          "candidate": {
+            "numerator": 3690941,
+            "denominator": 256000000000,
+            "value": 1.441773828125e-05
+          },
+          "ratio": {
+            "numerator": 221456460,
+            "denominator": 75303829,
+            "value": 2.9408393031382243
+          },
+          "passed": false
+        },
+        {
+          "index": 56,
+          "name": "rank8-alternating",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 40194829,
+            "denominator": 40960000000000,
+            "value": 9.813190673828126e-07
+          },
+          "candidate": {
+            "numerator": 162209097,
+            "denominator": 40960000000000,
+            "value": 3.960183032226563e-06
+          },
+          "ratio": {
+            "numerator": 3060549,
+            "denominator": 758393,
+            "value": 4.0355712671398605
+          },
+          "passed": false
+        },
+        {
+          "index": 57,
+          "name": "scalar-result-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 13728697,
+            "denominator": 122880000000000,
+            "value": 1.1172442220052083e-07
+          },
+          "candidate": {
+            "numerator": 2023719,
+            "denominator": 4096000000000,
+            "value": 4.94072021484375e-07
+          },
+          "ratio": {
+            "numerator": 60711570,
+            "denominator": 13728697,
+            "value": 4.422238323127097
+          },
+          "passed": false
+        },
+        {
+          "index": 58,
+          "name": "scalar-result-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 3527743,
+            "denominator": 30720000000000,
+            "value": 1.1483538411458333e-07
+          },
+          "candidate": {
+            "numerator": 60991603,
+            "denominator": 122880000000000,
+            "value": 4.963509358723958e-07
+          },
+          "ratio": {
+            "numerator": 60991603,
+            "denominator": 14110972,
+            "value": 4.322282192892169
+          },
+          "passed": false
+        },
+        {
+          "index": 59,
+          "name": "rank9-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 102005903,
+            "denominator": 61440000000000,
+            "value": 1.6602523274739583e-06
+          },
+          "candidate": {
+            "numerator": 220679889,
+            "denominator": 40960000000000,
+            "value": 5.387692602539062e-06
+          },
+          "ratio": {
+            "numerator": 662039667,
+            "denominator": 204011806,
+            "value": 3.2451046828142878
+          },
+          "passed": false
+        },
+        {
+          "index": 60,
+          "name": "rank9-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 99778957,
+            "denominator": 61440000000000,
+            "value": 1.6240064615885416e-06
+          },
+          "candidate": {
+            "numerator": 328520117,
+            "denominator": 61440000000000,
+            "value": 5.347007112630208e-06
+          },
+          "ratio": {
+            "numerator": 328520117,
+            "denominator": 99778957,
+            "value": 3.2924789642770067
+          },
+          "passed": false
+        },
+        {
+          "index": 61,
+          "name": "condition-outranks-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 5859491,
+            "denominator": 7680000000000,
+            "value": 7.629545572916666e-07
+          },
+          "candidate": {
+            "numerator": 6386313,
+            "denominator": 2560000000000,
+            "value": 2.494653515625e-06
+          },
+          "ratio": {
+            "numerator": 19158939,
+            "denominator": 5859491,
+            "value": 3.269727524114296
+          },
+          "passed": false
+        },
+        {
+          "index": 62,
+          "name": "condition-outranks-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 46772317,
+            "denominator": 61440000000000,
+            "value": 7.612681803385417e-07
+          },
+          "candidate": {
+            "numerator": 25738133,
+            "denominator": 10240000000000,
+            "value": 2.51348955078125e-06
+          },
+          "ratio": {
+            "numerator": 154428798,
+            "denominator": 46772317,
+            "value": 3.3017136610957287
+          },
+          "passed": false
+        },
+        {
+          "index": 63,
+          "name": "x-outranks-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 84541219,
+            "denominator": 61440000000000,
+            "value": 1.3759964029947916e-06
+          },
+          "candidate": {
+            "numerator": 232559161,
+            "denominator": 61440000000000,
+            "value": 3.785142594401042e-06
+          },
+          "ratio": {
+            "numerator": 232559161,
+            "denominator": 84541219,
+            "value": 2.750837564809658
+          },
+          "passed": false
+        },
+        {
+          "index": 64,
+          "name": "x-outranks-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 20914217,
+            "denominator": 15360000000000,
+            "value": 1.3616026692708333e-06
+          },
+          "candidate": {
+            "numerator": 117379933,
+            "denominator": 30720000000000,
+            "value": 3.820961360677083e-06
+          },
+          "ratio": {
+            "numerator": 117379933,
+            "denominator": 41828434,
+            "value": 2.806223465119445
+          },
+          "passed": false
+        },
+        {
+          "index": 65,
+          "name": "nonscalar-x-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 71501891,
+            "denominator": 122880000000000,
+            "value": 5.818838785807291e-07
+          },
+          "candidate": {
+            "numerator": 41109923,
+            "denominator": 20480000000000,
+            "value": 2.007320458984375e-06
+          },
+          "ratio": {
+            "numerator": 246659538,
+            "denominator": 71501891,
+            "value": 3.4496925123281006
+          },
+          "passed": false
+        },
+        {
+          "index": 66,
+          "name": "nonscalar-x-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 6886057,
+            "denominator": 12288000000000,
+            "value": 5.603887532552083e-07
+          },
+          "candidate": {
+            "numerator": 122794249,
+            "denominator": 61440000000000,
+            "value": 1.9986043131510417e-06
+          },
+          "ratio": {
+            "numerator": 122794249,
+            "denominator": 34430285,
+            "value": 3.5664604286604074
+          },
+          "passed": false
+        },
+        {
+          "index": 67,
+          "name": "empty-0",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 7688549,
+            "denominator": 40960000000000,
+            "value": 1.877087158203125e-07
+          },
+          "candidate": {
+            "numerator": 7387279,
+            "denominator": 40960000000000,
+            "value": 1.803534912109375e-07
+          },
+          "ratio": {
+            "numerator": 7387279,
+            "denominator": 7688549,
+            "value": 0.9608157534015846
+          },
+          "passed": true
+        },
+        {
+          "index": 68,
+          "name": "empty-1",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 125346173,
+            "denominator": 122880000000000,
+            "value": 1.0200697672526042e-06
+          },
+          "candidate": {
+            "numerator": 2137381,
+            "denominator": 10240000000000,
+            "value": 2.0872861328125e-07
+          },
+          "ratio": {
+            "numerator": 25648572,
+            "denominator": 125346173,
+            "value": 0.20462189938579137
+          },
+          "passed": true
+        },
+        {
+          "index": 69,
+          "name": "empty-2",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 14355889,
+            "denominator": 12288000000000,
+            "value": 1.1682852376302084e-06
+          },
+          "candidate": {
+            "numerator": 8674303,
+            "denominator": 40960000000000,
+            "value": 2.117749755859375e-07
+          },
+          "ratio": {
+            "numerator": 26022909,
+            "denominator": 143558890,
+            "value": 0.18126992344396087
+          },
+          "passed": true
+        },
+        {
+          "index": 70,
+          "name": "empty-3",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 63513237,
+            "denominator": 40960000000000,
+            "value": 1.5506161376953124e-06
+          },
+          "candidate": {
+            "numerator": 25898903,
+            "denominator": 122880000000000,
+            "value": 2.1076581217447915e-07
+          },
+          "ratio": {
+            "numerator": 25898903,
+            "denominator": 190539711,
+            "value": 0.13592391246987878
+          },
+          "passed": true
+        },
+        {
+          "index": 71,
+          "name": "offset-false",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 25842179,
+            "denominator": 6144000000000,
+            "value": 4.206083821614583e-06
+          },
+          "candidate": {
+            "numerator": 1778951,
+            "denominator": 5120000000000,
+            "value": 3.474513671875e-07
+          },
+          "ratio": {
+            "numerator": 10673706,
+            "denominator": 129210895,
+            "value": 0.0826068575718789
+          },
+          "passed": true
+        },
+        {
+          "index": 72,
+          "name": "offset-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 51275309,
+            "denominator": 7680000000000,
+            "value": 6.676472526041666e-06
+          },
+          "candidate": {
+            "numerator": 4178279,
+            "denominator": 10240000000000,
+            "value": 4.0803505859375e-07
+          },
+          "ratio": {
+            "numerator": 12534837,
+            "denominator": 205101236,
+            "value": 0.06111536548711974
+          },
+          "passed": true
+        },
+        {
+          "index": 73,
+          "name": "condition-custom-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 15264143,
+            "denominator": 30720000000000,
+            "value": 4.968796549479166e-07
+          },
+          "candidate": {
+            "numerator": 12913711,
+            "denominator": 5120000000000,
+            "value": 2.5222091796875e-06
+          },
+          "ratio": {
+            "numerator": 77482266,
+            "denominator": 15264143,
+            "value": 5.076096705855022
+          },
+          "passed": false
+        },
+        {
+          "index": 74,
+          "name": "condition-custom-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 48780457,
+            "denominator": 122880000000000,
+            "value": 3.9697637532552083e-07
+          },
+          "candidate": {
+            "numerator": 23062549,
+            "denominator": 10240000000000,
+            "value": 2.25220205078125e-06
+          },
+          "ratio": {
+            "numerator": 276750588,
+            "denominator": 48780457,
+            "value": 5.673390636746187
+          },
+          "passed": false
+        },
+        {
+          "index": 75,
+          "name": "x-custom-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 6831631,
+            "denominator": 20480000000000,
+            "value": 3.33575732421875e-07
+          },
+          "candidate": {
+            "numerator": 17732847,
+            "denominator": 8192000000000,
+            "value": 2.1646541748046874e-06
+          },
+          "ratio": {
+            "numerator": 88664235,
+            "denominator": 13663262,
+            "value": 6.489243564238174
+          },
+          "passed": false
+        },
+        {
+          "index": 76,
+          "name": "x-custom-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 19996611,
+            "denominator": 40960000000000,
+            "value": 4.881985107421875e-07
+          },
+          "candidate": {
+            "numerator": 294452623,
+            "denominator": 122880000000000,
+            "value": 2.3962615804036457e-06
+          },
+          "ratio": {
+            "numerator": 294452623,
+            "denominator": 59989833,
+            "value": 4.908375440885124
+          },
+          "passed": false
+        },
+        {
+          "index": 77,
+          "name": "y-custom-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 13171277,
+            "denominator": 30720000000000,
+            "value": 4.2875250651041666e-07
+          },
+          "candidate": {
+            "numerator": 138409663,
+            "denominator": 61440000000000,
+            "value": 2.2527614420572916e-06
+          },
+          "ratio": {
+            "numerator": 19772809,
+            "denominator": 3763222,
+            "value": 5.254223375607392
+          },
+          "passed": false
+        },
+        {
+          "index": 78,
+          "name": "y-custom-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 2138347,
+            "denominator": 4915200000000,
+            "value": 4.3504781087239583e-07
+          },
+          "candidate": {
+            "numerator": 284573993,
+            "denominator": 122880000000000,
+            "value": 2.3158690836588543e-06
+          },
+          "ratio": {
+            "numerator": 284573993,
+            "denominator": 53458675,
+            "value": 5.323251895038551
+          },
+          "passed": false
+        },
+        {
+          "index": 79,
+          "name": "condition-reverse-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 20433097,
+            "denominator": 61440000000000,
+            "value": 3.3256993815104165e-07
+          },
+          "candidate": {
+            "numerator": 266803247,
+            "denominator": 122880000000000,
+            "value": 2.1712503824869792e-06
+          },
+          "ratio": {
+            "numerator": 266803247,
+            "denominator": 40866194,
+            "value": 6.528703088915009
+          },
+          "passed": false
+        },
+        {
+          "index": 80,
+          "name": "condition-reverse-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 10570037,
+            "denominator": 24576000000000,
+            "value": 4.300959065755208e-07
+          },
+          "candidate": {
+            "numerator": 56688619,
+            "denominator": 24576000000000,
+            "value": 2.306665812174479e-06
+          },
+          "ratio": {
+            "numerator": 56688619,
+            "denominator": 10570037,
+            "value": 5.363142910474202
+          },
+          "passed": false
+        },
+        {
+          "index": 81,
+          "name": "x-reverse-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 13529833,
+            "denominator": 40960000000000,
+            "value": 3.303181884765625e-07
+          },
+          "candidate": {
+            "numerator": 107219013,
+            "denominator": 40960000000000,
+            "value": 2.6176516845703124e-06
+          },
+          "ratio": {
+            "numerator": 107219013,
+            "denominator": 13529833,
+            "value": 7.924636837720022
+          },
+          "passed": false
+        },
+        {
+          "index": 82,
+          "name": "x-reverse-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 52319681,
+            "denominator": 122880000000000,
+            "value": 4.2577865397135417e-07
+          },
+          "candidate": {
+            "numerator": 77923403,
+            "denominator": 40960000000000,
+            "value": 1.9024268310546874e-06
+          },
+          "ratio": {
+            "numerator": 233770209,
+            "denominator": 52319681,
+            "value": 4.468112276907805
+          },
+          "passed": false
+        },
+        {
+          "index": 83,
+          "name": "y-reverse-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 40719061,
+            "denominator": 122880000000000,
+            "value": 3.3137256673177085e-07
+          },
+          "candidate": {
+            "numerator": 108199279,
+            "denominator": 61440000000000,
+            "value": 1.7610559733072917e-06
+          },
+          "ratio": {
+            "numerator": 216398558,
+            "denominator": 40719061,
+            "value": 5.314428984499422
+          },
+          "passed": false
+        },
+        {
+          "index": 84,
+          "name": "y-reverse-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 26420759,
+            "denominator": 61440000000000,
+            "value": 4.3002537434895835e-07
+          },
+          "candidate": {
+            "numerator": 4880889,
+            "denominator": 2560000000000,
+            "value": 1.906597265625e-06
+          },
+          "ratio": {
+            "numerator": 117141336,
+            "denominator": 26420759,
+            "value": 4.433685497074478
+          },
+          "passed": false
+        },
+        {
+          "index": 85,
+          "name": "condition-view-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 52272919,
+            "denominator": 7680000000000,
+            "value": 6.8063696614583335e-06
+          },
+          "candidate": {
+            "numerator": 256212487,
+            "denominator": 15360000000000,
+            "value": 1.6680500455729168e-05
+          },
+          "ratio": {
+            "numerator": 256212487,
+            "denominator": 104545838,
+            "value": 2.4507191477101173
+          },
+          "passed": false
+        },
+        {
+          "index": 86,
+          "name": "condition-view-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 141964319,
+            "denominator": 15360000000000,
+            "value": 9.242468684895833e-06
+          },
+          "candidate": {
+            "numerator": 554037059,
+            "denominator": 30720000000000,
+            "value": 1.8035060514322915e-05
+          },
+          "ratio": {
+            "numerator": 554037059,
+            "denominator": 283928638,
+            "value": 1.9513250332993883
+          },
+          "passed": false
+        },
+        {
+          "index": 87,
+          "name": "x-view-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 9038477,
+            "denominator": 1920000000000,
+            "value": 4.7075401041666665e-06
+          },
+          "candidate": {
+            "numerator": 22298413,
+            "denominator": 1536000000000,
+            "value": 1.4517195963541667e-05
+          },
+          "ratio": {
+            "numerator": 111492065,
+            "denominator": 36153908,
+            "value": 3.0838177991712543
+          },
+          "passed": false
+        },
+        {
+          "index": 88,
+          "name": "x-view-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 36741621,
+            "denominator": 5120000000000,
+            "value": 7.1760978515625e-06
+          },
+          "candidate": {
+            "numerator": 483530701,
+            "denominator": 30720000000000,
+            "value": 1.5739931673177083e-05
+          },
+          "ratio": {
+            "numerator": 483530701,
+            "denominator": 220449726,
+            "value": 2.1933830890767356
+          },
+          "passed": false
+        },
+        {
+          "index": 89,
+          "name": "y-view-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 102435131,
+            "denominator": 6144000000000,
+            "value": 1.6672384602864583e-05
+          },
+          "candidate": {
+            "numerator": 154387373,
+            "denominator": 7680000000000,
+            "value": 2.0102522526041666e-05
+          },
+          "ratio": {
+            "numerator": 617549492,
+            "denominator": 512175655,
+            "value": 1.2057376916909492
+          },
+          "passed": false
+        },
+        {
+          "index": 90,
+          "name": "y-view-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 17178209,
+            "denominator": 2560000000000,
+            "value": 6.710237890625e-06
+          },
+          "candidate": {
+            "numerator": 96219707,
+            "denominator": 15360000000000,
+            "value": 6.264303841145833e-06
+          },
+          "ratio": {
+            "numerator": 96219707,
+            "denominator": 103069254,
+            "value": 0.9335442264867853
+          },
+          "passed": true
+        },
+        {
+          "index": 91,
+          "name": "condition-broadcast-false",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 8849549,
+            "denominator": 2048000000000,
+            "value": 4.32106884765625e-06
+          },
+          "candidate": {
+            "numerator": 118014919,
+            "denominator": 30720000000000,
+            "value": 3.841631477864583e-06
+          },
+          "ratio": {
+            "numerator": 118014919,
+            "denominator": 132743235,
+            "value": 0.8890465792851892
+          },
+          "passed": true
+        },
+        {
+          "index": 92,
+          "name": "condition-broadcast-true",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 104070629,
+            "denominator": 15360000000000,
+            "value": 6.775431575520833e-06
+          },
+          "candidate": {
+            "numerator": 8046979,
+            "denominator": 1280000000000,
+            "value": 6.28670234375e-06
+          },
+          "ratio": {
+            "numerator": 96563748,
+            "denominator": 104070629,
+            "value": 0.9278674389486009
+          },
+          "passed": true
+        },
+        {
+          "index": 93,
+          "name": "alias-false",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 8175421,
+            "denominator": 1920000000000,
+            "value": 4.2580317708333334e-06
+          },
+          "candidate": {
+            "numerator": 1867817,
+            "denominator": 10240000000000,
+            "value": 1.8240400390625e-07
+          },
+          "ratio": {
+            "numerator": 5603451,
+            "denominator": 130806736,
+            "value": 0.04283763337692334
+          },
+          "passed": true
+        },
+        {
+          "index": 94,
+          "name": "alias-true",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 68788483,
+            "denominator": 10240000000000,
+            "value": 6.71762529296875e-06
+          },
+          "candidate": {
+            "numerator": 1674637,
+            "denominator": 6144000000000,
+            "value": 2.725646158854167e-07
+          },
+          "ratio": {
+            "numerator": 8373185,
+            "denominator": 206365449,
+            "value": 0.040574548891660636
+          },
+          "passed": true
+        },
+        {
+          "index": 95,
+          "name": "dtype-Bool",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 105773,
+            "denominator": 80000000000,
+            "value": 1.3221625e-06
+          },
+          "candidate": {
+            "numerator": 147971641,
+            "denominator": 122880000000000,
+            "value": 1.204196297200521e-06
+          },
+          "ratio": {
+            "numerator": 147971641,
+            "denominator": 162467328,
+            "value": 0.9107778334361478
+          },
+          "passed": true
+        },
+        {
+          "index": 96,
+          "name": "dtype-Byte",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 96430439,
+            "denominator": 61440000000000,
+            "value": 1.5695058430989583e-06
+          },
+          "candidate": {
+            "numerator": 88550447,
+            "denominator": 61440000000000,
+            "value": 1.4412507649739583e-06
+          },
+          "ratio": {
+            "numerator": 88550447,
+            "denominator": 96430439,
+            "value": 0.9182831470880268
+          },
+          "passed": true
+        },
+        {
+          "index": 97,
+          "name": "dtype-Int32",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 195821537,
+            "denominator": 122880000000000,
+            "value": 1.5935997477213541e-06
+          },
+          "candidate": {
+            "numerator": 182592917,
+            "denominator": 122880000000000,
+            "value": 1.4859449625651043e-06
+          },
+          "ratio": {
+            "numerator": 182592917,
+            "denominator": 195821537,
+            "value": 0.9324455307487449
+          },
+          "passed": true
+        },
+        {
+          "index": 98,
+          "name": "dtype-Int64",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 103448747,
+            "denominator": 61440000000000,
+            "value": 1.6837361165364584e-06
+          },
+          "candidate": {
+            "numerator": 63413197,
+            "denominator": 40960000000000,
+            "value": 1.5481737548828124e-06
+          },
+          "ratio": {
+            "numerator": 190239591,
+            "denominator": 206897494,
+            "value": 0.9194871688489373
+          },
+          "passed": true
+        },
+        {
+          "index": 99,
+          "name": "dtype-UInt32",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 24468191,
+            "denominator": 15360000000000,
+            "value": 1.5929811848958332e-06
+          },
+          "candidate": {
+            "numerator": 45294623,
+            "denominator": 30720000000000,
+            "value": 1.4744343424479166e-06
+          },
+          "ratio": {
+            "numerator": 4117693,
+            "denominator": 4448762,
+            "value": 0.9255817685909024
+          },
+          "passed": true
+        },
+        {
+          "index": 100,
+          "name": "dtype-UInt64",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 196828207,
+            "denominator": 122880000000000,
+            "value": 1.6017920491536458e-06
+          },
+          "candidate": {
+            "numerator": 15229159,
+            "denominator": 10240000000000,
+            "value": 1.48722255859375e-06
+          },
+          "ratio": {
+            "numerator": 182749908,
+            "denominator": 196828207,
+            "value": 0.9284741795163536
+          },
+          "passed": true
+        },
+        {
+          "index": 101,
+          "name": "dtype-Double",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 3054581,
+            "denominator": 1920000000000,
+            "value": 1.5909276041666667e-06
+          },
+          "candidate": {
+            "numerator": 183988513,
+            "denominator": 122880000000000,
+            "value": 1.4973023518880209e-06
+          },
+          "ratio": {
+            "numerator": 183988513,
+            "denominator": 195493184,
+            "value": 0.9411505262505725
+          },
+          "passed": true
+        },
+        {
+          "index": 102,
+          "name": "dtype-Half",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 195993163,
+            "denominator": 122880000000000,
+            "value": 1.594996443684896e-06
+          },
+          "candidate": {
+            "numerator": 7625283,
+            "denominator": 5120000000000,
+            "value": 1.4893130859375e-06
+          },
+          "ratio": {
+            "numerator": 183006792,
+            "denominator": 195993163,
+            "value": 0.9337406938016506
+          },
+          "passed": true
+        },
+        {
+          "index": 103,
+          "name": "scalar-bits-0",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 44324407,
+            "denominator": 122880000000000,
+            "value": 3.6071294759114583e-07
+          },
+          "candidate": {
+            "numerator": 6974627,
+            "denominator": 61440000000000,
+            "value": 1.1351931966145833e-07
+          },
+          "ratio": {
+            "numerator": 13949254,
+            "denominator": 44324407,
+            "value": 0.314708192260756
+          },
+          "passed": true
+        },
+        {
+          "index": 104,
+          "name": "scalar-bits-1",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 3717309,
+            "denominator": 10240000000000,
+            "value": 3.6301845703125e-07
+          },
+          "candidate": {
+            "numerator": 7015177,
+            "denominator": 61440000000000,
+            "value": 1.1417931315104166e-07
+          },
+          "ratio": {
+            "numerator": 7015177,
+            "denominator": 22303854,
+            "value": 0.31452756998857684
+          },
+          "passed": true
+        },
+        {
+          "index": 105,
+          "name": "scalar-bits-2",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 22914133,
+            "denominator": 61440000000000,
+            "value": 3.7295138346354164e-07
+          },
+          "candidate": {
+            "numerator": 6965041,
+            "denominator": 61440000000000,
+            "value": 1.1336329752604167e-07
+          },
+          "ratio": {
+            "numerator": 6965041,
+            "denominator": 22914133,
+            "value": 0.3039626679307482
+          },
+          "passed": true
+        },
+        {
+          "index": 106,
+          "name": "scalar-bits-3",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 8613523,
+            "denominator": 24576000000000,
+            "value": 3.5048514811197917e-07
+          },
+          "candidate": {
+            "numerator": 4656603,
+            "denominator": 40960000000000,
+            "value": 1.136865966796875e-07
+          },
+          "ratio": {
+            "numerator": 607383,
+            "denominator": 1872505,
+            "value": 0.3243692273184851
+          },
+          "passed": true
+        },
+        {
+          "index": 107,
+          "name": "scalar-bits-4",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 5358751,
+            "denominator": 15360000000000,
+            "value": 3.488770182291667e-07
+          },
+          "candidate": {
+            "numerator": 6939721,
+            "denominator": 61440000000000,
+            "value": 1.1295118815104167e-07
+          },
+          "ratio": {
+            "numerator": 6939721,
+            "denominator": 21435004,
+            "value": 0.32375645929433927
+          },
+          "passed": true
+        },
+        {
+          "index": 108,
+          "name": "scalar-bits-5",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 439321,
+            "denominator": 1228800000000,
+            "value": 3.5752034505208334e-07
+          },
+          "candidate": {
+            "numerator": 4981723,
+            "denominator": 40960000000000,
+            "value": 1.216240966796875e-07
+          },
+          "ratio": {
+            "numerator": 14945169,
+            "denominator": 43932100,
+            "value": 0.34018790360579165
+          },
+          "passed": true
+        },
+        {
+          "index": 109,
+          "name": "scalar-bits-6",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 43911437,
+            "denominator": 122880000000000,
+            "value": 3.5735218912760414e-07
+          },
+          "candidate": {
+            "numerator": 6958733,
+            "denominator": 61440000000000,
+            "value": 1.1326062825520834e-07
+          },
+          "ratio": {
+            "numerator": 13917466,
+            "denominator": 43911437,
+            "value": 0.31694398887469794
+          },
+          "passed": true
+        },
+        {
+          "index": 110,
+          "name": "scalar-bits-7",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 7244957,
+            "denominator": 20480000000000,
+            "value": 3.53757666015625e-07
+          },
+          "candidate": {
+            "numerator": 6972071,
+            "denominator": 61440000000000,
+            "value": 1.1347771809895833e-07
+          },
+          "ratio": {
+            "numerator": 6972071,
+            "denominator": 21734871,
+            "value": 0.32077811733964284
+          },
+          "passed": true
+        },
+        {
+          "index": 111,
+          "name": "scalar-bits-8",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 43368251,
+            "denominator": 122880000000000,
+            "value": 3.5293173014322914e-07
+          },
+          "candidate": {
+            "numerator": 13939481,
+            "denominator": 122880000000000,
+            "value": 1.1343978678385417e-07
+          },
+          "ratio": {
+            "numerator": 13939481,
+            "denominator": 43368251,
+            "value": 0.3214213319324314
+          },
+          "passed": true
+        },
+        {
+          "index": 112,
+          "name": "scalar-bits-9",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 43950233,
+            "denominator": 122880000000000,
+            "value": 3.576679117838542e-07
+          },
+          "candidate": {
+            "numerator": 1752461,
+            "denominator": 15360000000000,
+            "value": 1.1409251302083334e-07
+          },
+          "ratio": {
+            "numerator": 14019688,
+            "denominator": 43950233,
+            "value": 0.31899007224830866
+          },
+          "passed": true
+        },
+        {
+          "index": 113,
+          "name": "scalar-bits-10",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 1080457,
+            "denominator": 3072000000000,
+            "value": 3.5171126302083335e-07
+          },
+          "candidate": {
+            "numerator": 1728679,
+            "denominator": 15360000000000,
+            "value": 1.1254420572916667e-07
+          },
+          "ratio": {
+            "numerator": 1728679,
+            "denominator": 5402285,
+            "value": 0.3199903374220353
+          },
+          "passed": true
+        },
+        {
+          "index": 114,
+          "name": "raw-bool-0",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 24570511,
+            "denominator": 122880000000000,
+            "value": 1.9995533040364582e-07
+          },
+          "candidate": {
+            "numerator": 110977,
+            "denominator": 491520000000,
+            "value": 2.2578328450520833e-07
+          },
+          "ratio": {
+            "numerator": 27744250,
+            "denominator": 24570511,
+            "value": 1.1291686200584106
+          },
+          "passed": false
+        },
+        {
+          "index": 115,
+          "name": "raw-bool-1",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 4004569,
+            "denominator": 20480000000000,
+            "value": 1.95535595703125e-07
+          },
+          "candidate": {
+            "numerator": 3437207,
+            "denominator": 15360000000000,
+            "value": 2.2377649739583333e-07
+          },
+          "ratio": {
+            "numerator": 13748828,
+            "denominator": 12013707,
+            "value": 1.144428443277333
+          },
+          "passed": false
+        },
+        {
+          "index": 116,
+          "name": "raw-bool-2",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 24924079,
+            "denominator": 122880000000000,
+            "value": 2.0283267415364583e-07
+          },
+          "candidate": {
+            "numerator": 13324933,
+            "denominator": 61440000000000,
+            "value": 2.1687716471354167e-07
+          },
+          "ratio": {
+            "numerator": 26649866,
+            "denominator": 24924079,
+            "value": 1.0692417561347
+          },
+          "passed": false
+        },
+        {
+          "index": 117,
+          "name": "raw-bool-3",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 24770263,
+            "denominator": 122880000000000,
+            "value": 2.0158091634114582e-07
+          },
+          "candidate": {
+            "numerator": 4207113,
+            "denominator": 40960000000000,
+            "value": 1.027127197265625e-07
+          },
+          "ratio": {
+            "numerator": 12621339,
+            "denominator": 24770263,
+            "value": 0.5095359302402239
+          },
+          "passed": true
+        },
+        {
+          "index": 118,
+          "name": "raw-bool-4",
+          "partition": "fallback74",
+          "current": {
+            "numerator": 82911,
+            "denominator": 409600000000,
+            "value": 2.0241943359375e-07
+          },
+          "candidate": {
+            "numerator": 8889,
+            "denominator": 40000000000,
+            "value": 2.22225e-07
+          },
+          "ratio": {
+            "numerator": 758528,
+            "denominator": 690925,
+            "value": 1.0978441943771031
+          },
+          "passed": false
+        },
+        {
+          "index": 119,
+          "name": "raw-bool-5",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 4910563,
+            "denominator": 24576000000000,
+            "value": 1.9981131998697916e-07
+          },
+          "candidate": {
+            "numerator": 344947,
+            "denominator": 4915200000000,
+            "value": 7.017964680989583e-08
+          },
+          "ratio": {
+            "numerator": 1724735,
+            "denominator": 4910563,
+            "value": 0.3512295840619497
+          },
+          "passed": true
+        },
+        {
+          "index": 120,
+          "name": "raw-bool-6",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 4980677,
+            "denominator": 24576000000000,
+            "value": 2.0266426595052084e-07
+          },
+          "candidate": {
+            "numerator": 12673529,
+            "denominator": 122880000000000,
+            "value": 1.0313744303385417e-07
+          },
+          "ratio": {
+            "numerator": 12673529,
+            "denominator": 24903385,
+            "value": 0.5089078854139708
+          },
+          "passed": true
+        },
+        {
+          "index": 121,
+          "name": "raw-bool-7",
+          "partition": "other_uniform42",
+          "current": {
+            "numerator": 24982597,
+            "denominator": 122880000000000,
+            "value": 2.0330889485677083e-07
+          },
+          "candidate": {
+            "numerator": 2831329,
+            "denominator": 30720000000000,
+            "value": 9.216565755208334e-08
+          },
+          "ratio": {
+            "numerator": 11325316,
+            "denominator": 24982597,
+            "value": 0.45332821083412583
+          },
+          "passed": true
+        }
+      ],
+      "scopes": {
+        "all122": {
+          "current": {
+            "numerator": 5812554099361,
+            "denominator": 122880000000000,
+            "value": 0.04730268635547689
+          },
+          "candidate": {
+            "numerator": 300389662441,
+            "denominator": 10240000000000,
+            "value": 0.029334927972753905
+          },
+          "ratio": {
+            "numerator": 3604675949292,
+            "denominator": 5812554099361,
+            "value": 0.6201535310765156
+          }
+        },
+        "target6": {
+          "current": {
+            "numerator": 92742767,
+            "denominator": 10000000000,
+            "value": 0.0092742767
+          },
+          "candidate": {
+            "numerator": 45418049,
+            "denominator": 120000000000,
+            "value": 0.00037848374166666665
+          },
+          "ratio": {
+            "numerator": 45418049,
+            "denominator": 1112913204,
+            "value": 0.04081005494117581
+          }
+        },
+        "other_uniform42": {
+          "current": {
+            "numerator": 1180104680621,
+            "denominator": 122880000000000,
+            "value": 0.009603716476407878
+          },
+          "candidate": {
+            "numerator": 60753143021,
+            "denominator": 122880000000000,
+            "value": 0.0004944103435953776
+          },
+          "ratio": {
+            "numerator": 60753143021,
+            "denominator": 1180104680621,
+            "value": 0.05148114740891478
+          }
+        },
+        "fallback74": {
+          "current": {
+            "numerator": 873206574461,
+            "denominator": 30720000000000,
+            "value": 0.02842469317906901
+          },
+          "candidate": {
+            "numerator": 699482944819,
+            "denominator": 24576000000000,
+            "value": 0.028462033887491862
+          },
+          "ratio": {
+            "numerator": 3497414724095,
+            "denominator": 3492826297844,
+            "value": 1.0013136714682411
+          }
+        }
+      },
+      "processes": {
+        "current-screen0-512": {
+          "all122": {
+            "numerator": 2904436944577,
+            "denominator": 61440000000000,
+            "value": 0.04727273672814128
+          },
+          "target6": {
+            "numerator": 140624737,
+            "denominator": 15000000000,
+            "value": 0.009374982466666666
+          },
+          "other_uniform42": {
+            "numerator": 4002609879,
+            "denominator": 409600000000,
+            "value": 0.009771996774902343
+          },
+          "fallback74": {
+            "numerator": 23040620533,
+            "denominator": 819200000000,
+            "value": 0.028125757486572266
+          }
+        },
+        "candidate-screen1-512": {
+          "all122": {
+            "numerator": 597342039817,
+            "denominator": 20480000000000,
+            "value": 0.029167091787939452
+          },
+          "target6": {
+            "numerator": 28529597,
+            "denominator": 60000000000,
+            "value": 0.0004754932833333333
+          },
+          "other_uniform42": {
+            "numerator": 28789363291,
+            "denominator": 61440000000000,
+            "value": 0.0004685768764811198
+          },
+          "fallback74": {
+            "numerator": 9031366921,
+            "denominator": 320000000000,
+            "value": 0.028223021628125
+          }
+        },
+        "candidate-screen2-512": {
+          "all122": {
+            "numerator": 604216609947,
+            "denominator": 20480000000000,
+            "value": 0.02950276415756836
+          },
+          "target6": {
+            "numerator": 1407371,
+            "denominator": 5000000000,
+            "value": 0.0002814742
+          },
+          "other_uniform42": {
+            "numerator": 3196377973,
+            "denominator": 6144000000000,
+            "value": 0.0005202438107096354
+          },
+          "fallback74": {
+            "numerator": 1763392275263,
+            "denominator": 61440000000000,
+            "value": 0.028701046146858724
+          }
+        },
+        "current-screen3-512": {
+          "all122": {
+            "numerator": 30292887029,
+            "denominator": 640000000000,
+            "value": 0.0473326359828125
+          },
+          "target6": {
+            "numerator": 34400891,
+            "denominator": 3750000000,
+            "value": 0.009173570933333333
+          },
+          "other_uniform42": {
+            "numerator": 579713198771,
+            "denominator": 61440000000000,
+            "value": 0.009435436177913412
+          },
+          "fallback74": {
+            "numerator": 1764779757869,
+            "denominator": 61440000000000,
+            "value": 0.028723628871565755
+          }
+        }
+      },
+      "sample_clocks": 58560,
+      "warmup_clocks": 29280,
+      "measured_clocks": 29280,
+      "public_calls": 35280960,
+      "measured_public_calls": 17640480
+    },
+    "resources": 385,
+    "peak_rss": 332197888,
+    "setup_count": 488,
+    "source_root_changed": false,
+    "complete_application_result": false
+  }
+}
