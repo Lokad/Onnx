@@ -12,6 +12,7 @@ TOOLS = ROOT/'tests/parakeet/masking-padding-layout-amd'
 sys.path.insert(0,str(TOOLS))
 from run import BASE, pin, read, prepared
 from review_build import resources
+from audit_masking_layouts import correction
 
 
 def main():
@@ -21,7 +22,9 @@ def main():
         ('build_review','build-review.json'),('collection','capture-collected/capture-collection.json'),
         ('transfer','capture-transfer.json')]:
         assert proof[key] == pin(BASE/name), name
-    assert proof['auditor'] == pin(TOOLS/'audit.py') and proof['checks'] == pin(TOOLS/'checks.py')
+    assert proof['auditor'] == pin(OUT/'audit_masking_layouts.py') and proof['checks'] == pin(TOOLS/'checks.py')
+    assert proof['audit_correction'] == pin(BASE/'audit-correction.json')
+    _, corrected = correction(); assert read(BASE/'audit-correction.json') == corrected
     analysis = read(BASE/'analysis.json'); observations = read(BASE/'observations.json')
     assert analysis['passed'] and analysis['core_unchanged'] and analysis['exact_public_results']
     assert analysis['diagnostic_only'] and analysis['no_performance_score']
@@ -78,6 +81,10 @@ def main():
         'helper body, all other original methods, public interfaces and implementation',
         'flags. Metadata contains no retained activation storage; logging state is',
         'restored after each graph call. All build and capture owners are terminal.','',
+        'The first local audit referenced the comparison result without its output/',
+        'directory. A separate audit revision corrects that one retained-file path',
+        'and binds the correction in the closure. Every original check remains;',
+        'the capture, prepared tools and raw observations are unchanged. No inference reran.','',
         'Use these observed layouts with the [matched ORT work](masking-padding-20260924.md)',
         'and [source-derived work counts](masking-work-20260924.md) to select one bounded',
         'experiment. This capture does not establish native instruction counts, memory',
@@ -89,7 +96,7 @@ def main():
     documents = {'masking-layouts-20260924.md':'\n'.join(lines)+'\n',
         'masking-layouts-20260924.csv':stream.getvalue(),
         'masking-layouts-20260924.json':json.dumps(dict(closure=pin(BASE/'closed.json'),
-            analysis=analysis,build_review=build),indent=2,allow_nan=False)+'\n'}
+            analysis=analysis,build_review=build,audit_correction=corrected),indent=2,allow_nan=False)+'\n'}
     assert all(not (OUT/name).exists() for name in documents), 'Preserve existing publication'
     for name,content in documents.items():
         with (OUT/name).open('x',encoding='utf8',newline='') as target:target.write(content)

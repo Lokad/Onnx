@@ -1,0 +1,425 @@
+{
+  "closure": {
+    "bytes": 1203,
+    "sha256": "3884b8ab0d36f8e6f2344bd5a3e7d711c19bebbf6c91bdc402d64d1fe8ac2ac8"
+  },
+  "analysis": {
+    "passed": true,
+    "requests": 80,
+    "observations": 9600,
+    "core_unchanged": true,
+    "exact_public_results": true,
+    "diagnostic_only": true,
+    "no_performance_score": true,
+    "frame_observation_counts": {
+      "51": 480,
+      "61": 480,
+      "83": 480,
+      "88": 480,
+      "89": 480,
+      "102": 480,
+      "106": 480,
+      "112": 480,
+      "114": 480,
+      "120": 480,
+      "151": 480,
+      "156": 960,
+      "157": 480,
+      "158": 480,
+      "167": 480,
+      "169": 480,
+      "190": 480,
+      "222": 480,
+      "225": 480
+    },
+    "masks": [
+      {
+        "family": "attention-cleanup",
+        "mask": "all-false",
+        "observations": 1920
+      },
+      {
+        "family": "attention-mask",
+        "mask": "all-false",
+        "observations": 1920
+      },
+      {
+        "family": "convolution-mask",
+        "mask": "all-false",
+        "observations": 1920
+      }
+    ],
+    "layouts": [
+      {
+        "family": "attention-cleanup",
+        "operand": "0",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-cleanup",
+        "operand": "1",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-cleanup",
+        "operand": "2",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-cleanup",
+        "operand": "output",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-mask",
+        "operand": "0",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-mask",
+        "operand": "1",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-mask",
+        "operand": "2",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-mask",
+        "operand": "output",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-pad",
+        "operand": "0",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-pad",
+        "operand": "1",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Int64, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "attention-pad",
+        "operand": "output",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "convolution-mask",
+        "operand": "0",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "convolution-mask",
+        "operand": "1",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "convolution-mask",
+        "operand": "2",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "convolution-mask",
+        "operand": "output",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "convolution-pad",
+        "operand": "0",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "convolution-pad",
+        "operand": "1",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Int64, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      },
+      {
+        "family": "convolution-pad",
+        "operand": "output",
+        "layout": {
+          "array_backed": true,
+          "array_offset": 0,
+          "exact_dense": true,
+          "reversed": false,
+          "row_major": true,
+          "runtime_type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+          "storage_matches_length": true
+        },
+        "observations": 1920
+      }
+    ],
+    "resources": [
+      {
+        "name": "phase",
+        "samples": 738,
+        "peak_rss": 9310642176
+      }
+    ]
+  },
+  "build_review": {
+    "passed": true,
+    "built": {
+      "bytes": 10025,
+      "sha256": "78241a161d60cb1e6407bb2e46c9124723f9cc0ec16aadaa48b22576ef3593d2"
+    },
+    "inventory": {
+      "bytes": 4739039,
+      "sha256": "923f455a02623d18cf744834eecc778a559978a19a3c7e51bddbfcbf1262131c"
+    },
+    "collection": {
+      "bytes": 12482,
+      "sha256": "e054e63efe73961c58e9fa951c05d9f0833fa1ab249c107a3f3a817bd7273525"
+    },
+    "spec": {
+      "bytes": 19496,
+      "sha256": "30d81f789ad9a1d0e285a887da0b5f0fefbc8b71017ad760f7c814d3f194a303"
+    },
+    "core_unchanged": true,
+    "methods": [
+      {
+        "assembly": "SampledAudio.dll",
+        "original_methods": 162,
+        "unchanged": 161,
+        "changed": "Program::<Main>$::Int32 <Main>$(System.String[])",
+        "added": 2,
+        "original_body_preserved": true,
+        "public_surface_equal": true,
+        "original_flags_equal": true
+      },
+      {
+        "assembly": "Lokad.Onnx.Data.dll",
+        "original_methods": 697,
+        "unchanged": 696,
+        "changed": "Lokad.Onnx.ParakeetTranscriber::Execute::System.Collections.Generic.IReadOnlyDictionary`2[System.String,Lokad.Onnx.ITensor] Execute(Lokad.Onnx.GraphExecution, System.Collections.Generic.Dictionary`2[System.String,Lokad.Onnx.ITensor])",
+        "added": 98,
+        "original_body_preserved": true,
+        "public_surface_equal": true,
+        "original_flags_equal": true
+      }
+    ],
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "peak_rss": 6496256
+      },
+      {
+        "name": "data-restore",
+        "samples": 2,
+        "peak_rss": 126410752
+      },
+      {
+        "name": "data-build",
+        "samples": 10,
+        "peak_rss": 344154112
+      },
+      {
+        "name": "consumer-restore",
+        "samples": 2,
+        "peak_rss": 128552960
+      },
+      {
+        "name": "consumer-build",
+        "samples": 15,
+        "peak_rss": 347783168
+      },
+      {
+        "name": "bridge-restore",
+        "samples": 2,
+        "peak_rss": 128667648
+      },
+      {
+        "name": "bridge-build",
+        "samples": 7,
+        "peak_rss": 301924352
+      },
+      {
+        "name": "inventory",
+        "samples": 1,
+        "peak_rss": 9277440
+      }
+    ],
+    "reviewer": {
+      "bytes": 5628,
+      "sha256": "4cf7dfb1ea8cc9255184c3ee16e9091e8904b7a0f78cc0202b0000292961eebc"
+    }
+  },
+  "audit_correction": {
+    "passed": true,
+    "original_auditor": {
+      "bytes": 4952,
+      "sha256": "d1689eb5dc527c27111b75f45f8605ae91a4ffcf7bd5652bcf0e9fa8946be37e"
+    },
+    "corrected_auditor": {
+      "bytes": 1983,
+      "sha256": "e9febf36331c2d655a47057874fa92e44bebde95223fcb6b8b54a5c4ee6b3a06"
+    },
+    "previous_missing_path": "collected/timing-01-candidate/result.json",
+    "retained_reference_path": "collected/timing-01-candidate/output/result.json",
+    "reference": {
+      "bytes": 258321,
+      "sha256": "13a2fb6366e73eda17dc3ab54edc8089e7564e21fa3465ee0a180f2fa6922b84"
+    },
+    "application_closure": {
+      "bytes": 119889,
+      "sha256": "f04c09fbc6c0455c4420d6680d60bb4f8fc5cac9dda2f2507768ba94b86335e4"
+    },
+    "new_inference_calls": 0,
+    "scope": "Only the retained reference path and an explicit closure correction pin change; every original check remains."
+  }
+}
