@@ -6,16 +6,14 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **41.78 GB**, including **28.33 GB** in artifacts,
-after retaining M54's build, numerical, component and complete Parakeet
-correctness evidence, closing its application and cross-model correctness
-comparisons, closing graph and Pyannote application checks, qualifying the actual
-root and package, and closing the next matrix-blocking candidate's build,
-numerical qualification and rejected performance screen. A fresh inventory
-confirms **41,776,159,353 bytes**, with **8.22 GB**
-of headroom. Receipt:
-`artifacts/repository-retention-20260923/m55-closed-size.json`.
-Counting the model junction again gives 52.56 GB, which counts the same 10.79 GB
+The latest inventory is **42.17 GB**, including **28.72 GB** in artifacts,
+after retaining the selected release proofs, closing the rejected matrix-blocking
+candidate, and qualifying the corrected uniform-mask Where candidate's build,
+numerics and generated code. The Boolean counterexample and superseded drafts
+remain retained. The fresh inventory totals **42,166,158,894 bytes**, with
+**7.83 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m56-v3-qualified-size.json`.
+Counting the model junction again gives 52.95 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
 No new model copies were needed. Recheck after subsequent collections.
@@ -119,3 +117,14 @@ freed **213.84 MB**. These operations preserve every path and byte; the staged
 screen was excluded and its unchanged setup resumed afterward. Receipts:
 `artifacts/parakeet-ordered-wide-blocks-runtime-links-20260923` and
 `artifacts/parakeet-closed-evidence-links-20260923`.
+
+The uniform-mask experiments retired another **135.45 MB across 552 closed VM
+build files**: generated package caches and duplicate instruction exports from
+V1/V2/V3. All 21 cached package-archive copies matched originals retained in
+the protected feed. Complete exports remain verified locally, and every immutable
+payload path remains intact. V1/V2
+retirement freed91.05MBof tmpfs; V3 freed45.49MB. The latter allowed an unchanged
+staged numerical run to pass its original memory preflight before any worker
+started. Receipts:artifacts/parakeet-scalar-where-build-retention-20260924 and
+artifacts/parakeet-scalar-where-v3-build-retention-20260924. No active worker or
+model was removed.
