@@ -6,7 +6,10 @@ Microsoft ORT latency. The [full graph comparison](graphs-20260924.md) fails
 release admission: 30-token e5 is 6.769% slower and its candidate repeatability
 control fails. Numerical checks and the other seven regression gates pass.
 The [retained-clock review](e5-repeatability-20260924.md) localizes bursts but
-does not establish their cause. Root integration and BENCHMARK.md remain pending.
+does not establish their cause. The [runtime diagnostic](../../benchmarks/e5-runtime-diagnostic-results/report-20260924.md)
+then confirms compilation continues into the measured window in both products.
+A focused comparison with a prospectively fixed longer warmup is next.
+Root integration and BENCHMARK.md remain pending.
 
 After each relevant campaign closes, run these local reporting actions with
 `C:/Python313/python.exe -X utf8 -B`:
