@@ -49,6 +49,10 @@ def main():
         for name,wanted in proof['files'].items():assert pin(folder/name)==wanted,name
         admissions[label]=dict(closure=pin(folder/'closed.json'),analysis=pin(folder/'analysis.json'),identities=analysis['identities'])
     assert admissions['recurrence']['identities']['current']==admissions['slice']['identities']['current']
+    assert admissions['recurrence']['identities']['candidate']['Lokad.Onnx.dll']['sha256']=='3c23b44a53736938f241302a6a8258605c2f57da57f5009c83e979337df957f5'
+    assert admissions['recurrence']['identities']['candidate']['Lokad.Onnx.Data.dll']['sha256']=='cc37b19eb41cf728061c35bcdb7e06a6ab4d370bfd4c47555eec86c86b2ef6d6'
+    assert admissions['slice']['identities']['candidate']['Lokad.Onnx.dll']['sha256']=='bafdb0069c4809251fd4e287ad094076ed5e01cefe8be7be6dc6446f8887a9da'
+    assert admissions['slice']['identities']['candidate']['Lokad.Onnx.Data.dll']['sha256']=='065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5'
     SOURCE.mkdir();snapshot=SOURCE/'source';snapshot.mkdir()
     for name,wanted in expected.items():
         source=(SLICE if name in changed['slice'] else RECURRENCE)/'source'/name
