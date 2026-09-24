@@ -35,6 +35,8 @@ def main():
         label='**Complete corpus**' if row['is_corpus'] else row['name']
         lines.append(f"| {label} | {row['audio_seconds']:.3f} | {row['current']['seconds']:.6f} | {row['candidate']['seconds']:.6f} | {row['ort']['seconds']:.6f} | {row['ratios_to_ort']['candidate']:.6f} |")
     lines+=['',f"Repeatability: {sum(r['passed'] for r in performance['controls'])}/63 controls pass. Admission gates: {sum(r['passed'] for r in performance['gates'])}/21 pass.",'',
+        f"The corpus difference is {(1-corpus['candidate']['seconds']/corpus['current']['seconds'])*100:.3f}% lower candidate latency; the fixed requirement is at least 3%.",
+        'Failing gates: '+(', '.join(r['name'] for r in performance['gates'] if not r['passed']) or 'none')+'.','',
         'AMD EPYC 9V74, CPU 2 before runtime startup, monitoring CPU 0; .NET 10.0.8',
         'and ORT 1.29.0 CPUExecutionProvider. ORT uses one intra/inter-op thread,',
         'sequential execution, all graph optimizations and no spinning. No profiler',
