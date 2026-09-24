@@ -252,3 +252,12 @@ clock/result copies was retired after verifying complete local originals and
 all immutable dependencies. Receipt:
 `artifacts/parakeet-where-balanced-remote-retention-20260924`.
 This maintenance finished before the control was staged or launched.
+
+During the M66 graph comparison, the supervisor waited between GPT-2 processes
+just below its unchanged 11 GiB memory preflight. With 71 workers complete and
+no live worker, maintenance retired one **20.31 MB** VM transfer archive from
+the closed selected-profile campaign. Its complete local `payload.tar.gz`
+remains verified against closure `e6a94afd`; all 76,719 paths referenced by VM
+payload, stage and observer manifests were protected. The final graph worker
+then started normally. No timing process, limit, input or score was changed.
+Receipt: `artifacts/parakeet-profile-transfer-retention-20260924/closed.json`.
