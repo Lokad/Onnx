@@ -55,6 +55,9 @@ public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntri
     /// <summary>Optional immutable prepared convolution weights shared by graph contexts.</summary>
     internal IReadOnlyDictionary<float[], PackedConvWeight>? PackedConvWeights { get; init; }
 
+    /// <summary>Immutable bounded LSTM projection weights shared by graph contexts.</summary>
+    internal IReadOnlyDictionary<float[], PackedLstmWeight>? PackedLstmWeights { get; init; }
+
     /// <summary>Test selection for the bounded, experimental float convolution path.</summary>
     internal bool UseSegmentedConvolution { get; init; }
 

@@ -48,6 +48,7 @@ public partial class ComputationalGraph
     /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
     internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
     internal Dictionary<float[], PackedConvWeight> PackedConvWeights = new Dictionary<float[], PackedConvWeight>();
+    internal Dictionary<float[], PackedLstmWeight> PackedLstmWeights = new Dictionary<float[], PackedLstmWeight>();
 
     internal object FoldLock = new object();
 
@@ -229,6 +230,7 @@ public partial class ComputationalGraph
                 }
                 PackedWeights.Clear();
                 PackedConvWeights.Clear();
+                PackedLstmWeights.Clear();
                 RetainedPackedWeightBytes = 0;
             }
         }
@@ -835,7 +837,7 @@ public partial class ComputationalGraph
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this, Options.Tensor.DisableBufferPool);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
-        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights, PackedConvWeights = PackedConvWeights } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights, PackedConvWeights = PackedConvWeights, PackedLstmWeights = PackedLstmWeights } };
         livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)
@@ -1246,6 +1248,7 @@ public partial class ComputationalGraph
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
         GraphConvPacking.PackWeights(this);
+        GraphLstmPacking.PackWeights(this);
         // Preparation assigns stable sequential identities by file-order
         // position: unlike name hashes they are distinct for duplicate or
         // anonymous names and identical across processes.

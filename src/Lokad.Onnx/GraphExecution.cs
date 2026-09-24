@@ -38,6 +38,7 @@ public sealed class GraphExecution : ComputationalGraph
         FoldedTransposes = prepared.FoldedTransposes;
         PackedWeights = prepared.PackedWeights;
         PackedConvWeights = prepared.PackedConvWeights;
+        PackedLstmWeights = prepared.PackedLstmWeights;
         RetainedPackedWeightBytes = prepared.RetainedPackedWeightBytes;
         FoldLock = prepared.FoldLock;
         PrepareLock = prepared.PrepareLock;

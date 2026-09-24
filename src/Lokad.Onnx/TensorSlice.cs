@@ -159,7 +159,58 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
 
     public override Tensor<T> RemoveDim(int dim) => Clone().RemoveDim(dim);
 
-    public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions) => Clone().Reshape(dimensions);
+    public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions)
+    {
+        if (TryCopyContiguousSlice(out var dense)) return dense.Reshape(dimensions);
+        return Clone().Reshape(dimensions);
+    }
+
+    // Materialize unit-step row-major slices in contiguous regions. Reshape must
+    // keep independent storage: removed rows leave gaps between those regions.
+    bool TryCopyContiguousSlice([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out DenseTensor<T>? result)
+    {
+        result = null;
+        if (GetType() != typeof(TensorSlice<T>) || parent is not DenseTensor<T> dense ||
+            dense.GetType() != typeof(DenseTensor<T>) || IsReversedStride || dense.IsReversedStride ||
+            Rank == 0 || Rank != dense.Rank || slices.Length != Rank || Length == 0)
+            return false;
+
+        int sourceStart = 0;
+        for (int axis = 0; axis < Rank; axis++)
+        {
+            var slice = slices[axis];
+            if (slice.IsIndex || slice.Step != 1 || slice.Count != this.dimensions[axis] ||
+                slice.Start < 0 || slice.Start > dense.dimensions[axis] - slice.Count)
+                return false;
+            sourceStart = checked(sourceStart + slice.Start * dense.strides[axis]);
+        }
+
+        int innerAxis = Rank - 1;
+        int blockLength = this.dimensions[innerAxis];
+        while (innerAxis > 0 && slices[innerAxis].Start == 0 &&
+               this.dimensions[innerAxis] == dense.dimensions[innerAxis])
+        {
+            innerAxis--;
+            blockLength = checked(blockLength * this.dimensions[innerAxis]);
+        }
+
+        result = new DenseTensor<T>(Dimensions);
+        var source = dense.Buffer.Span;
+        var destination = result.Buffer.Span;
+        int blocks = destination.Length / blockLength;
+        for (int block = 0; block < blocks; block++)
+        {
+            int remaining = block, sourceOffset = sourceStart;
+            for (int axis = innerAxis - 1; axis >= 0; axis--)
+            {
+                int coordinate = remaining % this.dimensions[axis];
+                remaining /= this.dimensions[axis];
+                sourceOffset += coordinate * dense.strides[axis];
+            }
+            source.Slice(sourceOffset, blockLength).CopyTo(destination.Slice(block * blockLength, blockLength));
+        }
+        return true;
+    }
 
     public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => Clone().BroadcastDim(dim, size);
     #endregion

@@ -105,6 +105,7 @@ internal static class GraphPacking
         }
         int live = 0;
         long retained = GraphConvPacking.PruneAndBytes(graph);
+        retained += GraphLstmPacking.PruneAndBytes(graph, retained);
         var stale = new List<float[]>();
         foreach (var kv in graph.PackedWeights)
         {

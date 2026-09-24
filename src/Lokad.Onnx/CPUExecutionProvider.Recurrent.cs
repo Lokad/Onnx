@@ -152,6 +152,13 @@ public partial class CPUExecutionProvider
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
         int H = hiddenSize;
+        float[]? preparedInput = null, preparedRecurrent = null;
+        if (seq == 1 && batch == 1 && numDirections == 1 && !reverse && inputSize == 640 && H == 640
+            && opts.Tensor.UseSimd && System.Numerics.Vector.IsHardwareAccelerated)
+        {
+            preparedInput = GraphLstmPacking.Resolve(opts.Tensor.PackedLstmWeights, (Tensor<float>)W);
+            preparedRecurrent = GraphLstmPacking.Resolve(opts.Tensor.PackedLstmWeights, (Tensor<float>)R);
+        }
         using var projections = LstmProjectionPanels.Create(ws, rs, inputSize, H, numDirections, seq, opts.Tensor);
         // At most four rows of four gates: <= 8 KiB under existing panel admission.
         var inputBlock = projections is null ? null : new float[16 * H];
@@ -189,7 +196,12 @@ public partial class CPUExecutionProvider
                     int t = rev ? limit - 1 - s : s;
                     int yOff = ((t * numDirections + d) * batch + b) * H;
                     int xOff = (t * batch + b) * inputSize;
-                    if (projections is not null)
+                    if (preparedInput is not null && preparedRecurrent is not null)
+                    {
+                        LstmProjectOrdered(xs.Slice(xOff, inputSize), preparedInput, xw);
+                        LstmProjectOrdered(hv, preparedRecurrent, hr);
+                    }
+                    else if (projections is not null)
                     {
                         if (s % 4 == 0)
                         {
