@@ -6,12 +6,12 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **42.55 GB**, including **29.09 GB** in artifacts,
-after retaining the M57 provider build, complete numerical qualification,
-code-generation review and rejected performance comparison. The fresh inventory
-totals **42,549,519,603 bytes**, with **7.45 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m57-screen-closed-size.json`.
-Counting the model junction again gives 53.34 GB, which counts the same 10.79 GB
+The latest inventory is **42.73 GB**, including **29.27 GB** in artifacts,
+after retaining the complete provider diagnostic and dense mixed-mask build,
+numerical qualification and native-code review.
+The fresh inventory totals **42,730,787,509 bytes**, with **7.27 GB** of headroom.
+Receipt: `artifacts/repository-retention-20260923/m59-numerics-closed-size.json`.
+Counting the model junction again gives 53.52 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 No new model copies were needed. All current proof records, complete clocks,
@@ -142,3 +142,17 @@ Before build and screen staging, two closed-only deduplication passes verified
 `artifacts/parakeet-provider-where-build-retention-20260924`,
 `artifacts/parakeet-provider-where-prebuild-links-20260924` and
 `artifacts/parakeet-provider-where-prescreen-links-20260924`.
+
+M58/M59 preparation shared another 32 identical closed runtime files after
+verifying 524 paths, then 557 identical evidence metadata files after verifying
+1,236 paths. This freed **15.37 MB** and **83.65 MB** of tmpfs with every path
+and byte retained. Receipts: `artifacts/parakeet-provider-where-postscreen-links-20260924`
+and `artifacts/parakeet-dense-where-evidence-links-20260924`. The latter recovered
+a pre-worker memory refusal without lowering the bound or repeating a worker.
+
+After the dense mixed-mask build closed, cleanup removed **45.17 MB across
+184 temporary VM files**, freeing **45.54 MB** of tmpfs. Seven package archives
+match the retained feed originals, and the full instruction export is verified
+locally. All immutable VM inputs and current runtimes remain. Receipt:
+`artifacts/parakeet-dense-scalar-where-build-retention-20260924`.
+This cleanup completed before the numerical qualification run started.
