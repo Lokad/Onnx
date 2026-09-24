@@ -134,3 +134,12 @@ Before the uniform-mask performance screen, closed-only deduplication verified
 tmpfs**. Every path and byte remains unchanged; all recorded owners were terminal.
 Receipt: `artifacts/parakeet-scalar-where-closed-links-20260924`. This maintenance
 finished before the screen launched.
+
+M57 preparation retired another **45.14 MB across 184 closed VM build files**,
+keeping verified package originals and the complete instruction export locally.
+Before build and screen staging, two closed-only deduplication passes verified
+363 and 487 paths and shared 65 and 92 identical files, freeing **32.01 MB** and
+**41.91 MB** of tmpfs. No maintenance overlapped a measured worker. Receipts:
+`artifacts/parakeet-provider-where-build-retention-20260924`,
+`artifacts/parakeet-provider-where-prebuild-links-20260924` and
+`artifacts/parakeet-provider-where-prescreen-links-20260924`.
