@@ -3,7 +3,7 @@
 The qualified release takes **73.82s versus ORT's 39.61s** for the twenty-clip
 corpus: a **34.21s gap** and **1.864 ratio**. The next optimization will be chosen
 from a matched diagnosis of these exact applications. The initial ORT capture
-is prepared; results have not yet been collected.
+is running; results have not yet been collected.
 
 The retained Lokad profile already constrains priorities. The entire
 `ParakeetGeneration.Decode` call tree accounts for **12.529% and 12.548%** of
@@ -34,3 +34,9 @@ preserves every original graph output.
 Each subsequent candidate must name the observed discrepancy, its likely cause,
 the maximum plausible whole-request benefit and one test that could reject it.
 No diagnostic clock replaces the qualified table in [BENCHMARK.md](../../../BENCHMARK.md).
+
+The in-flight decoder trial has now closed independently: **73.85s current,
+70.35s candidate and 39.71s ORT**, a **4.74%** candidate reduction. All63
+repeatability controls and21admission inequalities pass. The candidate remains
+unintegrated pending shared-model and root/package checks; its1.772ratio is
+not yet the release figure. [Complete application result](../prepared-recurrence-results/application-20260924.md).
