@@ -6,12 +6,14 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **42.73 GB**, including **29.27 GB** in artifacts,
-after retaining the complete provider diagnostic and dense mixed-mask build,
-numerical qualification and native-code review.
-The fresh inventory totals **42,730,787,509 bytes**, with **7.27 GB** of headroom.
-Receipt: `artifacts/repository-retention-20260923/m59-numerics-closed-size.json`.
-Counting the model junction again gives 53.52 GB, which counts the same 10.79 GB
+The latest inventory is **43.05 GB**, including **29.59 GB** in artifacts,
+after retaining the complete provider diagnostic, dense mixed-mask build and
+numerical/native qualification, and rejected identical-binary control. All
+686,400 control clocks remain retained in the verified archive and one local
+CSV export; the tracked report references their identities without another copy.
+The fresh inventory totals **43,051,805,711 bytes**, with **6.95 GB** of headroom.
+Receipt: `artifacts/repository-retention-20260923/m59-stability-closed-size.json`.
+Counting the model junction again gives 53.84 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 No new model copies were needed. All current proof records, complete clocks,
@@ -156,3 +158,10 @@ match the retained feed originals, and the full instruction export is verified
 locally. All immutable VM inputs and current runtimes remain. Receipt:
 `artifacts/parakeet-dense-scalar-where-build-retention-20260924`.
 This cleanup completed before the numerical qualification run started.
+
+Before the extended identical-binary Where control, sharing **10,743 identical
+closed source, build and evidence files** verified 21,353 paths and freed
+**250.25 MB of tmpfs**. Models, fixtures and capture directories were excluded.
+All affected campaign owners were terminal; every path and byte remains exact.
+Receipt: `artifacts/parakeet-dense-where-stability-headroom-20260924`.
+The operation finished before the control was staged or launched.
