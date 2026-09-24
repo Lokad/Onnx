@@ -35,6 +35,14 @@ graph serialization retained node metadata and identities, then removed its
 declared scratch weight sidecars after closing each session, including the
 2.476 GB encoder sidecar. No second model-weight copy was transferred locally.
 
+Before combined-candidate Pyannote qualification, a memory-preflight refusal
+was recovered by retiring **141.10 MB**: the closed VM `perf.data` duplicate.
+The complete local raw trace, collection and archive remain hash-verified.
+All VM payload/stage dependencies were checked and every recorded owner was
+terminal. No inference overlapped this retirement or was repeated; the original
+11 GiB preflight threshold remains unchanged. Receipt:
+`artifacts/parakeet-native-perf-remote-retention-20260924`.
+
 Before the prepared-recurrence full-model checks, another **558.69 MB of tmpfs**
 was recovered by sharing byte-identical files in terminal VM campaigns. The first
 pass replaced 1,449 binary/metadata duplicates and verified 10,141 paths; the
