@@ -1,0 +1,1818 @@
+{
+  "passed": true,
+  "no_inference": true,
+  "source_model": {
+    "bytes": 41770866,
+    "sha256": "98a74b21b4cc0017c1e7030319a4a96f4a9506e50f0708f3a516d02a77c96bb1"
+  },
+  "native_graph": {
+    "bytes": 432574,
+    "sha256": "ed1eca96607258004aa74b4b22751b7a5d4203a2c0e6eb2b586452211f1a0efc"
+  },
+  "copy_proof": {
+    "bytes": 2889,
+    "sha256": "807eba7e50d2ff8c51cf7a6ddf5aea492ee866b174c8a4f6026a6e714a6504cd"
+  },
+  "groups": {
+    "managed": {
+      "boundary": [
+        "/Gather_output_0",
+        "onnx::Slice_780"
+      ],
+      "targets": [
+        "/layers.0/self_attn/linear_pos/MatMul",
+        "/layers.1/self_attn/linear_pos/MatMul",
+        "/layers.2/self_attn/linear_pos/MatMul",
+        "/layers.3/self_attn/linear_pos/MatMul",
+        "/layers.4/self_attn/linear_pos/MatMul",
+        "/layers.5/self_attn/linear_pos/MatMul",
+        "/layers.6/self_attn/linear_pos/MatMul",
+        "/layers.7/self_attn/linear_pos/MatMul",
+        "/layers.8/self_attn/linear_pos/MatMul",
+        "/layers.9/self_attn/linear_pos/MatMul",
+        "/layers.10/self_attn/linear_pos/MatMul",
+        "/layers.11/self_attn/linear_pos/MatMul",
+        "/layers.12/self_attn/linear_pos/MatMul",
+        "/layers.13/self_attn/linear_pos/MatMul",
+        "/layers.14/self_attn/linear_pos/MatMul",
+        "/layers.15/self_attn/linear_pos/MatMul",
+        "/layers.16/self_attn/linear_pos/MatMul",
+        "/layers.17/self_attn/linear_pos/MatMul",
+        "/layers.18/self_attn/linear_pos/MatMul",
+        "/layers.19/self_attn/linear_pos/MatMul",
+        "/layers.20/self_attn/linear_pos/MatMul",
+        "/layers.21/self_attn/linear_pos/MatMul",
+        "/layers.22/self_attn/linear_pos/MatMul",
+        "/layers.23/self_attn/linear_pos/MatMul"
+      ],
+      "per_projection": {
+        "/layers.0/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.0/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.1/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.1/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.2/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.2/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.3/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.3/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.4/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.4/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.5/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.5/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.6/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.6/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.7/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.7/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.8/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.8/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.9/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.9/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.10/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.10/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.11/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.11/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.12/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.12/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.13/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.13/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.14/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.14/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.15/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.15/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.16/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.16/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.17/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.17/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.18/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.18/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.19/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.19/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.20/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.20/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.21/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.21/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.22/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.22/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ],
+        "/layers.23/self_attn/linear_pos/MatMul": [
+          "/Constant",
+          "/layers.23/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Constant",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1",
+          "/pre_encode/Constant_9",
+          "Constant_1704"
+        ]
+      },
+      "shared_nodes": [
+        "/Constant",
+        "/pos_enc/Add",
+        "/pos_enc/Constant",
+        "/pos_enc/Slice",
+        "/pos_enc/Sub",
+        "/pos_enc/Sub_1",
+        "/pos_enc/Unsqueeze",
+        "/pos_enc/Unsqueeze_1",
+        "/pre_encode/Constant_9",
+        "Constant_1704"
+      ],
+      "shared_counted_once": true,
+      "nodes": [
+        {
+          "name": "/Constant",
+          "op": "Constant",
+          "inputs": [],
+          "outputs": [
+            "/Constant_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/layers.0/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6412"
+          ],
+          "outputs": [
+            "/layers.0/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.1/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6522"
+          ],
+          "outputs": [
+            "/layers.1/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.10/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6864"
+          ],
+          "outputs": [
+            "/layers.10/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.11/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6902"
+          ],
+          "outputs": [
+            "/layers.11/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.12/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6940"
+          ],
+          "outputs": [
+            "/layers.12/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.13/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6978"
+          ],
+          "outputs": [
+            "/layers.13/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.14/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7016"
+          ],
+          "outputs": [
+            "/layers.14/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.15/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7054"
+          ],
+          "outputs": [
+            "/layers.15/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.16/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7092"
+          ],
+          "outputs": [
+            "/layers.16/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.17/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7130"
+          ],
+          "outputs": [
+            "/layers.17/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.18/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7168"
+          ],
+          "outputs": [
+            "/layers.18/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.19/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7206"
+          ],
+          "outputs": [
+            "/layers.19/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.2/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6560"
+          ],
+          "outputs": [
+            "/layers.2/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.20/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7244"
+          ],
+          "outputs": [
+            "/layers.20/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.21/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7282"
+          ],
+          "outputs": [
+            "/layers.21/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.22/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7320"
+          ],
+          "outputs": [
+            "/layers.22/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.23/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7358"
+          ],
+          "outputs": [
+            "/layers.23/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.3/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6598"
+          ],
+          "outputs": [
+            "/layers.3/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.4/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6636"
+          ],
+          "outputs": [
+            "/layers.4/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.5/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6674"
+          ],
+          "outputs": [
+            "/layers.5/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.6/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6712"
+          ],
+          "outputs": [
+            "/layers.6/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.7/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6750"
+          ],
+          "outputs": [
+            "/layers.7/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.8/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6788"
+          ],
+          "outputs": [
+            "/layers.8/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.9/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6826"
+          ],
+          "outputs": [
+            "/layers.9/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/pos_enc/Add",
+          "op": "Add",
+          "inputs": [
+            "/pos_enc/Constant_output_0",
+            "/Gather_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Add_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Constant",
+          "op": "Constant",
+          "inputs": [],
+          "outputs": [
+            "/pos_enc/Constant_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Slice",
+          "op": "Slice",
+          "inputs": [
+            "onnx::Slice_780",
+            "/pos_enc/Unsqueeze_output_0",
+            "/pos_enc/Unsqueeze_1_output_0",
+            "/pre_encode/Constant_9_output_0",
+            "/pre_encode/Constant_9_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Slice_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Sub",
+          "op": "Sub",
+          "inputs": [
+            "/pos_enc/Constant_output_0",
+            "/Gather_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Sub_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Sub_1",
+          "op": "Sub",
+          "inputs": [
+            "/pos_enc/Add_output_0",
+            "/Constant_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Sub_1_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Unsqueeze",
+          "op": "Unsqueeze",
+          "inputs": [
+            "/pos_enc/Sub_output_0",
+            "onnx::Unsqueeze_759"
+          ],
+          "outputs": [
+            "/pos_enc/Unsqueeze_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Unsqueeze_1",
+          "op": "Unsqueeze",
+          "inputs": [
+            "/pos_enc/Sub_1_output_0",
+            "onnx::Unsqueeze_759"
+          ],
+          "outputs": [
+            "/pos_enc/Unsqueeze_1_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pre_encode/Constant_9",
+          "op": "Constant",
+          "inputs": [],
+          "outputs": [
+            "/pre_encode/Constant_9_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "Constant_1704",
+          "op": "Constant",
+          "inputs": [],
+          "outputs": [
+            "onnx::Unsqueeze_759"
+          ],
+          "members": 24
+        }
+      ]
+    },
+    "ort": {
+      "boundary": [
+        "/Gather_output_0",
+        "onnx::Slice_780"
+      ],
+      "targets": [
+        "/layers.0/self_attn/linear_pos/MatMul",
+        "/layers.1/self_attn/linear_pos/MatMul",
+        "/layers.2/self_attn/linear_pos/MatMul",
+        "/layers.3/self_attn/linear_pos/MatMul",
+        "/layers.4/self_attn/linear_pos/MatMul",
+        "/layers.5/self_attn/linear_pos/MatMul",
+        "/layers.6/self_attn/linear_pos/MatMul",
+        "/layers.7/self_attn/linear_pos/MatMul",
+        "/layers.8/self_attn/linear_pos/MatMul",
+        "/layers.9/self_attn/linear_pos/MatMul",
+        "/layers.10/self_attn/linear_pos/MatMul",
+        "/layers.11/self_attn/linear_pos/MatMul",
+        "/layers.12/self_attn/linear_pos/MatMul",
+        "/layers.13/self_attn/linear_pos/MatMul",
+        "/layers.14/self_attn/linear_pos/MatMul",
+        "/layers.15/self_attn/linear_pos/MatMul",
+        "/layers.16/self_attn/linear_pos/MatMul",
+        "/layers.17/self_attn/linear_pos/MatMul",
+        "/layers.18/self_attn/linear_pos/MatMul",
+        "/layers.19/self_attn/linear_pos/MatMul",
+        "/layers.20/self_attn/linear_pos/MatMul",
+        "/layers.21/self_attn/linear_pos/MatMul",
+        "/layers.22/self_attn/linear_pos/MatMul",
+        "/layers.23/self_attn/linear_pos/MatMul"
+      ],
+      "per_projection": {
+        "/layers.0/self_attn/linear_pos/MatMul": [
+          "/layers.0/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.1/self_attn/linear_pos/MatMul": [
+          "/layers.1/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.2/self_attn/linear_pos/MatMul": [
+          "/layers.2/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.3/self_attn/linear_pos/MatMul": [
+          "/layers.3/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.4/self_attn/linear_pos/MatMul": [
+          "/layers.4/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.5/self_attn/linear_pos/MatMul": [
+          "/layers.5/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.6/self_attn/linear_pos/MatMul": [
+          "/layers.6/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.7/self_attn/linear_pos/MatMul": [
+          "/layers.7/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.8/self_attn/linear_pos/MatMul": [
+          "/layers.8/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.9/self_attn/linear_pos/MatMul": [
+          "/layers.9/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.10/self_attn/linear_pos/MatMul": [
+          "/layers.10/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.11/self_attn/linear_pos/MatMul": [
+          "/layers.11/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.12/self_attn/linear_pos/MatMul": [
+          "/layers.12/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.13/self_attn/linear_pos/MatMul": [
+          "/layers.13/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.14/self_attn/linear_pos/MatMul": [
+          "/layers.14/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.15/self_attn/linear_pos/MatMul": [
+          "/layers.15/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.16/self_attn/linear_pos/MatMul": [
+          "/layers.16/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.17/self_attn/linear_pos/MatMul": [
+          "/layers.17/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.18/self_attn/linear_pos/MatMul": [
+          "/layers.18/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.19/self_attn/linear_pos/MatMul": [
+          "/layers.19/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.20/self_attn/linear_pos/MatMul": [
+          "/layers.20/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.21/self_attn/linear_pos/MatMul": [
+          "/layers.21/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.22/self_attn/linear_pos/MatMul": [
+          "/layers.22/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ],
+        "/layers.23/self_attn/linear_pos/MatMul": [
+          "/layers.23/self_attn/linear_pos/MatMul",
+          "/pos_enc/Add",
+          "/pos_enc/Slice",
+          "/pos_enc/Sub",
+          "/pos_enc/Sub_1",
+          "/pos_enc/Unsqueeze",
+          "/pos_enc/Unsqueeze_1"
+        ]
+      },
+      "shared_nodes": [
+        "/pos_enc/Add",
+        "/pos_enc/Slice",
+        "/pos_enc/Sub",
+        "/pos_enc/Sub_1",
+        "/pos_enc/Unsqueeze",
+        "/pos_enc/Unsqueeze_1"
+      ],
+      "shared_counted_once": true,
+      "nodes": [
+        {
+          "name": "/layers.0/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6412"
+          ],
+          "outputs": [
+            "/layers.0/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.1/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6522"
+          ],
+          "outputs": [
+            "/layers.1/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.10/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6864"
+          ],
+          "outputs": [
+            "/layers.10/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.11/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6902"
+          ],
+          "outputs": [
+            "/layers.11/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.12/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6940"
+          ],
+          "outputs": [
+            "/layers.12/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.13/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6978"
+          ],
+          "outputs": [
+            "/layers.13/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.14/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7016"
+          ],
+          "outputs": [
+            "/layers.14/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.15/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7054"
+          ],
+          "outputs": [
+            "/layers.15/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.16/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7092"
+          ],
+          "outputs": [
+            "/layers.16/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.17/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7130"
+          ],
+          "outputs": [
+            "/layers.17/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.18/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7168"
+          ],
+          "outputs": [
+            "/layers.18/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.19/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7206"
+          ],
+          "outputs": [
+            "/layers.19/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.2/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6560"
+          ],
+          "outputs": [
+            "/layers.2/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.20/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7244"
+          ],
+          "outputs": [
+            "/layers.20/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.21/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7282"
+          ],
+          "outputs": [
+            "/layers.21/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.22/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7320"
+          ],
+          "outputs": [
+            "/layers.22/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.23/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_7358"
+          ],
+          "outputs": [
+            "/layers.23/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.3/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6598"
+          ],
+          "outputs": [
+            "/layers.3/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.4/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6636"
+          ],
+          "outputs": [
+            "/layers.4/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.5/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6674"
+          ],
+          "outputs": [
+            "/layers.5/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.6/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6712"
+          ],
+          "outputs": [
+            "/layers.6/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.7/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6750"
+          ],
+          "outputs": [
+            "/layers.7/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.8/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6788"
+          ],
+          "outputs": [
+            "/layers.8/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/layers.9/self_attn/linear_pos/MatMul",
+          "op": "MatMul",
+          "inputs": [
+            "/pos_enc/Slice_output_0",
+            "onnx::MatMul_6826"
+          ],
+          "outputs": [
+            "/layers.9/self_attn/linear_pos/MatMul_output_0"
+          ],
+          "members": 1
+        },
+        {
+          "name": "/pos_enc/Add",
+          "op": "Add",
+          "inputs": [
+            "/pos_enc/Constant_output_0",
+            "/Gather_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Add_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Slice",
+          "op": "Slice",
+          "inputs": [
+            "onnx::Slice_780",
+            "/pos_enc/Unsqueeze_output_0",
+            "/pos_enc/Unsqueeze_1_output_0",
+            "/layers.23/self_attn/Constant_34_output_0",
+            "/layers.23/self_attn/Constant_34_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Slice_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Sub",
+          "op": "Sub",
+          "inputs": [
+            "/pos_enc/Constant_output_0",
+            "/Gather_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Sub_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Sub_1",
+          "op": "Sub",
+          "inputs": [
+            "/pos_enc/Add_output_0",
+            "/layers.22/self_attn/Constant_11_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Sub_1_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Unsqueeze",
+          "op": "Unsqueeze",
+          "inputs": [
+            "/pos_enc/Sub_output_0",
+            "/layers.23/conv/depthwise_conv/Constant_3_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Unsqueeze_output_0"
+          ],
+          "members": 24
+        },
+        {
+          "name": "/pos_enc/Unsqueeze_1",
+          "op": "Unsqueeze",
+          "inputs": [
+            "/pos_enc/Sub_1_output_0",
+            "/layers.23/conv/depthwise_conv/Constant_3_output_0"
+          ],
+          "outputs": [
+            "/pos_enc/Unsqueeze_1_output_0"
+          ],
+          "members": 24
+        }
+      ]
+    }
+  },
+  "raw_export_nodes": 37,
+  "verified_constant_aliases": [
+    {
+      "node": "/pos_enc/Add",
+      "original": "/pos_enc/Constant_1_output_0",
+      "executed": "/pos_enc/Constant_output_0",
+      "shape": [],
+      "dtype": "int64",
+      "bits": "8813000000000000"
+    },
+    {
+      "node": "/pos_enc/Slice",
+      "original": "/pos_enc/Constant_3_output_0",
+      "executed": "/pre_encode/Constant_9_output_0",
+      "shape": [
+        1
+      ],
+      "dtype": "int64",
+      "bits": "0100000000000000"
+    },
+    {
+      "node": "/pos_enc/Slice",
+      "original": "/pos_enc/Constant_6_output_0",
+      "executed": "/pre_encode/Constant_9_output_0",
+      "shape": [
+        1
+      ],
+      "dtype": "int64",
+      "bits": "0100000000000000"
+    },
+    {
+      "node": "/pos_enc/Sub_1",
+      "original": "/pos_enc/Constant_2_output_0",
+      "executed": "/Constant_output_0",
+      "shape": [],
+      "dtype": "int64",
+      "bits": "0100000000000000"
+    },
+    {
+      "node": "/pos_enc/Unsqueeze",
+      "original": "/pos_enc/Constant_4_output_0",
+      "executed": "onnx::Unsqueeze_759",
+      "shape": [
+        1
+      ],
+      "dtype": "int64",
+      "bits": "0000000000000000"
+    },
+    {
+      "node": "/pos_enc/Unsqueeze_1",
+      "original": "/pos_enc/Constant_5_output_0",
+      "executed": "onnx::Unsqueeze_759",
+      "shape": [
+        1
+      ],
+      "dtype": "int64",
+      "bits": "0000000000000000"
+    }
+  ],
+  "earlier_profile_context": {
+    "managed": {
+      "complete_seconds": 5.383214094333334,
+      "projection_seconds": 5.382414680666667,
+      "rows": [
+        {
+          "name": "/Constant",
+          "seconds": 3.3885666666666666e-05,
+          "projection": false
+        },
+        {
+          "name": "/layers.0/self_attn/linear_pos/MatMul",
+          "seconds": 0.23063705133333334,
+          "projection": true
+        },
+        {
+          "name": "/layers.1/self_attn/linear_pos/MatMul",
+          "seconds": 0.22437024633333333,
+          "projection": true
+        },
+        {
+          "name": "/layers.10/self_attn/linear_pos/MatMul",
+          "seconds": 0.221748513,
+          "projection": true
+        },
+        {
+          "name": "/layers.11/self_attn/linear_pos/MatMul",
+          "seconds": 0.221080649,
+          "projection": true
+        },
+        {
+          "name": "/layers.12/self_attn/linear_pos/MatMul",
+          "seconds": 0.22052324366666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.13/self_attn/linear_pos/MatMul",
+          "seconds": 0.223057821,
+          "projection": true
+        },
+        {
+          "name": "/layers.14/self_attn/linear_pos/MatMul",
+          "seconds": 0.220734786,
+          "projection": true
+        },
+        {
+          "name": "/layers.15/self_attn/linear_pos/MatMul",
+          "seconds": 0.22072899933333334,
+          "projection": true
+        },
+        {
+          "name": "/layers.16/self_attn/linear_pos/MatMul",
+          "seconds": 0.22249910233333334,
+          "projection": true
+        },
+        {
+          "name": "/layers.17/self_attn/linear_pos/MatMul",
+          "seconds": 0.22152593633333334,
+          "projection": true
+        },
+        {
+          "name": "/layers.18/self_attn/linear_pos/MatMul",
+          "seconds": 0.22108147933333333,
+          "projection": true
+        },
+        {
+          "name": "/layers.19/self_attn/linear_pos/MatMul",
+          "seconds": 0.22213295266666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.2/self_attn/linear_pos/MatMul",
+          "seconds": 0.22273541866666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.20/self_attn/linear_pos/MatMul",
+          "seconds": 0.22284678533333332,
+          "projection": true
+        },
+        {
+          "name": "/layers.21/self_attn/linear_pos/MatMul",
+          "seconds": 0.221268937,
+          "projection": true
+        },
+        {
+          "name": "/layers.22/self_attn/linear_pos/MatMul",
+          "seconds": 0.24777404,
+          "projection": true
+        },
+        {
+          "name": "/layers.23/self_attn/linear_pos/MatMul",
+          "seconds": 0.22106698666666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.3/self_attn/linear_pos/MatMul",
+          "seconds": 0.249431512,
+          "projection": true
+        },
+        {
+          "name": "/layers.4/self_attn/linear_pos/MatMul",
+          "seconds": 0.22231527766666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.5/self_attn/linear_pos/MatMul",
+          "seconds": 0.22161940766666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.6/self_attn/linear_pos/MatMul",
+          "seconds": 0.22043798633333334,
+          "projection": true
+        },
+        {
+          "name": "/layers.7/self_attn/linear_pos/MatMul",
+          "seconds": 0.22190001633333334,
+          "projection": true
+        },
+        {
+          "name": "/layers.8/self_attn/linear_pos/MatMul",
+          "seconds": 0.22048803966666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.9/self_attn/linear_pos/MatMul",
+          "seconds": 0.220409493,
+          "projection": true
+        },
+        {
+          "name": "/pos_enc/Add",
+          "seconds": 5.2960333333333335e-05,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Constant",
+          "seconds": 9.763666666666666e-06,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Slice",
+          "seconds": 0.0003486883333333333,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Sub",
+          "seconds": 9.602666666666667e-05,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Sub_1",
+          "seconds": 2.3303333333333334e-05,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Unsqueeze",
+          "seconds": 0.000171351,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Unsqueeze_1",
+          "seconds": 3.1547e-05,
+          "projection": false
+        },
+        {
+          "name": "/pre_encode/Constant_9",
+          "seconds": 1.9175333333333333e-05,
+          "projection": false
+        },
+        {
+          "name": "Constant_1704",
+          "seconds": 1.2712333333333334e-05,
+          "projection": false
+        }
+      ]
+    },
+    "ort": {
+      "complete_seconds": 2.645658666666667,
+      "projection_seconds": 2.6443513333333333,
+      "rows": [
+        {
+          "name": "/layers.0/self_attn/linear_pos/MatMul",
+          "seconds": 0.109702,
+          "projection": true
+        },
+        {
+          "name": "/layers.1/self_attn/linear_pos/MatMul",
+          "seconds": 0.10972266666666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.10/self_attn/linear_pos/MatMul",
+          "seconds": 0.11034933333333333,
+          "projection": true
+        },
+        {
+          "name": "/layers.11/self_attn/linear_pos/MatMul",
+          "seconds": 0.110405,
+          "projection": true
+        },
+        {
+          "name": "/layers.12/self_attn/linear_pos/MatMul",
+          "seconds": 0.11028366666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.13/self_attn/linear_pos/MatMul",
+          "seconds": 0.11019566666666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.14/self_attn/linear_pos/MatMul",
+          "seconds": 0.110197,
+          "projection": true
+        },
+        {
+          "name": "/layers.15/self_attn/linear_pos/MatMul",
+          "seconds": 0.11010633333333333,
+          "projection": true
+        },
+        {
+          "name": "/layers.16/self_attn/linear_pos/MatMul",
+          "seconds": 0.11026066666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.17/self_attn/linear_pos/MatMul",
+          "seconds": 0.110253,
+          "projection": true
+        },
+        {
+          "name": "/layers.18/self_attn/linear_pos/MatMul",
+          "seconds": 0.11025766666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.19/self_attn/linear_pos/MatMul",
+          "seconds": 0.11035166666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.2/self_attn/linear_pos/MatMul",
+          "seconds": 0.11027566666666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.20/self_attn/linear_pos/MatMul",
+          "seconds": 0.11031166666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.21/self_attn/linear_pos/MatMul",
+          "seconds": 0.11045666666666666,
+          "projection": true
+        },
+        {
+          "name": "/layers.22/self_attn/linear_pos/MatMul",
+          "seconds": 0.11041233333333333,
+          "projection": true
+        },
+        {
+          "name": "/layers.23/self_attn/linear_pos/MatMul",
+          "seconds": 0.11021,
+          "projection": true
+        },
+        {
+          "name": "/layers.3/self_attn/linear_pos/MatMul",
+          "seconds": 0.10994333333333334,
+          "projection": true
+        },
+        {
+          "name": "/layers.4/self_attn/linear_pos/MatMul",
+          "seconds": 0.109749,
+          "projection": true
+        },
+        {
+          "name": "/layers.5/self_attn/linear_pos/MatMul",
+          "seconds": 0.110201,
+          "projection": true
+        },
+        {
+          "name": "/layers.6/self_attn/linear_pos/MatMul",
+          "seconds": 0.11007666666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.7/self_attn/linear_pos/MatMul",
+          "seconds": 0.11002266666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.8/self_attn/linear_pos/MatMul",
+          "seconds": 0.11015666666666667,
+          "projection": true
+        },
+        {
+          "name": "/layers.9/self_attn/linear_pos/MatMul",
+          "seconds": 0.110451,
+          "projection": true
+        },
+        {
+          "name": "/pos_enc/Add",
+          "seconds": 9.1e-05,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Slice",
+          "seconds": 0.0009993333333333334,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Sub",
+          "seconds": 4e-05,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Sub_1",
+          "seconds": 8.3e-05,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Unsqueeze",
+          "seconds": 4e-05,
+          "projection": false
+        },
+        {
+          "name": "/pos_enc/Unsqueeze_1",
+          "seconds": 5.4e-05,
+          "projection": false
+        }
+      ]
+    }
+  },
+  "earlier_profiles_are_not_candidate_measurements": true,
+  "earlier_closures": {
+    "managed": {
+      "bytes": 1968,
+      "sha256": "8a6f509a210641650a9c057f472417dde7b4acc320f86eeb3d34ecbced4cc2e6"
+    },
+    "ort": {
+      "bytes": 632,
+      "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+    }
+  },
+  "prospective_prediction": "The complete positional group and every one of its 24 MatMul kernels improve. Report all other node/phase clocks. No observer overhead subtraction or application score.",
+  "application_gate_unchanged": {
+    "minimum_corpus_gain": 0.03,
+    "maximum_clip_regression": 0.05,
+    "corpus_repeatability": 1.1,
+    "clip_repeatability": 1.2
+  },
+  "attribution_boundary": "From the already computed encoded-frame scalar and positional constant through shared slice geometry/materialization and all24 projection outputs. Weight initializers are boundaries; runtime input copies and packing inside MatMul remain in its interval.",
+  "reviewer": {
+    "bytes": 6883,
+    "sha256": "b8d3569733093e526b07ad7bba243b10d445ef780f276d4427320472f156b6b6"
+  }
+}

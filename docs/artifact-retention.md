@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **49.07 GB**, including **35.57 GB** in artifacts.
+The latest inventory is **49.27 GB**, including **35.77 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -45,18 +45,35 @@ modes. The original checker refusal, corrected reversed-layout test oracle,
 ineffective instruction flag and each subsequent recovery remain retained.
 Only the checker and corrected test consumer were rebuilt; the candidate product
 was built once, and the successful ordinary suite was not repeated. Full-model
-and application qualification have not started for this prototype.
+qualification now passes all 3,136 arrays / 12,361,976 values and 80 public
+requests in both modes at closure5860fc36. All 1,504 resource samples and exact
+current-product comparisons pass. Matched profiling and application timing
+remain unstarted for this prototype.
 No VM workload is live.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **49,072,756,390 bytes**, with
-**0.93 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m73-qualified-size.json`.
-Counting the model junction again gives 59.86 GB, which counts the same 10.79 GB
+remain retained. The inventory totals **49,268,586,068 bytes**, with
+**0.73 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m73-models-qualified-size.json`.
+Counting the model junction again gives 60.05 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
+
+Before the full-model run, 2,900 verified links across 3,462 identical closed
+package-cache files recovered **276.84 MB** of VM tmpfs while preserving bytes,
+paths, ownership and permissions. Retiring **76 redundant VM transfer archives**
+recovered another **127.51 MB**; every exact local archive remains. Retiring
+**3,462 unbound generated cache files** then recovered **89.89 MB**. All 120
+package instances have exact retained offline archives, and a scan of deployed
+payload/spec/stage inputs proved that no immutable dependency used those caches.
+No models, product runtimes, raw results or required inputs were removed.
+The first read-only cache scan outlived its SSH timeout; its exact PID/birth was
+terminated before a faster scan, with no deletion phase started. Receipts:
+`artifacts/parakeet-slice-dense-model-preflight-links-20260924`,
+`artifacts/parakeet-slice-dense-model-transfer-retention-20260924` and
+`artifacts/parakeet-slice-dense-model-cache-retention-20260924`.
 
 Before projection observation, closed root caches and duplicate instruction
 exports totaling **244.18 MB across 1,243 files** were retired after verifying

@@ -1,0 +1,72 @@
+{
+  "passed": true,
+  "no_rebuild": true,
+  "no_inference": true,
+  "original_scope": {
+    "passed": true,
+    "current_data_methods": 697,
+    "current_data_bodies_and_flags_exact": true,
+    "original_data_sources_exact": true,
+    "original_inventory": {
+      "bytes": 4760522,
+      "sha256": "6b0a9df024d2b016be7655b1b4ca20a426d0e3132ed7ae194a3fe197fc491e78"
+    },
+    "current_inventory": {
+      "bytes": 27401272,
+      "sha256": "4328210333d5e2d18522e2c83819d560ddd775d778ffe681350a47cac2954d30"
+    },
+    "original_observer_review": {
+      "bytes": 2222,
+      "sha256": "9cbe4b927fe3763f2371429337dae0471bdeb5f292a4d636f59445ea4831c2c4"
+    },
+    "consumer_review": {
+      "bytes": 1721,
+      "sha256": "d42bbafb84b647e933170c51f9508d0bc591d3e31c121d9bae61829a640e0fbc"
+    },
+    "consumer": {
+      "bytes": 50176,
+      "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+    },
+    "data": {
+      "bytes": 153600,
+      "sha256": "a2a0b4901ba8e4270b57e2b176d7a656e739886275ec66d0ca036807eea16e3e"
+    },
+    "no_rebuild": true
+  },
+  "current_data": {
+    "bytes": 143872,
+    "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+  },
+  "original_data_methods": 697,
+  "all_original_bodies_flags_and_surface_exact": true,
+  "current_inventory": {
+    "bytes": 27483781,
+    "sha256": "ffe4af8f9fbbb4c0bbc4020390b28fc604091cce382e75a5f21e8c4033804378"
+  },
+  "original_inventory": {
+    "bytes": 4760522,
+    "sha256": "6b0a9df024d2b016be7655b1b4ca20a426d0e3132ed7ae194a3fe197fc491e78"
+  },
+  "current_model_closure": {
+    "bytes": 890171,
+    "sha256": "5860fc366c3d976907f35f8d7a1832c10566fa08910af32c168dca7a63979842"
+  },
+  "graph_metadata": {
+    "bytes": 730436,
+    "sha256": "34d69c2f286d557e4f5dbc9b7305248bfc7890fded30f9dbbbf2e38aed0d0b08"
+  },
+  "decoder_packed_bytes": 51461120,
+  "observer_runtime": "artifacts/parakeet-slice-materialization-profile-amd-20260924/build-collected/runtime-observed",
+  "consumer": {
+    "bytes": 50176,
+    "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+  },
+  "observed_data": {
+    "bytes": 153600,
+    "sha256": "a2a0b4901ba8e4270b57e2b176d7a656e739886275ec66d0ca036807eea16e3e"
+  },
+  "reviewer": {
+    "bytes": 3151,
+    "sha256": "8d79acda68796000a8f06b32ef9f51bc095795a70ec72602098517cd6c52f62a"
+  }
+}

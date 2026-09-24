@@ -1,0 +1,107 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 890171,
+    "sha256": "5860fc366c3d976907f35f8d7a1832c10566fa08910af32c168dca7a63979842"
+  },
+  "analysis": {
+    "bytes": 466704,
+    "sha256": "017a00ee77338e2569fbbfe427b51034f137fe03b9759e13fb7d36fef054d052"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    }
+  },
+  "consumers": {
+    "TranscribeReplay": {
+      "bytes": 56832,
+      "sha256": "335ca09d0e45e344068c484c92af9d0db43a6ae0accd1895d7ae7bb88b0afcf9"
+    },
+    "AudioBenchmark": {
+      "bytes": 40448,
+      "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+    }
+  },
+  "arrays": 3136,
+  "values": 12361976,
+  "public_requests": 80,
+  "exact_current_arrays_and_transcripts": true,
+  "native_maximum_scaled_error": 3.830720152728115e-05,
+  "native_bound": 0.0001,
+  "resources": [
+    {
+      "name": "selected-native-512",
+      "samples": 128,
+      "peak_rss": 5688807424,
+      "seconds": 34.370732696028426
+    },
+    {
+      "name": "selected-public-512",
+      "samples": 272,
+      "peak_rss": 9308364800,
+      "seconds": 72.71006126108114
+    },
+    {
+      "name": "candidate-native-512",
+      "samples": 118,
+      "peak_rss": 7176785920,
+      "seconds": 32.551982742967084
+    },
+    {
+      "name": "candidate-public-512",
+      "samples": 251,
+      "peak_rss": 9372729344,
+      "seconds": 68.63787134503946
+    },
+    {
+      "name": "selected-native-256",
+      "samples": 124,
+      "peak_rss": 5682413568,
+      "seconds": 34.935130223981105
+    },
+    {
+      "name": "selected-public-256",
+      "samples": 259,
+      "peak_rss": 8146112512,
+      "seconds": 72.59570971608628
+    },
+    {
+      "name": "candidate-native-256",
+      "samples": 114,
+      "peak_rss": 7176749056,
+      "seconds": 32.86235248297453
+    },
+    {
+      "name": "candidate-public-256",
+      "samples": 238,
+      "peak_rss": 8205815808,
+      "seconds": 68.16804412892088
+    }
+  ],
+  "resource_samples": 1504,
+  "peak_rss": 9372729344,
+  "performance_measured": false,
+  "product_integrated": false,
+  "publisher": {
+    "bytes": 4906,
+    "sha256": "01ee1c6dcc46df95bfaedda8813c77ab4de0e99cba19b4a70543b1aaa23d4044"
+  }
+}
