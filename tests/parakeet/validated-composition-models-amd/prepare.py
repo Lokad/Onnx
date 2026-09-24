@@ -8,11 +8,11 @@ from protocol import pin,read,save
 ROOT=Path(__file__).resolve().parents[3];TOOLS=Path(__file__).resolve().parent
 BASE=ROOT/'artifacts/parakeet-validated-composition-models-amd-20260924'
 LAYOUT=ROOT/'artifacts/parakeet-slice-layout-amd-20260924'
-CONTRACTS=ROOT/'artifacts/parakeet-validated-composition-build-amd-20260924'
-BUILD=ROOT/'artifacts/parakeet-validated-composition-build-amd-20260924'
+CONTRACTS=ROOT/'artifacts/parakeet-validated-composition-build-amd-v2-20260924'
+BUILD=ROOT/'artifacts/parakeet-validated-composition-build-amd-v2-20260924'
 CURRENT=ROOT/'artifacts/parakeet-wide-entry-first-use-models-amd-20260923'
 PREVIOUS=ROOT/'artifacts/pyannote-winograd-product-parakeet-amd-20260923'
-SOURCE=ROOT/'artifacts/parakeet-validated-composition-source-20260924'
+SOURCE=ROOT/'artifacts/parakeet-validated-composition-source-v2-20260924'
 
 
 def previous_closed():

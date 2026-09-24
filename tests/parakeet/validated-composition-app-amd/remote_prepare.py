@@ -11,7 +11,7 @@ from checks import prereqs
 BASE=Path(__file__).resolve().parents[1]
 CURRENT=Path('/dev/shm/lokad-parakeet-winograd-baseline-20260923')
 MODELS=Path('/dev/shm/lokad-parakeet-validated-composition-models-20260924')
-COMPOSITION=Path('/dev/shm/lokad-parakeet-validated-composition-build-20260924')
+COMPOSITION=Path('/dev/shm/lokad-parakeet-validated-composition-build-v2-20260924')
 
 
 def main():

@@ -1,0 +1,224 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 1148,
+    "sha256": "bb578d7ad6dfeaf989726476d6d7864438e602a41c7727a99ee05cb8c9eb71da"
+  },
+  "analysis": {
+    "passed": true,
+    "core": {
+      "bytes": 782848,
+      "sha256": "37c243756bbe5e5d563e79627a0a4d20ff027598801849da9606549c7ac60286"
+    },
+    "data": {
+      "bytes": 143872,
+      "sha256": "cc37b19eb41cf728061c35bcdb7e06a6ab4d370bfd4c47555eec86c86b2ef6d6"
+    },
+    "source_prepared": {
+      "bytes": 151163,
+      "sha256": "af68e6c2c28f5794f3eece39bd9e78fc6809e2ca8925a5616ff2956c405061c4"
+    },
+    "consumer": {
+      "bytes": 186368,
+      "sha256": "5b9c5acd2d724cf1e2d66303650c107093547059e3a5f7c006d563fa4e875fbd"
+    },
+    "suites": [
+      {
+        "mode": "512",
+        "passed": 369,
+        "skipped": 0,
+        "trx": {
+          "bytes": 516046,
+          "sha256": "e07efcc40124991787084bca70ea95f7108c6a4bda2740604a2252a7d273face"
+        }
+      },
+      {
+        "mode": "256",
+        "passed": 369,
+        "skipped": 0,
+        "trx": {
+          "bytes": 516046,
+          "sha256": "a92189131caaf1fe84fc62e9985d6e546108cef1122b4a435de6e0103ce049b9"
+        }
+      }
+    ],
+    "resources": [
+      {
+        "name": "tensors-512",
+        "samples": 20,
+        "peak_rss": 356151296
+      },
+      {
+        "name": "tensors-256",
+        "samples": 20,
+        "peak_rss": 375062528
+      }
+    ],
+    "new_copy_cases": 25,
+    "existing_tensor_cases": 343,
+    "campaign_identity_cases": 1,
+    "public_surface_equal": true,
+    "performance_measured": false,
+    "same_binaries": true
+  },
+  "review": {
+    "passed": true,
+    "built": {
+      "bytes": 5354,
+      "sha256": "eb1952fad3cdfa142dddbb5f694987579900541d4d617709333b22a83dbce7ee"
+    },
+    "inventory": {
+      "bytes": 24114313,
+      "sha256": "458d5a0909e8e515d40844105d390b41b4a724866138f58c36c7f69ec2d0287d"
+    },
+    "collection": {
+      "bytes": 8003,
+      "sha256": "ccc53155fa0a1b494619f638f3e75654497f7f939dd515a60fce62c3c15d8fed"
+    },
+    "spec": {
+      "bytes": 84720,
+      "sha256": "5fee7d904ec485f7ec28312e1a0f4fbd686b19eee8b7b5e3e325b823988c962f"
+    },
+    "methods": {
+      "original": 3250,
+      "unchanged": 3249,
+      "changed": "Lokad.Onnx.TensorSlice`1[T]::Reshape::Lokad.Onnx.Tensor`1[T] Reshape(System.ReadOnlySpan`1[System.Int32])",
+      "added": "Lokad.Onnx.TensorSlice`1[T]::TryCopyContiguousSlice::Boolean TryCopyContiguousSlice(Lokad.Onnx.DenseTensor`1[T] ByRef)",
+      "original_flags_equal": true,
+      "public_surface_equal": true,
+      "original_fallback_exact": true,
+      "qualified_copy_bodies_exact": true
+    },
+    "recurrence_core": {
+      "bytes": 781824,
+      "sha256": "3c23b44a53736938f241302a6a8258605c2f57da57f5009c83e979337df957f5"
+    },
+    "data_unchanged": true,
+    "source_prepared": {
+      "bytes": 151163,
+      "sha256": "af68e6c2c28f5794f3eece39bd9e78fc6809e2ca8925a5616ff2956c405061c4"
+    },
+    "product_implementation_unchanged_from_v1": true,
+    "previous_inventory": {
+      "bytes": 24114313,
+      "sha256": "91eb99280fefc0331aade03c96a343b05c492498d4d2c2fcfb3a2027529ee7c8"
+    },
+    "previous_failure": {
+      "bytes": 1406,
+      "sha256": "a51a8a8dc4d7cac32b16c61abebfc17b09bc954544d4443821aabee66a4236d6"
+    },
+    "product_source_prepared": {
+      "bytes": 150427,
+      "sha256": "2000c839be501cdeb4f274f6e6ffda7652fad33aecbb0f43ecd51b28875dce34"
+    },
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "peak_rss": 8945664
+      },
+      {
+        "name": "tensors-restore",
+        "samples": 4,
+        "peak_rss": 172851200
+      },
+      {
+        "name": "tensors-build",
+        "samples": 31,
+        "peak_rss": 501972992
+      },
+      {
+        "name": "bridge-restore",
+        "samples": 2,
+        "peak_rss": 130527232
+      },
+      {
+        "name": "bridge-build",
+        "samples": 7,
+        "peak_rss": 293564416
+      },
+      {
+        "name": "inventory",
+        "samples": 2,
+        "peak_rss": 134119424
+      }
+    ],
+    "reviewer": {
+      "bytes": 4545,
+      "sha256": "40e376d567f675a8b8bf987938f7ac40f1e3ec7393e68bba7788c6c5d46c8228"
+    },
+    "resource_reviewer": {
+      "bytes": 5291,
+      "sha256": "abcf3deb1aa5281c640282997e03dadc2de944efd6c1335f92a1e88f9507f812"
+    }
+  },
+  "source": {
+    "bytes": 151163,
+    "sha256": "af68e6c2c28f5794f3eece39bd9e78fc6809e2ca8925a5616ff2956c405061c4"
+  },
+  "prior_failure": {
+    "passed": false,
+    "terminal": true,
+    "reason": "Two optional parameters in the newly added PreparedLstmWeightsTests violate existing source policy",
+    "tests": 369,
+    "passed_tests": 368,
+    "failed_tests": [
+      "Lokad.Onnx.Tensors.Tests.NoOptionalParametersTests.SourceTree_HasNoOptionalParameters"
+    ],
+    "copy_cases_passed": 25,
+    "identity_passed": true,
+    "disabled_mode_started": false,
+    "core": {
+      "bytes": 782848,
+      "sha256": "036c5f701f2f58b0aa85c924d2e75b88009ccdfddd69f12826a188558145068e"
+    },
+    "build_review": {
+      "bytes": 2156,
+      "sha256": "b937d51e07b99190f114f917c9ebeb368cb6a67ead531de8beb0be125c870565"
+    },
+    "collection": {
+      "bytes": 4616,
+      "sha256": "ac355a2f27d3e5c7bd7aa7a3328350e578f73e3fb08b0ee959a670fe13f54e0f"
+    },
+    "transfer": {
+      "bytes": 275,
+      "sha256": "3826263b7d29d7be3ab466df8c16cf681a2e8b7b5565ecb795723a5fb8f54901"
+    },
+    "trx": {
+      "bytes": 515779,
+      "sha256": "344311ce9e2d3b541b2a6d9a4210f96a55bb6272245b8cf61d1bec7c5ae59bea"
+    },
+    "resources": {
+      "samples": 27,
+      "peak_rss": 420024320
+    },
+    "terminal_owners": [
+      {
+        "pid": 941321,
+        "birth": 1790253021.95
+      },
+      {
+        "pid": 941322,
+        "birth": 1790253022.04
+      },
+      {
+        "pid": 941336,
+        "birth": 1790253022.48
+      },
+      {
+        "pid": 941349,
+        "birth": 1790253022.63
+      }
+    ]
+  },
+  "prior_failure_receipt": {
+    "bytes": 1406,
+    "sha256": "a51a8a8dc4d7cac32b16c61abebfc17b09bc954544d4443821aabee66a4236d6"
+  },
+  "correction": {
+    "Graph": 4,
+    "Run": 9
+  },
+  "release_qualified": false,
+  "performance_measured": false
+}

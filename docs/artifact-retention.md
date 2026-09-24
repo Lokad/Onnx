@@ -6,23 +6,18 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **46.57 GB**, including **33.09 GB** in artifacts,
-after retaining the selected-release profile, rejected inclusive-packing trial,
-actual decoder LSTM capture, isolated recurrent preparation build and focused
-contracts, actual decoder/call qualification and full-model checks in both
-instruction modes. The invalid component timing, completed application
-comparison, completed ORT graph/operator/native-kernel diagnosis and matched
-Lokad phase/operator capture are also retained. Actual slice layouts, both
-candidate builds, both-mode copying qualification and the two corrected test
-setup failures remain recorded with their raw evidence. Complete slice-candidate
-native/public model qualification in both modes and the reviewed profile consumer
-build are now retained too, along with the completed matched-pair profile
-and prepared unprofiled application comparison.
-All raw traces, clocks, native arrays,
-failed checks and qualification evidence remain retained. The inventory totals
-**46,566,758,477 bytes**, with **3.43 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m65-slice-profile-size.json`.
-Counting the model junction again gives 57.35 GB, which counts the same 10.79 GB
+The latest inventory is **46.72 GB**, including **33.24 GB** in artifacts.
+It retains the selected release, rejected trials, exact ORT diagnosis, matched
+Lokad profiles, both independent application admissions and the combined-source
+build qualification. The first combined tensor run's source-policy failure and
+the corrected two-mode qualification remain recorded. Full-model composition
+checks are running; their completed collection is not included yet.
+
+All raw traces, clocks, native arrays, failed checks and qualification evidence
+remain retained. The inventory totals **46,716,241,617 bytes**, with
+**3.28 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m66-composition-build-size.json`.
+Counting the model junction again gives57.50GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 

@@ -29,3 +29,9 @@ Unchanged bounds:11GiBavailable/3GiBtmpfs preflight,12GiBRSS, at least1GiBremain
 memory/tmpfs,1GiBoutput/job,2GiBstageartifacts,1800s/job,fourhours/stage. CPU2
 computes, CPU0 monitors. Reuse canonical models through immutable hardlinks;
 unlink product targets before replacing, never modify a source link in place.
+
+The qualified V2 snapshot corrects two optional parameters in new recurrence
+test helpers by passing the original defaults explicitly at13call sites. Every
+product source byte and all3,251compiled Core methods match V1. Preserve the
+original source-policy failure a51a8a8d; V2 passes all369tensor tests in both
+verified instruction modes. This correction changes no scoring or arithmetic.

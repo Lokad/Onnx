@@ -34,3 +34,9 @@ artifacts/parakeet-validated-composition-app-amd-20260924; VM namespace is
 An admitted result still needs shared/e5/Pyannote, long-meeting/recovery,
 normal-root/full-suites and package qualification before release integration
 and BENCHMARK.md updates. Individual accepted gains are not a combined claim.
+
+The qualified V2 snapshot corrects two optional parameters in new recurrence
+test helpers by passing the original defaults explicitly at13call sites. Every
+product source byte and all3,251compiled Core methods match V1. Preserve the
+original source-policy failure a51a8a8d; V2 passes all369tensor tests in both
+verified instruction modes. This correction changes no scoring or arithmetic.

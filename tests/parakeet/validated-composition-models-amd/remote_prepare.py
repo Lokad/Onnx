@@ -10,8 +10,8 @@ from remote import idle,live
 
 BASE=Path(__file__).resolve().parents[1]
 LAYOUT=Path('/dev/shm/lokad-parakeet-slice-layout-20260924')
-CONTRACTS=Path('/dev/shm/lokad-parakeet-validated-composition-build-20260924')
-BUILD=Path('/dev/shm/lokad-parakeet-validated-composition-build-20260924')
+CONTRACTS=Path('/dev/shm/lokad-parakeet-validated-composition-build-v2-20260924')
+BUILD=Path('/dev/shm/lokad-parakeet-validated-composition-build-v2-20260924')
 CURRENT=Path('/dev/shm/lokad-parakeet-wide-entry-first-use-models-20260923')
 PREVIOUS=Path('/dev/shm/lokad-pyannote-winograd-product-parakeet-20260923')
 

@@ -27,7 +27,8 @@ def prereqs(base, spec):
     assert current['Lokad.Onnx.dll']['sha256']=='672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35'
     folder=base/'evidence/composition';source=read(folder/'source-prepared.json')
     assert composition['source_prepared']==pin(folder/'source-prepared.json')
-    assert source['passed'] and source['all_parent_bytes_preserved'] and not source['new_optimization']
+    assert source['passed'] and source['all_product_parent_bytes_preserved'] and not source['new_optimization']
+    assert source['corrected_test_arguments']==dict(Graph=4,Run=9)
     assert len(source['source'])==425 and len(source['modified'])==6 and len(source['added'])==3
     for label in ['recurrence','slice']:
         parent=reports[label];proof=read(base/'evidence'/label/'closed.json')

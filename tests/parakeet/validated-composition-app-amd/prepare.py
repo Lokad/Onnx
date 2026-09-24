@@ -10,9 +10,9 @@ ROOT=Path(__file__).resolve().parents[3];TOOLS=Path(__file__).resolve().parent
 BASE=ROOT/'artifacts/parakeet-validated-composition-app-amd-20260924'
 CURRENT=ROOT/'artifacts/parakeet-winograd-baseline-amd-20260923'
 MODELS=ROOT/'artifacts/parakeet-validated-composition-models-amd-20260924'
-COMPOSITION=ROOT/'artifacts/parakeet-validated-composition-build-amd-20260924'
+COMPOSITION=ROOT/'artifacts/parakeet-validated-composition-build-amd-v2-20260924'
 QUALIFIED=ROOT/'artifacts/parakeet-wide-entry-first-use-root-amd-v2-20260923'
-SOURCE=ROOT/'artifacts/parakeet-validated-composition-source-20260924'
+SOURCE=ROOT/'artifacts/parakeet-validated-composition-source-v2-20260924'
 RECURRENCE=ROOT/'artifacts/parakeet-prepared-recurrence-app-amd-20260924'
 SLICE=ROOT/'artifacts/parakeet-slice-materialization-app-amd-20260924'
 PRIOR=dict(baseline=CURRENT,models=MODELS,composition=COMPOSITION,root=QUALIFIED,
@@ -31,7 +31,7 @@ def previous_closed():
         assert proof['analysis']==pin(folder/'analysis.json')
         root=ROOT if proof.get('paths_relative_to_repository') else folder
         for path,wanted in proof.get('files',{}).items():assert pin(root/path)==wanted,path
-    source=read(SOURCE/'prepared.json');assert source['passed'] and source['all_parent_bytes_preserved']
+    source=read(SOURCE/'prepared.json');assert source['passed'] and source['all_product_parent_bytes_preserved']
     assert read(COMPOSITION/'analysis.json')['source_prepared']==pin(SOURCE/'prepared.json')
     for label,folder in [('recurrence',RECURRENCE),('slice',SLICE)]:
         assert read(folder/'closed.json')['admitted']
