@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "no_inference": true,
+  "shared_edge": "/pos_enc/Slice_output_0",
+  "consumers": 24,
+  "source_model": {
+    "bytes": 41770866,
+    "sha256": "98a74b21b4cc0017c1e7030319a4a96f4a9506e50f0708f3a516d02a77c96bb1"
+  },
+  "native_optimized_model": {
+    "bytes": 432574,
+    "sha256": "ed1eca96607258004aa74b4b22751b7a5d4203a2c0e6eb2b586452211f1a0efc"
+  },
+  "native_serialization": {
+    "bytes": 1301,
+    "sha256": "794717bbfffbcad9470807eb0e941940b24a16a5845976ea20adbf2842e7ab20"
+  },
+  "routes": {
+    "bytes": 280288,
+    "sha256": "e03fcfaf7f9c752764e0c1b2a968234cf8f2205495b7424951022d86db2914a6"
+  },
+  "parent": {
+    "node": "Constant_1723",
+    "shape": [
+      1,
+      9999,
+      1024
+    ],
+    "dtype": "float32"
+  },
+  "slice": {
+    "axis": 1,
+    "step": 1,
+    "start": "5000-T",
+    "end_exclusive": "5000+T-1",
+    "rows": "2*T-1"
+  },
+  "constants": {
+    "/pos_enc/Constant": 5000,
+    "/pos_enc/Constant_1": 5000,
+    "/pos_enc/Constant_2": 1,
+    "/pos_enc/Constant_3": 1,
+    "/pos_enc/Constant_6": 1
+  },
+  "observed_input_materializations_per_corpus": 480,
+  "summary": {
+    "managed_seconds": 5.382414680666667,
+    "earlier_ort_seconds": 2.6443513333333333,
+    "diagnostic_difference": 2.7380633473333336,
+    "scratch_bytes_per_corpus": 1929379840,
+    "copy_bytes_per_corpus": 524353536
+  },
+  "managed_sources": {
+    "Tensor.cs": {
+      "bytes": 72103,
+      "sha256": "ee9502fa47f606436beea769975ff6bc02a07ddf29e05fe9ad3cb35530619f03"
+    },
+    "TensorSlice.cs": {
+      "bytes": 9753,
+      "sha256": "c699eb32c5bb8c296984a8b45d4097e827b8c3d5804195aa2f890241445cf419"
+    },
+    "TensorOps.MatMul.cs": {
+      "bytes": 45792,
+      "sha256": "2d97f599a67b21354cf9463ffe670f81c989f2c46721d2de305e199c43ac241e"
+    },
+    "TensorOps.Shape.cs": {
+      "bytes": 37823,
+      "sha256": "81c0125726e0b3988106f4c4b74adcb987ebb5685ecdf2e2c652df854721018b"
+    },
+    "CPUExecutionProvider.Shape.cs": {
+      "bytes": 61192,
+      "sha256": "532d26594643fdf97fad2973e05e6a603335509f36ed13da110a3e713ae6d768"
+    }
+  },
+  "ort_source": {
+    "revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+    "path": "onnxruntime/core/providers/cpu/tensor/slice.cc",
+    "bytes": 7240,
+    "sha256": "8010887f73b8d72ddb1971221237809766b4502f8fd442d215779fc0f972dfdb"
+  },
+  "source_conclusion": "ORT materializes one shared slice; Lokad MatMul requests independently owned dense input from the shared TensorSlice 24 times. TensorSlice inherits coordinate-by-coordinate ToDenseTensor; its existing contiguous copy helper is called only from Reshape.",
+  "copy_time_separately_measured": false,
+  "whole_application_gain_claimed": false,
+  "reviewer": {
+    "bytes": 5333,
+    "sha256": "6fb5ac7116640940155dc0b338d318c26548c37a4e05ef43b5236f915b6a67a7"
+  }
+}

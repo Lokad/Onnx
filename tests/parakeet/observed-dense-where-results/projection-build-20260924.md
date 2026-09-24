@@ -2,7 +2,8 @@
 
 The diagnostic build passes with Core **f95a13c5 unchanged byte for byte**.
 All eight AMD build jobs completed successfully. The isolated Data observer is
-65cd9716; no model has yet run with it.
+65cd9716. The subsequent full-corpus capture is now closed; see the
+[projection-route findings](projection-routes-20260924.md).
 
 The original private Data Execute body is retained inside a disposable scope.
 The other 696 existing Data methods and 161 existing consumer methods are
@@ -25,10 +26,10 @@ complete encoder node clocks. It does not invoke an arithmetic path or change
 graph outputs/options. Counter bytes are requested sizes, not physical traffic;
 source-predicted kernel names must remain distinct from instruction samples.
 
-Next run the original full-corpus control and observed applications after
-restoring the existing VM memory preflight. All native/public/ownership checks
-remain required. Expected observations: 217 nodes times 80 requests = 17,360.
-No performance admission or change to BENCHMARK.md follows from this build.
+The subsequent control and observed applications retain all native/public/
+ownership checks: 217 nodes times 80 requests = 17,360 observations. The original
+second-worker memory refusal and its phase-only recovery are retained. No
+performance admission or change to BENCHMARK.md follows from this build.
 
 [Complete review](projection-build-20260924.json),
 [exact correction](review_projection_build.py),

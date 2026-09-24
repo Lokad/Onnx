@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **48.79 GB**, including **35.29 GB** in artifacts.
+The latest inventory is **48.91 GB**, including **35.41 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -33,18 +33,20 @@ qualification now pass. The masking change is committed as `dddb60ef`.
 The original root source-policy failure is retained alongside the corrected
 nullable-output source and its complete compiled-equivalence and suite evidence.
 The current-gap review reuses retained profiles without model execution or
-another model copy. The projection observer is built and qualified; its
-control completed, and only its unstarted phase is being captured after a
-retained memory-preflight refusal. The recovery uses the same reviewed runtime
-paths without a rebuild or another model copy.
+another model copy. The projection observer and its recovery are closed and qualified: all 160
+requests,17360 observations and1267 resource samples pass. Only the originally
+unstarted phase was executed after the retained memory refusal. The recovery
+used the same reviewed runtime paths without a rebuild or another model copy.
+The initial shape-join refusal and corrected actual-geometry analysis remain.
+No VM workload is live.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **48,791,968,094 bytes**, with
-**1.21 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m70-root-v2-collected-size.json`.
-Counting the model junction again gives 59.58 GB, which counts the same 10.79 GB
+remain retained. The inventory totals **48,908,504,932 bytes**, with
+**1.09 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m71-projection-collected-size.json`.
+Counting the model junction again gives 59.69 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
