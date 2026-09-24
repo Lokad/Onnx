@@ -6,16 +6,17 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **45.66 GB**, including **32.18 GB** in artifacts,
+The latest inventory is **46.06 GB**, including **32.59 GB** in artifacts,
 after retaining the selected-release profile, rejected inclusive-packing trial,
 actual decoder LSTM capture, isolated recurrent preparation build and focused
 contracts, actual decoder/call qualification and full-model checks in both
 instruction modes. The invalid component timing, completed application
-comparison and staged ORT diagnosis are also retained. All raw traces, clocks, native arrays,
+comparison and completed ORT graph/operator/native-kernel diagnosis are also retained.
+All raw traces, clocks, native arrays,
 failed checks and qualification evidence remain retained. The inventory totals
-**45,658,910,051 bytes**, with **4.34 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m65-ort-diagnosis-staged-size.json`.
-Counting the model junction again gives 56.44 GB, which counts the same 10.79 GB
+**46,061,203,719 bytes**, with **3.94 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m65-native-diagnosis-complete-size.json`.
+Counting the model junction again gives 56.85 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
@@ -25,6 +26,13 @@ canonical decoder and saved encoder outputs. No model copy or download was
 needed. The compiler-name review reused the original binary and instruction
 inventory without another build. Compact tracked reports refer to the retained
 raw artifacts. No further deletion is necessary to meet the current 50 GB cap.
+
+The ORT diagnosis additionally retired **182.21 MB** of verified VM-only profile
+duplicates after collection; complete local traces and their archive remain.
+Receipt: `artifacts/parakeet-ort-remote-profile-retention-20260924`. Optimized
+graph serialization retained node metadata and identities, then removed its
+declared scratch weight sidecars after closing each session, including the
+2.476 GB encoder sidecar. No second model-weight copy was transferred locally.
 
 Before the prepared-recurrence full-model checks, another **558.69 MB of tmpfs**
 was recovered by sharing byte-identical files in terminal VM campaigns. The first

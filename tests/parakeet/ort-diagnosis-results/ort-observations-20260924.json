@@ -1,0 +1,154 @@
+{
+  "closure": {
+    "bytes": 632,
+    "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+  },
+  "raw_analysis": {
+    "bytes": 16849612,
+    "sha256": "f61c0c798bb71be7e6bdb4d88b863b6634c67bc3b1e1abdadd78fff1b5dee82e"
+  },
+  "raw_artifact": "artifacts/parakeet-ort-diagnosis-amd-20260924",
+  "passed": true,
+  "phases": {
+    "control": {
+      "phases": {
+        "frontend": {
+          "wall_ns": 684409025,
+          "cpu_ns": 684020086,
+          "calls": 60
+        },
+        "encoder": {
+          "wall_ns": 112720046929,
+          "cpu_ns": 112671555004,
+          "calls": 60
+        },
+        "decoder": {
+          "wall_ns": 5714322101,
+          "cpu_ns": 5706112764,
+          "calls": 3600
+        }
+      },
+      "requests": {
+        "wall_ns": 119450747942,
+        "observed_cpu_ns": 119399720475
+      },
+      "remainder_wall_ns": 331969887,
+      "corpus_seconds": 39.816915980666664,
+      "corpus_phase_seconds": {
+        "frontend": 0.22813634166666666,
+        "encoder": 37.573348976333335,
+        "decoder": 1.9047740336666668
+      },
+      "corpus_remainder_seconds": 0.110656629
+    },
+    "profile": {
+      "phases": {
+        "frontend": {
+          "wall_ns": 694660334,
+          "cpu_ns": 694435368,
+          "calls": 60
+        },
+        "encoder": {
+          "wall_ns": 113883435311,
+          "cpu_ns": 113839343227,
+          "calls": 60
+        },
+        "decoder": {
+          "wall_ns": 6326588285,
+          "cpu_ns": 6318269917,
+          "calls": 3600
+        }
+      },
+      "requests": {
+        "wall_ns": 121246635878,
+        "observed_cpu_ns": 121200023027
+      },
+      "remainder_wall_ns": 341951948,
+      "corpus_seconds": 40.415545292666664,
+      "corpus_phase_seconds": {
+        "frontend": 0.23155344466666666,
+        "encoder": 37.96114510366667,
+        "decoder": 2.108862761666667
+      },
+      "corpus_remainder_seconds": 0.11398398266666666
+    }
+  },
+  "original_native_seconds": 39.7054825615,
+  "control_over_original": 1.0028064995556738,
+  "profile_over_control": 1.0150345474343283,
+  "build_info": "ORT Build Info: git-branch=HEAD, git-commit-id=2e2543fbe9, fp8-kv-cache=1, build type=Release",
+  "capabilities": {
+    "perf": "/usr/bin/perf",
+    "readelf": "/usr/bin/readelf",
+    "nm": "/usr/bin/nm",
+    "perf_event_paranoid": "4",
+    "kptr_restrict": "1"
+  },
+  "benchmark_update": false,
+  "attribution_only": true,
+  "graphs": {
+    "encoder": {
+      "session_calls": 80,
+      "nodes": 1993,
+      "shape_records": 28927,
+      "phase_totals": {
+        "warmup": {
+          "run_us": 38203203,
+          "node_us": 37981515,
+          "outside_nodes_us": 221688
+        },
+        "measured": {
+          "run_us": 113879529,
+          "node_us": 113308787,
+          "outside_nodes_us": 570742
+        }
+      },
+      "categories": {
+        "('Session', 'X')": 162,
+        "('Node', 'X')": 159440
+      }
+    },
+    "decoder": {
+      "session_calls": 4800,
+      "nodes": 23,
+      "shape_records": 23,
+      "phase_totals": {
+        "warmup": {
+          "run_us": 2089871,
+          "node_us": 1960227,
+          "outside_nodes_us": 129644
+        },
+        "measured": {
+          "run_us": 6198536,
+          "node_us": 5812430,
+          "outside_nodes_us": 386106
+        }
+      },
+      "categories": {
+        "('Session', 'X')": 9602,
+        "('Node', 'X')": 110400
+      }
+    },
+    "frontend": {
+      "session_calls": 80,
+      "nodes": 35,
+      "shape_records": 510,
+      "phase_totals": {
+        "warmup": {
+          "run_us": 234080,
+          "node_us": 230665,
+          "outside_nodes_us": 3415
+        },
+        "measured": {
+          "run_us": 692002,
+          "node_us": 683212,
+          "outside_nodes_us": 8790
+        }
+      },
+      "categories": {
+        "('Session', 'X')": 162,
+        "('Node', 'X')": 2800
+      }
+    }
+  }
+}

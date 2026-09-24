@@ -1,9 +1,39 @@
 # Parakeet: explain the Microsoft ORT performance gap
 
 The qualified release takes **73.82s versus ORT's 39.61s** for the twenty-clip
-corpus: a **34.21s gap** and **1.864 ratio**. The next optimization will be chosen
-from a matched diagnosis of these exact applications. The initial ORT capture
-is running; results have not yet been collected.
+corpus: a **34.21s gap** and **1.864 ratio**. The ORT diagnosis is complete:
+original application phase clocks, optimized graphs and actual native dispatch
+are now reconciled. Matched Lokad phase/operator clocks remain the next step.
+
+| ORT phase, original twenty-clip corpus | Seconds |
+|---|---:|
+| Encoder | 37.573 |
+| Decoder | 1.905 |
+| Frontend | 0.228 |
+| Outside graph calls | 0.111 |
+| **Complete request** | **39.817** |
+
+The encoder's **217 constant-weight projections consume 29.44 profiled seconds**;
+its 72 dynamic matrix products consume only **0.83 seconds**. The 1,993 encoder
+nodes, 23 decoder nodes and 35 frontend nodes match the executed profile exactly.
+All 48 scaled projections fuse multiplication by 0.5. Runtime input observations
+and the matching source support preparation of constant B weights.
+
+Native samples identify **`MlasGemmFloatKernelAvx512F` at 90.87% of measured sample
+weight**. All **8,904 bytes** of the function match assembly built from the exact
+Microsoft revision reported by the installed wheel. Sampled hot instructions
+include its 12-row × 32-column AVX-512 block. This function also serves other
+matrix work; its entire share cannot be assigned to constant encoder projections.
+See [the graph and kernel findings](ort-kernels-20260924.md) and
+[complete phase/operator clocks](ort-phases-20260924.md).
+
+Lokad already has a 12-row AVX-512 kernel, enabled for eligible prepared weights.
+Its per-call packing path uses two-/three-row kernels by default, and its encoder
+retains 37 weights at the 256 MiB cap. The next comparison is the complete matching
+projection groups—packing, scale, destination handling and actual dispatch—on
+the same clips. We need their excess seconds before selecting an implementation.
+Neither another global toggle trial nor a larger packing cache follows from
+the native observations alone.
 
 The retained Lokad profile already constrains priorities. The entire
 `ParakeetGeneration.Decode` call tree accounts for **12.529% and 12.548%** of
@@ -24,19 +54,20 @@ consumer and correctness checks, adding phase clocks, runtime shapes and ORT's
 built-in operator profile. An unprofiled diagnostic control measures observation
 overhead before interpreting the profile.
 
-The investigation will first compare frontend, encoder, decoder and remaining
-time, then inspect the largest difference in the optimized graph and executed
-native kernels. Source inspection identifies possible mechanisms; it does not
-prove which implementation the installed wheel selected. Earlier intermediate
-output instrumentation changed ORT's optimized graph, so the new diagnostic
-preserves every original graph output.
+The phase observer adds 0.28% wall time relative to the preceding native run;
+the ORT profiler adds 1.50% relative to that observer, and native sampling adds
+0.61%. These separate processes also include ordinary timing variation. All
+original request checks pass. All 32,426 raw samples reconcile, with no lost
+samples. No overhead is subtracted, and no diagnostic result is a new benchmark.
+Earlier intermediate-output instrumentation changed ORT's optimized graph;
+this diagnosis preserves every original graph output.
 
 Each subsequent candidate must name the observed discrepancy, its likely cause,
 the maximum plausible whole-request benefit and one test that could reject it.
 No diagnostic clock replaces the qualified table in [BENCHMARK.md](../../../BENCHMARK.md).
 
-The in-flight decoder trial has now closed independently: **73.85s current,
-70.35s candidate and 39.71s ORT**, a **4.74%** candidate reduction. All63
-repeatability controls and21admission inequalities pass. The candidate remains
-unintegrated pending shared-model and root/package checks; its1.772ratio is
+The preceding decoder trial closed independently: **73.85s current,
+70.35s candidate and 39.71s ORT**, a **4.74%** candidate reduction. All 63
+repeatability controls and 21 admission inequalities pass. The candidate remains
+unintegrated pending shared-model and root/package checks; its 1.772 ratio is
 not yet the release figure. [Complete application result](../prepared-recurrence-results/application-20260924.md).

@@ -1,0 +1,136 @@
+{
+  "passed": true,
+  "raw": {
+    "counts": {
+      "69": 1,
+      "78": 1,
+      "73": 1,
+      "74": 1,
+      "3": 5,
+      "82": 1,
+      "10": 1826,
+      "68": 540,
+      "7": 26,
+      "9": 32426,
+      "4": 27
+    },
+    "lost": 0,
+    "data_start": 288,
+    "data_bytes": 141099200
+  },
+  "total_samples": 32426,
+  "measured_samples": 23902,
+  "measured_period_ns": 120110537750,
+  "measured_wall_ns": 120183669570,
+  "coverage_ratio": 0.9993914995251713,
+  "corpus_seconds": 40.06122319,
+  "over_control": 1.0061357642428148,
+  "kernel": {
+    "name": "MlasGemmFloatKernelAvx512F",
+    "start": "0x1247970",
+    "end": "0x1249c38",
+    "matched_bytes": 8904,
+    "sha256": "1e5fcc31864b764539cc4fd04bc20d98b78ee954461469a9d56dd0ddc00848c4",
+    "sample_period_ns": 109140689875,
+    "share": 0.9086687306501547,
+    "estimated_seconds_per_corpus": 36.38022995833333
+  },
+  "dsos": [
+    {
+      "path": "/home/vermorel/.local/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_pybind11_state.cpython-312-x86_64-linux-gnu.so",
+      "period_ns": 119447221250,
+      "share": 0.9944774495858087
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+      "period_ns": 412060250,
+      "share": 0.003430675257300644
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "period_ns": 155778875,
+      "share": 0.0012969625972721948
+    },
+    {
+      "path": "/home/vermorel/.local/lib/python3.12/site-packages/numpy/_core/_multiarray_umath.cpython-312-x86_64-linux-gnu.so",
+      "period_ns": 70351750,
+      "share": 0.0005857250439293783
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+      "period_ns": 20100500,
+      "share": 0.00016735001255125095
+    },
+    {
+      "path": "[vdso]",
+      "period_ns": 5025125,
+      "share": 4.183750313781274e-05
+    }
+  ],
+  "resource_samples": 329,
+  "peak_rss": 2933268480,
+  "thread_period_ns": {
+    "928733": 120095462375,
+    "928750": 5025125,
+    "928841": 10050250
+  },
+  "missing_stacks": [
+    {
+      "pid": 928733,
+      "tid": 928733,
+      "stamp": 608444115861184,
+      "period": 5025125,
+      "raw_leaf": {
+        "ip": 139631007853472,
+        "dso": "[vdso]"
+      }
+    }
+  ],
+  "auxiliary_thread_period_ns": 15075375,
+  "original_consumer_unchanged": true,
+  "loaded_binary": {
+    "bytes": 30112440,
+    "sha256": "ff54b93f257508c8e32a43f3528382b7eb791f0946730187e4767d7292a290ee"
+  },
+  "kernel_match": {
+    "bytes": 326,
+    "sha256": "54c791e4c46e511c52b615909dc1249dae0f96d7c4734c174a5e12aeabc6d414"
+  },
+  "attribution_only": true,
+  "raw_artifact": "artifacts/parakeet-ort-native-samples-20260924",
+  "closure": {
+    "bytes": 1273,
+    "sha256": "546b3a58af8814772f0a5b816dbcbece710facc01980acebeb2fc93d7f0dcca9"
+  },
+  "raw_analysis": {
+    "bytes": 72585,
+    "sha256": "88d87198e995abed63aa0a02529c6436ad85117dbf198f2a14c737d7ea8bed34"
+  },
+  "source_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "sources": {
+    "SgemmKernelAvx512F.S": {
+      "bytes": 561,
+      "sha256": "f8b9a2da8d0c565cdc633a7c08fcca33d4c1ccaad78dcc948a680d3a676e0454"
+    },
+    "asmmacro.h": {
+      "bytes": 3479,
+      "sha256": "2a0995edf03c1fa73c068cad1eb410047b351b79830c138fd071c2e124a677e0"
+    },
+    "SgemmKernelCommon.h": {
+      "bytes": 1231,
+      "sha256": "376b2b339b4951b82aa1b91090e1b83531a0ef4af430c4b029bd4a55f5afa4c7"
+    },
+    "FgemmKernelCommon.h": {
+      "bytes": 3815,
+      "sha256": "a8d82283c2f89e18d08bd3fb66ed87e3e3a4fb200cc3a8397fb3fbe3755f17d0"
+    },
+    "FgemmKernelAvx512FCommon.h": {
+      "bytes": 21458,
+      "sha256": "087c70e4469e2cb4c02d4dd3253c5c577825f85f32ef6e251cc686a41e7a413a"
+    }
+  },
+  "graph_review_closure": {
+    "bytes": 872,
+    "sha256": "d844dcef266c6ea132c58b68d3e6f2dd04f6a98fed55d4d995badbc21542bf5b"
+  }
+}

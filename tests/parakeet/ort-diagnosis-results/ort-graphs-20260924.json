@@ -1,0 +1,194 @@
+{
+  "closure": {
+    "bytes": 872,
+    "sha256": "d844dcef266c6ea132c58b68d3e6f2dd04f6a98fed55d4d995badbc21542bf5b"
+  },
+  "passed": true,
+  "graphs": {
+    "encoder": {
+      "nodes": 1993,
+      "census": {
+        "Cast": 4,
+        "Add": 176,
+        "Div": 27,
+        "Floor": 3,
+        "Unsqueeze": 180,
+        "Shape": 100,
+        "Gather": 149,
+        "Concat": 101,
+        "Reshape": 170,
+        "Equal": 1,
+        "Where": 73,
+        "Transpose": 196,
+        "Conv": 77,
+        "ReorderOutput": 1,
+        "MatMul": 241,
+        "Range": 1,
+        "Expand": 1,
+        "Less": 1,
+        "Not": 2,
+        "LayerNormalization": 120,
+        "QuickGelu": 72,
+        "FusedMatMul": 48,
+        "ConstantOfShape": 1,
+        "Slice": 75,
+        "Tile": 1,
+        "And": 2,
+        "Squeeze": 24,
+        "Sub": 2,
+        "Pad": 48,
+        "Softmax": 24,
+        "Split": 24,
+        "Sigmoid": 24,
+        "Mul": 24
+      },
+      "model": {
+        "bytes": 432574,
+        "sha256": "ed1eca96607258004aa74b4b22751b7a5d4203a2c0e6eb2b586452211f1a0efc"
+      },
+      "retired_scratch": {
+        "file": "weights.bin",
+        "bytes": 2476376064,
+        "sha256": "e542d602034ad7cd24c57cd71899838d22f8ac925ddf4ecc054e42bb30f57278"
+      },
+      "executed_nodes_exact": true,
+      "io_descriptors_exact": true,
+      "artifact": "artifacts\\parakeet-ort-graphs-amd-v2-20260924"
+    },
+    "decoder": {
+      "nodes": 23,
+      "census": {
+        "Identity": 1,
+        "Split": 2,
+        "Cast": 1,
+        "Gather": 1,
+        "Transpose": 2,
+        "LSTM": 2,
+        "Squeeze": 2,
+        "MatMul": 2,
+        "Add": 4,
+        "Unsqueeze": 2,
+        "FusedMatMul": 1,
+        "Relu": 1,
+        "Concat": 2
+      },
+      "model": {
+        "bytes": 5863,
+        "sha256": "bb517f61e4d0ea4ccf52b019196b2e8bccfa3997e40e60c960cfa449f5ed7cb7"
+      },
+      "retired_scratch": {
+        "file": "weights.bin",
+        "bytes": 72514560,
+        "sha256": "86d2ee2f94f31b1e12713964b8aebf78a4f930801f83045682aac7e64a4068d8"
+      },
+      "executed_nodes_exact": true,
+      "io_descriptors_exact": true,
+      "artifact": "artifacts\\parakeet-ort-small-graphs-amd-20260924"
+    },
+    "frontend": {
+      "nodes": 35,
+      "census": {
+        "Div": 4,
+        "Add": 3,
+        "Unsqueeze": 1,
+        "Cast": 3,
+        "Sub": 3,
+        "Slice": 3,
+        "Mul": 1,
+        "Concat": 1,
+        "Pad": 1,
+        "STFT": 1,
+        "ReduceSumSquare": 2,
+        "MatMul": 1,
+        "Log": 1,
+        "Shape": 1,
+        "Gather": 1,
+        "Range": 1,
+        "Less": 1,
+        "Transpose": 1,
+        "Where": 3,
+        "ReduceSum": 1,
+        "Sqrt": 1
+      },
+      "model": {
+        "bytes": 4577,
+        "sha256": "74c53c24425adf2504720b53ef2770a9da79c4fb856b498ffb4533d44af50d38"
+      },
+      "retired_scratch": {
+        "file": "weights.bin",
+        "bytes": 135680,
+        "sha256": "9d24b736e4758be9bd37be6b01bb75e0400b6d569d01e719001d81da4356681f"
+      },
+      "executed_nodes_exact": true,
+      "io_descriptors_exact": true,
+      "artifact": "artifacts\\parakeet-ort-small-graphs-amd-20260924"
+    }
+  },
+  "resources": {
+    "encoder": {
+      "samples": 13,
+      "peak_rss": 2274627584,
+      "seconds": 6.542372073046863,
+      "owner": {
+        "pid": 928449,
+        "birth": 1790242141.1
+      }
+    },
+    "decoder": {
+      "samples": 4,
+      "peak_rss": 17915904,
+      "seconds": 2.0207479199161753,
+      "owner": {
+        "pid": 928627,
+        "birth": 1790242264.6
+      }
+    },
+    "frontend": {
+      "samples": 4,
+      "peak_rss": 17956864,
+      "seconds": 2.018844853970222,
+      "owner": {
+        "pid": 928629,
+        "birth": 1790242266.62
+      }
+    }
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "sources": {
+    "onnxruntime/core/framework/sequential_executor.cc": {
+      "bytes": 33911,
+      "sha256": "c3e074519432105024bb9c38019b70c5142015bd0e3288835e7214b7363fc6cc"
+    },
+    "onnxruntime/core/framework/session_state.cc": {
+      "bytes": 95215,
+      "sha256": "fe38c97116f1f2c6d9868649a094b029ded299dbf2aa423eaf6c4cb791cb189c"
+    },
+    "onnxruntime/core/providers/cpu/math/matmul.cc": {
+      "bytes": 21228,
+      "sha256": "ae7e12fabee4dc14bf33eab3a74e197e6842bd158f1bc13f48ab38ab39055cc5"
+    },
+    "onnxruntime/contrib_ops/cpu/fused_matmul.cc": {
+      "bytes": 917,
+      "sha256": "8f8fabab2424f10c5f8f600de2bf5d3d77095456af3ed0a7496a2dec23bb9dad"
+    }
+  },
+  "constant_projections": 217,
+  "dynamic_projections": 72,
+  "constant_projection_seconds": 29.442083333333333,
+  "dynamic_projection_seconds": 0.8340396666666666,
+  "constant_source_bytes": 2130706432,
+  "preparation_inference": "Nonempty FP32 MatMul/FusedMatMul B is absent from all runtime input profiles; matching source releases prepacked initializers and consumes packed_b_. This supports prepared-B use; it does not identify the dispatched MLAS leaf.",
+  "original_encoder_stage_refusal": {
+    "bytes": 446,
+    "sha256": "e1a53819c80677feebb284779fdabadcec436d54fd42138667cebf562a08b29d"
+  },
+  "small_graph_closure": {
+    "bytes": 530,
+    "sha256": "8b3c9a09d99e8476f2929949d9387ff9c3fe4bbf85bde61deafde4394d251c33"
+  },
+  "native_profile_closure": {
+    "bytes": 632,
+    "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+  },
+  "inference_calls": 0
+}
