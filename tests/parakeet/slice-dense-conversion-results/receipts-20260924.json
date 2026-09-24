@@ -1,0 +1,108 @@
+{
+  "qualified_tensor_contracts": true,
+  "product_integrated": false,
+  "performance_measured": false,
+  "receipts": {
+    "artifacts/parakeet-slice-dense-conversion-source-20260924/prepared.json": {
+      "bytes": 149884,
+      "sha256": "a9811c6369122eb8b53ab1d88d8329928a999d172d89786a1b393c3451e91e1e"
+    },
+    "artifacts/parakeet-slice-dense-conversion-build-amd-20260924/build-collected/build-collection.json": {
+      "bytes": 6957,
+      "sha256": "c879e6c6202f73870cbb3a002042231cd044fedb100ce8ebe264af4ac3d3b5ff"
+    },
+    "artifacts/parakeet-slice-dense-conversion-recovery-amd-20260924/build-review.json": {
+      "bytes": 4539,
+      "sha256": "349ae125453183b0b04202dd6408c789760e1748ec863fc51c44d81208f17cbd"
+    },
+    "artifacts/parakeet-slice-dense-conversion-recovery-amd-20260924/capture-collected/capture-collection.json": {
+      "bytes": 3253,
+      "sha256": "4613a6d846850ae451b53d603df7a2856912d6a822f73d9f2795a286f002aef2"
+    },
+    "artifacts/parakeet-slice-dense-conversion-tests-amd-20260924/build-review.json": {
+      "bytes": 1582,
+      "sha256": "0eeef7982a09859c8f791bc361d900ab04941ada148e5600527978732b5351d4"
+    },
+    "artifacts/parakeet-slice-dense-conversion-tests-amd-20260924/capture-collected/capture-collection.json": {
+      "bytes": 3387,
+      "sha256": "33e244f9c873a5a166c4080bb7d2d3fea7cc07ccd2f1ce0c9187454e4012cda3"
+    },
+    "artifacts/parakeet-slice-dense-conversion-isa-amd-20260924/analysis.json": {
+      "bytes": 1715,
+      "sha256": "9a3a7dfe540536bc885875c14fb0dbc55281d7d9f018184bfcfa5cd3d45172a7"
+    },
+    "artifacts/parakeet-slice-dense-conversion-isa-amd-20260924/closed.json": {
+      "bytes": 955,
+      "sha256": "a4d86d05246f497000639435ba96f583b447da0ecabe0f5510abf4ee3886316f"
+    }
+  },
+  "analysis": {
+    "passed": true,
+    "core": {
+      "bytes": 815104,
+      "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+    },
+    "consumer": {
+      "bytes": 190976,
+      "sha256": "a17057a396f623d93fe79fdd3101be35337dc92d93240bf74b9e9dbcfb75fa29"
+    },
+    "suites": [
+      {
+        "mode": "512",
+        "passed": 395,
+        "skipped": 0,
+        "trx": {
+          "bytes": 577986,
+          "sha256": "09c80bfaa47ca0b54385f7e21976665c5e354a6f646a123a9bae5d10191fabb5"
+        }
+      },
+      {
+        "mode": "256",
+        "passed": 395,
+        "skipped": 0,
+        "trx": {
+          "bytes": 577986,
+          "sha256": "906ff76615689a394956094476965e593867b4558aaead8eba327cbcc27769bb"
+        }
+      }
+    ],
+    "resources": [
+      {
+        "name": "tensors-256",
+        "samples": 26,
+        "peak_rss": 480481280,
+        "seconds": 13.109130378928967
+      }
+    ],
+    "original_resources": [
+      {
+        "name": "tensors-512",
+        "samples": 23,
+        "peak_rss": 585596928,
+        "seconds": 11.910858129966073
+      },
+      {
+        "name": "tensors-256",
+        "samples": 23,
+        "peak_rss": 514953216,
+        "seconds": 11.91236872493755
+      }
+    ],
+    "failed_instruction_run_retained": true,
+    "ordinary_run_repeated": false,
+    "corrected_test_review": {
+      "bytes": 1582,
+      "sha256": "0eeef7982a09859c8f791bc361d900ab04941ada148e5600527978732b5351d4"
+    },
+    "compiled_review": {
+      "bytes": 4539,
+      "sha256": "349ae125453183b0b04202dd6408c789760e1748ec863fc51c44d81208f17cbd"
+    },
+    "original_methods_unchanged": 3253,
+    "new_copy_cases": 26,
+    "existing_tensor_cases": 368,
+    "identity_cases": 1,
+    "product_rebuilt": false,
+    "performance_measured": false
+  }
+}

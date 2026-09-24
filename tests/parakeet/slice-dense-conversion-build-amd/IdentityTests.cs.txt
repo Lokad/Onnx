@@ -1,0 +1,18 @@
+namespace Lokad.Onnx.Tensors.Tests;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+
+public class DenseCopyCandidateIdentityTests
+{
+    [Fact]
+    public void ConsumedCoreAndInstructionModeMatch()
+    {
+        string actual=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(typeof(Tensor<>).Assembly.Location)));
+        Assert.Equal(Environment.GetEnvironmentVariable("DENSE_COPY_CORE_SHA"),actual);
+        Assert.Equal(Environment.GetEnvironmentVariable("DENSE_COPY_AVX512")=="1",Avx512F.IsSupported);
+        Assert.True(Fma.IsSupported);
+        var method=typeof(TensorSlice<float>).GetMethod("ToDenseTensor");
+        Assert.NotNull(method);Assert.Equal(typeof(TensorSlice<float>),method.DeclaringType);
+        Assert.Equal(typeof(Tensor<float>),method.GetBaseDefinition().DeclaringType);
+    }
+}

@@ -1,0 +1,92 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+if (args.Length != 4) throw new ArgumentException("manifest, constant, output, mode");
+if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException();
+string manifestPath=args[0], constantPath=args[1], output=args[2], mode=args[3];
+Require(mode is "generic" or "helper", "Mode");
+Require(Environment.ProcessorCount==1 && Process.GetCurrentProcess().ProcessorAffinity.ToInt64()==4, "CPU2 before runtime startup");
+Require(RuntimeInformation.FrameworkDescription==".NET 10.0.8" && BitConverter.IsLittleEndian, "Runtime/byte order");
+var flags=Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k=>k.StartsWith("LOKAD_",StringComparison.OrdinalIgnoreCase)
+    || k.StartsWith("DOTNET_",StringComparison.OrdinalIgnoreCase) || k.StartsWith("COMPlus_",StringComparison.OrdinalIgnoreCase)).ToArray();
+Require(flags.Length==0, "Ordinary runtime defaults");
+using var manifestDoc=JsonDocument.Parse(File.ReadAllBytes(manifestPath));
+var manifest=manifestDoc.RootElement;
+string corePath=typeof(Tensor<>).Assembly.Location, consumerPath=typeof(Program).Assembly.Location;
+Require(Hash(File.ReadAllBytes(corePath))==manifest.GetProperty("core_sha256").GetString(), "Core identity");
+Require(Hash(File.ReadAllBytes(consumerPath))==manifest.GetProperty("consumer_sha256").GetString(), "Consumer identity");
+Directory.CreateDirectory(output);
+long setupStart=Stopwatch.GetTimestamp();
+byte[] raw=File.ReadAllBytes(constantPath);
+Require(raw.Length==40955904 && Hash(raw)==manifest.GetProperty("constant_sha256").GetString(), "Actual model constant");
+float[] parentValues=new float[9999*1024]; Buffer.BlockCopy(raw,0,parentValues,0,raw.Length);
+var parent=new DenseTensor<float>(parentValues,new[]{1,9999,1024});
+var cases=manifest.GetProperty("cases").EnumerateArray().Select((c,i)=>new Case(i,c.GetProperty("name").GetString()!,
+    c.GetProperty("frames").GetInt32(),c.GetProperty("output_sha256").GetString()!)).ToArray();
+Require(cases.Length==20 && cases.Select(c=>c.Frames).Distinct().Count()==19, "Original corpus lengths");
+var views=cases.Select(c=>parent.Slice(new SliceIndex(0,1),new SliceIndex(5000-c.Frames,5000+c.Frames-1,1),new SliceIndex(0,1024))).ToArray();
+for(int i=0;i<cases.Length;i++)
+{
+    Require(views[i].GetType()==typeof(TensorSlice<float>) && views[i].Dimensions.SequenceEqual(new[]{1,2*cases[i].Frames-1,1024}), "Actual view geometry");
+    Require(views[i].Storage.Length==parentValues.Length && !views[i].IsReversedStride, "Actual view storage");
+}
+Func<TensorSlice<float>,Tensor<float>> convert=mode=="generic" ? static v=>v.ToDenseTensor() : static v=>v.Reshape(v.Dimensions);
+long setupEnd=Stopwatch.GetTimestamp();
+var records=new List<object>(); var held=new List<(DenseTensor<float> Tensor,string Hash)>();
+var heldArrays=new HashSet<float[]>(ReferenceEqualityComparer.Instance);
+float[]? lastArray=null; DenseTensor<float>? last=null; string? lastHash=null;
+int thread=Environment.CurrentManagedThreadId;
+for(int pass=0;pass<4;pass++)
+{
+    for(int caseIndex=0;caseIndex<cases.Length;caseIndex++)
+    {
+        var c=cases[caseIndex]; var view=views[caseIndex]; long allocatedBefore=GC.GetAllocatedBytesForCurrentThread();
+        for(int copy=0;copy<24;copy++)
+        {
+            Require(Environment.CurrentManagedThreadId==thread, "Same main thread");
+            long start=Stopwatch.GetTimestamp(); Tensor<float> value=convert(view); long end=Stopwatch.GetTimestamp();
+            Require(end>start && value.GetType()==typeof(DenseTensor<float>), "Timed owned dense result");
+            var dense=(DenseTensor<float>)value;
+            Require(dense.Dimensions.SequenceEqual(new[]{1,2*c.Frames-1,1024}) && !dense.IsReversedStride, "Output shape/layout");
+            Require(MemoryMarshal.TryGetArray((ReadOnlyMemory<float>)dense.Buffer,out var segment) && segment.Array is not null, "Array backed");
+            float[] array=segment.Array!;
+            Require(segment.Offset==0 && segment.Count==dense.Length && array.Length==dense.Length, "Exact output storage");
+            Require(!ReferenceEquals(array,parentValues) && !ReferenceEquals(array,lastArray) && !heldArrays.Contains(array), "Independent output storage");
+            string actual=Hash(MemoryMarshal.AsBytes(dense.Buffer.Span)); Require(actual==c.OutputHash, "Every output bit");
+            if(last is not null) Require(Hash(MemoryMarshal.AsBytes(last.Buffer.Span))==lastHash, "Prior output unchanged");
+            if(pass==0 && copy==0) { held.Add((dense,actual)); Require(heldArrays.Add(array), "Unique sentinel"); }
+            last=dense; lastArray=array; lastHash=actual;
+            records.Add(new { name=c.Name,case_index=caseIndex,pass,phase=pass==0?"warmup":"measured",copy,
+                frames=c.Frames,rows=2*c.Frames-1,elements=dense.Length,start_ticks=start,end_ticks=end,
+                frequency=Stopwatch.Frequency,thread_id=thread,output_sha256=actual,independent=true });
+        }
+        Require(Hash(MemoryMarshal.AsBytes(parent.Buffer.Span))==manifest.GetProperty("constant_sha256").GetString(), "Parent unchanged");
+        foreach(var keep in held) Require(Hash(MemoryMarshal.AsBytes(keep.Tensor.Buffer.Span))==keep.Hash, "Held output unchanged");
+        long allocatedAfter=GC.GetAllocatedBytesForCurrentThread();
+        Write(Path.Combine(output,$"case-{pass:D1}-{caseIndex:D2}.json"),new { c.Name,pass,allocated_bytes=allocatedAfter-allocatedBefore,
+            input_unchanged=true,held_outputs_unchanged=true });
+    }
+}
+Require(records.Count==1920 && held.Count==20, "Complete calls and sentinels");
+Require(Hash(raw)==manifest.GetProperty("constant_sha256").GetString(), "Original bytes unchanged");
+foreach(var keep in held) Require(Hash(MemoryMarshal.AsBytes(keep.Tensor.Buffer.Span))==keep.Hash, "Final ownership");
+Write(Path.Combine(output,"clocks.json"),records);
+Write(Path.Combine(output,"result.json"),new { passed=true,mode,records=records.Count,measured=1440,warmup=480,cases=20,
+    frequency=Stopwatch.Frequency,thread_id=thread,processor_count=Environment.ProcessorCount,
+    affinity=Process.GetCurrentProcess().ProcessorAffinity.ToInt64(),runtime=RuntimeInformation.FrameworkDescription,flags,
+    core_sha256=Hash(File.ReadAllBytes(corePath)),consumer_sha256=Hash(File.ReadAllBytes(consumerPath)),
+    manifest_sha256=Hash(File.ReadAllBytes(manifestPath)),constant_sha256=Hash(raw),
+    input_unchanged=true,held_outputs_unchanged=true,independent_outputs=true,checked_every_output_byte=true,
+    setup_start_ticks=setupStart,setup_end_ticks=setupEnd,setup_seconds=(setupEnd-setupStart)/(double)Stopwatch.Frequency });
+
+static void Require(bool ok,string message) { if(!ok) throw new InvalidDataException(message); }
+static string Hash(ReadOnlySpan<byte> bytes)=>Convert.ToHexStringLower(SHA256.HashData(bytes));
+static void Write(string path,object value)
+{
+    using var stream=new FileStream(path,FileMode.CreateNew);
+    JsonSerializer.Serialize(stream,value,new JsonSerializerOptions { WriteIndented=true });
+}
+record Case(int Index,string Name,int Frames,string OutputHash);

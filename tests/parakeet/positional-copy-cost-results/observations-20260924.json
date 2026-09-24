@@ -1,0 +1,486 @@
+{
+  "passed": true,
+  "analysis_only": true,
+  "original_comparison_admitted": false,
+  "original_verdict_unchanged": true,
+  "no_rerun": true,
+  "application_gain_claimed": false,
+  "closure": {
+    "bytes": 1242,
+    "sha256": "c4c9aba12446a6216f35e213a5fcd1b3282d1a6261caab0f94029be81af1f8ef"
+  },
+  "analysis": {
+    "bytes": 20665,
+    "sha256": "367c9bcd7f235d26e34c096bb4e613c2a10aebd711ced2fc90dac5973fd2231c"
+  },
+  "clocks": {
+    "bytes": 3587587,
+    "sha256": "6f456f21d395ab5089b2ec5085bf6b2f0441ef2e98479fd10e070a2324cf8e0a"
+  },
+  "controls_passed": 29,
+  "controls_total": 42,
+  "failed_controls": [
+    {
+      "mode": "helper",
+      "name": "121-121726-0000",
+      "ratio": 2.087698261239709,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "121-123852-0000",
+      "ratio": 1.455941303303242,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "237-126133-0002",
+      "ratio": 1.6463792177795424,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "237-126133-0000",
+      "ratio": 1.631161689074523,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "260-123288-0005",
+      "ratio": 1.2788297189089919,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "672-122797-0001",
+      "ratio": 1.6254389779576979,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "908-157963-0000",
+      "ratio": 1.503366338955457,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "1089-134686-0002",
+      "ratio": 1.3539135375889286,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "1089-134686-0011",
+      "ratio": 1.499545353368237,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "1188-133604-0001",
+      "ratio": 1.2884249447548266,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "1221-135766-0002",
+      "ratio": 1.848088902884508,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "1221-135766-0000",
+      "ratio": 1.412354655330041,
+      "limit": 1.2,
+      "passed": false
+    },
+    {
+      "mode": "helper",
+      "name": "1284-1180-0018",
+      "ratio": 1.573490439721537,
+      "limit": 1.2,
+      "passed": false
+    }
+  ],
+  "processes": [
+    {
+      "index": 0,
+      "mode": "generic",
+      "corpus_seconds": 2.4213256943333334,
+      "cases": [
+        {
+          "name": "121-121726-0000",
+          "seconds": 0.08933114366666667
+        },
+        {
+          "name": "121-123852-0000",
+          "seconds": 0.18839625766666668
+        },
+        {
+          "name": "237-126133-0002",
+          "seconds": 0.09696445933333334
+        },
+        {
+          "name": "237-126133-0000",
+          "seconds": 0.15258555
+        },
+        {
+          "name": "260-123286-0000",
+          "seconds": 0.08467634466666667
+        },
+        {
+          "name": "260-123288-0005",
+          "seconds": 0.13794034533333333
+        },
+        {
+          "name": "672-122797-0000",
+          "seconds": 0.044716476666666664
+        },
+        {
+          "name": "672-122797-0001",
+          "seconds": 0.17938436433333332
+        },
+        {
+          "name": "908-157963-0005",
+          "seconds": 0.074485213
+        },
+        {
+          "name": "908-157963-0000",
+          "seconds": 0.136788845
+        },
+        {
+          "name": "1089-134686-0002",
+          "seconds": 0.07094691933333333
+        },
+        {
+          "name": "1089-134686-0011",
+          "seconds": 0.147243195
+        },
+        {
+          "name": "1188-133604-0001",
+          "seconds": 0.125119779
+        },
+        {
+          "name": "1188-133604-0002",
+          "seconds": 0.198435144
+        },
+        {
+          "name": "1221-135766-0002",
+          "seconds": 0.05103805833333333
+        },
+        {
+          "name": "1221-135766-0000",
+          "seconds": 0.13083257566666667
+        },
+        {
+          "name": "1284-1180-0000",
+          "seconds": 0.08715897033333334
+        },
+        {
+          "name": "1284-1180-0018",
+          "seconds": 0.12894408366666665
+        },
+        {
+          "name": "1320-122612-0001",
+          "seconds": 0.11777928166666667
+        },
+        {
+          "name": "1320-122612-0000",
+          "seconds": 0.17855868766666666
+        }
+      ],
+      "setup_seconds": 0.050928764
+    },
+    {
+      "index": 1,
+      "mode": "helper",
+      "corpus_seconds": 0.105214048,
+      "cases": [
+        {
+          "name": "121-121726-0000",
+          "seconds": 0.002576356666666667
+        },
+        {
+          "name": "121-123852-0000",
+          "seconds": 0.005270802
+        },
+        {
+          "name": "237-126133-0002",
+          "seconds": 0.006169951
+        },
+        {
+          "name": "237-126133-0000",
+          "seconds": 0.009034041666666666
+        },
+        {
+          "name": "260-123286-0000",
+          "seconds": 0.0052824
+        },
+        {
+          "name": "260-123288-0005",
+          "seconds": 0.006635189666666667
+        },
+        {
+          "name": "672-122797-0000",
+          "seconds": 0.0015334853333333334
+        },
+        {
+          "name": "672-122797-0001",
+          "seconds": 0.006301474333333334
+        },
+        {
+          "name": "908-157963-0005",
+          "seconds": 0.003414790333333333
+        },
+        {
+          "name": "908-157963-0000",
+          "seconds": 0.0026723393333333333
+        },
+        {
+          "name": "1089-134686-0002",
+          "seconds": 0.004902796666666666
+        },
+        {
+          "name": "1089-134686-0011",
+          "seconds": 0.008447957666666667
+        },
+        {
+          "name": "1188-133604-0001",
+          "seconds": 0.006484084
+        },
+        {
+          "name": "1188-133604-0002",
+          "seconds": 0.007779639
+        },
+        {
+          "name": "1221-135766-0002",
+          "seconds": 0.0018143243333333333
+        },
+        {
+          "name": "1221-135766-0000",
+          "seconds": 0.003929682
+        },
+        {
+          "name": "1284-1180-0000",
+          "seconds": 0.0010810683333333333
+        },
+        {
+          "name": "1284-1180-0018",
+          "seconds": 0.006168446
+        },
+        {
+          "name": "1320-122612-0001",
+          "seconds": 0.006521388
+        },
+        {
+          "name": "1320-122612-0000",
+          "seconds": 0.009193831666666666
+        }
+      ],
+      "setup_seconds": 0.050703524
+    },
+    {
+      "index": 2,
+      "mode": "helper",
+      "corpus_seconds": 0.10153751866666667,
+      "cases": [
+        {
+          "name": "121-121726-0000",
+          "seconds": 0.005378655333333334
+        },
+        {
+          "name": "121-123852-0000",
+          "seconds": 0.007673978333333334
+        },
+        {
+          "name": "237-126133-0002",
+          "seconds": 0.003747588
+        },
+        {
+          "name": "237-126133-0000",
+          "seconds": 0.0055384096666666665
+        },
+        {
+          "name": "260-123286-0000",
+          "seconds": 0.005140212333333333
+        },
+        {
+          "name": "260-123288-0005",
+          "seconds": 0.005188485666666667
+        },
+        {
+          "name": "672-122797-0000",
+          "seconds": 0.0016525
+        },
+        {
+          "name": "672-122797-0001",
+          "seconds": 0.010242662
+        },
+        {
+          "name": "908-157963-0005",
+          "seconds": 0.003036122
+        },
+        {
+          "name": "908-157963-0000",
+          "seconds": 0.004017505
+        },
+        {
+          "name": "1089-134686-0002",
+          "seconds": 0.0036212036666666667
+        },
+        {
+          "name": "1089-134686-0011",
+          "seconds": 0.005633679333333333
+        },
+        {
+          "name": "1188-133604-0001",
+          "seconds": 0.005032566333333334
+        },
+        {
+          "name": "1188-133604-0002",
+          "seconds": 0.007097702666666666
+        },
+        {
+          "name": "1221-135766-0002",
+          "seconds": 0.0033530326666666665
+        },
+        {
+          "name": "1221-135766-0000",
+          "seconds": 0.0055501046666666665
+        },
+        {
+          "name": "1284-1180-0000",
+          "seconds": 0.0011404966666666667
+        },
+        {
+          "name": "1284-1180-0018",
+          "seconds": 0.003920231
+        },
+        {
+          "name": "1320-122612-0001",
+          "seconds": 0.006257402333333334
+        },
+        {
+          "name": "1320-122612-0000",
+          "seconds": 0.008314981
+        }
+      ],
+      "setup_seconds": 0.051268678
+    },
+    {
+      "index": 3,
+      "mode": "generic",
+      "corpus_seconds": 2.398559861,
+      "cases": [
+        {
+          "name": "121-121726-0000",
+          "seconds": 0.08980168833333334
+        },
+        {
+          "name": "121-123852-0000",
+          "seconds": 0.187318659
+        },
+        {
+          "name": "237-126133-0002",
+          "seconds": 0.09672902333333333
+        },
+        {
+          "name": "237-126133-0000",
+          "seconds": 0.149296967
+        },
+        {
+          "name": "260-123286-0000",
+          "seconds": 0.09222818066666667
+        },
+        {
+          "name": "260-123288-0005",
+          "seconds": 0.137052872
+        },
+        {
+          "name": "672-122797-0000",
+          "seconds": 0.043251867666666666
+        },
+        {
+          "name": "672-122797-0001",
+          "seconds": 0.179587937
+        },
+        {
+          "name": "908-157963-0005",
+          "seconds": 0.07499206166666667
+        },
+        {
+          "name": "908-157963-0000",
+          "seconds": 0.134949671
+        },
+        {
+          "name": "1089-134686-0002",
+          "seconds": 0.07078302766666666
+        },
+        {
+          "name": "1089-134686-0011",
+          "seconds": 0.14534251466666667
+        },
+        {
+          "name": "1188-133604-0001",
+          "seconds": 0.119056029
+        },
+        {
+          "name": "1188-133604-0002",
+          "seconds": 0.196641902
+        },
+        {
+          "name": "1221-135766-0002",
+          "seconds": 0.050858746333333336
+        },
+        {
+          "name": "1221-135766-0000",
+          "seconds": 0.130810813
+        },
+        {
+          "name": "1284-1180-0000",
+          "seconds": 0.08707120933333333
+        },
+        {
+          "name": "1284-1180-0018",
+          "seconds": 0.129873884
+        },
+        {
+          "name": "1320-122612-0001",
+          "seconds": 0.10280535166666667
+        },
+        {
+          "name": "1320-122612-0000",
+          "seconds": 0.18010745566666667
+        }
+      ],
+      "setup_seconds": 0.050756139
+    }
+  ],
+  "corpus_seconds": {
+    "generic": 2.4099427776666666,
+    "helper": 0.10337578333333333
+  },
+  "observed_difference_seconds": 2.306566994333333,
+  "casewise_process_difference_seconds": 2.2683050403333334,
+  "casewise_all_measured_pass_difference_seconds": 2.020597914,
+  "largest_helper_case_difference_seconds": 0.003941187666666666,
+  "sum_helper_case_differences_seconds": 0.031335334,
+  "bounds_are_only_over_observed_samples": true,
+  "confidence_interval_claimed": false,
+  "interpretation": "The original comparison fails 13 helper per-case controls and is not admitted. Both corpus controls and every generic-path control pass. Stable generic copying accounts for about 2.41 seconds. Even combining the fastest observed generic case/pass with the slowest helper case/pass leaves 2.020598 seconds in this finite sample. This supports one isolated copying prototype, not a speedup claim or relaxation of any original gate.",
+  "next_evaluation": "One isolated reuse of the existing contiguous-copy helper; all numerical, full-application and release gates remain mandatory.",
+  "reviewer": {
+    "bytes": 3742,
+    "sha256": "1c203373a85b29cb8ad581addef0000f4b937fa2f61cc0692ac9187bf612bee9"
+  }
+}
