@@ -1,0 +1,366 @@
+{
+  "closure": {
+    "bytes": 206783,
+    "sha256": "dd612e81a85f74aebe4371ca93e6f17216c6779b927caf66bf400f0710af0f8e"
+  },
+  "passed": true,
+  "root_source_verified": true,
+  "root_integration": {
+    "bytes": 76958,
+    "sha256": "66f8c8290a20c23292e88a6bba10f3e821ec820d6134b9723125bc4571a143db"
+  },
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 815104,
+      "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 815104,
+      "sha256": "c2cc70f237bd99bfa2584ad30ca10f8e936012312a35465839b66abdbf6e19cd"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "5e53af1c153fbb0806a5a71903d6d83e19420d7d80ee21c598767dbc2a3c5954"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "core_methods": 3253,
+    "data_methods": 697,
+    "public_surface_equal": true,
+    "implementation_flags_equal": true
+  },
+  "suites": {
+    "backend": {
+      "passed": 3499,
+      "skipped": 41,
+      "census_exact": true,
+      "trx": {
+        "bytes": 5330150,
+        "sha256": "8299f6cb27b010a8f809404f5832240803a3f593ae2e77c93346cfbfbb2ac6b4"
+      }
+    },
+    "tensors": {
+      "passed": 368,
+      "skipped": 0,
+      "census_exact": true,
+      "trx": {
+        "bytes": 538215,
+        "sha256": "662d15723c2c35501929fa64009dba94fec572fd3145965df85b54db5a0b3b3d"
+      }
+    }
+  },
+  "suite256": {
+    "backend": {
+      "passed": 3409,
+      "skipped": 131,
+      "census_exact": true,
+      "avx512_disabled": true,
+      "trx": {
+        "bytes": 5390347,
+        "sha256": "3dcc180b0f8a5e303f95560d5fe4187a141a7718a819983d8312d9956495f919"
+      }
+    },
+    "tensors": {
+      "passed": 368,
+      "skipped": 0,
+      "census_exact": true,
+      "avx512_disabled": true,
+      "trx": {
+        "bytes": 538215,
+        "sha256": "6ea4e57742d227feb0006f5623bf8e1b6ae2ee6740664b35b8d9e87cc8df26a5"
+      }
+    }
+  },
+  "package": {
+    "passed": true,
+    "package": {
+      "bytes": 572770,
+      "sha256": "a83fc02e5e73d6d4c66a0a5f73a732f12efbd16a49250c5efced949aab56995e"
+    },
+    "core": {
+      "bytes": 815104,
+      "sha256": "c2cc70f237bd99bfa2584ad30ca10f8e936012312a35465839b66abdbf6e19cd"
+    },
+    "dependencies": [
+      {
+        "id": "Google.Protobuf",
+        "version": "3.33.5",
+        "exclude": "Build,Analyzers"
+      }
+    ]
+  },
+  "consumer": {
+    "passed": true,
+    "winograd_values": 1056,
+    "winograd_calls": 2,
+    "winograd_weights": 51200,
+    "winograd_scratch": 28800,
+    "prepared_graph_values": 1056,
+    "prepared_graph_calls": 2,
+    "retained_weights": 18432,
+    "scratch": 8384,
+    "ownership": true
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 8347648,
+      "seconds": 0.2604066940257326
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 173412352,
+      "seconds": 1.5597462420118973
+    },
+    {
+      "name": "cli-build",
+      "samples": 62,
+      "peak_rss": 502673408,
+      "seconds": 16.378865705104545
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 169033728,
+      "seconds": 1.5959377989638597
+    },
+    {
+      "name": "backend-build",
+      "samples": 65,
+      "peak_rss": 594272256,
+      "seconds": 17.732301487005316
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 4,
+      "peak_rss": 157229056,
+      "seconds": 1.0953917859587818
+    },
+    {
+      "name": "tensors-build",
+      "samples": 20,
+      "peak_rss": 367423488,
+      "seconds": 5.538625217042863
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 135970816,
+      "seconds": 1.1657982850447297
+    },
+    {
+      "name": "backend-tests",
+      "samples": 112,
+      "peak_rss": 1034276864,
+      "seconds": 31.072478787973523
+    },
+    {
+      "name": "tensors-tests",
+      "samples": 45,
+      "peak_rss": 383545344,
+      "seconds": 12.44641450396739
+    },
+    {
+      "name": "backend-tests-256",
+      "samples": 113,
+      "peak_rss": 831524864,
+      "seconds": 31.390198065084405
+    },
+    {
+      "name": "tensors-tests-256",
+      "samples": 39,
+      "peak_rss": 387891200,
+      "seconds": 10.800573269021697
+    },
+    {
+      "name": "package",
+      "samples": 4,
+      "peak_rss": 129781760,
+      "seconds": 1.1118243290111423
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 154767360,
+      "seconds": 1.1073443669592962
+    },
+    {
+      "name": "consumer-build",
+      "samples": 11,
+      "peak_rss": 303124480,
+      "seconds": 3.0516794110881165
+    },
+    {
+      "name": "consumer-run",
+      "samples": 1,
+      "peak_rss": 13025280,
+      "seconds": 0.2816360399592668
+    }
+  ],
+  "no_performance_measurement": true,
+  "source_correction": {
+    "correction": {
+      "failure": {
+        "bytes": 108855,
+        "sha256": "8888b3803c6495dedc87111388e021a4132307bae0dbc490efa6333a5a0a4891"
+      },
+      "original_integration": {
+        "bytes": 76019,
+        "sha256": "b5aa5ac2b91c4a9617d4db5892a8b88c037e0a24805be8fcffd19631abfe4db8"
+      },
+      "source_before": {
+        "bytes": 4689,
+        "sha256": "b06d3ee48fd41a7a5f7b86abdec1ead8f6b2c17eb963fb959f6ea1ecbb6de4e6"
+      },
+      "source_after": {
+        "bytes": 4748,
+        "sha256": "1349301e83a1eedd7eaf2e7e67be57d4c72dc4a0898fa629d703877be9b6a430"
+      },
+      "patch": {
+        "bytes": 891,
+        "sha256": "24812a3f157a3ec237c5ba19147f61c1c6651531e5ef4e6863119e573d8c8181"
+      },
+      "transformer": {
+        "bytes": 2746,
+        "sha256": "e571822179a5fb85172173870e0bde93c330c5625c641bffb46b2b1809004eb5"
+      },
+      "only_nullable_contract_changed": true,
+      "compiled_equivalence_pending": true
+    },
+    "compiled_equivalence_verified": true,
+    "zero_compiler_warnings": false,
+    "no_new_compiler_warnings": true,
+    "baseline_closure": {
+      "bytes": 203187,
+      "sha256": "c7a1d2e11566e6eeeb965de6c9cedbf47df479fd51f194c797af412446281609"
+    },
+    "compiler_warning_logs": {
+      "collected/logs/cli-build.stdout": {
+        "current": {
+          "bytes": 2325,
+          "sha256": "1799fbeae636c1d63705bad8ab9a6ff918d84870425881db79bba555c4977911"
+        },
+        "baseline": {
+          "bytes": 2303,
+          "sha256": "9382a3b2c2af35678c294242cd6147bc600261726f9a106880c8ad8ec59d97e8"
+        }
+      },
+      "collected/logs/cli-build.stderr": {
+        "current": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "baseline": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "collected/logs/backend-build.stdout": {
+        "current": {
+          "bytes": 540,
+          "sha256": "2bbfa27efbc6a820c0654fa8f4a802117dcedf15ad745b3947e42ce7266b506f"
+        },
+        "baseline": {
+          "bytes": 534,
+          "sha256": "ee070f0c000e7288c6f4b43ed812f6e5f766e5f1eff18a6a8612c2885a931c55"
+        }
+      },
+      "collected/logs/backend-build.stderr": {
+        "current": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "baseline": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "collected/logs/tensors-build.stdout": {
+        "current": {
+          "bytes": 390,
+          "sha256": "51c630ed60e9866112f32afad4efd74104d73038308665a567232d26bf959e0e"
+        },
+        "baseline": {
+          "bytes": 386,
+          "sha256": "1e53b81b9fdf0fb2480c92b553937b53dd10247af75641c618f8a2cf41ebf035"
+        }
+      },
+      "collected/logs/tensors-build.stderr": {
+        "current": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "baseline": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "collected/logs/package.stdout": {
+        "current": {
+          "bytes": 251,
+          "sha256": "08ddc171b12b024d56b89e7899d53a24003cb24995f45e1c2330f3988025703b"
+        },
+        "baseline": {
+          "bytes": 247,
+          "sha256": "7d6943718fe095413c695e3075374ea709bbcbc7be36d2641cb138c4a3dc12b7"
+        }
+      },
+      "collected/logs/package.stderr": {
+        "current": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "baseline": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "collected/logs/consumer-build.stdout": {
+        "current": {
+          "bytes": 202,
+          "sha256": "a2b1d0dcbbb71f20e5419b8bf303e02eab781e9ebf114240cbf6570af3af52c3"
+        },
+        "baseline": {
+          "bytes": 200,
+          "sha256": "baf64ee8f9771be8f0f0f96f4b2c370cffc356f65e8abb494915f9107731dca6"
+        }
+      },
+      "collected/logs/consumer-build.stderr": {
+        "current": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "baseline": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "diagnostics": {
+      "collected/logs/cli-build.stdout": [
+        "<root>/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,29): warning CS8604: Possible null reference argument for parameter 'x' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [<root>/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+        "<root>/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,29): warning CS8604: Possible null reference argument for parameter 'x' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [<root>/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+        "<root>/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,32): warning CS8604: Possible null reference argument for parameter 'y' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [<root>/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+        "<root>/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,32): warning CS8604: Possible null reference argument for parameter 'y' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [<root>/src/Lokad.Onnx/Lokad.Onnx.csproj]"
+      ],
+      "collected/logs/cli-build.stderr": [],
+      "collected/logs/backend-build.stdout": [],
+      "collected/logs/backend-build.stderr": [],
+      "collected/logs/tensors-build.stdout": [],
+      "collected/logs/tensors-build.stderr": [],
+      "collected/logs/package.stdout": [],
+      "collected/logs/package.stderr": [],
+      "collected/logs/consumer-build.stdout": [],
+      "collected/logs/consumer-build.stderr": []
+    }
+  }
+}

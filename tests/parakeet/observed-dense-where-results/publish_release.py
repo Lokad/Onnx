@@ -22,7 +22,8 @@ def read(path): return json.loads(path.read_text(encoding='utf8'))
 
 
 def closed(stage):
-    base = ROOT/f'artifacts/parakeet-observed-dense-where-{stage}-amd-20260924'
+    suffix = 'root-amd-v2' if stage == 'root' else f'{stage}-amd'
+    base = ROOT/f'artifacts/parakeet-observed-dense-where-{suffix}-20260924'
     proof = read(base/'closed.json'); assert proof['passed']
     for name, wanted in proof['files'].items(): assert pin(base/name) == wanted, name
     analysis = read(base/'analysis.json'); assert analysis['passed']
@@ -141,8 +142,56 @@ def pyannote():
         'pyannote-observations-20260924.json':observation(base,analysis)})
 
 
+def source_correction(base, analysis):
+    applied = read(base/'bundle/evidence/root-applied.json')
+    correction = applied['source_correction']
+    adapter = ROOT/'tests/parakeet/observed-dense-where-root-amd-v2'
+    sys.path.insert(0,str(adapter))
+    spec = importlib.util.spec_from_file_location('root_nullability',adapter/'nullability.py')
+    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    module.verify_failure()
+    integration = ROOT/'artifacts/parakeet-observed-dense-where-root-integration-v2-20260924'
+    assert correction['failure'] == pin(module.INCIDENT/'closed.json')
+    assert correction['original_integration'] == pin(module.INITIAL/'applied.json')
+    assert correction['transformer'] == pin(adapter/'nullability.py')
+    assert correction['patch'] == pin(integration/'source.patch')
+    before = ROOT/'artifacts/parakeet-observed-dense-where-source-20260924/source'/module.HELPER
+    assert correction['source_before'] == pin(before)
+    assert correction['source_after'] == pin(ROOT/module.HELPER)
+    assert module.correct(before.read_bytes()) == (ROOT/module.HELPER).read_bytes()
+    assert correction['only_nullable_contract_changed']
+    assert analysis['inventory']['implementation_flags_equal'] and analysis['inventory']['public_surface_equal']
+    # The earlier plan assumed a warning-free baseline. Retained M66 logs have
+    # two CS8604 diagnostics in unchanged WideProjectionEntry, each printed
+    # twice. Require the exact prior warning census, and disclose that fact.
+    baseline = ROOT/'artifacts/parakeet-validated-composition-root-amd-20260924'
+    assert applied['prerequisites']['selected'] == pin(baseline/'closed.json')
+    prior = read(baseline/'closed.json'); assert prior['passed']
+    logs = {}; warnings = {}
+    def diagnostics(content):
+        return sorted(re.sub(r'/dev/shm/[^/\s]+/source/','<root>/',line)
+            for line in content.splitlines() if re.search(r'\bwarning CS\d+\b',line))
+    for job in ['cli-build','backend-build','tensors-build','package','consumer-build']:
+        for channel in ['stdout','stderr']:
+            path = base/'collected/logs'/f'{job}.{channel}'
+            relative = path.relative_to(base).as_posix()
+            old = baseline/relative
+            assert pin(old) == prior['files'][relative]
+            content = path.read_text(encoding='utf8')
+            actual = diagnostics(content)
+            assert actual == diagnostics(old.read_text(encoding='utf8')), path
+            assert all('Zzz.WideProjectionEntry.cs(20,' in line and 'warning CS8604:' in line for line in actual)
+            warnings[relative] = actual
+            logs[relative] = dict(current=pin(path),baseline=pin(old))
+    assert sum(map(len,warnings.values())) == 4
+    return dict(correction=correction,compiled_equivalence_verified=True,
+        zero_compiler_warnings=False,no_new_compiler_warnings=True,
+        baseline_closure=pin(baseline/'closed.json'),compiler_warning_logs=logs,diagnostics=warnings)
+
+
 def root():
     base, _, analysis = closed('root')
+    correction = source_correction(base, analysis)
     assert analysis['root_source_verified'] and analysis['inventory']['implementation_flags_equal']
     assert (analysis['inventory']['core_methods'],analysis['inventory']['data_methods']) == (3253,697)
     expected = {'suites':{'backend':(3499,41),'tensors':(368,0)},'suite256':{'backend':(3409,131),'tensors':(368,0)}}
@@ -153,9 +202,18 @@ def root():
     source = read(base/'bundle/evidence/root-applied.json')['source_files']; assert len(source) == 427
     for name, wanted in source.items(): assert pin(ROOT/name) == wanted, name
     lines = ['# Observed-mask candidate: normal root and package qualification','',
-        'All 427 root inputs match the admitted source and public regression tests. A normal SDK 10.0.204 build',
+        'All 427 root inputs match the measured source with its nullable-output',
+        'annotation correction and public regression tests. A normal SDK 10.0.204 build',
         'preserves all 3,253 Core and 697 Data method bodies, implementation flags',
-        'and public interfaces against the measured candidate.','',
+        'and public interfaces against the measured candidate. The corrected helper',
+        'introduces no compiler warnings. Two existing CS8604 diagnostics in unchanged',
+        'WideProjectionEntry remain; all build warning lines exactly match the prior',
+        'qualified release after normalizing the workspace path. The plan\'s original',
+        'zero-warning assumption was incorrect; this is not a warning-free build.','',
+        'The [first root run](root-source-policy-failure-20260924.md) remains rejected.',
+        'This separately qualified successor replaces the helper\'s null suppression',
+        'with its explicit nullable-output contract. All original tests remain intact;',
+        'compiled equivalence, full suites and package use now pass.','',
         '| Full suite | Normal pass / skip | AVX512 disabled pass / skip |',
         '|---|---:|---:|','| Backend | 3,499 / 41 | 3,409 / 131 |','| Tensor | 368 / 0 | 368 / 0 |','',
         'Every current-release test outcome and all 28 new public masking cases',
@@ -171,11 +229,12 @@ def root():
         'This qualification provides no new performance measurement.','',
         '[Full census, package and resource evidence](root-observations-20260924.json).','',
         'Closure: `'+pin(base/'closed.json')['sha256']+'`.']
-    publish({'root-20260924.md':'\n'.join(lines)+'\n','root-observations-20260924.json':observation(base,analysis)})
+    publish({'root-20260924.md':'\n'.join(lines)+'\n','root-observations-20260924.json':observation(base,dict(**analysis,source_correction=correction))})
 
 
 def benchmark():
     rb, _, ra = closed('root'); _, pp, pa = closed('app')
+    source_correction(rb, ra)
     _, yp, ya = closed('pyannote-app'); gb, gp, ga = closed('graphs')
     assert pp['admitted'] and yp['admitted'] and gp['admitted'] and gp['all_controls_passed']
     assert ra['root_source_verified'] and ra['inventory']['implementation_flags_equal']

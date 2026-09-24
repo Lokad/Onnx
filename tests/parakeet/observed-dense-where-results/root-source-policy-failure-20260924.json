@@ -1,0 +1,147 @@
+{
+  "closure": {
+    "bytes": 108855,
+    "sha256": "8888b3803c6495dedc87111388e021a4132307bae0dbc490efa6333a5a0a4891"
+  },
+  "passed": false,
+  "release_admitted": false,
+  "classification": "New helper violates the existing no-null-forgiving source policy.",
+  "product_tests_failed": 1,
+  "failed_test": "Lokad.Onnx.Tensors.Tests.NoNullForgivingTests.SourceTree_HasNoNullForgivingOperators",
+  "failure_message": "Null-forgiving operators found:\nsrc/Lokad.Onnx/Zzz.DenseScalarWhere.cs: : unmanaged\n    {\n        output = null!",
+  "tensor_passed": 367,
+  "tensor_failed": 1,
+  "other_tensor_outcomes_exact": true,
+  "tensor_trx": {
+    "bytes": 537855,
+    "sha256": "7a62994740d8ae0420e7caa271f70324ad9d0bbc8d69ea17b9e1a90e626c0917"
+  },
+  "helper": {
+    "bytes": 4689,
+    "sha256": "b06d3ee48fd41a7a5f7b86abdec1ead8f6b2c17eb963fb959f6ea1ecbb6de4e6"
+  },
+  "policy_test": {
+    "bytes": 4986,
+    "sha256": "031d1f9aa96ceeb20c5bad89484ef1de616dc8f8c6c768e6ddce83cae34ffdde"
+  },
+  "inventory": {
+    "passed": true,
+    "core_methods": 3253,
+    "data_methods": 697,
+    "public_surface_equal": true,
+    "implementation_flags_equal": true
+  },
+  "backend": {
+    "passed": 3499,
+    "skipped": 41,
+    "census_exact": true,
+    "trx": {
+      "bytes": 5308871,
+      "sha256": "e9bdde375109a275c8a94c9683a31ca6041c3df5237a897019f5ddb688b8f8aa"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 815104,
+      "sha256": "8d57c878f77573ad9fad8a9cd3776c0b1e79da4c6539738387fe8e9071ccf35c"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "acd72f46431db375988351e2961d29af098d9596ae412000b3b939f24a4ab8c3"
+    }
+  },
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 815104,
+      "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+    }
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 8392704,
+      "seconds": 0.2608111770823598
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 172953600,
+      "seconds": 1.5574196330271661
+    },
+    {
+      "name": "cli-build",
+      "samples": 64,
+      "peak_rss": 511086592,
+      "seconds": 16.893622318049893
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 166424576,
+      "seconds": 1.594248250941746
+    },
+    {
+      "name": "backend-build",
+      "samples": 63,
+      "peak_rss": 600018944,
+      "seconds": 17.164043535944074
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 4,
+      "peak_rss": 157532160,
+      "seconds": 1.0958780189976096
+    },
+    {
+      "name": "tensors-build",
+      "samples": 21,
+      "peak_rss": 366813184,
+      "seconds": 5.803239983972162
+    },
+    {
+      "name": "inventory",
+      "samples": 3,
+      "peak_rss": 135593984,
+      "seconds": 0.8910291980719194
+    },
+    {
+      "name": "backend-tests",
+      "samples": 101,
+      "peak_rss": 821792768,
+      "seconds": 28.019345917971805
+    },
+    {
+      "name": "tensors-tests",
+      "samples": 45,
+      "peak_rss": 392011776,
+      "seconds": 12.432602094952017
+    }
+  ],
+  "completed_jobs": [
+    "sdk-version",
+    "cli-restore",
+    "cli-build",
+    "backend-restore",
+    "backend-build",
+    "tensors-restore",
+    "tensors-build",
+    "inventory",
+    "backend-tests",
+    "tensors-tests"
+  ],
+  "unexecuted_jobs": [
+    "backend-tests-256",
+    "tensors-tests-256",
+    "package",
+    "consumer-restore",
+    "consumer-build",
+    "consumer-run"
+  ],
+  "root_source_verified": true,
+  "normal_root_and_package_incomplete": true
+}

@@ -420,7 +420,21 @@ public partial class CPUExecutionProvider
             case TensorElementType.Int64: return Success(op, Tensor<long>.Where((Tensor<bool>)condition, (Tensor<long>)X, (Tensor<long>)Y));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Where((Tensor<bool>)condition, (Tensor<uint>)X, (Tensor<uint>)Y));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Where((Tensor<bool>)condition, (Tensor<ulong>)X, (Tensor<ulong>)Y));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Where((Tensor<bool>)condition, (Tensor<float>)X, (Tensor<float>)Y));
+            case TensorElementType.Float:
+            {
+                var c = (Tensor<bool>)condition;
+                var x = (Tensor<float>)X;
+                var y = (Tensor<float>)Y;
+                // Limit selection specialization to substantial scalar-operand calls.
+                // Small and unsupported calls retain the generic tensor entry.
+                if (y.Length >= 4096 && x.Length == 1)
+                {
+                    Profiler.StartOpStage(OpStage.ValidateArguments);
+                    if (DenseScalarWhere.Try(c, x, y, out var selected))
+                        return Success(op, selected);
+                }
+                return Success(op, Tensor<float>.Where(c, x, y));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Where((Tensor<bool>)condition, (Tensor<double>)X, (Tensor<double>)Y));
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Where((Tensor<bool>)condition, (Tensor<Half>)X, (Tensor<Half>)Y));
             default: return InputTypeNotSupported(op, nameof(X), X);
