@@ -7,6 +7,14 @@ root from a runtime directory outside that tree. Preserve its failed closure
 helper's forbidden null-forgiving operator with an annotated nullable out result.
 The candidate mechanism, fallback and test expectations stay the same.
 
+Qualification is now complete: [369/369 cases pass in both verified modes](../slice-materialization-results/qualification-20260924.md).
+The v2 disabled-mode attempt used an ineffective `DOTNET_EnableAVX512F` name and
+its identity test correctly failed. `correct_mode.py` reused the same binaries
+under a new namespace with `DOTNET_EnableAVX512=0`; all tests then passed.
+Both failed stages remain closed. Do not rerun the obsolete build/capture flow.
+The corrected-mode stage is also terminal; its commands were `prepare`, `stage`,
+`launch`, `observe`, `collect`, `audit`, with the same Python invocation below.
+
 This stage consumes the immutable 423-file candidate snapshot after all 1,920
 actual layouts passed. Only `TensorSlice.Reshape` changes, with one private helper;
 25 copying contract cases are added. The build adds one campaign-only identity

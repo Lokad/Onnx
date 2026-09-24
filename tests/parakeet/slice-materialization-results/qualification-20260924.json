@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "core": {
+    "bytes": 774656,
+    "sha256": "bafdb0069c4809251fd4e287ad094076ed5e01cefe8be7be6dc6446f8887a9da"
+  },
+  "consumer": {
+    "bytes": 186368,
+    "sha256": "1d24ea12d4582f10745f2c3ba454e17072b203364bdba8a3f1592f3f221839a4"
+  },
+  "suites": [
+    {
+      "mode": "512",
+      "passed": 369,
+      "skipped": 0,
+      "trx": {
+        "bytes": 516046,
+        "sha256": "3bf27dbaa8383d45eaa8ac9cce95a57d605bc62b53ad55e5df552cfaf31398df"
+      }
+    },
+    {
+      "mode": "256",
+      "passed": 369,
+      "skipped": 0,
+      "trx": {
+        "bytes": 516046,
+        "sha256": "5c5bbfdb082b3d106768a6f50421a995fb7619ecf5a59684f458e3a9430d462d"
+      }
+    }
+  ],
+  "same_binaries": true,
+  "resources": {
+    "samples": 22,
+    "peak_rss": 418807808
+  },
+  "previous_failure": {
+    "bytes": 1027,
+    "sha256": "c7613d20dddfc01734af51966ec22c47527bd16b5a2879531a3d23e0538bac4d"
+  },
+  "build_review": {
+    "bytes": 1819,
+    "sha256": "aa34820a580070972dde47225b1fa14a8172f6731ba91bb6b5aacfa30c527d96"
+  },
+  "performance_measured": false,
+  "closure": {
+    "bytes": 828,
+    "sha256": "2ca35d781102cdc701bd91432e139fa498c035b638d51233ee30555cd42b67a2"
+  },
+  "normal_mode_resources": {
+    "samples": 20,
+    "peak_rss": 422555648
+  },
+  "source": {
+    "bytes": 148123,
+    "sha256": "d11cfc00158da39984da41da3cafc4ceb404d2f9e002c542a701f244d30a5150"
+  }
+}

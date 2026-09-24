@@ -6,18 +6,20 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **46.12 GB**, including **32.65 GB** in artifacts,
+The latest inventory is **46.26 GB**, including **32.79 GB** in artifacts,
 after retaining the selected-release profile, rejected inclusive-packing trial,
 actual decoder LSTM capture, isolated recurrent preparation build and focused
 contracts, actual decoder/call qualification and full-model checks in both
 instruction modes. The invalid component timing, completed application
 comparison, completed ORT graph/operator/native-kernel diagnosis and matched
-Lokad phase/operator capture are also retained.
+Lokad phase/operator capture are also retained. Actual slice layouts, both
+candidate builds, both-mode copying qualification and the two corrected test
+setup failures remain recorded with their raw evidence.
 All raw traces, clocks, native arrays,
 failed checks and qualification evidence remain retained. The inventory totals
-**46,121,392,134 bytes**, with **3.88 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m65-matched-diagnosis-complete-size.json`.
-Counting the model junction again gives 56.91 GB, which counts the same 10.79 GB
+**46,260,857,302 bytes**, with **3.74 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m65-slice-copy-complete-size.json`.
+Counting the model junction again gives 57.05 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 

@@ -45,6 +45,11 @@ actual managed layout, then test one guarded bulk-copy change. The observed
 ceiling is about **2.94s, or 4% of the whole request**, not a promised saving.
 See the [matched pair evidence and rejection conditions](../managed-phase-results/results-20260924.md).
 
+The subsequent [actual-layout capture](../slice-materialization-results/layouts-20260924.md)
+confirms all 1,920 layouts. The isolated copying candidate now passes
+[369 tensor tests in each verified instruction mode](../slice-materialization-results/qualification-20260924.md).
+Full-model and performance qualification remain; the release ratio is unchanged.
+
 The retained Lokad profile already constrains priorities. The entire
 `ParakeetGeneration.Decode` call tree accounts for **12.529% and 12.548%** of
 request samples in its two captures. That includes recurrent graph execution
