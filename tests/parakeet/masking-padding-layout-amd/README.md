@@ -11,6 +11,11 @@ It records every one of the 72 float Where and 48 Pad operations during each
 of the original 80 requests: 9,600 observations across all 20 clips and 24 layers.
 Mixed masks and non-dense layouts are valid diagnostic findings.
 
+The [source work counts](../managed-phase-results/masking-work-20260924.md)
+quantify the predicted index calculations and logical writes for this corpus.
+`work_counts.py` consumes retained evidence only; its closed counts neither
+replace the capture nor establish instruction counts or a performance gain.
+
 Core remains byte-identical to the measured M66 composition (`37c24375`). An
 isolated Data build adds a disposable logger scope to the private graph-call
 helper. Every node ordinal is checked; target inputs and subsequent outputs
