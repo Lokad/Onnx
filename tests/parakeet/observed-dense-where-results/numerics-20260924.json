@@ -1,0 +1,66 @@
+{
+  "closure": {
+    "bytes": 37356,
+    "sha256": "0dfb5dcb4d5c5793c7c175837bde6f9469e791f62c02cf1b4df679ba4d81f0db"
+  },
+  "passed": true,
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 782848,
+        "sha256": "37c243756bbe5e5d563e79627a0a4d20ff027598801849da9606549c7ac60286"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "cc37b19eb41cf728061c35bcdb7e06a6ab4d370bfd4c47555eec86c86b2ef6d6"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    }
+  },
+  "consumer": {
+    "bytes": 45568,
+    "sha256": "32163d16153daee5a7b32cd7073a260956a50c422829b934732a3d677a1d5a33"
+  },
+  "numerical_workers": 4,
+  "cases_per_boundary": 235,
+  "boundaries": 2,
+  "provider_contract_cases_per_worker": 20,
+  "values_all_numerical_workers": 30403936,
+  "candidate_helper_admissions_both_boundaries_modes": 608,
+  "provider_fast_cases_per_census": 95,
+  "codegen_workers": 2,
+  "codegen_cases_per_boundary": 220,
+  "calls_per_codegen_case": 81,
+  "profile_validation_stage_sums": {
+    "current-numerics-256-tensor": 0,
+    "current-numerics-256-provider": 880,
+    "current-numerics-512-tensor": 0,
+    "current-numerics-512-provider": 880,
+    "candidate-numerics-256-tensor": 0,
+    "candidate-numerics-256-provider": 621,
+    "candidate-numerics-512-tensor": 0,
+    "candidate-numerics-512-provider": 621,
+    "current-codegen-512-tensor": 0,
+    "current-codegen-512-provider": -220,
+    "candidate-codegen-512-tensor": 0,
+    "candidate-codegen-512-provider": -220
+  },
+  "independent_coordinate_oracle": true,
+  "captured_raw_and_run_shapes_numpy_bit_oracle": true,
+  "all_selected_bits_exact": true,
+  "original_131_case_hashes_exact": true,
+  "input_ownership_and_held_outputs": true,
+  "resources": 129,
+  "peak_rss": 327802880,
+  "root_product_changed": false,
+  "no_performance_measurement": true
+}
