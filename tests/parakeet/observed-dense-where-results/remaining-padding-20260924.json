@@ -1,0 +1,3521 @@
+{
+  "closure": {
+    "bytes": 306,
+    "sha256": "c9161db64be4f67061339195862b4680cb9e178c0125adf7ad4f73548e0ce46c"
+  },
+  "rows": [
+    {
+      "kind": "attention-pad",
+      "layer": 0,
+      "name": "/layers.0/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.090141396,
+      "candidate_seconds": 0.09095434766666667,
+      "earlier_ort_group_seconds": 0.0011543333333333334
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 1,
+      "name": "/layers.1/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.090693201,
+      "candidate_seconds": 0.090243709,
+      "earlier_ort_group_seconds": 0.001445
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 2,
+      "name": "/layers.2/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08997252733333333,
+      "candidate_seconds": 0.09029816766666666,
+      "earlier_ort_group_seconds": 0.0014653333333333332
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 3,
+      "name": "/layers.3/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.09028276566666667,
+      "candidate_seconds": 0.089612034,
+      "earlier_ort_group_seconds": 0.001474
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 4,
+      "name": "/layers.4/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089789946,
+      "candidate_seconds": 0.089609807,
+      "earlier_ort_group_seconds": 0.001445
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 5,
+      "name": "/layers.5/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08921810933333334,
+      "candidate_seconds": 0.08975697766666667,
+      "earlier_ort_group_seconds": 0.0014576666666666666
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 6,
+      "name": "/layers.6/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08938512633333333,
+      "candidate_seconds": 0.09002581766666666,
+      "earlier_ort_group_seconds": 0.0015016666666666668
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 7,
+      "name": "/layers.7/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08937195633333334,
+      "candidate_seconds": 0.08950430566666667,
+      "earlier_ort_group_seconds": 0.0014706666666666666
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 8,
+      "name": "/layers.8/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08994009966666666,
+      "candidate_seconds": 0.08957884533333334,
+      "earlier_ort_group_seconds": 0.0014613333333333334
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 9,
+      "name": "/layers.9/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08977748433333334,
+      "candidate_seconds": 0.08971520466666667,
+      "earlier_ort_group_seconds": 0.001449
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 10,
+      "name": "/layers.10/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089671517,
+      "candidate_seconds": 0.08980040466666667,
+      "earlier_ort_group_seconds": 0.001511
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 11,
+      "name": "/layers.11/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08959360866666667,
+      "candidate_seconds": 0.09179322266666666,
+      "earlier_ort_group_seconds": 0.0014693333333333333
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 12,
+      "name": "/layers.12/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08961621066666667,
+      "candidate_seconds": 0.08973174633333333,
+      "earlier_ort_group_seconds": 0.0014706666666666666
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 13,
+      "name": "/layers.13/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089936663,
+      "candidate_seconds": 0.090533648,
+      "earlier_ort_group_seconds": 0.0014786666666666668
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 14,
+      "name": "/layers.14/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089902522,
+      "candidate_seconds": 0.090126357,
+      "earlier_ort_group_seconds": 0.001481
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 15,
+      "name": "/layers.15/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.11638828766666667,
+      "candidate_seconds": 0.08990237733333334,
+      "earlier_ort_group_seconds": 0.00147
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 16,
+      "name": "/layers.16/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089730898,
+      "candidate_seconds": 0.089934814,
+      "earlier_ort_group_seconds": 0.0014903333333333333
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 17,
+      "name": "/layers.17/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.09038193933333333,
+      "candidate_seconds": 0.09054475133333334,
+      "earlier_ort_group_seconds": 0.001461
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 18,
+      "name": "/layers.18/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.08945329966666667,
+      "candidate_seconds": 0.090058106,
+      "earlier_ort_group_seconds": 0.00148
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 19,
+      "name": "/layers.19/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089718882,
+      "candidate_seconds": 0.09036636833333334,
+      "earlier_ort_group_seconds": 0.0014723333333333333
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 20,
+      "name": "/layers.20/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089921349,
+      "candidate_seconds": 0.09132426733333333,
+      "earlier_ort_group_seconds": 0.001494
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 21,
+      "name": "/layers.21/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.089961798,
+      "candidate_seconds": 0.09076704566666667,
+      "earlier_ort_group_seconds": 0.001475
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 22,
+      "name": "/layers.22/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.09018595333333333,
+      "candidate_seconds": 0.09083163233333333,
+      "earlier_ort_group_seconds": 0.0014723333333333333
+    },
+    {
+      "kind": "attention-pad",
+      "layer": 23,
+      "name": "/layers.23/self_attn/Pad",
+      "calls": 60,
+      "selected_seconds": 0.090667994,
+      "candidate_seconds": 0.09057941666666666,
+      "earlier_ort_group_seconds": 0.001331
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 0,
+      "name": "/layers.0/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.030182748,
+      "candidate_seconds": 0.03103873,
+      "earlier_ort_group_seconds": 0.0006423333333333333
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 1,
+      "name": "/layers.1/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.030117746333333334,
+      "candidate_seconds": 0.030207393666666665,
+      "earlier_ort_group_seconds": 0.0006206666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 2,
+      "name": "/layers.2/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.02986275,
+      "candidate_seconds": 0.029835984666666666,
+      "earlier_ort_group_seconds": 0.0006646666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 3,
+      "name": "/layers.3/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029645666,
+      "candidate_seconds": 0.030516662333333333,
+      "earlier_ort_group_seconds": 0.000635
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 4,
+      "name": "/layers.4/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029646319333333334,
+      "candidate_seconds": 0.029691733,
+      "earlier_ort_group_seconds": 0.0006413333333333334
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 5,
+      "name": "/layers.5/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029691736,
+      "candidate_seconds": 0.029815982666666668,
+      "earlier_ort_group_seconds": 0.0006336666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 6,
+      "name": "/layers.6/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029562217,
+      "candidate_seconds": 0.030356039333333334,
+      "earlier_ort_group_seconds": 0.000635
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 7,
+      "name": "/layers.7/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029547445,
+      "candidate_seconds": 0.029662795666666665,
+      "earlier_ort_group_seconds": 0.0006346666666666666
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 8,
+      "name": "/layers.8/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029704368,
+      "candidate_seconds": 0.029594731333333332,
+      "earlier_ort_group_seconds": 0.0006426666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 9,
+      "name": "/layers.9/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029660055333333334,
+      "candidate_seconds": 0.029748958333333332,
+      "earlier_ort_group_seconds": 0.0006253333333333333
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 10,
+      "name": "/layers.10/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029678775333333334,
+      "candidate_seconds": 0.029988791666666667,
+      "earlier_ort_group_seconds": 0.000637
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 11,
+      "name": "/layers.11/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029667514666666665,
+      "candidate_seconds": 0.029733924666666668,
+      "earlier_ort_group_seconds": 0.0006373333333333333
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 12,
+      "name": "/layers.12/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029840512333333333,
+      "candidate_seconds": 0.029784421,
+      "earlier_ort_group_seconds": 0.0006426666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 13,
+      "name": "/layers.13/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029721399,
+      "candidate_seconds": 0.029861025333333333,
+      "earlier_ort_group_seconds": 0.0006343333333333333
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 14,
+      "name": "/layers.14/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029649755333333333,
+      "candidate_seconds": 0.029745648666666666,
+      "earlier_ort_group_seconds": 0.0006726666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 15,
+      "name": "/layers.15/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.030068439333333332,
+      "candidate_seconds": 0.029684705,
+      "earlier_ort_group_seconds": 0.0006236666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 16,
+      "name": "/layers.16/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029646358333333334,
+      "candidate_seconds": 0.029818565,
+      "earlier_ort_group_seconds": 0.0006313333333333334
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 17,
+      "name": "/layers.17/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029590978,
+      "candidate_seconds": 0.029785298333333335,
+      "earlier_ort_group_seconds": 0.000641
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 18,
+      "name": "/layers.18/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.02947261,
+      "candidate_seconds": 0.029984032,
+      "earlier_ort_group_seconds": 0.000638
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 19,
+      "name": "/layers.19/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029645219,
+      "candidate_seconds": 0.030031419666666666,
+      "earlier_ort_group_seconds": 0.0006433333333333333
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 20,
+      "name": "/layers.20/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029685376666666666,
+      "candidate_seconds": 0.02995877,
+      "earlier_ort_group_seconds": 0.0006303333333333333
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 21,
+      "name": "/layers.21/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029615338333333335,
+      "candidate_seconds": 0.030030774,
+      "earlier_ort_group_seconds": 0.0006326666666666667
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 22,
+      "name": "/layers.22/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.029766008,
+      "candidate_seconds": 0.030002350333333334,
+      "earlier_ort_group_seconds": 0.0006403333333333334
+    },
+    {
+      "kind": "convolution-pad",
+      "layer": 23,
+      "name": "/layers.23/conv/depthwise_conv/Pad",
+      "calls": 60,
+      "selected_seconds": 0.03060923,
+      "candidate_seconds": 0.029978057,
+      "earlier_ort_group_seconds": 0.0006143333333333334
+    }
+  ],
+  "families": [
+    {
+      "kind": "attention-pad",
+      "complete_groups": {
+        "selected": {
+          "nodes": 198,
+          "seconds": 2.204711333666667,
+          "operators": {
+            "Constant": {
+              "nodes": 6,
+              "seconds": 0.00013824866666666666
+            },
+            "ConstantOfShape": {
+              "nodes": 24,
+              "seconds": 0.001691017
+            },
+            "Concat": {
+              "nodes": 24,
+              "seconds": 0.0022047839999999996
+            },
+            "Reshape": {
+              "nodes": 48,
+              "seconds": 0.0024050383333333323
+            },
+            "Slice": {
+              "nodes": 24,
+              "seconds": 0.007711680666666667
+            },
+            "Transpose": {
+              "nodes": 24,
+              "seconds": 0.002880873
+            },
+            "Cast": {
+              "nodes": 24,
+              "seconds": 0.0039761576666666664
+            },
+            "Pad": {
+              "nodes": 24,
+              "seconds": 2.183703534333333
+            }
+          }
+        },
+        "candidate": {
+          "nodes": 198,
+          "seconds": 2.186340799,
+          "operators": {
+            "Constant": {
+              "nodes": 6,
+              "seconds": 5.0559333333333336e-05
+            },
+            "ConstantOfShape": {
+              "nodes": 24,
+              "seconds": 0.0017883603333333335
+            },
+            "Concat": {
+              "nodes": 24,
+              "seconds": 0.0023803786666666666
+            },
+            "Reshape": {
+              "nodes": 48,
+              "seconds": 0.0022731920000000007
+            },
+            "Slice": {
+              "nodes": 24,
+              "seconds": 0.007284933999999999
+            },
+            "Transpose": {
+              "nodes": 24,
+              "seconds": 0.002941275666666666
+            },
+            "Cast": {
+              "nodes": 24,
+              "seconds": 0.004028725000000002
+            },
+            "Pad": {
+              "nodes": 24,
+              "seconds": 2.165593374
+            }
+          }
+        }
+      },
+      "kernels": {
+        "selected": 2.1837035343333335,
+        "candidate": 2.165593374
+      },
+      "earlier_ort_group": {
+        "nodes": 24,
+        "seconds": 0.034880666666666664,
+        "operators": {
+          "Pad": {
+            "nodes": 24,
+            "seconds": 0.03488066666666666
+          }
+        }
+      }
+    },
+    {
+      "kind": "convolution-pad",
+      "complete_groups": {
+        "selected": {
+          "nodes": 198,
+          "seconds": 0.732804856,
+          "operators": {
+            "Constant": {
+              "nodes": 6,
+              "seconds": 0.00017862633333333333
+            },
+            "ConstantOfShape": {
+              "nodes": 24,
+              "seconds": 0.0021091806666666663
+            },
+            "Concat": {
+              "nodes": 24,
+              "seconds": 0.0024520436666666664
+            },
+            "Reshape": {
+              "nodes": 48,
+              "seconds": 0.0033014233333333335
+            },
+            "Slice": {
+              "nodes": 24,
+              "seconds": 0.006034778666666667
+            },
+            "Transpose": {
+              "nodes": 24,
+              "seconds": 0.0034285750000000005
+            },
+            "Cast": {
+              "nodes": 24,
+              "seconds": 0.0010216630000000001
+            },
+            "Pad": {
+              "nodes": 24,
+              "seconds": 0.7142785653333332
+            }
+          }
+        },
+        "candidate": {
+          "nodes": 198,
+          "seconds": 0.735899707,
+          "operators": {
+            "Constant": {
+              "nodes": 6,
+              "seconds": 7.891733333333334e-05
+            },
+            "ConstantOfShape": {
+              "nodes": 24,
+              "seconds": 0.0020582326666666664
+            },
+            "Concat": {
+              "nodes": 24,
+              "seconds": 0.002208267333333333
+            },
+            "Reshape": {
+              "nodes": 48,
+              "seconds": 0.002872515333333334
+            },
+            "Slice": {
+              "nodes": 24,
+              "seconds": 0.005649779
+            },
+            "Transpose": {
+              "nodes": 24,
+              "seconds": 0.0032351343333333338
+            },
+            "Cast": {
+              "nodes": 24,
+              "seconds": 0.0009400673333333334
+            },
+            "Pad": {
+              "nodes": 24,
+              "seconds": 0.7188567936666667
+            }
+          }
+        }
+      },
+      "kernels": {
+        "selected": 0.7142785653333333,
+        "candidate": 0.7188567936666667
+      },
+      "earlier_ort_group": {
+        "nodes": 24,
+        "seconds": 0.015294333333333333,
+        "operators": {
+          "Pad": {
+            "nodes": 24,
+            "seconds": 0.015294333333333332
+          }
+        }
+      }
+    }
+  ],
+  "union_rows": [
+    {
+      "name": "/layers.0/self_attn/Constant_88",
+      "op": "Constant",
+      "members": 24,
+      "selected_seconds": 5.488333333333333e-06,
+      "candidate_seconds": 6.102666666666667e-06
+    },
+    {
+      "name": "/layers.0/self_attn/Constant_87",
+      "op": "Constant",
+      "members": 24,
+      "selected_seconds": 5.979333333333333e-06,
+      "candidate_seconds": 7.883666666666667e-06
+    },
+    {
+      "name": "/layers.0/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 4.4003e-05,
+      "candidate_seconds": 4.9113333333333336e-05
+    },
+    {
+      "name": "/layers.0/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 5.4022e-05,
+      "candidate_seconds": 4.854366666666667e-05
+    },
+    {
+      "name": "/layers.0/self_attn/Constant_89",
+      "op": "Constant",
+      "members": 48,
+      "selected_seconds": 7.1166666666666666e-06,
+      "candidate_seconds": 5.980666666666667e-06
+    },
+    {
+      "name": "/layers.0/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 6.713866666666666e-05,
+      "candidate_seconds": 6.463766666666667e-05
+    },
+    {
+      "name": "/pre_encode/Constant_12",
+      "op": "Constant",
+      "members": 48,
+      "selected_seconds": 9.617833333333333e-05,
+      "candidate_seconds": 9.745e-06
+    },
+    {
+      "name": "/layers.0/self_attn/Constant_92",
+      "op": "Constant",
+      "members": 48,
+      "selected_seconds": 7.054333333333333e-06,
+      "candidate_seconds": 8.135e-06
+    },
+    {
+      "name": "Constant_1704",
+      "op": "Constant",
+      "members": 48,
+      "selected_seconds": 1.6431666666666667e-05,
+      "candidate_seconds": 1.2712333333333334e-05
+    },
+    {
+      "name": "/layers.0/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000281952,
+      "candidate_seconds": 0.0002766243333333333
+    },
+    {
+      "name": "/layers.0/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012376133333333333,
+      "candidate_seconds": 0.00012630266666666668
+    },
+    {
+      "name": "/layers.0/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.7174333333333333e-05,
+      "candidate_seconds": 1.6850333333333334e-05
+    },
+    {
+      "name": "/layers.0/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 7.476533333333333e-05,
+      "candidate_seconds": 7.381166666666667e-05
+    },
+    {
+      "name": "/layers.0/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.090141396,
+      "candidate_seconds": 0.09095434766666667
+    },
+    {
+      "name": "/layers.1/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.235966666666667e-05,
+      "candidate_seconds": 7.453433333333334e-05
+    },
+    {
+      "name": "/layers.1/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.737666666666667e-05,
+      "candidate_seconds": 0.00010976766666666666
+    },
+    {
+      "name": "/layers.1/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.1719e-05,
+      "candidate_seconds": 7.962433333333333e-05
+    },
+    {
+      "name": "/layers.1/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00030810366666666664,
+      "candidate_seconds": 0.00029858766666666665
+    },
+    {
+      "name": "/layers.1/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000120107,
+      "candidate_seconds": 0.00012555366666666668
+    },
+    {
+      "name": "/layers.1/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.8609e-05,
+      "candidate_seconds": 1.8275666666666665e-05
+    },
+    {
+      "name": "/layers.1/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.000161663,
+      "candidate_seconds": 0.00017169433333333333
+    },
+    {
+      "name": "/layers.1/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.090693201,
+      "candidate_seconds": 0.090243709
+    },
+    {
+      "name": "/layers.2/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.215933333333333e-05,
+      "candidate_seconds": 7.613066666666667e-05
+    },
+    {
+      "name": "/layers.2/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000102645,
+      "candidate_seconds": 0.00010446066666666667
+    },
+    {
+      "name": "/layers.2/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.211633333333333e-05,
+      "candidate_seconds": 7.828033333333334e-05
+    },
+    {
+      "name": "/layers.2/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000317212,
+      "candidate_seconds": 0.00030528833333333334
+    },
+    {
+      "name": "/layers.2/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011738633333333334,
+      "candidate_seconds": 0.00012058233333333334
+    },
+    {
+      "name": "/layers.2/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0351e-05,
+      "candidate_seconds": 2.0723666666666666e-05
+    },
+    {
+      "name": "/layers.2/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00018132,
+      "candidate_seconds": 0.000164736
+    },
+    {
+      "name": "/layers.2/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08997252733333333,
+      "candidate_seconds": 0.09029816766666666
+    },
+    {
+      "name": "/layers.3/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.280833333333333e-05,
+      "candidate_seconds": 7.645633333333334e-05
+    },
+    {
+      "name": "/layers.3/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 8.7883e-05,
+      "candidate_seconds": 0.000101364
+    },
+    {
+      "name": "/layers.3/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.874666666666666e-05,
+      "candidate_seconds": 7.812366666666667e-05
+    },
+    {
+      "name": "/layers.3/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00031422266666666666,
+      "candidate_seconds": 0.00031138266666666666
+    },
+    {
+      "name": "/layers.3/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011773633333333333,
+      "candidate_seconds": 0.000121967
+    },
+    {
+      "name": "/layers.3/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.7221333333333334e-05,
+      "candidate_seconds": 1.8605333333333333e-05
+    },
+    {
+      "name": "/layers.3/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00015218966666666667,
+      "candidate_seconds": 0.00021206633333333333
+    },
+    {
+      "name": "/layers.3/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.09028276566666667,
+      "candidate_seconds": 0.089612034
+    },
+    {
+      "name": "/layers.4/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.058666666666667e-05,
+      "candidate_seconds": 7.085266666666666e-05
+    },
+    {
+      "name": "/layers.4/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.084033333333334e-05,
+      "candidate_seconds": 9.4683e-05
+    },
+    {
+      "name": "/layers.4/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.769733333333333e-05,
+      "candidate_seconds": 7.516933333333333e-05
+    },
+    {
+      "name": "/layers.4/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0003148166666666667,
+      "candidate_seconds": 0.000308695
+    },
+    {
+      "name": "/layers.4/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000119539,
+      "candidate_seconds": 0.00011729766666666667
+    },
+    {
+      "name": "/layers.4/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0084666666666668e-05,
+      "candidate_seconds": 1.635e-05
+    },
+    {
+      "name": "/layers.4/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.000197615,
+      "candidate_seconds": 0.00012770533333333333
+    },
+    {
+      "name": "/layers.4/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089789946,
+      "candidate_seconds": 0.089609807
+    },
+    {
+      "name": "/layers.5/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.171166666666667e-05,
+      "candidate_seconds": 7.529233333333333e-05
+    },
+    {
+      "name": "/layers.5/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.660866666666666e-05,
+      "candidate_seconds": 0.00010171533333333333
+    },
+    {
+      "name": "/layers.5/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.764433333333334e-05,
+      "candidate_seconds": 7.438633333333334e-05
+    },
+    {
+      "name": "/layers.5/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00031118633333333335,
+      "candidate_seconds": 0.0003055033333333333
+    },
+    {
+      "name": "/layers.5/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011662666666666667,
+      "candidate_seconds": 0.00012117966666666667
+    },
+    {
+      "name": "/layers.5/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0948e-05,
+      "candidate_seconds": 2.0156e-05
+    },
+    {
+      "name": "/layers.5/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00017088066666666666,
+      "candidate_seconds": 0.00016609933333333333
+    },
+    {
+      "name": "/layers.5/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08921810933333334,
+      "candidate_seconds": 0.08975697766666667
+    },
+    {
+      "name": "/layers.6/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.256766666666667e-05,
+      "candidate_seconds": 8.404333333333333e-05
+    },
+    {
+      "name": "/layers.6/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.1467e-05,
+      "candidate_seconds": 9.817433333333333e-05
+    },
+    {
+      "name": "/layers.6/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.104766666666667e-05,
+      "candidate_seconds": 7.2867e-05
+    },
+    {
+      "name": "/layers.6/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00031228066666666665,
+      "candidate_seconds": 0.000302292
+    },
+    {
+      "name": "/layers.6/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011798733333333333,
+      "candidate_seconds": 0.00012024833333333334
+    },
+    {
+      "name": "/layers.6/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.6074333333333333e-05,
+      "candidate_seconds": 1.5766666666666666e-05
+    },
+    {
+      "name": "/layers.6/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00015369866666666666,
+      "candidate_seconds": 0.00017404333333333332
+    },
+    {
+      "name": "/layers.6/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08938512633333333,
+      "candidate_seconds": 0.09002581766666666
+    },
+    {
+      "name": "/layers.7/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.014166666666667e-05,
+      "candidate_seconds": 7.367733333333333e-05
+    },
+    {
+      "name": "/layers.7/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.280233333333333e-05,
+      "candidate_seconds": 9.918233333333333e-05
+    },
+    {
+      "name": "/layers.7/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.924233333333333e-05,
+      "candidate_seconds": 7.2721e-05
+    },
+    {
+      "name": "/layers.7/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0005951026666666667,
+      "candidate_seconds": 0.00030211966666666664
+    },
+    {
+      "name": "/layers.7/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011855566666666666,
+      "candidate_seconds": 0.00012481866666666668
+    },
+    {
+      "name": "/layers.7/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.4293666666666667e-05,
+      "candidate_seconds": 2.3517e-05
+    },
+    {
+      "name": "/layers.7/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00017151533333333333,
+      "candidate_seconds": 0.000183502
+    },
+    {
+      "name": "/layers.7/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08937195633333334,
+      "candidate_seconds": 0.08950430566666667
+    },
+    {
+      "name": "/layers.8/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.1473e-05,
+      "candidate_seconds": 7.107133333333333e-05
+    },
+    {
+      "name": "/layers.8/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.2209e-05,
+      "candidate_seconds": 9.9657e-05
+    },
+    {
+      "name": "/layers.8/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.821133333333333e-05,
+      "candidate_seconds": 7.584133333333333e-05
+    },
+    {
+      "name": "/layers.8/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0003088223333333333,
+      "candidate_seconds": 0.000303912
+    },
+    {
+      "name": "/layers.8/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011615466666666667,
+      "candidate_seconds": 0.00011911633333333334
+    },
+    {
+      "name": "/layers.8/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.6577333333333335e-05,
+      "candidate_seconds": 1.6088333333333333e-05
+    },
+    {
+      "name": "/layers.8/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.000188996,
+      "candidate_seconds": 0.000174776
+    },
+    {
+      "name": "/layers.8/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08994009966666666,
+      "candidate_seconds": 0.08957884533333334
+    },
+    {
+      "name": "/layers.9/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 5.402233333333333e-05,
+      "candidate_seconds": 6.0414333333333335e-05
+    },
+    {
+      "name": "/layers.9/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.8581e-05,
+      "candidate_seconds": 0.00010000933333333333
+    },
+    {
+      "name": "/layers.9/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 6.8373e-05,
+      "candidate_seconds": 6.391e-05
+    },
+    {
+      "name": "/layers.9/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00030372766666666664,
+      "candidate_seconds": 0.000308204
+    },
+    {
+      "name": "/layers.9/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012139766666666667,
+      "candidate_seconds": 0.00011724233333333333
+    },
+    {
+      "name": "/layers.9/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.7175666666666665e-05,
+      "candidate_seconds": 1.7124333333333335e-05
+    },
+    {
+      "name": "/layers.9/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00013008033333333332,
+      "candidate_seconds": 0.00015263966666666665
+    },
+    {
+      "name": "/layers.9/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08977748433333334,
+      "candidate_seconds": 0.08971520466666667
+    },
+    {
+      "name": "/layers.10/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.3194e-05,
+      "candidate_seconds": 7.504566666666667e-05
+    },
+    {
+      "name": "/layers.10/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.412733333333334e-05,
+      "candidate_seconds": 9.9089e-05
+    },
+    {
+      "name": "/layers.10/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.380433333333333e-05,
+      "candidate_seconds": 7.745333333333334e-05
+    },
+    {
+      "name": "/layers.10/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00031466966666666665,
+      "candidate_seconds": 0.0003100966666666667
+    },
+    {
+      "name": "/layers.10/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000117683,
+      "candidate_seconds": 0.00011883266666666667
+    },
+    {
+      "name": "/layers.10/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.2033e-05,
+      "candidate_seconds": 2.1805666666666667e-05
+    },
+    {
+      "name": "/layers.10/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00020530366666666666,
+      "candidate_seconds": 0.00016025833333333333
+    },
+    {
+      "name": "/layers.10/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089671517,
+      "candidate_seconds": 0.08980040466666667
+    },
+    {
+      "name": "/layers.11/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.113433333333333e-05,
+      "candidate_seconds": 7.524666666666667e-05
+    },
+    {
+      "name": "/layers.11/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.387e-05,
+      "candidate_seconds": 9.642166666666667e-05
+    },
+    {
+      "name": "/layers.11/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.847866666666667e-05,
+      "candidate_seconds": 7.442933333333334e-05
+    },
+    {
+      "name": "/layers.11/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000306312,
+      "candidate_seconds": 0.00029841566666666665
+    },
+    {
+      "name": "/layers.11/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011646133333333333,
+      "candidate_seconds": 0.000121293
+    },
+    {
+      "name": "/layers.11/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.8742e-05,
+      "candidate_seconds": 1.7313e-05
+    },
+    {
+      "name": "/layers.11/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00016092466666666667,
+      "candidate_seconds": 0.00017191333333333334
+    },
+    {
+      "name": "/layers.11/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08959360866666667,
+      "candidate_seconds": 0.09179322266666666
+    },
+    {
+      "name": "/layers.12/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.099733333333333e-05,
+      "candidate_seconds": 7.769933333333334e-05
+    },
+    {
+      "name": "/layers.12/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.2518e-05,
+      "candidate_seconds": 0.00010255933333333334
+    },
+    {
+      "name": "/layers.12/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.011833333333333e-05,
+      "candidate_seconds": 7.755466666666666e-05
+    },
+    {
+      "name": "/layers.12/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00031507433333333336,
+      "candidate_seconds": 0.000305065
+    },
+    {
+      "name": "/layers.12/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000119853,
+      "candidate_seconds": 0.00012781266666666666
+    },
+    {
+      "name": "/layers.12/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.9419e-05,
+      "candidate_seconds": 1.9471e-05
+    },
+    {
+      "name": "/layers.12/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.000150336,
+      "candidate_seconds": 0.00019968833333333332
+    },
+    {
+      "name": "/layers.12/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08961621066666667,
+      "candidate_seconds": 0.08973174633333333
+    },
+    {
+      "name": "/layers.13/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.387433333333334e-05,
+      "candidate_seconds": 7.4035e-05
+    },
+    {
+      "name": "/layers.13/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.223466666666667e-05,
+      "candidate_seconds": 0.000106663
+    },
+    {
+      "name": "/layers.13/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.129233333333333e-05,
+      "candidate_seconds": 7.545766666666666e-05
+    },
+    {
+      "name": "/layers.13/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000310496,
+      "candidate_seconds": 0.000311518
+    },
+    {
+      "name": "/layers.13/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012250833333333333,
+      "candidate_seconds": 0.000119613
+    },
+    {
+      "name": "/layers.13/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.1701e-05,
+      "candidate_seconds": 2.0206333333333333e-05
+    },
+    {
+      "name": "/layers.13/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.000197671,
+      "candidate_seconds": 0.000149942
+    },
+    {
+      "name": "/layers.13/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089936663,
+      "candidate_seconds": 0.090533648
+    },
+    {
+      "name": "/layers.14/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.073666666666666e-05,
+      "candidate_seconds": 7.8802e-05
+    },
+    {
+      "name": "/layers.14/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.270766666666666e-05,
+      "candidate_seconds": 0.00010367333333333333
+    },
+    {
+      "name": "/layers.14/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.0301e-05,
+      "candidate_seconds": 7.5925e-05
+    },
+    {
+      "name": "/layers.14/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0003264403333333333,
+      "candidate_seconds": 0.00030417733333333336
+    },
+    {
+      "name": "/layers.14/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000119699,
+      "candidate_seconds": 0.00012095833333333334
+    },
+    {
+      "name": "/layers.14/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.6337e-05,
+      "candidate_seconds": 1.6124666666666668e-05
+    },
+    {
+      "name": "/layers.14/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00017143433333333333,
+      "candidate_seconds": 0.00017376433333333335
+    },
+    {
+      "name": "/layers.14/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089902522,
+      "candidate_seconds": 0.090126357
+    },
+    {
+      "name": "/layers.15/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.299533333333334e-05,
+      "candidate_seconds": 7.6302e-05
+    },
+    {
+      "name": "/layers.15/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.3604e-05,
+      "candidate_seconds": 9.965766666666667e-05
+    },
+    {
+      "name": "/layers.15/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.317066666666667e-05,
+      "candidate_seconds": 8.105433333333333e-05
+    },
+    {
+      "name": "/layers.15/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000309404,
+      "candidate_seconds": 0.0003100003333333333
+    },
+    {
+      "name": "/layers.15/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011770266666666666,
+      "candidate_seconds": 0.00012415
+    },
+    {
+      "name": "/layers.15/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.6835e-05,
+      "candidate_seconds": 1.9807333333333333e-05
+    },
+    {
+      "name": "/layers.15/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00014340366666666668,
+      "candidate_seconds": 0.00018243633333333333
+    },
+    {
+      "name": "/layers.15/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.11638828766666667,
+      "candidate_seconds": 0.08990237733333334
+    },
+    {
+      "name": "/layers.16/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.2082e-05,
+      "candidate_seconds": 7.7756e-05
+    },
+    {
+      "name": "/layers.16/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.017966666666667e-05,
+      "candidate_seconds": 0.000100202
+    },
+    {
+      "name": "/layers.16/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.589033333333333e-05,
+      "candidate_seconds": 8.283966666666667e-05
+    },
+    {
+      "name": "/layers.16/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0003085503333333333,
+      "candidate_seconds": 0.00031051866666666667
+    },
+    {
+      "name": "/layers.16/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011606833333333333,
+      "candidate_seconds": 0.00011794166666666667
+    },
+    {
+      "name": "/layers.16/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.6457333333333333e-05,
+      "candidate_seconds": 1.7663666666666668e-05
+    },
+    {
+      "name": "/layers.16/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00016686533333333333,
+      "candidate_seconds": 0.00016549966666666666
+    },
+    {
+      "name": "/layers.16/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089730898,
+      "candidate_seconds": 0.089934814
+    },
+    {
+      "name": "/layers.17/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.524533333333334e-05,
+      "candidate_seconds": 7.5737e-05
+    },
+    {
+      "name": "/layers.17/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.2281e-05,
+      "candidate_seconds": 0.0001006
+    },
+    {
+      "name": "/layers.17/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.428933333333334e-05,
+      "candidate_seconds": 8.300466666666666e-05
+    },
+    {
+      "name": "/layers.17/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00030621466666666666,
+      "candidate_seconds": 0.0002984383333333333
+    },
+    {
+      "name": "/layers.17/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012581833333333333,
+      "candidate_seconds": 0.000132766
+    },
+    {
+      "name": "/layers.17/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.3429e-05,
+      "candidate_seconds": 2.3119e-05
+    },
+    {
+      "name": "/layers.17/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00018503233333333333,
+      "candidate_seconds": 0.00017102466666666668
+    },
+    {
+      "name": "/layers.17/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.09038193933333333,
+      "candidate_seconds": 0.09054475133333334
+    },
+    {
+      "name": "/layers.18/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.230966666666667e-05,
+      "candidate_seconds": 7.6143e-05
+    },
+    {
+      "name": "/layers.18/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.530733333333333e-05,
+      "candidate_seconds": 0.00010220533333333334
+    },
+    {
+      "name": "/layers.18/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.8944e-05,
+      "candidate_seconds": 7.370966666666666e-05
+    },
+    {
+      "name": "/layers.18/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000305827,
+      "candidate_seconds": 0.00029887733333333334
+    },
+    {
+      "name": "/layers.18/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012162966666666667,
+      "candidate_seconds": 0.000121015
+    },
+    {
+      "name": "/layers.18/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.5680333333333333e-05,
+      "candidate_seconds": 1.5112666666666667e-05
+    },
+    {
+      "name": "/layers.18/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00014390466666666668,
+      "candidate_seconds": 0.000187945
+    },
+    {
+      "name": "/layers.18/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.08945329966666667,
+      "candidate_seconds": 0.090058106
+    },
+    {
+      "name": "/layers.19/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.7979e-05,
+      "candidate_seconds": 7.7338e-05
+    },
+    {
+      "name": "/layers.19/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.214066666666666e-05,
+      "candidate_seconds": 9.9625e-05
+    },
+    {
+      "name": "/layers.19/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.890066666666666e-05,
+      "candidate_seconds": 7.795733333333333e-05
+    },
+    {
+      "name": "/layers.19/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0003064026666666667,
+      "candidate_seconds": 0.00030785066666666667
+    },
+    {
+      "name": "/layers.19/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00011459433333333333,
+      "candidate_seconds": 0.000122794
+    },
+    {
+      "name": "/layers.19/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.8906666666666666e-05,
+      "candidate_seconds": 1.4841333333333333e-05
+    },
+    {
+      "name": "/layers.19/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00017195233333333333,
+      "candidate_seconds": 0.00018353266666666667
+    },
+    {
+      "name": "/layers.19/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089718882,
+      "candidate_seconds": 0.09036636833333334
+    },
+    {
+      "name": "/layers.20/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.2559e-05,
+      "candidate_seconds": 8.133133333333333e-05
+    },
+    {
+      "name": "/layers.20/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.5398e-05,
+      "candidate_seconds": 9.859633333333334e-05
+    },
+    {
+      "name": "/layers.20/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 9.357066666666667e-05,
+      "candidate_seconds": 8.833e-05
+    },
+    {
+      "name": "/layers.20/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000318471,
+      "candidate_seconds": 0.00030104066666666667
+    },
+    {
+      "name": "/layers.20/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000121036,
+      "candidate_seconds": 0.00012302733333333332
+    },
+    {
+      "name": "/layers.20/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.7237e-05,
+      "candidate_seconds": 1.4881e-05
+    },
+    {
+      "name": "/layers.20/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00017730766666666667,
+      "candidate_seconds": 0.00015002933333333333
+    },
+    {
+      "name": "/layers.20/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089921349,
+      "candidate_seconds": 0.09132426733333333
+    },
+    {
+      "name": "/layers.21/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.5238e-05,
+      "candidate_seconds": 7.731066666666667e-05
+    },
+    {
+      "name": "/layers.21/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.9279e-05,
+      "candidate_seconds": 0.00011406966666666666
+    },
+    {
+      "name": "/layers.21/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 8.644366666666667e-05,
+      "candidate_seconds": 7.466533333333334e-05
+    },
+    {
+      "name": "/layers.21/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0003076516666666667,
+      "candidate_seconds": 0.0002996676666666667
+    },
+    {
+      "name": "/layers.21/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012486733333333334,
+      "candidate_seconds": 0.00013377766666666666
+    },
+    {
+      "name": "/layers.21/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.7674666666666665e-05,
+      "candidate_seconds": 1.6477e-05
+    },
+    {
+      "name": "/layers.21/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00015727433333333335,
+      "candidate_seconds": 0.000212961
+    },
+    {
+      "name": "/layers.21/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.089961798,
+      "candidate_seconds": 0.09076704566666667
+    },
+    {
+      "name": "/layers.22/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.324666666666666e-05,
+      "candidate_seconds": 7.816933333333334e-05
+    },
+    {
+      "name": "/layers.22/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.072666666666667e-05,
+      "candidate_seconds": 0.00010010166666666666
+    },
+    {
+      "name": "/layers.22/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 9.960733333333333e-05,
+      "candidate_seconds": 7.432566666666667e-05
+    },
+    {
+      "name": "/layers.22/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0003037686666666667,
+      "candidate_seconds": 0.00030290866666666665
+    },
+    {
+      "name": "/layers.22/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012414833333333333,
+      "candidate_seconds": 0.000119467
+    },
+    {
+      "name": "/layers.22/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.5074e-05,
+      "candidate_seconds": 2.4072333333333333e-05
+    },
+    {
+      "name": "/layers.22/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.00018275966666666667,
+      "candidate_seconds": 0.00014680033333333334
+    },
+    {
+      "name": "/layers.22/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.09018595333333333,
+      "candidate_seconds": 0.09083163233333333
+    },
+    {
+      "name": "/layers.23/self_attn/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.7592e-05,
+      "candidate_seconds": 7.585833333333334e-05
+    },
+    {
+      "name": "/layers.23/self_attn/Concat_4",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 8.5975e-05,
+      "candidate_seconds": 9.935733333333334e-05
+    },
+    {
+      "name": "/layers.23/self_attn/Reshape_4",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 7.984666666666666e-05,
+      "candidate_seconds": 7.551066666666667e-05
+    },
+    {
+      "name": "/layers.23/self_attn/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00030497166666666666,
+      "candidate_seconds": 0.00030375
+    },
+    {
+      "name": "/layers.23/self_attn/Transpose_4",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00012955133333333334,
+      "candidate_seconds": 0.00012351866666666667
+    },
+    {
+      "name": "/layers.23/self_attn/Reshape_5",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0408333333333332e-05,
+      "candidate_seconds": 2.1061333333333335e-05
+    },
+    {
+      "name": "/layers.23/self_attn/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 0.000179264,
+      "candidate_seconds": 0.00017185566666666667
+    },
+    {
+      "name": "/layers.23/self_attn/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.090667994,
+      "candidate_seconds": 0.09057941666666666
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Constant_1",
+      "op": "Constant",
+      "members": 24,
+      "selected_seconds": 7.404333333333333e-06,
+      "candidate_seconds": 7.355333333333333e-06
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Constant",
+      "op": "Constant",
+      "members": 24,
+      "selected_seconds": 4.4441e-05,
+      "candidate_seconds": 3.4989e-05
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 9.7743e-05,
+      "candidate_seconds": 9.175933333333333e-05
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.086233333333333e-05,
+      "candidate_seconds": 8.1635e-05
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00010732533333333333,
+      "candidate_seconds": 8.886666666666667e-05
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00024118533333333334,
+      "candidate_seconds": 0.00022115266666666665
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00013333266666666667,
+      "candidate_seconds": 0.00013216533333333333
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.6617333333333334e-05,
+      "candidate_seconds": 3.254133333333333e-05
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 3.580433333333333e-05,
+      "candidate_seconds": 3.497766666666667e-05
+    },
+    {
+      "name": "/layers.0/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.030182748,
+      "candidate_seconds": 0.03103873
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.941233333333334e-05,
+      "candidate_seconds": 6.3718e-05
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.9808e-05,
+      "candidate_seconds": 8.618366666666667e-05
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000121423,
+      "candidate_seconds": 9.914833333333333e-05
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00024949266666666667,
+      "candidate_seconds": 0.00023469566666666666
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014402133333333333,
+      "candidate_seconds": 0.00013322933333333333
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.3071e-05,
+      "candidate_seconds": 2.388e-05
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.1494333333333334e-05,
+      "candidate_seconds": 3.882633333333333e-05
+    },
+    {
+      "name": "/layers.1/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.030117746333333334,
+      "candidate_seconds": 0.030207393666666665
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.863333333333334e-05,
+      "candidate_seconds": 6.455766666666667e-05
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000104169,
+      "candidate_seconds": 8.8465e-05
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000116241,
+      "candidate_seconds": 9.357966666666666e-05
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000249772,
+      "candidate_seconds": 0.00023516966666666667
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014047266666666666,
+      "candidate_seconds": 0.00013952933333333335
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0414666666666666e-05,
+      "candidate_seconds": 2.1470666666666668e-05
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.476033333333333e-05,
+      "candidate_seconds": 4.4053333333333334e-05
+    },
+    {
+      "name": "/layers.2/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.02986275,
+      "candidate_seconds": 0.029835984666666666
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.981266666666667e-05,
+      "candidate_seconds": 6.574766666666666e-05
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010547266666666666,
+      "candidate_seconds": 9.7235e-05
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000109559,
+      "candidate_seconds": 9.721366666666666e-05
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00025162266666666665,
+      "candidate_seconds": 0.00022704933333333332
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000144287,
+      "candidate_seconds": 0.00013227233333333333
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0528e-05,
+      "candidate_seconds": 2.1830666666666667e-05
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.4886e-05,
+      "candidate_seconds": 3.456066666666667e-05
+    },
+    {
+      "name": "/layers.3/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029645666,
+      "candidate_seconds": 0.030516662333333333
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.622666666666667e-05,
+      "candidate_seconds": 6.342266666666667e-05
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.7446e-05,
+      "candidate_seconds": 8.728433333333333e-05
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000108424,
+      "candidate_seconds": 9.3002e-05
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00024070266666666667,
+      "candidate_seconds": 0.00022984333333333332
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00013502866666666668,
+      "candidate_seconds": 0.00012920333333333334
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.2527333333333334e-05,
+      "candidate_seconds": 2.294e-05
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.0402e-05,
+      "candidate_seconds": 3.513166666666667e-05
+    },
+    {
+      "name": "/layers.4/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029646319333333334,
+      "candidate_seconds": 0.029691733
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.1398e-05,
+      "candidate_seconds": 6.3389e-05
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010017366666666667,
+      "candidate_seconds": 8.645333333333333e-05
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011409733333333334,
+      "candidate_seconds": 9.883533333333333e-05
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000259126,
+      "candidate_seconds": 0.00023592766666666667
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00013879533333333334,
+      "candidate_seconds": 0.00013387166666666667
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.4296333333333333e-05,
+      "candidate_seconds": 2.9729e-05
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.1185333333333334e-05,
+      "candidate_seconds": 3.6712e-05
+    },
+    {
+      "name": "/layers.5/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029691736,
+      "candidate_seconds": 0.029815982666666668
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.025566666666667e-05,
+      "candidate_seconds": 6.446733333333334e-05
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.8989e-05,
+      "candidate_seconds": 8.9823e-05
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011447833333333333,
+      "candidate_seconds": 9.745633333333333e-05
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0002507333333333333,
+      "candidate_seconds": 0.00023510333333333334
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014265933333333332,
+      "candidate_seconds": 0.00013651566666666667
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.2196333333333333e-05,
+      "candidate_seconds": 2.2777666666666667e-05
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 3.841833333333333e-05,
+      "candidate_seconds": 3.7831e-05
+    },
+    {
+      "name": "/layers.6/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029562217,
+      "candidate_seconds": 0.030356039333333334
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.967533333333333e-05,
+      "candidate_seconds": 6.280566666666666e-05
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010021233333333333,
+      "candidate_seconds": 8.903533333333334e-05
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000112427,
+      "candidate_seconds": 9.202233333333333e-05
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00024225133333333334,
+      "candidate_seconds": 0.00022348333333333334
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014480466666666667,
+      "candidate_seconds": 0.00012989433333333332
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.1521e-05,
+      "candidate_seconds": 1.8572e-05
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.0881666666666665e-05,
+      "candidate_seconds": 3.8911333333333335e-05
+    },
+    {
+      "name": "/layers.7/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029547445,
+      "candidate_seconds": 0.029662795666666665
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.3447e-05,
+      "candidate_seconds": 6.272266666666667e-05
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010426033333333333,
+      "candidate_seconds": 9.4137e-05
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000119536,
+      "candidate_seconds": 9.54e-05
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000257965,
+      "candidate_seconds": 0.00024076366666666665
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014168666666666667,
+      "candidate_seconds": 0.00013262633333333332
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.4758666666666667e-05,
+      "candidate_seconds": 2.6318666666666666e-05
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 3.9534e-05,
+      "candidate_seconds": 3.708e-05
+    },
+    {
+      "name": "/layers.8/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029704368,
+      "candidate_seconds": 0.029594731333333332
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.9078e-05,
+      "candidate_seconds": 6.0844666666666664e-05
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010423733333333333,
+      "candidate_seconds": 9.105266666666666e-05
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011853933333333333,
+      "candidate_seconds": 9.6178e-05
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000255777,
+      "candidate_seconds": 0.00023280733333333334
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014449033333333334,
+      "candidate_seconds": 0.00013332266666666668
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.4683e-05,
+      "candidate_seconds": 2.3217666666666666e-05
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.6065e-05,
+      "candidate_seconds": 4.0580333333333335e-05
+    },
+    {
+      "name": "/layers.9/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029660055333333334,
+      "candidate_seconds": 0.029748958333333332
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.836633333333334e-05,
+      "candidate_seconds": 6.5315e-05
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.852733333333333e-05,
+      "candidate_seconds": 9.1969e-05
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000119249,
+      "candidate_seconds": 9.5213e-05
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00026213033333333333,
+      "candidate_seconds": 0.00022866766666666667
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014821233333333334,
+      "candidate_seconds": 0.00013619133333333335
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.3279666666666667e-05,
+      "candidate_seconds": 1.9777333333333335e-05
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.1789666666666664e-05,
+      "candidate_seconds": 3.7347333333333334e-05
+    },
+    {
+      "name": "/layers.10/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029678775333333334,
+      "candidate_seconds": 0.029988791666666667
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.685666666666667e-05,
+      "candidate_seconds": 6.329066666666667e-05
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000104182,
+      "candidate_seconds": 9.775733333333333e-05
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000120873,
+      "candidate_seconds": 0.000101464
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000253594,
+      "candidate_seconds": 0.00023493266666666667
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014911833333333332,
+      "candidate_seconds": 0.00013333833333333334
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.8568666666666667e-05,
+      "candidate_seconds": 1.8435333333333333e-05
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.300366666666667e-05,
+      "candidate_seconds": 3.889133333333333e-05
+    },
+    {
+      "name": "/layers.11/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029667514666666665,
+      "candidate_seconds": 0.029733924666666668
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.8066e-05,
+      "candidate_seconds": 6.187033333333334e-05
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000100129,
+      "candidate_seconds": 9.257933333333333e-05
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011981033333333333,
+      "candidate_seconds": 0.000110165
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0002538526666666667,
+      "candidate_seconds": 0.000246777
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014317733333333332,
+      "candidate_seconds": 0.00013775833333333333
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.5300333333333332e-05,
+      "candidate_seconds": 2.4369e-05
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.2083666666666665e-05,
+      "candidate_seconds": 3.9396333333333334e-05
+    },
+    {
+      "name": "/layers.12/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029840512333333333,
+      "candidate_seconds": 0.029784421
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.019133333333333e-05,
+      "candidate_seconds": 6.4814e-05
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 9.843433333333333e-05,
+      "candidate_seconds": 8.947066666666666e-05
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011522333333333334,
+      "candidate_seconds": 0.00010286433333333333
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0002560043333333333,
+      "candidate_seconds": 0.00024404766666666667
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014115466666666667,
+      "candidate_seconds": 0.00014062266666666666
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.2314333333333334e-05,
+      "candidate_seconds": 2.3168333333333333e-05
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.141933333333333e-05,
+      "candidate_seconds": 3.9993e-05
+    },
+    {
+      "name": "/layers.13/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029721399,
+      "candidate_seconds": 0.029861025333333333
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.5792e-05,
+      "candidate_seconds": 6.4383e-05
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000102926,
+      "candidate_seconds": 9.212366666666667e-05
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000115741,
+      "candidate_seconds": 9.755433333333333e-05
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000261948,
+      "candidate_seconds": 0.00023687866666666666
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014192933333333332,
+      "candidate_seconds": 0.000135913
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.2907666666666668e-05,
+      "candidate_seconds": 2.3680333333333334e-05
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 5.025866666666667e-05,
+      "candidate_seconds": 4.6102e-05
+    },
+    {
+      "name": "/layers.14/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029649755333333333,
+      "candidate_seconds": 0.029745648666666666
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.434466666666667e-05,
+      "candidate_seconds": 6.427966666666667e-05
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010708033333333333,
+      "candidate_seconds": 0.000103428
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011444833333333333,
+      "candidate_seconds": 9.3614e-05
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000259695,
+      "candidate_seconds": 0.0002512183333333333
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014352233333333333,
+      "candidate_seconds": 0.00013454033333333334
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0893333333333332e-05,
+      "candidate_seconds": 2.0086e-05
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 3.982e-05,
+      "candidate_seconds": 3.6395333333333334e-05
+    },
+    {
+      "name": "/layers.15/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.030068439333333332,
+      "candidate_seconds": 0.029684705
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 0.00048178533333333336,
+      "candidate_seconds": 0.0005662566666666666
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010038366666666667,
+      "candidate_seconds": 9.562466666666667e-05
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011668333333333333,
+      "candidate_seconds": 9.7177e-05
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000240772,
+      "candidate_seconds": 0.00024977766666666666
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014007366666666667,
+      "candidate_seconds": 0.00013641133333333334
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.9355333333333334e-05,
+      "candidate_seconds": 2.1348e-05
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.6387333333333336e-05,
+      "candidate_seconds": 4.606566666666667e-05
+    },
+    {
+      "name": "/layers.16/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029646358333333334,
+      "candidate_seconds": 0.029818565
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.847733333333334e-05,
+      "candidate_seconds": 6.2804e-05
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010353266666666667,
+      "candidate_seconds": 9.3337e-05
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011920166666666667,
+      "candidate_seconds": 0.00010862266666666667
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0002514593333333333,
+      "candidate_seconds": 0.00022771
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00013692266666666666,
+      "candidate_seconds": 0.00013261066666666666
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.1579e-05,
+      "candidate_seconds": 1.891533333333333e-05
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.0182666666666664e-05,
+      "candidate_seconds": 3.6735333333333334e-05
+    },
+    {
+      "name": "/layers.17/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029590978,
+      "candidate_seconds": 0.029785298333333335
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.290333333333334e-05,
+      "candidate_seconds": 6.0087666666666664e-05
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000105274,
+      "candidate_seconds": 9.0897e-05
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011500733333333334,
+      "candidate_seconds": 9.518133333333333e-05
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000247874,
+      "candidate_seconds": 0.00022961733333333334
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014060933333333333,
+      "candidate_seconds": 0.00013310866666666667
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.6049e-05,
+      "candidate_seconds": 2.0345333333333333e-05
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.3093e-05,
+      "candidate_seconds": 4.0487333333333335e-05
+    },
+    {
+      "name": "/layers.18/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.02947261,
+      "candidate_seconds": 0.029984032
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.389533333333333e-05,
+      "candidate_seconds": 6.206633333333333e-05
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010563066666666667,
+      "candidate_seconds": 9.235866666666667e-05
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011501566666666666,
+      "candidate_seconds": 9.460933333333334e-05
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00024267033333333333,
+      "candidate_seconds": 0.00024105233333333333
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00014579533333333334,
+      "candidate_seconds": 0.000134265
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.5386e-05,
+      "candidate_seconds": 2.5047666666666667e-05
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 3.9105e-05,
+      "candidate_seconds": 3.9261666666666664e-05
+    },
+    {
+      "name": "/layers.19/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029645219,
+      "candidate_seconds": 0.030031419666666666
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.857166666666667e-05,
+      "candidate_seconds": 6.605966666666667e-05
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010778666666666667,
+      "candidate_seconds": 8.9962e-05
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000110864,
+      "candidate_seconds": 9.598766666666667e-05
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.00025792366666666666,
+      "candidate_seconds": 0.000238125
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.000143439,
+      "candidate_seconds": 0.000136385
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.8824666666666666e-05,
+      "candidate_seconds": 2.5027333333333333e-05
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.173133333333333e-05,
+      "candidate_seconds": 3.9988e-05
+    },
+    {
+      "name": "/layers.20/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029685376666666666,
+      "candidate_seconds": 0.02995877
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 6.891266666666666e-05,
+      "candidate_seconds": 6.238033333333333e-05
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000103626,
+      "candidate_seconds": 9.548366666666666e-05
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.000114991,
+      "candidate_seconds": 9.716633333333333e-05
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.000254477,
+      "candidate_seconds": 0.00023746233333333335
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00015337133333333334,
+      "candidate_seconds": 0.00014190566666666667
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.1311666666666668e-05,
+      "candidate_seconds": 2.0795333333333334e-05
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.6862e-05,
+      "candidate_seconds": 3.954e-05
+    },
+    {
+      "name": "/layers.21/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029615338333333335,
+      "candidate_seconds": 0.030030774
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.471566666666666e-05,
+      "candidate_seconds": 6.409966666666667e-05
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.00010723433333333333,
+      "candidate_seconds": 9.728966666666666e-05
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011234566666666666,
+      "candidate_seconds": 9.6316e-05
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0002453926666666667,
+      "candidate_seconds": 0.00023966866666666668
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00015202066666666667,
+      "candidate_seconds": 0.00013618866666666667
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 1.7519e-05,
+      "candidate_seconds": 1.8029666666666668e-05
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.881066666666666e-05,
+      "candidate_seconds": 4.131e-05
+    },
+    {
+      "name": "/layers.22/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.029766008,
+      "candidate_seconds": 0.030002350333333334
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/ConstantOfShape",
+      "op": "ConstantOfShape",
+      "members": 1,
+      "selected_seconds": 7.062033333333333e-05,
+      "candidate_seconds": 6.7091e-05
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/Concat",
+      "op": "Concat",
+      "members": 1,
+      "selected_seconds": 0.000101666,
+      "candidate_seconds": 9.468233333333333e-05
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/Reshape",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 0.00011561566666666666,
+      "candidate_seconds": 9.362433333333333e-05
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/Slice",
+      "op": "Slice",
+      "members": 1,
+      "selected_seconds": 0.0002483573333333333,
+      "candidate_seconds": 0.00022784766666666666
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/Transpose",
+      "op": "Transpose",
+      "members": 1,
+      "selected_seconds": 0.00013965,
+      "candidate_seconds": 0.000133265
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/Reshape_1",
+      "op": "Reshape",
+      "members": 1,
+      "selected_seconds": 2.0401333333333334e-05,
+      "candidate_seconds": 1.8951e-05
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/Cast",
+      "op": "Cast",
+      "members": 1,
+      "selected_seconds": 4.3684666666666665e-05,
+      "candidate_seconds": 3.9889666666666665e-05
+    },
+    {
+      "name": "/layers.23/conv/depthwise_conv/Pad",
+      "op": "Pad",
+      "members": 1,
+      "selected_seconds": 0.03060923,
+      "candidate_seconds": 0.029978057
+    }
+  ],
+  "complete_groups": {
+    "selected": {
+      "nodes": 392,
+      "seconds": 2.9373894086666668,
+      "operators": {
+        "Constant": {
+          "nodes": 8,
+          "seconds": 0.00019009399999999997
+        },
+        "ConstantOfShape": {
+          "nodes": 48,
+          "seconds": 0.003800197666666667
+        },
+        "Concat": {
+          "nodes": 48,
+          "seconds": 0.004656827666666666
+        },
+        "Reshape": {
+          "nodes": 96,
+          "seconds": 0.005706461666666664
+        },
+        "Slice": {
+          "nodes": 48,
+          "seconds": 0.013746459333333334
+        },
+        "Transpose": {
+          "nodes": 48,
+          "seconds": 0.006309447999999999
+        },
+        "Cast": {
+          "nodes": 48,
+          "seconds": 0.004997820666666668
+        },
+        "Pad": {
+          "nodes": 48,
+          "seconds": 2.897982099666666
+        }
+      }
+    },
+    "candidate": {
+      "nodes": 392,
+      "seconds": 2.922203933,
+      "operators": {
+        "Constant": {
+          "nodes": 8,
+          "seconds": 9.290366666666667e-05
+        },
+        "ConstantOfShape": {
+          "nodes": 48,
+          "seconds": 0.0038465930000000006
+        },
+        "Concat": {
+          "nodes": 48,
+          "seconds": 0.004588646000000001
+        },
+        "Reshape": {
+          "nodes": 96,
+          "seconds": 0.005145707333333335
+        },
+        "Slice": {
+          "nodes": 48,
+          "seconds": 0.012934712999999999
+        },
+        "Transpose": {
+          "nodes": 48,
+          "seconds": 0.006176409999999997
+        },
+        "Cast": {
+          "nodes": 48,
+          "seconds": 0.004968792333333339
+        },
+        "Pad": {
+          "nodes": 48,
+          "seconds": 2.884450167666668
+        }
+      }
+    }
+  },
+  "kernels": {
+    "selected": 2.8979820996666668,
+    "candidate": 2.8844501676666665
+  },
+  "shared_ancestors_counted_once": true,
+  "passed": true,
+  "profile": {
+    "bytes": 1968,
+    "sha256": "8a6f509a210641650a9c057f472417dde7b4acc320f86eeb3d34ecbced4cc2e6"
+  },
+  "matched": {
+    "bytes": 303,
+    "sha256": "0299d2e1d273b2651d45209cb7c9dffb623ae4149cf0cb5eed23eaf89d842e76"
+  },
+  "work": {
+    "bytes": 301,
+    "sha256": "21b37b9aaf36b8753717c190f97b2dc695413a98666eb28f229d470df292b4e8"
+  },
+  "build": {
+    "bytes": 18439,
+    "sha256": "7d5296b266feeacbf9c52bf57a689de2cdf0a839045130f15912912f5da1b7bd"
+  },
+  "source": {
+    "bytes": 153332,
+    "sha256": "41f2477c7060c3f543471bebe991c77ea3b853d724708fec098a2cbb505cb0a2"
+  },
+  "managed_pad_source": {
+    "bytes": 61192,
+    "sha256": "532d26594643fdf97fad2973e05e6a603335509f36ed13da110a3e713ae6d768"
+  },
+  "native_sources": {
+    "onnxruntime/core/providers/cpu/tensor/pad.cc": {
+      "bytes": 33229,
+      "sha256": "64b7c3367a2d080fd1d88e6c5a4a66320eb1835d6b58a1b1825add4916b63052"
+    },
+    "onnxruntime/core/providers/cpu/tensor/utils.h": {
+      "bytes": 21922,
+      "sha256": "3f395ea21526a1550fc45e8092cb05cd2e58e4a5f1b85fece02b09030ae7087c"
+    }
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "source_counts": {
+    "input_values": 220412352,
+    "output_values": 224858496,
+    "padding_values": 4446144,
+    "managed_pad_coordinate_steps": 815859456,
+    "source_predicted_ort_innermost_copy_blocks": 1005504,
+    "managed_fill_plus_copy_float_writes": 445270848,
+    "ort_copy_plus_padding_float_writes": 224858496
+  },
+  "candidate_profile_seconds": 64.492802482,
+  "profile_pad_fraction": 0.04472514849190681,
+  "helper": {
+    "bytes": 4668,
+    "sha256": "98760fb6c60d854bc85b5fd0448de6a304a9f22bdd01c0335bc1af1c30e441fb"
+  },
+  "graph_helper": {
+    "bytes": 13321,
+    "sha256": "e121c8a37ac366f165ce39269ea72449b62a127c95dbf0d1b4bf8458b7942268"
+  },
+  "new_inference_calls": 0,
+  "new_optimization_selected": false,
+  "overhead_subtracted": false,
+  "ort_profile_is_earlier": true,
+  "current_release_qualification_pending": true
+}
