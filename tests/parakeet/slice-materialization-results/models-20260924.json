@@ -1,0 +1,100 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 889790,
+    "sha256": "60232ced73cba8b8ba87828b329eb8edc2f0ac75641817b8845a9cb1ab2e8db4"
+  },
+  "analysis": {
+    "bytes": 466704,
+    "sha256": "20c61e5720e8c2d11b8714516e028c839fa1a003e1402e5372c7ccde1b216e49"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 773632,
+        "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 774656,
+        "sha256": "bafdb0069c4809251fd4e287ad094076ed5e01cefe8be7be6dc6446f8887a9da"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+      }
+    }
+  },
+  "consumers": {
+    "TranscribeReplay": {
+      "bytes": 56832,
+      "sha256": "335ca09d0e45e344068c484c92af9d0db43a6ae0accd1895d7ae7bb88b0afcf9"
+    },
+    "AudioBenchmark": {
+      "bytes": 40448,
+      "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+    }
+  },
+  "native_arrays": 3136,
+  "native_values": 12361976,
+  "public_requests": 80,
+  "exact_candidate_arrays": 1568,
+  "exact_candidate_values": 6180988,
+  "maximum_scaled_native_error": 3.830720152728115e-05,
+  "resources": [
+    {
+      "name": "selected-native-512",
+      "samples": 140,
+      "peak_rss": 5609521152,
+      "seconds": 37.562853471026756
+    },
+    {
+      "name": "selected-public-512",
+      "samples": 307,
+      "peak_rss": 9383968768,
+      "seconds": 82.07333559996914
+    },
+    {
+      "name": "candidate-native-512",
+      "samples": 135,
+      "peak_rss": 5562355712,
+      "seconds": 37.141633116058074
+    },
+    {
+      "name": "candidate-public-512",
+      "samples": 288,
+      "peak_rss": 9375322112,
+      "seconds": 78.76646889094263
+    },
+    {
+      "name": "selected-native-256",
+      "samples": 134,
+      "peak_rss": 5566263296,
+      "seconds": 37.64525984902866
+    },
+    {
+      "name": "selected-public-256",
+      "samples": 296,
+      "peak_rss": 9357213696,
+      "seconds": 82.83427862497047
+    },
+    {
+      "name": "candidate-native-256",
+      "samples": 128,
+      "peak_rss": 5659561984,
+      "seconds": 36.846117194974795
+    },
+    {
+      "name": "candidate-public-256",
+      "samples": 274,
+      "peak_rss": 8425750528,
+      "seconds": 78.37754760694224
+    }
+  ],
+  "performance_measured": false
+}
