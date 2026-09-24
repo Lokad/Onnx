@@ -6,14 +6,16 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **44.89 GB**, including **31.42 GB** in artifacts,
+The latest inventory is **45.60 GB**, including **32.13 GB** in artifacts,
 after retaining the selected-release profile, rejected inclusive-packing trial,
 actual decoder LSTM capture, isolated recurrent preparation build and focused
-contracts in both instruction modes. All raw traces, clocks, native arrays,
+contracts, actual decoder/call qualification and full-model checks in both
+instruction modes. The invalid component timing and the staged independent
+application comparison are also retained. All raw traces, clocks, native arrays,
 failed checks and qualification evidence remain retained. The inventory totals
-**44,894,453,705 bytes**, with **5.11 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m64-contracts-closed-size.json`.
-Counting the model junction again gives 55.68 GB, which counts the same 10.79 GB
+**45,603,587,503 bytes**, with **4.40 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m64-application-staged-size.json`.
+Counting the model junction again gives 56.39 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
@@ -23,6 +25,15 @@ canonical decoder and saved encoder outputs. No model copy or download was
 needed. The compiler-name review reused the original binary and instruction
 inventory without another build. Compact tracked reports refer to the retained
 raw artifacts. No further deletion is necessary to meet the current 50 GB cap.
+
+Before the prepared-recurrence full-model checks, another **558.69 MB of tmpfs**
+was recovered by sharing byte-identical files in terminal VM campaigns. The first
+pass replaced 1,449 binary/metadata duplicates and verified 10,141 paths; the
+second replaced 21,763 source/tensor duplicates and verified 49,749 paths. All
+contents, permissions and paths stayed intact, with PID/birth owners checked
+terminal before replacement. Receipts:
+`artifacts/parakeet-prepared-recurrence-closed-links-20260924` and
+`artifacts/parakeet-prepared-recurrence-input-links-20260924`.
 
 Before the selected-release profile, another **195.49 MB** in eight closed VM
 output duplicates was retired after verifying the complete local control proof
