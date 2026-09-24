@@ -1,0 +1,788 @@
+{
+  "closed": {
+    "bytes": 121030,
+    "sha256": "e6a94afd464807f625e439bdba4a4b71246e641e98b10a632b66bb068adc5937"
+  },
+  "analysis": {
+    "bytes": 451418,
+    "sha256": "73c4c8c31555ed11e9a7b00e407f13f5853af0991ea4a8ee176da7e6f848f57d"
+  },
+  "generator": {
+    "bytes": 8148,
+    "sha256": "711749b4190f938382ac3e835b6351fcf850a6da7946e7d91ecdb0333dfadaf0"
+  },
+  "corpus": [
+    {
+      "process": "control",
+      "wall_seconds": 73.773137673,
+      "wall_fraction": "73773137673/1000000000",
+      "cpu_seconds": 73.76565766666667,
+      "allocated_bytes": 14902590248.0
+    },
+    {
+      "process": "sampled-a",
+      "wall_seconds": 83.428083681,
+      "wall_fraction": "83428083681/1000000000",
+      "cpu_seconds": 79.41612233333333,
+      "allocated_bytes": 14902573949.333334
+    },
+    {
+      "process": "sampled-b",
+      "wall_seconds": 83.128297437,
+      "wall_fraction": "83128297437/1000000000",
+      "cpu_seconds": 79.124565,
+      "allocated_bytes": 14902569685.333334
+    }
+  ],
+  "resources": [
+    {
+      "name": "control",
+      "samples": 1189,
+      "peak_rss": 9773932544,
+      "seconds": 303.472836657078
+    },
+    {
+      "name": "sampled-a",
+      "samples": 1289,
+      "peak_rss": 9587331072,
+      "seconds": 332.437039889046
+    },
+    {
+      "name": "sampled-b",
+      "samples": 1284,
+      "peak_rss": 9581305856,
+      "seconds": 332.2876840280369
+    },
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9363456,
+      "seconds": 0.257352705928497
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 4,
+      "peak_rss": 152768512,
+      "seconds": 1.019922001985833
+    },
+    {
+      "name": "bridge-build",
+      "samples": 14,
+      "peak_rss": 327536640,
+      "seconds": 3.5800100510241464
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 152231936,
+      "seconds": 1.0246959530049935
+    },
+    {
+      "name": "consumer-build",
+      "samples": 28,
+      "peak_rss": 346628096,
+      "seconds": 7.190884472918697
+    },
+    {
+      "name": "inventory",
+      "samples": 1,
+      "peak_rss": 10158080,
+      "seconds": 0.26422275009099394
+    },
+    {
+      "name": "sampled-a-speedscope",
+      "samples": 18,
+      "peak_rss": 131751936,
+      "seconds": 4.750589274917729
+    },
+    {
+      "name": "sampled-a-chromium",
+      "samples": 19,
+      "peak_rss": 133521408,
+      "seconds": 5.068168630008586
+    },
+    {
+      "name": "sampled-b-speedscope",
+      "samples": 18,
+      "peak_rss": 136003584,
+      "seconds": 4.754359673010185
+    },
+    {
+      "name": "sampled-b-chromium",
+      "samples": 19,
+      "peak_rss": 136429568,
+      "seconds": 5.080228191916831
+    }
+  ],
+  "diagnostics": [
+    {
+      "name": "sampled-a",
+      "exports": {
+        "passed": true,
+        "profiles": 3,
+        "events": 494606
+      },
+      "coverage": [
+        {
+          "name": "corpus",
+          "calls": 60,
+          "wall_seconds": 250.284251043,
+          "sampled_thread_seconds": 250.28319424141137,
+          "process_cpu_seconds": 238.248367,
+          "sampled_to_wall": 0.9999957775945381,
+          "marker_intervals": 56
+        }
+      ],
+      "selected_seconds": {
+        "corpus": 250.28319424141137
+      },
+      "outside_marker_seconds": 209.43453575462547,
+      "profiles": [
+        {
+          "name": "Thread (906175)",
+          "seconds": 250.66357812500095,
+          "selected_seconds": 250.28319424141137,
+          "events": 494528
+        },
+        {
+          "name": "Thread (906177)",
+          "seconds": 0.00460499603590393,
+          "selected_seconds": 0.0,
+          "events": 64
+        },
+        {
+          "name": "Thread (906180) (.NET Finalizer Thread)",
+          "seconds": 209.049546875,
+          "selected_seconds": 0.0,
+          "events": 14
+        }
+      ],
+      "intervals": {
+        "corpus": [
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 183.13649326757812,
+            "end_ms": 3473.2077640625
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 3478.124834,
+            "end_ms": 10138.614780464844
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 10140.886220029388,
+            "end_ms": 13600.037569831788
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 13603.13675208258,
+            "end_ms": 18991.3076504375
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 18995.200388,
+            "end_ms": 21917.035452492186
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 21918.627812019684,
+            "end_ms": 27036.09900340625
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 27039.45918207959,
+            "end_ms": 28662.918166375
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 28666.295807,
+            "end_ms": 34469.49408362891
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 34471.7967,
+            "end_ms": 37161.056465625
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 37167.765834,
+            "end_ms": 42021.189205873045
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 42022.36611804397,
+            "end_ms": 44984.16226057812
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 44985.233918,
+            "end_ms": 49813.28036103334
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 49815.531434,
+            "end_ms": 53221.665733945316
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 53224.01637,
+            "end_ms": 60218.13118667285
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 60221.18410211107,
+            "end_ms": 62459.10451215625
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 62461.442668036085,
+            "end_ms": 67165.0754805
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 67166.349191,
+            "end_ms": 70140.67487459375
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 70143.02242,
+            "end_ms": 74944.14089737891
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 74946.379226,
+            "end_ms": 83701.080397875
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 83702.346979,
+            "end_ms": 93588.74743895703
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 93593.271158,
+            "end_ms": 97143.1489159789
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 97147.19254707682,
+            "end_ms": 102594.80669594884
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 102597.02086305838,
+            "end_ms": 105415.42587821484
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 105418.236981,
+            "end_ms": 110570.67301858985
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 110574.283171,
+            "end_ms": 112200.10051506055
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 112202.452816,
+            "end_ms": 118218.85578000055
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 118221.27439802219,
+            "end_ms": 120950.82835307812
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 120953.20294304063,
+            "end_ms": 125836.380677375
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 125837.644075,
+            "end_ms": 128522.80136900695
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 128523.97991805128,
+            "end_ms": 133146.83707798974
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 133149.19446604492,
+            "end_ms": 136449.1947101406
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 136452.640188,
+            "end_ms": 143289.51274659374
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 143291.74548601054,
+            "end_ms": 145530.90393326562
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 145534.3034400715,
+            "end_ms": 150165.5483789747
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 150167.909624014,
+            "end_ms": 153165.7309130625
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 153167.012414,
+            "end_ms": 158052.85121383984
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 158057.35928,
+            "end_ms": 161719.12910522657
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 161721.486499,
+            "end_ms": 167326.10055873828
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 167327.507797,
+            "end_ms": 170829.0380704375
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 170831.518686,
+            "end_ms": 180920.02554993556
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 180925.147587,
+            "end_ms": 186234.95888202635
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 186236.125104,
+            "end_ms": 189062.37528054047
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 189064.62811403905,
+            "end_ms": 193991.511052081
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 193993.75640401777,
+            "end_ms": 195559.92049505765
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 195562.124626,
+            "end_ms": 201511.60070021875
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 201515.08988,
+            "end_ms": 204262.00187597185
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 204264.359524,
+            "end_ms": 209234.47237008985
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 209236.7171220212,
+            "end_ms": 211991.24007121875
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 211993.479861,
+            "end_ms": 216643.12600301317
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 216646.645515,
+            "end_ms": 220038.27152999572
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 220040.51649,
+            "end_ms": 226730.08148229297
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 226732.4341680442,
+            "end_ms": 228912.04403128126
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 228914.54669903484,
+            "end_ms": 233502.450995875
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 233507.193212073,
+            "end_ms": 241543.2830656875
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 241545.62832601732,
+            "end_ms": 245131.28408771876
+          },
+          {
+            "thread": "Thread (906175)",
+            "start_ms": 245133.52229304062,
+            "end_ms": 250613.10969534374
+          }
+        ]
+      },
+      "rounding_adjustments_ms": [],
+      "scope": "Estimated sampled thread time under explicit markers; CPU_TIME is an exporter label, not independently measured CPU time."
+    },
+    {
+      "name": "sampled-b",
+      "exports": {
+        "passed": true,
+        "profiles": 2,
+        "events": 495896
+      },
+      "coverage": [
+        {
+          "name": "corpus",
+          "calls": 60,
+          "wall_seconds": 249.384892311,
+          "sampled_thread_seconds": 249.39318184671066,
+          "process_cpu_seconds": 237.373695,
+          "sampled_to_wall": 1.0000332399273824,
+          "marker_intervals": 55
+        }
+      ],
+      "selected_seconds": {
+        "corpus": 249.39318184671066
+      },
+      "outside_marker_seconds": 0.37279968833671173,
+      "profiles": [
+        {
+          "name": "Thread (906587)",
+          "seconds": 249.7626406250017,
+          "selected_seconds": 249.39318184671066,
+          "events": 495852
+        },
+        {
+          "name": "Thread (906589)",
+          "seconds": 0.0033409100459213257,
+          "selected_seconds": 0.0,
+          "events": 44
+        }
+      ],
+      "intervals": {
+        "corpus": [
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 172.398034,
+            "end_ms": 3451.409020328125
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 3452.5827220184096,
+            "end_ms": 10112.52754621875
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 10116.094124,
+            "end_ms": 13618.348159015717
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 13620.392652,
+            "end_ms": 18880.819647040862
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 18881.999213025734,
+            "end_ms": 21765.81532109375
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 21770.192621,
+            "end_ms": 26755.36571122656
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 26756.76687801156,
+            "end_ms": 28414.858885045134
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 28417.344115,
+            "end_ms": 34393.3587634375
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 34394.636687,
+            "end_ms": 37080.28697730628
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 37081.465467,
+            "end_ms": 41851.300048796875
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 41852.474231,
+            "end_ms": 44770.394885296875
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 44771.468084,
+            "end_ms": 49637.04474415625
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 49639.282794033774,
+            "end_ms": 53013.769122125
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 53019.386726,
+            "end_ms": 59753.7275463125
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 59756.4335,
+            "end_ms": 61922.194974609374
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 61926.71372804703,
+            "end_ms": 66673.34800534375
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 66674.61766403304,
+            "end_ms": 69743.8881718125
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 69745.160301,
+            "end_ms": 74478.83681298047
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 74481.108284,
+            "end_ms": 78028.51526642188
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 78030.86604103584,
+            "end_ms": 83318.33034678356
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 83319.60040503585,
+            "end_ms": 86490.6248190625
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 86492.86388604817,
+            "end_ms": 93085.79255102166
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 93089.541265,
+            "end_ms": 96631.53298101484
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 96633.784258,
+            "end_ms": 102041.6895314375
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 102046.445811,
+            "end_ms": 104950.69459029687
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 104954.492729,
+            "end_ms": 109993.20811350782
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 109997.448846,
+            "end_ms": 117621.5816585
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 117623.9342190321,
+            "end_ms": 120356.15370142188
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 120359.65804904223,
+            "end_ms": 125159.0319971054
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 125160.402301,
+            "end_ms": 127843.67061154687
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 127844.842936,
+            "end_ms": 132406.9786781875
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 132409.32533602705,
+            "end_ms": 135720.2208438125
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 135723.5537790083,
+            "end_ms": 142361.836982125
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 142365.27413502842,
+            "end_ms": 144612.22677171876
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 144613.48059401862,
+            "end_ms": 149205.74670728124
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 149208.100366,
+            "end_ms": 152226.8847233711
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 152229.562338,
+            "end_ms": 157039.15071690624
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 157043.5385,
+            "end_ms": 160620.39714257812
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 160623.0537920257,
+            "end_ms": 166134.3770341875
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 166135.769199,
+            "end_ms": 169562.29579975
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 169564.63873101422,
+            "end_ms": 176129.00241214526
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 176131.25098201734,
+            "end_ms": 179557.04468317187
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 179560.44563807166,
+            "end_ms": 184730.63470734766
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 184734.055409,
+            "end_ms": 192523.2927136875
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 192525.54924700462,
+            "end_ms": 194150.6281044619
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 194152.871953,
+            "end_ms": 200062.82938494356
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 200065.139536,
+            "end_ms": 202755.39708505152
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 202758.57943110558,
+            "end_ms": 207651.3556874984
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 207653.6300710377,
+            "end_ms": 215291.9660085
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 215294.276035,
+            "end_ms": 218795.6397938457
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 218797.879863,
+            "end_ms": 225605.1327926875
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 225607.450335,
+            "end_ms": 232455.16371390625
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 232459.57947807023,
+            "end_ms": 235521.90496746876
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 235524.153459,
+            "end_ms": 244170.44275505625
+          },
+          {
+            "thread": "Thread (906587)",
+            "start_ms": 244172.681923,
+            "end_ms": 249702.74982854517
+          }
+        ]
+      },
+      "rounding_adjustments_ms": [],
+      "scope": "Estimated sampled thread time under explicit markers; CPU_TIME is an exporter label, not independently measured CPU time."
+    }
+  ],
+  "outputs": {
+    "results-20260924.md": {
+      "bytes": 3979,
+      "sha256": "d334c64faf136f012678587a36d2391d7ee723d86014476a3652386367e03a74"
+    },
+    "clocks-20260924.csv": {
+      "bytes": 32201,
+      "sha256": "b8dbfa788091f40c037feed80a189f8f16cba8518198f89a60db015733cfdddd"
+    },
+    "setup-20260924.csv": {
+      "bytes": 74,
+      "sha256": "50a436cab3050014df8e2521b49e0fd1edeac8459e69876f97d73c7a0971e1f1"
+    },
+    "clips-20260924.csv": {
+      "bytes": 2533,
+      "sha256": "138426dae67248b9c07aed852b5689c2782ee22ae32348c8ac3ab09b63736a5b"
+    },
+    "stacks-20260924.csv": {
+      "bytes": 300330,
+      "sha256": "975a5e7b31fb5e56e79873c2148dbe5197d990be52a2b455dff3a445772dc67d"
+    }
+  }
+}
