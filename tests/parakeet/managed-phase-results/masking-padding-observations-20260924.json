@@ -1,0 +1,1049 @@
+{
+  "closure": {
+    "bytes": 303,
+    "sha256": "0299d2e1d273b2651d45209cb7c9dffb623ae4149cf0cb5eed23eaf89d842e76"
+  },
+  "passed": true,
+  "managed_closure": {
+    "bytes": 952,
+    "sha256": "2a9d9342acfffede564e1a6870a8027322049e1b5087c005c260d9a054e0c2a3"
+  },
+  "native_closure": {
+    "bytes": 632,
+    "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+  },
+  "graph_review": {
+    "bytes": 872,
+    "sha256": "d844dcef266c6ea132c58b68d3e6f2dd04f6a98fed55d4d995badbc21542bf5b"
+  },
+  "original_model": {
+    "bytes": 41770866,
+    "sha256": "98a74b21b4cc0017c1e7030319a4a96f4a9506e50f0708f3a516d02a77c96bb1"
+  },
+  "optimized_model": {
+    "bytes": 432574,
+    "sha256": "ed1eca96607258004aa74b4b22751b7a5d4203a2c0e6eb2b586452211f1a0efc"
+  },
+  "families": {
+    "attention-mask": {
+      "managed": {
+        "nodes": 51,
+        "seconds": 1.2286000343333334,
+        "operators": {
+          "Constant": {
+            "nodes": 2,
+            "seconds": 3.4848e-05
+          },
+          "Unsqueeze": {
+            "nodes": 1,
+            "seconds": 0.000162751
+          },
+          "Cast": {
+            "nodes": 24,
+            "seconds": 0.004309709
+          },
+          "Where": {
+            "nodes": 24,
+            "seconds": 1.2240927263333332
+          }
+        }
+      },
+      "ort": {
+        "nodes": 25,
+        "seconds": 0.036693666666666666,
+        "operators": {
+          "Unsqueeze": {
+            "nodes": 1,
+            "seconds": 4.1e-05
+          },
+          "Where": {
+            "nodes": 24,
+            "seconds": 0.036652666666666674
+          }
+        }
+      }
+    },
+    "attention-cleanup": {
+      "managed": {
+        "nodes": 51,
+        "seconds": 1.2232993733333333,
+        "operators": {
+          "Constant": {
+            "nodes": 2,
+            "seconds": 3.849833333333333e-05
+          },
+          "Unsqueeze": {
+            "nodes": 1,
+            "seconds": 0.000162751
+          },
+          "Cast": {
+            "nodes": 24,
+            "seconds": 0.0025225216666666665
+          },
+          "Where": {
+            "nodes": 24,
+            "seconds": 1.2205756023333332
+          }
+        }
+      },
+      "ort": {
+        "nodes": 25,
+        "seconds": 0.023665666666666668,
+        "operators": {
+          "Unsqueeze": {
+            "nodes": 1,
+            "seconds": 4.1e-05
+          },
+          "Where": {
+            "nodes": 24,
+            "seconds": 0.023624666666666672
+          }
+        }
+      }
+    },
+    "convolution-mask": {
+      "managed": {
+        "nodes": 51,
+        "seconds": 0.821441486,
+        "operators": {
+          "Constant": {
+            "nodes": 2,
+            "seconds": 3.849833333333333e-05
+          },
+          "Unsqueeze": {
+            "nodes": 1,
+            "seconds": 0.00018494333333333334
+          },
+          "Cast": {
+            "nodes": 24,
+            "seconds": 0.0027600573333333334
+          },
+          "Where": {
+            "nodes": 24,
+            "seconds": 0.8184579869999999
+          }
+        }
+      },
+      "ort": {
+        "nodes": 25,
+        "seconds": 0.033787333333333336,
+        "operators": {
+          "Unsqueeze": {
+            "nodes": 1,
+            "seconds": 9.2e-05
+          },
+          "Where": {
+            "nodes": 24,
+            "seconds": 0.033695333333333334
+          }
+        }
+      }
+    },
+    "attention-pad": {
+      "managed": {
+        "nodes": 198,
+        "seconds": 2.201272842,
+        "operators": {
+          "Constant": {
+            "nodes": 6,
+            "seconds": 5.5818e-05
+          },
+          "ConstantOfShape": {
+            "nodes": 24,
+            "seconds": 0.0017564383333333333
+          },
+          "Concat": {
+            "nodes": 24,
+            "seconds": 0.002382357
+          },
+          "Reshape": {
+            "nodes": 48,
+            "seconds": 0.002401322
+          },
+          "Slice": {
+            "nodes": 24,
+            "seconds": 0.008386202666666667
+          },
+          "Transpose": {
+            "nodes": 24,
+            "seconds": 0.0027806346666666673
+          },
+          "Cast": {
+            "nodes": 24,
+            "seconds": 0.004074043666666667
+          },
+          "Pad": {
+            "nodes": 24,
+            "seconds": 2.1794360256666665
+          }
+        }
+      },
+      "ort": {
+        "nodes": 24,
+        "seconds": 0.034880666666666664,
+        "operators": {
+          "Pad": {
+            "nodes": 24,
+            "seconds": 0.03488066666666666
+          }
+        }
+      }
+    },
+    "convolution-pad": {
+      "managed": {
+        "nodes": 198,
+        "seconds": 0.732724717,
+        "operators": {
+          "Constant": {
+            "nodes": 6,
+            "seconds": 9.858966666666667e-05
+          },
+          "ConstantOfShape": {
+            "nodes": 24,
+            "seconds": 0.0020843913333333337
+          },
+          "Concat": {
+            "nodes": 24,
+            "seconds": 0.0026811176666666665
+          },
+          "Reshape": {
+            "nodes": 48,
+            "seconds": 0.0030861420000000005
+          },
+          "Slice": {
+            "nodes": 24,
+            "seconds": 0.006619521333333335
+          },
+          "Transpose": {
+            "nodes": 24,
+            "seconds": 0.0033477810000000006
+          },
+          "Cast": {
+            "nodes": 24,
+            "seconds": 0.0011796060000000001
+          },
+          "Pad": {
+            "nodes": 24,
+            "seconds": 0.713627568
+          }
+        }
+      },
+      "ort": {
+        "nodes": 24,
+        "seconds": 0.015294333333333333,
+        "operators": {
+          "Pad": {
+            "nodes": 24,
+            "seconds": 0.015294333333333332
+          }
+        }
+      }
+    }
+  },
+  "combined": {
+    "managed": {
+      "nodes": 541,
+      "seconds": 6.20707155,
+      "operators": {
+        "Constant": {
+          "nodes": 11,
+          "seconds": 0.00016210066666666668
+        },
+        "Unsqueeze": {
+          "nodes": 2,
+          "seconds": 0.00034769433333333333
+        },
+        "Cast": {
+          "nodes": 120,
+          "seconds": 0.014845937666666666
+        },
+        "Where": {
+          "nodes": 72,
+          "seconds": 3.263126315666667
+        },
+        "ConstantOfShape": {
+          "nodes": 48,
+          "seconds": 0.0038408296666666668
+        },
+        "Concat": {
+          "nodes": 48,
+          "seconds": 0.005063474666666666
+        },
+        "Reshape": {
+          "nodes": 96,
+          "seconds": 0.005487464000000001
+        },
+        "Slice": {
+          "nodes": 48,
+          "seconds": 0.015005724
+        },
+        "Transpose": {
+          "nodes": 48,
+          "seconds": 0.006128415666666667
+        },
+        "Pad": {
+          "nodes": 48,
+          "seconds": 2.893063593666666
+        }
+      }
+    },
+    "ort": {
+      "nodes": 122,
+      "seconds": 0.14428066666666667,
+      "operators": {
+        "Unsqueeze": {
+          "nodes": 2,
+          "seconds": 0.000133
+        },
+        "Where": {
+          "nodes": 72,
+          "seconds": 0.09397266666666672
+        },
+        "Pad": {
+          "nodes": 48,
+          "seconds": 0.05017499999999998
+        }
+      }
+    }
+  },
+  "shared_nodes": {
+    "managed": [
+      {
+        "name": "/pre_encode/Constant_9",
+        "members": [
+          "/layers.0/self_attn/Where",
+          "/layers.1/self_attn/Where",
+          "/layers.2/self_attn/Where",
+          "/layers.3/self_attn/Where",
+          "/layers.4/self_attn/Where",
+          "/layers.5/self_attn/Where",
+          "/layers.6/self_attn/Where",
+          "/layers.7/self_attn/Where",
+          "/layers.8/self_attn/Where",
+          "/layers.9/self_attn/Where",
+          "/layers.10/self_attn/Where",
+          "/layers.11/self_attn/Where",
+          "/layers.12/self_attn/Where",
+          "/layers.13/self_attn/Where",
+          "/layers.14/self_attn/Where",
+          "/layers.15/self_attn/Where",
+          "/layers.16/self_attn/Where",
+          "/layers.17/self_attn/Where",
+          "/layers.18/self_attn/Where",
+          "/layers.19/self_attn/Where",
+          "/layers.20/self_attn/Where",
+          "/layers.21/self_attn/Where",
+          "/layers.22/self_attn/Where",
+          "/layers.23/self_attn/Where",
+          "/layers.0/self_attn/Where_1",
+          "/layers.1/self_attn/Where_1",
+          "/layers.2/self_attn/Where_1",
+          "/layers.3/self_attn/Where_1",
+          "/layers.4/self_attn/Where_1",
+          "/layers.5/self_attn/Where_1",
+          "/layers.6/self_attn/Where_1",
+          "/layers.7/self_attn/Where_1",
+          "/layers.8/self_attn/Where_1",
+          "/layers.9/self_attn/Where_1",
+          "/layers.10/self_attn/Where_1",
+          "/layers.11/self_attn/Where_1",
+          "/layers.12/self_attn/Where_1",
+          "/layers.13/self_attn/Where_1",
+          "/layers.14/self_attn/Where_1",
+          "/layers.15/self_attn/Where_1",
+          "/layers.16/self_attn/Where_1",
+          "/layers.17/self_attn/Where_1",
+          "/layers.18/self_attn/Where_1",
+          "/layers.19/self_attn/Where_1",
+          "/layers.20/self_attn/Where_1",
+          "/layers.21/self_attn/Where_1",
+          "/layers.22/self_attn/Where_1",
+          "/layers.23/self_attn/Where_1",
+          "/layers.0/conv/Where",
+          "/layers.1/conv/Where",
+          "/layers.2/conv/Where",
+          "/layers.3/conv/Where",
+          "/layers.4/conv/Where",
+          "/layers.5/conv/Where",
+          "/layers.6/conv/Where",
+          "/layers.7/conv/Where",
+          "/layers.8/conv/Where",
+          "/layers.9/conv/Where",
+          "/layers.10/conv/Where",
+          "/layers.11/conv/Where",
+          "/layers.12/conv/Where",
+          "/layers.13/conv/Where",
+          "/layers.14/conv/Where",
+          "/layers.15/conv/Where",
+          "/layers.16/conv/Where",
+          "/layers.17/conv/Where",
+          "/layers.18/conv/Where",
+          "/layers.19/conv/Where",
+          "/layers.20/conv/Where",
+          "/layers.21/conv/Where",
+          "/layers.22/conv/Where",
+          "/layers.23/conv/Where"
+        ],
+        "seconds": 2.3465666666666668e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Unsqueeze_35",
+        "members": [
+          "/layers.0/self_attn/Where",
+          "/layers.1/self_attn/Where",
+          "/layers.2/self_attn/Where",
+          "/layers.3/self_attn/Where",
+          "/layers.4/self_attn/Where",
+          "/layers.5/self_attn/Where",
+          "/layers.6/self_attn/Where",
+          "/layers.7/self_attn/Where",
+          "/layers.8/self_attn/Where",
+          "/layers.9/self_attn/Where",
+          "/layers.10/self_attn/Where",
+          "/layers.11/self_attn/Where",
+          "/layers.12/self_attn/Where",
+          "/layers.13/self_attn/Where",
+          "/layers.14/self_attn/Where",
+          "/layers.15/self_attn/Where",
+          "/layers.16/self_attn/Where",
+          "/layers.17/self_attn/Where",
+          "/layers.18/self_attn/Where",
+          "/layers.19/self_attn/Where",
+          "/layers.20/self_attn/Where",
+          "/layers.21/self_attn/Where",
+          "/layers.22/self_attn/Where",
+          "/layers.23/self_attn/Where",
+          "/layers.0/self_attn/Where_1",
+          "/layers.1/self_attn/Where_1",
+          "/layers.2/self_attn/Where_1",
+          "/layers.3/self_attn/Where_1",
+          "/layers.4/self_attn/Where_1",
+          "/layers.5/self_attn/Where_1",
+          "/layers.6/self_attn/Where_1",
+          "/layers.7/self_attn/Where_1",
+          "/layers.8/self_attn/Where_1",
+          "/layers.9/self_attn/Where_1",
+          "/layers.10/self_attn/Where_1",
+          "/layers.11/self_attn/Where_1",
+          "/layers.12/self_attn/Where_1",
+          "/layers.13/self_attn/Where_1",
+          "/layers.14/self_attn/Where_1",
+          "/layers.15/self_attn/Where_1",
+          "/layers.16/self_attn/Where_1",
+          "/layers.17/self_attn/Where_1",
+          "/layers.18/self_attn/Where_1",
+          "/layers.19/self_attn/Where_1",
+          "/layers.20/self_attn/Where_1",
+          "/layers.21/self_attn/Where_1",
+          "/layers.22/self_attn/Where_1",
+          "/layers.23/self_attn/Where_1"
+        ],
+        "seconds": 0.000162751
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_111",
+        "members": [
+          "/layers.0/self_attn/Where",
+          "/layers.1/self_attn/Where",
+          "/layers.2/self_attn/Where",
+          "/layers.3/self_attn/Where",
+          "/layers.4/self_attn/Where",
+          "/layers.5/self_attn/Where",
+          "/layers.6/self_attn/Where",
+          "/layers.7/self_attn/Where",
+          "/layers.8/self_attn/Where",
+          "/layers.9/self_attn/Where",
+          "/layers.10/self_attn/Where",
+          "/layers.11/self_attn/Where",
+          "/layers.12/self_attn/Where",
+          "/layers.13/self_attn/Where",
+          "/layers.14/self_attn/Where",
+          "/layers.15/self_attn/Where",
+          "/layers.16/self_attn/Where",
+          "/layers.17/self_attn/Where",
+          "/layers.18/self_attn/Where",
+          "/layers.19/self_attn/Where",
+          "/layers.20/self_attn/Where",
+          "/layers.21/self_attn/Where",
+          "/layers.22/self_attn/Where",
+          "/layers.23/self_attn/Where"
+        ],
+        "seconds": 1.1382333333333333e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_112",
+        "members": [
+          "/layers.0/self_attn/Where_1",
+          "/layers.1/self_attn/Where_1",
+          "/layers.2/self_attn/Where_1",
+          "/layers.3/self_attn/Where_1",
+          "/layers.4/self_attn/Where_1",
+          "/layers.5/self_attn/Where_1",
+          "/layers.6/self_attn/Where_1",
+          "/layers.7/self_attn/Where_1",
+          "/layers.8/self_attn/Where_1",
+          "/layers.9/self_attn/Where_1",
+          "/layers.10/self_attn/Where_1",
+          "/layers.11/self_attn/Where_1",
+          "/layers.12/self_attn/Where_1",
+          "/layers.13/self_attn/Where_1",
+          "/layers.14/self_attn/Where_1",
+          "/layers.15/self_attn/Where_1",
+          "/layers.16/self_attn/Where_1",
+          "/layers.17/self_attn/Where_1",
+          "/layers.18/self_attn/Where_1",
+          "/layers.19/self_attn/Where_1",
+          "/layers.20/self_attn/Where_1",
+          "/layers.21/self_attn/Where_1",
+          "/layers.22/self_attn/Where_1",
+          "/layers.23/self_attn/Where_1",
+          "/layers.0/conv/Where",
+          "/layers.1/conv/Where",
+          "/layers.2/conv/Where",
+          "/layers.3/conv/Where",
+          "/layers.4/conv/Where",
+          "/layers.5/conv/Where",
+          "/layers.6/conv/Where",
+          "/layers.7/conv/Where",
+          "/layers.8/conv/Where",
+          "/layers.9/conv/Where",
+          "/layers.10/conv/Where",
+          "/layers.11/conv/Where",
+          "/layers.12/conv/Where",
+          "/layers.13/conv/Where",
+          "/layers.14/conv/Where",
+          "/layers.15/conv/Where",
+          "/layers.16/conv/Where",
+          "/layers.17/conv/Where",
+          "/layers.18/conv/Where",
+          "/layers.19/conv/Where",
+          "/layers.20/conv/Where",
+          "/layers.21/conv/Where",
+          "/layers.22/conv/Where",
+          "/layers.23/conv/Where"
+        ],
+        "seconds": 1.5032666666666666e-05
+      },
+      {
+        "name": "/layers.0/conv/Unsqueeze",
+        "members": [
+          "/layers.0/conv/Where",
+          "/layers.1/conv/Where",
+          "/layers.2/conv/Where",
+          "/layers.3/conv/Where",
+          "/layers.4/conv/Where",
+          "/layers.5/conv/Where",
+          "/layers.6/conv/Where",
+          "/layers.7/conv/Where",
+          "/layers.8/conv/Where",
+          "/layers.9/conv/Where",
+          "/layers.10/conv/Where",
+          "/layers.11/conv/Where",
+          "/layers.12/conv/Where",
+          "/layers.13/conv/Where",
+          "/layers.14/conv/Where",
+          "/layers.15/conv/Where",
+          "/layers.16/conv/Where",
+          "/layers.17/conv/Where",
+          "/layers.18/conv/Where",
+          "/layers.19/conv/Where",
+          "/layers.20/conv/Where",
+          "/layers.21/conv/Where",
+          "/layers.22/conv/Where",
+          "/layers.23/conv/Where"
+        ],
+        "seconds": 0.00018494333333333334
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_88",
+        "members": [
+          "/layers.0/self_attn/Pad",
+          "/layers.1/self_attn/Pad",
+          "/layers.2/self_attn/Pad",
+          "/layers.3/self_attn/Pad",
+          "/layers.4/self_attn/Pad",
+          "/layers.5/self_attn/Pad",
+          "/layers.6/self_attn/Pad",
+          "/layers.7/self_attn/Pad",
+          "/layers.8/self_attn/Pad",
+          "/layers.9/self_attn/Pad",
+          "/layers.10/self_attn/Pad",
+          "/layers.11/self_attn/Pad",
+          "/layers.12/self_attn/Pad",
+          "/layers.13/self_attn/Pad",
+          "/layers.14/self_attn/Pad",
+          "/layers.15/self_attn/Pad",
+          "/layers.16/self_attn/Pad",
+          "/layers.17/self_attn/Pad",
+          "/layers.18/self_attn/Pad",
+          "/layers.19/self_attn/Pad",
+          "/layers.20/self_attn/Pad",
+          "/layers.21/self_attn/Pad",
+          "/layers.22/self_attn/Pad",
+          "/layers.23/self_attn/Pad"
+        ],
+        "seconds": 6.490666666666667e-06
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_87",
+        "members": [
+          "/layers.0/self_attn/Pad",
+          "/layers.1/self_attn/Pad",
+          "/layers.2/self_attn/Pad",
+          "/layers.3/self_attn/Pad",
+          "/layers.4/self_attn/Pad",
+          "/layers.5/self_attn/Pad",
+          "/layers.6/self_attn/Pad",
+          "/layers.7/self_attn/Pad",
+          "/layers.8/self_attn/Pad",
+          "/layers.9/self_attn/Pad",
+          "/layers.10/self_attn/Pad",
+          "/layers.11/self_attn/Pad",
+          "/layers.12/self_attn/Pad",
+          "/layers.13/self_attn/Pad",
+          "/layers.14/self_attn/Pad",
+          "/layers.15/self_attn/Pad",
+          "/layers.16/self_attn/Pad",
+          "/layers.17/self_attn/Pad",
+          "/layers.18/self_attn/Pad",
+          "/layers.19/self_attn/Pad",
+          "/layers.20/self_attn/Pad",
+          "/layers.21/self_attn/Pad",
+          "/layers.22/self_attn/Pad",
+          "/layers.23/self_attn/Pad"
+        ],
+        "seconds": 7.139666666666667e-06
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_89",
+        "members": [
+          "/layers.0/self_attn/Pad",
+          "/layers.1/self_attn/Pad",
+          "/layers.2/self_attn/Pad",
+          "/layers.3/self_attn/Pad",
+          "/layers.4/self_attn/Pad",
+          "/layers.5/self_attn/Pad",
+          "/layers.6/self_attn/Pad",
+          "/layers.7/self_attn/Pad",
+          "/layers.8/self_attn/Pad",
+          "/layers.9/self_attn/Pad",
+          "/layers.10/self_attn/Pad",
+          "/layers.11/self_attn/Pad",
+          "/layers.12/self_attn/Pad",
+          "/layers.13/self_attn/Pad",
+          "/layers.14/self_attn/Pad",
+          "/layers.15/self_attn/Pad",
+          "/layers.16/self_attn/Pad",
+          "/layers.17/self_attn/Pad",
+          "/layers.18/self_attn/Pad",
+          "/layers.19/self_attn/Pad",
+          "/layers.20/self_attn/Pad",
+          "/layers.21/self_attn/Pad",
+          "/layers.22/self_attn/Pad",
+          "/layers.23/self_attn/Pad",
+          "/layers.0/conv/depthwise_conv/Pad",
+          "/layers.1/conv/depthwise_conv/Pad",
+          "/layers.2/conv/depthwise_conv/Pad",
+          "/layers.3/conv/depthwise_conv/Pad",
+          "/layers.4/conv/depthwise_conv/Pad",
+          "/layers.5/conv/depthwise_conv/Pad",
+          "/layers.6/conv/depthwise_conv/Pad",
+          "/layers.7/conv/depthwise_conv/Pad",
+          "/layers.8/conv/depthwise_conv/Pad",
+          "/layers.9/conv/depthwise_conv/Pad",
+          "/layers.10/conv/depthwise_conv/Pad",
+          "/layers.11/conv/depthwise_conv/Pad",
+          "/layers.12/conv/depthwise_conv/Pad",
+          "/layers.13/conv/depthwise_conv/Pad",
+          "/layers.14/conv/depthwise_conv/Pad",
+          "/layers.15/conv/depthwise_conv/Pad",
+          "/layers.16/conv/depthwise_conv/Pad",
+          "/layers.17/conv/depthwise_conv/Pad",
+          "/layers.18/conv/depthwise_conv/Pad",
+          "/layers.19/conv/depthwise_conv/Pad",
+          "/layers.20/conv/depthwise_conv/Pad",
+          "/layers.21/conv/depthwise_conv/Pad",
+          "/layers.22/conv/depthwise_conv/Pad",
+          "/layers.23/conv/depthwise_conv/Pad"
+        ],
+        "seconds": 6.003e-06
+      },
+      {
+        "name": "/pre_encode/Constant_12",
+        "members": [
+          "/layers.0/self_attn/Pad",
+          "/layers.1/self_attn/Pad",
+          "/layers.2/self_attn/Pad",
+          "/layers.3/self_attn/Pad",
+          "/layers.4/self_attn/Pad",
+          "/layers.5/self_attn/Pad",
+          "/layers.6/self_attn/Pad",
+          "/layers.7/self_attn/Pad",
+          "/layers.8/self_attn/Pad",
+          "/layers.9/self_attn/Pad",
+          "/layers.10/self_attn/Pad",
+          "/layers.11/self_attn/Pad",
+          "/layers.12/self_attn/Pad",
+          "/layers.13/self_attn/Pad",
+          "/layers.14/self_attn/Pad",
+          "/layers.15/self_attn/Pad",
+          "/layers.16/self_attn/Pad",
+          "/layers.17/self_attn/Pad",
+          "/layers.18/self_attn/Pad",
+          "/layers.19/self_attn/Pad",
+          "/layers.20/self_attn/Pad",
+          "/layers.21/self_attn/Pad",
+          "/layers.22/self_attn/Pad",
+          "/layers.23/self_attn/Pad",
+          "/layers.0/conv/depthwise_conv/Pad",
+          "/layers.1/conv/depthwise_conv/Pad",
+          "/layers.2/conv/depthwise_conv/Pad",
+          "/layers.3/conv/depthwise_conv/Pad",
+          "/layers.4/conv/depthwise_conv/Pad",
+          "/layers.5/conv/depthwise_conv/Pad",
+          "/layers.6/conv/depthwise_conv/Pad",
+          "/layers.7/conv/depthwise_conv/Pad",
+          "/layers.8/conv/depthwise_conv/Pad",
+          "/layers.9/conv/depthwise_conv/Pad",
+          "/layers.10/conv/depthwise_conv/Pad",
+          "/layers.11/conv/depthwise_conv/Pad",
+          "/layers.12/conv/depthwise_conv/Pad",
+          "/layers.13/conv/depthwise_conv/Pad",
+          "/layers.14/conv/depthwise_conv/Pad",
+          "/layers.15/conv/depthwise_conv/Pad",
+          "/layers.16/conv/depthwise_conv/Pad",
+          "/layers.17/conv/depthwise_conv/Pad",
+          "/layers.18/conv/depthwise_conv/Pad",
+          "/layers.19/conv/depthwise_conv/Pad",
+          "/layers.20/conv/depthwise_conv/Pad",
+          "/layers.21/conv/depthwise_conv/Pad",
+          "/layers.22/conv/depthwise_conv/Pad",
+          "/layers.23/conv/depthwise_conv/Pad"
+        ],
+        "seconds": 1.0679666666666667e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_92",
+        "members": [
+          "/layers.0/self_attn/Pad",
+          "/layers.1/self_attn/Pad",
+          "/layers.2/self_attn/Pad",
+          "/layers.3/self_attn/Pad",
+          "/layers.4/self_attn/Pad",
+          "/layers.5/self_attn/Pad",
+          "/layers.6/self_attn/Pad",
+          "/layers.7/self_attn/Pad",
+          "/layers.8/self_attn/Pad",
+          "/layers.9/self_attn/Pad",
+          "/layers.10/self_attn/Pad",
+          "/layers.11/self_attn/Pad",
+          "/layers.12/self_attn/Pad",
+          "/layers.13/self_attn/Pad",
+          "/layers.14/self_attn/Pad",
+          "/layers.15/self_attn/Pad",
+          "/layers.16/self_attn/Pad",
+          "/layers.17/self_attn/Pad",
+          "/layers.18/self_attn/Pad",
+          "/layers.19/self_attn/Pad",
+          "/layers.20/self_attn/Pad",
+          "/layers.21/self_attn/Pad",
+          "/layers.22/self_attn/Pad",
+          "/layers.23/self_attn/Pad",
+          "/layers.0/conv/depthwise_conv/Pad",
+          "/layers.1/conv/depthwise_conv/Pad",
+          "/layers.2/conv/depthwise_conv/Pad",
+          "/layers.3/conv/depthwise_conv/Pad",
+          "/layers.4/conv/depthwise_conv/Pad",
+          "/layers.5/conv/depthwise_conv/Pad",
+          "/layers.6/conv/depthwise_conv/Pad",
+          "/layers.7/conv/depthwise_conv/Pad",
+          "/layers.8/conv/depthwise_conv/Pad",
+          "/layers.9/conv/depthwise_conv/Pad",
+          "/layers.10/conv/depthwise_conv/Pad",
+          "/layers.11/conv/depthwise_conv/Pad",
+          "/layers.12/conv/depthwise_conv/Pad",
+          "/layers.13/conv/depthwise_conv/Pad",
+          "/layers.14/conv/depthwise_conv/Pad",
+          "/layers.15/conv/depthwise_conv/Pad",
+          "/layers.16/conv/depthwise_conv/Pad",
+          "/layers.17/conv/depthwise_conv/Pad",
+          "/layers.18/conv/depthwise_conv/Pad",
+          "/layers.19/conv/depthwise_conv/Pad",
+          "/layers.20/conv/depthwise_conv/Pad",
+          "/layers.21/conv/depthwise_conv/Pad",
+          "/layers.22/conv/depthwise_conv/Pad",
+          "/layers.23/conv/depthwise_conv/Pad"
+        ],
+        "seconds": 9.787333333333334e-06
+      },
+      {
+        "name": "Constant_1704",
+        "members": [
+          "/layers.0/self_attn/Pad",
+          "/layers.1/self_attn/Pad",
+          "/layers.2/self_attn/Pad",
+          "/layers.3/self_attn/Pad",
+          "/layers.4/self_attn/Pad",
+          "/layers.5/self_attn/Pad",
+          "/layers.6/self_attn/Pad",
+          "/layers.7/self_attn/Pad",
+          "/layers.8/self_attn/Pad",
+          "/layers.9/self_attn/Pad",
+          "/layers.10/self_attn/Pad",
+          "/layers.11/self_attn/Pad",
+          "/layers.12/self_attn/Pad",
+          "/layers.13/self_attn/Pad",
+          "/layers.14/self_attn/Pad",
+          "/layers.15/self_attn/Pad",
+          "/layers.16/self_attn/Pad",
+          "/layers.17/self_attn/Pad",
+          "/layers.18/self_attn/Pad",
+          "/layers.19/self_attn/Pad",
+          "/layers.20/self_attn/Pad",
+          "/layers.21/self_attn/Pad",
+          "/layers.22/self_attn/Pad",
+          "/layers.23/self_attn/Pad",
+          "/layers.0/conv/depthwise_conv/Pad",
+          "/layers.1/conv/depthwise_conv/Pad",
+          "/layers.2/conv/depthwise_conv/Pad",
+          "/layers.3/conv/depthwise_conv/Pad",
+          "/layers.4/conv/depthwise_conv/Pad",
+          "/layers.5/conv/depthwise_conv/Pad",
+          "/layers.6/conv/depthwise_conv/Pad",
+          "/layers.7/conv/depthwise_conv/Pad",
+          "/layers.8/conv/depthwise_conv/Pad",
+          "/layers.9/conv/depthwise_conv/Pad",
+          "/layers.10/conv/depthwise_conv/Pad",
+          "/layers.11/conv/depthwise_conv/Pad",
+          "/layers.12/conv/depthwise_conv/Pad",
+          "/layers.13/conv/depthwise_conv/Pad",
+          "/layers.14/conv/depthwise_conv/Pad",
+          "/layers.15/conv/depthwise_conv/Pad",
+          "/layers.16/conv/depthwise_conv/Pad",
+          "/layers.17/conv/depthwise_conv/Pad",
+          "/layers.18/conv/depthwise_conv/Pad",
+          "/layers.19/conv/depthwise_conv/Pad",
+          "/layers.20/conv/depthwise_conv/Pad",
+          "/layers.21/conv/depthwise_conv/Pad",
+          "/layers.22/conv/depthwise_conv/Pad",
+          "/layers.23/conv/depthwise_conv/Pad"
+        ],
+        "seconds": 1.5717666666666667e-05
+      },
+      {
+        "name": "/layers.0/conv/depthwise_conv/Constant_1",
+        "members": [
+          "/layers.0/conv/depthwise_conv/Pad",
+          "/layers.1/conv/depthwise_conv/Pad",
+          "/layers.2/conv/depthwise_conv/Pad",
+          "/layers.3/conv/depthwise_conv/Pad",
+          "/layers.4/conv/depthwise_conv/Pad",
+          "/layers.5/conv/depthwise_conv/Pad",
+          "/layers.6/conv/depthwise_conv/Pad",
+          "/layers.7/conv/depthwise_conv/Pad",
+          "/layers.8/conv/depthwise_conv/Pad",
+          "/layers.9/conv/depthwise_conv/Pad",
+          "/layers.10/conv/depthwise_conv/Pad",
+          "/layers.11/conv/depthwise_conv/Pad",
+          "/layers.12/conv/depthwise_conv/Pad",
+          "/layers.13/conv/depthwise_conv/Pad",
+          "/layers.14/conv/depthwise_conv/Pad",
+          "/layers.15/conv/depthwise_conv/Pad",
+          "/layers.16/conv/depthwise_conv/Pad",
+          "/layers.17/conv/depthwise_conv/Pad",
+          "/layers.18/conv/depthwise_conv/Pad",
+          "/layers.19/conv/depthwise_conv/Pad",
+          "/layers.20/conv/depthwise_conv/Pad",
+          "/layers.21/conv/depthwise_conv/Pad",
+          "/layers.22/conv/depthwise_conv/Pad",
+          "/layers.23/conv/depthwise_conv/Pad"
+        ],
+        "seconds": 7.992666666666667e-06
+      },
+      {
+        "name": "/layers.0/conv/depthwise_conv/Constant",
+        "members": [
+          "/layers.0/conv/depthwise_conv/Pad",
+          "/layers.1/conv/depthwise_conv/Pad",
+          "/layers.2/conv/depthwise_conv/Pad",
+          "/layers.3/conv/depthwise_conv/Pad",
+          "/layers.4/conv/depthwise_conv/Pad",
+          "/layers.5/conv/depthwise_conv/Pad",
+          "/layers.6/conv/depthwise_conv/Pad",
+          "/layers.7/conv/depthwise_conv/Pad",
+          "/layers.8/conv/depthwise_conv/Pad",
+          "/layers.9/conv/depthwise_conv/Pad",
+          "/layers.10/conv/depthwise_conv/Pad",
+          "/layers.11/conv/depthwise_conv/Pad",
+          "/layers.12/conv/depthwise_conv/Pad",
+          "/layers.13/conv/depthwise_conv/Pad",
+          "/layers.14/conv/depthwise_conv/Pad",
+          "/layers.15/conv/depthwise_conv/Pad",
+          "/layers.16/conv/depthwise_conv/Pad",
+          "/layers.17/conv/depthwise_conv/Pad",
+          "/layers.18/conv/depthwise_conv/Pad",
+          "/layers.19/conv/depthwise_conv/Pad",
+          "/layers.20/conv/depthwise_conv/Pad",
+          "/layers.21/conv/depthwise_conv/Pad",
+          "/layers.22/conv/depthwise_conv/Pad",
+          "/layers.23/conv/depthwise_conv/Pad"
+        ],
+        "seconds": 4.840933333333333e-05
+      }
+    ],
+    "ort": [
+      {
+        "name": "/layers.0/self_attn/Unsqueeze_35",
+        "members": [
+          "/layers.0/self_attn/Where",
+          "/layers.1/self_attn/Where",
+          "/layers.2/self_attn/Where",
+          "/layers.3/self_attn/Where",
+          "/layers.4/self_attn/Where",
+          "/layers.5/self_attn/Where",
+          "/layers.6/self_attn/Where",
+          "/layers.7/self_attn/Where",
+          "/layers.8/self_attn/Where",
+          "/layers.9/self_attn/Where",
+          "/layers.10/self_attn/Where",
+          "/layers.11/self_attn/Where",
+          "/layers.12/self_attn/Where",
+          "/layers.13/self_attn/Where",
+          "/layers.14/self_attn/Where",
+          "/layers.15/self_attn/Where",
+          "/layers.16/self_attn/Where",
+          "/layers.17/self_attn/Where",
+          "/layers.18/self_attn/Where",
+          "/layers.19/self_attn/Where",
+          "/layers.20/self_attn/Where",
+          "/layers.21/self_attn/Where",
+          "/layers.22/self_attn/Where",
+          "/layers.23/self_attn/Where",
+          "/layers.0/self_attn/Where_1",
+          "/layers.1/self_attn/Where_1",
+          "/layers.2/self_attn/Where_1",
+          "/layers.3/self_attn/Where_1",
+          "/layers.4/self_attn/Where_1",
+          "/layers.5/self_attn/Where_1",
+          "/layers.6/self_attn/Where_1",
+          "/layers.7/self_attn/Where_1",
+          "/layers.8/self_attn/Where_1",
+          "/layers.9/self_attn/Where_1",
+          "/layers.10/self_attn/Where_1",
+          "/layers.11/self_attn/Where_1",
+          "/layers.12/self_attn/Where_1",
+          "/layers.13/self_attn/Where_1",
+          "/layers.14/self_attn/Where_1",
+          "/layers.15/self_attn/Where_1",
+          "/layers.16/self_attn/Where_1",
+          "/layers.17/self_attn/Where_1",
+          "/layers.18/self_attn/Where_1",
+          "/layers.19/self_attn/Where_1",
+          "/layers.20/self_attn/Where_1",
+          "/layers.21/self_attn/Where_1",
+          "/layers.22/self_attn/Where_1",
+          "/layers.23/self_attn/Where_1"
+        ],
+        "seconds": 4.1e-05
+      },
+      {
+        "name": "/layers.0/conv/Unsqueeze",
+        "members": [
+          "/layers.0/conv/Where",
+          "/layers.1/conv/Where",
+          "/layers.2/conv/Where",
+          "/layers.3/conv/Where",
+          "/layers.4/conv/Where",
+          "/layers.5/conv/Where",
+          "/layers.6/conv/Where",
+          "/layers.7/conv/Where",
+          "/layers.8/conv/Where",
+          "/layers.9/conv/Where",
+          "/layers.10/conv/Where",
+          "/layers.11/conv/Where",
+          "/layers.12/conv/Where",
+          "/layers.13/conv/Where",
+          "/layers.14/conv/Where",
+          "/layers.15/conv/Where",
+          "/layers.16/conv/Where",
+          "/layers.17/conv/Where",
+          "/layers.18/conv/Where",
+          "/layers.19/conv/Where",
+          "/layers.20/conv/Where",
+          "/layers.21/conv/Where",
+          "/layers.22/conv/Where",
+          "/layers.23/conv/Where"
+        ],
+        "seconds": 9.2e-05
+      }
+    ]
+  },
+  "frames": {
+    "51": 1,
+    "61": 1,
+    "83": 1,
+    "88": 1,
+    "89": 1,
+    "102": 1,
+    "106": 1,
+    "112": 1,
+    "114": 1,
+    "120": 1,
+    "151": 1,
+    "156": 2,
+    "157": 1,
+    "158": 1,
+    "167": 1,
+    "169": 1,
+    "190": 1,
+    "222": 1,
+    "225": 1
+  },
+  "managed_sources": {
+    "src/Lokad.Onnx/CPUExecutionProvider.Shape.cs": {
+      "bytes": 61192,
+      "sha256": "532d26594643fdf97fad2973e05e6a603335509f36ed13da110a3e713ae6d768"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.Elementwise.cs": {
+      "bytes": 47917,
+      "sha256": "9b77db906cca856396d3c410a683b0bc4f8122cd880e40c90116802cc44f392c"
+    },
+    "src/Lokad.Onnx/TensorOps.Elementwise.cs": {
+      "bytes": 139471,
+      "sha256": "78fb682e983598663e415e43460d70a97dea6e52ed5055870b7890fe52d946e8"
+    }
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "native_sources": {
+    "onnxruntime/core/providers/cpu/tensor/where_op.cc": {
+      "bytes": 12469,
+      "sha256": "1f34fc25892f558d36b43309548849bcd616f03a1461a6de4f9bce9f40aeae2d"
+    },
+    "onnxruntime/core/providers/cpu/tensor/pad.cc": {
+      "bytes": 33229,
+      "sha256": "64b7c3367a2d080fd1d88e6c5a4a66320eb1835d6b58a1b1825add4916b63052"
+    },
+    "onnxruntime/core/providers/cpu/tensor/utils.h": {
+      "bytes": 21922,
+      "sha256": "3f395ea21526a1550fc45e8092cb05cd2e58e4a5f1b85fece02b09030ae7087c"
+    }
+  },
+  "helpers": {
+    "compare_slices.py": {
+      "bytes": 7223,
+      "sha256": "d063e52c042d3fdbac48f9c11877fc9bedae296a81943d43e2aa10b772ade14e"
+    },
+    "run.py": {
+      "bytes": 11635,
+      "sha256": "d4168732bccd4656db430b03e5cdf4985b2adac67908d6c811a0c9c1be023ce7"
+    }
+  },
+  "new_inference_calls": 0,
+  "metadata_only_constant_evaluation": true,
+  "new_optimization_selected": false,
+  "runtime_mask_values_captured": false,
+  "managed_runtime_layout_observed_for_this_corpus": false,
+  "shared_ancestors_counted_once": true,
+  "profiler_clocks_are_diagnostic": true,
+  "caveat": "These selected-release profiles predate the composition. Family ancestor totals overlap at shared constants; use the combined union, not their sum. Existing convolution attribution also contains these convolution masking/padding nodes."
+}
