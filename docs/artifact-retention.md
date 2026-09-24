@@ -39,6 +39,12 @@ traces. Complete local inventories, raw traces and archives remain verified,
 and all immutable VM inputs are protected. Receipt:
 `artifacts/parakeet-inclusive-packing-precontract-retention-20260924`.
 
+After the product build and focused contracts closed, **85.58 MB across 542
+generated package-cache files** was removed from the VM. All 20 package archives
+matched retained feed originals, and all immutable inputs and products remained
+exact. This recovered **86.81 MB of tmpfs** before model residency work. Receipt:
+`artifacts/parakeet-inclusive-packing-package-retention-20260924`.
+
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
 canonical models and worktrees were retained. Removed files were older duplicate
