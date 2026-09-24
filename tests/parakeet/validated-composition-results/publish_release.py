@@ -162,12 +162,16 @@ def root():
 
 
 def benchmark():
+    import qualified_graphs
     rb, _, ra = closed('root'); _, pp, pa = closed('app')
-    _, yp, ya = closed('pyannote-app'); gb, gp, ga = closed('graphs')
-    assert pp['admitted'] and yp['admitted'] and gp['admitted'] and ra['root_source_verified']
+    _, yp, ya = closed('pyannote-app'); ga = qualified_graphs.admission()
+    assert pp['admitted'] and yp['admitted'] and ga['admitted'] and ra['root_source_verified']
     assert pa['identities']['candidate'] == ya['identities']['candidate'] == ra['measured']
-    assert read(gb/'payload.json')['products']['candidate']['Lokad.Onnx.dll'] == ra['measured']['Lokad.Onnx.dll']
-    source = read(rb/'bundle/evidence/root-applied.json')['source_files']; assert len(source) == 425
+    assert ga['products']['candidate']['Lokad.Onnx.dll'] == ra['measured']['Lokad.Onnx.dll']
+    applied = read(rb/'bundle/evidence/root-applied.json')
+    assert applied['graph_qualification'] == pin(qualified_graphs.BASE/'closed.json')
+    assert ga['source_closures'] == dict(original_graphs=applied['prerequisites']['graphs'],e5_successor=applied['prerequisites']['e5'])
+    source = applied['source_files']; assert len(source) == 425
     for name, wanted in source.items(): assert pin(ROOT/name) == wanted, name
     changed = read(rb/'bundle/evidence/root-applied.json')['changed']
     assert not subprocess.check_output(['git','diff','HEAD','--name-only','--',*changed],cwd=ROOT,text=True).strip()
@@ -183,13 +187,18 @@ def benchmark():
         rows.append(f"| {label} | {work} | {row['candidate']:.6f} | {row['ort']:.6f} | **{row['ratio']:.3f}** | Qualified |")
     rows += ['| DINOv2-small | 224x224 image | — | — | — | Excluded: numerical agreement gate |',
         '| Whisper Large V3 Turbo | Speech transcription | — | — | — | Supported; current-release comparison deferred |']
-    for name in ['application-20260924.md','graphs-20260924.md','pyannote-application-20260924.md','root-20260924.md']:
+    for name in ['application-20260924.md','qualified-graphs-20260924.md','pyannote-application-20260924.md','root-20260924.md']:
         assert (OUT/name).exists(), name
     path = ROOT/'BENCHMARK.md'; document = path.read_text(encoding='utf8')
     start = document.index('| Parakeet TDT'); end = document.index('\n\nEvery numerical timing row',start)
     document = document[:start]+'\n'.join(rows)+document[end:]
     document, count = re.subn(r'measured on \d{4}-\d{2}-\d{2} UTC', 'measured on 2026-09-24 UTC', document); assert count == 1
     document = document.replace('so 1.154 means 15.4% more time','so 1.100 means 10.0% more time')
+    before = 'uses 600 fixed warmups and 180 measurements. Separate numerical workers run first.'
+    assert document.count(before) == 1
+    document = document.replace(before,
+        'uses 1,200 fixed warmups for 30-token e5 and 600 for the other graph cases,\n'
+        'followed by 180 measurements. Separate numerical workers run first.')
     start = document.index('The selected product is source'); end = document.index('\n## What is timed',start)
     document = document[:start]+f'''The selected product is source `{commit}`, measured as Core `{ra['measured']['Lokad.Onnx.dll']['sha256'][:8]}` and
 Data `{ra['measured']['Lokad.Onnx.Data.dll']['sha256'][:8]}`. The [normal root and package qualification](tests/parakeet/validated-composition-results/root-20260924.md)
@@ -200,8 +209,8 @@ skip census in each mode is recorded in that report.
 ''' + document[end:]
     for before, after in [('wide-entry-first-use-results/pyannote-20260923.md','validated-composition-results/pyannote-application-20260924.md'),
         ('wide-entry-first-use-results/application-20260923.md','validated-composition-results/application-20260924.md'),
-        ('wide-entry-first-use-results/graphs-20260923.md','validated-composition-results/graphs-20260924.md'),
-        ('wide-entry-first-use-graphs-amd/README.md','validated-composition-graphs-amd/README.md'),
+        ('wide-entry-first-use-results/graphs-20260923.md','validated-composition-results/qualified-graphs-20260924.md'),
+        ('wide-entry-first-use-graphs-amd/README.md','validated-composition-results/qualified-graphs-20260924.md'),
         ('wide-entry-first-use-pyannote-app-amd/README.md','validated-composition-pyannote-app-amd/README.md'),
         ('wide-entry-first-use-app-amd-v2/README.md','validated-composition-app-amd/README.md')]:
         assert document.count(before) == 1; document = document.replace(before,after)

@@ -1,6 +1,6 @@
 """Apply exactly the admitted source after verifying all complete regression gates."""
 import json,shutil
-from prepare import ROOT,APPLIED,SOURCE,PRIOR,gates
+from prepare import ROOT,APPLIED,SOURCE,PRIOR,gates,graph_qualification
 from protocol import pin,read,save
 from source_scope import verify_before,delta
 
@@ -13,6 +13,7 @@ def main():
         if (ROOT/name).exists():
             backup=APPLIED/'before'/name;backup.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/name,backup)
     intended=dict(prepared=pin(SOURCE/'prepared.json'),prerequisites={label:pin(folder/'closed.json') for label,folder in PRIOR.items()},
+        graph_qualification=pin(graph_qualification.BASE/'closed.json'),
         before={name:source['before'].get(name) for name in changed},source_files=source['source'],changed=changed)
     save(APPLIED/'intended.json',intended)
     for name in changed:

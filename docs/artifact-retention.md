@@ -6,19 +6,21 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **47.17 GB**, including **33.71 GB** in artifacts.
+The latest inventory is **47.99 GB**, including **34.51 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
 the corrected two-mode qualification remain recorded. Complete native/public
 Parakeet models, the combined application, shared/e5 and complete Pyannote
-correctness are collected and audited; the warmed graph comparison is staged.
+correctness are collected and audited. The graph comparison, its retained e5
+failure, the runtime diagnostic and the admitted focused e5 successor are all
+retained. The complete Pyannote application and long-meeting check is running.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **47,172,535,990 bytes**, with
-**2.83 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m66-shared-pyannote-size.json`.
-Counting the model junction again gives57.96GB, which counts the same10.79GB
+remain retained. The inventory totals **47,986,552,954 bytes**, with
+**2.01 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m69-pyannote-stage-size.json`.
+Counting the model junction again gives58.77GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 

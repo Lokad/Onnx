@@ -2,6 +2,10 @@
 
 Integrate only after the combined Parakeet application, complete shared/e5 and
 Pyannote checks, warmed graph comparison and Pyannote application/meetings pass.
+The graph qualification explicitly combines seven retained graph cases with
+the diagnosed e5 successor. Verify both source closures and matching products;
+preserve the original failed graph verdict. Bind this derived qualification
+separately in the integration receipt and frozen bundle. It is not a VM run.
 Verify the current 422 root inputs and copy exactly six modified files and three
 additions from the admitted 425-file source snapshot af68e6c2. Preserve a backup
 and integration receipt. No unqualified optimization belongs in this change.

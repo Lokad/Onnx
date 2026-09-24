@@ -40,6 +40,14 @@ class Prerequisite(unittest.TestCase):
 
     def test_actual_complete_sources_pass(self):self.assertTrue(verify_bundle(self.base,self.spec)['passed'])
 
+    def test_root_measured_product_matches(self):
+        self.spec['measured']=self.spec.pop('identities')['candidate']
+        self.assertTrue(verify_bundle(self.base,self.spec)['passed'])
+
+    def test_root_measured_product_substitution_rejected(self):
+        self.spec['measured']=self.spec.pop('identities')['selected']
+        with self.assertRaises(AssertionError):verify_bundle(self.base,self.spec)
+
     def test_hidden_warmup_change_rejected(self):
         self.forge_summary(lambda value:next(r for r in value['performance'] if r['key']=='e5-30tok').update(warmups=600))
         with self.assertRaises(AssertionError):verify_bundle(self.base,self.spec)
