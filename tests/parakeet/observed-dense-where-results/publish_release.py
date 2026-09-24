@@ -52,6 +52,11 @@ def resources(analysis):
 
 def graphs():
     base, proof, analysis = closed('graphs')
+    collection = read(base/'collection-adapter.json')
+    assert collection['passed'] and not collection['worker_or_scoring_changed'] and not collection['original_inputs_removed']
+    assert collection['payload'] == pin(base/'payload.json')
+    assert collection['added_directories'] == ['runtimes-e5','source'] and len(collection['added_inputs']) == 11
+    for name,wanted in collection['added_inputs'].items(): assert pin(base/'collected'/name) == wanted,name
     assert analysis['clocks'] == 41112 and analysis['measured'] == 8640
     assert analysis['consumer']['branches_locals_exceptions_equal'] and analysis['consumer']['implementation_flags_equal']
     assert analysis['e5_consumer']['branches_locals_exceptions_equal'] and analysis['e5_consumer']['implementation_flags_equal']
@@ -89,6 +94,10 @@ def graphs():
         'ORT scaled error <=1e-4, exact shapes, finiteness, unchanged inputs and',
         'held-output ownership checks. Both previously qualified consumers are reused',
         'unchanged, including all method flags; no profiler or build overlaps timing.','',
+        'A [collection correction](../observed-dense-where-graph-collection/README.md)',
+        'adds the separately deployed e5 runtime and SDK pin omitted from the frozen',
+        'transport list. All eleven added input files match the deployed payload;',
+        'workers, inputs, clocks, scoring and original collection checks are unchanged.','',
         resources(analysis),'',
         '[All clocks](graphs-clocks-20260924.csv), [all setups](graphs-setup-20260924.csv),',
         '[complete controls, consumer and resource evidence](graphs-observations-20260924.json).','',
