@@ -6,17 +6,17 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **42.19 GB**, including **28.74 GB** in artifacts,
-after retaining the selected release proofs, closing the rejected matrix-blocking
-candidate, and qualifying the corrected uniform-mask Where candidate's build,
-numerics and generated code, then staging its fixed performance screen. The Boolean counterexample and superseded drafts
-remain retained. The fresh inventory totals **42,194,072,754 bytes**, with
-**7.81 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m56-screen-staged-size.json`.
-Counting the model junction again gives 52.98 GB, which counts the same 10.79 GB
+The latest inventory is **42.31 GB**, including **28.85 GB** in artifacts,
+after retaining the qualified release, the rejected uniform-mask screen and its
+untimed code-generation investigation, and preparing the next provider-only
+source candidate. The fresh inventory totals **42,310,229,807 bytes**, with
+**7.69 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m57-source-prepared-size.json`.
+Counting the model junction again gives 53.10 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
-No new model copies were needed. Recheck after subsequent collections.
+No new model copies were needed. All current proof records, complete clocks,
+Boolean counterexamples and superseded drafts remain retained.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,

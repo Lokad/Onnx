@@ -39,7 +39,7 @@ existing float `Where` dispatch and preserves the entire generic tensor method.
 It needs its own source/build/numerical/generated-code/component qualification.
 Component timing must include the complete provider call and returned `OpResult`;
 the old public-tensor screen remains rejected and supplies no admitted gain.
-No application run or integration is authorized by this diagnostic result alone.
+This diagnostic does not admit application timing or integration.
 
 Frozen tools:485f9416,tests/parakeet/scalar-where-fallback-codegen.
 Closure:1cf6a1241cb1501fdf24e7dc049b19181353f3d80c9dfacd71729ece384ffd41.
