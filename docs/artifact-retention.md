@@ -261,3 +261,18 @@ remains verified against closure `e6a94afd`; all 76,719 paths referenced by VM
 payload, stage and observer manifests were protected. The final graph worker
 then started normally. No timing process, limit, input or score was changed.
 Receipt: `artifacts/parakeet-profile-transfer-retention-20260924/closed.json`.
+
+During the focused e5 runtime diagnostic, maintenance reclaimed **175.92 MB**
+in seven compiler exports from terminal VM campaigns. Every complete local
+export and collection remains hash-verified; all 76,813 immutable input paths
+were protected. Receipt: `artifacts/e5-diagnostic-compiler-retention-20260924`.
+The preceding attempt to retire old GPT-2 event text found it already absent
+and made no mutation (`artifacts/e5-startup-retirement-refusal-20260924.json`).
+
+After all four e5 inference captures finished, decoded event text is collected
+incrementally. Each completed export is compressed during transfer, verified
+against its original raw SHA-256 and size, then its VM duplicate is removed.
+Raw traces and summaries remain on the VM. Final local collection restores all
+four original event texts and records `incremental-event-collection.json`;
+no event, call or original limit is omitted. Transfer receipts and archives
+are in `artifacts/e5-runtime-event-transfers-20260924`.
