@@ -1,0 +1,10 @@
+process,seconds
+verify-e5-30tok-current,0.6384752
+verify-e5-30tok-candidate,0.6385894
+verify-e5-30tok-ort,0.286939333
+timing-e5-30tok-current-a,0.6403351
+timing-e5-30tok-candidate-a,0.6368169
+timing-e5-30tok-ort-a,0.285632886
+timing-e5-30tok-ort-b,0.287034047
+timing-e5-30tok-candidate-b,0.6377222
+timing-e5-30tok-current-b,0.6413672

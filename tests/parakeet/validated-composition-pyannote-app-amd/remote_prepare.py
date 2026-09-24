@@ -11,6 +11,7 @@ PRIOR=dict(baseline=OLD,models=MODELS,product=Path('/dev/shm/lokad-parakeet-vali
     parakeet=Path('/dev/shm/lokad-parakeet-validated-composition-models-20260924'),
     shared=Path('/dev/shm/lokad-parakeet-validated-composition-shared-20260924'),
     graphs=Path('/dev/shm/lokad-parakeet-validated-composition-graphs-20260924'),
+    e5=Path('/dev/shm/lokad-e5-warmed-qualification-20260924'),
     **{'parakeet-app':Path('/dev/shm/lokad-parakeet-validated-composition-app-20260924')})
 
 def main():
@@ -45,6 +46,7 @@ def main():
     save(BASE/'meetings/manifest.json',meeting)
     assert pin(BASE/'evidence/selected-meetings.json')==pin(OLD/'meetings-run/output/result.json')
     payload=dict(passed=True,jobs=JOBS,limits=LIMITS,boot_time=1789634288.0,prerequisites=stage['prerequisites'],
+        graph_qualification=stage['graph_qualification'],
         previous_owner=receipt['identities'][0],identities=stage['identities'],consumers=stage['consumers'],
         external=external,interpreter=old['interpreter'],python_paths=old['python_paths'],
         files={p.relative_to(BASE).as_posix():pin(p) for p in BASE.rglob('*') if p.is_file() and p.name!='transfer.tar.gz'},

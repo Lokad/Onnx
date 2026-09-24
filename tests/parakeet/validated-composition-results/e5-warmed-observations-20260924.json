@@ -1,0 +1,271 @@
+{
+  "closure": {
+    "bytes": 31492,
+    "sha256": "71c6d952a4ef99aba8b9953c47c2ed9cd70035691e81f99e3f42761fbb8944a4"
+  },
+  "passed": true,
+  "performance": {
+    "key": "e5-30tok",
+    "means": {
+      "current-a": 0.016387687122222223,
+      "candidate-a": 0.016472360566666667,
+      "ort-a": 0.015941895227777777,
+      "ort-b": 0.015648258494444445,
+      "candidate-b": 0.016177196938888888,
+      "current-b": 0.016145120983333334
+    },
+    "current": 0.016266404052777777,
+    "candidate": 0.01632477875277778,
+    "ort": 0.01579507686111111,
+    "ratio": 1.0335358856638956,
+    "current_over_ort": 1.0298401328344984,
+    "candidate_over_current": 1.003588666543054,
+    "regression_passed": true,
+    "controls": [
+      {
+        "role": "current",
+        "ratio": 1.01502411404283,
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "ratio": 1.0182456595473734,
+        "passed": true
+      },
+      {
+        "role": "ort",
+        "ratio": 1.0187648186817455,
+        "passed": true
+      }
+    ],
+    "qualified": true
+  },
+  "numerics": [
+    {
+      "process": "verify-e5-30tok-current",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "verify-e5-30tok-candidate",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "verify-e5-30tok-ort",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30tok-current-a",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "timing-e5-30tok-candidate-a",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "timing-e5-30tok-ort-a",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30tok-ort-b",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30tok-candidate-b",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "timing-e5-30tok-current-b",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    }
+  ],
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 5251072,
+      "seconds": 0.25564540503546596
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 153231360,
+      "seconds": 1.0193633229937404
+    },
+    {
+      "name": "consumer-build",
+      "samples": 16,
+      "peak_rss": 327532544,
+      "seconds": 4.088249200955033
+    },
+    {
+      "name": "consumer-inventory",
+      "samples": 1,
+      "peak_rss": 10113024,
+      "seconds": 0.26086358702741563
+    },
+    {
+      "name": "verify-e5-30tok-current",
+      "samples": 4,
+      "peak_rss": 1412423680,
+      "seconds": 1.0257777340011671
+    },
+    {
+      "name": "verify-e5-30tok-candidate",
+      "samples": 4,
+      "peak_rss": 1415995392,
+      "seconds": 1.0243397919693962
+    },
+    {
+      "name": "verify-e5-30tok-ort",
+      "samples": 2,
+      "peak_rss": 918192128,
+      "seconds": 0.5157947479747236
+    },
+    {
+      "name": "timing-e5-30tok-current-a",
+      "samples": 113,
+      "peak_rss": 1411366912,
+      "seconds": 28.920484693022445
+    },
+    {
+      "name": "timing-e5-30tok-candidate-a",
+      "samples": 112,
+      "peak_rss": 1415766016,
+      "seconds": 28.679914194974117
+    },
+    {
+      "name": "timing-e5-30tok-ort-a",
+      "samples": 90,
+      "peak_rss": 886779904,
+      "seconds": 23.060191933065653
+    },
+    {
+      "name": "timing-e5-30tok-ort-b",
+      "samples": 89,
+      "peak_rss": 559288320,
+      "seconds": 22.80474823899567
+    },
+    {
+      "name": "timing-e5-30tok-candidate-b",
+      "samples": 111,
+      "peak_rss": 1416286208,
+      "seconds": 28.464242360088974
+    },
+    {
+      "name": "timing-e5-30tok-current-b",
+      "samples": 111,
+      "peak_rss": 1411903488,
+      "seconds": 28.482085402938537
+    }
+  ],
+  "consumer": {
+    "passed": true,
+    "methods": 66,
+    "unchanged_methods": 65,
+    "changes": [
+      {
+        "index": 281,
+        "before": 780,
+        "after": 1380
+      },
+      {
+        "index": 521,
+        "before": 600,
+        "after": 1200
+      }
+    ],
+    "main_instructions": 657,
+    "branches_locals_exceptions_equal": true,
+    "implementation_flags_equal": true,
+    "previous_consumer": {
+      "bytes": 27648,
+      "sha256": "d827e3b9f1e5158e10bd24a5ca009fa7950fd08d08bb5260b84e36b5a853ac02"
+    },
+    "consumer": {
+      "bytes": 27648,
+      "sha256": "0b228b2d22eef7080a64fb5fbababc24e24a94b18deae2fead5075fbf90b4930"
+    },
+    "product_changed": false
+  },
+  "clocks": 8289,
+  "measured": 1080,
+  "setups": [
+    {
+      "process": "verify-e5-30tok-current",
+      "seconds": 0.6384752
+    },
+    {
+      "process": "verify-e5-30tok-candidate",
+      "seconds": 0.6385894
+    },
+    {
+      "process": "verify-e5-30tok-ort",
+      "seconds": 0.286939333
+    },
+    {
+      "process": "timing-e5-30tok-current-a",
+      "seconds": 0.6403351
+    },
+    {
+      "process": "timing-e5-30tok-candidate-a",
+      "seconds": 0.6368169
+    },
+    {
+      "process": "timing-e5-30tok-ort-a",
+      "seconds": 0.285632886
+    },
+    {
+      "process": "timing-e5-30tok-ort-b",
+      "seconds": 0.287034047
+    },
+    {
+      "process": "timing-e5-30tok-candidate-b",
+      "seconds": 0.6377222
+    },
+    {
+      "process": "timing-e5-30tok-current-b",
+      "seconds": 0.6413672
+    }
+  ],
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 773632,
+        "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 782848,
+        "sha256": "37c243756bbe5e5d563e79627a0a4d20ff027598801849da9606549c7ac60286"
+      }
+    }
+  },
+  "root_product_changed": false,
+  "original_graph_closure": {
+    "bytes": 139126,
+    "sha256": "729814e9effff9c5e1456e165e7ef792bf2cba1c4978ce28ee3cb3ea7b4d1209"
+  },
+  "diagnosis_closure": {
+    "bytes": 41622,
+    "sha256": "8304dc71470c5666b83078f1fa487ae8595259d3ce9738471f70065d4919e990"
+  }
+}

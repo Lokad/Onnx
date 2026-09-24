@@ -1,5 +1,5 @@
 """Freeze complete Pyannote regression timing and long-meeting qualification."""
-import ast,importlib.util,json,shutil,tarfile
+import ast,importlib.util,json,shutil,sys,tarfile
 from pathlib import Path
 from protocol import pin,read,save
 from checks import prereqs
@@ -9,6 +9,9 @@ BASE=ROOT/'artifacts/parakeet-validated-composition-pyannote-app-amd-20260924'
 OLD=ROOT/'artifacts/parakeet-wide-entry-first-use-pyannote-app-amd-20260923';APP_PAYLOAD=OLD/'collected'
 PARAKEET_APP=ROOT/'artifacts/parakeet-validated-composition-app-amd-20260924'
 GRAPHS=ROOT/'artifacts/parakeet-validated-composition-graphs-amd-20260924'
+E5=ROOT/'artifacts/e5-warmed-qualification-amd-20260924'
+sys.path.insert(0,str(ROOT/'tests/parakeet/validated-composition-results'))
+import qualified_graphs as graph_qualification
 PRIOR=dict(product=ROOT/'artifacts/parakeet-validated-composition-models-amd-20260924',
     models=ROOT/'artifacts/parakeet-validated-composition-pyannote-amd-20260924',
     parakeet=ROOT/'artifacts/parakeet-validated-composition-models-amd-20260924',
@@ -21,7 +24,7 @@ def previous_closed():
     verify_scope()
     assert pin(OLD/'closed.json')['sha256']=='bba3b59f090c6ac08a7c8a688eb8f621e7882b593be8d31e99dd70a498dc6052'
     assert read(PARAKEET_APP/'closed.json')['admitted']
-    assert read(GRAPHS/'closed.json')['admitted']
+    graph_qualification.admission()
     identities=read(PRIOR['models']/'analysis.json')['identities']
     graph=read(GRAPHS/'payload.json')['products'];app=read(PARAKEET_APP/'analysis.json')['identities']
     for role,label in [('current','selected'),('candidate','candidate')]:
@@ -29,7 +32,7 @@ def previous_closed():
         assert app[role]==identities[label]
     assert read(PRIOR['product']/'closed.json')['analysis']==pin(PRIOR['product']/'analysis.json')
     assert read(PRIOR['parakeet']/'closed.json')['analysis']==pin(PRIOR['parakeet']/'analysis.json')
-    for folder in [*PRIOR.values(),OLD,PARAKEET_APP,GRAPHS]:
+    for folder in [*PRIOR.values(),OLD,PARAKEET_APP,GRAPHS,E5]:
         proof=read(folder/'closed.json');assert proof['passed']
         for name,wanted in proof['files'].items():assert pin(folder/name)==wanted,name
 
@@ -40,7 +43,10 @@ def prepare():
         originals[source.relative_to(ROOT).as_posix()]=pin(source)
     for name in ['protocol.py','remote.py','remote_prepare.py','checks.py','meeting_protocol.py','meetings_audit.py','admission.py','semantics.py']:
         copy(TOOLS/name,bundle/'tools'/name)
-    for label,folder in [*PRIOR.items(),('baseline',OLD),('parakeet-app',PARAKEET_APP),('graphs',GRAPHS)]:
+    copy(ROOT/'tests/parakeet/validated-composition-results/graph_prerequisite.py',bundle/'tools/graph_prerequisite.py')
+    originals[Path(graph_qualification.__file__).relative_to(ROOT).as_posix()]=pin(Path(graph_qualification.__file__))
+    for name in ['closed.json','analysis.json']:copy(graph_qualification.BASE/name,bundle/'evidence/graph-qualification'/name)
+    for label,folder in [*PRIOR.items(),('baseline',OLD),('parakeet-app',PARAKEET_APP),('graphs',GRAPHS),('e5',E5)]:
         for name in ['closed.json','analysis.json','payload.json']:copy(folder/name,bundle/'evidence'/label/name)
         copy(folder/'collected/collection.json',bundle/'evidence'/label/'collection.json')
         if label in PRIOR:prerequisites[label]=dict(closed=pin(folder/'closed.json'),analysis=pin(folder/'analysis.json'))
@@ -50,6 +56,7 @@ def prepare():
     copy(APP_PAYLOAD/'meetings-run/output/result.json',bundle/'evidence/selected-meetings.json')
     copy(TOOLS/'README.md',bundle/'prospective-plan.md')
     stage=dict(passed=True,identities=read(PRIOR['models']/'analysis.json')['identities'],prerequisites=prerequisites,
+        graph_qualification=dict(closed=pin(graph_qualification.BASE/'closed.json'),analysis=pin(graph_qualification.BASE/'analysis.json')),
         consumers=read(OLD/'analysis.json')['consumers'],
         files={p.relative_to(bundle).as_posix():pin(p) for p in bundle.rglob('*') if p.is_file()})
     prereqs(bundle,stage);save(bundle/'stage.json',stage)

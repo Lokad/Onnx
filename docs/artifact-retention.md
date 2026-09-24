@@ -276,3 +276,9 @@ Raw traces and summaries remain on the VM. Final local collection restores all
 four original event texts and records `incremental-event-collection.json`;
 no event, call or original limit is omitted. Transfer receipts and archives
 are in `artifacts/e5-runtime-event-transfers-20260924`.
+
+Between numerical workers of the focused e5 successor, retirement reclaimed
+**130.49 MB** from four closed runtime-diagnostic trace copies on the VM.
+Every raw trace, full event text and collection archive remains verified locally.
+All 76,853 immutable VM paths were protected, and no inference worker was live
+during deletion. Receipt: `artifacts/e5-diagnostic-trace-retention-20260924`.

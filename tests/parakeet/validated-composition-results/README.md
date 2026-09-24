@@ -8,8 +8,10 @@ control fails. Numerical checks and the other seven regression gates pass.
 The [retained-clock review](e5-repeatability-20260924.md) localizes bursts but
 does not establish their cause. The [runtime diagnostic](../../benchmarks/e5-runtime-diagnostic-results/report-20260924.md)
 then confirms compilation continues into the measured window in both products.
-A focused comparison with a prospectively fixed longer warmup is next.
-Root integration and BENCHMARK.md remain pending.
+The [focused e5 successor](e5-warmed-20260924.md) passes all unchanged gates.
+The [qualified graph summary](qualified-graphs-20260924.md) binds that case
+and the seven retained passing cases: all24controls and8regression gates pass.
+Pyannote application/meetings, root integration and BENCHMARK.md remain pending.
 
 After each relevant campaign closes, run these local reporting actions with
 `C:/Python313/python.exe -X utf8 -B`:

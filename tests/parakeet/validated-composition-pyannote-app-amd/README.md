@@ -6,8 +6,10 @@ ten-minute meetings and the thirty-second recovery call. Retain the original
 native limits and require all complete meeting results to match the selected
 Core672e5f30/Data065b7a7f product exactly, including centroids. Parakeet native and public checks are
 already closed and are bound as prerequisites rather than repeated here.
-The M66 warmed graph comparison must also be admitted before preparation;
-its actual selected/candidate Core identities must match this lane.
+The graph qualification must admit all eight cases before preparation: seven
+retained M66 cases and the separately diagnosed e5 successor. The original
+failed graph campaign remains unchanged. Both source closures and all actual
+selected/candidate Core identities must match this lane.
 
 Then run six fresh Pyannote timing processes in selected, candidate, ORT, ORT,
 candidate, selected order. Each contains four fixtures, one warmup and three

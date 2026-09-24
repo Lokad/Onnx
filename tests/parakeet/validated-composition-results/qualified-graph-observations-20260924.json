@@ -1,0 +1,774 @@
+{
+  "closure": {
+    "bytes": 808,
+    "sha256": "e09da61c499ebcd698ccba7fdecc0bba8d1d779d8e6250a495bb2d35d8f63fa7"
+  },
+  "passed": true,
+  "admitted": true,
+  "all_controls_passed": true,
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 773632,
+        "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 782848,
+        "sha256": "37c243756bbe5e5d563e79627a0a4d20ff027598801849da9606549c7ac60286"
+      }
+    }
+  },
+  "performance": [
+    {
+      "key": "e5-8tok",
+      "source": "original-graphs",
+      "warmups": 600,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.011788113416666666,
+        "candidate-a": 0.012134839583333333,
+        "ort-a": 0.006214749294444445,
+        "ort-b": 0.006335068783333333,
+        "candidate-b": 0.011336249244444445,
+        "current-b": 0.011610069183333334
+      },
+      "current": 0.0116990913,
+      "candidate": 0.011735544413888889,
+      "ort": 0.006274909038888889,
+      "ratio": 1.8702333916169287,
+      "current_over_ort": 1.864424046228339,
+      "candidate_over_current": 1.0031158927607384,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0153353292320533,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.070445728712277,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0193603125706852,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-30tok",
+      "source": "e5-successor",
+      "warmups": 1200,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.016387687122222223,
+        "candidate-a": 0.016472360566666667,
+        "ort-a": 0.015941895227777777,
+        "ort-b": 0.015648258494444445,
+        "candidate-b": 0.016177196938888888,
+        "current-b": 0.016145120983333334
+      },
+      "current": 0.016266404052777777,
+      "candidate": 0.01632477875277778,
+      "ort": 0.01579507686111111,
+      "ratio": 1.0335358856638956,
+      "current_over_ort": 1.0298401328344984,
+      "candidate_over_current": 1.003588666543054,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.01502411404283,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0182456595473734,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0187648186817455,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-30pad128",
+      "source": "original-graphs",
+      "warmups": 600,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.06345570428333333,
+        "candidate-a": 0.06295922554444444,
+        "ort-a": 0.063894908,
+        "ort-b": 0.06349491121111112,
+        "candidate-b": 0.06323332392222222,
+        "current-b": 0.06317621827222222
+      },
+      "current": 0.06331596127777778,
+      "candidate": 0.06309627473333333,
+      "ort": 0.06369490960555556,
+      "ratio": 0.990601527250303,
+      "current_over_ort": 0.9940505712289334,
+      "candidate_over_current": 0.996530313367894,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.004423911698969,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0043535856009582,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0062996668750186,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-128tok",
+      "source": "original-graphs",
+      "warmups": 600,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.0633355081111111,
+        "candidate-a": 0.06372275314444445,
+        "ort-a": 0.06322099731666667,
+        "ort-b": 0.06409073958333333,
+        "candidate-b": 0.06375908978333333,
+        "current-b": 0.06296687077222222
+      },
+      "current": 0.06315118944166667,
+      "candidate": 0.06374092146388889,
+      "ort": 0.06365586845,
+      "ratio": 1.0013361378292356,
+      "current_over_ort": 0.9920717599080476,
+      "candidate_over_current": 1.0093384151183242,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0058544649649561,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0005702302097106,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0137571740969258,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-512tok",
+      "source": "original-graphs",
+      "warmups": 600,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.35326577854444446,
+        "candidate-a": 0.3880628679111111,
+        "ort-a": 0.3042269815777778,
+        "ort-b": 0.3023524109833333,
+        "candidate-b": 0.3616119155722222,
+        "current-b": 0.3877591863222222
+      },
+      "current": 0.37051248243333335,
+      "candidate": 0.3748373917416667,
+      "ort": 0.3032896962805556,
+      "ratio": 1.2359054604839808,
+      "current_over_ort": 1.2216454662890819,
+      "candidate_over_current": 1.0116727762582507,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0976415205568466,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0731473471968764,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.006199952526748,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "dinov3",
+      "source": "original-graphs",
+      "warmups": 600,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.11512596014444444,
+        "candidate-a": 0.11678000752222223,
+        "ort-a": 0.10451354045,
+        "ort-b": 0.10495500453888888,
+        "candidate-b": 0.11518274707777777,
+        "current-b": 0.11900086364444444
+      },
+      "current": 0.11706341189444444,
+      "candidate": 0.1159813773,
+      "ort": 0.10473427249444445,
+      "ratio": 1.10738705237249,
+      "current_over_ort": 1.1177182894038242,
+      "candidate_over_current": 0.9907568506937069,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0336579473051803,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.013867184842934,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.004223989417908,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "resnet50",
+      "source": "original-graphs",
+      "warmups": 600,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.1077897850888889,
+        "candidate-a": 0.10670862719444445,
+        "ort-a": 0.07350636428888889,
+        "ort-b": 0.07342008847222223,
+        "candidate-b": 0.10719833073333333,
+        "current-b": 0.10145364163333333
+      },
+      "current": 0.1046217133611111,
+      "candidate": 0.10695347896388889,
+      "ort": 0.07346322638055555,
+      "ratio": 1.4558777803992233,
+      "current_over_ort": 1.4241371978293982,
+      "candidate_over_current": 1.0222875876131896,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0624535832676683,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0045891653914407,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0011750982389418,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "gpt2",
+      "source": "original-graphs",
+      "warmups": 600,
+      "measured_per_process": 180,
+      "means": {
+        "current-a": 0.03712171574444444,
+        "candidate-a": 0.03623121490555556,
+        "ort-a": 0.0210689065,
+        "ort-b": 0.02124211827222222,
+        "candidate-b": 0.03513283316111111,
+        "current-b": 0.036671079777777775
+      },
+      "current": 0.03689639776111111,
+      "candidate": 0.035682024033333336,
+      "ort": 0.02115551238611111,
+      "ratio": 1.6866537374324755,
+      "current_over_ort": 1.7440559740511938,
+      "candidate_over_current": 0.967086929850433,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0122885927929437,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0312636825902288,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0082212037070943,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    }
+  ],
+  "clocks": 41112,
+  "measured": 8640,
+  "setups": [
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-8tok-current",
+      "seconds": 0.643081
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-8tok-candidate",
+      "seconds": 0.6524891
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-8tok-ort",
+      "seconds": 0.27797503
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-8tok-current-a",
+      "seconds": 0.6106973
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-8tok-candidate-a",
+      "seconds": 0.6319941
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-8tok-ort-a",
+      "seconds": 0.282312563
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-8tok-ort-b",
+      "seconds": 0.281162261
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-8tok-candidate-b",
+      "seconds": 0.6541952
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-8tok-current-b",
+      "seconds": 0.6302242
+    },
+    {
+      "source": "e5-successor",
+      "process": "verify-e5-30tok-current",
+      "seconds": 0.6384752
+    },
+    {
+      "source": "e5-successor",
+      "process": "verify-e5-30tok-candidate",
+      "seconds": 0.6385894
+    },
+    {
+      "source": "e5-successor",
+      "process": "verify-e5-30tok-ort",
+      "seconds": 0.286939333
+    },
+    {
+      "source": "e5-successor",
+      "process": "timing-e5-30tok-current-a",
+      "seconds": 0.6403351
+    },
+    {
+      "source": "e5-successor",
+      "process": "timing-e5-30tok-candidate-a",
+      "seconds": 0.6368169
+    },
+    {
+      "source": "e5-successor",
+      "process": "timing-e5-30tok-ort-a",
+      "seconds": 0.285632886
+    },
+    {
+      "source": "e5-successor",
+      "process": "timing-e5-30tok-ort-b",
+      "seconds": 0.287034047
+    },
+    {
+      "source": "e5-successor",
+      "process": "timing-e5-30tok-candidate-b",
+      "seconds": 0.6377222
+    },
+    {
+      "source": "e5-successor",
+      "process": "timing-e5-30tok-current-b",
+      "seconds": 0.6413672
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-30pad128-current",
+      "seconds": 0.6222886
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-30pad128-candidate",
+      "seconds": 0.6565988
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-30pad128-ort",
+      "seconds": 0.277789697
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-30pad128-current-a",
+      "seconds": 0.6206353
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-30pad128-candidate-a",
+      "seconds": 0.6243493
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-30pad128-ort-a",
+      "seconds": 0.278707162
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-30pad128-ort-b",
+      "seconds": 0.282826504
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-30pad128-candidate-b",
+      "seconds": 0.6391176
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-30pad128-current-b",
+      "seconds": 0.6225338
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-128tok-current",
+      "seconds": 0.628047
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-128tok-candidate",
+      "seconds": 0.6461665
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-128tok-ort",
+      "seconds": 0.291104825
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-128tok-current-a",
+      "seconds": 0.6218551
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-128tok-candidate-a",
+      "seconds": 0.6572034
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-128tok-ort-a",
+      "seconds": 0.278659221
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-128tok-ort-b",
+      "seconds": 0.272828125
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-128tok-candidate-b",
+      "seconds": 0.6550031
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-128tok-current-b",
+      "seconds": 0.6184607
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-512tok-current",
+      "seconds": 0.644194
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-512tok-candidate",
+      "seconds": 0.6412002
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-e5-512tok-ort",
+      "seconds": 0.286311708
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-512tok-current-a",
+      "seconds": 0.612371
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-512tok-candidate-a",
+      "seconds": 0.6410215
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-512tok-ort-a",
+      "seconds": 0.276754553
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-512tok-ort-b",
+      "seconds": 0.279799766
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-512tok-candidate-b",
+      "seconds": 0.641234
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-e5-512tok-current-b",
+      "seconds": 0.6441364
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-dinov3-current",
+      "seconds": 0.1883798
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-dinov3-candidate",
+      "seconds": 0.1902948
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-dinov3-ort",
+      "seconds": 0.115373993
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-dinov3-current-a",
+      "seconds": 0.1897945
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-dinov3-candidate-a",
+      "seconds": 0.1945908
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-dinov3-ort-a",
+      "seconds": 0.110780555
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-dinov3-ort-b",
+      "seconds": 0.109457065
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-dinov3-candidate-b",
+      "seconds": 0.195331
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-dinov3-current-b",
+      "seconds": 0.1881203
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-resnet50-current",
+      "seconds": 0.285826
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-resnet50-candidate",
+      "seconds": 0.2878566
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-resnet50-ort",
+      "seconds": 0.126775037
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-resnet50-current-a",
+      "seconds": 0.297961
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-resnet50-candidate-a",
+      "seconds": 0.2930517
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-resnet50-ort-a",
+      "seconds": 0.11848383
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-resnet50-ort-b",
+      "seconds": 0.113597926
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-resnet50-candidate-b",
+      "seconds": 0.2929108
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-resnet50-current-b",
+      "seconds": 0.2878439
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-gpt2-current",
+      "seconds": 0.9266964
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-gpt2-candidate",
+      "seconds": 0.9657847
+    },
+    {
+      "source": "original-graphs",
+      "process": "verify-gpt2-ort",
+      "seconds": 0.531585512
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-gpt2-current-a",
+      "seconds": 0.9057516
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-gpt2-candidate-a",
+      "seconds": 0.9241862
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-gpt2-ort-a",
+      "seconds": 0.532496778
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-gpt2-ort-b",
+      "seconds": 0.550688945
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-gpt2-candidate-b",
+      "seconds": 0.9237948
+    },
+    {
+      "source": "original-graphs",
+      "process": "timing-gpt2-current-b",
+      "seconds": 0.9682925
+    }
+  ],
+  "source_closures": {
+    "original_graphs": {
+      "bytes": 139126,
+      "sha256": "729814e9effff9c5e1456e165e7ef792bf2cba1c4978ce28ee3cb3ea7b4d1209"
+    },
+    "e5_successor": {
+      "bytes": 31492,
+      "sha256": "71c6d952a4ef99aba8b9953c47c2ed9cd70035691e81f99e3f42761fbb8944a4"
+    }
+  },
+  "source_calls_retained": 45801,
+  "original_graph_failure_preserved": true,
+  "root_product_changed": false,
+  "consumer": {
+    "original": {
+      "passed": true,
+      "methods": 66,
+      "unchanged_methods": 65,
+      "changes": [
+        {
+          "index": 281,
+          "before": 120,
+          "after": 780
+        },
+        {
+          "index": 521,
+          "before": 60,
+          "after": 600
+        }
+      ],
+      "main_instructions": 657,
+      "branches_locals_exceptions_equal": true,
+      "implementation_flags_equal": true,
+      "previous_consumer": {
+        "bytes": 27648,
+        "sha256": "af01388794b5c86ad5c6dc1c2a3631d4af8590057cb60ae66ade262a90c3388a"
+      },
+      "consumer": {
+        "bytes": 27648,
+        "sha256": "d827e3b9f1e5158e10bd24a5ca009fa7950fd08d08bb5260b84e36b5a853ac02"
+      },
+      "product_changed": false
+    },
+    "e5": {
+      "passed": true,
+      "methods": 66,
+      "unchanged_methods": 65,
+      "changes": [
+        {
+          "index": 281,
+          "before": 780,
+          "after": 1380
+        },
+        {
+          "index": 521,
+          "before": 600,
+          "after": 1200
+        }
+      ],
+      "main_instructions": 657,
+      "branches_locals_exceptions_equal": true,
+      "implementation_flags_equal": true,
+      "previous_consumer": {
+        "bytes": 27648,
+        "sha256": "d827e3b9f1e5158e10bd24a5ca009fa7950fd08d08bb5260b84e36b5a853ac02"
+      },
+      "consumer": {
+        "bytes": 27648,
+        "sha256": "0b228b2d22eef7080a64fb5fbababc24e24a94b18deae2fead5075fbf90b4930"
+      },
+      "product_changed": false
+    }
+  }
+}

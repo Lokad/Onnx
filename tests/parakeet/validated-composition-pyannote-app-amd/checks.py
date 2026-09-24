@@ -7,6 +7,8 @@ from semantics import compare_records
 
 
 def prereqs(base, spec):
+    from graph_prerequisite import verify_bundle
+    verify_bundle(base,spec)
     assert set(spec['prerequisites']) == {'product','models','parakeet','shared'}
     reports = {}
     for name, wanted in spec['prerequisites'].items():
