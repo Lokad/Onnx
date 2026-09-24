@@ -1,0 +1,763 @@
+{
+  "canonical_numerics": {
+    "closure": {
+      "bytes": 34572,
+      "sha256": "a5f2bfda923acea5673607935b5487878211148bef88579cb490c1409539d55a"
+    },
+    "analysis": {
+      "passed": true,
+      "products": {
+        "current": {
+          "Lokad.Onnx.dll": {
+            "bytes": 773632,
+            "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+          },
+          "Lokad.Onnx.Data.dll": {
+            "bytes": 143872,
+            "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+          }
+        },
+        "candidate": {
+          "Lokad.Onnx.dll": {
+            "bytes": 774656,
+            "sha256": "7856867a3d2bacae3718da6309adf91d5f83ae9d9d8b7f87c82b5f46b35651f4"
+          },
+          "Lokad.Onnx.Data.dll": {
+            "bytes": 143872,
+            "sha256": "60ed1c0a29ef3786ac5b180c193b3d516a26e8562cb43d44820fe84b24d25e1e"
+          }
+        }
+      },
+      "consumer": {
+        "bytes": 30720,
+        "sha256": "8326037ad1ffc67483a299ede08f0e3265d237bd83024ab02bb901ed26e14357"
+      },
+      "numerical_workers": 4,
+      "cases_per_worker": 123,
+      "values_all_numerical_workers": 12220016,
+      "candidate_admissions_both_modes": 88,
+      "codegen_workers": 2,
+      "codegen_cases": 32,
+      "calls_per_codegen_case": 81,
+      "independent_coordinate_oracle": true,
+      "captured_numpy_bit_oracle": true,
+      "all_selected_bits_exact": true,
+      "input_ownership_and_held_outputs": true,
+      "resources": 67,
+      "peak_rss": 329359360,
+      "root_product_changed": false,
+      "no_performance_measurement": true
+    }
+  },
+  "raw_boolean_probe": {
+    "closure": {
+      "bytes": 28092,
+      "sha256": "e83bf8c65c0d695328e68f77a9ad8f664462553973cdcd8187edcd94792282c6"
+    },
+    "analysis": {
+      "passed": true,
+      "diagnostic_only": true,
+      "candidate_numerically_admitted": false,
+      "all_current_cases_match": true,
+      "candidate_failures": [
+        {
+          "name": "raw-bool-0",
+          "mask": [
+            0,
+            2
+          ],
+          "expected": [
+            1092616192,
+            -971227136
+          ],
+          "actual": [
+            1092616192,
+            1101004800
+          ],
+          "matches_nonzero_selection": false,
+          "inputs_unchanged": true
+        },
+        {
+          "name": "raw-bool-1",
+          "mask": [
+            0,
+            255
+          ],
+          "expected": [
+            1092616192,
+            -971227136
+          ],
+          "actual": [
+            1092616192,
+            1101004800
+          ],
+          "matches_nonzero_selection": false,
+          "inputs_unchanged": true
+        }
+      ],
+      "results": {
+        "current-probe-256": [
+          {
+            "name": "raw-bool-0",
+            "mask": [
+              0,
+              2
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-1",
+            "mask": [
+              0,
+              255
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-2",
+            "mask": [
+              2,
+              0
+            ],
+            "expected": [
+              -971227136,
+              1101004800
+            ],
+            "actual": [
+              -971227136,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-3",
+            "mask": [
+              2,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-4",
+            "mask": [
+              0,
+              1
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-5",
+            "mask": [
+              0,
+              0
+            ],
+            "expected": [
+              1092616192,
+              1101004800
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-6",
+            "mask": [
+              1,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-7",
+            "mask": [
+              255,
+              255
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          }
+        ],
+        "current-probe-512": [
+          {
+            "name": "raw-bool-0",
+            "mask": [
+              0,
+              2
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-1",
+            "mask": [
+              0,
+              255
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-2",
+            "mask": [
+              2,
+              0
+            ],
+            "expected": [
+              -971227136,
+              1101004800
+            ],
+            "actual": [
+              -971227136,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-3",
+            "mask": [
+              2,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-4",
+            "mask": [
+              0,
+              1
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-5",
+            "mask": [
+              0,
+              0
+            ],
+            "expected": [
+              1092616192,
+              1101004800
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-6",
+            "mask": [
+              1,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-7",
+            "mask": [
+              255,
+              255
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          }
+        ],
+        "candidate-probe-256": [
+          {
+            "name": "raw-bool-0",
+            "mask": [
+              0,
+              2
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": false,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-1",
+            "mask": [
+              0,
+              255
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": false,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-2",
+            "mask": [
+              2,
+              0
+            ],
+            "expected": [
+              -971227136,
+              1101004800
+            ],
+            "actual": [
+              -971227136,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-3",
+            "mask": [
+              2,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-4",
+            "mask": [
+              0,
+              1
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-5",
+            "mask": [
+              0,
+              0
+            ],
+            "expected": [
+              1092616192,
+              1101004800
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-6",
+            "mask": [
+              1,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-7",
+            "mask": [
+              255,
+              255
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          }
+        ],
+        "candidate-probe-512": [
+          {
+            "name": "raw-bool-0",
+            "mask": [
+              0,
+              2
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": false,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-1",
+            "mask": [
+              0,
+              255
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": false,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-2",
+            "mask": [
+              2,
+              0
+            ],
+            "expected": [
+              -971227136,
+              1101004800
+            ],
+            "actual": [
+              -971227136,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-3",
+            "mask": [
+              2,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-4",
+            "mask": [
+              0,
+              1
+            ],
+            "expected": [
+              1092616192,
+              -971227136
+            ],
+            "actual": [
+              1092616192,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-5",
+            "mask": [
+              0,
+              0
+            ],
+            "expected": [
+              1092616192,
+              1101004800
+            ],
+            "actual": [
+              1092616192,
+              1101004800
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-6",
+            "mask": [
+              1,
+              1
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          },
+          {
+            "name": "raw-bool-7",
+            "mask": [
+              255,
+              255
+            ],
+            "expected": [
+              -971227136,
+              -971227136
+            ],
+            "actual": [
+              -971227136,
+              -971227136
+            ],
+            "matches_nonzero_selection": true,
+            "inputs_unchanged": true
+          }
+        ]
+      },
+      "resources": 23,
+      "peak_rss": 323854336,
+      "consumer": {
+        "bytes": 15360,
+        "sha256": "ec3db07e3076f88c475f7f2b25e42d2d1d4d1c8b00effe9f47b3929a4a617752"
+      },
+      "products": {
+        "current": {
+          "Lokad.Onnx.dll": {
+            "bytes": 773632,
+            "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+          },
+          "Lokad.Onnx.Data.dll": {
+            "bytes": 143872,
+            "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+          }
+        },
+        "candidate": {
+          "Lokad.Onnx.dll": {
+            "bytes": 774656,
+            "sha256": "7856867a3d2bacae3718da6309adf91d5f83ae9d9d8b7f87c82b5f46b35651f4"
+          },
+          "Lokad.Onnx.Data.dll": {
+            "bytes": 143872,
+            "sha256": "60ed1c0a29ef3786ac5b180c193b3d516a26e8562cb43d44820fe84b24d25e1e"
+          }
+        }
+      },
+      "root_product_changed": false,
+      "no_performance_measurement": true
+    }
+  },
+  "corrected_build": {
+    "closure": {
+      "bytes": 201594,
+      "sha256": "8f5958cb468b3a35582150de113cdaec61bb4389afea98ca3a7c40fa67071909"
+    },
+    "analysis": {
+      "passed": true,
+      "measured": {
+        "Lokad.Onnx.dll": {
+          "bytes": 773632,
+          "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+        }
+      },
+      "built": {
+        "Lokad.Onnx.dll": {
+          "bytes": 774656,
+          "sha256": "70275a50560e7b9014dbb5885b34552be574e65498e0309f086e6756714bdc93"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "7d26bf8c85418d9631e2ee1310f44034d0d6db6267d1a8cb2f29d3f4f99ca050"
+        }
+      },
+      "inventory": {
+        "passed": true,
+        "original_core_methods": 3189,
+        "candidate_core_methods": 3190,
+        "unchanged_core_methods": 3188,
+        "data_methods": 697,
+        "helper": "Lokad.Onnx.Tensor`1[T]::Where::Lokad.Onnx.Tensor`1[T] Where(Lokad.Onnx.Tensor`1[System.Boolean], Lokad.Onnx.Tensor`1[T], Lokad.Onnx.Tensor`1[T])",
+        "guard_instructions_added": 14,
+        "original_body_and_edges_exact": true,
+        "original_locals_preserved_with_one_declared_insertion": true,
+        "all_existing_flags_exact": true,
+        "added_flags": {
+          "Lokad.Onnx.UniformScalarWhere::Try::Boolean Try[T](Lokad.Onnx.Tensor`1[System.Boolean], Lokad.Onnx.Tensor`1[T], Lokad.Onnx.Tensor`1[T], Lokad.Onnx.Tensor`1[T] ByRef)": 520
+        },
+        "public_surface_equal": true,
+        "new_helper_instructions": 193
+      },
+      "resources": [
+        {
+          "name": "sdk-version",
+          "samples": 1,
+          "peak_rss": 10199040,
+          "seconds": 0.2607029320206493
+        },
+        {
+          "name": "cli-restore",
+          "samples": 6,
+          "peak_rss": 171180032,
+          "seconds": 1.5530992290005088
+        },
+        {
+          "name": "cli-build",
+          "samples": 63,
+          "peak_rss": 505008128,
+          "seconds": 16.616371045005508
+        },
+        {
+          "name": "inventory",
+          "samples": 4,
+          "peak_rss": 179171328,
+          "seconds": 1.1214134680340067
+        }
+      ],
+      "source_prepared": {
+        "bytes": 147982,
+        "sha256": "6971271ecaa50346aa43b5040dab55cf6c9a812282aedbe34b5f8d117a700c89"
+      },
+      "root_product_changed": false,
+      "numerically_qualified": false,
+      "no_performance_measurement": true
+    }
+  }
+}
