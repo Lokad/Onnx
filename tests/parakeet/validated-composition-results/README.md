@@ -2,7 +2,11 @@
 
 The [complete application comparison](application-20260924.md) admits the
 recurrence and slice changes together: 9.477% lower latency, 1.700 times
-Microsoft ORT latency. Release qualification is still in progress.
+Microsoft ORT latency. The [full graph comparison](graphs-20260924.md) fails
+release admission: 30-token e5 is 6.769% slower and its candidate repeatability
+control fails. Numerical checks and the other seven regression gates pass.
+The [retained-clock review](e5-repeatability-20260924.md) localizes bursts but
+does not establish their cause. Root integration and BENCHMARK.md remain pending.
 
 After each relevant campaign closes, run these local reporting actions with
 `C:/Python313/python.exe -X utf8 -B`:
