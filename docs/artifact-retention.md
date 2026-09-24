@@ -18,6 +18,13 @@ counts each actual file path, including hardlinked paths separately.
 No new model copies were needed. Raw clocks remain in verified local collections
 and archives; compact tracked reports reference them without another raw copy.
 
+Before the selected-release profile, another **195.49 MB** in eight closed VM
+output duplicates was retired after verifying the complete local control proof
+and every VM payload dependency. All local clocks, result files and collection
+archives remain. Receipt: `artifacts/parakeet-balanced-control-remote-retention-20260924`.
+This maintenance followed a memory-preflight refusal before any profiling worker;
+the original failure and recovery are retained with unchanged inputs and limits.
+
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
 canonical models and worktrees were retained. Removed files were older duplicate

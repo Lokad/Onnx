@@ -1,0 +1,61 @@
+{
+  "selected_source": "81f75c38",
+  "local_files": {
+    "src/Lokad.Onnx/GraphPacking.cs": {
+      "bytes": 10677,
+      "sha256": "2950ca3037a6037a7f576afe9d0ee6389c8ff2718c28add88c78bae441d28804"
+    },
+    "src/Lokad.Onnx/TensorOps.MatMul.cs": {
+      "bytes": 45792,
+      "sha256": "2d97f599a67b21354cf9463ffe670f81c989f2c46721d2de305e199c43ac241e"
+    },
+    "src/Lokad.Onnx/Zzz.WideProjectionEntry.cs": {
+      "bytes": 4624,
+      "sha256": "ba6fb630d857458427115a9e840d3736172b6d6264b4118c3a8512355cc84c8e"
+    },
+    "src/Lokad.Onnx/Zzz.IsolatedShortMatMul.cs": {
+      "bytes": 19586,
+      "sha256": "f822940b400e503666a12c7c2b7d98728a96e064517f574b1be1c92922c34093"
+    },
+    "src/Lokad.Onnx/MathOps.PackedAvx512.cs": {
+      "bytes": 14443,
+      "sha256": "7edef35d0ed2bf11399b0cf93f8de4d4e67b5c915fed12fb4a9db383c192daca"
+    },
+    "src/Lokad.Onnx/AblationSwitches.cs": {
+      "bytes": 6333,
+      "sha256": "c3a340802dd19ecf1218342d4786c958aadeb3d9b2358b762e6886b021143656"
+    },
+    "src/Lokad.Onnx.Data/ParakeetTranscriber.cs": {
+      "bytes": 9617,
+      "sha256": "3950a354bfcc523df19a2d5600304f918fb55af122350167d5ca638f1169b9ae"
+    }
+  },
+  "ort_commit": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "ort_files": {
+    "onnxruntime/core/providers/cpu/math/matmul.cc": {
+      "bytes": 21228,
+      "sha256": "ae7e12fabee4dc14bf33eab3a74e197e6842bd158f1bc13f48ab38ab39055cc5"
+    },
+    "onnxruntime/core/providers/cpu/math/gemm.cc": {
+      "bytes": 18513,
+      "sha256": "a0cfd76d12fa2d20912076a9eaae198707eb9197b1947f01a67b2ccdd5a8fbc1"
+    },
+    "onnxruntime/core/mlas/lib/sgemm.cpp": {
+      "bytes": 43141,
+      "sha256": "1554aa0b046c3c02734613ef8ab1105bd55449f7d76116d342d17e1c630cb523"
+    },
+    "onnxruntime/core/mlas/lib/x86_64/FgemmKernelAvx512FCommon.h": {
+      "bytes": 21458,
+      "sha256": "087c70e4469e2cb4c02d4dd3253c5c577825f85f32ef6e251cc686a41e7a413a"
+    },
+    "onnxruntime/core/mlas/lib/x86_64/SgemmKernelAvx512F.S": {
+      "bytes": 561,
+      "sha256": "f8b9a2da8d0c565cdc633a7c08fcca33d4c1ccaad78dcc948a680d3a676e0454"
+    }
+  },
+  "report": {
+    "bytes": 4191,
+    "sha256": "87800b6eb34b7cbf3b7e2bcd6814cf1e52af180b700d7188865da73d69a590b4"
+  },
+  "scope": "Source inspection only; no current attribution, execution, speed or installed-wheel dispatch claim. Existing default packing budgets remain fixed."
+}
