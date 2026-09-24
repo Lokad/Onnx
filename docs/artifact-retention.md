@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **49.02 GB**, including **35.52 GB** in artifacts.
+The latest inventory is **49.12 GB**, including **35.63 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -23,16 +23,16 @@ joint audit passes. The initial memory refusal and narrow historical packing
 metadata correction remain retained. Only the unstarted candidate was executed
 after recovery. The complete application comparison is collected and admitted:
 all 63 repeatability controls and 21 performance gates pass. Shared/e5 release
-regression checks pass; Pyannote correctness is running. The qualified
-repository product is unchanged.
+regression checks and Pyannote correctness pass. The full model shortlist
+comparison is running. The qualified repository product is unchanged.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **49,020,794,862 bytes**, with
-**0.98 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m70-shared-closed-size.json`.
-Counting the model junction again gives59.81GB, which counts the same10.79GB
+remain retained. The inventory totals **49,121,832,846 bytes**, with
+**0.88 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m70-pyannote-closed-size.json`.
+Counting the model junction again gives59.91GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
