@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **47.99 GB**, including **34.51 GB** in artifacts.
+The latest inventory is **48.28 GB**, including **34.80 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -14,13 +14,14 @@ the corrected two-mode qualification remain recorded. Complete native/public
 Parakeet models, the combined application, shared/e5 and complete Pyannote
 correctness are collected and audited. The graph comparison, its retained e5
 failure, the runtime diagnostic and the admitted focused e5 successor are all
-retained. The complete Pyannote application and long-meeting check is running.
+retained. Complete Pyannote timing/meetings and normal root/package qualification
+have passed. The next Parakeet masking/padding layout capture is running.
 
 All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **47,986,552,954 bytes**, with
-**2.01 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m69-pyannote-stage-size.json`.
-Counting the model junction again gives58.77GB, which counts the same10.79GB
+remain retained. The inventory totals **48,279,222,140 bytes**, with
+**1.72 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m67-capture-prepared-size.json`.
+Counting the model junction again gives59.06GB, which counts the same10.79GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
@@ -284,3 +285,15 @@ Between numerical workers of the focused e5 successor, retirement reclaimed
 Every raw trace, full event text and collection archive remains verified locally.
 All 76,853 immutable VM paths were protected, and no inference worker was live
 during deletion. Receipt: `artifacts/e5-diagnostic-trace-retention-20260924`.
+
+After composition root qualification and the layout observer build were terminal,
+retire the root's generated package cache and duplicate instruction export:
+626 files, **122.84 MB**, retaining all 24 package archives and the exact local
+instruction export. Retire the closed composition V2 build's generated package
+cache as well: 584 files, **85.66 MB**, retaining all 20 package archives.
+The second operation checked 77,581 protected immutable paths across payload,
+stage and specification manifests. All source, runtime inputs and local build
+collections remain unchanged. These operations provide headroom for the original
+11 GiB capture preflight; no model call was running or retried. Receipts:
+`artifacts/parakeet-composition-root-retention-20260924` and
+`artifacts/parakeet-composition-build-cache-retention-20260924`.
