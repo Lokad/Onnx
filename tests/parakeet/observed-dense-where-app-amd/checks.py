@@ -51,6 +51,12 @@ def prereqs(base, spec):
     assert first==profile_spec['initial']==profile['initial_failure']
     assert profile['split_capture'] and not profile['completed_control_repeated']
     assert first['candidate_never_started'] and first['original_code']==1
+    assert read(folder/'closed.json')['audit_correction']==pin(folder/'audit-correction.json')
+    correction=read(folder/'audit-correction.json')
+    assert correction['passed'] and correction['new_inference_calls']==0
+    assert correction['current_and_candidate_graph_metadata_exact'] and correction['all_other_historical_graph_fields_exact']
+    assert correction['field']=='decoder_joint-model.onnx.retained_packed_bytes'
+    assert (correction['historical'],correction['current'],correction['added_recurrent_bytes'])==(25246720,51461120,26214400)
     for key,name in [('spec','initial-spec.json'),('state','initial-state.json'),('collection','initial-collection.json')]:
         assert first[key]==pin(folder/name)
     assert read(folder/'initial-collection.json')['terminal'] and read(folder/'initial-collection.json')['code']==1

@@ -1,0 +1,2339 @@
+{
+  "closure": {
+    "bytes": 1968,
+    "sha256": "8a6f509a210641650a9c057f472417dde7b4acc320f86eeb3d34ecbced4cc2e6"
+  },
+  "passed": true,
+  "current": {
+    "bytes": 782848,
+    "sha256": "37c243756bbe5e5d563e79627a0a4d20ff027598801849da9606549c7ac60286"
+  },
+  "candidate": {
+    "bytes": 815104,
+    "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+  },
+  "observer": {
+    "bytes": 153600,
+    "sha256": "a2a0b4901ba8e4270b57e2b176d7a656e739886275ec66d0ca036807eea16e3e"
+  },
+  "consumer": {
+    "bytes": 50176,
+    "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+  },
+  "requests": 160,
+  "clips": 20,
+  "frames": [
+    51,
+    61,
+    83,
+    88,
+    89,
+    102,
+    106,
+    112,
+    114,
+    120,
+    151,
+    156,
+    157,
+    158,
+    167,
+    169,
+    190,
+    222,
+    225
+  ],
+  "masking": {
+    "kernels": 72,
+    "layers": 24,
+    "selected_seconds": 3.325926418,
+    "candidate_seconds": 0.22467951666666666,
+    "gain": 0.9324460350503561,
+    "complete_groups": {
+      "selected": {
+        "nodes": 149,
+        "seconds": 3.334658764,
+        "operators": {
+          "Constant": {
+            "nodes": 3,
+            "seconds": 4.4534666666666666e-05
+          },
+          "Unsqueeze": {
+            "nodes": 2,
+            "seconds": 0.00032814033333333336
+          },
+          "Cast": {
+            "nodes": 72,
+            "seconds": 0.008359670999999999
+          },
+          "Where": {
+            "nodes": 72,
+            "seconds": 3.3259264180000008
+          }
+        }
+      },
+      "candidate": {
+        "nodes": 149,
+        "seconds": 0.23307495066666667,
+        "operators": {
+          "Constant": {
+            "nodes": 3,
+            "seconds": 4.496433333333333e-05
+          },
+          "Unsqueeze": {
+            "nodes": 2,
+            "seconds": 0.000302807
+          },
+          "Cast": {
+            "nodes": 72,
+            "seconds": 0.008047662666666669
+          },
+          "Where": {
+            "nodes": 72,
+            "seconds": 0.2246795166666667
+          }
+        }
+      }
+    },
+    "complete_group_gain": 0.9301053069708735,
+    "families": [
+      {
+        "kind": "attention-mask",
+        "totals": {
+          "selected": {
+            "nodes": 51,
+            "seconds": 1.2635723189999999,
+            "operators": {
+              "Constant": {
+                "nodes": 2,
+                "seconds": 3.292333333333333e-05
+              },
+              "Unsqueeze": {
+                "nodes": 1,
+                "seconds": 0.00015577466666666666
+              },
+              "Cast": {
+                "nodes": 24,
+                "seconds": 0.0033682560000000005
+              },
+              "Where": {
+                "nodes": 24,
+                "seconds": 1.2600153649999999
+              }
+            }
+          },
+          "candidate": {
+            "nodes": 51,
+            "seconds": 0.081119865,
+            "operators": {
+              "Constant": {
+                "nodes": 2,
+                "seconds": 2.9671666666666666e-05
+              },
+              "Unsqueeze": {
+                "nodes": 1,
+                "seconds": 0.00014434433333333335
+              },
+              "Cast": {
+                "nodes": 24,
+                "seconds": 0.003535623333333334
+              },
+              "Where": {
+                "nodes": 24,
+                "seconds": 0.07741022566666667
+              }
+            }
+          }
+        },
+        "kernels": {
+          "selected": 1.260015365,
+          "candidate": 0.07741022566666667
+        },
+        "kernel_gain": 0.9385640621400941,
+        "complete_group_gain": 0.9358011696044443
+      },
+      {
+        "kind": "attention-cleanup",
+        "totals": {
+          "selected": {
+            "nodes": 51,
+            "seconds": 1.221384972,
+            "operators": {
+              "Constant": {
+                "nodes": 2,
+                "seconds": 3.355266666666667e-05
+              },
+              "Unsqueeze": {
+                "nodes": 1,
+                "seconds": 0.00015577466666666666
+              },
+              "Cast": {
+                "nodes": 24,
+                "seconds": 0.002251058333333333
+              },
+              "Where": {
+                "nodes": 24,
+                "seconds": 1.2189445863333332
+              }
+            }
+          },
+          "candidate": {
+            "nodes": 51,
+            "seconds": 0.08018588966666666,
+            "operators": {
+              "Constant": {
+                "nodes": 2,
+                "seconds": 3.4467999999999996e-05
+              },
+              "Unsqueeze": {
+                "nodes": 1,
+                "seconds": 0.00014434433333333335
+              },
+              "Cast": {
+                "nodes": 24,
+                "seconds": 0.0020341340000000004
+              },
+              "Where": {
+                "nodes": 24,
+                "seconds": 0.07797294333333335
+              }
+            }
+          }
+        },
+        "kernels": {
+          "selected": 1.2189445863333332,
+          "candidate": 0.07797294333333334
+        },
+        "kernel_gain": 0.9360324134439276,
+        "complete_group_gain": 0.9343483901432295
+      },
+      {
+        "kind": "convolution-mask",
+        "totals": {
+          "selected": {
+            "nodes": 51,
+            "seconds": 0.8499127416666666,
+            "operators": {
+              "Constant": {
+                "nodes": 2,
+                "seconds": 3.355266666666667e-05
+              },
+              "Unsqueeze": {
+                "nodes": 1,
+                "seconds": 0.00017236566666666668
+              },
+              "Cast": {
+                "nodes": 24,
+                "seconds": 0.0027403566666666674
+              },
+              "Where": {
+                "nodes": 24,
+                "seconds": 0.8469664666666665
+              }
+            }
+          },
+          "candidate": {
+            "nodes": 51,
+            "seconds": 0.07196718366666667,
+            "operators": {
+              "Constant": {
+                "nodes": 2,
+                "seconds": 3.4467999999999996e-05
+              },
+              "Unsqueeze": {
+                "nodes": 1,
+                "seconds": 0.00015846266666666667
+              },
+              "Cast": {
+                "nodes": 24,
+                "seconds": 0.002477905333333333
+              },
+              "Where": {
+                "nodes": 24,
+                "seconds": 0.06929634766666667
+              }
+            }
+          }
+        },
+        "kernels": {
+          "selected": 0.8469664666666666,
+          "candidate": 0.06929634766666666
+        },
+        "kernel_gain": 0.9181828910660532,
+        "complete_group_gain": 0.9153240325288687
+      }
+    ],
+    "rows": [
+      {
+        "kind": "attention-mask",
+        "layer": 0,
+        "name": "/layers.0/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.0/self_attn/Div_output_0"
+        ],
+        "output": "/layers.0/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05257252666666667,
+        "candidate_seconds": 0.0030320056666666667
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 1,
+        "name": "/layers.1/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.1/self_attn/Div_output_0"
+        ],
+        "output": "/layers.1/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.051423287,
+        "candidate_seconds": 0.0034353966666666666
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 2,
+        "name": "/layers.2/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.2/self_attn/Div_output_0"
+        ],
+        "output": "/layers.2/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050912095666666664,
+        "candidate_seconds": 0.0031656833333333335
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 3,
+        "name": "/layers.3/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.3/self_attn/Div_output_0"
+        ],
+        "output": "/layers.3/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05070717366666667,
+        "candidate_seconds": 0.0030201866666666665
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 4,
+        "name": "/layers.4/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.4/self_attn/Div_output_0"
+        ],
+        "output": "/layers.4/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05050849366666667,
+        "candidate_seconds": 0.002966292
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 5,
+        "name": "/layers.5/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.5/self_attn/Div_output_0"
+        ],
+        "output": "/layers.5/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05039475066666667,
+        "candidate_seconds": 0.002952033
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 6,
+        "name": "/layers.6/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.6/self_attn/Div_output_0"
+        ],
+        "output": "/layers.6/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05038578,
+        "candidate_seconds": 0.0030465643333333335
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 7,
+        "name": "/layers.7/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.7/self_attn/Div_output_0"
+        ],
+        "output": "/layers.7/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05033496266666666,
+        "candidate_seconds": 0.003035582
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 8,
+        "name": "/layers.8/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.8/self_attn/Div_output_0"
+        ],
+        "output": "/layers.8/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050524109,
+        "candidate_seconds": 0.0031007693333333333
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 9,
+        "name": "/layers.9/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.9/self_attn/Div_output_0"
+        ],
+        "output": "/layers.9/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05046450933333333,
+        "candidate_seconds": 0.0029350456666666666
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 10,
+        "name": "/layers.10/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.10/self_attn/Div_output_0"
+        ],
+        "output": "/layers.10/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050720197,
+        "candidate_seconds": 0.0029835873333333334
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 11,
+        "name": "/layers.11/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.11/self_attn/Div_output_0"
+        ],
+        "output": "/layers.11/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05094292066666667,
+        "candidate_seconds": 0.003154946
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 12,
+        "name": "/layers.12/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.12/self_attn/Div_output_0"
+        ],
+        "output": "/layers.12/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050611712,
+        "candidate_seconds": 0.003251592
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 13,
+        "name": "/layers.13/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.13/self_attn/Div_output_0"
+        ],
+        "output": "/layers.13/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.06365587566666667,
+        "candidate_seconds": 0.0033065126666666665
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 14,
+        "name": "/layers.14/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.14/self_attn/Div_output_0"
+        ],
+        "output": "/layers.14/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.07679245533333333,
+        "candidate_seconds": 0.0030434576666666666
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 15,
+        "name": "/layers.15/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.15/self_attn/Div_output_0"
+        ],
+        "output": "/layers.15/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05064851966666667,
+        "candidate_seconds": 0.0030306263333333334
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 16,
+        "name": "/layers.16/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.16/self_attn/Div_output_0"
+        ],
+        "output": "/layers.16/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050808504666666664,
+        "candidate_seconds": 0.0031572753333333333
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 17,
+        "name": "/layers.17/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.17/self_attn/Div_output_0"
+        ],
+        "output": "/layers.17/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050952829,
+        "candidate_seconds": 0.003370180333333333
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 18,
+        "name": "/layers.18/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.18/self_attn/Div_output_0"
+        ],
+        "output": "/layers.18/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.051300156,
+        "candidate_seconds": 0.0034710596666666666
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 19,
+        "name": "/layers.19/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.19/self_attn/Div_output_0"
+        ],
+        "output": "/layers.19/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050707975,
+        "candidate_seconds": 0.0034721976666666665
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 20,
+        "name": "/layers.20/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.20/self_attn/Div_output_0"
+        ],
+        "output": "/layers.20/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050862546333333335,
+        "candidate_seconds": 0.0035855213333333335
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 21,
+        "name": "/layers.21/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.21/self_attn/Div_output_0"
+        ],
+        "output": "/layers.21/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050696491333333336,
+        "candidate_seconds": 0.0034839096666666666
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 22,
+        "name": "/layers.22/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.22/self_attn/Div_output_0"
+        ],
+        "output": "/layers.22/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.051324462,
+        "candidate_seconds": 0.0037512273333333334
+      },
+      {
+        "kind": "attention-mask",
+        "layer": 23,
+        "name": "/layers.23/self_attn/Where",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.23/self_attn/Div_output_0"
+        ],
+        "output": "/layers.23/self_attn/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.051763032,
+        "candidate_seconds": 0.0036585736666666668
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 0,
+        "name": "/layers.0/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.0/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.0/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05267174733333333,
+        "candidate_seconds": 0.0031006793333333334
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 1,
+        "name": "/layers.1/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.1/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.1/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.051353819,
+        "candidate_seconds": 0.0031044926666666667
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 2,
+        "name": "/layers.2/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.2/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.2/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05090233066666667,
+        "candidate_seconds": 0.0031666913333333333
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 3,
+        "name": "/layers.3/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.3/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.3/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050876201333333336,
+        "candidate_seconds": 0.0029633233333333335
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 4,
+        "name": "/layers.4/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.4/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.4/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05043509733333333,
+        "candidate_seconds": 0.0029479513333333335
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 5,
+        "name": "/layers.5/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.5/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.5/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05154523933333333,
+        "candidate_seconds": 0.003021728333333333
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 6,
+        "name": "/layers.6/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.6/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.6/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050146778,
+        "candidate_seconds": 0.002943456666666667
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 7,
+        "name": "/layers.7/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.7/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.7/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05045951666666667,
+        "candidate_seconds": 0.003168878333333333
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 8,
+        "name": "/layers.8/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.8/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.8/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050354014333333336,
+        "candidate_seconds": 0.003041929
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 9,
+        "name": "/layers.9/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.9/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.9/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050391638333333336,
+        "candidate_seconds": 0.002907335666666667
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 10,
+        "name": "/layers.10/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.10/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.10/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05090753866666667,
+        "candidate_seconds": 0.0030217263333333333
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 11,
+        "name": "/layers.11/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.11/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.11/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05059740233333333,
+        "candidate_seconds": 0.0034313496666666665
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 12,
+        "name": "/layers.12/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.12/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.12/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05035341866666666,
+        "candidate_seconds": 0.0032699506666666665
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 13,
+        "name": "/layers.13/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.13/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.13/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050527899333333334,
+        "candidate_seconds": 0.003374765333333333
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 14,
+        "name": "/layers.14/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.14/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.14/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050615538,
+        "candidate_seconds": 0.003085768
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 15,
+        "name": "/layers.15/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.15/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.15/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05060476033333333,
+        "candidate_seconds": 0.0029832586666666667
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 16,
+        "name": "/layers.16/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.16/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.16/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050517594666666665,
+        "candidate_seconds": 0.003180175
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 17,
+        "name": "/layers.17/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.17/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.17/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050512601,
+        "candidate_seconds": 0.0035214886666666665
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 18,
+        "name": "/layers.18/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.18/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.18/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050402698,
+        "candidate_seconds": 0.0034435623333333334
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 19,
+        "name": "/layers.19/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.19/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.19/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05074978166666667,
+        "candidate_seconds": 0.0035762756666666666
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 20,
+        "name": "/layers.20/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.20/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.20/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.05067044366666667,
+        "candidate_seconds": 0.0037415116666666666
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 21,
+        "name": "/layers.21/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.21/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.21/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.050540567333333335,
+        "candidate_seconds": 0.0035932693333333332
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 22,
+        "name": "/layers.22/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.22/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.22/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.051234439666666666,
+        "candidate_seconds": 0.0036691876666666667
+      },
+      {
+        "kind": "attention-cleanup",
+        "layer": 23,
+        "name": "/layers.23/self_attn/Where_1",
+        "boundary": [
+          "/Not_output_0",
+          "/layers.23/self_attn/Softmax_output_0"
+        ],
+        "output": "/layers.23/self_attn/Where_1_output_0",
+        "calls": 60,
+        "selected_seconds": 0.051573520666666664,
+        "candidate_seconds": 0.0037141883333333334
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 0,
+        "name": "/layers.0/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.0/conv/Mul_output_0"
+        ],
+        "output": "/layers.0/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.035910564666666665,
+        "candidate_seconds": 0.00302229
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 1,
+        "name": "/layers.1/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.1/conv/Mul_output_0"
+        ],
+        "output": "/layers.1/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03457180333333333,
+        "candidate_seconds": 0.0030509956666666667
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 2,
+        "name": "/layers.2/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.2/conv/Mul_output_0"
+        ],
+        "output": "/layers.2/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03453685833333334,
+        "candidate_seconds": 0.0030387906666666667
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 3,
+        "name": "/layers.3/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.3/conv/Mul_output_0"
+        ],
+        "output": "/layers.3/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.058560776,
+        "candidate_seconds": 0.0026752936666666668
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 4,
+        "name": "/layers.4/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.4/conv/Mul_output_0"
+        ],
+        "output": "/layers.4/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03410112033333333,
+        "candidate_seconds": 0.002775454666666667
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 5,
+        "name": "/layers.5/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.5/conv/Mul_output_0"
+        ],
+        "output": "/layers.5/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.034002411,
+        "candidate_seconds": 0.0028223153333333333
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 6,
+        "name": "/layers.6/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.6/conv/Mul_output_0"
+        ],
+        "output": "/layers.6/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.034031343,
+        "candidate_seconds": 0.00271978
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 7,
+        "name": "/layers.7/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.7/conv/Mul_output_0"
+        ],
+        "output": "/layers.7/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.034093373,
+        "candidate_seconds": 0.0027215586666666665
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 8,
+        "name": "/layers.8/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.8/conv/Mul_output_0"
+        ],
+        "output": "/layers.8/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03407791066666667,
+        "candidate_seconds": 0.0026660596666666665
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 9,
+        "name": "/layers.9/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.9/conv/Mul_output_0"
+        ],
+        "output": "/layers.9/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03403497366666667,
+        "candidate_seconds": 0.002610046
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 10,
+        "name": "/layers.10/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.10/conv/Mul_output_0"
+        ],
+        "output": "/layers.10/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03416355066666667,
+        "candidate_seconds": 0.002700605
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 11,
+        "name": "/layers.11/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.11/conv/Mul_output_0"
+        ],
+        "output": "/layers.11/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03419188533333333,
+        "candidate_seconds": 0.00281065
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 12,
+        "name": "/layers.12/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.12/conv/Mul_output_0"
+        ],
+        "output": "/layers.12/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.034266024666666665,
+        "candidate_seconds": 0.0029263276666666666
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 13,
+        "name": "/layers.13/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.13/conv/Mul_output_0"
+        ],
+        "output": "/layers.13/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03415193566666667,
+        "candidate_seconds": 0.0029858316666666667
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 14,
+        "name": "/layers.14/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.14/conv/Mul_output_0"
+        ],
+        "output": "/layers.14/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03412132366666667,
+        "candidate_seconds": 0.0028377456666666668
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 15,
+        "name": "/layers.15/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.15/conv/Mul_output_0"
+        ],
+        "output": "/layers.15/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.034380028,
+        "candidate_seconds": 0.002852874333333333
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 16,
+        "name": "/layers.16/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.16/conv/Mul_output_0"
+        ],
+        "output": "/layers.16/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.034156729,
+        "candidate_seconds": 0.0027389506666666667
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 17,
+        "name": "/layers.17/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.17/conv/Mul_output_0"
+        ],
+        "output": "/layers.17/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03445820266666667,
+        "candidate_seconds": 0.002957958666666667
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 18,
+        "name": "/layers.18/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.18/conv/Mul_output_0"
+        ],
+        "output": "/layers.18/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.033958060666666665,
+        "candidate_seconds": 0.0029739443333333332
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 19,
+        "name": "/layers.19/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.19/conv/Mul_output_0"
+        ],
+        "output": "/layers.19/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.034294777666666665,
+        "candidate_seconds": 0.0030401576666666667
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 20,
+        "name": "/layers.20/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.20/conv/Mul_output_0"
+        ],
+        "output": "/layers.20/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03402908066666667,
+        "candidate_seconds": 0.0030882043333333334
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 21,
+        "name": "/layers.21/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.21/conv/Mul_output_0"
+        ],
+        "output": "/layers.21/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03398270766666667,
+        "candidate_seconds": 0.0031135773333333333
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 22,
+        "name": "/layers.22/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.22/conv/Mul_output_0"
+        ],
+        "output": "/layers.22/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.0342215,
+        "candidate_seconds": 0.0030827986666666666
+      },
+      {
+        "kind": "convolution-mask",
+        "layer": 23,
+        "name": "/layers.23/conv/Where",
+        "boundary": [
+          "/Not_1_output_0",
+          "/layers.23/conv/Mul_output_0"
+        ],
+        "output": "/layers.23/conv/Where_output_0",
+        "calls": 60,
+        "selected_seconds": 0.03466952633333333,
+        "candidate_seconds": 0.0030841373333333334
+      }
+    ],
+    "union_rows": [
+      {
+        "name": "/pre_encode/Constant_9",
+        "op": "Constant",
+        "members": 72,
+        "selected_seconds": 2.1941333333333333e-05,
+        "candidate_seconds": 1.9175333333333333e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Unsqueeze_35",
+        "op": "Unsqueeze",
+        "members": 48,
+        "selected_seconds": 0.00015577466666666666,
+        "candidate_seconds": 0.00014434433333333335
+      },
+      {
+        "name": "/layers.0/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011522666666666667,
+        "candidate_seconds": 9.926333333333334e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_111",
+        "op": "Constant",
+        "members": 24,
+        "selected_seconds": 1.0982e-05,
+        "candidate_seconds": 1.0496333333333333e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05257252666666667,
+        "candidate_seconds": 0.0030320056666666667
+      },
+      {
+        "name": "/layers.1/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014122066666666667,
+        "candidate_seconds": 0.000135928
+      },
+      {
+        "name": "/layers.1/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.051423287,
+        "candidate_seconds": 0.0034353966666666666
+      },
+      {
+        "name": "/layers.2/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000142271,
+        "candidate_seconds": 0.00013826366666666666
+      },
+      {
+        "name": "/layers.2/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050912095666666664,
+        "candidate_seconds": 0.0031656833333333335
+      },
+      {
+        "name": "/layers.3/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00013877166666666666,
+        "candidate_seconds": 0.00013976066666666667
+      },
+      {
+        "name": "/layers.3/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05070717366666667,
+        "candidate_seconds": 0.0030201866666666665
+      },
+      {
+        "name": "/layers.4/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00013524666666666667,
+        "candidate_seconds": 0.00013582233333333334
+      },
+      {
+        "name": "/layers.4/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05050849366666667,
+        "candidate_seconds": 0.002966292
+      },
+      {
+        "name": "/layers.5/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014030766666666666,
+        "candidate_seconds": 0.00015537233333333332
+      },
+      {
+        "name": "/layers.5/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05039475066666667,
+        "candidate_seconds": 0.002952033
+      },
+      {
+        "name": "/layers.6/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000136188,
+        "candidate_seconds": 0.00013506766666666667
+      },
+      {
+        "name": "/layers.6/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05038578,
+        "candidate_seconds": 0.0030465643333333335
+      },
+      {
+        "name": "/layers.7/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014320666666666667,
+        "candidate_seconds": 0.00013121266666666666
+      },
+      {
+        "name": "/layers.7/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05033496266666666,
+        "candidate_seconds": 0.003035582
+      },
+      {
+        "name": "/layers.8/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000137689,
+        "candidate_seconds": 0.00014017566666666667
+      },
+      {
+        "name": "/layers.8/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050524109,
+        "candidate_seconds": 0.0031007693333333333
+      },
+      {
+        "name": "/layers.9/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00013550133333333332,
+        "candidate_seconds": 0.00013581533333333333
+      },
+      {
+        "name": "/layers.9/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05046450933333333,
+        "candidate_seconds": 0.0029350456666666666
+      },
+      {
+        "name": "/layers.10/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014337666666666666,
+        "candidate_seconds": 0.000134643
+      },
+      {
+        "name": "/layers.10/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050720197,
+        "candidate_seconds": 0.0029835873333333334
+      },
+      {
+        "name": "/layers.11/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00015126866666666667,
+        "candidate_seconds": 0.00014777566666666667
+      },
+      {
+        "name": "/layers.11/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05094292066666667,
+        "candidate_seconds": 0.003154946
+      },
+      {
+        "name": "/layers.12/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014130933333333335,
+        "candidate_seconds": 0.000273476
+      },
+      {
+        "name": "/layers.12/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050611712,
+        "candidate_seconds": 0.003251592
+      },
+      {
+        "name": "/layers.13/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000141377,
+        "candidate_seconds": 0.00014141933333333334
+      },
+      {
+        "name": "/layers.13/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.06365587566666667,
+        "candidate_seconds": 0.0033065126666666665
+      },
+      {
+        "name": "/layers.14/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00013456166666666667,
+        "candidate_seconds": 0.00014114833333333333
+      },
+      {
+        "name": "/layers.14/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.07679245533333333,
+        "candidate_seconds": 0.0030434576666666666
+      },
+      {
+        "name": "/layers.15/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000143938,
+        "candidate_seconds": 0.00014181633333333333
+      },
+      {
+        "name": "/layers.15/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05064851966666667,
+        "candidate_seconds": 0.0030306263333333334
+      },
+      {
+        "name": "/layers.16/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00013868566666666666,
+        "candidate_seconds": 0.00023858133333333335
+      },
+      {
+        "name": "/layers.16/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050808504666666664,
+        "candidate_seconds": 0.0031572753333333333
+      },
+      {
+        "name": "/layers.17/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014194566666666668,
+        "candidate_seconds": 0.00014298566666666666
+      },
+      {
+        "name": "/layers.17/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050952829,
+        "candidate_seconds": 0.003370180333333333
+      },
+      {
+        "name": "/layers.18/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014000066666666666,
+        "candidate_seconds": 0.00013768866666666665
+      },
+      {
+        "name": "/layers.18/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.051300156,
+        "candidate_seconds": 0.0034710596666666666
+      },
+      {
+        "name": "/layers.19/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00014306433333333333,
+        "candidate_seconds": 0.000141116
+      },
+      {
+        "name": "/layers.19/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050707975,
+        "candidate_seconds": 0.0034721976666666665
+      },
+      {
+        "name": "/layers.20/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000144567,
+        "candidate_seconds": 0.00013928866666666667
+      },
+      {
+        "name": "/layers.20/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050862546333333335,
+        "candidate_seconds": 0.0035855213333333335
+      },
+      {
+        "name": "/layers.21/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00015792,
+        "candidate_seconds": 0.00013339233333333332
+      },
+      {
+        "name": "/layers.21/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050696491333333336,
+        "candidate_seconds": 0.0034839096666666666
+      },
+      {
+        "name": "/layers.22/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000142251,
+        "candidate_seconds": 0.000138167
+      },
+      {
+        "name": "/layers.22/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.051324462,
+        "candidate_seconds": 0.0037512273333333334
+      },
+      {
+        "name": "/layers.23/self_attn/Cast_1",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000138361,
+        "candidate_seconds": 0.00013744333333333333
+      },
+      {
+        "name": "/layers.23/self_attn/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.051763032,
+        "candidate_seconds": 0.0036585736666666668
+      },
+      {
+        "name": "/layers.0/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 8.8493e-05,
+        "candidate_seconds": 6.5242e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Constant_112",
+        "op": "Constant",
+        "members": 48,
+        "selected_seconds": 1.1611333333333334e-05,
+        "candidate_seconds": 1.5292666666666667e-05
+      },
+      {
+        "name": "/layers.0/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05267174733333333,
+        "candidate_seconds": 0.0031006793333333334
+      },
+      {
+        "name": "/layers.1/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 8.822866666666666e-05,
+        "candidate_seconds": 6.750133333333334e-05
+      },
+      {
+        "name": "/layers.1/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.051353819,
+        "candidate_seconds": 0.0031044926666666667
+      },
+      {
+        "name": "/layers.2/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.462766666666667e-05,
+        "candidate_seconds": 6.595966666666666e-05
+      },
+      {
+        "name": "/layers.2/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05090233066666667,
+        "candidate_seconds": 0.0031666913333333333
+      },
+      {
+        "name": "/layers.3/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.123133333333333e-05,
+        "candidate_seconds": 6.689433333333333e-05
+      },
+      {
+        "name": "/layers.3/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050876201333333336,
+        "candidate_seconds": 0.0029633233333333335
+      },
+      {
+        "name": "/layers.4/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 8.9958e-05,
+        "candidate_seconds": 6.8409e-05
+      },
+      {
+        "name": "/layers.4/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05043509733333333,
+        "candidate_seconds": 0.0029479513333333335
+      },
+      {
+        "name": "/layers.5/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 8.8055e-05,
+        "candidate_seconds": 0.00020774566666666668
+      },
+      {
+        "name": "/layers.5/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05154523933333333,
+        "candidate_seconds": 0.003021728333333333
+      },
+      {
+        "name": "/layers.6/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.374533333333334e-05,
+        "candidate_seconds": 6.806966666666667e-05
+      },
+      {
+        "name": "/layers.6/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050146778,
+        "candidate_seconds": 0.002943456666666667
+      },
+      {
+        "name": "/layers.7/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.0523e-05,
+        "candidate_seconds": 6.890833333333333e-05
+      },
+      {
+        "name": "/layers.7/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05045951666666667,
+        "candidate_seconds": 0.003168878333333333
+      },
+      {
+        "name": "/layers.8/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.2104e-05,
+        "candidate_seconds": 6.807333333333333e-05
+      },
+      {
+        "name": "/layers.8/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050354014333333336,
+        "candidate_seconds": 0.003041929
+      },
+      {
+        "name": "/layers.9/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.070266666666667e-05,
+        "candidate_seconds": 6.899733333333334e-05
+      },
+      {
+        "name": "/layers.9/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050391638333333336,
+        "candidate_seconds": 0.002907335666666667
+      },
+      {
+        "name": "/layers.10/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.720133333333333e-05,
+        "candidate_seconds": 7.336533333333333e-05
+      },
+      {
+        "name": "/layers.10/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05090753866666667,
+        "candidate_seconds": 0.0030217263333333333
+      },
+      {
+        "name": "/layers.11/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.1636e-05,
+        "candidate_seconds": 0.000185219
+      },
+      {
+        "name": "/layers.11/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05059740233333333,
+        "candidate_seconds": 0.0034313496666666665
+      },
+      {
+        "name": "/layers.12/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.1e-05,
+        "candidate_seconds": 7.3221e-05
+      },
+      {
+        "name": "/layers.12/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05035341866666666,
+        "candidate_seconds": 0.0032699506666666665
+      },
+      {
+        "name": "/layers.13/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.741733333333334e-05,
+        "candidate_seconds": 6.765866666666666e-05
+      },
+      {
+        "name": "/layers.13/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050527899333333334,
+        "candidate_seconds": 0.003374765333333333
+      },
+      {
+        "name": "/layers.14/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00010645066666666667,
+        "candidate_seconds": 6.7439e-05
+      },
+      {
+        "name": "/layers.14/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050615538,
+        "candidate_seconds": 0.003085768
+      },
+      {
+        "name": "/layers.15/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.144633333333334e-05,
+        "candidate_seconds": 8.310233333333334e-05
+      },
+      {
+        "name": "/layers.15/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05060476033333333,
+        "candidate_seconds": 0.0029832586666666667
+      },
+      {
+        "name": "/layers.16/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.170433333333334e-05,
+        "candidate_seconds": 7.1252e-05
+      },
+      {
+        "name": "/layers.16/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050517594666666665,
+        "candidate_seconds": 0.003180175
+      },
+      {
+        "name": "/layers.17/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.220366666666667e-05,
+        "candidate_seconds": 6.8967e-05
+      },
+      {
+        "name": "/layers.17/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050512601,
+        "candidate_seconds": 0.0035214886666666665
+      },
+      {
+        "name": "/layers.18/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.542733333333333e-05,
+        "candidate_seconds": 6.8669e-05
+      },
+      {
+        "name": "/layers.18/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050402698,
+        "candidate_seconds": 0.0034435623333333334
+      },
+      {
+        "name": "/layers.19/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.964966666666666e-05,
+        "candidate_seconds": 7.451766666666667e-05
+      },
+      {
+        "name": "/layers.19/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05074978166666667,
+        "candidate_seconds": 0.0035762756666666666
+      },
+      {
+        "name": "/layers.20/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000104297,
+        "candidate_seconds": 6.792433333333333e-05
+      },
+      {
+        "name": "/layers.20/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.05067044366666667,
+        "candidate_seconds": 0.0037415116666666666
+      },
+      {
+        "name": "/layers.21/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.4393e-05,
+        "candidate_seconds": 0.00017630666666666666
+      },
+      {
+        "name": "/layers.21/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.050540567333333335,
+        "candidate_seconds": 0.0035932693333333332
+      },
+      {
+        "name": "/layers.22/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.680233333333333e-05,
+        "candidate_seconds": 6.8409e-05
+      },
+      {
+        "name": "/layers.22/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.051234439666666666,
+        "candidate_seconds": 0.0036691876666666667
+      },
+      {
+        "name": "/layers.23/self_attn/Cast_2",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 9.376066666666666e-05,
+        "candidate_seconds": 7.228233333333333e-05
+      },
+      {
+        "name": "/layers.23/self_attn/Where_1",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.051573520666666664,
+        "candidate_seconds": 0.0037141883333333334
+      },
+      {
+        "name": "/layers.0/conv/Unsqueeze",
+        "op": "Unsqueeze",
+        "members": 24,
+        "selected_seconds": 0.00017236566666666668,
+        "candidate_seconds": 0.00015846266666666667
+      },
+      {
+        "name": "/layers.0/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 8.069833333333334e-05,
+        "candidate_seconds": 7.362133333333334e-05
+      },
+      {
+        "name": "/layers.0/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.035910564666666665,
+        "candidate_seconds": 0.00302229
+      },
+      {
+        "name": "/layers.1/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000118809,
+        "candidate_seconds": 0.00010291066666666667
+      },
+      {
+        "name": "/layers.1/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03457180333333333,
+        "candidate_seconds": 0.0030509956666666667
+      },
+      {
+        "name": "/layers.2/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000111399,
+        "candidate_seconds": 0.00010145
+      },
+      {
+        "name": "/layers.2/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03453685833333334,
+        "candidate_seconds": 0.0030387906666666667
+      },
+      {
+        "name": "/layers.3/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011261766666666666,
+        "candidate_seconds": 9.8228e-05
+      },
+      {
+        "name": "/layers.3/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.058560776,
+        "candidate_seconds": 0.0026752936666666668
+      },
+      {
+        "name": "/layers.4/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011420366666666667,
+        "candidate_seconds": 0.00010429
+      },
+      {
+        "name": "/layers.4/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03410112033333333,
+        "candidate_seconds": 0.002775454666666667
+      },
+      {
+        "name": "/layers.5/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000121056,
+        "candidate_seconds": 0.00011558766666666667
+      },
+      {
+        "name": "/layers.5/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.034002411,
+        "candidate_seconds": 0.0028223153333333333
+      },
+      {
+        "name": "/layers.6/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000121204,
+        "candidate_seconds": 0.00010775033333333334
+      },
+      {
+        "name": "/layers.6/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.034031343,
+        "candidate_seconds": 0.00271978
+      },
+      {
+        "name": "/layers.7/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011659733333333333,
+        "candidate_seconds": 0.00010073966666666667
+      },
+      {
+        "name": "/layers.7/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.034093373,
+        "candidate_seconds": 0.0027215586666666665
+      },
+      {
+        "name": "/layers.8/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00012293233333333334,
+        "candidate_seconds": 0.00011415866666666667
+      },
+      {
+        "name": "/layers.8/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03407791066666667,
+        "candidate_seconds": 0.0026660596666666665
+      },
+      {
+        "name": "/layers.9/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011860633333333333,
+        "candidate_seconds": 9.847433333333333e-05
+      },
+      {
+        "name": "/layers.9/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03403497366666667,
+        "candidate_seconds": 0.002610046
+      },
+      {
+        "name": "/layers.10/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011811966666666667,
+        "candidate_seconds": 0.000100468
+      },
+      {
+        "name": "/layers.10/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03416355066666667,
+        "candidate_seconds": 0.002700605
+      },
+      {
+        "name": "/layers.11/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000113736,
+        "candidate_seconds": 0.00011245666666666666
+      },
+      {
+        "name": "/layers.11/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03419188533333333,
+        "candidate_seconds": 0.00281065
+      },
+      {
+        "name": "/layers.12/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011095433333333333,
+        "candidate_seconds": 0.000102168
+      },
+      {
+        "name": "/layers.12/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.034266024666666665,
+        "candidate_seconds": 0.0029263276666666666
+      },
+      {
+        "name": "/layers.13/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011170433333333333,
+        "candidate_seconds": 0.000106074
+      },
+      {
+        "name": "/layers.13/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03415193566666667,
+        "candidate_seconds": 0.0029858316666666667
+      },
+      {
+        "name": "/layers.14/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000114642,
+        "candidate_seconds": 0.000103491
+      },
+      {
+        "name": "/layers.14/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03412132366666667,
+        "candidate_seconds": 0.0028377456666666668
+      },
+      {
+        "name": "/layers.15/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011453333333333333,
+        "candidate_seconds": 0.00010150866666666667
+      },
+      {
+        "name": "/layers.15/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.034380028,
+        "candidate_seconds": 0.002852874333333333
+      },
+      {
+        "name": "/layers.16/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00010948766666666667,
+        "candidate_seconds": 0.00010213533333333333
+      },
+      {
+        "name": "/layers.16/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.034156729,
+        "candidate_seconds": 0.0027389506666666667
+      },
+      {
+        "name": "/layers.17/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00012290333333333335,
+        "candidate_seconds": 0.00010226433333333333
+      },
+      {
+        "name": "/layers.17/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03445820266666667,
+        "candidate_seconds": 0.002957958666666667
+      },
+      {
+        "name": "/layers.18/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011353366666666667,
+        "candidate_seconds": 0.000101078
+      },
+      {
+        "name": "/layers.18/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.033958060666666665,
+        "candidate_seconds": 0.0029739443333333332
+      },
+      {
+        "name": "/layers.19/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00010805733333333333,
+        "candidate_seconds": 0.00010312433333333333
+      },
+      {
+        "name": "/layers.19/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.034294777666666665,
+        "candidate_seconds": 0.0030401576666666667
+      },
+      {
+        "name": "/layers.20/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011459866666666667,
+        "candidate_seconds": 0.00010256
+      },
+      {
+        "name": "/layers.20/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03402908066666667,
+        "candidate_seconds": 0.0030882043333333334
+      },
+      {
+        "name": "/layers.21/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.00011631266666666666,
+        "candidate_seconds": 0.00011107433333333333
+      },
+      {
+        "name": "/layers.21/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03398270766666667,
+        "candidate_seconds": 0.0031135773333333333
+      },
+      {
+        "name": "/layers.22/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000115767,
+        "candidate_seconds": 0.000102505
+      },
+      {
+        "name": "/layers.22/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.0342215,
+        "candidate_seconds": 0.0030827986666666666
+      },
+      {
+        "name": "/layers.23/conv/Cast",
+        "op": "Cast",
+        "members": 1,
+        "selected_seconds": 0.000117883,
+        "candidate_seconds": 0.000109787
+      },
+      {
+        "name": "/layers.23/conv/Where",
+        "op": "Where",
+        "members": 1,
+        "selected_seconds": 0.03466952633333333,
+        "candidate_seconds": 0.0030841373333333334
+      }
+    ],
+    "shared_ancestors_counted_once": true
+  },
+  "resources": [
+    {
+      "name": "control",
+      "samples": 552,
+      "peak_rss": 8657575936,
+      "seconds": 278.58213521400467
+    },
+    {
+      "name": "wall",
+      "samples": 529,
+      "peak_rss": 9429024768,
+      "seconds": 266.9570615258999
+    }
+  ],
+  "initial_failure": {
+    "collection": {
+      "bytes": 21292,
+      "sha256": "cbb015d321733a200e1afa7bead8b54eb0e21a569719ac88e3e4a6d3bf075c4f"
+    },
+    "transfer": {
+      "bytes": 277,
+      "sha256": "28fdb1a6ae7b57177fef323ba0951f21dfa29a02ed0419630c22ec46e2feda2b"
+    },
+    "archive": {
+      "bytes": 5195829,
+      "sha256": "1f28f2ce8e70b4c4826fec75547d615a068943885e066664c34db6d928810f70"
+    },
+    "state": {
+      "bytes": 52802,
+      "sha256": "3597946819d23fdb2a08fd5550dc351b25569f74e3cb752fdf9c1834b119420e"
+    },
+    "spec": {
+      "bytes": 19685,
+      "sha256": "120685fe4dd3188860a2dca098326e7c7295bf0c10a961fd157d7e213c0f4132"
+    },
+    "deployment": {
+      "bytes": 48,
+      "sha256": "7e9335a3464500b48a67e12ac0d9e339349c08ce928ee18ab94920f4726dfe62"
+    },
+    "candidate_never_started": true,
+    "original_code": 1
+  },
+  "audit_correction": {
+    "passed": true,
+    "original_auditor": {
+      "bytes": 7266,
+      "sha256": "31bcfe15486de1277e6a5873a408815c553bbddd2ef4756c769228df6afd1a25"
+    },
+    "corrected_auditor": {
+      "bytes": 3577,
+      "sha256": "cf666cf90a45e7348512f62d1aa089aab67d9b7c9a476beffaa9c79dfba4b9ab"
+    },
+    "recurrence_closure": {
+      "bytes": 1438718,
+      "sha256": "20b3bc4b5a2d2ddb6e0834e40fb7e2bcb5220dd1f45c813a7a830466ddbc463d"
+    },
+    "recurrence_analysis": {
+      "bytes": 19626,
+      "sha256": "4662859a30e6ca84c8ed84d399381a26d79844074fbe2498b792d8c2db37d19b"
+    },
+    "graphs": {
+      "artifacts/parakeet-observed-dense-where-profile-amd-20260924/capture-collected/control/graphs.json": {
+        "bytes": 730436,
+        "sha256": "34d69c2f286d557e4f5dbc9b7305248bfc7890fded30f9dbbbf2e38aed0d0b08"
+      },
+      "artifacts/parakeet-observed-dense-where-profile-resume-amd-20260924/capture-collected/wall/graphs.json": {
+        "bytes": 730436,
+        "sha256": "34d69c2f286d557e4f5dbc9b7305248bfc7890fded30f9dbbbf2e38aed0d0b08"
+      },
+      "artifacts/parakeet-managed-phase-amd-20260924/capture-collected/wall/graphs.json": {
+        "bytes": 730436,
+        "sha256": "e6a41f004d21ca0b4d458e44cfcffafba2deda11b1a55d9fca4243b3644b475e"
+      }
+    },
+    "field": "decoder_joint-model.onnx.retained_packed_bytes",
+    "historical": 25246720,
+    "current": 51461120,
+    "added_recurrent_bytes": 26214400,
+    "current_and_candidate_graph_metadata_exact": true,
+    "all_other_historical_graph_fields_exact": true,
+    "new_inference_calls": 0,
+    "scope": "Only historical decoder packing total is updated to the already qualified recurrence preparation. Every node, input, output and other graph field remains exact; all timing and correctness gates remain."
+  },
+  "split_capture": true,
+  "completed_control_repeated": false,
+  "attribution_only": true,
+  "application_gain_admitted": false,
+  "overhead_subtracted": false
+}

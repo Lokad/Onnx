@@ -22,6 +22,7 @@ DIGESTS=dict(baseline='2e75c249ca3f76fc90c0179e2244cd677e829cf14da18029ec73f0a2e
     models='ff9a7a2b5f1156bd365d0f51564f1160e72a82f632ce6e544bb7f86a5663e337',
     build='7d5296b266feeacbf9c52bf57a689de2cdf0a839045130f15912912f5da1b7bd',
     numerics='0dfb5dcb4d5c5793c7c175837bde6f9469e791f62c02cf1b4df679ba4d81f0db',
+    profile='8a6f509a210641650a9c057f472417dde7b4acc320f86eeb3d34ecbced4cc2e6',
     root='c7a1d2e11566e6eeeb965de6c9cedbf47df479fd51f194c797af412446281609',
     release_app='f04c09fbc6c0455c4420d6680d60bb4f8fc5cac9dda2f2507768ba94b86335e4')
 
@@ -36,6 +37,9 @@ def previous_closed():
         root=ROOT if proof.get('paths_relative_to_repository') else folder
         for path,wanted in proof.get('files',{}).items():assert pin(root/path)==wanted,path
     proof=read(PROFILE/'closed.json')
+    assert proof['audit_correction']==pin(PROFILE/'audit-correction.json')
+    correction=read(PROFILE/'audit-correction.json');assert correction['passed']
+    assert correction['corrected_auditor']==pin(TOOLS.parent/'observed-dense-where-results/audit_profile.py')
     assert proof['collection']==pin(PROFILE/'capture-collected/capture-collection.json')
     assert proof['transfer']==pin(PROFILE/'capture-transfer.json')
     for name,wanted in read(PROFILE/'capture-collected/capture-collection.json')['files'].items():
@@ -69,7 +73,8 @@ def prepare():
         copy(folder/'payload.json',bundle/'evidence'/label/'payload.json')
         copy(folder/'collected/collection.json',bundle/'evidence'/label/'collection.json')
     for source,name in [('bundle/spec.json','spec.json'),('capture-collected/capture-collection.json','collection.json'),
-        ('capture-collected/capture-state.json','state.json'),('capture-collected/observer-review.json','observer-review.json')]:
+        ('capture-collected/capture-state.json','state.json'),('capture-collected/observer-review.json','observer-review.json'),
+        ('audit-correction.json','audit-correction.json')]:
         copy(PROFILE/source,bundle/'evidence/profile'/name)
     for source,name in [('bundle/spec.json','initial-spec.json'),('capture-collected/capture-collection.json','initial-collection.json'),
         ('capture-collected/capture-state.json','initial-state.json')]:

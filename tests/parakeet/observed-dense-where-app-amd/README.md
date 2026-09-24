@@ -35,7 +35,8 @@ VM: `/dev/shm/lokad-parakeet-observed-dense-where-app-20260924`.
 Admission still requires shared/e5/Pyannote, graph comparisons, meetings,
 normal root/full suites and package qualification before integration and
 BENCHMARK.md changes. Only measured complete-application gains qualify a release.
-# Profile prerequisite recovery
+
+## Profile prerequisite recovery
 
 The mechanism prerequisite is the joint result from
 `observed-dense-where-profile-resume-amd`. Its first current-release process is

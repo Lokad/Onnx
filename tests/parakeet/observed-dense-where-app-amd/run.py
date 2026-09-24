@@ -1,4 +1,4 @@
-"""Prepare, stage, observe and collect the M63 full Parakeet comparison."""
+"""Prepare, stage, observe and collect the M70 full Parakeet comparison."""
 import ast
 import base64
 import importlib.util
