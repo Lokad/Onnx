@@ -1,8 +1,8 @@
 # Observe Parakeet masking and padding across the complete corpus
 
-Status: local implementation; source inspection and all six checker tests pass.
-No observer build or model capture has run. M66 release qualification must
-finish before `prepare`, staging or launch is permitted.
+M66 release qualification must finish before `prepare`, staging or launch.
+This protocol requires an actual AMD build review and complete capture; local
+source inspection and checker tests alone do not qualify the observer.
 
 The [matched ORT analysis](../managed-phase-results/masking-padding-20260924.md)
 attributes 6.063 seconds of excess time to masking and padding. This observer
@@ -36,6 +36,7 @@ From the repository root, use `C:/Python313/python.exe -X utf8 -B` followed by:
     tests/parakeet/masking-padding-layout-amd/run.py observe capture
     tests/parakeet/masking-padding-layout-amd/run.py collect capture
     tests/parakeet/masking-padding-layout-amd/audit.py
+    tests/parakeet/managed-phase-results/publish_masking_layouts.py
 
 Observe the recorded owner until terminal before collecting. Build review must
 prove the original Data helper body, consumer checks, all other original methods,
@@ -58,3 +59,7 @@ damage result checks, branches, exception regions and graph execution:
     C:/Python313/python.exe -X utf8 -B -m unittest discover -s tests/parakeet/masking-padding-layout-amd -p test_checks.py -v
 
 These validate the auditor; they do not qualify the unbuilt observer itself.
+
+The publisher requires the actual diagnostic closure and verified raw collection.
+It retains all 9,600 observations in CSV, groups every mask/layout finding, and
+does not use capture clocks to admit an optimization.
