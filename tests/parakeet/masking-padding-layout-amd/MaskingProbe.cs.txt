@@ -1,0 +1,196 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+
+// Diagnostic Data assembly only. Retain scalar descriptions, never activations.
+internal static class ParakeetMaskingProbe
+{
+    static readonly List<Call> Calls = new();
+    static readonly Dictionary<string, string> Targets = Enumerable.Range(0, 24)
+        .SelectMany(layer => new[] {
+            ($"/layers.{layer}/self_attn/Where", "attention-mask"),
+            ($"/layers.{layer}/self_attn/Where_1", "attention-cleanup"),
+            ($"/layers.{layer}/conv/Where", "convolution-mask"),
+            ($"/layers.{layer}/self_attn/Pad", "attention-pad"),
+            ($"/layers.{layer}/conv/depthwise_conv/Pad", "convolution-pad") })
+        .ToDictionary(p => p.Item1, p => p.Item2, StringComparer.Ordinal);
+
+    static void Require(bool value, string message)
+    { if (!value) throw new InvalidDataException(message); }
+
+    internal static Scope Enter(GraphExecution context) =>
+        new(Path.GetFileName(context.ModelFile) == "encoder-model.onnx" ? new State(context) : null);
+
+    internal readonly struct Scope : IDisposable
+    {
+        readonly State? state;
+        internal Scope(State? state) { this.state = state; }
+        public void Dispose() => state?.Dispose();
+    }
+
+    internal sealed class State : IDisposable
+    {
+        GraphExecution? context;
+        readonly LogLevel previousLevel;
+        readonly Action<LogLevel, string>? previousSink;
+        readonly int thread = Environment.CurrentManagedThreadId;
+        readonly List<Observation> records = new();
+        string? pendingOutput;
+        int observedNodes;
+        bool disposed;
+
+        internal State(GraphExecution context)
+        {
+            Require(context.Nodes.Count == 2856 && !context.Nodes.Any(n => n.Op == OpType.If), "Encoder node census");
+            var targets = context.Nodes.Where(n => Targets.ContainsKey(n.Name)).ToArray();
+            Require(targets.Length == 120 && targets.Select(n => n.Name).Distinct().Count() == 120,
+                "Every target must occur exactly once");
+            Require(targets.Count(n => n.Op == OpType.Where) == 72 && targets.Count(n => n.Op == OpType.Pad) == 48,
+                "Target operator census");
+            previousLevel = Log.MinLevel; previousSink = Log.Sink;
+            Require(previousSink is null, "Observer requires an unused logger");
+            this.context = context;
+            Log.MinLevel = LogLevel.Debug; Log.Sink = Observe;
+        }
+
+        void Flush()
+        {
+            if (pendingOutput is null) return;
+            records[^1].Output = Info(context!.GetInputTensor(pendingOutput));
+            pendingOutput = null;
+        }
+
+        void Observe(LogLevel level, string message)
+        {
+            const string prefix = "Executing node ";
+            if (level != LogLevel.Debug || !message.StartsWith(prefix, StringComparison.Ordinal)) return;
+            Require(Environment.CurrentManagedThreadId == thread, "Node logging changed thread");
+            int end = message.IndexOf(' ', prefix.Length);
+            int index = int.Parse(message.AsSpan(prefix.Length, end - prefix.Length)) - 1;
+            Require(index == observedNodes++, "Sequential node census");
+            Flush(); var node = context!.Nodes[index];
+            Require(message.StartsWith($"Executing node {index + 1} {node.Name} with op: {node.Op},", StringComparison.Ordinal),
+                "Logging node identity");
+            if (!Targets.TryGetValue(node.Name, out string? family)) return;
+            Require(node.Outputs.Length == 1, "Target output arity");
+            var inputs = node.Inputs.Select(name => string.IsNullOrEmpty(name) ? null : context.GetInputTensor(name)).ToArray();
+            var row = new Observation { Index = index, Id = node.ID, Name = node.Name, Family = family,
+                Op = node.Op.ToString(), InputNames = node.Inputs.ToArray(), OutputName = node.Outputs[0],
+                Inputs = inputs.Select(t => t is null ? null : Info(t)).ToArray() };
+            if (node.Op == OpType.Where)
+            {
+                Require(inputs.Length == 3 && inputs[0] is Tensor<bool> && inputs[1] is Tensor<float>
+                    && inputs[2] is Tensor<float>, "Where operands");
+                var condition = (Tensor<bool>)inputs[0]!;
+                long trueCount = 0;
+                for (int i = 0; i < condition.Length; i++) if (condition.GetValue(i)) trueCount++;
+                row.TrueCount = trueCount; row.FalseCount = condition.Length - trueCount;
+            }
+            else
+            {
+                Require(node.Op == OpType.Pad && inputs.Length >= 2 && inputs[0] is Tensor<float>, "Pad operands");
+                row.Pads = inputs[1] switch {
+                    Tensor<long> t => t.ToArray(), Tensor<int> t => t.ToArray().Select(v => (long)v).ToArray(),
+                    _ => throw new InvalidDataException("Pad widths dtype") };
+                row.Mode = node.Attr<string>("mode", "constant");
+                row.FillSource = inputs.Length > 2 && inputs[2] is not null ? "input" : "default";
+                row.FillBits = row.FillSource == "input" ? row.Inputs[2]!.ScalarBits : "00000000";
+            }
+            records.Add(row); pendingOutput = node.Outputs[0];
+        }
+
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+            try
+            {
+                Flush();
+                Require(observedNodes == 2856 && records.Count == 120 && records.All(r => r.Output is not null),
+                    "Incomplete encoder observation");
+                Calls.Add(new Call { GraphNodes = observedNodes, Records = records.ToArray() });
+            }
+            finally
+            {
+                Log.Sink = previousSink; Log.MinLevel = previousLevel;
+                context = null; pendingOutput = null; records.Clear();
+            }
+        }
+    }
+
+    static Layout Info<T>(Tensor<T> tensor) where T : unmanaged
+    {
+        var storage = tensor.Storage;
+        bool arrayBacked = MemoryMarshal.TryGetArray((ReadOnlyMemory<T>)storage, out var segment);
+        return new Layout { RuntimeType = tensor.GetType().FullName!, Dtype = tensor.ElementType.ToString(),
+            Dimensions = tensor.Dimensions.ToArray(), Strides = tensor.Strides.ToArray(), Reversed = tensor.IsReversedStride,
+            ExactDense = tensor.GetType() == typeof(DenseTensor<T>), Length = tensor.Length, StorageLength = storage.Length,
+            ArrayBacked = arrayBacked, ArrayOffset = arrayBacked ? segment.Offset : -1,
+            ArrayCount = arrayBacked ? segment.Count : -1, ArrayLength = arrayBacked ? segment.Array!.Length : -1,
+            ScalarBits = tensor.Length == 1 ? Convert.ToHexStringLower(MemoryMarshal.AsBytes(new[] { tensor.GetValue(0) }.AsSpan())) : null };
+    }
+
+    static Layout Info(ITensor tensor) => tensor switch {
+        Tensor<float> t => Info(t), Tensor<bool> t => Info(t), Tensor<long> t => Info(t), Tensor<int> t => Info(t),
+        _ => throw new InvalidDataException("Unexpected target dtype " + tensor.ElementType) };
+
+    // Cached delegate, called after the original complete-request clock stops.
+    public static void Save(string output, int index, string name, int pass)
+    {
+        Require(Calls.Count == 1 && Log.Sink is null, "One encoder per request, logger restored");
+        using var stream = new FileStream(Path.Combine(output, $"layout-{index:D3}.json"), FileMode.CreateNew);
+        JsonSerializer.Serialize(stream, new Request { Name = name, Pass = pass, Calls = Calls.ToArray() });
+        Calls.Clear();
+    }
+
+    internal sealed class Request
+    {
+        public string Name { get; set; } = "";
+        public int Pass { get; set; }
+        public Call[] Calls { get; set; } = Array.Empty<Call>();
+    }
+    internal sealed class Call
+    {
+        public int GraphNodes { get; set; }
+        public Observation[] Records { get; set; } = Array.Empty<Observation>();
+    }
+    internal sealed class Observation
+    {
+        public int Index { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Family { get; set; } = "";
+        public string Op { get; set; } = "";
+        public string[] InputNames { get; set; } = Array.Empty<string>();
+        public string OutputName { get; set; } = "";
+        public Layout?[] Inputs { get; set; } = Array.Empty<Layout?>();
+        public Layout? Output { get; set; }
+        public long? TrueCount { get; set; }
+        public long? FalseCount { get; set; }
+        public long[]? Pads { get; set; }
+        public string? Mode { get; set; }
+        public string? FillSource { get; set; }
+        public string? FillBits { get; set; }
+    }
+    internal sealed class Layout
+    {
+        public string RuntimeType { get; set; } = "";
+        public string Dtype { get; set; } = "";
+        public int[] Dimensions { get; set; } = Array.Empty<int>();
+        public int[] Strides { get; set; } = Array.Empty<int>();
+        public bool Reversed { get; set; }
+        public bool ExactDense { get; set; }
+        public long Length { get; set; }
+        public int StorageLength { get; set; }
+        public bool ArrayBacked { get; set; }
+        public int ArrayOffset { get; set; }
+        public int ArrayCount { get; set; }
+        public int ArrayLength { get; set; }
+        public string? ScalarBits { get; set; }
+    }
+}
