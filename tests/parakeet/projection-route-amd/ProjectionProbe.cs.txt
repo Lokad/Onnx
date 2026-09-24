@@ -1,0 +1,235 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Text.Json;
+
+// Observe existing counters and tensor metadata. Never invoke an arithmetic path.
+internal static class ParakeetProjectionProbe
+{
+    static readonly bool Control = Environment.GetEnvironmentVariable("PARAKEET_PROJECTION_MODE") == "control";
+    static readonly List<Call> Calls = new();
+    static readonly FieldInfo Packed = typeof(ComputationalGraph).GetField("PackedWeights", BindingFlags.Instance | BindingFlags.NonPublic)
+        ?? throw new InvalidDataException("Missing prepared mapping");
+    static readonly PropertyInfo Scratch = typeof(ComputationalGraph).GetProperty("ActiveScratch", BindingFlags.Instance | BindingFlags.NonPublic)
+        ?? throw new InvalidDataException("Missing scratch accountant");
+    static readonly PropertyInfo Copies = typeof(ComputationalGraph).GetProperty("ActiveCopy", BindingFlags.Instance | BindingFlags.NonPublic)
+        ?? throw new InvalidDataException("Missing copy accountant");
+
+    static void Require(bool value, string message)
+    { if (!value) throw new InvalidDataException(message); }
+
+    internal static Scope Enter(GraphExecution context) =>
+        new(!Control && Path.GetFileName(context.ModelFile) == "encoder-model.onnx" ? new State(context) : null);
+
+    internal readonly struct Scope : IDisposable
+    {
+        readonly State? state;
+        internal Scope(State? state) { this.state = state; }
+        public void Dispose() => state?.Dispose();
+    }
+
+    internal sealed class State : IDisposable
+    {
+        readonly GraphExecution context;
+        readonly LogLevel previousLevel;
+        readonly Action<LogLevel, string>? previousSink;
+        readonly int thread = Environment.CurrentManagedThreadId;
+        readonly List<Observation> records = new();
+        readonly HashSet<string> targets;
+        readonly IDictionary mapping;
+        readonly ProfilerContext wall;
+        IScratchAccountant? scratch;
+        ICopyAccountant? copies;
+        Observation? pending;
+        string? pendingOutput;
+        long scratchStart, copyStart;
+        int observedNodes, returnedNodes;
+        bool disposed;
+
+        internal State(GraphExecution context)
+        {
+            Require(context.Nodes.Count == 2856 && !context.Nodes.Any(n => n.Op == OpType.If), "Encoder census");
+            targets = context.Nodes.Where(n => n.Op == OpType.MatMul && n.Inputs.Length == 2
+                && context.Initializers.TryGetValue(n.Inputs[1], out var t) && t is Tensor<float>
+                && t.Dims.Length == 2 && t.Dims[0] >= 1024 && t.Dims[1] >= 1024)
+                .Select(n => n.Name).ToHashSet(StringComparer.Ordinal);
+            Require(targets.Count == 217, "Constant projection census");
+            previousLevel = Log.MinLevel; previousSink = Log.Sink;
+            Require(previousSink is null, "Observer requires an unused logger");
+            this.context = context;
+            mapping = Packed.GetValue(context) as IDictionary ?? throw new InvalidDataException("Mapping type");
+            wall = Profiler.BeginWallExecution();
+            Log.MinLevel = LogLevel.Debug; Log.Sink = Observe;
+        }
+
+        void FlushOutput()
+        {
+            if (pendingOutput is null) return;
+            records[^1].Output = Info(context.GetInputTensor(pendingOutput));
+            pendingOutput = null;
+        }
+
+        void Observe(LogLevel level, string message)
+        {
+            if (level != LogLevel.Debug) return;
+            const string begin = "Executing node ", end = "Execution of node ";
+            if (message.StartsWith(end, StringComparison.Ordinal))
+            {
+                long stop = Stopwatch.GetTimestamp();
+                Require(Environment.CurrentManagedThreadId == thread, "Return thread");
+                var node = context.Nodes[returnedNodes++];
+                Require(message.StartsWith($"Execution of node {node.Name} with op {node.Op} returned ", StringComparison.Ordinal), "Return identity");
+                if (pending is null) return;
+                Require(pending.Name == node.Name && scratch is not null && copies is not null, "Counter ownership");
+                pending.EndTicks = stop;
+                pending.ScratchBytes = scratch!.TotalScratchBytes - scratchStart;
+                pending.CopyBytes = copies!.TotalCopyBytes - copyStart;
+                pending = null;
+                return;
+            }
+            if (!message.StartsWith(begin, StringComparison.Ordinal)) return;
+            Require(Environment.CurrentManagedThreadId == thread && pending is null, "Sequential projection execution");
+            int separator = message.IndexOf(' ', begin.Length);
+            int index = int.Parse(message.AsSpan(begin.Length, separator - begin.Length)) - 1;
+            Require(index == observedNodes++ && returnedNodes == index, "Sequential node census");
+            FlushOutput(); var current = context.Nodes[index];
+            Require(message.StartsWith($"Executing node {index + 1} {current.Name} with op: {current.Op},", StringComparison.Ordinal), "Node identity");
+            if (!targets.Contains(current.Name)) return;
+            Require(current.Outputs.Length == 1, "Output arity");
+            var a = context.GetInputTensor(current.Inputs[0]) as Tensor<float> ?? throw new InvalidDataException("A type");
+            var b = context.GetInputTensor(current.Inputs[1]) as Tensor<float> ?? throw new InvalidDataException("B type");
+            Require(a.Rank >= 2 && b.Rank == 2 && a.Dimensions[^1] == b.Dimensions[0], "Projection dimensions");
+            object? mapped = null;
+            if (b is DenseTensor<float> dense && MemoryMarshal.TryGetArray(dense.Buffer, out ArraySegment<float> segment)
+                && segment.Array is not null && segment.Offset == 0 && mapping.Contains(segment.Array))
+                mapped = mapping[segment.Array];
+            var prepared = mapped?.GetType().GetProperty("Packed")?.GetValue(mapped) as DenseTensor<float>;
+            string? mappedName = mapped?.GetType().GetProperty("SourceName")?.GetValue(mapped) as string;
+            bool sourceSame = mapped is not null && ReferenceEquals(mapped.GetType().GetProperty("SourceRef")?.GetValue(mapped), b);
+            int m = a.Dimensions[^2];
+            bool rowAllowed = m % 2 == 0 || m % 3 == 0;
+            var options = context.Options.Tensor;
+            var row = new Observation { Index = index, Id = current.ID, Name = current.Name,
+                InputNames = current.Inputs.ToArray(), OutputName = current.Outputs[0], A = Info(a), B = Info(b),
+                M = m, K = b.Dimensions[0], N = b.Dimensions[1], MappedSource = mappedName,
+                SourceReferenceMatches = sourceSame, Prepared = prepared is null ? null : Info(prepared),
+                RowGuardAllows = rowAllowed, UseSimd = options.UseSimd, UseIntrinsics = options.UseIntrinsics,
+                DegreeOfParallelism = options.MaxDegreeOfParallelism, Fma = Fma.IsSupported, Avx512 = Avx512F.IsSupported };
+            scratch = Scratch.GetValue(context) as IScratchAccountant ?? throw new InvalidDataException("Scratch counter");
+            copies = Copies.GetValue(context) as ICopyAccountant ?? throw new InvalidDataException("Copy counter");
+            scratchStart = scratch.TotalScratchBytes; copyStart = copies.TotalCopyBytes;
+            records.Add(row); pending = row; pendingOutput = current.Outputs[0];
+            row.StartTicks = Stopwatch.GetTimestamp();
+        }
+
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+            try
+            {
+                FlushOutput();
+                Require(observedNodes == 2856 && returnedNodes == 2856 && pending is null
+                    && records.Count == 217 && records.All(r => r.Output is not null), "Incomplete projection observation");
+                var nodes = context.LastWallProfile?.ToArray() ?? throw new InvalidDataException("Missing wall profile");
+                Require(nodes.Length == 2856, "Wall census");
+                Calls.Add(new Call { GraphNodes = observedNodes, Records = records.ToArray(), Nodes = nodes,
+                    PackedWeights = mapping.Count, RetainedBytes = context.RetainedPackedWeightBytes,
+                    MaximumBytes = context.MaximumPackedWeightBytes, ScratchBytes = context.LastScratchBytes,
+                    CopyBytes = context.LastCopyBytes });
+            }
+            finally
+            {
+                Log.Sink = previousSink; Log.MinLevel = previousLevel; wall.Dispose();
+                pending = null; pendingOutput = null; records.Clear(); scratch = null; copies = null;
+            }
+        }
+    }
+
+    static Layout Info(ITensor value)
+    {
+        var tensor = value as Tensor<float> ?? throw new InvalidDataException("Projection dtype");
+        Memory<float> storage;
+        try { storage = tensor.Storage; }
+        catch (NotSupportedException)
+        { return new Layout { RuntimeType = tensor.GetType().FullName ?? "", Dimensions = tensor.Dimensions.ToArray(),
+            Strides = tensor.Strides.ToArray(), Reversed = tensor.IsReversedStride, Length = tensor.Length, StorageAvailable = false }; }
+        bool array = MemoryMarshal.TryGetArray((ReadOnlyMemory<float>)storage, out var segment);
+        return new Layout { RuntimeType = tensor.GetType().FullName ?? "", Dimensions = tensor.Dimensions.ToArray(),
+            Strides = tensor.Strides.ToArray(), Reversed = tensor.IsReversedStride, ExactDense = tensor.GetType() == typeof(DenseTensor<float>),
+            Length = tensor.Length, StorageAvailable = true, StorageLength = storage.Length, ArrayBacked = array,
+            ArrayOffset = array ? segment.Offset : -1, ArrayCount = array ? segment.Count : -1,
+            ArrayLength = array && segment.Array is not null ? segment.Array.Length : -1 };
+    }
+
+    public static void Save(string output, int index, string name, int pass)
+    {
+        Require(Calls.Count == (Control ? 0 : 1) && Log.Sink is null, "One encoder and restored logger");
+        using var stream = new FileStream(Path.Combine(output, $"projection-{index:D3}.json"), FileMode.CreateNew);
+        JsonSerializer.Serialize(stream, new { Name = name, Pass = pass, Control, Frequency = Stopwatch.Frequency,
+            Calls = Calls.ToArray() }, new JsonSerializerOptions { IncludeFields = true });
+        Calls.Clear();
+    }
+
+    internal sealed class Call
+    {
+        public int GraphNodes { get; set; }
+        public int PackedWeights { get; set; }
+        public long RetainedBytes { get; set; }
+        public long MaximumBytes { get; set; }
+        public long ScratchBytes { get; set; }
+        public long CopyBytes { get; set; }
+        public Observation[] Records { get; set; } = Array.Empty<Observation>();
+        public WallNode[] Nodes { get; set; } = Array.Empty<WallNode>();
+    }
+    internal sealed class Observation
+    {
+        public int Index { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; } = "";
+        public string[] InputNames { get; set; } = Array.Empty<string>();
+        public string OutputName { get; set; } = "";
+        public Layout A { get; set; } = new();
+        public Layout B { get; set; } = new();
+        public Layout? Output { get; set; }
+        public Layout? Prepared { get; set; }
+        public string? MappedSource { get; set; }
+        public bool SourceReferenceMatches { get; set; }
+        public bool RowGuardAllows { get; set; }
+        public bool UseSimd { get; set; }
+        public bool UseIntrinsics { get; set; }
+        public bool Fma { get; set; }
+        public bool Avx512 { get; set; }
+        public int DegreeOfParallelism { get; set; }
+        public int M { get; set; }
+        public int K { get; set; }
+        public int N { get; set; }
+        public long StartTicks { get; set; }
+        public long EndTicks { get; set; }
+        public long ScratchBytes { get; set; }
+        public long CopyBytes { get; set; }
+    }
+    internal sealed class Layout
+    {
+        public string RuntimeType { get; set; } = "";
+        public int[] Dimensions { get; set; } = Array.Empty<int>();
+        public int[] Strides { get; set; } = Array.Empty<int>();
+        public bool Reversed { get; set; }
+        public bool ExactDense { get; set; }
+        public long Length { get; set; }
+        public bool StorageAvailable { get; set; }
+        public int StorageLength { get; set; }
+        public bool ArrayBacked { get; set; }
+        public int ArrayOffset { get; set; } = -1;
+        public int ArrayCount { get; set; } = -1;
+        public int ArrayLength { get; set; } = -1;
+    }
+}

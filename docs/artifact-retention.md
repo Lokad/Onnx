@@ -32,8 +32,11 @@ payload. Pyannote application/meeting validation and normal root/package
 qualification now pass. The masking change is committed as `dddb60ef`.
 The original root source-policy failure is retained alongside the corrected
 nullable-output source and its complete compiled-equivalence and suite evidence.
-No workload is live. The current-gap review reuses retained profiles without
-model execution or another model copy.
+The current-gap review reuses retained profiles without model execution or
+another model copy. The projection observer is built and qualified; its
+control completed, and only its unstarted phase is being captured after a
+retained memory-preflight refusal. The recovery uses the same reviewed runtime
+paths without a rebuild or another model copy.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
@@ -44,6 +47,19 @@ remain retained. The inventory totals **48,791,968,094 bytes**, with
 Counting the model junction again gives 59.58 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
+
+Before projection observation, closed root caches and duplicate instruction
+exports totaling **244.18 MB across 1,243 files** were retired after verifying
+all local originals, package archives and immutable VM dependencies. Sharing
+identical runtime files then made **442 links across 3,188 verified files**;
+sharing retained root evidence made **526 links across 1,022 verified files**.
+All owners were terminal, and all shared contents and permissions were preserved.
+Receipts: `artifacts/parakeet-projection-root-cache-retention-20260924`,
+`artifacts/parakeet-projection-preflight-runtime-links-20260924` and
+`artifacts/parakeet-projection-preflight-evidence-links-20260924`.
+The initial control completed before a memory refusal at the next process
+boundary. Its complete collection and failure remain; the missing process
+reuses the reviewed binaries, with no rebuild, model copy or limit relaxation.
 
 Before the observed-mask numerical checks, **45.42 MB across 184 closed VM
 files** was retired: generated build packages and a duplicate instruction export.

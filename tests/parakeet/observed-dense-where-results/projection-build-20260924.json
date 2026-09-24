@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "compiler_generated_review": {
+    "initial_review_refused": true,
+    "original_review": {
+      "bytes": 5720,
+      "sha256": "b2002210f52ade36525f30db9917bf21423e18f622121d3a0c7a08af7b265275"
+    },
+    "inventory": {
+      "bytes": 4812394,
+      "sha256": "f75da9621149b68f763dd22fc73157fa78819d9eae08fa190292e9399cf50dff"
+    },
+    "scope": "Nine compiler-generated methods for the five-field JSON envelope, referenced only by Save.",
+    "methods": {
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::get_Name::<Name>j__TPar get_Name()": "b2efaf3249afa84ec61b9ca96f33633717d462e2e671c927bc14c4e17076e818",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::get_Pass::<Pass>j__TPar get_Pass()": "48a50b8258a3a8a9b1b3939481371f0f02ab1d0673429a08b085ee7377da50d2",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::get_Control::<Control>j__TPar get_Control()": "8499dfd50ca3963f92ebe272d6ff511bdbf7f6d05a19e77c87a9c30353e438d6",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::get_Frequency::<Frequency>j__TPar get_Frequency()": "8e88a57e5ec890426dbd9441851ea0a90f1e2bafa7990b80f58ec16a011c297e",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::get_Calls::<Calls>j__TPar get_Calls()": "d8e8c96cb73bf5a041bd4d9dab49854269015b677c082e15d028b3cf8c17bdfe",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::Equals::Boolean Equals(System.Object)": "788092c418de918c7c6cfe6caabdad127404400d534f761d5f81ca42e0d6319a",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::GetHashCode::Int32 GetHashCode()": "f834892dd8450d5c95e39e55df6f58df3373898252d6d05b496f6d46232be275",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::ToString::System.String ToString()": "f8e9d52849db0c2323e2ed0026aa686aa3b094d9ace0d42bb1d4c2d2753963b0",
+      "<>f__AnonymousType0`5[<Name>j__TPar,<Pass>j__TPar,<Control>j__TPar,<Frequency>j__TPar,<Calls>j__TPar]::.ctor::Void .ctor(<Name>j__TPar, <Pass>j__TPar, <Control>j__TPar, <Frequency>j__TPar, <Calls>j__TPar)": "48cd4d4788df984dc313043b603df714d2a774e784bbe362e31bf851e434c514"
+    },
+    "original_inference_checks_unchanged": true,
+    "no_rebuild": true
+  },
+  "built": {
+    "bytes": 10025,
+    "sha256": "fd5e51d15b9321cfcdaed8ab4e6034a44a838bb1273dc1334e6acea91e46be1f"
+  },
+  "inventory": {
+    "bytes": 4812394,
+    "sha256": "f75da9621149b68f763dd22fc73157fa78819d9eae08fa190292e9399cf50dff"
+  },
+  "collection": {
+    "bytes": 12481,
+    "sha256": "b53c2fb750eb245040733cdbe4b9f3a6fe5b81209aaf0d500e1e29ebb1b06112"
+  },
+  "spec": {
+    "bytes": 19472,
+    "sha256": "23f3b1699b34728f6c6789d507bf184022c4fcc9a6d39fc4d81e53cb332fbbd3"
+  },
+  "core_unchanged": true,
+  "methods": [
+    {
+      "assembly": "SampledAudio.dll",
+      "original_methods": 162,
+      "unchanged": 161,
+      "changed": "Program::<Main>$::Int32 <Main>$(System.String[])",
+      "added": 2,
+      "original_body_preserved": true,
+      "public_surface_equal": true,
+      "original_flags_equal": true
+    },
+    {
+      "assembly": "Lokad.Onnx.Data.dll",
+      "original_methods": 697,
+      "unchanged": 696,
+      "changed": "Lokad.Onnx.ParakeetTranscriber::Execute::System.Collections.Generic.IReadOnlyDictionary`2[System.String,Lokad.Onnx.ITensor] Execute(Lokad.Onnx.GraphExecution, System.Collections.Generic.Dictionary`2[System.String,Lokad.Onnx.ITensor])",
+      "added": 118,
+      "original_body_preserved": true,
+      "public_surface_equal": true,
+      "original_flags_equal": true
+    }
+  ],
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9945088
+    },
+    {
+      "name": "data-restore",
+      "samples": 2,
+      "peak_rss": 126091264
+    },
+    {
+      "name": "data-build",
+      "samples": 9,
+      "peak_rss": 349212672
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 2,
+      "peak_rss": 121004032
+    },
+    {
+      "name": "consumer-build",
+      "samples": 14,
+      "peak_rss": 349474816
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 2,
+      "peak_rss": 121344000
+    },
+    {
+      "name": "bridge-build",
+      "samples": 7,
+      "peak_rss": 294715392
+    },
+    {
+      "name": "inventory",
+      "samples": 1,
+      "peak_rss": 10100736
+    }
+  ],
+  "reviewer": {
+    "bytes": 4565,
+    "sha256": "1b98eb4927109e55ce456693b23f78cb1de22b0ac9ba41f846a2b948de02060d"
+  }
+}
