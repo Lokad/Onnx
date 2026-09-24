@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "managed_closure": {
+    "bytes": 952,
+    "sha256": "2a9d9342acfffede564e1a6870a8027322049e1b5087c005c260d9a054e0c2a3"
+  },
+  "native_closure": {
+    "bytes": 632,
+    "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+  },
+  "graph_review": {
+    "bytes": 872,
+    "sha256": "d844dcef266c6ea132c58b68d3e6f2dd04f6a98fed55d4d995badbc21542bf5b"
+  },
+  "groups": [
+    {
+      "reduction": 1024,
+      "columns": 1024,
+      "alpha": 1.0,
+      "nodes": 120,
+      "managed": 11.626414544333327,
+      "ort": 7.988579333333336,
+      "excess": 3.6378352109999916
+    },
+    {
+      "reduction": 1024,
+      "columns": 4096,
+      "alpha": 1.0,
+      "nodes": 48,
+      "managed": 12.79465140066667,
+      "ort": 10.595550666666666,
+      "excess": 2.1991007340000035
+    },
+    {
+      "reduction": 4096,
+      "columns": 1024,
+      "alpha": 0.5,
+      "nodes": 48,
+      "managed": 12.813853983999998,
+      "ort": 10.636331666666667,
+      "excess": 2.177522317333331
+    },
+    {
+      "reduction": 4096,
+      "columns": 1024,
+      "alpha": 1.0,
+      "nodes": 1,
+      "managed": 0.274053624,
+      "ort": 0.22162166666666666,
+      "excess": 0.052431957333333334
+    }
+  ],
+  "managed_projection_seconds": 37.508973553,
+  "ort_projection_seconds": 29.442083333333333,
+  "projection_excess_seconds": 8.066890219666664,
+  "managed_group_node_count": 265,
+  "managed_phases": {
+    "frontend": 0.6478803603333333,
+    "encoder": 63.83994942266666,
+    "decoder": 9.044452434333333
+  },
+  "ort_phases": {
+    "frontend": 0.22813634166666666,
+    "encoder": 37.573348976333335,
+    "decoder": 1.9047740336666668
+  },
+  "managed_complete": {
+    "control": 73.53046903933334,
+    "phase": 73.66040401566666,
+    "wall": 74.16266192100001
+  },
+  "phase_over_control": 1.001767090269257,
+  "wall_over_phase": 1.0068185602841186,
+  "profiler_clocks_are_diagnostic": true
+}

@@ -1,0 +1,218 @@
+ort_name,shape,alpha,managed_nodes,managed_seconds,ort_seconds,excess_seconds,ratio
+/pre_encode/out/MatMul,"[4096, 1024]",1.0,['/pre_encode/out/MatMul'],0.274053624,0.22162166666666666,0.052431957333333334,1.2365831740278102
+/layers.0/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.0/feed_forward1/linear1/MatMul'],0.2612982266666667,0.22090266666666666,0.040395560000000025,1.1828658775810765
+/layers.0/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.0/feed_forward1/linear2/MatMul', '/layers.0/Mul']",0.27156205366666664,0.22157166666666667,0.04999038699999997,1.2256172359582678
+/layers.0/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.0/self_attn/linear_v/MatMul'],0.06739095966666667,0.056091666666666665,0.011299293000000002,1.2014433457138614
+/layers.0/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.0/self_attn/linear_k/MatMul'],0.066811026,0.055279,0.011532025999999994,1.2086149532372148
+/layers.0/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.0/self_attn/linear_q/MatMul'],0.064602605,0.055223,0.009379604999999992,1.1698496097640474
+/layers.0/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.0/self_attn/linear_pos/MatMul'],0.22935842366666667,0.109702,0.11965642366666668,2.0907405851002414
+/layers.0/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.0/self_attn/linear_out/MatMul'],0.06395181866666666,0.05515,0.008801818666666662,1.1595977999395588
+/layers.0/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.0/feed_forward2/linear1/MatMul'],0.26389419333333336,0.22064266666666665,0.043251526666666706,1.1960252172441717
+/layers.0/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.0/feed_forward2/linear2/MatMul', '/layers.0/Mul_1']",0.26698270333333335,0.22135433333333332,0.04562837000000003,1.206132716323602
+/layers.1/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.1/feed_forward1/linear1/MatMul'],0.25644991266666667,0.22051833333333334,0.035931579333333324,1.1629414606495303
+/layers.1/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.1/feed_forward1/linear2/MatMul', '/layers.1/Mul']",0.26657590366666667,0.22154166666666666,0.045034237000000005,1.2032766010908407
+/layers.1/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.1/self_attn/linear_v/MatMul'],0.06264122166666666,0.05626966666666667,0.006371554999999994,1.1132324994520433
+/layers.1/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.1/self_attn/linear_k/MatMul'],0.06404736566666666,0.05527066666666667,0.008776698999999992,1.1587948821556942
+/layers.1/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.1/self_attn/linear_q/MatMul'],0.06386860133333333,0.055123,0.008745601333333332,1.1586561205546384
+/layers.1/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.1/self_attn/linear_pos/MatMul'],0.22308972066666666,0.10972266666666666,0.113367054,2.033214534827201
+/layers.1/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.1/self_attn/linear_out/MatMul'],0.06345761066666666,0.05519633333333333,0.00826127733333333,1.1496707631545573
+/layers.1/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.1/feed_forward2/linear1/MatMul'],0.2572389466666667,0.220782,0.036456946666666684,1.1651264444867184
+/layers.1/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.1/feed_forward2/linear2/MatMul', '/layers.1/Mul_1']",0.2661944073333333,0.222342,0.043852407333333315,1.197229526285332
+/layers.2/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.2/feed_forward1/linear1/MatMul'],0.255397584,0.22204333333333334,0.03335425066666667,1.1502150511161484
+/layers.2/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.2/feed_forward1/linear2/MatMul', '/layers.2/Mul']",0.26624579233333334,0.221648,0.04459779233333333,1.201209992119637
+/layers.2/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.2/self_attn/linear_v/MatMul'],0.06351742433333334,0.055424666666666664,0.008092757666666672,1.1460136461503303
+/layers.2/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.2/self_attn/linear_k/MatMul'],0.06363242666666667,0.05549333333333333,0.00813909333333334,1.1466679481018742
+/layers.2/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.2/self_attn/linear_q/MatMul'],0.062590608,0.05531,0.007280608000000008,1.1316327608027483
+/layers.2/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.2/self_attn/linear_pos/MatMul'],0.222394818,0.11027566666666666,0.11211915133333333,2.016717057555762
+/layers.2/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.2/self_attn/linear_out/MatMul'],0.06358681366666667,0.055606333333333334,0.007980480333333338,1.1435174710314773
+/layers.2/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.2/feed_forward2/linear1/MatMul'],0.257627239,0.22087866666666667,0.03674857233333334,1.1663744755793528
+/layers.2/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.2/feed_forward2/linear2/MatMul', '/layers.2/Mul_1']",0.2665618126666667,0.22154033333333334,0.045021479333333336,1.2032202383012274
+/layers.3/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.3/feed_forward1/linear1/MatMul'],0.25582691166666666,0.22078266666666665,0.035044245,1.158727338196839
+/layers.3/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.3/feed_forward1/linear2/MatMul', '/layers.3/Mul']",0.26874020333333337,0.22137766666666667,0.047362536666666705,1.2139445111144909
+/layers.3/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.3/self_attn/linear_v/MatMul'],0.06340633933333334,0.055252333333333334,0.008154006000000005,1.1475775864669366
+/layers.3/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.3/self_attn/linear_k/MatMul'],0.06263732733333334,0.055242,0.00739532733333334,1.1338714625345452
+/layers.3/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.3/self_attn/linear_q/MatMul'],0.06380916133333334,0.05590166666666667,0.007907494666666667,1.1414536477743658
+/layers.3/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.3/self_attn/linear_pos/MatMul'],0.223324137,0.10994333333333334,0.11338080366666667,2.0312658369463055
+/layers.3/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.3/self_attn/linear_out/MatMul'],0.06280577466666666,0.055379,0.007426774666666663,1.1341081396678645
+/layers.3/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.3/feed_forward2/linear1/MatMul'],0.25756779366666666,0.220542,0.03702579366666667,1.1678854534132577
+/layers.3/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.3/feed_forward2/linear2/MatMul', '/layers.3/Mul_1']",0.266478649,0.22155233333333332,0.04492631566666669,1.2027796999053648
+/layers.4/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.4/feed_forward1/linear1/MatMul'],0.255186259,0.22057266666666667,0.03461359233333336,1.1569260274014008
+/layers.4/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.4/feed_forward1/linear2/MatMul', '/layers.4/Mul']",0.26696824566666666,0.22144633333333333,0.04552191233333333,1.2055663403774277
+/layers.4/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.4/self_attn/linear_v/MatMul'],0.06252068733333334,0.055321666666666665,0.007199020666666674,1.1301302202271564
+/layers.4/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.4/self_attn/linear_k/MatMul'],0.06350986766666666,0.05529733333333333,0.008212534333333334,1.148515919996142
+/layers.4/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.4/self_attn/linear_q/MatMul'],0.06373039766666666,0.055408,0.008322397666666662,1.1502020947636922
+/layers.4/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.4/self_attn/linear_pos/MatMul'],0.22807909033333335,0.109749,0.11833009033333335,2.078188323659745
+/layers.4/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.4/self_attn/linear_out/MatMul'],0.06327217066666667,0.055425,0.007847170666666667,1.141581789204631
+/layers.4/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.4/feed_forward2/linear1/MatMul'],0.26878636,0.22055033333333332,0.04823602666666668,1.218707566375627
+/layers.4/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.4/feed_forward2/linear2/MatMul', '/layers.4/Mul_1']",0.26632121166666667,0.221476,0.04484521166666666,1.2024833917294273
+/layers.5/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.5/feed_forward1/linear1/MatMul'],0.2670142443333333,0.22081866666666666,0.046195577666666654,1.2092014156411897
+/layers.5/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.5/feed_forward1/linear2/MatMul', '/layers.5/Mul']",0.266015145,0.221693,0.04432214500000001,1.1999257757349127
+/layers.5/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.5/self_attn/linear_v/MatMul'],0.06344045866666667,0.05531,0.008130458666666673,1.1469979871029954
+/layers.5/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.5/self_attn/linear_k/MatMul'],0.06337849566666667,0.055287666666666666,0.008090829000000008,1.1463405762587198
+/layers.5/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.5/self_attn/linear_q/MatMul'],0.06283601166666666,0.055275333333333336,0.0075606783333333274,1.136782139109669
+/layers.5/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.5/self_attn/linear_pos/MatMul'],0.22345354666666667,0.110201,0.11325254666666668,2.0276907348088193
+/layers.5/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.5/self_attn/linear_out/MatMul'],0.06611154733333334,0.055502333333333334,0.010609214000000006,1.191148972715862
+/layers.5/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.5/feed_forward2/linear1/MatMul'],0.26878681866666665,0.22049733333333332,0.048289485333333326,1.2190025820418084
+/layers.5/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.5/feed_forward2/linear2/MatMul', '/layers.5/Mul_1']",0.2661155496666667,0.221738,0.04437754966666668,1.200135067812764
+/layers.6/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.6/feed_forward1/linear1/MatMul'],0.2681091563333333,0.22063833333333333,0.047470822999999995,1.2151522008112825
+/layers.6/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.6/feed_forward1/linear2/MatMul', '/layers.6/Mul']",0.26642612866666665,0.22147233333333333,0.044953795333333324,1.2029770249707639
+/layers.6/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.6/self_attn/linear_v/MatMul'],0.06533275866666667,0.05543733333333333,0.00989542533333334,1.1784974986771852
+/layers.6/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.6/self_attn/linear_k/MatMul'],0.066178766,0.05536233333333333,0.010816432666666667,1.1953753033048944
+/layers.6/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.6/self_attn/linear_q/MatMul'],0.066238536,0.055328,0.010910535999999998,1.1971973684210526
+/layers.6/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.6/self_attn/linear_pos/MatMul'],0.221662888,0.11007666666666667,0.11158622133333333,2.0137136662326256
+/layers.6/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.6/self_attn/linear_out/MatMul'],0.06671299366666666,0.05556,0.011152993666666666,1.200737826973842
+/layers.6/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.6/feed_forward2/linear1/MatMul'],0.268911939,0.22054266666666666,0.048369272333333324,1.2193193410798817
+/layers.6/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.6/feed_forward2/linear2/MatMul', '/layers.6/Mul_1']",0.26676721633333333,0.22151333333333334,0.045253882999999995,1.2042941719083877
+/layers.7/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.7/feed_forward1/linear1/MatMul'],0.26730328366666667,0.22065766666666667,0.046645617,1.2113935930921653
+/layers.7/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.7/feed_forward1/linear2/MatMul', '/layers.7/Mul']",0.26612407066666666,0.22137666666666667,0.04474740399999999,1.2021324319033924
+/layers.7/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.7/self_attn/linear_v/MatMul'],0.065476244,0.05548466666666667,0.009991577333333335,1.1800781717471494
+/layers.7/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.7/self_attn/linear_k/MatMul'],0.06521840866666667,0.055439,0.00977940866666667,1.1763994420293777
+/layers.7/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.7/self_attn/linear_q/MatMul'],0.066221824,0.055425666666666665,0.010796157333333334,1.1947862422343438
+/layers.7/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.7/self_attn/linear_pos/MatMul'],0.22133958333333334,0.11002266666666667,0.11131691666666667,2.01176348510004
+/layers.7/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.7/self_attn/linear_out/MatMul'],0.066059415,0.05558933333333333,0.010470081666666665,1.1883469550513288
+/layers.7/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.7/feed_forward2/linear1/MatMul'],0.26956296733333335,0.22050833333333333,0.049054634000000014,1.2224615879974303
+/layers.7/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.7/feed_forward2/linear2/MatMul', '/layers.7/Mul_1']",0.267282263,0.22136366666666665,0.04591859633333337,1.207435109043791
+/layers.8/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.8/feed_forward1/linear1/MatMul'],0.26732768766666665,0.22115,0.046177687666666634,1.2088070887029918
+/layers.8/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.8/feed_forward1/linear2/MatMul', '/layers.8/Mul']",0.2669093513333333,0.22151466666666667,0.04539468466666666,1.204928573578273
+/layers.8/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.8/self_attn/linear_v/MatMul'],0.064956284,0.055584,0.009372284000000002,1.1686147812320091
+/layers.8/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.8/self_attn/linear_k/MatMul'],0.065206828,0.055559,0.009647827999999997,1.173650137691463
+/layers.8/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.8/self_attn/linear_q/MatMul'],0.06670409233333334,0.055536666666666665,0.011167425666666675,1.2010820298901628
+/layers.8/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.8/self_attn/linear_pos/MatMul'],0.22223463866666668,0.11015666666666667,0.11207797200000001,2.0174415710957123
+/layers.8/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.8/self_attn/linear_out/MatMul'],0.06648094733333333,0.055688666666666664,0.010792280666666668,1.1937967150706907
+/layers.8/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.8/feed_forward2/linear1/MatMul'],0.268450291,0.22055366666666668,0.04789662433333333,1.217165395874927
+/layers.8/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.8/feed_forward2/linear2/MatMul', '/layers.8/Mul_1']",0.26655165166666667,0.22159366666666666,0.044957985000000006,1.2028847921345527
+/layers.9/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.9/feed_forward1/linear1/MatMul'],0.267822035,0.22098833333333334,0.04683370166666667,1.2119283898848356
+/layers.9/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.9/feed_forward1/linear2/MatMul', '/layers.9/Mul']",0.26623139933333334,0.22143566666666667,0.04479573266666667,1.2022968266178138
+/layers.9/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.9/self_attn/linear_v/MatMul'],0.06491044633333333,0.05566733333333333,0.009243112999999997,1.1660419575813463
+/layers.9/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.9/self_attn/linear_k/MatMul'],0.06563137733333334,0.055683,0.009948377333333334,1.1786609437949345
+/layers.9/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.9/self_attn/linear_q/MatMul'],0.066153617,0.05572866666666667,0.010424950333333328,1.1870662076968166
+/layers.9/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.9/self_attn/linear_pos/MatMul'],0.22136377333333335,0.110451,0.11091277333333335,2.004180798121641
+/layers.9/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.9/self_attn/linear_out/MatMul'],0.066786172,0.05587333333333333,0.010912838666666674,1.195313900489202
+/layers.9/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.9/feed_forward2/linear1/MatMul'],0.26919180833333334,0.22081833333333334,0.048373475,1.2190645779713338
+/layers.9/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.9/feed_forward2/linear2/MatMul', '/layers.9/Mul_1']",0.2677170363333334,0.22150633333333333,0.04621070300000005,1.2086202335824863
+/layers.10/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.10/feed_forward1/linear1/MatMul'],0.2681711173333333,0.22127666666666668,0.04689445066666664,1.2119267764337254
+/layers.10/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.10/feed_forward1/linear2/MatMul', '/layers.10/Mul']",0.266242427,0.22145633333333334,0.044786093666666665,1.2022344224369288
+/layers.10/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.10/self_attn/linear_v/MatMul'],0.0655255,0.05579133333333333,0.009734166666666669,1.1744745300942798
+/layers.10/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.10/self_attn/linear_k/MatMul'],0.06517035533333333,0.055677333333333336,0.009493021999999997,1.1705006585564441
+/layers.10/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.10/self_attn/linear_q/MatMul'],0.06618522033333334,0.055675666666666665,0.010509553666666671,1.1887638585378413
+/layers.10/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.10/self_attn/linear_pos/MatMul'],0.22184729533333333,0.11034933333333333,0.111497962,2.0104090222565913
+/layers.10/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.10/self_attn/linear_out/MatMul'],0.06625081466666667,0.05595666666666667,0.010294148000000003,1.183966426401382
+/layers.10/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.10/feed_forward2/linear1/MatMul'],0.268898806,0.220519,0.048379806,1.2193906466109496
+/layers.10/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.10/feed_forward2/linear2/MatMul', '/layers.10/Mul_1']",0.2661563393333334,0.22134433333333334,0.04481200600000004,1.2024538208191462
+/layers.11/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.11/feed_forward1/linear1/MatMul'],0.26754406033333333,0.22051166666666666,0.04703239366666667,1.2132875524348674
+/layers.11/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.11/feed_forward1/linear2/MatMul', '/layers.11/Mul']",0.26615628533333335,0.22395466666666666,0.04220161866666669,1.188438219639689
+/layers.11/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.11/self_attn/linear_v/MatMul'],0.06505391166666667,0.057086,0.007967911666666674,1.1395773336136124
+/layers.11/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.11/self_attn/linear_k/MatMul'],0.065074466,0.05646,0.008614465999999994,1.1525764434998227
+/layers.11/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.11/self_attn/linear_q/MatMul'],0.06678161833333333,0.055958666666666664,0.01082295166666667,1.1934097488622555
+/layers.11/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.11/self_attn/linear_pos/MatMul'],0.222243612,0.110405,0.111838612,2.0129850278519994
+/layers.11/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.11/self_attn/linear_out/MatMul'],0.06597374566666667,0.05593066666666666,0.010043079000000003,1.1795630125393344
+/layers.11/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.11/feed_forward2/linear1/MatMul'],0.268660228,0.220488,0.04817222800000001,1.2184800442654475
+/layers.11/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.11/feed_forward2/linear2/MatMul', '/layers.11/Mul_1']",0.2664676496666667,0.22145566666666666,0.04501198300000003,1.2032550518011884
+/layers.12/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.12/feed_forward1/linear1/MatMul'],0.26773338,0.22077633333333332,0.046957046666666696,1.212690581267014
+/layers.12/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.12/feed_forward1/linear2/MatMul', '/layers.12/Mul']",0.26591552366666665,0.221825,0.04409052366666666,1.1987626447274502
+/layers.12/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.12/self_attn/linear_v/MatMul'],0.06488209333333333,0.05573433333333333,0.009147760000000005,1.1641315048174974
+/layers.12/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.12/self_attn/linear_k/MatMul'],0.065620039,0.05575366666666667,0.009866372333333338,1.1769636496254359
+/layers.12/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.12/self_attn/linear_q/MatMul'],0.066101513,0.05574433333333333,0.010357179666666667,1.1857978927604003
+/layers.12/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.12/self_attn/linear_pos/MatMul'],0.22123760766666667,0.11028366666666667,0.110953941,2.0060777298542245
+/layers.12/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.12/self_attn/linear_out/MatMul'],0.066687663,0.055883666666666665,0.01080399633333333,1.1933301262742244
+/layers.12/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.12/feed_forward2/linear1/MatMul'],0.2684398176666667,0.22047066666666668,0.047969151000000015,1.2175761144339685
+/layers.12/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.12/feed_forward2/linear2/MatMul', '/layers.12/Mul_1']",0.2660052296666666,0.22130966666666665,0.044695562999999966,1.201959379692708
+/layers.13/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.13/feed_forward1/linear1/MatMul'],0.26699481533333336,0.220739,0.04625581533333337,1.2095498092015158
+/layers.13/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.13/feed_forward1/linear2/MatMul', '/layers.13/Mul']",0.2672093353333333,0.22136966666666666,0.04583966866666664,1.2070729443510024
+/layers.13/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.13/self_attn/linear_v/MatMul'],0.06609415266666667,0.055655333333333334,0.010438819333333335,1.1875618868512152
+/layers.13/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.13/self_attn/linear_k/MatMul'],0.06551730833333333,0.055672,0.00984530833333333,1.17684488312497
+/layers.13/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.13/self_attn/linear_q/MatMul'],0.06616165466666667,0.05572133333333333,0.010440321333333336,1.1873666818214448
+/layers.13/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.13/self_attn/linear_pos/MatMul'],0.221992745,0.11019566666666666,0.11179707833333333,2.0145324377546605
+/layers.13/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.13/self_attn/linear_out/MatMul'],0.06823541066666666,0.055794,0.01244141066666666,1.22298832610436
+/layers.13/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.13/feed_forward2/linear1/MatMul'],0.269643646,0.22105533333333333,0.04858831266666669,1.2198015851234836
+/layers.13/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.13/feed_forward2/linear2/MatMul', '/layers.13/Mul_1']",0.265893569,0.22157466666666667,0.044318902333333327,1.2000179126976007
+/layers.14/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.14/feed_forward1/linear1/MatMul'],0.266597535,0.220653,0.04594453500000001,1.2082207583853382
+/layers.14/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.14/feed_forward1/linear2/MatMul', '/layers.14/Mul']",0.26769529033333334,0.22145366666666666,0.046241623666666676,1.2088094740660575
+/layers.14/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.14/self_attn/linear_v/MatMul'],0.065471063,0.055715,0.009756062999999995,1.1751065781207932
+/layers.14/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.14/self_attn/linear_k/MatMul'],0.06574171733333334,0.055632,0.010109717333333337,1.1817248585945739
+/layers.14/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.14/self_attn/linear_q/MatMul'],0.067490351,0.055657333333333336,0.011833017666666668,1.2126048259588433
+/layers.14/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.14/self_attn/linear_pos/MatMul'],0.22338842866666667,0.110197,0.11319142866666666,2.0271734136742983
+/layers.14/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.14/self_attn/linear_out/MatMul'],0.067015825,0.05585933333333333,0.01115649166666667,1.1997247550394443
+/layers.14/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.14/feed_forward2/linear1/MatMul'],0.271576186,0.22073,0.05084618599999999,1.2303546685996465
+/layers.14/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.14/feed_forward2/linear2/MatMul', '/layers.14/Mul_1']",0.26925518800000003,0.22169366666666668,0.047561521333333356,1.2145371225459758
+/layers.15/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.15/feed_forward1/linear1/MatMul'],0.26986834433333334,0.22084133333333333,0.04902701100000001,1.2220010641123944
+/layers.15/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.15/feed_forward1/linear2/MatMul', '/layers.15/Mul']",0.26759601266666666,0.221368,0.04622801266666665,1.2088287948875476
+/layers.15/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.15/self_attn/linear_v/MatMul'],0.06516503966666666,0.05581766666666667,0.009347372999999992,1.1674626253336755
+/layers.15/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.15/self_attn/linear_k/MatMul'],0.066146119,0.05570166666666666,0.01044445233333334,1.1875069985936988
+/layers.15/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.15/self_attn/linear_q/MatMul'],0.06639340533333334,0.055617,0.010776405333333336,1.1937609963380502
+/layers.15/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.15/self_attn/linear_pos/MatMul'],0.221005311,0.11010633333333333,0.11089897766666668,2.0071988986404055
+/layers.15/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.15/self_attn/linear_out/MatMul'],0.06664783433333334,0.055767,0.010880834333333339,1.195112420128989
+/layers.15/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.15/feed_forward2/linear1/MatMul'],0.26872300433333335,0.22040833333333334,0.048314671000000003,1.2192052826193807
+/layers.15/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.15/feed_forward2/linear2/MatMul', '/layers.15/Mul_1']",0.26605111833333334,0.221399,0.044652118333333324,1.2016816622176854
+/layers.16/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.16/feed_forward1/linear1/MatMul'],0.267196665,0.220781,0.046415664999999995,1.2102339648792242
+/layers.16/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.16/feed_forward1/linear2/MatMul', '/layers.16/Mul']",0.26645232933333335,0.22146566666666667,0.04498666266666668,1.2031315433392986
+/layers.16/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.16/self_attn/linear_v/MatMul'],0.06559236066666667,0.055691333333333336,0.009901027333333333,1.1777839879334906
+/layers.16/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.16/self_attn/linear_k/MatMul'],0.06584255533333333,0.05569266666666667,0.010149888666666662,1.1822482074240772
+/layers.16/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.16/self_attn/linear_q/MatMul'],0.06615710066666666,0.055645,0.010512100666666663,1.1889136610057807
+/layers.16/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.16/self_attn/linear_pos/MatMul'],0.22110150866666667,0.11026066666666667,0.110840842,2.0052618522168677
+/layers.16/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.16/self_attn/linear_out/MatMul'],0.066028378,0.055838,0.010190378,1.182498979189799
+/layers.16/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.16/feed_forward2/linear1/MatMul'],0.26837736,0.22059833333333334,0.04777902666666667,1.216588339289357
+/layers.16/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.16/feed_forward2/linear2/MatMul', '/layers.16/Mul_1']",0.2667453106666667,0.22147933333333333,0.045265977333333346,1.2043801408107304
+/layers.17/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.17/feed_forward1/linear1/MatMul'],0.26765948266666667,0.22074566666666667,0.046913816,1.2125242896425297
+/layers.17/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.17/feed_forward1/linear2/MatMul', '/layers.17/Mul']",0.2661533046666667,0.22139666666666666,0.04475663800000004,1.2021558800945515
+/layers.17/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.17/self_attn/linear_v/MatMul'],0.06503461966666667,0.055738,0.009296619666666665,1.1667914110062554
+/layers.17/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.17/self_attn/linear_k/MatMul'],0.06528463566666666,0.05577466666666667,0.009509968999999993,1.170506962539743
+/layers.17/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.17/self_attn/linear_q/MatMul'],0.06693909233333334,0.05562966666666667,0.011309425666666671,1.2032984618518896
+/layers.17/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.17/self_attn/linear_pos/MatMul'],0.22169170366666666,0.110253,0.11143870366666665,2.010754389147385
+/layers.17/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.17/self_attn/linear_out/MatMul'],0.06627165,0.055858,0.010413650000000003,1.1864307708833113
+/layers.17/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.17/feed_forward2/linear1/MatMul'],0.2690159483333333,0.22074566666666667,0.04827028166666664,1.21866921509973
+/layers.17/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.17/feed_forward2/linear2/MatMul', '/layers.17/Mul_1']",0.26650787200000003,0.22169333333333333,0.04481453866666671,1.2021465327479404
+/layers.18/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.18/feed_forward1/linear1/MatMul'],0.26729945033333335,0.22074466666666667,0.04655478366666668,1.21089879257181
+/layers.18/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.18/feed_forward1/linear2/MatMul', '/layers.18/Mul']",0.26684658833333336,0.22151833333333334,0.04532825500000001,1.2046252981318326
+/layers.18/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.18/self_attn/linear_v/MatMul'],0.06500467966666666,0.055762,0.009242679666666663,1.1657522984589266
+/layers.18/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.18/self_attn/linear_k/MatMul'],0.065676678,0.05578266666666667,0.009894011333333334,1.1773671271840715
+/layers.18/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.18/self_attn/linear_q/MatMul'],0.066016348,0.055751666666666665,0.010264681333333338,1.1841143403784642
+/layers.18/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.18/self_attn/linear_pos/MatMul'],0.221134838,0.11025766666666667,0.11087717133333333,2.0056186992287763
+/layers.18/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.18/self_attn/linear_out/MatMul'],0.06742989933333333,0.05586,0.011569899333333335,1.2071231531208975
+/layers.18/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.18/feed_forward2/linear1/MatMul'],0.26943642966666664,0.220575,0.04886142966666665,1.2215184389285578
+/layers.18/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.18/feed_forward2/linear2/MatMul', '/layers.18/Mul_1']",0.26634949100000005,0.22141866666666668,0.04493082433333337,1.2029224771774738
+/layers.19/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.19/feed_forward1/linear1/MatMul'],0.267424363,0.220731,0.04669336299999999,1.2115396704586125
+/layers.19/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.19/feed_forward1/linear2/MatMul', '/layers.19/Mul']",0.26683075766666664,0.22166966666666665,0.04516109099999999,1.2037314878445253
+/layers.19/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.19/self_attn/linear_v/MatMul'],0.065668201,0.055830333333333336,0.00983786766666666,1.176210082929829
+/layers.19/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.19/self_attn/linear_k/MatMul'],0.06546044266666666,0.05581766666666667,0.009642775999999992,1.1727549103330486
+/layers.19/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.19/self_attn/linear_q/MatMul'],0.06637155766666666,0.055766333333333334,0.01060522433333333,1.1901725234460456
+/layers.19/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.19/self_attn/linear_pos/MatMul'],0.22465228766666667,0.11035166666666667,0.114300621,2.035785180710154
+/layers.19/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.19/self_attn/linear_out/MatMul'],0.06592036566666666,0.055859,0.010061365666666662,1.180120762395794
+/layers.19/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.19/feed_forward2/linear1/MatMul'],0.26871004633333334,0.220664,0.04804604633333334,1.2177339590206528
+/layers.19/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.19/feed_forward2/linear2/MatMul', '/layers.19/Mul_1']",0.26655361366666663,0.221481,0.04507261366666662,1.2035055542762882
+/layers.20/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.20/feed_forward1/linear1/MatMul'],0.267389705,0.220764,0.04662570499999999,1.2112015772499138
+/layers.20/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.20/feed_forward1/linear2/MatMul', '/layers.20/Mul']",0.2670425733333333,0.22157733333333332,0.04546523999999999,1.2051890385899882
+/layers.20/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.20/self_attn/linear_v/MatMul'],0.06516594433333334,0.055696333333333334,0.009469611000000003,1.1700221618418927
+/layers.20/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.20/self_attn/linear_k/MatMul'],0.06530097866666666,0.055967333333333334,0.009333645333333328,1.166769520315422
+/layers.20/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.20/self_attn/linear_q/MatMul'],0.06683044266666667,0.055759666666666666,0.011070776000000004,1.1985445154502359
+/layers.20/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.20/self_attn/linear_pos/MatMul'],0.22200647833333334,0.11031166666666667,0.11169481166666667,2.012538519648874
+/layers.20/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.20/self_attn/linear_out/MatMul'],0.06604405766666667,0.05590666666666667,0.010137391000000003,1.1813270510374434
+/layers.20/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.20/feed_forward2/linear1/MatMul'],0.2685049196666667,0.22105333333333332,0.04745158633333335,1.2146612567102963
+/layers.20/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.20/feed_forward2/linear2/MatMul', '/layers.20/Mul_1']",0.26698251133333334,0.221783,0.04519951133333333,1.2038006129114194
+/layers.21/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.21/feed_forward1/linear1/MatMul'],0.2675996603333333,0.221085,0.04651466033333332,1.2103926559166533
+/layers.21/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.21/feed_forward1/linear2/MatMul', '/layers.21/Mul']",0.2676779223333333,0.22197733333333333,0.045700588999999986,1.2058795297417755
+/layers.21/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.21/self_attn/linear_v/MatMul'],0.064978363,0.055815333333333335,0.009163029666666662,1.1641668896241175
+/layers.21/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.21/self_attn/linear_k/MatMul'],0.065824562,0.05574,0.010084562000000005,1.180921456763545
+/layers.21/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.21/self_attn/linear_q/MatMul'],0.06621276366666666,0.055716666666666664,0.010496096999999996,1.1883834340412802
+/layers.21/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.21/self_attn/linear_pos/MatMul'],0.22134039366666666,0.11045666666666666,0.110883727,2.0038663155988776
+/layers.21/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.21/self_attn/linear_out/MatMul'],0.06671477,0.055851333333333336,0.01086343666666667,1.194506308414004
+/layers.21/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.21/feed_forward2/linear1/MatMul'],0.268848775,0.220726,0.04812277499999998,1.2180204189809989
+/layers.21/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.21/feed_forward2/linear2/MatMul', '/layers.21/Mul_1']",0.2668128206666667,0.221706,0.045106820666666686,1.2034533150508633
+/layers.22/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.22/feed_forward1/linear1/MatMul'],0.268483458,0.22097133333333333,0.04751212466666668,1.2150148797581588
+/layers.22/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.22/feed_forward1/linear2/MatMul', '/layers.22/Mul']",0.26640090699999996,0.221527,0.04487390699999996,1.2025663102014652
+/layers.22/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.22/self_attn/linear_v/MatMul'],0.06568659866666667,0.055799666666666664,0.009886932000000001,1.1771862197504166
+/layers.22/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.22/self_attn/linear_k/MatMul'],0.06535809366666667,0.05578533333333333,0.00957276033333334,1.1715999486125386
+/layers.22/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.22/self_attn/linear_q/MatMul'],0.066054,0.055803,0.010251000000000003,1.1836998010859632
+/layers.22/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.22/self_attn/linear_pos/MatMul'],0.22128878433333332,0.11041233333333333,0.11087645099999999,2.004203494778663
+/layers.22/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.22/self_attn/linear_out/MatMul'],0.06603784133333333,0.055896,0.010141841333333332,1.1814412718858833
+/layers.22/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.22/feed_forward2/linear1/MatMul'],0.27142869366666666,0.22051266666666666,0.050916027,1.2308984230686673
+/layers.22/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.22/feed_forward2/linear2/MatMul', '/layers.22/Mul_1']",0.2693109126666667,0.22148233333333334,0.04782857933333334,1.2159476045493471
+/layers.23/feed_forward1/linear1/MatMul,"[1024, 4096]",1.0,['/layers.23/feed_forward1/linear1/MatMul'],0.2715358686666667,0.22063866666666668,0.050897202,1.2306812435414765
+/layers.23/feed_forward1/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.23/feed_forward1/linear2/MatMul', '/layers.23/Mul']",0.2679266766666667,0.22147366666666668,0.04645301000000002,1.2097450712725817
+/layers.23/self_attn/linear_v/MatMul,"[1024, 1024]",1.0,['/layers.23/self_attn/linear_v/MatMul'],0.06615289566666667,0.055738333333333334,0.010414562333333335,1.1868473940734983
+/layers.23/self_attn/linear_k/MatMul,"[1024, 1024]",1.0,['/layers.23/self_attn/linear_k/MatMul'],0.06548647533333334,0.05572766666666667,0.009758808666666667,1.1751160464879802
+/layers.23/self_attn/linear_q/MatMul,"[1024, 1024]",1.0,['/layers.23/self_attn/linear_q/MatMul'],0.06778173966666666,0.05571966666666667,0.012062072999999993,1.2164778384651738
+/layers.23/self_attn/linear_pos/MatMul,"[1024, 1024]",1.0,['/layers.23/self_attn/linear_pos/MatMul'],0.223233741,0.11021,0.11302374100000001,2.025530723164867
+/layers.23/self_attn/linear_out/MatMul,"[1024, 1024]",1.0,['/layers.23/self_attn/linear_out/MatMul'],0.06640884666666666,0.055759,0.010649846666666657,1.1909978060343023
+/layers.23/feed_forward2/linear1/MatMul,"[1024, 4096]",1.0,['/layers.23/feed_forward2/linear1/MatMul'],0.27113597666666667,0.22035633333333332,0.050779643333333346,1.2304433122714875
+/layers.23/feed_forward2/linear2/MatMul/MatMulScaleFusion/,"[4096, 1024]",0.5,"['/layers.23/feed_forward2/linear2/MatMul', '/layers.23/Mul_1']",0.26984562966666664,0.22142033333333333,0.04842529633333331,1.2187030233597937

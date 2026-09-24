@@ -1,5 +1,13 @@
 # Matched Parakeet phase and operator diagnosis
 
+The capture is complete; all 240 requests pass. Read the
+[matched results](../managed-phase-results/results-20260924.md).
+`compare.py` reconciles complete constant projections, including fused scale;
+`compare_slices.py` checks all 24 attention Slice/Reshape pairs, original and
+optimized constants, graph edges and every observed native shape. Both analyze
+retained records without inference. Existing output is refused. Do not observe
+or repeat the closed build/capture namespaces.
+
 Measure the selected Lokad application on the same twenty clips as the completed
 ORT diagnosis. Keep Core `672e5f30` unchanged. An isolated Data assembly adds one
 `using var observation = ParakeetPhaseProbe.Enter(context);` at the start of the

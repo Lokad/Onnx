@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "managed_closure": {
+    "bytes": 952,
+    "sha256": "2a9d9342acfffede564e1a6870a8027322049e1b5087c005c260d9a054e0c2a3"
+  },
+  "native_closure": {
+    "bytes": 632,
+    "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+  },
+  "graph_review": {
+    "bytes": 872,
+    "sha256": "d844dcef266c6ea132c58b68d3e6f2dd04f6a98fed55d4d995badbc21542bf5b"
+  },
+  "original_model": {
+    "bytes": 41770866,
+    "sha256": "98a74b21b4cc0017c1e7030319a4a96f4a9506e50f0708f3a516d02a77c96bb1"
+  },
+  "layers": 24,
+  "nodes_per_engine": 48,
+  "measured_calls_per_node": 60,
+  "frames": {
+    "51": 1,
+    "61": 1,
+    "83": 1,
+    "88": 1,
+    "89": 1,
+    "102": 1,
+    "106": 1,
+    "112": 1,
+    "114": 1,
+    "120": 1,
+    "151": 1,
+    "156": 2,
+    "157": 1,
+    "158": 1,
+    "167": 1,
+    "169": 1,
+    "190": 1,
+    "222": 1,
+    "225": 1
+  },
+  "managed_seconds": 2.961946589,
+  "ort_seconds": 0.024001666666666668,
+  "excess_seconds": 2.937944922333333,
+  "managed_sources": {
+    "src/Lokad.Onnx/TensorSlice.cs": {
+      "bytes": 7271,
+      "sha256": "4ac4b7b769adf7a7857138c181fa108a6ead7b69b9d4a64aa2cd9d615aa0a019"
+    },
+    "src/Lokad.Onnx/Tensor.cs": {
+      "bytes": 72103,
+      "sha256": "ee9502fa47f606436beea769975ff6bc02a07ddf29e05fe9ad3cb35530619f03"
+    },
+    "src/Lokad.Onnx/TensorOps.Shape.cs": {
+      "bytes": 37823,
+      "sha256": "81c0125726e0b3988106f4c4b74adcb987ebb5685ecdf2e2c652df854721018b"
+    },
+    "src/Lokad.Onnx/DenseTensor.cs": {
+      "bytes": 14608,
+      "sha256": "9fcb1c26c7a4dbca34eb741b0e3ab5cd4a74c57f3a602b8c746a25613bc5ad2b"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.Elementwise.cs": {
+      "bytes": 47917,
+      "sha256": "9b77db906cca856396d3c410a683b0bc4f8122cd880e40c90116802cc44f392c"
+    }
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "native_sources": {
+    "onnxruntime/core/providers/cpu/tensor/slice.cc": {
+      "bytes": 7240,
+      "sha256": "8010887f73b8d72ddb1971221237809766b4502f8fd442d215779fc0f972dfdb"
+    },
+    "onnxruntime/core/providers/cpu/tensor/reshape.cc": {
+      "bytes": 2641,
+      "sha256": "38cd50e7abf5d06381e984ccf4b6752345d19200da6cf34591720c60dfca5bf0"
+    },
+    "onnxruntime/core/providers/cpu/tensor/reshape.h": {
+      "bytes": 1936,
+      "sha256": "468f52e72914c927ad36790f19bb8ec7f9249f684e7baf83e7f06ad05f96658c"
+    }
+  },
+  "runtime_managed_layout_observed": false
+}

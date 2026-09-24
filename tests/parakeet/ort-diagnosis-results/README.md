@@ -3,7 +3,10 @@
 The qualified release takes **73.82s versus ORT's 39.61s** for the twenty-clip
 corpus: a **34.21s gap** and **1.864 ratio**. The ORT diagnosis is complete:
 original application phase clocks, optimized graphs and actual native dispatch
-are now reconciled. Matched Lokad phase/operator clocks remain the next step.
+are now reconciled. [Matched Lokad phase/operator clocks](../managed-phase-results/results-20260924.md)
+are also complete: encoder **63.840s versus 37.573s**, decoder **9.044s versus
+1.905s**. The 217 constant-projection groups explain **8.067s** of the **26.267s**
+encoder difference, about 31%.
 
 | ORT phase, original twenty-clip corpus | Seconds |
 |---|---:|
@@ -29,19 +32,26 @@ See [the graph and kernel findings](ort-kernels-20260924.md) and
 
 Lokad already has a 12-row AVX-512 kernel, enabled for eligible prepared weights.
 Its per-call packing path uses two-/three-row kernels by default, and its encoder
-retains 37 weights at the 256 MiB cap. The next comparison is the complete matching
-projection groups—packing, scale, destination handling and actual dispatch—on
-the same clips. We need their excess seconds before selecting an implementation.
-Neither another global toggle trial nor a larger packing cache follows from
-the native observations alone.
+retains 37 weights at the 256 MiB cap. The complete matching projections,
+including fused scale, cost **37.509s versus 29.442s**. Their measured excess
+does not justify assigning the whole encoder gap to matrix dispatch or packing.
+Prior rejected toggle and cache trials remain closed.
+
+The next bounded hypothesis is attention slice materialization. All 24 matched
+Slice→Reshape pairs cost **2.962s versus 0.024s**. Selected Lokad source copies
+sliced tensors through per-element coordinate translation; the matching ORT
+source uses contiguous slice copies and permits Reshape aliasing. Confirm the
+actual managed layout, then test one guarded bulk-copy change. The observed
+ceiling is about **2.94s, or 4% of the whole request**, not a promised saving.
+See the [matched pair evidence and rejection conditions](../managed-phase-results/results-20260924.md).
 
 The retained Lokad profile already constrains priorities. The entire
 `ParakeetGeneration.Decode` call tree accounts for **12.529% and 12.548%** of
 request samples in its two captures. That includes recurrent graph execution
 and greedy decoding, not just the LSTM leaf. This suggests decoder-only work
 cannot close most of the total gap. It is a sampled fraction with collection
-overhead, not an exact phase clock or a promised saving. The rest must be measured
-before assigning it entirely to the encoder. See the
+overhead, not an exact phase clock or a promised saving. The new exact phase
+clocks confirm that the encoder contains most of the difference. See the
 [original stack weights](../selected-profile-results/stacks-20260924.csv) and
 [profile scope and overhead](../selected-profile-results/results-20260924.md).
 
