@@ -6,18 +6,17 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **43.05 GB**, including **29.59 GB** in artifacts,
-after retaining the complete provider diagnostic, dense mixed-mask build and
-numerical/native qualification, and rejected identical-binary control. All
-686,400 control clocks remain retained in the verified archive and one local
-CSV export; the tracked report references their identities without another copy.
-The fresh inventory totals **43,051,805,711 bytes**, with **6.95 GB** of headroom.
-Receipt: `artifacts/repository-retention-20260923/m59-stability-closed-size.json`.
-Counting the model junction again gives 53.84 GB, which counts the same 10.79 GB
+The latest inventory is **43.33 GB**, including **29.86 GB** in artifacts,
+after retaining the complete exact-consumer Where diagnostic: all 686,400
+clocks, 880 setups and 192 native-code bodies. Earlier rejected controls,
+Boolean counterexamples and complete qualification evidence remain retained.
+The inventory totals **43,329,733,659 bytes**, with **6.67 GB** of headroom.
+Receipt: `artifacts/repository-retention-20260923/m60-final-cleanup-size.json`.
+Counting the model junction again gives 54.12 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
-No new model copies were needed. All current proof records, complete clocks,
-Boolean counterexamples and failed qualification runs remain retained.
+No new model copies were needed. Raw clocks remain in verified local collections
+and archives; compact tracked reports reference them without another raw copy.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
@@ -165,3 +164,18 @@ closed source, build and evidence files** verified 21,353 paths and freed
 All affected campaign owners were terminal; every path and byte remains exact.
 Receipt: `artifacts/parakeet-dense-where-stability-headroom-20260924`.
 The operation finished before the control was staged or launched.
+
+Before the exact-consumer Where diagnostic, idle VM maintenance retired
+**249.48 MB across ten duplicate files**: two complete compiler exports, four
+clock journals and four result JSON files from the rejected control. Every
+file has a hash-verified complete local copy; the full collection archives and
+all 686,400 control clocks remain retained. All owners were terminal and every
+immutable payload dependency was protected. Receipt:
+`artifacts/parakeet-where-control-remote-retention-20260924`.
+The adapter configuration records the exact ten-file scope; the shared
+retirement implementation has an older generic five-export description.
+
+After collection, four temporary local inspection copies totaling **4.13 MB**
+were removed after matching them to the complete retained stdout/native bodies.
+No canonical evidence was removed. Receipt:
+`artifacts/parakeet-where-control-live-inspection-retention-20260924.json`.
