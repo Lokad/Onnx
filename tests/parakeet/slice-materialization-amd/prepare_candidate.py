@@ -4,10 +4,14 @@ import json
 from pathlib import Path
 from run import ROOT, TOOLS, BASE, read, pin, write
 
-SOURCE = ROOT/'artifacts/parakeet-slice-materialization-source-20260924'
+SOURCE = ROOT/'artifacts/parakeet-slice-materialization-source-v2-20260924'
 
 
 def main():
+    failure_path = ROOT/'artifacts/parakeet-slice-materialization-build-amd-20260924/closed.json'
+    failure = read(failure_path)
+    assert failure['terminal'] and not failure['passed'] and len(failure['failed_tests']) == 7
+    assert failure['all_copy_cases_passed'] and failure['identity_passed']
     closure = read(BASE/'closed.json'); assert closure['passed'] and closure['analysis'] == pin(BASE/'analysis.json')
     layout = read(BASE/'analysis.json')
     assert layout['layouts'] == 1920 and layout['all_parents_dense_row_major'] and layout['all_copy_regions_in_bounds']
@@ -35,7 +39,8 @@ def main():
     value = dict(passed=True,before=selected['source'],source=identities,layout_closure=pin(BASE/'closed.json'),
         selected_source=pin(selected_path),modified=modified,added=[test_name],patch=pin(SOURCE/'candidate.patch'),
         implementation=pin(TOOLS/'reshape.cs.txt'),tests=pin(TOOLS/'SliceReshapeCopyTests.cs.txt'),
-        generator=pin(__file__),root_product_changed=False,expected_upper_bound_seconds=2.937944922333333)
+        generator=pin(__file__),root_product_changed=False,expected_upper_bound_seconds=2.937944922333333,
+        previous_failure=pin(failure_path),correction='Use nullable out result with NotNullWhen instead of a null-forgiving operator')
     write(SOURCE/'prepared.json',value)
     print(json.dumps(dict(passed=True,source_files=len(identities),prepared=pin(SOURCE/'prepared.json'),modified=modified,added=value['added'])))
 

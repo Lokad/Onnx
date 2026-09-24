@@ -6,9 +6,9 @@
 
     // Materialize unit-step row-major slices in contiguous regions. Reshape must
     // keep independent storage: removed rows leave gaps between those regions.
-    bool TryCopyContiguousSlice(out DenseTensor<T> result)
+    bool TryCopyContiguousSlice([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out DenseTensor<T>? result)
     {
-        result = null!;
+        result = null;
         if (GetType() != typeof(TensorSlice<T>) || parent is not DenseTensor<T> dense ||
             dense.GetType() != typeof(DenseTensor<T>) || IsReversedStride || dense.IsReversedStride ||
             Rank == 0 || Rank != dense.Rank || slices.Length != Rank || Length == 0)

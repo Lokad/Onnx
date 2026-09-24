@@ -11,9 +11,9 @@ LAYOUT_TOOLS = TOOLS.parent/'slice-materialization-amd'
 loader = importlib.util.spec_from_file_location('layout_transport',LAYOUT_TOOLS/'run.py')
 layout = importlib.util.module_from_spec(loader); loader.loader.exec_module(layout)
 transport = layout.transport
-BASE = ROOT/'artifacts/parakeet-slice-materialization-build-amd-20260924'
-REMOTE = '/dev/shm/lokad-parakeet-slice-materialization-build-20260924'
-SOURCE = ROOT/'artifacts/parakeet-slice-materialization-source-20260924'
+BASE = ROOT/'artifacts/parakeet-slice-materialization-build-amd-v2-20260924'
+REMOTE = '/dev/shm/lokad-parakeet-slice-materialization-build-v2-20260924'
+SOURCE = ROOT/'artifacts/parakeet-slice-materialization-source-v2-20260924'
 PRIOR = layout.PRIOR
 pin, read, write, ssh = layout.pin, layout.read, layout.write, layout.ssh
 PRELUDE = layout.PRELUDE.replace(layout.REMOTE,REMOTE)
@@ -40,7 +40,7 @@ def prepare():
     for name in ['remote.py','README.md']: put(name,(TOOLS/name).read_bytes())
     external = {layout.REMOTE_PRIOR+'/'+p.name:pin(p) for p in (PRIOR/'collected/runtime').iterdir() if p.is_file()}
     specification = dict(boot=1789634288.0,prior=layout.REMOTE_PRIOR,external=external,
-        source_prepared=pin(SOURCE/'prepared.json'),layout_closure=source['layout_closure'],
+        source_prepared=pin(SOURCE/'prepared.json'),layout_closure=source['layout_closure'],previous_failure=source['previous_failure'],
         core=pin(PRIOR/'collected/runtime/Lokad.Onnx.dll'),
         build_limits=dict(available_before=2*1024**3,tmpfs_before=1024**3,rss=3*1024**3,seconds=180),
         capture_limits=dict(available_before=2*1024**3,tmpfs_before=1024**3,rss=3*1024**3,seconds=300),

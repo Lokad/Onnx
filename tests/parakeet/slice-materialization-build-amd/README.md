@@ -1,5 +1,12 @@
 # Build and qualify the guarded slice reshape copy
 
+This is the corrected v2 namespace. The first run passed all 25 copy cases and
+the identity check, but seven source-policy tests could not discover the source
+root from a runtime directory outside that tree. Preserve its failed closure
+`84358a71`. V2 places the test runtime under the source root and replaces the
+helper's forbidden null-forgiving operator with an annotated nullable out result.
+The candidate mechanism, fallback and test expectations stay the same.
+
 This stage consumes the immutable 423-file candidate snapshot after all 1,920
 actual layouts passed. Only `TensorSlice.Reshape` changes, with one private helper;
 25 copying contract cases are added. The build adds one campaign-only identity
@@ -23,5 +30,5 @@ capped at 3 GiB, total stage output at 512 MiB, builds at 180 seconds per comman
 and each test process at 300 seconds. Reuse the pinned SDK, offline feed and
 selected runtime. No Windows build/inference or extra model copy is required.
 
-Artifacts: `artifacts/parakeet-slice-materialization-build-amd-20260924` and
-`/dev/shm/lokad-parakeet-slice-materialization-build-20260924`.
+Artifacts: `artifacts/parakeet-slice-materialization-build-amd-v2-20260924` and
+`/dev/shm/lokad-parakeet-slice-materialization-build-v2-20260924`.
