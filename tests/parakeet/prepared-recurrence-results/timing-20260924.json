@@ -1,0 +1,2262 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 194869,
+    "sha256": "d0eb4898dbc850d2b29659bd47b71181262ae4923c88760fa7f6995348b494b2"
+  },
+  "analysis": {
+    "passed": true,
+    "identities": {
+      "selected": {
+        "Lokad.Onnx.dll": {
+          "bytes": 773632,
+          "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+        },
+        "Google.Protobuf.dll": {
+          "bytes": 497304,
+          "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+        }
+      },
+      "candidate": {
+        "Lokad.Onnx.dll": {
+          "bytes": 781824,
+          "sha256": "3c23b44a53736938f241302a6a8258605c2f57da57f5009c83e979337df957f5"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "cc37b19eb41cf728061c35bcdb7e06a6ab4d370bfd4c47555eec86c86b2ef6d6"
+        },
+        "Google.Protobuf.dll": {
+          "bytes": 497304,
+          "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+        }
+      }
+    },
+    "consumer": {
+      "bytes": 35328,
+      "sha256": "439c104fda90b87ca030c985e1fe8ea108a5f271be4c12cfdd6e730324984c66"
+    },
+    "reviews": [
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1683291,
+          "sha256": "1f707f1f1922073e19fac267a13f9e5b5493b3d61530afeac44a2552d94fc6ed"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 10492419,
+            "allocated_bytes": 29072,
+            "retained_bytes": 0
+          },
+          {
+            "index": 1,
+            "ticks": 82003,
+            "allocated_bytes": 26032,
+            "retained_bytes": 0
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 2701545747,
+          "denominator": 250000000
+        }
+      },
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1683139,
+          "sha256": "c1acf67021a3d24a6656cbdfd7ac63de0b1e590007984e4fd305dfd1f87cfa90"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 22844004,
+            "allocated_bytes": 13139336,
+            "retained_bytes": 13107200
+          },
+          {
+            "index": 1,
+            "ticks": 5254943,
+            "allocated_bytes": 13136272,
+            "retained_bytes": 13107200
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 1385016473,
+          "denominator": 250000000
+        }
+      },
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1683284,
+          "sha256": "cbdf5b96d83219f8662e6f958418d408ef52a3c10a854d8e8ec11810c8519fed"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 23405195,
+            "allocated_bytes": 13139336,
+            "retained_bytes": 13107200
+          },
+          {
+            "index": 1,
+            "ticks": 5568951,
+            "allocated_bytes": 13136272,
+            "retained_bytes": 13107200
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 2629054107,
+          "denominator": 500000000
+        }
+      },
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1683290,
+          "sha256": "5ca2ad846368d337b2047b27a6e3d1baa9ae6aa583f60416a7684347a4b9951b"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 10519512,
+            "allocated_bytes": 29072,
+            "retained_bytes": 0
+          },
+          {
+            "index": 1,
+            "ticks": 84727,
+            "allocated_bytes": 26032,
+            "retained_bytes": 0
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 5390986109,
+          "denominator": 500000000
+        }
+      },
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1683326,
+          "sha256": "c3c54d7f1ccfd9b0140f11d0ede01a57e23302231d4c22ad3eb54c4273955b05"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 10322507,
+            "allocated_bytes": 29072,
+            "retained_bytes": 0
+          },
+          {
+            "index": 1,
+            "ticks": 88713,
+            "allocated_bytes": 26032,
+            "retained_bytes": 0
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 10864755761,
+          "denominator": 1000000000
+        }
+      },
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1683348,
+          "sha256": "e55016cd1b01dd561a9d871fd05a4477f8b6f6f0d831e1ffefcd4e15e8780062"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 23232297,
+            "allocated_bytes": 13139336,
+            "retained_bytes": 13107200
+          },
+          {
+            "index": 1,
+            "ticks": 5566781,
+            "allocated_bytes": 13136272,
+            "retained_bytes": 13107200
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 2874572649,
+          "denominator": 500000000
+        }
+      },
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1682585,
+          "sha256": "fb60c30c089d7e283ab39e1c25bd453957bfd23a4c0e188a5a21ecc6677675bb"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 22779804,
+            "allocated_bytes": 13139336,
+            "retained_bytes": 13107200
+          },
+          {
+            "index": 1,
+            "ticks": 5341989,
+            "allocated_bytes": 13136272,
+            "retained_bytes": 13107200
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 4440698187,
+          "denominator": 1000000000
+        }
+      },
+      {
+        "passed": true,
+        "result": {
+          "bytes": 1683327,
+          "sha256": "af243b3c6cac26c61d7e1a337e6c3e44bd4adb77d12543881a820c5d81d8a686"
+        },
+        "calls": 3800,
+        "warmup": 1900,
+        "measured": 1900,
+        "exact_output_arrays": 11400,
+        "frequency": 1000000000,
+        "setup": [
+          {
+            "index": 0,
+            "ticks": 10459856,
+            "allocated_bytes": 29072,
+            "retained_bytes": 0
+          },
+          {
+            "index": 1,
+            "ticks": 80361,
+            "allocated_bytes": 26032,
+            "retained_bytes": 0
+          }
+        ],
+        "total_timed_seconds": {
+          "numerator": 5436894547,
+          "denominator": 500000000
+        }
+      }
+    ],
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "seconds": 0.2639085139380768,
+        "peak_rss": 9928704
+      },
+      {
+        "name": "timing-restore",
+        "samples": 4,
+        "seconds": 1.0327975609106943,
+        "peak_rss": 152829952
+      },
+      {
+        "name": "timing-build",
+        "samples": 15,
+        "seconds": 3.887701778905466,
+        "peak_rss": 336859136
+      },
+      {
+        "name": "selected-0-512",
+        "samples": 44,
+        "seconds": 11.405935995047912,
+        "peak_rss": 179359744,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0010981317677721642,
+          "foreign_cpu_seconds": 0.04999999999998894,
+          "wall_seconds": 11.382969117956236,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "candidate-0-512",
+        "samples": 24,
+        "seconds": 6.2385203399462625,
+        "peak_rss": 185663488,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.00040208729329952077,
+          "foreign_cpu_seconds": 0.010000000000000009,
+          "wall_seconds": 6.217555345967412,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "candidate-1-512",
+        "samples": 23,
+        "seconds": 5.984165139030665,
+        "peak_rss": 185348096,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0020961348357924673,
+          "foreign_cpu_seconds": 0.05000000000002203,
+          "wall_seconds": 5.9633568349527195,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 2,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "selected-1-512",
+        "samples": 44,
+        "seconds": 11.42344499588944,
+        "peak_rss": 182083584,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0006577426754509883,
+          "foreign_cpu_seconds": 0.029999999999986926,
+          "wall_seconds": 11.402635528938845,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "selected-0-256",
+        "samples": 44,
+        "seconds": 11.432214365922846,
+        "peak_rss": 190799872,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0008762388680828703,
+          "foreign_cpu_seconds": 0.039999999999970726,
+          "wall_seconds": 11.412413172074594,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "candidate-0-256",
+        "samples": 25,
+        "seconds": 6.522530196933076,
+        "peak_rss": 185212928,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0007692065090573681,
+          "foreign_cpu_seconds": 0.020000000000019336,
+          "wall_seconds": 6.5002050049370155,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 1,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "candidate-1-256",
+        "samples": 19,
+        "seconds": 4.957257570000365,
+        "peak_rss": 184909824,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0005064223908248383,
+          "foreign_cpu_seconds": 0.009999999999990905,
+          "wall_seconds": 4.9365905720042065,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "selected-1-256",
+        "samples": 44,
+        "seconds": 11.45352494798135,
+        "peak_rss": 177889280,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0004373859887498772,
+          "foreign_cpu_seconds": 0.019999999999990886,
+          "wall_seconds": 11.4315504579572,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      }
+    ],
+    "performance": {
+      "controls_passed": false,
+      "admitted": false,
+      "controls": [
+        {
+          "mode": "512",
+          "name": "selected-0-512",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 213241066,
+            "denominator": 174670839
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "selected-0-512",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 203951059,
+            "denominator": 201271362
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected-0-512",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 82036873,
+            "denominator": 78826684
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected-0-512",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 261040105,
+            "denominator": 252399522
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected-0-512",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 34780161,
+            "denominator": 21958291
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "selected-0-512",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 379101852,
+            "denominator": 203014757
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "selected-0-512",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 245599548,
+            "denominator": 202817195
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-0-512",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 633309044,
+            "denominator": 471834193
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-0-512",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 76563990,
+            "denominator": 45875383
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-0-512",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 46992596,
+            "denominator": 36025411
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-0-512",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 145221963,
+            "denominator": 115628056
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-0-512",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 9434798,
+            "denominator": 5660563
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-0-512",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 51010387,
+            "denominator": 27971075
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-0-512",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 56578513,
+            "denominator": 45659032
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-1-512",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 33924299,
+            "denominator": 29883571
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-1-512",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 147450281,
+            "denominator": 97845527
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-1-512",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 11310977,
+            "denominator": 7873531
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-1-512",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 132561727,
+            "denominator": 112201433
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate-1-512",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 17570372,
+            "denominator": 9722191
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "candidate-1-512",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 103088381,
+            "denominator": 95329321
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate-1-512",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 25973481,
+            "denominator": 22813324
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected-1-512",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 1288005574,
+            "denominator": 1036201853
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "selected-1-512",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 204007509,
+            "denominator": 200982245
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected-1-512",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 40689219,
+            "denominator": 39360500
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected-1-512",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 285711115,
+            "denominator": 249901641
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected-1-512",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 56870757,
+            "denominator": 21678784
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "selected-1-512",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 180828612,
+            "denominator": 100453457
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "512",
+          "name": "selected-1-512",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 220696933,
+            "denominator": 200846427
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected",
+          "group": "corpus",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 2743480199,
+            "denominator": 2723551224
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate",
+          "group": "corpus",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 2782822553,
+            "denominator": 2631805181
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected",
+          "group": "english-16k",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 112802181,
+            "denominator": 112107484
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate",
+          "group": "english-16k",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 577748830,
+            "denominator": 547869159
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected",
+          "group": "french-44k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 802185167,
+            "denominator": 796087914
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate",
+          "group": "french-44k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 60184297,
+            "denominator": 59932126
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected",
+          "group": "jfk-48k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 1289121595,
+            "denominator": 1277178933
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate",
+          "group": "jfk-48k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 651210207,
+            "denominator": 620220046
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected",
+          "group": "english-token-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 144122413,
+            "denominator": 122972579
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate",
+          "group": "english-token-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 65264157,
+            "denominator": 59527372
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected",
+          "group": "english-frame-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 1210676607,
+            "denominator": 1183735240
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate",
+          "group": "english-frame-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 78952801,
+            "denominator": 71134440
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "selected",
+          "group": "english-repeat",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 352909161,
+            "denominator": 341689310
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "name": "candidate",
+          "group": "english-repeat",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 514639673,
+            "denominator": 486722642
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "selected-0-256",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 644066302,
+            "denominator": 522190375
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-0-256",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 206604502,
+            "denominator": 203328405
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "selected-0-256",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 162838064,
+            "denominator": 158260321
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "selected-0-256",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 275395675,
+            "denominator": 252656197
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "selected-0-256",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 33969663,
+            "denominator": 21944381
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-0-256",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 48013282,
+            "denominator": 25428185
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-0-256",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 116381613,
+            "denominator": 101763667
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate-0-256",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 595556733,
+            "denominator": 544401967
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate-0-256",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 113548775,
+            "denominator": 107135986
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate-0-256",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 91229843,
+            "denominator": 84203019
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate-0-256",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 140144224,
+            "denominator": 126173811
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate-0-256",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 10344079,
+            "denominator": 5628463
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "candidate-0-256",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 72076149,
+            "denominator": 50878118
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "candidate-0-256",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 112193312,
+            "denominator": 101437989
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate-1-256",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 460221231,
+            "denominator": 415273675
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "candidate-1-256",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 128019661,
+            "denominator": 75493976
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "candidate-1-256",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 71674565,
+            "denominator": 57616727
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "candidate-1-256",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 108288601,
+            "denominator": 92716848
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate-1-256",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 15264305,
+            "denominator": 7758537
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "candidate-1-256",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 95702568,
+            "denominator": 74286905
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "candidate-1-256",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 92158909,
+            "denominator": 74426781
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-1-256",
+          "group": "corpus",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 1296498011,
+            "denominator": 1049368102
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-1-256",
+          "group": "english-16k",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 67902387,
+            "denominator": 67416689
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "selected-1-256",
+          "group": "french-44k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 169177152,
+            "denominator": 158312581
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "selected-1-256",
+          "group": "jfk-48k-stereo",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 340404829,
+            "denominator": 252784898
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-1-256",
+          "group": "english-token-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 35717627,
+            "denominator": 21936403
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-1-256",
+          "group": "english-frame-limit",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 22263460,
+            "denominator": 12717901
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected-1-256",
+          "group": "english-repeat",
+          "kind": "within-process",
+          "ratio": {
+            "numerator": 203597547,
+            "denominator": 203025137
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "selected",
+          "group": "corpus",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 612860521,
+            "denominator": 612495320
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate",
+          "group": "corpus",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 475652962,
+            "denominator": 360288205
+          },
+          "limit": {
+            "numerator": 11,
+            "denominator": 10
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected",
+          "group": "english-16k",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 510728467,
+            "denominator": 507916931
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate",
+          "group": "english-16k",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 553327441,
+            "denominator": 445385645
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected",
+          "group": "french-44k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 404001491,
+            "denominator": 399886290
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate",
+          "group": "french-44k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 217996373,
+            "denominator": 160949119
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected",
+          "group": "jfk-48k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 679272715,
+            "denominator": 647159682
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate",
+          "group": "jfk-48k-stereo",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 679712874,
+            "denominator": 506236169
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected",
+          "group": "english-token-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 123815203,
+            "denominator": 121918513
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate",
+          "group": "english-token-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 72975563,
+            "denominator": 49790437
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected",
+          "group": "english-frame-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 1217187467,
+            "denominator": 1189462825
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate",
+          "group": "english-frame-limit",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 575893333,
+            "denominator": 421382224
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        },
+        {
+          "mode": "256",
+          "name": "selected",
+          "group": "english-repeat",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 1061089831,
+            "denominator": 1016797578
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "name": "candidate",
+          "group": "english-repeat",
+          "kind": "between-processes",
+          "ratio": {
+            "numerator": 536015815,
+            "denominator": 417036517
+          },
+          "limit": {
+            "numerator": 6,
+            "denominator": 5
+          },
+          "passed": false
+        }
+      ],
+      "gates": [
+        {
+          "mode": "512",
+          "group": "corpus",
+          "ratio": {
+            "numerator": 2707313867,
+            "denominator": 5467031423
+          },
+          "limit": {
+            "numerator": 9,
+            "denominator": 10
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "group": "english-16k",
+          "ratio": {
+            "numerator": 1125617989,
+            "denominator": 2024186985
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "group": "french-44k-stereo",
+          "ratio": {
+            "numerator": 840814961,
+            "denominator": 1598273081
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "group": "jfk-48k-stereo",
+          "ratio": {
+            "numerator": 1271430253,
+            "denominator": 2566300528
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "group": "english-token-limit",
+          "ratio": {
+            "numerator": 124791529,
+            "denominator": 267094992
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "group": "english-frame-limit",
+          "ratio": {
+            "numerator": 1050610687,
+            "denominator": 2394411847
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "512",
+          "group": "english-repeat",
+          "ratio": {
+            "numerator": 1001362315,
+            "denominator": 2083795413
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "group": "corpus",
+          "ratio": {
+            "numerator": 1671882334,
+            "denominator": 3676067523
+          },
+          "limit": {
+            "numerator": 9,
+            "denominator": 10
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "group": "english-16k",
+          "ratio": {
+            "numerator": 166452181,
+            "denominator": 339548466
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "group": "french-44k-stereo",
+          "ratio": {
+            "numerator": 378945492,
+            "denominator": 803887781
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "group": "jfk-48k-stereo",
+          "ratio": {
+            "numerator": 1185949043,
+            "denominator": 2652864794
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "group": "english-token-limit",
+          "ratio": {
+            "numerator": 30691500,
+            "denominator": 61433429
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "group": "english-frame-limit",
+          "ratio": {
+            "numerator": 997275557,
+            "denominator": 2406650292
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        },
+        {
+          "mode": "256",
+          "group": "english-repeat",
+          "ratio": {
+            "numerator": 953052332,
+            "denominator": 2077887409
+          },
+          "limit": {
+            "numerator": 21,
+            "denominator": 20
+          },
+          "passed": true
+        }
+      ],
+      "table": [
+        {
+          "mode": "512",
+          "group": "corpus",
+          "selected": {
+            "numerator": 5467031423,
+            "denominator": 5000000000
+          },
+          "candidate": {
+            "numerator": 2707313867,
+            "denominator": 5000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 2707313867,
+            "denominator": 5467031423
+          }
+        },
+        {
+          "mode": "512",
+          "group": "english-16k",
+          "selected": {
+            "numerator": 404837397,
+            "denominator": 2000000000
+          },
+          "candidate": {
+            "numerator": 1125617989,
+            "denominator": 10000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 1125617989,
+            "denominator": 2024186985
+          }
+        },
+        {
+          "mode": "512",
+          "group": "french-44k-stereo",
+          "selected": {
+            "numerator": 1598273081,
+            "denominator": 10000000000
+          },
+          "candidate": {
+            "numerator": 840814961,
+            "denominator": 10000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 840814961,
+            "denominator": 1598273081
+          }
+        },
+        {
+          "mode": "512",
+          "group": "jfk-48k-stereo",
+          "selected": {
+            "numerator": 160393783,
+            "denominator": 625000000
+          },
+          "candidate": {
+            "numerator": 1271430253,
+            "denominator": 10000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 1271430253,
+            "denominator": 2566300528
+          }
+        },
+        {
+          "mode": "512",
+          "group": "english-token-limit",
+          "selected": {
+            "numerator": 16693437,
+            "denominator": 625000000
+          },
+          "candidate": {
+            "numerator": 124791529,
+            "denominator": 10000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 124791529,
+            "denominator": 267094992
+          }
+        },
+        {
+          "mode": "512",
+          "group": "english-frame-limit",
+          "selected": {
+            "numerator": 2394411847,
+            "denominator": 10000000000
+          },
+          "candidate": {
+            "numerator": 1050610687,
+            "denominator": 10000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 1050610687,
+            "denominator": 2394411847
+          }
+        },
+        {
+          "mode": "512",
+          "group": "english-repeat",
+          "selected": {
+            "numerator": 2083795413,
+            "denominator": 10000000000
+          },
+          "candidate": {
+            "numerator": 200272463,
+            "denominator": 2000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 1001362315,
+            "denominator": 2083795413
+          }
+        },
+        {
+          "mode": "256",
+          "group": "corpus",
+          "selected": {
+            "numerator": 11028202569,
+            "denominator": 10000000000
+          },
+          "candidate": {
+            "numerator": 2507823501,
+            "denominator": 5000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 1671882334,
+            "denominator": 3676067523
+          }
+        },
+        {
+          "mode": "256",
+          "group": "english-16k",
+          "selected": {
+            "numerator": 509322699,
+            "denominator": 2500000000
+          },
+          "candidate": {
+            "numerator": 499356543,
+            "denominator": 5000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 166452181,
+            "denominator": 339548466
+          }
+        },
+        {
+          "mode": "256",
+          "group": "french-44k-stereo",
+          "selected": {
+            "numerator": 803887781,
+            "denominator": 5000000000
+          },
+          "candidate": {
+            "numerator": 94736373,
+            "denominator": 1250000000
+          },
+          "candidate_over_selected": {
+            "numerator": 378945492,
+            "denominator": 803887781
+          }
+        },
+        {
+          "mode": "256",
+          "group": "jfk-48k-stereo",
+          "selected": {
+            "numerator": 1326432397,
+            "denominator": 5000000000
+          },
+          "candidate": {
+            "numerator": 1185949043,
+            "denominator": 10000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 1185949043,
+            "denominator": 2652864794
+          }
+        },
+        {
+          "mode": "256",
+          "group": "english-token-limit",
+          "selected": {
+            "numerator": 61433429,
+            "denominator": 2500000000
+          },
+          "candidate": {
+            "numerator": 61383,
+            "denominator": 5000000
+          },
+          "candidate_over_selected": {
+            "numerator": 30691500,
+            "denominator": 61433429
+          }
+        },
+        {
+          "mode": "256",
+          "group": "english-frame-limit",
+          "selected": {
+            "numerator": 601662573,
+            "denominator": 2500000000
+          },
+          "candidate": {
+            "numerator": 997275557,
+            "denominator": 10000000000
+          },
+          "candidate_over_selected": {
+            "numerator": 997275557,
+            "denominator": 2406650292
+          }
+        },
+        {
+          "mode": "256",
+          "group": "english-repeat",
+          "selected": {
+            "numerator": 2077887409,
+            "denominator": 10000000000
+          },
+          "candidate": {
+            "numerator": 238263083,
+            "denominator": 2500000000
+          },
+          "candidate_over_selected": {
+            "numerator": 953052332,
+            "denominator": 2077887409
+          }
+        }
+      ],
+      "policy": "Five fixed warmups and measured passes; both modes; all 84 controls; corpus gain>=10%, no case>5% slower; all raw clocks kept; no unchanged retry."
+    },
+    "complete_call_clocks": 30400,
+    "warmup": 15200,
+    "measured": 15200,
+    "exact_output_arrays": 91200,
+    "source_prepared": {
+      "bytes": 149433,
+      "sha256": "b52a89c1043165de1c376b37fc5307cd003a7c8b76f0f52508c4cdefcc669eab"
+    },
+    "root_product_changed": false
+  },
+  "raw_results": {
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/selected-0-512/output/result.json": {
+      "bytes": 1683291,
+      "sha256": "1f707f1f1922073e19fac267a13f9e5b5493b3d61530afeac44a2552d94fc6ed"
+    },
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/candidate-0-512/output/result.json": {
+      "bytes": 1683139,
+      "sha256": "c1acf67021a3d24a6656cbdfd7ac63de0b1e590007984e4fd305dfd1f87cfa90"
+    },
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/candidate-1-512/output/result.json": {
+      "bytes": 1683284,
+      "sha256": "cbdf5b96d83219f8662e6f958418d408ef52a3c10a854d8e8ec11810c8519fed"
+    },
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/selected-1-512/output/result.json": {
+      "bytes": 1683290,
+      "sha256": "5ca2ad846368d337b2047b27a6e3d1baa9ae6aa583f60416a7684347a4b9951b"
+    },
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/selected-0-256/output/result.json": {
+      "bytes": 1683326,
+      "sha256": "c3c54d7f1ccfd9b0140f11d0ede01a57e23302231d4c22ad3eb54c4273955b05"
+    },
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/candidate-0-256/output/result.json": {
+      "bytes": 1683348,
+      "sha256": "e55016cd1b01dd561a9d871fd05a4477f8b6f6f0d831e1ffefcd4e15e8780062"
+    },
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/candidate-1-256/output/result.json": {
+      "bytes": 1682585,
+      "sha256": "fb60c30c089d7e283ab39e1c25bd453957bfd23a4c0e188a5a21ecc6677675bb"
+    },
+    "artifacts/parakeet-prepared-recurrence-timing-amd-20260924/collected/selected-1-256/output/result.json": {
+      "bytes": 1683327,
+      "sha256": "af243b3c6cac26c61d7e1a337e6c3e44bd4adb77d12543881a820c5d81d8a686"
+    }
+  },
+  "setup": [
+    {
+      "worker": "selected-0-512",
+      "seconds": 0.010574422,
+      "allocated_bytes": 55104,
+      "retained_bytes": 0
+    },
+    {
+      "worker": "candidate-0-512",
+      "seconds": 0.028098947,
+      "allocated_bytes": 26275608,
+      "retained_bytes": 26214400
+    },
+    {
+      "worker": "candidate-1-512",
+      "seconds": 0.028974146,
+      "allocated_bytes": 26275608,
+      "retained_bytes": 26214400
+    },
+    {
+      "worker": "selected-1-512",
+      "seconds": 0.010604239,
+      "allocated_bytes": 55104,
+      "retained_bytes": 0
+    },
+    {
+      "worker": "selected-0-256",
+      "seconds": 0.01041122,
+      "allocated_bytes": 55104,
+      "retained_bytes": 0
+    },
+    {
+      "worker": "candidate-0-256",
+      "seconds": 0.028799078,
+      "allocated_bytes": 26275608,
+      "retained_bytes": 26214400
+    },
+    {
+      "worker": "candidate-1-256",
+      "seconds": 0.028121793,
+      "allocated_bytes": 26275608,
+      "retained_bytes": 26214400
+    },
+    {
+      "worker": "selected-1-256",
+      "seconds": 0.010540217,
+      "allocated_bytes": 55104,
+      "retained_bytes": 0
+    }
+  ],
+  "terminal": [
+    {
+      "pid": 924465,
+      "birth": 1790238769.68
+    },
+    {
+      "pid": 924466,
+      "birth": 1790238777.16
+    },
+    {
+      "pid": 924474,
+      "birth": 1790238781.12
+    },
+    {
+      "pid": 924491,
+      "birth": 1790238785.87
+    },
+    {
+      "pid": 924508,
+      "birth": 1790238786.74
+    },
+    {
+      "pid": 924523,
+      "birth": 1790238793.47
+    },
+    {
+      "pid": 924533,
+      "birth": 1790238808.59
+    },
+    {
+      "pid": 924544,
+      "birth": 1790238818.53
+    },
+    {
+      "pid": 924630,
+      "birth": 1790238828.23
+    },
+    {
+      "pid": 924639,
+      "birth": 1790238843.35
+    },
+    {
+      "pid": 924648,
+      "birth": 1790238858.48
+    },
+    {
+      "pid": 924657,
+      "birth": 1790238868.73
+    },
+    {
+      "pid": 924666,
+      "birth": 1790238877.39
+    }
+  ],
+  "publisher": {
+    "bytes": 5506,
+    "sha256": "8f0b457a55e1749b97ed78ed2356359947b1ff5c236981ef1e48316bf75c9f1c"
+  }
+}
