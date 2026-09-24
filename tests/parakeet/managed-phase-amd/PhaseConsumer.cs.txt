@@ -1,0 +1,23 @@
+using System.Reflection;
+using Lokad.Onnx;
+
+internal static class PhaseConsumer
+{
+    static Action<string, int, string, int>? save;
+
+    public static void Initialize()
+    {
+        string? mode = Environment.GetEnvironmentVariable("PARAKEET_PHASE_MODE");
+        if (mode is not ("control" or "phase" or "wall")) throw new InvalidDataException("Phase mode");
+        var type = typeof(ParakeetTranscriber).Assembly.GetType("Lokad.Onnx.ParakeetPhaseProbe");
+        if (mode == "control")
+        {
+            if (type is not null) throw new InvalidDataException("Control Data must be original");
+            return;
+        }
+        save = type?.GetMethod("Save", BindingFlags.Static | BindingFlags.Public)?
+            .CreateDelegate<Action<string, int, string, int>>() ?? throw new InvalidDataException("Missing phase observer");
+    }
+
+    public static void Save(string output, int index, string name, int pass) => save?.Invoke(output, index, name, pass);
+}
