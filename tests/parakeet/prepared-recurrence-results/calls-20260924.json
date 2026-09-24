@@ -1,0 +1,644 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 1438718,
+    "sha256": "20b3bc4b5a2d2ddb6e0834e40fb7e2bcb5220dd1f45c813a7a830466ddbc463d"
+  },
+  "analysis": {
+    "passed": true,
+    "identities": {
+      "selected": {
+        "Lokad.Onnx.dll": {
+          "bytes": 773632,
+          "sha256": "672e5f303b011e27bb23097a49252c38ddee334938c75895e3c2341df0f3be35"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "065b7a7f28561a37174f9d38ac13ef77bc59c010702e2b64200e9542376eb4c5"
+        },
+        "Google.Protobuf.dll": {
+          "bytes": 497304,
+          "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+        }
+      },
+      "candidate": {
+        "Lokad.Onnx.dll": {
+          "bytes": 781824,
+          "sha256": "3c23b44a53736938f241302a6a8258605c2f57da57f5009c83e979337df957f5"
+        },
+        "Lokad.Onnx.Data.dll": {
+          "bytes": 143872,
+          "sha256": "cc37b19eb41cf728061c35bcdb7e06a6ab4d370bfd4c47555eec86c86b2ef6d6"
+        },
+        "Google.Protobuf.dll": {
+          "bytes": 497304,
+          "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+        }
+      }
+    },
+    "consumer": {
+      "bytes": 59904,
+      "sha256": "543780262ac5527502766d2407d7b1ec625c606c4dab2e42abf9e2ef3377b41f"
+    },
+    "reviews": [
+      {
+        "passed": true,
+        "role": "selected",
+        "mode": "512",
+        "result": {
+          "bytes": 1740243,
+          "sha256": "ba4dc7cfc121ee43c2b3f808298f1d16f961beedc242ee7a744b7557a21f358e"
+        },
+        "output_digest": "060bba9c4d1c8ae71eae8d2730521fa4f9064f41e462d259dfb0b89db7132845",
+        "decoder_executions": 380,
+        "exact_decoder_arrays": 1520,
+        "decoder_values": 4088420,
+        "complete_calls": 760,
+        "exact_component_arrays": 2280,
+        "component_values": 1459200,
+        "max_native_error": 1.2874603271484375e-05,
+        "distinct_files": 671,
+        "tensor_bytes": 5577348,
+        "residencies": [
+          {
+            "name": "decoder",
+            "budget": 67108864,
+            "bytes": 25246720,
+            "weights": [
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_228",
+                "shape": [
+                  1024,
+                  640
+                ],
+                "bytes": 2621440,
+                "source_sha256": "7dc879e1f991f39de58b2b9acc1a0449f259c413fd2ff215ca9970b73bed4fbe",
+                "prepared_sha256": "fd31dc0615c1892f55ef9ee808a9b6a44ff6372a17bab28bd7c08fe1b6cf2971"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_229",
+                "shape": [
+                  640,
+                  640
+                ],
+                "bytes": 1638400,
+                "source_sha256": "6747b0789679f470ef668dbdc692c1ea8663f3d287760fcd7f45faa2c4593063",
+                "prepared_sha256": "c930eccf75d26bea4761b691621787f4c925073ea35f9adee3c599e54c08939c"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_230",
+                "shape": [
+                  640,
+                  8198
+                ],
+                "bytes": 20986880,
+                "source_sha256": "8dfc0254f3b951595a69e2ad949d2be6a91b62b3e1ea1c1b2f47e3b1aca2319b",
+                "prepared_sha256": "3b035f560e3ef7c53e3d8fbfebdc2e0dd7ba22b77677cae632c0c84dc8ae00a7"
+              }
+            ]
+          },
+          {
+            "name": "lstm-0",
+            "budget": 67108864,
+            "bytes": 0,
+            "weights": []
+          },
+          {
+            "name": "lstm-1",
+            "budget": 67108864,
+            "bytes": 0,
+            "weights": []
+          }
+        ],
+        "prepared_routes_proven": 0,
+        "no_performance_measurement": true
+      },
+      {
+        "passed": true,
+        "role": "candidate",
+        "mode": "512",
+        "result": {
+          "bytes": 1743387,
+          "sha256": "37d2d723252ffcdccc6f806692ca11280807084d877d5625fb9fa1911a5e92d9"
+        },
+        "output_digest": "060bba9c4d1c8ae71eae8d2730521fa4f9064f41e462d259dfb0b89db7132845",
+        "decoder_executions": 380,
+        "exact_decoder_arrays": 1520,
+        "decoder_values": 4088420,
+        "complete_calls": 760,
+        "exact_component_arrays": 2280,
+        "component_values": 1459200,
+        "max_native_error": 1.2874603271484375e-05,
+        "distinct_files": 671,
+        "tensor_bytes": 5577348,
+        "residencies": [
+          {
+            "name": "decoder",
+            "budget": 67108864,
+            "bytes": 51461120,
+            "weights": [
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_228",
+                "shape": [
+                  1024,
+                  640
+                ],
+                "bytes": 2621440,
+                "source_sha256": "7dc879e1f991f39de58b2b9acc1a0449f259c413fd2ff215ca9970b73bed4fbe",
+                "prepared_sha256": "fd31dc0615c1892f55ef9ee808a9b6a44ff6372a17bab28bd7c08fe1b6cf2971"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_229",
+                "shape": [
+                  640,
+                  640
+                ],
+                "bytes": 1638400,
+                "source_sha256": "6747b0789679f470ef668dbdc692c1ea8663f3d287760fcd7f45faa2c4593063",
+                "prepared_sha256": "c930eccf75d26bea4761b691621787f4c925073ea35f9adee3c599e54c08939c"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_230",
+                "shape": [
+                  640,
+                  8198
+                ],
+                "bytes": 20986880,
+                "source_sha256": "8dfc0254f3b951595a69e2ad949d2be6a91b62b3e1ea1c1b2f47e3b1aca2319b",
+                "prepared_sha256": "3b035f560e3ef7c53e3d8fbfebdc2e0dd7ba22b77677cae632c0c84dc8ae00a7"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_205",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "8221b82cb8144e6f3bd75cc6d690521751beef4dc5bac9766708a0e8b24c9824",
+                "prepared_sha256": "7354957982c2405fb27fe3ff43a8d79e7ecc5bf071c5e6e365b65979b7124444"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_206",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "fe18a23c4c03b24e641756ec8ecf78a080da37994f80c2450861000734d2bb62",
+                "prepared_sha256": "cf64b4bbc0276010b17969802f5795bc0794c563788e9d74a66749e6d919f7ac"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_225",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "43a99b00fa37b3367b157dbb74bd38162a33ab052cf45a57e718285070c15c28",
+                "prepared_sha256": "cbfe8014f731fe2b6cb4576e4aa33232b96360c0715411a1fb6e3af171457f77"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_226",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "e43f649ecb41fc59852bb2ed2d95784c174d4dd74bf076248dcd8ab0795d2680",
+                "prepared_sha256": "225262ce5ce481913852343d9bc7f8bb44583bab785beb0ace6fcff4b9ca1be6"
+              }
+            ]
+          },
+          {
+            "name": "lstm-0",
+            "budget": 67108864,
+            "bytes": 13107200,
+            "weights": [
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_205",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "8221b82cb8144e6f3bd75cc6d690521751beef4dc5bac9766708a0e8b24c9824",
+                "prepared_sha256": "7354957982c2405fb27fe3ff43a8d79e7ecc5bf071c5e6e365b65979b7124444"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_206",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "fe18a23c4c03b24e641756ec8ecf78a080da37994f80c2450861000734d2bb62",
+                "prepared_sha256": "cf64b4bbc0276010b17969802f5795bc0794c563788e9d74a66749e6d919f7ac"
+              }
+            ]
+          },
+          {
+            "name": "lstm-1",
+            "budget": 67108864,
+            "bytes": 13107200,
+            "weights": [
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_225",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "43a99b00fa37b3367b157dbb74bd38162a33ab052cf45a57e718285070c15c28",
+                "prepared_sha256": "cbfe8014f731fe2b6cb4576e4aa33232b96360c0715411a1fb6e3af171457f77"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_226",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "e43f649ecb41fc59852bb2ed2d95784c174d4dd74bf076248dcd8ab0795d2680",
+                "prepared_sha256": "225262ce5ce481913852343d9bc7f8bb44583bab785beb0ace6fcff4b9ca1be6"
+              }
+            ]
+          }
+        ],
+        "prepared_routes_proven": 3,
+        "no_performance_measurement": true
+      },
+      {
+        "passed": true,
+        "role": "selected",
+        "mode": "256",
+        "result": {
+          "bytes": 1740278,
+          "sha256": "2d67b0bfaa86b38bb0f7318a7441d0039c957cf2b4124a2f5b049b14426c2242"
+        },
+        "output_digest": "060bba9c4d1c8ae71eae8d2730521fa4f9064f41e462d259dfb0b89db7132845",
+        "decoder_executions": 380,
+        "exact_decoder_arrays": 1520,
+        "decoder_values": 4088420,
+        "complete_calls": 760,
+        "exact_component_arrays": 2280,
+        "component_values": 1459200,
+        "max_native_error": 1.2874603271484375e-05,
+        "distinct_files": 671,
+        "tensor_bytes": 5577348,
+        "residencies": [
+          {
+            "name": "decoder",
+            "budget": 67108864,
+            "bytes": 25246720,
+            "weights": [
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_228",
+                "shape": [
+                  1024,
+                  640
+                ],
+                "bytes": 2621440,
+                "source_sha256": "7dc879e1f991f39de58b2b9acc1a0449f259c413fd2ff215ca9970b73bed4fbe",
+                "prepared_sha256": "fd31dc0615c1892f55ef9ee808a9b6a44ff6372a17bab28bd7c08fe1b6cf2971"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_229",
+                "shape": [
+                  640,
+                  640
+                ],
+                "bytes": 1638400,
+                "source_sha256": "6747b0789679f470ef668dbdc692c1ea8663f3d287760fcd7f45faa2c4593063",
+                "prepared_sha256": "c930eccf75d26bea4761b691621787f4c925073ea35f9adee3c599e54c08939c"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_230",
+                "shape": [
+                  640,
+                  8198
+                ],
+                "bytes": 20986880,
+                "source_sha256": "8dfc0254f3b951595a69e2ad949d2be6a91b62b3e1ea1c1b2f47e3b1aca2319b",
+                "prepared_sha256": "3b035f560e3ef7c53e3d8fbfebdc2e0dd7ba22b77677cae632c0c84dc8ae00a7"
+              }
+            ]
+          },
+          {
+            "name": "lstm-0",
+            "budget": 67108864,
+            "bytes": 0,
+            "weights": []
+          },
+          {
+            "name": "lstm-1",
+            "budget": 67108864,
+            "bytes": 0,
+            "weights": []
+          }
+        ],
+        "prepared_routes_proven": 0,
+        "no_performance_measurement": true
+      },
+      {
+        "passed": true,
+        "role": "candidate",
+        "mode": "256",
+        "result": {
+          "bytes": 1743422,
+          "sha256": "1e33fbbf439fb87b5ba8b311853adb3fbf52556676f17d8f328430d5442f0974"
+        },
+        "output_digest": "060bba9c4d1c8ae71eae8d2730521fa4f9064f41e462d259dfb0b89db7132845",
+        "decoder_executions": 380,
+        "exact_decoder_arrays": 1520,
+        "decoder_values": 4088420,
+        "complete_calls": 760,
+        "exact_component_arrays": 2280,
+        "component_values": 1459200,
+        "max_native_error": 1.2874603271484375e-05,
+        "distinct_files": 671,
+        "tensor_bytes": 5577348,
+        "residencies": [
+          {
+            "name": "decoder",
+            "budget": 67108864,
+            "bytes": 51461120,
+            "weights": [
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_228",
+                "shape": [
+                  1024,
+                  640
+                ],
+                "bytes": 2621440,
+                "source_sha256": "7dc879e1f991f39de58b2b9acc1a0449f259c413fd2ff215ca9970b73bed4fbe",
+                "prepared_sha256": "fd31dc0615c1892f55ef9ee808a9b6a44ff6372a17bab28bd7c08fe1b6cf2971"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_229",
+                "shape": [
+                  640,
+                  640
+                ],
+                "bytes": 1638400,
+                "source_sha256": "6747b0789679f470ef668dbdc692c1ea8663f3d287760fcd7f45faa2c4593063",
+                "prepared_sha256": "c930eccf75d26bea4761b691621787f4c925073ea35f9adee3c599e54c08939c"
+              },
+              {
+                "kind": "matrix",
+                "name": "onnx::MatMul_230",
+                "shape": [
+                  640,
+                  8198
+                ],
+                "bytes": 20986880,
+                "source_sha256": "8dfc0254f3b951595a69e2ad949d2be6a91b62b3e1ea1c1b2f47e3b1aca2319b",
+                "prepared_sha256": "3b035f560e3ef7c53e3d8fbfebdc2e0dd7ba22b77677cae632c0c84dc8ae00a7"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_205",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "8221b82cb8144e6f3bd75cc6d690521751beef4dc5bac9766708a0e8b24c9824",
+                "prepared_sha256": "7354957982c2405fb27fe3ff43a8d79e7ecc5bf071c5e6e365b65979b7124444"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_206",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "fe18a23c4c03b24e641756ec8ecf78a080da37994f80c2450861000734d2bb62",
+                "prepared_sha256": "cf64b4bbc0276010b17969802f5795bc0794c563788e9d74a66749e6d919f7ac"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_225",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "43a99b00fa37b3367b157dbb74bd38162a33ab052cf45a57e718285070c15c28",
+                "prepared_sha256": "cbfe8014f731fe2b6cb4576e4aa33232b96360c0715411a1fb6e3af171457f77"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_226",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "e43f649ecb41fc59852bb2ed2d95784c174d4dd74bf076248dcd8ab0795d2680",
+                "prepared_sha256": "225262ce5ce481913852343d9bc7f8bb44583bab785beb0ace6fcff4b9ca1be6"
+              }
+            ]
+          },
+          {
+            "name": "lstm-0",
+            "budget": 67108864,
+            "bytes": 13107200,
+            "weights": [
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_205",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "8221b82cb8144e6f3bd75cc6d690521751beef4dc5bac9766708a0e8b24c9824",
+                "prepared_sha256": "7354957982c2405fb27fe3ff43a8d79e7ecc5bf071c5e6e365b65979b7124444"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_206",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "fe18a23c4c03b24e641756ec8ecf78a080da37994f80c2450861000734d2bb62",
+                "prepared_sha256": "cf64b4bbc0276010b17969802f5795bc0794c563788e9d74a66749e6d919f7ac"
+              }
+            ]
+          },
+          {
+            "name": "lstm-1",
+            "budget": 67108864,
+            "bytes": 13107200,
+            "weights": [
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_225",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "43a99b00fa37b3367b157dbb74bd38162a33ab052cf45a57e718285070c15c28",
+                "prepared_sha256": "cbfe8014f731fe2b6cb4576e4aa33232b96360c0715411a1fb6e3af171457f77"
+              },
+              {
+                "kind": "recurrent",
+                "name": "onnx::LSTM_226",
+                "shape": [
+                  1,
+                  2560,
+                  640
+                ],
+                "bytes": 6553600,
+                "source_sha256": "e43f649ecb41fc59852bb2ed2d95784c174d4dd74bf076248dcd8ab0795d2680",
+                "prepared_sha256": "225262ce5ce481913852343d9bc7f8bb44583bab785beb0ace6fcff4b9ca1be6"
+              }
+            ]
+          }
+        ],
+        "prepared_routes_proven": 3,
+        "no_performance_measurement": true
+      }
+    ],
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "seconds": 0.3174537039594725,
+        "peak_rss": 9498624
+      },
+      {
+        "name": "calls-restore",
+        "samples": 4,
+        "seconds": 1.1011436640983447,
+        "peak_rss": 153632768
+      },
+      {
+        "name": "calls-build",
+        "samples": 16,
+        "seconds": 4.421816747053526,
+        "peak_rss": 351055872
+      },
+      {
+        "name": "selected-512",
+        "samples": 25,
+        "seconds": 7.7091584670124575,
+        "peak_rss": 546820096
+      },
+      {
+        "name": "candidate-512",
+        "samples": 20,
+        "seconds": 6.401202164008282,
+        "peak_rss": 770863104
+      },
+      {
+        "name": "selected-256",
+        "samples": 24,
+        "seconds": 7.694971453980543,
+        "peak_rss": 514404352
+      },
+      {
+        "name": "candidate-256",
+        "samples": 19,
+        "seconds": 6.2995913460617885,
+        "peak_rss": 777605120
+      }
+    ],
+    "decoder_executions": 1520,
+    "exact_decoder_arrays": 6080,
+    "complete_calls": 3040,
+    "exact_component_arrays": 9120,
+    "component_values": 5836800,
+    "max_native_error": 1.2874603271484375e-05,
+    "source_prepared": {
+      "bytes": 149433,
+      "sha256": "b52a89c1043165de1c376b37fc5307cd003a7c8b76f0f52508c4cdefcc669eab"
+    },
+    "root_product_changed": false,
+    "no_performance_measurement": true
+  },
+  "terminal": [
+    {
+      "pid": 921797,
+      "birth": 1790237235.29
+    },
+    {
+      "pid": 921815,
+      "birth": 1790237243.11
+    },
+    {
+      "pid": 921827,
+      "birth": 1790237247.32
+    },
+    {
+      "pid": 921845,
+      "birth": 1790237252.29
+    },
+    {
+      "pid": 921862,
+      "birth": 1790237253.16
+    },
+    {
+      "pid": 921878,
+      "birth": 1790237260.58
+    },
+    {
+      "pid": 921887,
+      "birth": 1790237272.19
+    },
+    {
+      "pid": 921898,
+      "birth": 1790237282.48
+    },
+    {
+      "pid": 921991,
+      "birth": 1790237294.06
+    }
+  ],
+  "first_refusal": {
+    "bytes": 1044001,
+    "sha256": "bc2ce8017027b3c4f5f2ce9b413cd1b200b85cd258e39dba27f4350947e7c116"
+  },
+  "publisher": {
+    "bytes": 4825,
+    "sha256": "5ef78579e2a43504d5a52ba53102c1cb6108c32149d7c8f211d775627a59b990"
+  }
+}
