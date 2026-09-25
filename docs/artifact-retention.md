@@ -6,7 +6,13 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **49.58 GB**, including **36.08 GB** in artifacts.
+The latest file-length inventory is **49.70 GB**, including **36.20 GB** in
+artifacts. A separate Windows allocation inventory measures **42.90 GB of
+allocated file data**, leaving **7.10 GB** below the requested 50 GB storage
+target. Existing NTFS compression is present on139,263 files. No compression
+setting or retained file content was changed by this read-only measurement.
+Both inventories exclude the duplicate model-directory junction and count
+hardlinked paths separately. Allocation does not include filesystem metadata.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -57,15 +63,24 @@ requests,2685 resource samples,63 controls and21 gates pass. Candidate latency
 is6.297410% lower than fresh current and1.529181 times fresh ORT. All raw clocks
 remain. Shared/e5 qualification also passes at2f96025a, covering166 arrays and
 5000814 values per role. Its staging memory refusal and resumed unchanged
-preparer remain recorded. The candidate still needs the remaining release checks.
+preparer remain recorded. Pyannote correctness passes at10237093, including
+all original numerical/public contracts and460 resource samples. The original
+72-process graph comparison is running under1001563/birth1790297796.19.
+The candidate still needs the remaining release checks.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All local raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **49,583,830,384 bytes**, with
-**0.42 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m73-shared-qualified-size.json`.
-Counting the model junction again gives 60.37 GB, which counts the same 10.79 GB
+remain retained. The file-length inventory totals **49,701,236,763 bytes**.
+Receipts:
+`artifacts/repository-retention-20260923/m73-graphs-started-size.json` and
+`artifacts/repository-retention-20260923/m73-graphs-started-allocation.json`.
+The slightly later allocation scan records **42,896,724,264 allocated bytes**
+and49,701,355,313 logical bytes. It uses Windows FILE_STANDARD_INFO AllocationSize
+for each regular file; no locked-file estimate was needed. A100,132,902-byte
+trace reports42,024,960 allocated bytes consistently through this API,
+FILE_COMPRESSION_INFO and compact.exe. Counting the model junction again gives
+60.49 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
@@ -75,6 +90,19 @@ A proposed retirement of27 old-worktree build dependencies, totalling
 an exact retained counterpart and no dependency in450 prepared manifests;
 the prospective evidence and rejection are retained under
 `artifacts/parakeet-slice-dense-local-retention-20260925`. No deletion was retried.
+
+A separate129,530,097-byte obsolete Git transfer bundle also remains after
+automatic approval review rejected its one-file deletion with "blocked by
+policy" before launch. All11,526 objects are readable in current Git history,
+both bundle tips are ancestors of HEAD, and none of452 prepared manifests
+references it. The proof and rejection are preserved under
+`artifacts/obsolete-git-transport-retention-20260925`. Its deletion was not retried.
+
+Before graph staging,3,516 closed VM tensor copies were retired after verifying
+exact local originals, completed owners and every deployed input manifest.
+This recovered130,080,768 physical bytes on the VM. All local raw tensors
+remain, along with the earlier failed campaigns. Receipt:
+`artifacts/parakeet-slice-dense-release-array-retention-20260925`.
 
 After shared/e5 qualification,160 closed M73 VM phase-trace duplicates were
 retired after verifying exact local originals, terminal owners and every

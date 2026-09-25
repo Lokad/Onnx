@@ -1,0 +1,227 @@
+{
+  "passed": true,
+  "no_new_inference": true,
+  "no_product_candidate_selected": true,
+  "current_candidate_profile": {
+    "bytes": 81725,
+    "sha256": "04abbe9ce27b9ff58574c36735c845e4b0d28410b3fa8108ec9e4b25029fa71d"
+  },
+  "candidate_groups": [
+    {
+      "shape": [
+        1024,
+        4096
+      ],
+      "alpha": 1.0,
+      "nodes": 48,
+      "managed": 12.810522266333336,
+      "ort": 10.595550666666666,
+      "excess": 2.2149715996666703
+    },
+    {
+      "shape": [
+        4096,
+        1024
+      ],
+      "alpha": 0.5,
+      "nodes": 48,
+      "managed": 12.825550626333337,
+      "ort": 10.636331666666667,
+      "excess": 2.18921895966667
+    }
+  ],
+  "earlier_route_capture": {
+    "bytes": 280288,
+    "sha256": "e03fcfaf7f9c752764e0c1b2a968234cf8f2205495b7424951022d86db2914a6"
+  },
+  "earlier_matched_calls": {
+    "bytes": 7075217,
+    "sha256": "70cd77d31afaa9b5d437c8f69166ca6af27c46bc1529a9dac642a35439cef482"
+  },
+  "route_groups": [
+    {
+      "k": 1024,
+      "n": 4096,
+      "alpha": 1.0,
+      "route": "mapped-allowed",
+      "weights": 9,
+      "calls_per_corpus": 117,
+      "scratch_requested_per_corpus": 0,
+      "frames": [
+        51,
+        88,
+        102,
+        106,
+        112,
+        114,
+        120,
+        156,
+        158,
+        190,
+        222,
+        225
+      ],
+      "copy_bytes": 0
+    },
+    {
+      "k": 1024,
+      "n": 4096,
+      "alpha": 1.0,
+      "route": "mapped-declined",
+      "weights": 9,
+      "calls_per_corpus": 63,
+      "scratch_requested_per_corpus": 1056964608,
+      "frames": [
+        61,
+        83,
+        89,
+        151,
+        157,
+        167,
+        169
+      ],
+      "copy_bytes": 0
+    },
+    {
+      "k": 1024,
+      "n": 4096,
+      "alpha": 1.0,
+      "route": "unmapped",
+      "weights": 39,
+      "calls_per_corpus": 780,
+      "scratch_requested_per_corpus": 13086228480,
+      "frames": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "copy_bytes": 0
+    },
+    {
+      "k": 4096,
+      "n": 1024,
+      "alpha": 0.5,
+      "route": "unmapped",
+      "weights": 48,
+      "calls_per_corpus": 960,
+      "scratch_requested_per_corpus": 16106127360,
+      "frames": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "copy_bytes": 0
+    }
+  ],
+  "route_capture_precedes_slice_candidate": true,
+  "source_dispatch_unchanged": {
+    "GraphPacking.cs": {
+      "bytes": 10547,
+      "sha256": "732fee575241985ad6a09e6cc546f39dd2f23f7eceb6ccd281c79785adf260dd"
+    },
+    "TensorOps.MatMul.cs": {
+      "bytes": 45792,
+      "sha256": "2d97f599a67b21354cf9463ffe670f81c989f2c46721d2de305e199c43ac241e"
+    },
+    "Zzz.WideProjectionEntry.cs": {
+      "bytes": 4624,
+      "sha256": "ba6fb630d857458427115a9e840d3736172b6d6264b4118c3a8512355cc84c8e"
+    },
+    "Zzz.IsolatedShortMatMul.cs": {
+      "bytes": 19586,
+      "sha256": "f822940b400e503666a12c7c2b7d98728a96e064517f574b1be1c92922c34093"
+    },
+    "MathOps.PackedAvx512.cs": {
+      "bytes": 14443,
+      "sha256": "7edef35d0ed2bf11399b0cf93f8de4d4e67b5c915fed12fb4a9db383c192daca"
+    },
+    "AblationSwitches.cs": {
+      "bytes": 6333,
+      "sha256": "c3a340802dd19ecf1218342d4786c958aadeb3d9b2358b762e6886b021143656"
+    }
+  },
+  "native_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "native_kernel_proof": {
+    "bytes": 3930,
+    "sha256": "6838d9b9f0af7ccc8d89c35b581b2680039ddb2e5c5678e0b048b33f43edc2e4"
+  },
+  "native_sources": {
+    "onnxruntime/core/providers/cpu/math/matmul.cc": {
+      "bytes": 21228,
+      "sha256": "ae7e12fabee4dc14bf33eab3a74e197e6842bd158f1bc13f48ab38ab39055cc5",
+      "git_object": "250117e784ff23654e197ed5b8cc44a5b2186283",
+      "lines": {
+        "Status MatMul<float>::PrePack": 302,
+        "Status MatMul<float>::Compute": 462,
+        "data[i].BIsPacked = bool(packed_b_);": 548
+      }
+    },
+    "onnxruntime/core/providers/cpu/math/gemm.cc": {
+      "bytes": 18513,
+      "sha256": "a0cfd76d12fa2d20912076a9eaae198707eb9197b1947f01a67b2ccdd5a8fbc1",
+      "git_object": "b3092a6b549880c4bf2a036c26c93742eb4cbbb1",
+      "lines": {
+        "bool GemmPackBFp32": 103,
+        "MlasGemmPackBSize": 121,
+        "MlasGemmPackB(": 134
+      }
+    }
+  },
+  "native_prepack_buffers_not_dumped": true,
+  "packing_time_not_yet_separated": true,
+  "prior_inclusive_trial": {
+    "closure": {
+      "bytes": 120348,
+      "sha256": "5a7344ce05b9d2d8c6cf8cd8c7a618030a594424fe160a645a088bdf96a600dc"
+    },
+    "analysis": {
+      "bytes": 92465,
+      "sha256": "9c6f481d3dc2f249afc10b0899283b53b4bcc99c0954d3a0f136bad6b0976ea7"
+    },
+    "admitted": false,
+    "failed_gates": [
+      {
+        "name": "corpus-at-least-three-percent-gain",
+        "candidate_over_current": 0.9926985996521082,
+        "limit": 0.97,
+        "passed": false
+      }
+    ]
+  },
+  "reviewer": {
+    "bytes": 5258,
+    "sha256": "e4eda84f84934729762e3ec27950ef294b99d32a174bfc602cad15fc7f7f3f8f"
+  }
+}

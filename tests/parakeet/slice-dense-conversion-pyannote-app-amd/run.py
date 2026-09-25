@@ -76,9 +76,16 @@ import remote
 remote.idle()
 assert pin(base/'stage.json')=={spec['stage']!r}
 archive.unlink()
-env=dict(os.environ,PYTHONPATH={SITE!r},PYTHONDONTWRITEBYTECODE='1');env.pop('PYTHONOPTIMIZE',None)
-p=subprocess.run([sys.executable,'-B',str(base/'tools/remote_prepare.py')],cwd=base,env=env,text=True,capture_output=True,timeout=180)
-assert p.returncode==0,(p.returncode,p.stdout[-3000:],p.stderr[-4000:])
+import contextlib,io,signal,remote_prepare
+assert not (base/'stage-prepare.stdout').exists()
+def staging_timeout(signum,frame):raise TimeoutError('Staging exceeded180seconds')
+previous_handler=signal.signal(signal.SIGALRM,staging_timeout)
+signal.alarm(180);stage_log=io.StringIO()
+try:
+ with contextlib.redirect_stdout(stage_log):remote_prepare.main()
+finally:
+ signal.alarm(0);signal.signal(signal.SIGALRM,previous_handler)
+ with (base/'stage-prepare.stdout').open('x') as log:log.write(stage_log.getvalue())
 value=verify(base);assert not remote.live(value['previous_owner'])
 receipt=dict(passed=True,payload=pin(base/'payload.json'),files=len(value['files']),external=len(value['external']))
 save(base/'staged.json',receipt)
