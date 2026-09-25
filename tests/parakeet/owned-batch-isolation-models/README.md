@@ -1,7 +1,11 @@
 # Full Parakeet correctness after dispatch isolation
 
-Preparation requires an admitted graph comparison for Core e07a4518. No further
-VM work starts while that verdict is pending or if the graph comparison fails.
+Preparation requires the admitted combined graph qualification for Core e07a4518.
+It independently recomputes the seven original passing cases and the diagnosed
+short-e5 correction from their complete clocks. The original failed campaign
+remains unchanged. Both source campaigns must be terminal, the corrected case
+and all combined gates must pass, and exact product identities must agree.
+No model staging or inference starts while that qualification is missing or failed.
 
 Compare the successful direct-depthwise parent Core40260aef with Coree07a4518;
 both use Data01e9e784. Reuse the original eight-process full-model protocol,

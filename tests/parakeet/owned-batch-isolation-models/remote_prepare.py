@@ -23,6 +23,18 @@ def main():
         assert receipt['terminal'] and receipt['code'] == 0 and not any(live(i) for i in receipt['identities'])
     graph = read(BASE/'evidence/graphs-closed.json')
     assert graph['passed'] and graph['admitted'] and graph['all_controls_passed']
+    assert graph['files']['analysis.json'] == pin(BASE/'evidence/graphs-analysis.json')
+    assert graph['generator'] == pin(BASE/'evidence/graphs-generator.py')
+    combined = read(BASE/'evidence/graphs-analysis.json')
+    assert graph['source_closures'] == combined['source_closures'] == dict(
+        original_graphs=pin(BASE/'evidence/original-graphs-closed.json'),
+        short_e5_correction=pin(BASE/'evidence/short-e5-closed.json'))
+    assert not read(BASE/'evidence/original-graphs-closed.json')['admitted']
+    corrected = read(BASE/'evidence/short-e5-closed.json')
+    assert corrected['passed'] and corrected['admitted'] and corrected['all_controls_passed']
+    assert combined['original_graph_failure_preserved'] and len(combined['performance']) == 8
+    assert all(row['qualified'] for row in combined['performance'])
+    assert combined['products']['candidate']['Lokad.Onnx.dll'] == stage['identities']['candidate']['Lokad.Onnx.dll']
     build = read(BASE/'evidence/build-analysis.json')
     assert build['product'] == stage['identities']['candidate']
     assert build['compiled_review'] == pin(BASE/'evidence/build-review.json')

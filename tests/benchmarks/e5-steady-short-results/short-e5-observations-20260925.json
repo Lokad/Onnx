@@ -1,0 +1,271 @@
+{
+  "closure": {
+    "bytes": 33073,
+    "sha256": "b81128a6dbea610cf0571279e078debe3ff24c2b0f3c89bbea0e0c4ab675629a"
+  },
+  "passed": true,
+  "performance": {
+    "key": "e5-8tok",
+    "means": {
+      "current-a": 0.005657864844444444,
+      "candidate-a": 0.005661983355555555,
+      "ort-a": 0.005545032733333333,
+      "ort-b": 0.0056627040166666665,
+      "candidate-b": 0.005678678766666666,
+      "current-b": 0.005732252288888889
+    },
+    "current": 0.005695058566666667,
+    "candidate": 0.005670331061111111,
+    "ort": 0.005603868375,
+    "ratio": 1.0118601440404302,
+    "current_over_ort": 1.0162727219064396,
+    "candidate_over_current": 0.9956580770388761,
+    "regression_passed": true,
+    "controls": [
+      {
+        "role": "current",
+        "ratio": 1.013147617783321,
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "ratio": 1.0029486860103058,
+        "passed": true
+      },
+      {
+        "role": "ort",
+        "ratio": 1.0212210259149537,
+        "passed": true
+      }
+    ],
+    "qualified": true
+  },
+  "numerics": [
+    {
+      "process": "verify-e5-8tok-current",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "verify-e5-8tok-candidate",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "verify-e5-8tok-ort",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-8tok-current-a",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "timing-e5-8tok-candidate-a",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "timing-e5-8tok-ort-a",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-8tok-ort-b",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-8tok-candidate-b",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "timing-e5-8tok-current-b",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    }
+  ],
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9355264,
+      "seconds": 0.2563768189866096
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 154214400,
+      "seconds": 1.019438531016931
+    },
+    {
+      "name": "consumer-build",
+      "samples": 14,
+      "peak_rss": 330018816,
+      "seconds": 3.5750985599588603
+    },
+    {
+      "name": "consumer-inventory",
+      "samples": 1,
+      "peak_rss": 9404416,
+      "seconds": 0.2607298009097576
+    },
+    {
+      "name": "verify-e5-8tok-current",
+      "samples": 4,
+      "peak_rss": 1413373952,
+      "seconds": 1.0239547049859539
+    },
+    {
+      "name": "verify-e5-8tok-candidate",
+      "samples": 4,
+      "peak_rss": 1416949760,
+      "seconds": 1.0239173560403287
+    },
+    {
+      "name": "verify-e5-8tok-ort",
+      "samples": 2,
+      "peak_rss": 533901312,
+      "seconds": 0.5148580659879372
+    },
+    {
+      "name": "timing-e5-8tok-current-a",
+      "samples": 168,
+      "peak_rss": 1416974336,
+      "seconds": 42.958037268021144
+    },
+    {
+      "name": "timing-e5-8tok-candidate-a",
+      "samples": 166,
+      "peak_rss": 1417740288,
+      "seconds": 42.46261851803865
+    },
+    {
+      "name": "timing-e5-8tok-ort-a",
+      "samples": 144,
+      "peak_rss": 557907968,
+      "seconds": 36.85659387195483
+    },
+    {
+      "name": "timing-e5-8tok-ort-b",
+      "samples": 146,
+      "peak_rss": 560074752,
+      "seconds": 37.38079628592823
+    },
+    {
+      "name": "timing-e5-8tok-candidate-b",
+      "samples": 165,
+      "peak_rss": 1413328896,
+      "seconds": 42.27204777498264
+    },
+    {
+      "name": "timing-e5-8tok-current-b",
+      "samples": 166,
+      "peak_rss": 1418010624,
+      "seconds": 42.54417594789993
+    }
+  ],
+  "consumer": {
+    "passed": true,
+    "methods": 66,
+    "unchanged_methods": 65,
+    "changes": [
+      {
+        "index": 281,
+        "before": 780,
+        "after": 6180
+      },
+      {
+        "index": 521,
+        "before": 600,
+        "after": 6000
+      }
+    ],
+    "main_instructions": 657,
+    "branches_locals_exceptions_equal": true,
+    "implementation_flags_equal": true,
+    "previous_consumer": {
+      "bytes": 27648,
+      "sha256": "d827e3b9f1e5158e10bd24a5ca009fa7950fd08d08bb5260b84e36b5a853ac02"
+    },
+    "consumer": {
+      "bytes": 27648,
+      "sha256": "e437850d39cafd15fc4c29b45ac70a0062f1039260c52ae89ffde490e2fad354"
+    },
+    "product_changed": false
+  },
+  "clocks": 37089,
+  "measured": 1080,
+  "setups": [
+    {
+      "process": "verify-e5-8tok-current",
+      "seconds": 0.6165534
+    },
+    {
+      "process": "verify-e5-8tok-candidate",
+      "seconds": 0.6160864
+    },
+    {
+      "process": "verify-e5-8tok-ort",
+      "seconds": 0.270920102
+    },
+    {
+      "process": "timing-e5-8tok-current-a",
+      "seconds": 0.6291399
+    },
+    {
+      "process": "timing-e5-8tok-candidate-a",
+      "seconds": 0.6134974
+    },
+    {
+      "process": "timing-e5-8tok-ort-a",
+      "seconds": 0.273595305
+    },
+    {
+      "process": "timing-e5-8tok-ort-b",
+      "seconds": 0.276447218
+    },
+    {
+      "process": "timing-e5-8tok-candidate-b",
+      "seconds": 0.6227179
+    },
+    {
+      "process": "timing-e5-8tok-current-b",
+      "seconds": 0.6181436
+    }
+  ],
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 825344,
+        "sha256": "e07a45189b348fe55ce76300415c6c35ba6a2bc0d224f1fc13b0b92c303bccba"
+      }
+    }
+  },
+  "root_product_changed": false,
+  "original_graph_closure": {
+    "bytes": 142259,
+    "sha256": "def19d3f178cbb318bc11999b6e23dd18db40772d78949707155cf1f4c791638"
+  },
+  "diagnosis_closure": {
+    "bytes": 25017,
+    "sha256": "5b87937aa914ab9007928bfb3ba0f90c99eae3ff8f3d23611467cbb98ab8ed4b"
+  }
+}

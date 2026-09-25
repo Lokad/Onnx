@@ -1,0 +1,10 @@
+process,seconds
+verify-e5-8tok-current,0.6165534
+verify-e5-8tok-candidate,0.6160864
+verify-e5-8tok-ort,0.270920102
+timing-e5-8tok-current-a,0.6291399
+timing-e5-8tok-candidate-a,0.6134974
+timing-e5-8tok-ort-a,0.273595305
+timing-e5-8tok-ort-b,0.276447218
+timing-e5-8tok-candidate-b,0.6227179
+timing-e5-8tok-current-b,0.6181436
