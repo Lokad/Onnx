@@ -3,6 +3,7 @@ import csv
 import hashlib
 import json
 from pathlib import Path
+from publish_release import closed as closed_stage
 
 ROOT = Path(__file__).resolve().parents[3]
 BASE = ROOT / 'artifacts/parakeet-packed-final-row-release-app-amd-20260925'
@@ -16,6 +17,21 @@ def pin(path):
 
 def read(path):
     return json.loads(path.read_text(encoding='utf8'))
+
+
+def graph_context(identities):
+    base,proof,analysis=closed_stage('graphs')
+    products=read(base/'payload.json')['products']
+    for role in ['current','candidate']:
+        assert products[role]['Lokad.Onnx.dll']==identities[role]['Lokad.Onnx.dll']
+    rows=analysis['performance']
+    assert proof['admitted']==all(r['qualified'] for r in rows)
+    assert proof['all_controls_passed']==all(c['passed'] for r in rows for c in r['controls'])
+    failures=[dict(key=r['key'],candidate_over_current=r['candidate_over_current'],
+                   regression_passed=r['regression_passed'],controls=r['controls'])
+              for r in rows if not r['qualified']]
+    return dict(closure=pin(base/'closed.json'),admitted=proof['admitted'],
+                all_controls_passed=proof['all_controls_passed'],failed_cases=failures)
 
 
 def main():
@@ -36,6 +52,12 @@ def main():
     assert value['identities']==payload['identities']
     assert payload['identities']['candidate']['Lokad.Onnx.dll']['sha256']=='49901366484570493b7a42028e5c5458f30fe2c1703a01335b68d9a5f9a1fea9'
     assert payload['identities']['candidate']['Lokad.Onnx.Data.dll']['sha256']=='01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1'
+    graph=graph_context(value['identities'])
+    graph_verdict=('The completed [M78 graph comparison](graphs-20260925.md) passes.'
+                   if graph['admitted'] else
+                   'The completed [M78 graph comparison](graphs-20260925.md) fails: '+
+                   '; '.join(f"{r['key']} candidate/release {r['candidate_over_current']:.6f}"
+                             for r in graph['failed_cases'])+'.')
     corpus, = [row for row in value['table'] if row['is_corpus']]
     assert corpus['audio_seconds'] == 213.265 and len(value['table']) == 21
     gain = 1 - corpus['candidate']['seconds'] / corpus['current']['seconds']
@@ -92,9 +114,10 @@ release Core f95a13c5/Data a893952f. Exact model/public lineage binds release,
 intermediate M73 and M78; historical performance ratios are not composed.
 
 The separately retained M73 graph failures keep their original verdicts.
+{graph_verdict}
 This application result alone does not promote product source or BENCHMARK.md.
-Fresh M78 graph/Pyannote admission and actual root/package qualification are
-also required. A failed admission permits no unchanged retry.
+Every graph gate, Pyannote application admission and actual root/package
+qualification are also required. A failed admission permits no unchanged retry.
 
 [Every case](release-application-20260925.csv) and
 [all controls, gates, identities, process clocks and resources](release-application-20260925.json)
@@ -105,7 +128,8 @@ Raw evidence: `{BASE.relative_to(ROOT).as_posix()}`.
 '''
     with paths[0].open('x', encoding='utf8') as stream:
         json.dump(dict(closure=pin(BASE / 'closed.json'), **value, release_admitted=False,
-                       failed_release_controls=payload['failed_release_controls']), stream, indent=2, allow_nan=False)
+                       failed_release_controls=payload['failed_release_controls'],
+                       graph_qualification=graph), stream, indent=2, allow_nan=False)
     with paths[1].open('x', encoding='utf8', newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
