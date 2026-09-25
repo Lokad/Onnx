@@ -1,0 +1,5145 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "usable_for_attribution": false,
+  "closure": {
+    "bytes": 81595,
+    "sha256": "1750ff9e337a06840f1001b335ac211909bc721c09abc33f8aabc389e46c8f38"
+  },
+  "analysis": {
+    "bytes": 149712,
+    "sha256": "207e07b93fd6d5b9973ffdeb42eccb71e0598018af8b83274086942741e1ea00"
+  },
+  "products": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 822784,
+        "sha256": "82c02785506b540d3fe590d48b0fdb15fc4b744ffb376cd626d758d5755bb16f"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "3f80f8cb31f4a7e33fdb07247e3e1ed297ac53f7d8e3ebeb272980ff316f8236"
+      }
+    }
+  },
+  "summary": {
+    "usable_for_attribution": false,
+    "controls": [
+      {
+        "name": "121-121726-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0036368878003736,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-121726-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0118896655880214,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-121726-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0170981427113548,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-121726-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.004895661428607,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.000717089240308,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0012378216429991,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0204866184385981,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0080580464312032,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0025440604663263,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0056874927464172,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0131143582876008,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0067138791422274,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.035161727335318,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0107788050435644,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.006446028112799,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0068663841280685,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 1.1468476100182488,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0143195886592717,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0014580760080805,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.09888889037443,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.2426355305457955,
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 2.5178635444998294,
+        "limit": 1.2,
+        "passed": false
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.013128833631124,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.000676281448569,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0093621031408695,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0174368529590445,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 1.0153990126859291,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0403888656232119,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0234303723472842,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.012207702927795,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0063197438007911,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0005731595132294,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.015369393256451,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0066124229022988,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0014992582203557,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.004910972608445,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0068379437618182,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0347599867234887,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0041764393800006,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.015238430579593,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0024477036775747,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0188652220520662,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.005497424867653,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.001422530117793,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0001723298796872,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.013304020564991,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0182436707770686,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 1.067616392450958,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.010165844535203,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.010015335594541,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0079301293680067,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0009406641969485,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0049249681163879,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0106602811705483,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.034685981818898,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0100204458704543,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.003345008785414,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0022103834110327,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.032168367705664,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0010833526531964,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0128610162379907,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0042062615536353,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0523081315120124,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0249570363299927,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 1.0604070512564256,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0131254100676865,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.005397616521453,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0133327679329591,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0052206030253668,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0029570499738427,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.002296143076323,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0037249212901949,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.009617198158343,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0175348961535866,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0231284206375721,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0049803857729251,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0073829089455753,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 1.1413383647396622,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0080225996179055,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.01087657659091,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0006439986630058,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0037644474960854,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0236778052934308,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0032767901946298,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0077505110316758,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.0018886572162462,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 1.0178143751584223,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "selected",
+        "metric": "encoder",
+        "ratio": 1.0015752760308558,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "selected",
+        "metric": "feed_forward",
+        "ratio": 1.0008322144552753,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "candidate",
+        "metric": "encoder",
+        "ratio": 1.0068329118448003,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "candidate",
+        "metric": "feed_forward",
+        "ratio": 1.011221506592477,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "candidate",
+        "metric": "copy_y",
+        "ratio": 1.2418932160007679,
+        "limit": 1.1,
+        "passed": false
+      }
+    ],
+    "table": [
+      {
+        "name": "121-121726-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 2.3112547903333334,
+            "numerator": 6933764371,
+            "denominator": 3000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 2.307059532,
+                "numerator": 576764883,
+                "denominator": 250000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 2.3154500486666665,
+                "numerator": 3473175073,
+                "denominator": 1500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.1050588,
+            "numerator": 2762647,
+            "denominator": 2500000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.1115893666666667,
+                "numerator": 33347681,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.0985282333333333,
+                "numerator": 32955847,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.09803335,
+            "numerator": 21960667,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.1076046666666666,
+                "numerator": 1661407,
+                "denominator": 1500000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.0884620333333332,
+                "numerator": 32653861,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0043469166666666665,
+            "numerator": 52163,
+            "denominator": 12000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0011940666666666667,
+                "numerator": 17911,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.007499766666666667,
+                "numerator": 224993,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 2.1065508015,
+            "numerator": 4213101603,
+            "denominator": 2000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 2.124407199,
+                "numerator": 2124407199,
+                "denominator": 1000000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 2.088694404,
+                "numerator": 522173601,
+                "denominator": 250000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.93231775,
+            "numerator": 3729271,
+            "denominator": 4000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.9345943333333333,
+                "numerator": 2803783,
+                "denominator": 3000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.9300411666666667,
+                "numerator": 5580247,
+                "denominator": 6000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.9285120833333333,
+            "numerator": 2228429,
+            "denominator": 2400000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.9306022666666667,
+                "numerator": 6979517,
+                "denominator": 7500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.9264219,
+                "numerator": 9264219,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0012619666666666667,
+            "numerator": 37859,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0014629333333333334,
+                "numerator": 2743,
+                "denominator": 1875000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.001061,
+                "numerator": 1061,
+                "denominator": 1000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "121-123852-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 4.192155290333333,
+            "numerator": 12576465871,
+            "denominator": 3000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 4.193657826333333,
+                "numerator": 12580973479,
+                "denominator": 3000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 4.190652754333334,
+                "numerator": 12571958263,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.79299345,
+            "numerator": 35859869,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.7918844333333332,
+                "numerator": 53756533,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.7941024666666667,
+                "numerator": 26911537,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.7853631,
+            "numerator": 17853631,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.7842616333333334,
+                "numerator": 53527849,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.7864645666666668,
+                "numerator": 53593937,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0024706666666666666,
+            "numerator": 1853,
+            "denominator": 750000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0024761,
+                "numerator": 24761,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0024652333333333334,
+                "numerator": 73957,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 4.1759901195,
+            "numerator": 8351980239,
+            "denominator": 2000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 4.133647886,
+                "numerator": 2066823943,
+                "denominator": 500000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 4.218332353,
+                "numerator": 4218332353,
+                "denominator": 1000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.63574715,
+            "numerator": 32714943,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6291831333333333,
+                "numerator": 24437747,
+                "denominator": 15000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6423111666666668,
+                "numerator": 9853867,
+                "denominator": 6000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.6279663666666666,
+            "numerator": 48838991,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6213583666666667,
+                "numerator": 48640751,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6345743666666666,
+                "numerator": 49037231,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0025181,
+            "numerator": 25181,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0025192,
+                "numerator": 3149,
+                "denominator": 1250000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.002517,
+                "numerator": 2517,
+                "denominator": 1000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "237-126133-0002",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 2.3460655073333334,
+            "numerator": 3519098261,
+            "denominator": 1500000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 2.349045982333333,
+                "numerator": 7047137947,
+                "denominator": 3000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 2.343085032333333,
+                "numerator": 7029255097,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.1241856,
+            "numerator": 87827,
+            "denominator": 78125,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.1273734333333334,
+                "numerator": 33821203,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.1209977666666666,
+                "numerator": 33629933,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.1199278,
+            "numerator": 5599639,
+            "denominator": 5000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.1229649,
+                "numerator": 11229649,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.1168907,
+                "numerator": 11168907,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0013467666666666666,
+            "numerator": 40403,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0013679666666666667,
+                "numerator": 41039,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0013255666666666666,
+                "numerator": 39767,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 2.1935644751666667,
+            "numerator": 13161386851,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 2.1792745813333334,
+                "numerator": 12769187,
+                "denominator": 5859375
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 2.207854369,
+                "numerator": 2207854369,
+                "denominator": 1000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.9678419166666666,
+            "numerator": 11614103,
+            "denominator": 12000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.9646038,
+                "numerator": 4823019,
+                "denominator": 5000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.9710800333333334,
+                "numerator": 29132401,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.9639311,
+            "numerator": 9639311,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.9610499666666666,
+                "numerator": 28831499,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.9668122333333333,
+                "numerator": 29004367,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0012593166666666667,
+            "numerator": 75559,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0011552,
+                "numerator": 361,
+                "denominator": 312500
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0013634333333333334,
+                "numerator": 40903,
+                "denominator": 30000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "237-126133-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 3.472588216,
+            "numerator": 434073527,
+            "denominator": 125000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 3.412591903,
+                "numerator": 3412591903,
+                "denominator": 1000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 3.532584529,
+                "numerator": 3532584529,
+                "denominator": 1000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.6579540166666666,
+            "numerator": 99477241,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.6490665333333334,
+                "numerator": 12367999,
+                "denominator": 7500000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.6668415,
+                "numerator": 3333683,
+                "denominator": 2000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.6517131,
+            "numerator": 16517131,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.6430414333333334,
+                "numerator": 49291243,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.6603847666666667,
+                "numerator": 49811543,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.002115933333333333,
+            "numerator": 31739,
+            "denominator": 15000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0019665,
+                "numerator": 3933,
+                "denominator": 2000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0022653666666666667,
+                "numerator": 67961,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 3.449999018833333,
+            "numerator": 20699994113,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 3.4610826913333335,
+                "numerator": 5191624037,
+                "denominator": 1500000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 3.4389153463333333,
+                "numerator": 10316746039,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.6632735666666667,
+            "numerator": 49898207,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6689643666666667,
+                "numerator": 50068931,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6575827666666667,
+                "numerator": 49727483,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.16160316666666666,
+            "numerator": 969619,
+            "denominator": 6000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.17265706666666666,
+                "numerator": 80933,
+                "denominator": 468750
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.15054926666666665,
+                "numerator": 2258239,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.4955770833333333,
+            "numerator": 717877,
+            "denominator": 480000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.4901698666666667,
+                "numerator": 5588137,
+                "denominator": 3750000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.5009843,
+                "numerator": 15009843,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0019528833333333333,
+            "numerator": 117173,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0019312333333333332,
+                "numerator": 57937,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0019745333333333333,
+                "numerator": 14809,
+                "denominator": 7500000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "260-123286-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 2.042795834666667,
+            "numerator": 383024219,
+            "denominator": 187500000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 2.057317858,
+                "numerator": 1028658929,
+                "denominator": 500000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 2.0282738113333334,
+                "numerator": 3042410717,
+                "denominator": 1500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.00111155,
+            "numerator": 20022231,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.0003822333333334,
+                "numerator": 30011467,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.0018408666666667,
+                "numerator": 15027613,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.9974500333333334,
+            "numerator": 29923501,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.9967541333333333,
+                "numerator": 934457,
+                "denominator": 937500
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.9981459333333333,
+                "numerator": 14972189,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0011701166666666667,
+            "numerator": 70207,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0011530666666666666,
+                "numerator": 1081,
+                "denominator": 937500
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0011871666666666667,
+                "numerator": 7123,
+                "denominator": 6000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 2.190484559666667,
+            "numerator": 6571453679,
+            "denominator": 3000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 2.293688968666667,
+                "numerator": 3440533453,
+                "denominator": 1500000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 2.0872801506666665,
+                "numerator": 1565460113,
+                "denominator": 750000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.1461738666666668,
+            "numerator": 537269,
+            "denominator": 468750,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.2701808666666667,
+                "numerator": 19052713,
+                "denominator": 15000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.0221668666666666,
+                "numerator": 15332503,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.28424841666666667,
+            "numerator": 3410981,
+            "denominator": 12000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.40689396666666666,
+                "numerator": 12206819,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.16160286666666668,
+                "numerator": 2424043,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.8580030333333334,
+            "numerator": 25740091,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.8593550666666666,
+                "numerator": 6445163,
+                "denominator": 7500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.856651,
+                "numerator": 856651,
+                "denominator": 1000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0012191666666666666,
+            "numerator": 1463,
+            "denominator": 1200000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0012162666666666667,
+                "numerator": 4561,
+                "denominator": 3750000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0012220666666666667,
+                "numerator": 18331,
+                "denominator": 15000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "260-123288-0005",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 3.3442849943333335,
+            "numerator": 10032854983,
+            "denominator": 3000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 3.366095104333333,
+                "numerator": 10098285313,
+                "denominator": 3000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 3.3224748843333334,
+                "numerator": 9967424653,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.5753206333333334,
+            "numerator": 47259619,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.5747881333333333,
+                "numerator": 11810911,
+                "denominator": 7500000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.5758531333333334,
+                "numerator": 23637797,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.5694452333333333,
+            "numerator": 47083357,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.5689616,
+                "numerator": 980601,
+                "denominator": 625000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.5699288666666666,
+                "numerator": 23548933,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0018424166666666667,
+            "numerator": 22109,
+            "denominator": 12000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0019096,
+                "numerator": 2387,
+                "denominator": 1250000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0017752333333333334,
+                "numerator": 53257,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 3.2948721575,
+            "numerator": 1317948863,
+            "denominator": 400000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 3.279520552666667,
+                "numerator": 4919280829,
+                "denominator": 1500000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 3.3102237623333335,
+                "numerator": 9930671287,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.5888485666666667,
+            "numerator": 47665457,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.5751160333333334,
+                "numerator": 47253481,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6025811,
+                "numerator": 16025811,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.15800301666666666,
+            "numerator": 9480181,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.15921026666666666,
+                "numerator": 1194077,
+                "denominator": 7500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.15679576666666667,
+                "numerator": 4703873,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.4251850166666666,
+            "numerator": 85511101,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.4103874333333333,
+                "numerator": 42311623,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.4399826,
+                "numerator": 7199913,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.00173105,
+            "numerator": 34621,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0016706,
+                "numerator": 8353,
+                "denominator": 5000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0017915,
+                "numerator": 3583,
+                "denominator": 2000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "672-122797-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 1.1620122376666666,
+            "numerator": 3486036713,
+            "denominator": 3000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.18501391,
+                "numerator": 118501391,
+                "denominator": 100000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.1390105653333333,
+                "numerator": 213564481,
+                "denominator": 187500000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.5539444833333333,
+            "numerator": 33236669,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.5603589,
+                "numerator": 5603589,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.5475300666666667,
+                "numerator": 8212951,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.5516415666666666,
+            "numerator": 16549247,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.5578969,
+                "numerator": 5578969,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.5453862333333334,
+                "numerator": 16361587,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0007053166666666666,
+            "numerator": 42319,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0007461333333333333,
+                "numerator": 1399,
+                "denominator": 1875000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0006645,
+                "numerator": 1329,
+                "denominator": 2000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 1.0073303098333333,
+            "numerator": 6043981859,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.013441602,
+                "numerator": 506720801,
+                "denominator": 500000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.0012190176666667,
+                "numerator": 3003657053,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.39858173333333335,
+            "numerator": 2989363,
+            "denominator": 7500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.39732623333333333,
+                "numerator": 11919787,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.3998372333333333,
+                "numerator": 11995117,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.3966378,
+            "numerator": 1983189,
+            "denominator": 5000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.3954953,
+                "numerator": 3954953,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.3977803,
+                "numerator": 3977803,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0005172,
+            "numerator": 1293,
+            "denominator": 2500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0004909666666666667,
+                "numerator": 14729,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0005434333333333333,
+                "numerator": 16303,
+                "denominator": 30000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "672-122797-0001",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 3.8930103783333334,
+            "numerator": 2335806227,
+            "denominator": 600000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 3.89189504,
+                "numerator": 3040543,
+                "denominator": 781250
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 3.8941257166666667,
+                "numerator": 233647543,
+                "denominator": 60000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.7860741666666666,
+            "numerator": 2143289,
+            "denominator": 1200000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.7996949333333334,
+                "numerator": 843607,
+                "denominator": 468750
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.7724534,
+                "numerator": 8862267,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.7686726166666666,
+            "numerator": 106120357,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.7710776666666668,
+                "numerator": 5313233,
+                "denominator": 3000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.7662675666666667,
+                "numerator": 52988027,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.012973383333333333,
+            "numerator": 778403,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.024060633333333335,
+                "numerator": 721819,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0018861333333333333,
+                "numerator": 7073,
+                "denominator": 3750000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 3.8390392558333333,
+            "numerator": 4606847107,
+            "denominator": 1200000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 3.8263884066666667,
+                "numerator": 573958261,
+                "denominator": 150000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 3.851690105,
+                "numerator": 770338021,
+                "denominator": 200000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.625532,
+            "numerator": 406383,
+            "denominator": 250000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6267496333333333,
+                "numerator": 48802489,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6243143666666666,
+                "numerator": 48729431,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.6188251333333334,
+            "numerator": 24282377,
+            "denominator": 15000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6200995,
+                "numerator": 3240199,
+                "denominator": 2000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6175507666666666,
+                "numerator": 48526523,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0021816166666666667,
+            "numerator": 130897,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.002162733333333333,
+                "numerator": 32441,
+                "denominator": 15000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0022005,
+                "numerator": 4401,
+                "denominator": 2000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "908-157963-0005",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 1.9107325916666666,
+            "numerator": 229287911,
+            "denominator": 120000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.9060523063333332,
+                "numerator": 5718156919,
+                "denominator": 3000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.915412877,
+                "numerator": 1915412877,
+                "denominator": 1000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.9231491333333334,
+            "numerator": 13847237,
+            "denominator": 15000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.9262946,
+                "numerator": 4631473,
+                "denominator": 5000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.9200036666666667,
+                "numerator": 2760011,
+                "denominator": 3000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.919738,
+            "numerator": 459869,
+            "denominator": 500000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.9228422,
+                "numerator": 4614211,
+                "denominator": 5000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.9166338,
+                "numerator": 4583169,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.00108545,
+            "numerator": 21709,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0010788666666666667,
+                "numerator": 16183,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0010920333333333334,
+                "numerator": 32761,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 1.7596338106666667,
+            "numerator": 659862679,
+            "denominator": 375000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.729573829,
+                "numerator": 1729573829,
+                "denominator": 1000000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.7896937923333334,
+                "numerator": 5369081377,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.7666672,
+            "numerator": 479167,
+            "denominator": 625000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.7650695666666667,
+                "numerator": 22952087,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.7682648333333333,
+                "numerator": 4609589,
+                "denominator": 6000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.7633645833333333,
+            "numerator": 73283,
+            "denominator": 96000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.7617969333333333,
+                "numerator": 5713477,
+                "denominator": 7500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.7649322333333334,
+                "numerator": 22947967,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0009944333333333332,
+            "numerator": 29833,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0009034,
+                "numerator": 4517,
+                "denominator": 5000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0010854666666666667,
+                "numerator": 8141,
+                "denominator": 7500000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "908-157963-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 3.262637943,
+            "numerator": 3262637943,
+            "denominator": 1000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 3.237967174,
+                "numerator": 1618983587,
+                "denominator": 500000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 3.287308712,
+                "numerator": 410913589,
+                "denominator": 125000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.50813965,
+            "numerator": 30162793,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.5099831333333333,
+                "numerator": 22649747,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.5062961666666668,
+                "numerator": 9037777,
+                "denominator": 6000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.5027161333333334,
+            "numerator": 11270371,
+            "denominator": 7500000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.5045118,
+                "numerator": 7522559,
+                "denominator": 5000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.5009204666666667,
+                "numerator": 22513807,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0017488333333333334,
+            "numerator": 10493,
+            "denominator": 6000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0017665333333333334,
+                "numerator": 13249,
+                "denominator": 7500000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0017311333333333333,
+                "numerator": 25967,
+                "denominator": 15000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 3.0925172803333334,
+            "numerator": 9277551841,
+            "denominator": 3000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 3.0636193506666665,
+                "numerator": 2297714513,
+                "denominator": 750000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 3.12141521,
+                "numerator": 312141521,
+                "denominator": 100000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.3577558166666666,
+            "numerator": 81465349,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.3540339666666668,
+                "numerator": 40621019,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.3614776666666666,
+                "numerator": 4084433,
+                "denominator": 3000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.35230555,
+            "numerator": 27046111,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.3485704333333333,
+                "numerator": 40457113,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.3560406666666667,
+                "numerator": 2034061,
+                "denominator": 1500000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0016822666666666667,
+            "numerator": 12617,
+            "denominator": 7500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0016511666666666667,
+                "numerator": 9907,
+                "denominator": 6000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0017133666666666668,
+                "numerator": 51401,
+                "denominator": 30000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1089-134686-0002",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 1.9591159783333334,
+            "numerator": 1175469587,
+            "denominator": 600000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.957723518,
+                "numerator": 978861759,
+                "denominator": 500000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.9605084386666667,
+                "numerator": 1470381329,
+                "denominator": 750000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.9695420333333333,
+            "numerator": 29086261,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.9694585,
+                "numerator": 1938917,
+                "denominator": 2000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.9696255666666667,
+                "numerator": 29088767,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.9661741166666666,
+            "numerator": 57970447,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.9660336666666667,
+                "numerator": 2898101,
+                "denominator": 3000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.9663145666666667,
+                "numerator": 28989437,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.00104285,
+            "numerator": 20857,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0010507,
+                "numerator": 10507,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.001035,
+                "numerator": 207,
+                "denominator": 200000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 1.9680379573333333,
+            "numerator": 369007117,
+            "denominator": 187500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.9810428573333334,
+                "numerator": 1485782143,
+                "denominator": 750000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.9550330573333334,
+                "numerator": 1466274793,
+                "denominator": 750000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.9813984666666666,
+            "numerator": 14720977,
+            "denominator": 15000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.9902697,
+                "numerator": 9902697,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.9725272333333334,
+                "numerator": 29175817,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.1633816,
+            "numerator": 204227,
+            "denominator": 1250000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.1687246,
+                "numerator": 843623,
+                "denominator": 5000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.1580386,
+                "numerator": 790193,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.8145312666666666,
+            "numerator": 12217969,
+            "denominator": 15000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.8180499333333333,
+                "numerator": 12270749,
+                "denominator": 15000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.8110126,
+                "numerator": 4055063,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0010834833333333333,
+            "numerator": 65009,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0010797,
+                "numerator": 10797,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0010872666666666667,
+                "numerator": 16309,
+                "denominator": 15000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1089-134686-0011",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 2.9452414258333333,
+            "numerator": 3534289711,
+            "denominator": 1200000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 2.9303467013333333,
+                "numerator": 1098880013,
+                "denominator": 375000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 2.960136150333333,
+                "numerator": 8880408451,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.3190965166666666,
+            "numerator": 79145791,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.3125238333333333,
+                "numerator": 7875143,
+                "denominator": 6000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.3256692,
+                "numerator": 3314173,
+                "denominator": 2500000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.3139023,
+            "numerator": 13139023,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.3074845,
+                "numerator": 2614969,
+                "denominator": 2000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.3203201,
+                "numerator": 13203201,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0015738833333333333,
+            "numerator": 94433,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0015315,
+                "numerator": 3063,
+                "denominator": 2000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0016162666666666666,
+                "numerator": 6061,
+                "denominator": 3750000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 2.8641019915,
+            "numerator": 5728203983,
+            "denominator": 2000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 2.8527904926666667,
+                "numerator": 4279185739,
+                "denominator": 1500000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 2.8754134903333335,
+                "numerator": 8626240471,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.1593007,
+            "numerator": 11593007,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.1598457,
+                "numerator": 11598457,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.1587557,
+                "numerator": 11587557,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.1538953833333334,
+            "numerator": 69233723,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.1543692,
+                "numerator": 2885923,
+                "denominator": 2500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.1534215666666667,
+                "numerator": 34602647,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0016720166666666667,
+            "numerator": 100321,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0016780333333333334,
+                "numerator": 50341,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.001666,
+                "numerator": 833,
+                "denominator": 500000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1188-133604-0001",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 2.223126626,
+            "numerator": 1111563313,
+            "denominator": 500000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 2.217665659666667,
+                "numerator": 6652996979,
+                "denominator": 3000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 2.228587592333333,
+                "numerator": 6685762777,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.0196350166666666,
+            "numerator": 61178101,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.025041,
+                "numerator": 1025041,
+                "denominator": 1000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.0142290333333333,
+                "numerator": 30426871,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.01538735,
+            "numerator": 20307747,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.0207656666666667,
+                "numerator": 3062297,
+                "denominator": 3000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.0100090333333334,
+                "numerator": 30300271,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.001307,
+            "numerator": 1307,
+            "denominator": 1000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0012785666666666666,
+                "numerator": 38357,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0013354333333333334,
+                "numerator": 40063,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 2.102957605333333,
+            "numerator": 394304551,
+            "denominator": 187500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 2.1388074366666667,
+                "numerator": 641642231,
+                "denominator": 300000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 2.067107774,
+                "numerator": 1033553887,
+                "denominator": 500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.8624516333333333,
+            "numerator": 25873549,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.8667511666666666,
+                "numerator": 5200507,
+                "denominator": 6000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.8581521,
+                "numerator": 8581521,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.8583056166666667,
+            "numerator": 51498337,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.8626216333333333,
+                "numerator": 25878649,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.8539896,
+                "numerator": 1067487,
+                "denominator": 1250000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0012438666666666667,
+            "numerator": 9329,
+            "denominator": 7500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0012532,
+                "numerator": 3133,
+                "denominator": 2500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0012345333333333333,
+                "numerator": 9259,
+                "denominator": 7500000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1188-133604-0002",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 4.2483700075,
+            "numerator": 1699348003,
+            "denominator": 400000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 4.255463561,
+                "numerator": 4255463561,
+                "denominator": 1000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 4.241276454,
+                "numerator": 2120638227,
+                "denominator": 500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.8099499333333333,
+            "numerator": 27149249,
+            "denominator": 15000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.8119480666666667,
+                "numerator": 27179221,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.8079518,
+                "numerator": 9039759,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.8024810166666667,
+            "numerator": 108148861,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.8044195666666667,
+                "numerator": 54132587,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.8005424666666667,
+                "numerator": 27008137,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0023049333333333335,
+            "numerator": 17287,
+            "denominator": 7500000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.002342166666666667,
+                "numerator": 14053,
+                "denominator": 6000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0022677,
+                "numerator": 22677,
+                "denominator": 10000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 4.096507423833334,
+            "numerator": 24579044543,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 4.161353407666667,
+                "numerator": 12484060223,
+                "denominator": 3000000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 4.03166144,
+                "numerator": 6299471,
+                "denominator": 1562500
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.6517571,
+            "numerator": 16517571,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6526513333333333,
+                "numerator": 2478977,
+                "denominator": 1500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6508628666666667,
+                "numerator": 24762943,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.6439621666666666,
+            "numerator": 9863773,
+            "denominator": 6000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6452661666666666,
+                "numerator": 9871597,
+                "denominator": 6000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.6426581666666666,
+                "numerator": 9855949,
+                "denominator": 6000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0026913,
+            "numerator": 26913,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0024502666666666667,
+                "numerator": 18377,
+                "denominator": 7500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0029323333333333332,
+                "numerator": 8797,
+                "denominator": 3000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1221-135766-0002",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 1.5452488043333332,
+            "numerator": 4635746413,
+            "denominator": 3000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.5353755593333334,
+                "numerator": 2303063339,
+                "denominator": 1500000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.5551220493333333,
+                "numerator": 1166341537,
+                "denominator": 750000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.76353795,
+            "numerator": 15270759,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.7619355,
+                "numerator": 1523871,
+                "denominator": 2000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.7651404,
+                "numerator": 1912851,
+                "denominator": 2500000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.7607154166666666,
+            "numerator": 1825717,
+            "denominator": 2400000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.7591684,
+                "numerator": 1897921,
+                "denominator": 2500000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.7622624333333333,
+                "numerator": 22867873,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0008730166666666666,
+            "numerator": 52381,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0008325333333333334,
+                "numerator": 1561,
+                "denominator": 1875000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0009135,
+                "numerator": 1827,
+                "denominator": 2000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 1.5656207978333334,
+            "numerator": 9393724787,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.605524503,
+                "numerator": 1605524503,
+                "denominator": 1000000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.5257170926666668,
+                "numerator": 2288575639,
+                "denominator": 1500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.7709395166666667,
+            "numerator": 46256371,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.7804411333333333,
+                "numerator": 11706617,
+                "denominator": 15000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.7614379,
+                "numerator": 7614379,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.1589182,
+            "numerator": 794591,
+            "denominator": 5000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.16357736666666667,
+                "numerator": 4907321,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.15425903333333332,
+                "numerator": 4627771,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.6092376166666666,
+            "numerator": 36554257,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.6139929666666667,
+                "numerator": 18419789,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.6044822666666667,
+                "numerator": 4533617,
+                "denominator": 7500000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0008503333333333334,
+            "numerator": 2551,
+            "denominator": 3000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0008874333333333333,
+                "numerator": 26623,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0008132333333333334,
+                "numerator": 24397,
+                "denominator": 30000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1221-135766-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 2.9694369721666667,
+            "numerator": 17816621833,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 2.988797454,
+                "numerator": 1494398727,
+                "denominator": 500000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 2.950076490333333,
+                "numerator": 8850229471,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.3179175,
+            "numerator": 527167,
+            "denominator": 400000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.3214647333333334,
+                "numerator": 19821971,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.3143702666666666,
+                "numerator": 9857777,
+                "denominator": 7500000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.3069139666666667,
+            "numerator": 39207419,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.3051193666666667,
+                "numerator": 39153581,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.3087085666666667,
+                "numerator": 39261257,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.007189316666666667,
+            "numerator": 431359,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.012562766666666666,
+                "numerator": 376883,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0018158666666666667,
+                "numerator": 13619,
+                "denominator": 7500000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 2.8197797575,
+            "numerator": 1127911903,
+            "denominator": 400000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 2.838453009,
+                "numerator": 2838453009,
+                "denominator": 1000000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 2.801106506,
+                "numerator": 1400553253,
+                "denominator": 500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.1520876666666666,
+            "numerator": 3456263,
+            "denominator": 3000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.1550871333333332,
+                "numerator": 17326307,
+                "denominator": 15000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.1490882,
+                "numerator": 5745441,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.1466333666666666,
+            "numerator": 34399001,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.1493082666666667,
+                "numerator": 2154953,
+                "denominator": 1875000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.1439584666666667,
+                "numerator": 17159377,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.00166545,
+            "numerator": 33309,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0018131333333333334,
+                "numerator": 27197,
+                "denominator": 15000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0015177666666666666,
+                "numerator": 45533,
+                "denominator": 30000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1284-1180-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 1.9581678801666667,
+            "numerator": 11749007281,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.9552769543333333,
+                "numerator": 5865830863,
+                "denominator": 3000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.961058806,
+                "numerator": 980529403,
+                "denominator": 500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.9250450333333333,
+            "numerator": 27751351,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.9239842333333333,
+                "numerator": 27719527,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.9261058333333333,
+                "numerator": 1111327,
+                "denominator": 1200000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.9205160166666667,
+            "numerator": 55230961,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.9188007,
+                "numerator": 9188007,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.9222313333333333,
+                "numerator": 1383347,
+                "denominator": 1500000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0011694166666666667,
+            "numerator": 14033,
+            "denominator": 12000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0011884333333333334,
+                "numerator": 35653,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0011504,
+                "numerator": 719,
+                "denominator": 625000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 1.8217829668333334,
+            "numerator": 10930697801,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.8251696583333332,
+                "numerator": 219020359,
+                "denominator": 120000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.8183962753333334,
+                "numerator": 2727594413,
+                "denominator": 1500000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.7671577,
+            "numerator": 7671577,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.770829,
+                "numerator": 770829,
+                "denominator": 1000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.7634864,
+                "numerator": 477179,
+                "denominator": 625000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.7622177,
+            "numerator": 7622177,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.7642766666666667,
+                "numerator": 229283,
+                "denominator": 300000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.7601587333333333,
+                "numerator": 11402381,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.00254145,
+            "numerator": 50829,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.004079566666666667,
+                "numerator": 122387,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0010033333333333333,
+                "numerator": 301,
+                "denominator": 300000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1284-1180-0018",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 3.1914299071666665,
+            "numerator": 19148579443,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 3.219167416,
+                "numerator": 402395927,
+                "denominator": 125000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 3.163692398333333,
+                "numerator": 1898215439,
+                "denominator": 600000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.5300199,
+            "numerator": 15300199,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.5125287,
+                "numerator": 15125287,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.5475111,
+                "numerator": 15475111,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.5154616833333334,
+            "numerator": 90927701,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.5070541,
+                "numerator": 15070541,
+                "denominator": 10000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.5238692666666667,
+                "numerator": 22858039,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.010896283333333333,
+            "numerator": 653777,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0017979333333333334,
+                "numerator": 26969,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.019994633333333334,
+                "numerator": 599839,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 3.2166210061666667,
+            "numerator": 19299726037,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 3.224611116,
+                "numerator": 806152779,
+                "denominator": 250000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 3.208630896333333,
+                "numerator": 9625892689,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.5513203666666666,
+            "numerator": 46539611,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.5456148,
+                "numerator": 3864037,
+                "denominator": 2500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.5570259333333334,
+                "numerator": 23355389,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.16968921666666667,
+            "numerator": 10181353,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.15848893333333333,
+                "numerator": 1188667,
+                "denominator": 7500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.1808895,
+                "numerator": 361779,
+                "denominator": 2000000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.3760508,
+            "numerator": 3440127,
+            "denominator": 2500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.3812497,
+                "numerator": 13812497,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.3708519,
+                "numerator": 13708519,
+                "denominator": 10000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0018260166666666667,
+            "numerator": 109561,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0018815666666666666,
+                "numerator": 56447,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0017704666666666666,
+                "numerator": 26557,
+                "denominator": 15000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1320-122612-0001",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 2.3109753748333333,
+            "numerator": 13865852249,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 2.3202083536666667,
+                "numerator": 6960625061,
+                "denominator": 3000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 2.301742396,
+                "numerator": 575435599,
+                "denominator": 250000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.05114005,
+            "numerator": 21022801,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.0568255333333334,
+                "numerator": 15852383,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.0454545666666666,
+                "numerator": 31363637,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.0470263166666667,
+            "numerator": 62821579,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.0526535666666668,
+                "numerator": 31579607,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.0413990666666666,
+                "numerator": 7810493,
+                "denominator": 7500000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.00128615,
+            "numerator": 25723,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0013035333333333333,
+                "numerator": 19553,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0012687666666666667,
+                "numerator": 38063,
+                "denominator": 30000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 2.1633742661666666,
+            "numerator": 12980245597,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 2.164070647,
+                "numerator": 2164070647,
+                "denominator": 1000000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 2.1626778853333333,
+                "numerator": 811004207,
+                "denominator": 375000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 0.8922718,
+            "numerator": 4461359,
+            "denominator": 5000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.8939481,
+                "numerator": 8939481,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.8905955,
+                "numerator": 1781191,
+                "denominator": 2000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 0.8882116166666667,
+            "numerator": 53292697,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.8896028333333333,
+                "numerator": 5337617,
+                "denominator": 6000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.8868204,
+                "numerator": 2217051,
+                "denominator": 2500000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0012284166666666667,
+            "numerator": 14741,
+            "denominator": 12000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.001317,
+                "numerator": 1317,
+                "denominator": 1000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0011398333333333334,
+                "numerator": 6839,
+                "denominator": 6000000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "1320-122612-0000",
+        "corpus": false,
+        "selected": {
+          "encoder": {
+            "seconds": 3.521934097,
+            "numerator": 3521934097,
+            "denominator": 1000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 3.480726119333333,
+                "numerator": 5221089179,
+                "denominator": 1500000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 3.5631420746666667,
+                "numerator": 668089139,
+                "denominator": 187500000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.6760558833333334,
+            "numerator": 100563353,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.6733143333333333,
+                "numerator": 5019943,
+                "denominator": 3000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.6787974333333333,
+                "numerator": 50363923,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.6697174666666668,
+            "numerator": 12522881,
+            "denominator": 7500000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 1.6669055333333334,
+                "numerator": 25003583,
+                "denominator": 15000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 1.6725294,
+                "numerator": 8362647,
+                "denominator": 5000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0020605333333333334,
+            "numerator": 7727,
+            "denominator": 3750000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0021111666666666666,
+                "numerator": 12667,
+                "denominator": 6000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0020099,
+                "numerator": 20099,
+                "denominator": 10000000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 3.5458474121666668,
+            "numerator": 21275084473,
+            "denominator": 6000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 3.5595354323333335,
+                "numerator": 10678606297,
+                "denominator": 3000000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 3.532159392,
+                "numerator": 110379981,
+                "denominator": 31250000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 1.6835593333333334,
+            "numerator": 2525339,
+            "denominator": 1500000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.6851476666666667,
+                "numerator": 5055443,
+                "denominator": 3000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.681971,
+                "numerator": 1681971,
+                "denominator": 1000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.15616003333333334,
+            "numerator": 4684801,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.1575387,
+                "numerator": 1575387,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.15478136666666667,
+                "numerator": 4643441,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 1.52105745,
+            "numerator": 30421149,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.5209917333333334,
+                "numerator": 5703719,
+                "denominator": 3750000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.5211231666666667,
+                "numerator": 9126739,
+                "denominator": 6000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.0019851,
+            "numerator": 19851,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.0020485333333333335,
+                "numerator": 3841,
+                "denominator": 1875000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.0019216666666666666,
+                "numerator": 1153,
+                "denominator": 600000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "complete-corpus",
+        "corpus": true,
+        "selected": {
+          "encoder": {
+            "seconds": 54.810584857,
+            "numerator": 54810584857,
+            "denominator": 1000000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 54.767447933,
+                "numerator": 54767447933,
+                "denominator": 1000000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 54.853721781,
+                "numerator": 54853721781,
+                "denominator": 1000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 25.4098713,
+            "numerator": 254098713,
+            "denominator": 10000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 25.420440133333333,
+                "numerator": 190653301,
+                "denominator": 7500000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 25.399302466666665,
+                "numerator": 380989537,
+                "denominator": 15000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 0.0,
+            "numerator": 0,
+            "denominator": 1,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              }
+            ]
+          },
+          "math": {
+            "seconds": 25.282996583333333,
+            "numerator": 303395959,
+            "denominator": 12000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 25.288322,
+                "numerator": 12644161,
+                "denominator": 500000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 25.277671166666668,
+                "numerator": 151666027,
+                "denominator": 6000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.05950918333333333,
+            "numerator": 3570551,
+            "denominator": 60000000,
+            "processes": [
+              {
+                "job": "selected-512-a",
+                "seconds": 0.06371876666666666,
+                "numerator": 1911563,
+                "denominator": 30000000
+              },
+              {
+                "job": "selected-512-b",
+                "seconds": 0.0552996,
+                "numerator": 138249,
+                "denominator": 2500000
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "encoder": {
+            "seconds": 53.2746129735,
+            "numerator": 106549225947,
+            "denominator": 2000000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 53.45600362733333,
+                "numerator": 80184005441,
+                "denominator": 1500000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 53.093222319666665,
+                "numerator": 159279666959,
+                "denominator": 3000000000
+              }
+            ]
+          },
+          "feed_forward": {
+            "seconds": 23.55498385,
+            "numerator": 471099677,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 23.686407666666668,
+                "numerator": 71059223,
+                "denominator": 3000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 23.423560033333334,
+                "numerator": 702706801,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "copy_y": {
+            "seconds": 1.25200365,
+            "numerator": 25040073,
+            "denominator": 20000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 1.3870909,
+                "numerator": 13870909,
+                "denominator": 10000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 1.1169164,
+                "numerator": 2792291,
+                "denominator": 2500000
+              }
+            ]
+          },
+          "math": {
+            "seconds": 22.204410733333333,
+            "numerator": 333066161,
+            "denominator": 15000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 22.198614233333334,
+                "numerator": 665958427,
+                "denominator": 30000000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 22.210207233333332,
+                "numerator": 666306217,
+                "denominator": 30000000
+              }
+            ]
+          },
+          "scales": {
+            "seconds": 0.032105433333333336,
+            "numerator": 963163,
+            "denominator": 30000000,
+            "processes": [
+              {
+                "job": "candidate-512-a",
+                "seconds": 0.033652133333333334,
+                "numerator": 252391,
+                "denominator": 7500000
+              },
+              {
+                "job": "candidate-512-b",
+                "seconds": 0.030558733333333334,
+                "numerator": 458381,
+                "denominator": 15000000
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "application_scored": false,
+    "release_admitted": false,
+    "overhead_subtracted": false,
+    "policy": "Four fresh normal-mode processes; one warmup and three measured complete encoder passes. Corpus max/min <=1.10 and each clip <=1.20. No trimming or unchanged retry."
+  },
+  "partitions": [
+    {
+      "reconstructs": false,
+      "clips": 13,
+      "names": [
+        "121-121726-0000",
+        "121-123852-0000",
+        "237-126133-0002",
+        "672-122797-0000",
+        "672-122797-0001",
+        "908-157963-0005",
+        "908-157963-0000",
+        "1089-134686-0011",
+        "1188-133604-0001",
+        "1188-133604-0002",
+        "1221-135766-0000",
+        "1284-1180-0000",
+        "1320-122612-0001"
+      ],
+      "selected": {
+        "encoder": {
+          "seconds": 35.733187025166664,
+          "numerator": 214399122151,
+          "denominator": 6000000000
+        },
+        "feed_forward": {
+          "seconds": 16.236329333333334,
+          "numerator": 12177247,
+          "denominator": 750000
+        },
+        "copy_y": {
+          "seconds": 0.0,
+          "numerator": 0,
+          "denominator": 1
+        },
+        "math": {
+          "seconds": 16.152319533333333,
+          "numerator": 242284793,
+          "denominator": 15000000
+        },
+        "scales": {
+          "seconds": 0.03950803333333333,
+          "numerator": 1185241,
+          "denominator": 30000000
+        }
+      },
+      "candidate": {
+        "encoder": {
+          "seconds": 34.043130064,
+          "numerator": 2127695629,
+          "denominator": 62500000
+        },
+        "feed_forward": {
+          "seconds": 14.169470166666667,
+          "numerator": 85016821,
+          "denominator": 6000000
+        },
+        "copy_y": {
+          "seconds": 0.0,
+          "numerator": 0,
+          "denominator": 1
+        },
+        "math": {
+          "seconds": 14.104768466666666,
+          "numerator": 211571527,
+          "denominator": 15000000
+        },
+        "scales": {
+          "seconds": 0.0214574,
+          "numerator": 107287,
+          "denominator": 5000000
+        }
+      }
+    },
+    {
+      "reconstructs": true,
+      "clips": 7,
+      "names": [
+        "237-126133-0000",
+        "260-123286-0000",
+        "260-123288-0005",
+        "1089-134686-0002",
+        "1221-135766-0002",
+        "1284-1180-0018",
+        "1320-122612-0000"
+      ],
+      "selected": {
+        "encoder": {
+          "seconds": 19.077397831833334,
+          "numerator": 114464386991,
+          "denominator": 6000000000
+        },
+        "feed_forward": {
+          "seconds": 9.173541966666667,
+          "numerator": 275206259,
+          "denominator": 30000000
+        },
+        "copy_y": {
+          "seconds": 0.0,
+          "numerator": 0,
+          "denominator": 1
+        },
+        "math": {
+          "seconds": 9.13067705,
+          "numerator": 182613541,
+          "denominator": 20000000
+        },
+        "scales": {
+          "seconds": 0.02000115,
+          "numerator": 400023,
+          "denominator": 20000000
+        }
+      },
+      "candidate": {
+        "encoder": {
+          "seconds": 19.2314829095,
+          "numerator": 38462965819,
+          "denominator": 2000000000
+        },
+        "feed_forward": {
+          "seconds": 9.385513683333333,
+          "numerator": 563130821,
+          "denominator": 60000000
+        },
+        "copy_y": {
+          "seconds": 1.25200365,
+          "numerator": 25040073,
+          "denominator": 20000000
+        },
+        "math": {
+          "seconds": 8.099642266666667,
+          "numerator": 60747317,
+          "denominator": 7500000
+        },
+        "scales": {
+          "seconds": 0.010648033333333333,
+          "numerator": 319441,
+          "denominator": 30000000
+        }
+      }
+    }
+  ],
+  "source_evidence": {
+    "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+    "ort_path": "onnxruntime/core/mlas/lib/sgemm.cpp",
+    "ort_source": {
+      "bytes": 43141,
+      "sha256": "1554aa0b046c3c02734613ef8ab1105bd55449f7d76116d342d17e1c630cb523"
+    },
+    "ort_assembly_path": "onnxruntime/core/mlas/lib/x86_64/FgemmKernelAvx512FCommon.h",
+    "ort_assembly": {
+      "bytes": 21458,
+      "sha256": "087c70e4469e2cb4c02d4dd3253c5c577825f85f32ef6e251cc686a41e7a413a"
+    },
+    "managed_source": {
+      "path": "artifacts/parakeet-owned-packed-weight-scope-source-20260925/source/src/Lokad.Onnx/TensorOps.OwnedPackedMatMul.cs",
+      "bytes": 4155,
+      "sha256": "df9ca9ea399a5a15b94362d69ff77d44b8b662937bf4b4902755439ad41edda4"
+    },
+    "every_native_row_leaf_directly_observed": false
+  },
+  "resources": [
+    {
+      "name": "selected-512-a",
+      "samples": 453,
+      "seconds": 228.82012273394503,
+      "peak_rss": 7614996480
+    },
+    {
+      "name": "candidate-512-a",
+      "samples": 440,
+      "seconds": 222.62858770997263,
+      "peak_rss": 9928531968
+    },
+    {
+      "name": "candidate-512-b",
+      "samples": 439,
+      "seconds": 222.3458351760637,
+      "peak_rss": 9910996992
+    },
+    {
+      "name": "selected-512-b",
+      "samples": 452,
+      "seconds": 229.21236650901847,
+      "peak_rss": 7783559168
+    }
+  ],
+  "application_admitted": false,
+  "release_admitted": false,
+  "new_variant_selected": false,
+  "prior_failed_application_gate": "corpus-at-least-three-percent-gain",
+  "failed_release_controls": [
+    [
+      "e5-8tok",
+      "candidate"
+    ],
+    [
+      "e5-512tok",
+      "candidate"
+    ]
+  ],
+  "publisher": {
+    "bytes": 10611,
+    "sha256": "7ce2d0d18e17518d5af0f6041c03e4f727023d039967f2f18e6256566e1fcc53"
+  }
+}
