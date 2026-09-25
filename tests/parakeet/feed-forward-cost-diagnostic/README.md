@@ -2,8 +2,11 @@
 
 This diagnostic addresses one unresolved question from
 [the retained feed-forward review](../slice-dense-conversion-results/feed-forward-review-20260925.md).
-It selects no optimization, changes no product source and starts no VM workload.
-The current slice-conversion release qualification keeps the VM until completion.
+It selects no optimization and changes no product source. The slice-conversion
+graph campaign is terminal: numerical and regression checks pass, but two e5
+repeatability controls fail. That release remains unadmitted. This isolated
+diagnostic uses its exact compiled and Parakeet-qualified candidate; it neither
+waives those controls nor requires promoting the candidate first.
 
 `source.py` generates isolated copies of four Core files, a diagnostic-only stage
 vocabulary, a complete patch and a reversible source review. Run from the root:
@@ -37,7 +40,7 @@ node sums and complete graph calls. It must not subtract estimated overhead or
 discard unclassified time. All 48 scalar multiplications corresponding to ORT's
 fused scale remain part of their complete projection groups.
 
-Before capture, compile on the AMD VM after release qualification, verify the
+Before capture, compile on the now-idle AMD VM, verify the
 exact allowed method changes and unchanged arithmetic leaves, and reuse the
 original complete twenty-clip public/native checks. Compare three fresh
 processes: original Core with graph clocks, original Core with existing stage
@@ -65,8 +68,13 @@ of this diagnostic.
 
 The bounded transport (`run.py`), VM worker (`vm.py`), compiled build review
 (`review_build.py`, `build_checks.py`) and capture audit (`audit.py`, `analyze.py`)
-are drafted. Preparation requires the completed and committed M73 root
-qualification. No diagnostic campaign has been prepared or staged.
+are drafted. `isolated_baseline.py` requires the exact candidate source, compiled
+review, both tensor suites, full Parakeet/native/public checks, Parakeet
+application admission, shared/Pyannote correctness and the retained failed graph
+verdict. It verifies all 428 source inputs and reconstructs the inspected
+candidate method inventory from existing bodies plus the sole reviewed override.
+It does not rebuild or invent a baseline body. The selected release's unchanged
+697 Data methods remain the Data baseline. No diagnostic campaign is prepared yet.
 
 The build review requires all 3,254 original Core methods: 3,245 unchanged, seven
 wrappers equivalent after removing only profiler markers, and two explicitly
@@ -106,8 +114,10 @@ all 240 requests, all failed controls and the uncorrected timings. A failed
 control sets `usable_for_candidate_selection` to false; successful collection
 and complete accounting alone do not make the split suitable for a decision.
 
-After the ongoing release checks finish and the qualified product is committed,
-run `run.py prepare`, `stage`, `launch build`, `observe build`, `collect build`,
+Run `isolated_baseline.py` to verify the prerequisites, then
+`run.py prepare`, `stage`, `launch build`, `observe build`, `collect build`,
 then `review_build.py`. Only a passing compiled review permits `launch capture`.
 Observe until terminal, collect once and run `audit.py` once, with stdout outside
 the artifact directory. Keep the first verdict and all failed controls.
+Release qualification, root integration and BENCHMARK promotion remain separate
+and require resolving the e5 controls, then the remaining original release gates.

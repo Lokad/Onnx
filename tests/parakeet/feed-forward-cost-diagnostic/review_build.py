@@ -5,7 +5,7 @@ import json
 import re
 
 from build_checks import inventory
-from run import BASE, ROOT, ROOT_QUAL, PRELUDE, pin, read, write, ssh, prerequisites
+from run import BASE, ROOT, RELEASE, PRELUDE, pin, read, write, ssh, prerequisites
 
 JOBS = ['sdk-version', 'core-restore', 'core-build', 'data-restore', 'data-build', 'inventory']
 
@@ -23,7 +23,7 @@ def warnings(folder, job):
 
 
 def main():
-    prerequisites()
+    _, _, _, _, isolated = prerequisites()
     assert not (BASE / 'build-review.json').exists(), 'Preserve the original build verdict'
     folder = BASE / 'build-collected'
     spec = read(BASE / 'bundle/spec.json')
@@ -73,9 +73,10 @@ def main():
     certificate = read(ROOT / 'tests/parakeet/slice-dense-conversion-results/observer-20260925.json')
     original_observer = ROOT / 'artifacts/parakeet-managed-phase-amd-20260924/build-collected/inventory/instructions.json'
     assert pin(original_observer) == certificate['original_inventory']
-    baseline = ROOT_QUAL / 'collected/inventory/instructions.json'
-    il = inventory(read(folder / 'inventory/instructions.json'), read(baseline), read(original_observer), spec['product'], built)
-    baseline_warnings = warnings(ROOT_QUAL / 'collected', 'cli-build')
+    assert spec['isolated_evidence'] == isolated['evidence'] and not spec['release_admitted'] and spec['diagnostic_only']
+    assert read(folder / 'evidence/isolated-baseline.json') == {k:v for k,v in isolated.items() if k != 'inventory'}
+    il = inventory(read(folder / 'inventory/instructions.json'), isolated['inventory'], read(original_observer), spec['product'], built)
+    baseline_warnings = warnings(RELEASE / 'collected', 'cli-build')
     assert sum(baseline_warnings.values()) == 4 and len(baseline_warnings) == 2
     assert warnings(folder, 'core-build') == baseline_warnings
     assert not warnings(folder, 'data-build')
@@ -83,9 +84,10 @@ def main():
         assert not warnings(folder, job)
     result = dict(passed=True, arithmetic_equivalent=True, source_changes_exact=True,
         built=pin(folder / 'built.json'), inventory=pin(folder / 'inventory/instructions.json'),
-        baseline_inventory=pin(baseline), original_observer_inventory=pin(original_observer),
+        isolated_evidence=isolated['evidence'], original_observer_inventory=pin(original_observer),
         spec=pin(BASE / 'bundle/spec.json'), collection=pin(folder / 'build-collection.json'),
-        root_release=spec['root_closure'], methods=il, resources=resources,
+        selected_release=spec['selected_release_closure'], release_admitted=False, diagnostic_only=True,
+        methods=il, resources=resources,
         warnings=dict(baseline_warnings), consumer_rebuilt=False, reviewer=pin(__file__))
     write(BASE / 'build-review.json', result)
     encoded = base64.b64encode((BASE / 'build-review.json').read_bytes()).decode()

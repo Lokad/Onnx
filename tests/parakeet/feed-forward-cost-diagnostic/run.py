@@ -1,4 +1,4 @@
-"""Freeze and run the one cost diagnostic only after the full release qualifies."""
+"""Freeze one diagnostic on the isolated candidate; do not promote the release."""
 import ast
 import importlib.util
 import json
@@ -6,13 +6,12 @@ from pathlib import Path
 import subprocess
 import sys
 import tarfile
+from isolated_baseline import qualify, source_path, RELEASE
 
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = Path(__file__).resolve().parent
 BASE = ROOT / 'artifacts/parakeet-feed-forward-cost-amd-20260925'
 REMOTE = '/dev/shm/lokad-parakeet-feed-forward-cost-20260925'
-ROOT_QUAL = ROOT / 'artifacts/parakeet-slice-dense-conversion-root-amd-20260925'
-APPLIED = ROOT / 'artifacts/parakeet-slice-dense-conversion-root-integration-20260925'
 CORE_SOURCE = ROOT / 'artifacts/parakeet-feed-forward-cost-source-20260925'
 DATA_SOURCE = ROOT / 'artifacts/parakeet-feed-forward-cost-observer-source-20260925'
 MODELS = ROOT / 'artifacts/parakeet-slice-dense-conversion-models-amd-20260925'
@@ -33,23 +32,9 @@ transport.BASE, transport.REMOTE, transport.PRELUDE = BASE, REMOTE, PRELUDE
 
 
 def prerequisites():
-    proof = read(ROOT_QUAL / 'closed.json')
-    assert proof['passed'] and proof['analysis'] == pin(ROOT_QUAL / 'analysis.json')
-    for name, wanted in proof['files'].items():
-        assert pin(ROOT_QUAL / name) == wanted, name
-    qualified = read(ROOT_QUAL / 'analysis.json')
-    assert qualified['passed'] and qualified['root_source_verified']
-    assert qualified['inventory']['core_methods'] == 3254 and qualified['inventory']['data_methods'] == 697
-    assert qualified['suites']['tensors']['passed'] == qualified['suite256']['tensors']['passed'] == 394
-    applied = read(APPLIED / 'applied.json')
-    assert applied['passed'] and qualified['root_integration'] == pin(APPLIED / 'applied.json')
-    assert len(applied['source_files']) == 428
-    for name, wanted in applied['source_files'].items():
-        assert pin(ROOT / name) == wanted, name
-    assert not subprocess.check_output(['git', 'diff', 'HEAD', '--name-only', '--', *applied['changed']],
-                                       cwd=ROOT, text=True).strip(), 'Commit the qualified product first'
-    measured = read(MODELS / 'analysis.json')['identities']['candidate']
-    assert qualified['measured'] == measured
+    isolated = qualify()
+    candidate = dict(source_files=isolated['source_files'])
+    measured = isolated['product']
     assert measured['Lokad.Onnx.dll']['sha256'] == '49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8'
     assert measured['Lokad.Onnx.Data.dll']['sha256'] == 'a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1'
     core = read(CORE_SOURCE / 'review.json')
@@ -66,12 +51,12 @@ def prerequisites():
     assert pin(DATA_SOURCE / 'ParakeetTranscriber.cs') == observer['diagnostic_transcriber']
     assert pin(DATA_SOURCE / 'PhaseProbe.cs') == pin(TOOLS / 'PhaseProbe.cs.txt') == observer['observer']
     assert pin(OBSERVER / 'build-collected/runtime-observed/SampledAudio.dll') == observer['consumer']
-    return applied, measured, core, observer
+    return candidate, measured, core, observer, isolated
 
 
 def prepare():
     assert all((TOOLS / name).is_file() for name in ['audit.py', 'analyze.py']), 'Finish the capture audit before freezing tools'
-    applied, product, core, observer = prerequisites()
+    candidate, product, core, observer, isolated = prerequisites()
     from reference import references
     reference = references()
     assert not BASE.exists(), 'Preserve the prepared diagnostic'
@@ -88,15 +73,16 @@ def prepare():
         with path.open('xb') as stream:
             stream.write(content if isinstance(content, bytes) else content.encode())
 
-    for name in applied['source_files']:
-        source = ROOT / name
+    for name in candidate['source_files']:
+        source = source_path(name)
+        assert pin(source) == candidate['source_files'][name]
         if name.startswith('src/Lokad.Onnx/') and Path(name).name in core['files']:
             source = CORE_SOURCE / Path(name).name
         put('core-source/' + name, source.read_bytes())
     put('core-source/src/Lokad.Onnx/FeedForwardCostStages.cs', (CORE_SOURCE / 'FeedForwardCostStages.cs').read_bytes())
     for path in sorted((ROOT / 'src/Lokad.Onnx.Data').glob('*.cs')):
         source = DATA_SOURCE / path.name if path.name == 'ParakeetTranscriber.cs' else path
-        assert path.relative_to(ROOT).as_posix() in applied['source_files']
+        assert pin(path) == candidate['source_files'][path.relative_to(ROOT).as_posix()]
         put('data-source/' + path.name, source.read_bytes())
     put('data-source/PhaseProbe.cs', (DATA_SOURCE / 'PhaseProbe.cs').read_bytes())
     refs = ['Lokad.Onnx', 'Google.Protobuf', 'FastBertTokenizer', 'Lokad.Tokenizers', 'SixLabors.ImageSharp']
@@ -104,7 +90,7 @@ def prepare():
     put('data-source/ObserverData.csproj', '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><LangVersion>11.0</LangVersion><AssemblyName>Lokad.Onnx.Data</AssemblyName></PropertyGroup><ItemGroup>' + references + '</ItemGroup></Project>')
     put('data-source/global.json', (ROOT / 'global.json').read_bytes())
     for name in ['Bridge.dll', 'Bridge.deps.json', 'Bridge.runtimeconfig.json']:
-        assert pin(ROOT_QUAL / 'bundle/bridge' / name) == pin(BRIDGE / name)
+        assert pin(RELEASE / 'bundle/bridge' / name) == pin(BRIDGE / name)
         put('bridge/' + name, (BRIDGE / name).read_bytes())
     put('common.py', COMMON.read_bytes())
     put('remote.py', (TOOLS / 'vm.py').read_bytes())
@@ -112,9 +98,10 @@ def prepare():
         put(name, (TOOLS / name).read_bytes())
     for name, path in [('core-source-review.json', CORE_SOURCE / 'review.json'),
                        ('observer-source-review.json', DATA_SOURCE / 'review.json'),
-                       ('root-closure.json', ROOT_QUAL / 'closed.json'),
-                       ('root-analysis.json', ROOT_QUAL / 'analysis.json')]:
+                       ('selected-release-closure.json', RELEASE / 'closed.json'),
+                       ('selected-release-analysis.json', RELEASE / 'analysis.json')]:
         put('evidence/' + name, path.read_bytes())
+    put('evidence/isolated-baseline.json', json.dumps({k:v for k,v in isolated.items() if k != 'inventory'}, separators=(',', ':'), allow_nan=False))
     put('evidence/cost-reference.json', json.dumps(reference, separators=(',', ':'), allow_nan=False))
     runtime_files = {}
     external = {}
@@ -139,7 +126,8 @@ def prepare():
         diagnostic_references=reference['inputs'],
         consumer_runtime=REMOTE_OBSERVER + '/runtime-observed',
         product_runtime=REMOTE_MODELS + '/runtimes/candidate', original_runtime_files=runtime_files,
-        root_closure=pin(ROOT_QUAL / 'closed.json'), root_source=applied['source_files'],
+        selected_release_closure=pin(RELEASE / 'closed.json'), candidate_source=candidate['source_files'],
+        isolated_evidence=isolated['evidence'], release_admitted=False, diagnostic_only=True,
         app=REMOTE_APP, manifest=MANIFEST,
         feed='/dev/shm/lokad-pyannote-blocked-spatial-app-20260922/nuget-feed',
         build_limits=dict(available_before=2*1024**3, tmpfs_before=1024**3, rss=3*1024**3, seconds=180),
@@ -171,6 +159,8 @@ def prepared():
     for name, wanted in read(BASE / 'bundle/spec.json')['files'].items():
         assert pin(BASE / 'bundle' / name) == wanted, name
     for name, wanted in read(BASE / 'bundle/spec.json')['diagnostic_references'].items():
+        assert pin(ROOT / name) == wanted, name
+    for name, wanted in read(BASE / 'bundle/spec.json')['isolated_evidence'].items():
         assert pin(ROOT / name) == wanted, name
 
 

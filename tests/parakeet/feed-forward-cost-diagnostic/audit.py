@@ -17,7 +17,7 @@ def load(name, path):
 
 
 def main():
-    prerequisites()
+    _, _, _, _, isolated = prerequisites()
     assert not (BASE / 'closed.json').exists() and not (BASE / 'analysis.json').exists(), 'Retain the first verdict'
     folder = BASE / 'capture-collected'
     spec = read(BASE / 'bundle/spec.json')
@@ -31,6 +31,7 @@ def main():
     assert pin(folder / 'spec.json') == pin(BASE / 'bundle/spec.json')
     for name, wanted in spec['files'].items():
         assert pin(folder / name) == wanted, name
+    assert spec['isolated_evidence'] == isolated['evidence'] and not spec['release_admitted'] and spec['diagnostic_only']
     state = read(folder / 'capture-state.json')
     assert state['complete'] and state['code'] == 0 and receipt['state'] == pin(folder / 'capture-state.json')
     assert state['supervisor'] == read(BASE / 'capture-deployment.json')
@@ -100,6 +101,7 @@ def main():
     validity = controls(roles)
     groups = families(roles['markers'])
     analysis = dict(passed=True, diagnostic_only=True, no_application_score=True, new_candidate_selected=False,
+        release_admitted=False, isolated_evidence=isolated['evidence'], failed_release_controls=isolated['failed_release_controls'],
         overhead_subtracted=False, references=reference['inputs'],
         native_profile_is_earlier=True, native_packed_buffers_not_dumped=True,
         per_node_copy_bytes_are_retained_evidence=True, current_graph_counters_equal=True,

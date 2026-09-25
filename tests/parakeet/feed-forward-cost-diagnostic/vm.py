@@ -19,7 +19,8 @@ def build(state, env, spec):
     for name in ['tmp', 'cli-home', 'packages', 'http-cache', 'runtime-original', 'inventory']:
         (BASE / name).mkdir()
     # The old observer directory supplies the already qualified consumer and
-    # dependencies. Replace both products with the admitted measured release.
+    # dependencies. Replace both products with the qualified isolated candidate;
+    # its separate graph release admission remains failed and is not waived here.
     for original in Path(spec['consumer_runtime']).iterdir():
         if not original.is_file():
             continue
