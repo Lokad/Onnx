@@ -76,7 +76,8 @@ def main():
         managed_phases=managed['phases']['phase']['phase_seconds'],ort_phases=native['phases']['control']['corpus_phase_seconds'],
         managed_complete=managed['corpus'],phase_over_control=managed['phase_over_control'],wall_over_phase=managed['wall_over_phase'],
         profiler_clocks_are_diagnostic=True,native_profile_is_historical=True,
-        fresh_cross_engine_score=False,source_receipt=managed['source_receipt'])
+        fresh_cross_engine_score=False,source_receipt=managed['source_receipt'],
+        diagnostic_context=managed['diagnostic_context'])
     write(BASE/'comparison.json',comparison)
     out=ROOT/'tests/parakeet/packed-final-row-profile-results';out.mkdir(exist_ok=True)
     with (out/'projections-20260925.csv').open('x',newline='',encoding='utf8') as stream:

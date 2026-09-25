@@ -5,14 +5,24 @@ its files. The remaining adapter uses those exact 22 Data sources, the unchanged
 PhaseProbe and SampledAudio 38ab5c7e. Original M78 Core 49901366 and Data 01e9e784
 form the control. Only diagnostic Data and the inventory bridge are built.
 
-Preparation requires admitted M78 graphs, the direct release Parakeet comparison,
-Pyannote application/meetings and actual root/package qualification. It checks
-every closed input, consistent product identities and the 433 integrated source
-files. These prerequisites are currently pending; no profile VM work may overlap
-the active release campaign. Local preparation also freezes every adapter tool.
+M78's graph comparison is closed: all numerical and 24 repeatability checks pass,
+but 8-token e5 regresses 7.7654%, failing the 5% release limit. Preserve that
+verdict. This diagnosis profiles the isolated candidate; it cannot promote it or
+change BENCHMARK.md. Requiring release admission before diagnosing an isolated
+candidate would prevent useful Parakeet work for an unrelated e5 failure.
+
+Preparation requires the closed direct-release Parakeet comparison, the original
+admitted M78 application comparison, exact model/compiled qualification and the
+closed graph evidence, including its failed verdict. It checks every closed
+input, consistent product identities and all 433 isolated source files. Numerical
+checks must pass; any timing failures remain visible in diagnostic_context.
+Pyannote timing, root integration and release promotion remain pending separately.
+No profile VM work may overlap the active application campaign. Local preparation
+also freezes every adapter tool. The older README is frozen source-preparation
+evidence; this runbook describes the current campaign order.
 
 Use Python 3.13 -X utf8 -B from the repository root. Run unittest discovery and
-consumer_scope.py first. After release qualification, execute run.py prepare and
+consumer_scope.py first. After the direct comparison closes, execute run.py prepare and
 run.py stage once. Then run.py launch build, observe build while its owner is live,
 collect build after all exact PID/birth owners are terminal, and review_build.py.
 Keep review stdout outside the campaign directory. A timeout is not terminal.

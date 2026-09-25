@@ -116,7 +116,8 @@ def main():
         operators=[dict(graph=g,op=op,corpus_seconds=seconds) for (g,op),seconds in sorted(operators.items(),key=lambda p:-p[1])],
         original_request_checks=True,core_unchanged=True,consumer_unchanged=True,constructor_unchanged=True,
         complete_admitted_public_results_exact=True,source_receipt=spec['source_receipt'],
-        release_closures=spec['release_closures'],attribution_only=True,actual_kernel_dispatch_measured=False)
+        qualification_closures=spec['qualification_closures'],diagnostic_context=spec['diagnostic_context'],
+        attribution_only=True,actual_kernel_dispatch_measured=False)
     write(BASE/'analysis.json',analysis)
     write(BASE/'closed.json',dict(passed=True,analysis=pin(BASE/'analysis.json'),build_review=pin(BASE/'build-review.json'),
         transfer=pin(BASE/'capture-transfer.json'),collection=pin(folder/'capture-collection.json'),auditor=pin(__file__),

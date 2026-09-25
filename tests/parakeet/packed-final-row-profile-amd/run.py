@@ -38,8 +38,8 @@ def prepared():
 
 def stage():
     prepared()
-    from prepare import release_gates
-    release_gates()
+    from prepare import diagnostic_gates
+    diagnostic_gates()
     receipt=read(BASE/'prepared.json');assert not (BASE/'staged.json').exists()
     result=ssh(PRELUDE+'''
 assert not base.exists()
