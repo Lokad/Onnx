@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **49.27 GB**, including **35.77 GB** in artifacts.
+The latest inventory is **49.40 GB**, including **35.90 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -47,19 +47,31 @@ Only the checker and corrected test consumer were rebuilt; the candidate product
 was built once, and the successful ordinary suite was not repeated. Full-model
 qualification now passes all 3,136 arrays / 12,361,976 values and 80 public
 requests in both modes at closure5860fc36. All 1,504 resource samples and exact
-current-product comparisons pass. Matched profiling and application timing
-remain unstarted for this prototype.
-No VM workload is live.
+current-product comparisons pass. Matched positional profiling now passes at
+705fad80: the complete34-node group falls5.368752 to3.239678 seconds and all24
+projection kernels improve. All160 public requests and1029 resource samples
+pass. The successful control and immediate memory refusal remain; only the
+unstarted candidate ran after idle recovery. Both raw collections remain local.
+The fresh six-process application comparison is live under owner997213/birth
+1790294610.35. No application gain or new release is claimed yet.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
-All raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **49,268,586,068 bytes**, with
-**0.73 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m73-models-qualified-size.json`.
-Counting the model junction again gives 60.05 GB, which counts the same 10.79 GB
+All local raw traces, clocks, native arrays, failed checks and qualification evidence
+remain retained. The inventory totals **49,398,153,467 bytes**, with
+**0.60 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m73-app-started-size.json`.
+Counting the model junction again gives 60.18 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
+
+Before positional profiling and application staging, **160 VM phase-trace
+copies** and **80 VM projection-trace copies** were retired only after verifying
+their exact complete local originals, terminal process owners and all deployed
+payload/spec/stage dependencies. Physical VM recovery was **60.13 MB** and
+**48.74 MB**, respectively. No local trace or clock was removed. Receipts:
+`artifacts/parakeet-slice-dense-profile-trace-retention-20260925` and
+`artifacts/parakeet-slice-dense-app-trace-retention-20260925`.
 
 Before the full-model run, 2,900 verified links across 3,462 identical closed
 package-cache files recovered **276.84 MB** of VM tmpfs while preserving bytes,

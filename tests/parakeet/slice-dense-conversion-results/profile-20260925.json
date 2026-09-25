@@ -1,0 +1,688 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 1835,
+    "sha256": "705fad8054d2f8020e99e80b32dca43f8f8c6ab046a63780a65faa062a427990"
+  },
+  "analysis": {
+    "bytes": 4845783,
+    "sha256": "0cf983118ce8dd51eb4c9bd7c4cb23d435a16c035983b5e6c3d55c072d743b99"
+  },
+  "initial_failure": {
+    "collection": {
+      "bytes": 21408,
+      "sha256": "912627240975a81fe21fdc606f51868eaa144d7869285f44c9106bdacc0abcc3"
+    },
+    "transfer": {
+      "bytes": 277,
+      "sha256": "460aa0f36524b33f8d4ee1eea61e3e08629586e76aac4d7c477ee3e55cd3e676"
+    },
+    "archive": {
+      "bytes": 5253316,
+      "sha256": "e78fc95f345e31a18c733119401ee1bf71145d6fdd46396e416e185d48689469"
+    },
+    "state": {
+      "bytes": 53131,
+      "sha256": "442345ad66404516adfdaead403dd852dcf3e09207ee45754704ae251fb22971"
+    },
+    "spec": {
+      "bytes": 94163,
+      "sha256": "de1bebe058d8322561f8a6307d0eaf237b9f19d118b278b77adb74db13681c96"
+    },
+    "deployment": {
+      "bytes": 48,
+      "sha256": "51f4278004d715f860ffe59f35fdc7387c7f6aa2472a66b9bd15ed512ab74ad4"
+    },
+    "candidate_never_started": true,
+    "original_code": 1
+  },
+  "completed_control_repeated": false,
+  "prepared": {
+    "bytes": 1820,
+    "sha256": "259782c00ee43d4adf02bfb95da423ad4f6ffd7b01e3a94e429d5a30ebec3fc5"
+  },
+  "current": {
+    "bytes": 815104,
+    "sha256": "f95a13c58354bf07f3b7926b72903c18b1a560a56673297cb9fe001d3541b592"
+  },
+  "candidate": {
+    "bytes": 815104,
+    "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+  },
+  "observed_data": {
+    "bytes": 153600,
+    "sha256": "a2a0b4901ba8e4270b57e2b176d7a656e739886275ec66d0ca036807eea16e3e"
+  },
+  "consumer": {
+    "bytes": 50176,
+    "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+  },
+  "prospective_groups": {
+    "bytes": 53055,
+    "sha256": "c7740ffb18f61eaf830dc6c99ff3f56e06bec2b945c8e95164f26b65f3bc3edc"
+  },
+  "requests": 160,
+  "clips": 20,
+  "frames": [
+    51,
+    61,
+    83,
+    88,
+    89,
+    102,
+    106,
+    112,
+    114,
+    120,
+    151,
+    156,
+    157,
+    158,
+    167,
+    169,
+    190,
+    222,
+    225
+  ],
+  "positional": {
+    "passed": true,
+    "selected_seconds": 5.368751627,
+    "candidate_seconds": 3.2396780003333334,
+    "complete_group_gain": 0.3965677264635111,
+    "selected_kernel_seconds": 5.367938353333334,
+    "candidate_kernel_seconds": 3.238887148,
+    "improved_kernels": 24,
+    "kernels": 24,
+    "nodes": 34,
+    "shared_ancestors_counted_once": true,
+    "rows": [
+      {
+        "name": "/Constant",
+        "op": "Constant",
+        "inputs": [],
+        "outputs": [
+          "/Constant_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 3.7651e-05,
+        "candidate_seconds": 3.587533333333333e-05,
+        "gain": 0.04716120864430351,
+        "projection": false
+      },
+      {
+        "name": "/layers.0/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6412"
+        ],
+        "outputs": [
+          "/layers.0/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.230798047,
+        "candidate_seconds": 0.16279907633333332,
+        "gain": 0.29462541624828686,
+        "projection": true
+      },
+      {
+        "name": "/layers.1/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6522"
+        ],
+        "outputs": [
+          "/layers.1/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22384330233333333,
+        "candidate_seconds": 0.13449751,
+        "gain": 0.39914436305217305,
+        "projection": true
+      },
+      {
+        "name": "/layers.10/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6864"
+        ],
+        "outputs": [
+          "/layers.10/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.222718221,
+        "candidate_seconds": 0.13301489633333333,
+        "gain": 0.4027659895265896,
+        "projection": true
+      },
+      {
+        "name": "/layers.11/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6902"
+        ],
+        "outputs": [
+          "/layers.11/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.223594659,
+        "candidate_seconds": 0.13352216866666666,
+        "gain": 0.4028382911120133,
+        "projection": true
+      },
+      {
+        "name": "/layers.12/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6940"
+        ],
+        "outputs": [
+          "/layers.12/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22294781033333333,
+        "candidate_seconds": 0.13344364166666667,
+        "gain": 0.40145794001227175,
+        "projection": true
+      },
+      {
+        "name": "/layers.13/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6978"
+        ],
+        "outputs": [
+          "/layers.13/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22201608133333334,
+        "candidate_seconds": 0.133493516,
+        "gain": 0.39872141153787055,
+        "projection": true
+      },
+      {
+        "name": "/layers.14/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7016"
+        ],
+        "outputs": [
+          "/layers.14/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.222990542,
+        "candidate_seconds": 0.133978599,
+        "gain": 0.39917362504101184,
+        "projection": true
+      },
+      {
+        "name": "/layers.15/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7054"
+        ],
+        "outputs": [
+          "/layers.15/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22341900966666667,
+        "candidate_seconds": 0.132840257,
+        "gain": 0.40542097470491434,
+        "projection": true
+      },
+      {
+        "name": "/layers.16/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7092"
+        ],
+        "outputs": [
+          "/layers.16/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22461979066666668,
+        "candidate_seconds": 0.13338721633333334,
+        "gain": 0.4061644526626841,
+        "projection": true
+      },
+      {
+        "name": "/layers.17/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7130"
+        ],
+        "outputs": [
+          "/layers.17/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.222598755,
+        "candidate_seconds": 0.134532656,
+        "gain": 0.39562709593771095,
+        "projection": true
+      },
+      {
+        "name": "/layers.18/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7168"
+        ],
+        "outputs": [
+          "/layers.18/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22118310166666666,
+        "candidate_seconds": 0.13341380766666666,
+        "gain": 0.39681735782995053,
+        "projection": true
+      },
+      {
+        "name": "/layers.19/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7206"
+        ],
+        "outputs": [
+          "/layers.19/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.222015234,
+        "candidate_seconds": 0.13513224933333334,
+        "gain": 0.3913379415516445,
+        "projection": true
+      },
+      {
+        "name": "/layers.2/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6560"
+        ],
+        "outputs": [
+          "/layers.2/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22371899633333334,
+        "candidate_seconds": 0.13455096266666666,
+        "gain": 0.3985715792046979,
+        "projection": true
+      },
+      {
+        "name": "/layers.20/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7244"
+        ],
+        "outputs": [
+          "/layers.20/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22282844266666665,
+        "candidate_seconds": 0.13401811666666666,
+        "gain": 0.398559200688994,
+        "projection": true
+      },
+      {
+        "name": "/layers.21/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7282"
+        ],
+        "outputs": [
+          "/layers.21/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22159819166666667,
+        "candidate_seconds": 0.13330092866666668,
+        "gain": 0.398456604433031,
+        "projection": true
+      },
+      {
+        "name": "/layers.22/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7320"
+        ],
+        "outputs": [
+          "/layers.22/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22224392733333334,
+        "candidate_seconds": 0.13308962933333332,
+        "gain": 0.4011551589721578,
+        "projection": true
+      },
+      {
+        "name": "/layers.23/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_7358"
+        ],
+        "outputs": [
+          "/layers.23/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22202066566666667,
+        "candidate_seconds": 0.133746778,
+        "gain": 0.39759311324288027,
+        "projection": true
+      },
+      {
+        "name": "/layers.3/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6598"
+        ],
+        "outputs": [
+          "/layers.3/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.222955796,
+        "candidate_seconds": 0.13484094866666665,
+        "gain": 0.39521218516935686,
+        "projection": true
+      },
+      {
+        "name": "/layers.4/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6636"
+        ],
+        "outputs": [
+          "/layers.4/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22455820833333334,
+        "candidate_seconds": 0.13527340633333335,
+        "gain": 0.3976020411931056,
+        "projection": true
+      },
+      {
+        "name": "/layers.5/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6674"
+        ],
+        "outputs": [
+          "/layers.5/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.234659482,
+        "candidate_seconds": 0.13403502466666667,
+        "gain": 0.4288105320770006,
+        "projection": true
+      },
+      {
+        "name": "/layers.6/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6712"
+        ],
+        "outputs": [
+          "/layers.6/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22286615233333334,
+        "candidate_seconds": 0.133152616,
+        "gain": 0.4025444662370796,
+        "projection": true
+      },
+      {
+        "name": "/layers.7/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6750"
+        ],
+        "outputs": [
+          "/layers.7/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.221892458,
+        "candidate_seconds": 0.13241566233333332,
+        "gain": 0.40324396995352885,
+        "projection": true
+      },
+      {
+        "name": "/layers.8/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6788"
+        ],
+        "outputs": [
+          "/layers.8/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22317728366666667,
+        "candidate_seconds": 0.13381614433333333,
+        "gain": 0.4004042788996457,
+        "projection": true
+      },
+      {
+        "name": "/layers.9/self_attn/linear_pos/MatMul",
+        "op": "MatMul",
+        "inputs": [
+          "/pos_enc/Slice_output_0",
+          "onnx::MatMul_6826"
+        ],
+        "outputs": [
+          "/layers.9/self_attn/linear_pos/MatMul_output_0"
+        ],
+        "members": 1,
+        "selected_seconds": 0.22267419533333332,
+        "candidate_seconds": 0.132591336,
+        "gain": 0.4045500611262266,
+        "projection": true
+      },
+      {
+        "name": "/pos_enc/Add",
+        "op": "Add",
+        "inputs": [
+          "/pos_enc/Constant_output_0",
+          "/Gather_output_0"
+        ],
+        "outputs": [
+          "/pos_enc/Add_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 5.176033333333333e-05,
+        "candidate_seconds": 4.549166666666666e-05,
+        "gain": 0.12110947250468507,
+        "projection": false
+      },
+      {
+        "name": "/pos_enc/Constant",
+        "op": "Constant",
+        "inputs": [],
+        "outputs": [
+          "/pos_enc/Constant_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 1.0611333333333333e-05,
+        "candidate_seconds": 8.992666666666666e-06,
+        "gain": 0.15254130803543386,
+        "projection": false
+      },
+      {
+        "name": "/pos_enc/Slice",
+        "op": "Slice",
+        "inputs": [
+          "onnx::Slice_780",
+          "/pos_enc/Unsqueeze_output_0",
+          "/pos_enc/Unsqueeze_1_output_0",
+          "/pre_encode/Constant_9_output_0",
+          "/pre_encode/Constant_9_output_0"
+        ],
+        "outputs": [
+          "/pos_enc/Slice_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 0.00035532066666666665,
+        "candidate_seconds": 0.00035853766666666667,
+        "gain": -0.009053793662438414,
+        "projection": false
+      },
+      {
+        "name": "/pos_enc/Sub",
+        "op": "Sub",
+        "inputs": [
+          "/pos_enc/Constant_output_0",
+          "/Gather_output_0"
+        ],
+        "outputs": [
+          "/pos_enc/Sub_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 0.00010699666666666667,
+        "candidate_seconds": 9.518833333333333e-05,
+        "gain": 0.11036169351070135,
+        "projection": false
+      },
+      {
+        "name": "/pos_enc/Sub_1",
+        "op": "Sub",
+        "inputs": [
+          "/pos_enc/Add_output_0",
+          "/Constant_output_0"
+        ],
+        "outputs": [
+          "/pos_enc/Sub_1_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 1.9992333333333332e-05,
+        "candidate_seconds": 1.4919333333333333e-05,
+        "gain": 0.25374726978675155,
+        "projection": false
+      },
+      {
+        "name": "/pos_enc/Unsqueeze",
+        "op": "Unsqueeze",
+        "inputs": [
+          "/pos_enc/Sub_output_0",
+          "onnx::Unsqueeze_759"
+        ],
+        "outputs": [
+          "/pos_enc/Unsqueeze_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 0.000163736,
+        "candidate_seconds": 0.000161818,
+        "gain": 0.011713978599697139,
+        "projection": false
+      },
+      {
+        "name": "/pos_enc/Unsqueeze_1",
+        "op": "Unsqueeze",
+        "inputs": [
+          "/pos_enc/Sub_1_output_0",
+          "onnx::Unsqueeze_759"
+        ],
+        "outputs": [
+          "/pos_enc/Unsqueeze_1_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 3.0455333333333333e-05,
+        "candidate_seconds": 3.063866666666667e-05,
+        "gain": -0.006019744762822077,
+        "projection": false
+      },
+      {
+        "name": "/pre_encode/Constant_9",
+        "op": "Constant",
+        "inputs": [],
+        "outputs": [
+          "/pre_encode/Constant_9_output_0"
+        ],
+        "members": 24,
+        "selected_seconds": 2.0399e-05,
+        "candidate_seconds": 2.4644666666666668e-05,
+        "gain": -0.2081311175384415,
+        "projection": false
+      },
+      {
+        "name": "Constant_1704",
+        "op": "Constant",
+        "inputs": [],
+        "outputs": [
+          "onnx::Unsqueeze_759"
+        ],
+        "members": 24,
+        "selected_seconds": 1.6351e-05,
+        "candidate_seconds": 1.4746e-05,
+        "gain": 0.09815913399792053,
+        "projection": false
+      }
+    ]
+  },
+  "phases": {
+    "selected": {
+      "corpus_seconds": 64.308828321,
+      "phase_seconds": {
+        "frontend": 0.6813435976666666,
+        "encoder": 58.01773764133333,
+        "decoder": 5.4746271963333335
+      },
+      "remainder_seconds": 0.13511988566666666,
+      "call_counts": {
+        "frontend": 60,
+        "encoder": 60,
+        "decoder": 3600
+      }
+    },
+    "candidate": {
+      "corpus_seconds": 61.38292706,
+      "phase_seconds": {
+        "frontend": 0.610752755,
+        "encoder": 55.113405363,
+        "decoder": 5.502294771666667
+      },
+      "remainder_seconds": 0.15647417033333333,
+      "call_counts": {
+        "frontend": 60,
+        "encoder": 60,
+        "decoder": 3600
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "control",
+      "samples": 527,
+      "peak_rss": 7747584000,
+      "seconds": 265.9476407789625
+    },
+    {
+      "name": "wall",
+      "samples": 502,
+      "peak_rss": 7540187136,
+      "seconds": 253.3880959720118
+    }
+  ],
+  "all_node_rows_retained": 2919,
+  "observer_overhead_included": true,
+  "application_speedup_claimed": false,
+  "release_unchanged": true,
+  "publisher": {
+    "bytes": 5070,
+    "sha256": "2afed4b03efef8b5db1b1e905691628e2f10485b3d931297f4d4766bbfc41955"
+  }
+}
