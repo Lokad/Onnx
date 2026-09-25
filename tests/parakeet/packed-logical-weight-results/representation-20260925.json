@@ -1,0 +1,1004 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "application_saving_measured": false,
+  "closure": {
+    "bytes": 25865,
+    "sha256": "021b990189a2162d9b0b2db991d789434dba177c333b4fa5b97526661e9f8e89"
+  },
+  "build_review": {
+    "bytes": 1644,
+    "sha256": "5dd6dc772852143695dbc558abed611e99775db806cc384d29638d6a33d027de"
+  },
+  "analysis": {
+    "passed": true,
+    "representation_passed": true,
+    "diagnostic_only": true,
+    "release_admitted": false,
+    "no_product_change": true,
+    "no_application_score": true,
+    "no_model_execution": true,
+    "failures": [],
+    "cases": 48,
+    "modes": {
+      "native": {
+        "completed": true,
+        "passed": true,
+        "failed": 0,
+        "mode": "native",
+        "cases": [
+          {
+            "id": "layout-7-33",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "elements": 231,
+              "source_sha256": "4046c44c0d062a147d9d049464ba0e6bee1a33abe24174d47e018e519b146322",
+              "packed_sha256": "f8ccb1f80ebb58ddc63b4191833b7e32ce7a417a40a9f0c33811675609f1ad1b",
+              "views": true,
+              "bit_exact": true,
+              "independent_copies": true,
+              "DenseMaterializations": 3,
+              "DenseBytes": 2772
+            }
+          },
+          {
+            "id": "layout-8-64",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "elements": 512,
+              "source_sha256": "1870a3b29c2e303321b3a79c32d2d61e5d38d9ae46cb1ac8dbd3bf06c7589bfb",
+              "packed_sha256": "817489dab5057e94f8fe7fa69af28f3698bf1f2181fc282ae6573df12ff6c24a",
+              "views": true,
+              "bit_exact": true,
+              "independent_copies": true,
+              "DenseMaterializations": 3,
+              "DenseBytes": 6144
+            }
+          },
+          {
+            "id": "layout-1024-4096",
+            "passed": true,
+            "evidence": {
+              "n": 1024,
+              "k": 4096,
+              "elements": 4194304,
+              "source_sha256": "2fcf67845fa6f2386dc4d8fddea9b9be99d68f6d809f9be3d802b14457de391a",
+              "packed_sha256": "0a5c81fa8118c8b5766833cfb8c4e3d015a3d3c56e9a2af37f132e4f93a7fdc2",
+              "views": false,
+              "bit_exact": true,
+              "independent_copies": true,
+              "DenseMaterializations": 3,
+              "DenseBytes": 50331648
+            }
+          },
+          {
+            "id": "layout-4096-1024",
+            "passed": true,
+            "evidence": {
+              "n": 4096,
+              "k": 1024,
+              "elements": 4194304,
+              "source_sha256": "2fcf67845fa6f2386dc4d8fddea9b9be99d68f6d809f9be3d802b14457de391a",
+              "packed_sha256": "66136026439709aed8efc84e3b9acf8f752046858f1eea55d1df3d67639ae2aa",
+              "views": false,
+              "bit_exact": true,
+              "independent_copies": true,
+              "DenseMaterializations": 3,
+              "DenseBytes": 50331648
+            }
+          },
+          {
+            "id": "bounds",
+            "passed": true,
+            "evidence": {
+              "checks": 8,
+              "raw_storage_not_exposed": true
+            }
+          },
+          {
+            "id": "packed-1024-4096-167",
+            "passed": true,
+            "evidence": {
+              "n": 1024,
+              "k": 4096,
+              "m": 167,
+              "rows": 166,
+              "bit_exact": true,
+              "output_sha256": "7b25a45e19821080dbf2765aac3fa721c4e4718cf87887eed6b29191bd85fc00",
+              "multiply": "ShortWideMultiply2Rows",
+              "remainder": true,
+              "packed_reconstruction_bytes": 16777216,
+              "fallback_reconstruction_bytes": 16777216,
+              "source_sha256": "071690e035cfff4c9159d00d43a78b86d914f320c70b141f43c4d3e5591ef1f3",
+              "packed_sha256": "f64cd31cc2a5abb6cd4c39e9885693edfb88791ce2d44d485d5823d3148aa26a"
+            }
+          },
+          {
+            "id": "packed-1024-4096-225",
+            "passed": true,
+            "evidence": {
+              "n": 1024,
+              "k": 4096,
+              "m": 225,
+              "rows": 225,
+              "bit_exact": true,
+              "output_sha256": "a869f674a668031956815deb730fa0cdf51bd22425c5392328f659bd0d4a48a4",
+              "multiply": "ShortWideMultiply3Rows",
+              "remainder": false,
+              "packed_reconstruction_bytes": 0,
+              "fallback_reconstruction_bytes": 16777216,
+              "source_sha256": "071690e035cfff4c9159d00d43a78b86d914f320c70b141f43c4d3e5591ef1f3",
+              "packed_sha256": "f64cd31cc2a5abb6cd4c39e9885693edfb88791ce2d44d485d5823d3148aa26a"
+            }
+          },
+          {
+            "id": "ownership-1024-4096",
+            "passed": true,
+            "evidence": {
+              "n": 1024,
+              "k": 4096,
+              "source_alive": false,
+              "temporary_alive": false,
+              "retained_payload_bytes": 16777216,
+              "source_sha256": "2fcf67845fa6f2386dc4d8fddea9b9be99d68f6d809f9be3d802b14457de391a",
+              "packed_sha256": "0a5c81fa8118c8b5766833cfb8c4e3d015a3d3c56e9a2af37f132e4f93a7fdc2",
+              "forced_gc_unscored": true,
+              "no_dense_cache": true
+            }
+          },
+          {
+            "id": "packed-4096-1024-167",
+            "passed": true,
+            "evidence": {
+              "n": 4096,
+              "k": 1024,
+              "m": 167,
+              "rows": 166,
+              "bit_exact": true,
+              "output_sha256": "5b7f8c8d8bc5294a34dcdd5061f22ff0ed4077a7884871c0d080198668ac0b05",
+              "multiply": "ShortWideMultiply2Rows",
+              "remainder": true,
+              "packed_reconstruction_bytes": 16777216,
+              "fallback_reconstruction_bytes": 16777216,
+              "source_sha256": "071690e035cfff4c9159d00d43a78b86d914f320c70b141f43c4d3e5591ef1f3",
+              "packed_sha256": "95c3d18200bd87927fec68ce8005e8ff554a2442b5aa8c3837f0cf4992aeb00f"
+            }
+          },
+          {
+            "id": "packed-4096-1024-225",
+            "passed": true,
+            "evidence": {
+              "n": 4096,
+              "k": 1024,
+              "m": 225,
+              "rows": 225,
+              "bit_exact": true,
+              "output_sha256": "a734d304ae29f77d1495bf52f2fe4ab9e576eb7bea5aeffa6a3786b34a1a13f7",
+              "multiply": "ShortWideMultiply3Rows",
+              "remainder": false,
+              "packed_reconstruction_bytes": 0,
+              "fallback_reconstruction_bytes": 16777216,
+              "source_sha256": "071690e035cfff4c9159d00d43a78b86d914f320c70b141f43c4d3e5591ef1f3",
+              "packed_sha256": "95c3d18200bd87927fec68ce8005e8ff554a2442b5aa8c3837f0cf4992aeb00f"
+            }
+          },
+          {
+            "id": "ownership-4096-1024",
+            "passed": true,
+            "evidence": {
+              "n": 4096,
+              "k": 1024,
+              "source_alive": false,
+              "temporary_alive": false,
+              "retained_payload_bytes": 16777216,
+              "source_sha256": "2fcf67845fa6f2386dc4d8fddea9b9be99d68f6d809f9be3d802b14457de391a",
+              "packed_sha256": "66136026439709aed8efc84e3b9acf8f752046858f1eea55d1df3d67639ae2aa",
+              "forced_gc_unscored": true,
+              "no_dense_cache": true
+            }
+          },
+          {
+            "id": "fallback-7-33-1-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 1,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "a03e4d2287565ec382d0ca355d25fb025db76ca8ca9bea75342cc9b3ee9a3e61",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-1-simd",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 1,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "a03e4d2287565ec382d0ca355d25fb025db76ca8ca9bea75342cc9b3ee9a3e61",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-1-intrinsics",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 1,
+              "mode": "intrinsics",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "b70b8759d44008d1b838c4b41015eb0bc7076f5a058a49b14e5eba81b63a0ec1",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-2-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 2,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "5befd207d4366f7090ebdafd365d6de504b9908910aa2cf820a3385b841aba92",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-2-simd",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 2,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "5befd207d4366f7090ebdafd365d6de504b9908910aa2cf820a3385b841aba92",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-2-intrinsics",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 2,
+              "mode": "intrinsics",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "d601feecc6287656379856bf627dfaee5d5caa4e34882212d3311649254f062a",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-3-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 3,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "b07d7c9fd72961edf5ac5c177659b3d6d5af22961bcade0bfe1c73b0fc6942a3",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-3-simd",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 3,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "b07d7c9fd72961edf5ac5c177659b3d6d5af22961bcade0bfe1c73b0fc6942a3",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-3-intrinsics",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 3,
+              "mode": "intrinsics",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "eb902140b61a4d36f0e869f7314d73bf870c97e8505052f61cadf3add57ccbf7",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-8-64-1-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 1,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "6e256d4b4f4ec81809ae63f4533ebbeea511b4f49682c4b8d69cbe2fffea9562",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-1-simd",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 1,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "6e256d4b4f4ec81809ae63f4533ebbeea511b4f49682c4b8d69cbe2fffea9562",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-1-intrinsics",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 1,
+              "mode": "intrinsics",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "71268b9c6645bf8d122e28b52cc2322714aa0fa5d3b49e6b34aac8838d132da6",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-2-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 2,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "dfd06997424f12f976fc59cb819a4de3dad56e28faaca7d19bb2981552f2a578",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-2-simd",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 2,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "dfd06997424f12f976fc59cb819a4de3dad56e28faaca7d19bb2981552f2a578",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-2-intrinsics",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 2,
+              "mode": "intrinsics",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "49a62a1d84014eb2f1281346a2fec47b4bb2c75aab21ffee24940f098bee2d2f",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-3-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 3,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "491938968f148d34b3674fb14d67ebf41f8c9736ee15b4adeba65e827121adca",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-3-simd",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 3,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "491938968f148d34b3674fb14d67ebf41f8c9736ee15b4adeba65e827121adca",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-3-intrinsics",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 3,
+              "mode": "intrinsics",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "0e8ad6eb3c402c6f4b9f43cd40f2f5a895d5f7747c60b8f55e040b4873c8ed6c",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          }
+        ],
+        "runtime": ".NET 10.0.8",
+        "affinity": 4,
+        "processor_count": 1,
+        "flags": {},
+        "fma": true,
+        "avx2": true,
+        "avx512": true,
+        "kernels": [
+          {
+            "name": "ShortWidePackPanelsB",
+            "token": 100664714,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          },
+          {
+            "name": "ShortWideMultiply2Rows",
+            "token": 100664715,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          },
+          {
+            "name": "ShortWideMultiply3Rows",
+            "token": 100664716,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          },
+          {
+            "name": "ShortWideMultiplyRemainder",
+            "token": 100664717,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          }
+        ],
+        "core_sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8",
+        "runner_sha256": "451d1934055698fd08040aa4adeb41b8a892dbf7a0c6ddb2e0c9f7d5b1e9cda4",
+        "spec_sha256": "02acbcf38a99731695690539568e057c818872f73c31a9d587269322f322823e",
+        "diagnostic_only": true,
+        "no_model_execution": true,
+        "no_application_score": true,
+        "no_product_change": true
+      },
+      "hardware-disabled": {
+        "completed": true,
+        "passed": true,
+        "failed": 0,
+        "mode": "hardware-disabled",
+        "cases": [
+          {
+            "id": "fallback-7-33-1-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 1,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "a03e4d2287565ec382d0ca355d25fb025db76ca8ca9bea75342cc9b3ee9a3e61",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-1-simd",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 1,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "a03e4d2287565ec382d0ca355d25fb025db76ca8ca9bea75342cc9b3ee9a3e61",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-1-auto",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 1,
+              "mode": "auto",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "a03e4d2287565ec382d0ca355d25fb025db76ca8ca9bea75342cc9b3ee9a3e61",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-2-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 2,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "5befd207d4366f7090ebdafd365d6de504b9908910aa2cf820a3385b841aba92",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-2-simd",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 2,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "5befd207d4366f7090ebdafd365d6de504b9908910aa2cf820a3385b841aba92",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-2-auto",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 2,
+              "mode": "auto",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "5befd207d4366f7090ebdafd365d6de504b9908910aa2cf820a3385b841aba92",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-3-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 3,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "b07d7c9fd72961edf5ac5c177659b3d6d5af22961bcade0bfe1c73b0fc6942a3",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-3-simd",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 3,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "b07d7c9fd72961edf5ac5c177659b3d6d5af22961bcade0bfe1c73b0fc6942a3",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-7-33-3-auto",
+            "passed": true,
+            "evidence": {
+              "n": 7,
+              "k": 33,
+              "m": 3,
+              "mode": "auto",
+              "bit_exact": true,
+              "source_sha256": "1d8739a17f67300a1cc9b5c86fe636707fb78fbd54216a55dae9020791217c09",
+              "packed_sha256": "66d9bfb77aea4d612ac6cd62b32466d489521146a09537b88b4daae7e69021c1",
+              "output_sha256": "b07d7c9fd72961edf5ac5c177659b3d6d5af22961bcade0bfe1c73b0fc6942a3",
+              "DenseMaterializations": 1,
+              "DenseBytes": 924,
+              "copy_bytes": 924
+            }
+          },
+          {
+            "id": "fallback-8-64-1-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 1,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "6e256d4b4f4ec81809ae63f4533ebbeea511b4f49682c4b8d69cbe2fffea9562",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-1-simd",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 1,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "6e256d4b4f4ec81809ae63f4533ebbeea511b4f49682c4b8d69cbe2fffea9562",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-1-auto",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 1,
+              "mode": "auto",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "6e256d4b4f4ec81809ae63f4533ebbeea511b4f49682c4b8d69cbe2fffea9562",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-2-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 2,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "dfd06997424f12f976fc59cb819a4de3dad56e28faaca7d19bb2981552f2a578",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-2-simd",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 2,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "dfd06997424f12f976fc59cb819a4de3dad56e28faaca7d19bb2981552f2a578",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-2-auto",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 2,
+              "mode": "auto",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "dfd06997424f12f976fc59cb819a4de3dad56e28faaca7d19bb2981552f2a578",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-3-scalar",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 3,
+              "mode": "scalar",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "491938968f148d34b3674fb14d67ebf41f8c9736ee15b4adeba65e827121adca",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-3-simd",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 3,
+              "mode": "simd",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "491938968f148d34b3674fb14d67ebf41f8c9736ee15b4adeba65e827121adca",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "fallback-8-64-3-auto",
+            "passed": true,
+            "evidence": {
+              "n": 8,
+              "k": 64,
+              "m": 3,
+              "mode": "auto",
+              "bit_exact": true,
+              "source_sha256": "ba4c75d2149dc82431c6d74cba361094eb3339d231fc04c7593d742169ab6a6e",
+              "packed_sha256": "6f3e436cf6d24d7b24deeca9d1916f231ddc343fe286bbbc97e3417bf1586a4d",
+              "output_sha256": "491938968f148d34b3674fb14d67ebf41f8c9736ee15b4adeba65e827121adca",
+              "DenseMaterializations": 1,
+              "DenseBytes": 2048,
+              "copy_bytes": 2048
+            }
+          },
+          {
+            "id": "explicit-intrinsics-unavailable",
+            "passed": true,
+            "evidence": {
+              "rejected": true
+            }
+          }
+        ],
+        "runtime": ".NET 10.0.8",
+        "affinity": 4,
+        "processor_count": 1,
+        "flags": {
+          "DOTNET_EnableHWIntrinsic": "0"
+        },
+        "fma": false,
+        "avx2": false,
+        "avx512": false,
+        "kernels": [
+          {
+            "name": "ShortWidePackPanelsB",
+            "token": 100664714,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          },
+          {
+            "name": "ShortWideMultiply2Rows",
+            "token": 100664715,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          },
+          {
+            "name": "ShortWideMultiply3Rows",
+            "token": 100664716,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          },
+          {
+            "name": "ShortWideMultiplyRemainder",
+            "token": 100664717,
+            "module": "616b1a49-dd0b-4d40-b7eb-d79e07b058d5",
+            "assembly": "Lokad.Onnx"
+          }
+        ],
+        "core_sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8",
+        "runner_sha256": "451d1934055698fd08040aa4adeb41b8a892dbf7a0c6ddb2e0c9f7d5b1e9cda4",
+        "spec_sha256": "02acbcf38a99731695690539568e057c818872f73c31a9d587269322f322823e",
+        "diagnostic_only": true,
+        "no_model_execution": true,
+        "no_application_score": true,
+        "no_product_change": true
+      }
+    },
+    "resources": [
+      {
+        "name": "native",
+        "samples": 2,
+        "seconds": 1.010554051026702,
+        "peak_rss": 434663424
+      },
+      {
+        "name": "hardware-disabled",
+        "samples": 1,
+        "seconds": 0.5071632729377598,
+        "peak_rss": 10199040
+      }
+    ],
+    "existing_odd_remainder_requires_full_reconstruction": true,
+    "graph_dispatch_alias_and_invalidation_not_tested": true,
+    "product": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    },
+    "failed_release_controls": [
+      [
+        "e5-8tok",
+        "candidate"
+      ],
+      [
+        "e5-512tok",
+        "candidate"
+      ]
+    ],
+    "ownership_closure": {
+      "bytes": 17247,
+      "sha256": "abe97a41fbb60648a6ee55968cd5e36c861ac908603336bd2f465379cbb1f3cd"
+    }
+  },
+  "original_build_rejected_for_warning": {
+    "before": "Require(OperatingSystem.IsLinux() && RuntimeInformation.FrameworkDescription == \".NET 10.0.8\", \"Runtime\");",
+    "after": "if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException(\"Linux required.\");\n            Require(RuntimeInformation.FrameworkDescription == \".NET 10.0.8\", \"Runtime\");",
+    "reason": "Original build succeeds with CA1416; zero-warning admission fails before capture.",
+    "original_preparation": {
+      "bytes": 1833,
+      "sha256": "7ce49a4af3c7ac18e0cdbf7af392c34899cd3290811c532978227d33bcae336b"
+    },
+    "original_collection": {
+      "bytes": 4095,
+      "sha256": "edc4d78492b1b6c9a576c0fd7e3711855724d82c52f5cff7866dfc96010b4af4"
+    },
+    "original_transfer": {
+      "bytes": 276,
+      "sha256": "61da2bd8f6f643e87ed929ea28c83b38570d2b74bfc623583abb275bf085be46"
+    },
+    "original_state": {
+      "bytes": 2832,
+      "sha256": "683df5c52e70db5403986153dffec26fe9122e92ed827c984e9d3f73a002e72e"
+    },
+    "original_source": {
+      "bytes": 17732,
+      "sha256": "5139a519135b7b0abbe4fe3b789a1875aad9843a703c803bcbfbc2013d378139"
+    },
+    "corrected_source": {
+      "bytes": 17807,
+      "sha256": "b6525762db29e20bed0e0300e65c86a3bbd4f169cea24e5f6ddf842435efa8c7"
+    },
+    "original_build_output": {
+      "bytes": 1008,
+      "sha256": "8cb1ed13baf1ca56ad0e8dd43ff27b56ee70d76fbbcdb5186249f8e70cd1c0be"
+    }
+  },
+  "representation_source": {
+    "bytes": 4491,
+    "sha256": "4d361abc587c8c4f75724e76b07dd2847f34247e5010453d0af1fb6b0165456e"
+  },
+  "consumer_source": {
+    "bytes": 17807,
+    "sha256": "b6525762db29e20bed0e0300e65c86a3bbd4f169cea24e5f6ddf842435efa8c7"
+  },
+  "next_step": "Integrate this representation in one isolated private-encoder candidate, preserving existing kernel selection, alias protection, logical fallbacks and default graph behavior.",
+  "publisher": {
+    "bytes": 2895,
+    "sha256": "46b8df99984e633fc500536c0661b55ef206f54f5887cad7a7318b46fea9b94e"
+  }
+}
