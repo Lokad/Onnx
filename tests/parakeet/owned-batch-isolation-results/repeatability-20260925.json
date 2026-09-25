@@ -1,0 +1,1710 @@
+{
+  "closure": {
+    "bytes": 142259,
+    "sha256": "def19d3f178cbb318bc11999b6e23dd18db40772d78949707155cf1f4c791638"
+  },
+  "sources": {
+    "analysis.json": {
+      "bytes": 67571,
+      "sha256": "89dfe89e5864005abafedb38330c1f88b207241437beccfc84c54028c06304ee"
+    },
+    "payload.json": {
+      "bytes": 4699801,
+      "sha256": "50f78de2172f7841174f24edb5fb0d8ef23cd96696d6293d31af7ec1ea5c73ff"
+    },
+    "collected/identity.json": {
+      "bytes": 86739,
+      "sha256": "1dd51ef2b456fe1ba641f7f29c5d431f4d676a28152de4a625e5fdb99733047e"
+    },
+    "collected/timing-e5-8tok-current-a/output/result.json": {
+      "bytes": 86487,
+      "sha256": "7613eead2b8763cd20cf509e10ce0c12e9d7224fe99bee2c930911284b573256"
+    },
+    "collected/timing-e5-8tok-candidate-a/output/result.json": {
+      "bytes": 86477,
+      "sha256": "a9f5fab6323f714d14da5f33925ed00d82e1b4d6ede03e43e2400d1c13d1edc4"
+    },
+    "collected/timing-e5-8tok-ort-a/output/result.json": {
+      "bytes": 85837,
+      "sha256": "1260c46aa1682fcaeea2ef30b37ab2d59afaa8f442ae06b71414e3178cff016d"
+    },
+    "collected/timing-e5-8tok-ort-b/output/result.json": {
+      "bytes": 85837,
+      "sha256": "b5ff756928c6d6cda0f39d68db096af0c7203165f9f2e888a305f80c572e68d4"
+    },
+    "collected/timing-e5-8tok-candidate-b/output/result.json": {
+      "bytes": 86501,
+      "sha256": "7a5cbfab700c5984fb8f3a5c15996a28f513b1b8beea173d1b844ca4a4eb1481"
+    },
+    "collected/timing-e5-8tok-current-b/output/result.json": {
+      "bytes": 86491,
+      "sha256": "10fac74a679dcfaa77837879f450f8192fce7be414b6026e61c5261c851f1f55"
+    }
+  },
+  "failed_controls": [
+    {
+      "key": "e5-8tok",
+      "role": "candidate",
+      "ratio": 1.141205794448349,
+      "passed": false
+    }
+  ],
+  "original_case": {
+    "key": "e5-8tok",
+    "means": {
+      "current-a": 0.011536482022222223,
+      "candidate-a": 0.010549126544444445,
+      "ort-a": 0.005986424494444444,
+      "ort-b": 0.005956301411111111,
+      "candidate-b": 0.012038724338888888,
+      "current-b": 0.011117255616666667
+    },
+    "current": 0.011326868819444445,
+    "candidate": 0.011293925441666667,
+    "ort": 0.005971362952777778,
+    "ratio": 1.8913480106602667,
+    "current_over_ort": 1.896864904883294,
+    "candidate_over_current": 0.9970915724104419,
+    "regression_passed": true,
+    "controls": [
+      {
+        "role": "current",
+        "ratio": 1.0377095229264193,
+        "passed": true
+      },
+      {
+        "role": "candidate",
+        "ratio": 1.141205794448349,
+        "passed": false
+      },
+      {
+        "role": "ort",
+        "ratio": 1.005057347043778,
+        "passed": true
+      }
+    ],
+    "qualified": false
+  },
+  "processes": [
+    {
+      "role": "current-a",
+      "pid": 1080723,
+      "birth": 1790362826.21,
+      "warmup_seconds": 6.92427692,
+      "measured_seconds": 2.076566764,
+      "measured_mean_seconds": 0.011536482022222223,
+      "worker_seconds": 9.826754124020226
+    },
+    {
+      "role": "candidate-a",
+      "pid": 1080736,
+      "birth": 1790362868.71,
+      "warmup_seconds": 7.036933298,
+      "measured_seconds": 1.898842778,
+      "measured_mean_seconds": 0.010549126544444445,
+      "worker_seconds": 9.833067503059283
+    },
+    {
+      "role": "ort-a",
+      "pid": 1080752,
+      "birth": 1790362911.22,
+      "warmup_seconds": 3.57080331,
+      "measured_seconds": 1.077556409,
+      "measured_mean_seconds": 0.005986424494444444,
+      "worker_seconds": 5.179557287949137
+    },
+    {
+      "role": "ort-b",
+      "pid": 1080756,
+      "birth": 1790362929.07,
+      "warmup_seconds": 3.590987579,
+      "measured_seconds": 1.072134254,
+      "measured_mean_seconds": 0.005956301411111111,
+      "worker_seconds": 5.1869580909842625
+    },
+    {
+      "role": "candidate-b",
+      "pid": 1080761,
+      "birth": 1790362946.93,
+      "warmup_seconds": 7.199215469,
+      "measured_seconds": 2.166970381,
+      "measured_mean_seconds": 0.012038724338888888,
+      "worker_seconds": 10.368008918943815
+    },
+    {
+      "role": "current-b",
+      "pid": 1080773,
+      "birth": 1790362989.97,
+      "warmup_seconds": 6.917296519,
+      "measured_seconds": 2.001106011,
+      "measured_mean_seconds": 0.011117255616666667,
+      "worker_seconds": 9.850324438069947
+    }
+  ],
+  "blocks": [
+    {
+      "role": "current-a",
+      "start": 0,
+      "end": 29,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 14.420508,
+      "numerator": 3605127,
+      "denominator": 250000000
+    },
+    {
+      "role": "current-a",
+      "start": 30,
+      "end": 59,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.494883933333334,
+      "numerator": 142423259,
+      "denominator": 15000000000
+    },
+    {
+      "role": "current-a",
+      "start": 60,
+      "end": 89,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.548677166666666,
+      "numerator": 57292063,
+      "denominator": 6000000000
+    },
+    {
+      "role": "current-a",
+      "start": 90,
+      "end": 119,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.423251066666667,
+      "numerator": 70674383,
+      "denominator": 7500000000
+    },
+    {
+      "role": "current-a",
+      "start": 120,
+      "end": 149,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.3004568,
+      "numerator": 12875571,
+      "denominator": 1250000000
+    },
+    {
+      "role": "current-a",
+      "start": 150,
+      "end": 179,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.2499136,
+      "numerator": 1601549,
+      "denominator": 156250000
+    },
+    {
+      "role": "current-a",
+      "start": 180,
+      "end": 209,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.3202603,
+      "numerator": 103202603,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-a",
+      "start": 210,
+      "end": 239,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.356651066666666,
+      "numerator": 92674883,
+      "denominator": 7500000000
+    },
+    {
+      "role": "current-a",
+      "start": 240,
+      "end": 269,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.238139866666666,
+      "numerator": 91786049,
+      "denominator": 7500000000
+    },
+    {
+      "role": "current-a",
+      "start": 270,
+      "end": 299,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.1890712,
+      "numerator": 15236339,
+      "denominator": 1250000000
+    },
+    {
+      "role": "current-a",
+      "start": 300,
+      "end": 329,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.4393974,
+      "numerator": 62196987,
+      "denominator": 5000000000
+    },
+    {
+      "role": "current-a",
+      "start": 330,
+      "end": 359,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.1544368,
+      "numerator": 7596523,
+      "denominator": 625000000
+    },
+    {
+      "role": "current-a",
+      "start": 360,
+      "end": 389,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.3482781,
+      "numerator": 123482781,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-a",
+      "start": 390,
+      "end": 419,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.2069053,
+      "numerator": 122069053,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-a",
+      "start": 420,
+      "end": 449,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.250520833333333,
+      "numerator": 23521,
+      "denominator": 1920000
+    },
+    {
+      "role": "current-a",
+      "start": 450,
+      "end": 479,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 14.574671733333334,
+      "numerator": 54655019,
+      "denominator": 3750000000
+    },
+    {
+      "role": "current-a",
+      "start": 480,
+      "end": 509,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.626847,
+      "numerator": 11626847,
+      "denominator": 1000000000
+    },
+    {
+      "role": "current-a",
+      "start": 510,
+      "end": 539,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.905045633333334,
+      "numerator": 327151369,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-a",
+      "start": 540,
+      "end": 569,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.869783433333334,
+      "numerator": 326093503,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-a",
+      "start": 570,
+      "end": 599,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.891531433333334,
+      "numerator": 326745943,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-a",
+      "start": 600,
+      "end": 629,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.8684134,
+      "numerator": 54342067,
+      "denominator": 5000000000
+    },
+    {
+      "role": "current-a",
+      "start": 630,
+      "end": 659,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.8840316,
+      "numerator": 27210079,
+      "denominator": 2500000000
+    },
+    {
+      "role": "current-a",
+      "start": 660,
+      "end": 689,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 11.624742866666667,
+      "numerator": 174371143,
+      "denominator": 15000000000
+    },
+    {
+      "role": "current-a",
+      "start": 690,
+      "end": 719,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.8116482,
+      "numerator": 54058241,
+      "denominator": 5000000000
+    },
+    {
+      "role": "current-a",
+      "start": 720,
+      "end": 749,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.815994833333333,
+      "numerator": 64895969,
+      "denominator": 6000000000
+    },
+    {
+      "role": "current-a",
+      "start": 750,
+      "end": 779,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 14.214061233333334,
+      "numerator": 426421837,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 0,
+      "end": 29,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 14.7597264,
+      "numerator": 9224829,
+      "denominator": 625000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 30,
+      "end": 59,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.6670689,
+      "numerator": 96670689,
+      "denominator": 10000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 60,
+      "end": 89,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.718822233333333,
+      "numerator": 291564667,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 90,
+      "end": 119,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.840755066666667,
+      "numerator": 73805663,
+      "denominator": 7500000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 120,
+      "end": 149,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.3810094,
+      "numerator": 61905047,
+      "denominator": 5000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 150,
+      "end": 179,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.714893766666666,
+      "numerator": 351446813,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 180,
+      "end": 209,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.432736533333333,
+      "numerator": 23311381,
+      "denominator": 1875000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 210,
+      "end": 239,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.226813733333334,
+      "numerator": 91701103,
+      "denominator": 7500000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 240,
+      "end": 269,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.113756966666667,
+      "numerator": 363412709,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 270,
+      "end": 299,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.3742672,
+      "numerator": 7733917,
+      "denominator": 625000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 300,
+      "end": 329,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.107745833333333,
+      "numerator": 2905859,
+      "denominator": 240000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 330,
+      "end": 359,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.142878133333333,
+      "numerator": 45535793,
+      "denominator": 3750000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 360,
+      "end": 389,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.514658133333333,
+      "numerator": 2933123,
+      "denominator": 234375000
+    },
+    {
+      "role": "candidate-a",
+      "start": 390,
+      "end": 419,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.409525433333334,
+      "numerator": 372285763,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 420,
+      "end": 449,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.364078133333333,
+      "numerator": 46365293,
+      "denominator": 3750000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 450,
+      "end": 479,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 14.977741766666666,
+      "numerator": 449332253,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 480,
+      "end": 509,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.255081033333333,
+      "numerator": 307652431,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 510,
+      "end": 539,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.2837441,
+      "numerator": 102837441,
+      "denominator": 10000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 540,
+      "end": 569,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.146958266666667,
+      "numerator": 76102187,
+      "denominator": 7500000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 570,
+      "end": 599,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.132182233333333,
+      "numerator": 303965467,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 600,
+      "end": 629,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.216553866666667,
+      "numerator": 38312077,
+      "denominator": 3750000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 630,
+      "end": 659,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.092289933333333,
+      "numerator": 151384349,
+      "denominator": 15000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 660,
+      "end": 689,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.929196766666667,
+      "numerator": 327875903,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 690,
+      "end": 719,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.1049078,
+      "numerator": 50524539,
+      "denominator": 5000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 720,
+      "end": 749,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.158974433333332,
+      "numerator": 304769233,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-a",
+      "start": 750,
+      "end": 779,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 11.792836466666667,
+      "numerator": 176892547,
+      "denominator": 15000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 0,
+      "end": 29,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9049993,
+      "numerator": 59049993,
+      "denominator": 10000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 30,
+      "end": 59,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9343002,
+      "numerator": 29671501,
+      "denominator": 5000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 60,
+      "end": 89,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9550252,
+      "numerator": 14887563,
+      "denominator": 2500000000
+    },
+    {
+      "role": "ort-a",
+      "start": 90,
+      "end": 119,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9196282,
+      "numerator": 29598141,
+      "denominator": 5000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 120,
+      "end": 149,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.919921566666667,
+      "numerator": 177597647,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 150,
+      "end": 179,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9714651,
+      "numerator": 59714651,
+      "denominator": 10000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 180,
+      "end": 209,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.913167,
+      "numerator": 5913167,
+      "denominator": 1000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 210,
+      "end": 239,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.914282133333334,
+      "numerator": 11089279,
+      "denominator": 1875000000
+    },
+    {
+      "role": "ort-a",
+      "start": 240,
+      "end": 269,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.909620733333333,
+      "numerator": 88644311,
+      "denominator": 15000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 270,
+      "end": 299,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.903610066666666,
+      "numerator": 88554151,
+      "denominator": 15000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 300,
+      "end": 329,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.860289833333334,
+      "numerator": 35161739,
+      "denominator": 6000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 330,
+      "end": 359,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.953199933333333,
+      "numerator": 89297999,
+      "denominator": 15000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 360,
+      "end": 389,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.952372266666667,
+      "numerator": 5580349,
+      "denominator": 937500000
+    },
+    {
+      "role": "ort-a",
+      "start": 390,
+      "end": 419,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 6.0183632,
+      "numerator": 3761477,
+      "denominator": 625000000
+    },
+    {
+      "role": "ort-a",
+      "start": 420,
+      "end": 449,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.997246566666667,
+      "numerator": 179917397,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 450,
+      "end": 479,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 6.0853163666666665,
+      "numerator": 182559491,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 480,
+      "end": 509,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 6.024253666666667,
+      "numerator": 18072761,
+      "denominator": 3000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 510,
+      "end": 539,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9583913,
+      "numerator": 59583913,
+      "denominator": 10000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 540,
+      "end": 569,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9771245,
+      "numerator": 11954249,
+      "denominator": 2000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 570,
+      "end": 599,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9541998666666665,
+      "numerator": 44656499,
+      "denominator": 7500000000
+    },
+    {
+      "role": "ort-a",
+      "start": 600,
+      "end": 629,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.982818766666667,
+      "numerator": 179484563,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 630,
+      "end": 659,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.967940666666666,
+      "numerator": 8951911,
+      "denominator": 1500000000
+    },
+    {
+      "role": "ort-a",
+      "start": 660,
+      "end": 689,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.9979396,
+      "numerator": 14994849,
+      "denominator": 2500000000
+    },
+    {
+      "role": "ort-a",
+      "start": 690,
+      "end": 719,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.984305366666667,
+      "numerator": 179529161,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-a",
+      "start": 720,
+      "end": 749,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 6.003958,
+      "numerator": 3001979,
+      "denominator": 500000000
+    },
+    {
+      "role": "ort-a",
+      "start": 750,
+      "end": 779,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.981584566666666,
+      "numerator": 179447537,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 0,
+      "end": 29,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 6.132197,
+      "numerator": 6132197,
+      "denominator": 1000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 30,
+      "end": 59,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9948212,
+      "numerator": 14987053,
+      "denominator": 2500000000
+    },
+    {
+      "role": "ort-b",
+      "start": 60,
+      "end": 89,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.984541466666666,
+      "numerator": 44884061,
+      "denominator": 7500000000
+    },
+    {
+      "role": "ort-b",
+      "start": 90,
+      "end": 119,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9323829,
+      "numerator": 59323829,
+      "denominator": 10000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 120,
+      "end": 149,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.934645433333333,
+      "numerator": 178039363,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 150,
+      "end": 179,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9453157333333335,
+      "numerator": 11147467,
+      "denominator": 1875000000
+    },
+    {
+      "role": "ort-b",
+      "start": 180,
+      "end": 209,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.996884633333333,
+      "numerator": 179906539,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 210,
+      "end": 239,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.971170133333334,
+      "numerator": 1399493,
+      "denominator": 234375000
+    },
+    {
+      "role": "ort-b",
+      "start": 240,
+      "end": 269,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 6.0401727,
+      "numerator": 60401727,
+      "denominator": 10000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 270,
+      "end": 299,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9660652333333335,
+      "numerator": 178981957,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 300,
+      "end": 329,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.976087566666667,
+      "numerator": 179282627,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 330,
+      "end": 359,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 6.026151466666667,
+      "numerator": 5649517,
+      "denominator": 937500000
+    },
+    {
+      "role": "ort-b",
+      "start": 360,
+      "end": 389,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 6.0429930333333335,
+      "numerator": 181289791,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 390,
+      "end": 419,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.9915976,
+      "numerator": 7489497,
+      "denominator": 1250000000
+    },
+    {
+      "role": "ort-b",
+      "start": 420,
+      "end": 449,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.952832166666667,
+      "numerator": 35716993,
+      "denominator": 6000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 450,
+      "end": 479,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.967069066666666,
+      "numerator": 22376509,
+      "denominator": 3750000000
+    },
+    {
+      "role": "ort-b",
+      "start": 480,
+      "end": 509,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.958473166666667,
+      "numerator": 35750839,
+      "denominator": 6000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 510,
+      "end": 539,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.971126133333334,
+      "numerator": 22391723,
+      "denominator": 3750000000
+    },
+    {
+      "role": "ort-b",
+      "start": 540,
+      "end": 569,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.957321,
+      "numerator": 5957321,
+      "denominator": 1000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 570,
+      "end": 599,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 5.957738333333333,
+      "numerator": 3574643,
+      "denominator": 600000000
+    },
+    {
+      "role": "ort-b",
+      "start": 600,
+      "end": 629,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.9762843666666665,
+      "numerator": 179288531,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 630,
+      "end": 659,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.953867833333334,
+      "numerator": 35723207,
+      "denominator": 6000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 660,
+      "end": 689,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.9681416333333335,
+      "numerator": 179044249,
+      "denominator": 30000000000
+    },
+    {
+      "role": "ort-b",
+      "start": 690,
+      "end": 719,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.9465875,
+      "numerator": 475727,
+      "denominator": 80000000
+    },
+    {
+      "role": "ort-b",
+      "start": 720,
+      "end": 749,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.945405066666667,
+      "numerator": 22295269,
+      "denominator": 3750000000
+    },
+    {
+      "role": "ort-b",
+      "start": 750,
+      "end": 779,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 5.947522066666667,
+      "numerator": 89212831,
+      "denominator": 15000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 0,
+      "end": 29,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 15.046197733333333,
+      "numerator": 112846483,
+      "denominator": 7500000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 30,
+      "end": 59,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.8645738,
+      "numerator": 49322869,
+      "denominator": 5000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 60,
+      "end": 89,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.831376266666666,
+      "numerator": 36867661,
+      "denominator": 3750000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 90,
+      "end": 119,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.910477066666667,
+      "numerator": 37164289,
+      "denominator": 3750000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 120,
+      "end": 149,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.7202057,
+      "numerator": 107202057,
+      "denominator": 10000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 150,
+      "end": 179,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.417140533333333,
+      "numerator": 39064277,
+      "denominator": 3750000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 180,
+      "end": 209,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.479801766666666,
+      "numerator": 314394053,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 210,
+      "end": 239,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.964318733333334,
+      "numerator": 194464781,
+      "denominator": 15000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 240,
+      "end": 269,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.0345986,
+      "numerator": 60172993,
+      "denominator": 5000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 270,
+      "end": 299,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.3665603,
+      "numerator": 123665603,
+      "denominator": 10000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 300,
+      "end": 329,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.209806266666666,
+      "numerator": 91573547,
+      "denominator": 7500000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 330,
+      "end": 359,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.115833166666667,
+      "numerator": 72694999,
+      "denominator": 6000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 360,
+      "end": 389,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.600202333333334,
+      "numerator": 37800607,
+      "denominator": 3000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 390,
+      "end": 419,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.4158172,
+      "numerator": 31039543,
+      "denominator": 2500000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 420,
+      "end": 449,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.5114504,
+      "numerator": 15639313,
+      "denominator": 1250000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 450,
+      "end": 479,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.524827133333334,
+      "numerator": 187872407,
+      "denominator": 15000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 480,
+      "end": 509,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.2808628,
+      "numerator": 30702157,
+      "denominator": 2500000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 510,
+      "end": 539,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.410422233333334,
+      "numerator": 372312667,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 540,
+      "end": 569,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 15.404329633333333,
+      "numerator": 462129889,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 570,
+      "end": 599,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.8650473,
+      "numerator": 118650473,
+      "denominator": 10000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 600,
+      "end": 629,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 11.8800264,
+      "numerator": 14850033,
+      "denominator": 1250000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 630,
+      "end": 659,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 11.9069733,
+      "numerator": 119069733,
+      "denominator": 10000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 660,
+      "end": 689,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 11.935881233333333,
+      "numerator": 358076437,
+      "denominator": 30000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 690,
+      "end": 719,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 12.015741133333334,
+      "numerator": 180236117,
+      "denominator": 15000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 720,
+      "end": 749,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 12.531805666666667,
+      "numerator": 37595417,
+      "denominator": 3000000000
+    },
+    {
+      "role": "candidate-b",
+      "start": 750,
+      "end": 779,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 11.9619183,
+      "numerator": 119619183,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-b",
+      "start": 0,
+      "end": 29,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 14.549348266666666,
+      "numerator": 6820007,
+      "denominator": 468750000
+    },
+    {
+      "role": "current-b",
+      "start": 30,
+      "end": 59,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.573753,
+      "numerator": 9573753,
+      "denominator": 1000000000
+    },
+    {
+      "role": "current-b",
+      "start": 60,
+      "end": 89,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.5632919,
+      "numerator": 95632919,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-b",
+      "start": 90,
+      "end": 119,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 9.530167,
+      "numerator": 9530167,
+      "denominator": 1000000000
+    },
+    {
+      "role": "current-b",
+      "start": 120,
+      "end": 149,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.341723966666667,
+      "numerator": 340251719,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-b",
+      "start": 150,
+      "end": 179,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.206707533333333,
+      "numerator": 168100613,
+      "denominator": 15000000000
+    },
+    {
+      "role": "current-b",
+      "start": 180,
+      "end": 209,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.2570493,
+      "numerator": 112570493,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-b",
+      "start": 210,
+      "end": 239,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.7750607,
+      "numerator": 127750607,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-b",
+      "start": 240,
+      "end": 269,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.880031033333333,
+      "numerator": 356400931,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-b",
+      "start": 270,
+      "end": 299,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.9991922,
+      "numerator": 59995961,
+      "denominator": 5000000000
+    },
+    {
+      "role": "current-b",
+      "start": 300,
+      "end": 329,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.7811591,
+      "numerator": 117811591,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-b",
+      "start": 330,
+      "end": 359,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 11.793673433333334,
+      "numerator": 353810203,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-b",
+      "start": 360,
+      "end": 389,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.200075666666667,
+      "numerator": 36600227,
+      "denominator": 3000000000
+    },
+    {
+      "role": "current-b",
+      "start": 390,
+      "end": 419,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.1487689,
+      "numerator": 121487689,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-b",
+      "start": 420,
+      "end": 449,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 12.1286496,
+      "numerator": 3790203,
+      "denominator": 312500000
+    },
+    {
+      "role": "current-b",
+      "start": 450,
+      "end": 479,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 15.0504026,
+      "numerator": 75252013,
+      "denominator": 5000000000
+    },
+    {
+      "role": "current-b",
+      "start": 480,
+      "end": 509,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.428154233333334,
+      "numerator": 312844627,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-b",
+      "start": 510,
+      "end": 539,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.4363198,
+      "numerator": 52181599,
+      "denominator": 5000000000
+    },
+    {
+      "role": "current-b",
+      "start": 540,
+      "end": 569,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.467761933333334,
+      "numerator": 157016429,
+      "denominator": 15000000000
+    },
+    {
+      "role": "current-b",
+      "start": 570,
+      "end": 599,
+      "count": 30,
+      "phase": "warmup",
+      "mean_ms": 10.465260466666667,
+      "numerator": 156978907,
+      "denominator": 15000000000
+    },
+    {
+      "role": "current-b",
+      "start": 600,
+      "end": 629,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.4511317,
+      "numerator": 104511317,
+      "denominator": 10000000000
+    },
+    {
+      "role": "current-b",
+      "start": 630,
+      "end": 659,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.513662866666667,
+      "numerator": 157704943,
+      "denominator": 15000000000
+    },
+    {
+      "role": "current-b",
+      "start": 660,
+      "end": 689,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 11.4207036,
+      "numerator": 28551759,
+      "denominator": 2500000000
+    },
+    {
+      "role": "current-b",
+      "start": 690,
+      "end": 719,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.558572966666667,
+      "numerator": 316757189,
+      "denominator": 30000000000
+    },
+    {
+      "role": "current-b",
+      "start": 720,
+      "end": 749,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 10.450849266666667,
+      "numerator": 156762739,
+      "denominator": 15000000000
+    },
+    {
+      "role": "current-b",
+      "start": 750,
+      "end": 779,
+      "count": 30,
+      "phase": "measured",
+      "mean_ms": 13.3086133,
+      "numerator": 133086133,
+      "denominator": 10000000000
+    }
+  ],
+  "diagnostic_only": true,
+  "inference_run": false,
+  "rescored": false,
+  "admitted": false
+}
