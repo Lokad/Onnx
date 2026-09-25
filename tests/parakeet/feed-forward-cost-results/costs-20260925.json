@@ -1,0 +1,2341 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "new_implementation_selected": false,
+  "closure": {
+    "bytes": 2597,
+    "sha256": "d7b79da277b3f6017be67478e67d52c753dc0c2ffdb6d0f31ee27a84f6e9bcab"
+  },
+  "analysis": {
+    "bytes": 25689493,
+    "sha256": "443862642408a530127e79a9367abbe938b635f355e9f3a451c59c1eaa5b6377"
+  },
+  "corpus_seconds": {
+    "clock": 58.442227235333334,
+    "stages": 60.45249019166667,
+    "markers": 60.64994889966667
+  },
+  "controls": {
+    "repeatability": [
+      {
+        "name": "clock:corpus-repeatability",
+        "values": [
+          58.322230815,
+          58.434721561,
+          58.56972933
+        ],
+        "ratio": 1.0042436393728675,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "clock:1089-134686-0002:repeatability",
+        "values": [
+          2.062243401,
+          1.976633335,
+          2.050636408
+        ],
+        "ratio": 1.0433110504027798,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1089-134686-0011:repeatability",
+        "values": [
+          3.385594921,
+          3.145462755,
+          3.292412706
+        ],
+        "ratio": 1.0763423968757182,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1188-133604-0001:repeatability",
+        "values": [
+          2.453949196,
+          2.333762535,
+          2.368528809
+        ],
+        "ratio": 1.0514990960723432,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1188-133604-0002:repeatability",
+        "values": [
+          4.584513242,
+          4.513340791,
+          4.600516609
+        ],
+        "ratio": 1.0193151419396107,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:121-121726-0000:repeatability",
+        "values": [
+          2.465050044,
+          2.297229996,
+          2.478500549
+        ],
+        "ratio": 1.0789083171104474,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:121-123852-0000:repeatability",
+        "values": [
+          4.435171945,
+          4.457913604,
+          4.584095061
+        ],
+        "ratio": 1.0335777547853335,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1221-135766-0000:repeatability",
+        "values": [
+          3.269253966,
+          3.296604805,
+          3.29907531
+        ],
+        "ratio": 1.0091217581473144,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1221-135766-0002:repeatability",
+        "values": [
+          1.654478403,
+          1.646219872,
+          1.645794891
+        ],
+        "ratio": 1.0052761811617508,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1284-1180-0000:repeatability",
+        "values": [
+          2.091683854,
+          2.182102743,
+          2.135291029
+        ],
+        "ratio": 1.0432277988985235,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1284-1180-0018:repeatability",
+        "values": [
+          3.338798146,
+          3.37348887,
+          3.317364563
+        ],
+        "ratio": 1.0169183416335903,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1320-122612-0000:repeatability",
+        "values": [
+          3.678690689,
+          3.788584983,
+          3.739501615
+        ],
+        "ratio": 1.0298732085110076,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:1320-122612-0001:repeatability",
+        "values": [
+          2.466981933,
+          2.527811437,
+          2.448929755
+        ],
+        "ratio": 1.0322106756385914,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:237-126133-0000:repeatability",
+        "values": [
+          3.599593547,
+          3.79239657,
+          3.765940506
+        ],
+        "ratio": 1.0535624426709753,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:237-126133-0002:repeatability",
+        "values": [
+          2.493321348,
+          2.548405734,
+          2.426048988
+        ],
+        "ratio": 1.0504345735000469,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:260-123286-0000:repeatability",
+        "values": [
+          2.172136292,
+          2.167940909,
+          2.182002552
+        ],
+        "ratio": 1.0064861744808749,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:260-123288-0005:repeatability",
+        "values": [
+          3.604570179,
+          3.627728486,
+          3.611057037
+        ],
+        "ratio": 1.0064247069275885,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:672-122797-0000:repeatability",
+        "values": [
+          1.256196511,
+          1.258729674,
+          1.242257532
+        ],
+        "ratio": 1.0132598447388605,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:672-122797-0001:repeatability",
+        "values": [
+          4.010299937,
+          4.185381456,
+          3.962374436
+        ],
+        "ratio": 1.0562811575740743,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:908-157963-0000:repeatability",
+        "values": [
+          3.348817549,
+          3.356104039,
+          3.397007337
+        ],
+        "ratio": 1.014390090620013,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "clock:908-157963-0005:repeatability",
+        "values": [
+          1.950885712,
+          1.958878967,
+          2.022393637
+        ],
+        "ratio": 1.0366540820716206,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:corpus-repeatability",
+        "values": [
+          60.596027215,
+          60.173407556,
+          60.588035804
+        ],
+        "ratio": 1.0070233625809988,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "stages:1089-134686-0002:repeatability",
+        "values": [
+          2.151687253,
+          2.088287479,
+          2.102653777
+        ],
+        "ratio": 1.0303596964678252,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1089-134686-0011:repeatability",
+        "values": [
+          3.457471325,
+          3.359847752,
+          3.408716816
+        ],
+        "ratio": 1.0290559514019313,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1188-133604-0001:repeatability",
+        "values": [
+          2.544436007,
+          2.490596847,
+          2.455444518
+        ],
+        "ratio": 1.0362425167205507,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1188-133604-0002:repeatability",
+        "values": [
+          4.727525299,
+          4.767703011,
+          4.712345003
+        ],
+        "ratio": 1.0117474437811234,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:121-121726-0000:repeatability",
+        "values": [
+          2.421577068,
+          2.450287826,
+          2.627954059
+        ],
+        "ratio": 1.0852242093498385,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:121-123852-0000:repeatability",
+        "values": [
+          4.587697253,
+          4.625838231,
+          4.658848875
+        ],
+        "ratio": 1.0155092234897307,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1221-135766-0000:repeatability",
+        "values": [
+          3.307929027,
+          3.295649216,
+          3.376891216
+        ],
+        "ratio": 1.0246512886157846,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1221-135766-0002:repeatability",
+        "values": [
+          1.642455548,
+          1.640330944,
+          1.694631277
+        ],
+        "ratio": 1.0331032790661054,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1284-1180-0000:repeatability",
+        "values": [
+          2.249011579,
+          2.22287602,
+          2.216987598
+        ],
+        "ratio": 1.0144448173859384,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1284-1180-0018:repeatability",
+        "values": [
+          3.591389431,
+          3.595872246,
+          3.569174422
+        ],
+        "ratio": 1.0074801118811783,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1320-122612-0000:repeatability",
+        "values": [
+          3.928976049,
+          3.875853082,
+          3.936703984
+        ],
+        "ratio": 1.0157000022221174,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:1320-122612-0001:repeatability",
+        "values": [
+          2.640568131,
+          2.614388541,
+          2.590392562
+        ],
+        "ratio": 1.0193698707045624,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:237-126133-0000:repeatability",
+        "values": [
+          3.837964431,
+          3.680797187,
+          3.723683232
+        ],
+        "ratio": 1.0426992404132154,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:237-126133-0002:repeatability",
+        "values": [
+          2.544339706,
+          2.515827622,
+          2.533694208
+        ],
+        "ratio": 1.0113330832965948,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:260-123286-0000:repeatability",
+        "values": [
+          2.170995567,
+          2.2384138,
+          2.176414546
+        ],
+        "ratio": 1.031054062949176,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:260-123288-0005:repeatability",
+        "values": [
+          3.628279092,
+          3.682542411,
+          3.718711497
+        ],
+        "ratio": 1.0249243243716821,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:672-122797-0000:repeatability",
+        "values": [
+          1.318229833,
+          1.236235095,
+          1.254530301
+        ],
+        "ratio": 1.0663261691337116,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:672-122797-0001:repeatability",
+        "values": [
+          4.24108382,
+          4.185421213,
+          4.272852328
+        ],
+        "ratio": 1.0208894423166868,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:908-157963-0000:repeatability",
+        "values": [
+          3.562681769,
+          3.607847422,
+          3.54966208
+        ],
+        "ratio": 1.016391797497524,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "stages:908-157963-0005:repeatability",
+        "values": [
+          2.041729027,
+          1.998791611,
+          2.007743505
+        ],
+        "ratio": 1.021481687117207,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:corpus-repeatability",
+        "values": [
+          60.867929184,
+          60.252004516999996,
+          60.829912998
+        ],
+        "ratio": 1.0102224759481027,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "markers:1089-134686-0002:repeatability",
+        "values": [
+          2.171973913,
+          2.017277428,
+          2.102537235
+        ],
+        "ratio": 1.0766857760131543,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1089-134686-0011:repeatability",
+        "values": [
+          3.458425575,
+          3.430692426,
+          3.400076669
+        ],
+        "ratio": 1.0171610559644118,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1188-133604-0001:repeatability",
+        "values": [
+          2.533858638,
+          2.461751497,
+          2.463276925
+        ],
+        "ratio": 1.0292909910232098,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1188-133604-0002:repeatability",
+        "values": [
+          4.695703887,
+          4.7589107,
+          4.755681349
+        ],
+        "ratio": 1.0134605619351313,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:121-121726-0000:repeatability",
+        "values": [
+          2.548707845,
+          2.424675892,
+          2.62376931
+        ],
+        "ratio": 1.0821113529675825,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:121-123852-0000:repeatability",
+        "values": [
+          4.668737677,
+          4.648287568,
+          4.684999168
+        ],
+        "ratio": 1.0078978762529092,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1221-135766-0000:repeatability",
+        "values": [
+          3.337556299,
+          3.334560747,
+          3.343507944
+        ],
+        "ratio": 1.0026831710917397,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1221-135766-0002:repeatability",
+        "values": [
+          1.608043962,
+          1.642535388,
+          1.636038879
+        ],
+        "ratio": 1.02144930537664,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1284-1180-0000:repeatability",
+        "values": [
+          2.208648227,
+          2.191442129,
+          2.24679837
+        ],
+        "ratio": 1.0252601883789012,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1284-1180-0018:repeatability",
+        "values": [
+          3.540175191,
+          3.599582183,
+          3.605371728
+        ],
+        "ratio": 1.0184161894489703,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1320-122612-0000:repeatability",
+        "values": [
+          3.915056596,
+          3.909003841,
+          3.900373944
+        ],
+        "ratio": 1.0037644216197747,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:1320-122612-0001:repeatability",
+        "values": [
+          2.630208745,
+          2.606265851,
+          2.596391613
+        ],
+        "ratio": 1.0130246653974229,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:237-126133-0000:repeatability",
+        "values": [
+          3.893982281,
+          3.862889139,
+          3.894543595
+        ],
+        "ratio": 1.008194502834786,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:237-126133-0002:repeatability",
+        "values": [
+          2.509064765,
+          2.511089723,
+          2.521045716
+        ],
+        "ratio": 1.00477506645788,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:260-123286-0000:repeatability",
+        "values": [
+          2.210279579,
+          2.105081994,
+          2.215794424
+        ],
+        "ratio": 1.0525929300215182,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:260-123288-0005:repeatability",
+        "values": [
+          3.7153785,
+          3.67127737,
+          3.660090586
+        ],
+        "ratio": 1.0151056135636312,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:672-122797-0000:repeatability",
+        "values": [
+          1.287905511,
+          1.263002644,
+          1.31853409
+        ],
+        "ratio": 1.0439677986929061,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:672-122797-0001:repeatability",
+        "values": [
+          4.267505752,
+          4.255278483,
+          4.294604923
+        ],
+        "ratio": 1.009241801719232,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:908-157963-0000:repeatability",
+        "values": [
+          3.613022849,
+          3.537937798,
+          3.54755446
+        ],
+        "ratio": 1.0212228295936818,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "markers:908-157963-0005:repeatability",
+        "values": [
+          2.053693392,
+          2.020461716,
+          2.01892207
+        ],
+        "ratio": 1.0172227162784941,
+        "limit": 1.2,
+        "passed": true
+      }
+    ],
+    "observer_effects": [
+      {
+        "name": "stages/clock",
+        "ratio": 1.034397439170798,
+        "minimum": 0.95,
+        "maximum": 1.05,
+        "passed": true
+      },
+      {
+        "name": "markers/stages",
+        "ratio": 1.0032663453130541,
+        "minimum": 0.95,
+        "maximum": 1.05,
+        "passed": true
+      }
+    ],
+    "usable_for_candidate_selection": true
+  },
+  "families": [
+    {
+      "k": 1024,
+      "n": 4096,
+      "alpha": 1.0,
+      "route": "mapped-allowed",
+      "calls_per_corpus": 117,
+      "complete_seconds": 1.4174726723333333,
+      "earlier_ort_seconds": 1.3351746666666668,
+      "stages": {
+        "GraphOrchestration": 0.00022093333333333338,
+        "OutputPreparation": 0.005205333333333336,
+        "Math": 0.0007579999999999992,
+        "Broadcast": 7.446666666666657e-05,
+        "ValidateArguments": 1.8466666666666704e-05,
+        "CalculateIndices": 0.00015663333333333317,
+        "PreparedMultiplication": 1.4105161333333334
+      },
+      "transition_residual_seconds": 0.0005227056666666667,
+      "scale_seconds": 0.0,
+      "prior_scratch_bytes_per_corpus": 0
+    },
+    {
+      "k": 1024,
+      "n": 4096,
+      "alpha": 1.0,
+      "route": "mapped-declined",
+      "calls_per_corpus": 63,
+      "complete_seconds": 0.8558588673333333,
+      "earlier_ort_seconds": 0.6524903333333333,
+      "stages": {
+        "GraphOrchestration": 0.00012339999999999983,
+        "OutputPreparation": 0.003664266666666668,
+        "Math": 0.0004980000000000001,
+        "Broadcast": 4.679999999999994e-05,
+        "ValidateArguments": 1e-05,
+        "CalculateIndices": 9.206666666666662e-05,
+        "ScratchRent": 2.1066666666666683e-05,
+        "WeightPacking": 0.10690993333333326,
+        "PackedMultiplication": 0.7048734666666668,
+        "ScratchReturn": 4.439999999999997e-05,
+        "OddRowRemainder": 0.03916616666666666
+      },
+      "transition_residual_seconds": 0.0004093006666666666,
+      "scale_seconds": 0.0,
+      "prior_scratch_bytes_per_corpus": 1056964608
+    },
+    {
+      "k": 1024,
+      "n": 4096,
+      "alpha": 1.0,
+      "route": "unmapped",
+      "calls_per_corpus": 780,
+      "complete_seconds": 10.257111517666667,
+      "earlier_ort_seconds": 8.607885666666666,
+      "stages": {
+        "GraphOrchestration": 0.0015286000000000013,
+        "OutputPreparation": 0.033737400000000035,
+        "Math": 0.005657566666666673,
+        "Broadcast": 0.0005132666666666604,
+        "ValidateArguments": 0.00012450000000000186,
+        "CalculateIndices": 0.001068466666666668,
+        "ScratchRent": 0.00023766666666666492,
+        "WeightPacking": 1.3227523999999995,
+        "PackedMultiplication": 8.716917833333328,
+        "ScratchReturn": 0.0005607666666666626,
+        "OddRowRemainder": 0.16898026666666743
+      },
+      "transition_residual_seconds": 0.005032784333333333,
+      "scale_seconds": 0.0,
+      "prior_scratch_bytes_per_corpus": 13086228480
+    },
+    {
+      "k": 4096,
+      "n": 1024,
+      "alpha": 0.5,
+      "route": "unmapped",
+      "calls_per_corpus": 960,
+      "complete_seconds": 12.557024048999999,
+      "earlier_ort_seconds": 10.636331666666667,
+      "stages": {
+        "GraphOrchestration": 0.002169299999999975,
+        "OutputPreparation": 0.008930899999999983,
+        "Math": 0.008206966666666655,
+        "Broadcast": 0.0007536666666666677,
+        "ValidateArguments": 0.0002359999999999954,
+        "CalculateIndices": 0.0015333000000000083,
+        "ScratchRent": 0.00035073333333332534,
+        "WeightPacking": 1.7198637666666643,
+        "PackedMultiplication": 10.627266666666648,
+        "ScratchReturn": 0.0006889333333333301,
+        "OddRowRemainder": 0.14561790000000133
+      },
+      "transition_residual_seconds": 0.006830859000000001,
+      "scale_seconds": 0.034575056666666666,
+      "prior_scratch_bytes_per_corpus": 16106127360
+    }
+  ],
+  "stages": {
+    "GraphOrchestration": 0.00404223333333331,
+    "OutputPreparation": 0.051537900000000025,
+    "Math": 0.015120533333333328,
+    "Broadcast": 0.0013881999999999946,
+    "ValidateArguments": 0.00038896666666666396,
+    "CalculateIndices": 0.002850466666666676,
+    "PreparedMultiplication": 1.4105161333333334,
+    "ScratchRent": 0.0006094666666666569,
+    "WeightPacking": 3.149526099999997,
+    "PackedMultiplication": 20.049057966666645,
+    "ScratchReturn": 0.0012940999999999927,
+    "OddRowRemainder": 0.35376433333333546
+  },
+  "complete_feed_forward_seconds": 25.08746710633333,
+  "earlier_ort_seconds": 21.231882333333335,
+  "profile_gap_seconds": 3.855584772999997,
+  "weight_packing_seconds": 3.149526099999997,
+  "multiplication_seconds": 21.45957409999998,
+  "packing_fraction_of_diagnostic_gap": 0.8168737780208054,
+  "scale_seconds": 0.034575056666666666,
+  "transition_seconds": 0.012795649666666667,
+  "native_profile_is_earlier": true,
+  "no_saving_promised": true,
+  "no_overhead_subtracted": true,
+  "graph_metadata": {
+    "bytes": 730436,
+    "sha256": "34d69c2f286d557e4f5dbc9b7305248bfc7890fded30f9dbbbf2e38aed0d0b08"
+  },
+  "feed_forward_weights": [
+    {
+      "name": "onnx::MatMul_6398",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.0/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6399",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.0/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6506",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.0/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6507",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.0/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6508",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.1/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6509",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.1/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6544",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.1/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6545",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.1/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6546",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.2/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6547",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.2/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6582",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.2/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6583",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.2/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6584",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.3/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6585",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.3/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6620",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.3/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6621",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.3/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6622",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.4/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6623",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.4/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6658",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.4/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6659",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.4/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6660",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.5/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6661",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.5/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6696",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.5/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6697",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.5/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6698",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.6/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6699",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.6/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6734",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.6/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6735",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.6/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6736",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.7/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6737",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.7/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6772",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.7/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6773",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.7/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6774",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.8/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6775",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.8/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6810",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.8/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6811",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.8/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6812",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.9/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6813",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.9/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6848",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.9/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6849",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.9/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6850",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.10/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6851",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.10/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6886",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.10/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6887",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.10/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6888",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.11/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6889",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.11/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6924",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.11/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6925",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.11/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6926",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.12/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6927",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.12/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6962",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.12/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6963",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.12/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6964",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.13/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_6965",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.13/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7000",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.13/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7001",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.13/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7002",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.14/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7003",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.14/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7038",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.14/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7039",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.14/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7040",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.15/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7041",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.15/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7076",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.15/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7077",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.15/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7078",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.16/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7079",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.16/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7114",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.16/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7115",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.16/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7116",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.17/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7117",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.17/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7152",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.17/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7153",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.17/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7154",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.18/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7155",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.18/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7190",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.18/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7191",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.18/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7192",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.19/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7193",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.19/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7228",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.19/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7229",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.19/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7230",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.20/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7231",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.20/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7266",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.20/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7267",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.20/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7268",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.21/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7269",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.21/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7304",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.21/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7305",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.21/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7306",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.22/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7307",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.22/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7342",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.22/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7343",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.22/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7344",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.23/feed_forward1/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7345",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.23/feed_forward1/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7380",
+      "dims": [
+        1024,
+        4096
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.23/feed_forward2/linear1/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    },
+    {
+      "name": "onnx::MatMul_7381",
+      "dims": [
+        4096,
+        1024
+      ],
+      "type": "Float",
+      "consumers": [
+        {
+          "node": "/layers.23/feed_forward2/linear2/MatMul",
+          "op": "MatMul",
+          "input": 1
+        }
+      ]
+    }
+  ],
+  "feed_forward_payload_bytes": 1610612736,
+  "encoder_packed_limit": 268435456,
+  "graph_use_census_is_not_a_managed_heap_dump": true,
+  "originals_not_proven_removable": true,
+  "native_release_source": {
+    "revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+    "path": "onnxruntime/core/framework/session_state.cc",
+    "bytes": 95215,
+    "sha256": "fe38c97116f1f2c6d9868649a094b029ded299dbf2aa423eaf6c4cb791cb189c",
+    "git_object": "3a143946dbfeca9914bc052d858ffc622ed8c5f1",
+    "lines": {
+      "--constant_initializers_use_count[input_name] == 0": 681,
+      "st->initialized_tensors_.erase(ort_value_idx);": 683,
+      "constant_initialized_tensors.erase(ort_value_idx);": 684
+    }
+  },
+  "managed_sources": {
+    "src/Lokad.Onnx/GraphPacking.cs": {
+      "bytes": 10547,
+      "sha256": "732fee575241985ad6a09e6cc546f39dd2f23f7eceb6ccd281c79785adf260dd"
+    },
+    "src/Lokad.Onnx/GraphExecution.cs": {
+      "bytes": 3845,
+      "sha256": "71b5d0c5e5ba6406ff490d3041856ef44b7b74857eede803fc166347bed82c28"
+    },
+    "src/Lokad.Onnx/Model.cs": {
+      "bytes": 8205,
+      "sha256": "53aee99b0583a8cfbdc7a5eae67a1ee09dc459a2dcaad36b6a885295b0058763"
+    },
+    "src/Lokad.Onnx.Data/ParakeetTranscriber.cs": {
+      "bytes": 9617,
+      "sha256": "3950a354bfcc523df19a2d5600304f918fb55af122350167d5ca638f1169b9ae"
+    }
+  },
+  "next_question": "Can immutable graph-owned weights retain one prepared payload instead of source plus clone, while preserving fallback, replacement and ownership contracts?",
+  "publisher": {
+    "bytes": 5930,
+    "sha256": "5247df662df6e9a940adb859ed5c93b7f62a421fa281ddb02dd06a6ae7767e23"
+  }
+}
