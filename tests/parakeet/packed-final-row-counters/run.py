@@ -28,7 +28,7 @@ def references():
     new='Require(copies == 0, "Exact B reconstruction stages " + node.Name);'
     assert before.count(old)==1 and (TOOLS/'Program.cs.txt').read_text()==before.replace(old,new)
     assert pin(ROOT/'artifacts/parakeet-owned-packed-weight-counters-v2-amd-20260925/build-review.json')['sha256']=='1df9eca835c4bcb335f16c5624011ac178f796822e6870b1d014de8cb23864d8'
-    for folder,digest in [(MODELS,'PENDING_M78_MODELS_CLOSURE'),
+    for folder,digest in [(MODELS,'1a0da5fcd612d893c4954c6c2761a358af081f2a693e462ee138743fad29777d'),
                           (CENSUS,'fa159300cbe217b8ac08df793031850f2794f2149dc65b89e89b93a5d5692a77')]:
         assert pin(folder/'closed.json')['sha256']==digest
         proof=read(folder/'closed.json');assert proof['passed'] and proof['analysis']==pin(folder/'analysis.json')

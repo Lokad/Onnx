@@ -16,7 +16,7 @@ COUNTERS=ROOT/'artifacts/parakeet-packed-final-row-counters-amd-20260925'
 SELECTED_APP=ROOT/'artifacts/parakeet-slice-dense-conversion-app-amd-20260925'
 PRIOR=dict(baseline=CURRENT,models=MODELS,contracts=CONTRACTS,census=CENSUS,counters=COUNTERS,selected_app=SELECTED_APP)
 DIGESTS=dict(baseline='2e75c249ca3f76fc90c0179e2244cd677e829cf14da18029ec73f0a2ed03abf3',
-    models='PENDING_M78_MODELS_CLOSURE',counters='PENDING_M78_COUNTERS_CLOSURE',
+    models='1a0da5fcd612d893c4954c6c2761a358af081f2a693e462ee138743fad29777d',counters='PENDING_M78_COUNTERS_CLOSURE',
     contracts='6295ad30835b7a2a1694b580a8e1447a6a0cdb28828a5960fa6e0e7c3628576f',
     census='fa159300cbe217b8ac08df793031850f2794f2149dc65b89e89b93a5d5692a77',
     selected_app='c9e72e572118d4ea8e23c3438e53e77a6529f9f4c35c5f93919c27c9d7932326')

@@ -1,0 +1,208 @@
+{
+  "closure": {
+    "bytes": 890902,
+    "sha256": "1a0da5fcd612d893c4954c6c2761a358af081f2a693e462ee138743fad29777d"
+  },
+  "analysis": {
+    "bytes": 466703,
+    "sha256": "12ebb11ee050e923f01a16bdfe9ee285078af7e876961d17e68d416c60d1dbfb"
+  },
+  "census": {
+    "bytes": 21306,
+    "sha256": "fa159300cbe217b8ac08df793031850f2794f2149dc65b89e89b93a5d5692a77"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 822784,
+        "sha256": "49901366484570493b7a42028e5c5458f30fe2c1703a01335b68d9a5f9a1fea9"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+      }
+    }
+  },
+  "consumers": {
+    "TranscribeReplay": {
+      "bytes": 56832,
+      "sha256": "335ca09d0e45e344068c484c92af9d0db43a6ae0accd1895d7ae7bb88b0afcf9"
+    },
+    "AudioBenchmark": {
+      "bytes": 40448,
+      "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+    }
+  },
+  "jobs": [
+    {
+      "name": "selected-native-512",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_selected_arrays": 0,
+      "passed": true
+    },
+    {
+      "name": "selected-public-512",
+      "public_requests": 20,
+      "passed": true
+    },
+    {
+      "name": "candidate-native-512",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_selected_arrays": 784,
+      "passed": true
+    },
+    {
+      "name": "candidate-public-512",
+      "public_requests": 20,
+      "passed": true
+    },
+    {
+      "name": "selected-native-256",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_selected_arrays": 0,
+      "passed": true
+    },
+    {
+      "name": "selected-public-256",
+      "public_requests": 20,
+      "passed": true
+    },
+    {
+      "name": "candidate-native-256",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_selected_arrays": 784,
+      "passed": true
+    },
+    {
+      "name": "candidate-public-256",
+      "public_requests": 20,
+      "passed": true
+    }
+  ],
+  "resources": [
+    {
+      "name": "selected-native-512",
+      "samples": 120,
+      "peak_rss": 7176814592,
+      "seconds": 32.23597629799042
+    },
+    {
+      "name": "selected-public-512",
+      "samples": 256,
+      "peak_rss": 9201442816,
+      "seconds": 68.37041857489385
+    },
+    {
+      "name": "candidate-native-512",
+      "samples": 111,
+      "peak_rss": 7537504256,
+      "seconds": 30.548496914911084
+    },
+    {
+      "name": "candidate-public-512",
+      "samples": 238,
+      "peak_rss": 7529758720,
+      "seconds": 65.00073897396214
+    },
+    {
+      "name": "selected-native-256",
+      "samples": 114,
+      "peak_rss": 7179890688,
+      "seconds": 32.03497147595044
+    },
+    {
+      "name": "selected-public-256",
+      "samples": 242,
+      "peak_rss": 9232769024,
+      "seconds": 67.69350127188955
+    },
+    {
+      "name": "candidate-native-256",
+      "samples": 108,
+      "peak_rss": 7548907520,
+      "seconds": 31.136447024997324
+    },
+    {
+      "name": "candidate-public-256",
+      "samples": 225,
+      "peak_rss": 7935950848,
+      "seconds": 64.33157818694599
+    }
+  ],
+  "terminal_owners": [
+    {
+      "pid": 1039185,
+      "birth": 1790328136.44
+    },
+    {
+      "pid": 1039188,
+      "birth": 1790328142.98
+    },
+    {
+      "pid": 1039297,
+      "birth": 1790328218.44
+    },
+    {
+      "pid": 1039489,
+      "birth": 1790328312.09
+    },
+    {
+      "pid": 1039760,
+      "birth": 1790328435.86
+    },
+    {
+      "pid": 1039945,
+      "birth": 1790328544.08
+    },
+    {
+      "pid": 1040681,
+      "birth": 1790329038.37
+    },
+    {
+      "pid": 1040793,
+      "birth": 1790329130.75
+    },
+    {
+      "pid": 1040892,
+      "birth": 1790329165.11
+    }
+  ],
+  "maintenance": {
+    "bytes": 94596,
+    "sha256": "e9bc272eafa82a9ee253e0ffbd4a9fc8e9150d179b1b7465e3192e88f6a66517"
+  },
+  "no_performance_measurement": true,
+  "release_admitted": false,
+  "failed_release_controls": [
+    [
+      "e5-8tok",
+      "candidate"
+    ],
+    [
+      "e5-512tok",
+      "candidate"
+    ]
+  ],
+  "publisher": {
+    "bytes": 5844,
+    "sha256": "39f736b2d1948be7fb087b34e85376a148bfb5bc514acd537ae3995727e682f5"
+  }
+}
