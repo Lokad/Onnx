@@ -31,6 +31,12 @@ internal static class TensorAlias
         array = null;
         start = 0;
         length = 0;
+        if (t is Tensor<float> typed && OwnedPackedTensor.FindStorage(typed) is { } packed)
+        {
+            array = packed.PackedArray;
+            length = t.Length == 0 ? 0 : packed.PackedArray.Length;
+            return true;
+        }
         Memory<T> storage;
         try
         {

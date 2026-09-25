@@ -1775,6 +1775,7 @@ public partial class ComputationalGraph
             }
             return false;
         }
+        if (typed is OwnedPackedTensor packed) { root = packed.PackedArray; return true; }
         if (typed is BroadcastedTensor<float> broadcast) return TryCollectSingleRoot(broadcast.source, out root);
         if (typed is TensorSlice<float> slice) return TryCollectSingleRoot(slice.parent, out root);
         return false;
@@ -1884,6 +1885,7 @@ public partial class ComputationalGraph
             }
             return false;
         }
+        if (typed is OwnedPackedTensor packed) { roots.Add(packed.PackedArray); return true; }
         if (typed is BroadcastedTensor<float> broadcast) return CollectAliasRoot(broadcast.source, roots);
         if (typed is TensorSlice<float> slice) return CollectAliasRoot(slice.parent, roots);
         return false;
@@ -1938,6 +1940,7 @@ public partial class ComputationalGraph
         }
         if (tensor is not Tensor<float> typed) return false;
         if (typed is DenseTensor<float> dense) return SharesBuffer(candidate, dense.Buffer);
+        if (typed is OwnedPackedTensor packed) return ReferenceEquals(candidate, packed.PackedArray);
         if (typed is BroadcastedTensor<float> broadcast) return SharesPooledStorage(candidate, broadcast.source);
         if (typed is TensorSlice<float> slice) return SharesPooledStorage(candidate, slice.parent);
         return true;

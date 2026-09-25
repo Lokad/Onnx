@@ -151,6 +151,12 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
     }
 
    
+    public override DenseTensor<T> ToDenseTensor()
+    {
+        if (TryCopyContiguousSlice(out var dense)) return dense;
+        return base.ToDenseTensor();
+    }
+
     public override Tensor<T> Clone() => ToDenseTensor();
 
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions, this.IsReversedStride);

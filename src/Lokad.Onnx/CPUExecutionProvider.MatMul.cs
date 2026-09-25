@@ -157,6 +157,7 @@ public partial class CPUExecutionProvider
         // counted); other modes leave views for the kernels, which densify
         // defensively and count through the same choke point.
         if (opts.Optimization != OptimizationMode.Speed) return t;
+        if (t is Tensor<float> owned && OwnedPackedTensor.Resolve(owned) is not null) return t;
         // A view over a fresh packed clone must reach the packed kernel
         // intact: materializing it would freeze scrambled bytes row-major.
         if (typeof(T) == typeof(float) && t is Tensor<float> tf

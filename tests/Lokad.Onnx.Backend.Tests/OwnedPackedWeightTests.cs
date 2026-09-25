@@ -1,0 +1,276 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+
+namespace Lokad.Onnx.Backend.Tests;
+
+[Collection("SequentialLogSink")]
+public class OwnedPackedWeightTests
+{
+    static float[] Values(int count)
+    {
+        var values = new float[count]; uint state = 0x31415926;
+        for (int i = 0; i < count; i++)
+        { state = unchecked(state * 1664525 + 1013904223); values[i] = ((int)(state >> 8) % 2001 - 1000) / 997.0f; }
+        return values;
+    }
+
+    static void Exact(ReadOnlySpan<float> expected, ReadOnlySpan<float> actual) =>
+        Assert.True(MemoryMarshal.AsBytes(expected).SequenceEqual(MemoryMarshal.AsBytes(actual)), "Float bits differ.");
+
+    static ComputationalGraph Graph(int n, int k, int m, long budget, bool batched)
+    {
+        var graph = new ComputationalGraph(budget);
+        graph.Metadata["Name"] = "owned-packed-contract";
+        int[] xd = batched ? new[] { 2, m, n } : new[] { m, n };
+        graph.Inputs["x"] = new DenseTensor<float>(Values((batched ? 2 : 1) * m * n), xd);
+        graph.Initializers["w"] = new DenseTensor<float>(Values(n * k), new[] { n, k }) { Name = "w" };
+        graph.Outputs["y"] = Tensor<float>.Zeros(batched ? new[] { 2, m, k } : new[] { m, k });
+        graph.Nodes.Add(new Node { Name = "/layers.0/feed_forward1/linear2/MatMul", Op = OpType.MatMul, OpTypeName = "MatMul",
+            Inputs = new[] { "x", "w" }, Outputs = new[] { "y" } });
+        return graph;
+    }
+
+    [Theory]
+    [InlineData(7, 33)]
+    [InlineData(8, 64)]
+    public void LogicalViewsSharePackedStorage_ClonesOwnTheirValues(int n, int k)
+    {
+        float[] values = Values(n * k);
+        int[] bits = { 0, unchecked((int)0x80000000), 0x7fc00001, unchecked((int)0xffc12345) };
+        for (int i = 0; i < bits.Length; i++) values[i] = BitConverter.Int32BitsToSingle(bits[i]);
+        var tensor = new OwnedPackedTensor(values, n, k);
+        Exact(values, tensor.ToDenseTensor().Buffer.Span);
+        var shape = Assert.IsType<OwnedPackedTensor>(tensor.Reshape(new[] { 1, n, k }));
+        Assert.Same(tensor.PackedArray, shape.PackedArray);
+        var broadcast = shape.BroadcastDim(0, 2);
+        for (int b = 0; b < 2; b++)
+            for (int i = 0; i < values.Length; i++)
+                Assert.Equal(BitConverter.SingleToInt32Bits(values[i]), BitConverter.SingleToInt32Bits(broadcast.GetValue(b * values.Length + i)));
+        shape[0, 0, 1] = 23;
+        Assert.Equal(23f, tensor.GetValue(1));
+        Assert.Equal(23f, broadcast.GetValue(values.Length + 1));
+        var clone = tensor.Clone(); clone.SetValue(1, 31); Assert.Equal(23f, tensor.GetValue(1));
+        var slice = tensor.Slice(new SliceIndex(1, n, 2), new SliceIndex(0, k, 2));
+        int j = 0;
+        for (int row = 1; row < n; row += 2)
+            for (int col = 0; col < k; col += 2) Assert.Equal(tensor[row, col], slice.GetValue(j++));
+        Assert.Throws<ArgumentOutOfRangeException>(() => tensor.GetValue(-1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => { _ = shape[0, n, 0]; });
+        Assert.Throws<ArgumentException>(() => tensor.Reshape(new[] { 1 }));
+        Assert.Throws<NotImplementedException>(() => { _ = tensor.Storage; });
+    }
+
+    [SkippableFact]
+    public void PreparationIsOptIn_Idempotent_AndSurvivesInvalidation()
+    {
+        Skip.If(!Fma.IsSupported, "Owned packed execution requires FMA.");
+        Assert.True(Fma.IsSupported);
+        var graph = Graph(4096, 1024, 48, 0, false); var source = graph.Initializers["w"];
+        graph.Prepare(); Assert.Same(source, graph.Initializers["w"]); Assert.Equal(0, graph.OwnedPackedWeightCount);
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+        var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]);
+        Assert.Equal(1, graph.OwnedPackedWeightCount); Assert.Equal(16777216, graph.OwnedPackedWeightBytes);
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); Assert.Same(packed, graph.Initializers["w"]);
+        packed.SetValue(0, 7); graph.InvalidatePreparation(); graph.Prepare();
+        Assert.Same(packed, graph.Initializers["w"]); Assert.Equal(7f, packed.GetValue(0));
+        Assert.Equal(0, graph.RetainedPackedWeightBytes); Assert.Equal(0, graph.MaximumPackedWeightBytes);
+        var replacement = new DenseTensor<float>(Values(4096 * 1024), new[] { 4096, 1024 });
+        graph.Initializers["w"] = replacement; graph.InvalidatePreparation(); graph.Prepare();
+        Assert.Same(replacement, graph.Initializers["w"]); Assert.Equal(0, graph.OwnedPackedWeightCount);
+    }
+
+    [Fact]
+    public void EqualShapePreprocessingProjectionRemainsDense()
+    {
+        var graph = Graph(4096, 1024, 48, 0, false);
+        var node = graph.Nodes[0]; node.Name = "/pre_encode/out/MatMul"; graph.Nodes[0] = node;
+        var original = graph.Initializers["w"];
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights());
+        Assert.Same(original, graph.Initializers["w"]);
+        Assert.Equal(0, graph.OwnedPackedWeightCount);
+        Assert.Equal(0, graph.OwnedPackedWeightBytes);
+        Assert.Empty(graph.PackedWeights);
+    }
+
+    [SkippableFact]
+    public void ExistingPackedRecordAndBudgetRemainUntouched()
+    {
+        Skip.If(!Fma.IsSupported, "Owned packed execution requires FMA.");
+        var graph = Graph(1024, 4096, 48, 16777216, false); graph.Prepare();
+        var source = graph.Initializers["w"]; var entry = Assert.Single(graph.PackedWeights).Value;
+        var packed = entry.Packed; float[] before = packed.ToArray();
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); graph.Prepare();
+        Assert.Same(source, graph.Initializers["w"]); Assert.Same(entry, Assert.Single(graph.PackedWeights).Value);
+        Assert.Same(packed, graph.Initializers[entry.PackedName]); Exact(before, packed.Buffer.Span);
+        Assert.Equal(16777216, graph.RetainedPackedWeightBytes); Assert.Equal(16777216, graph.MaximumPackedWeightBytes);
+    }
+
+    [SkippableTheory]
+    [InlineData("input")]
+    [InlineData("output")]
+    [InlineData("second-consumer")]
+    [InlineData("initializer-alias")]
+    [InlineData("input-alias")]
+    [InlineData("attribute-alias")]
+    [InlineData("nested-capture")]
+    public void SharedOrVisibleWeightIsNotConsumed(string reason)
+    {
+        Skip.If(!Fma.IsSupported, "Owned packed execution requires FMA.");
+        var graph = Graph(4096, 1024, 48, 0, false); var source = Assert.IsType<DenseTensor<float>>(graph.Initializers["w"]);
+        var alias = new DenseTensor<float>(source.Buffer, source.Dimensions);
+        if (reason == "input") graph.Inputs["w"] = source;
+        if (reason == "output") graph.Outputs["w"] = source;
+        if (reason == "initializer-alias") graph.Initializers["alias"] = alias;
+        if (reason == "input-alias") graph.Inputs["alias"] = alias;
+        if (reason == "second-consumer") graph.Nodes.Add(new Node { Name = "second", Op = OpType.MatMul, OpTypeName = "MatMul",
+            Inputs = new[] { "x", "w" }, Outputs = new[] { "other" } });
+        if (reason is "attribute-alias" or "nested-capture")
+        {
+            var node = graph.Nodes[0]; node.Attributes ??= new Dictionary<string, object>();
+            node.Attributes["guard"] = reason == "attribute-alias" ? (object)alias : Graph(4096, 1024, 48, 0, false);
+            graph.Nodes[0] = node;
+        }
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); Assert.Same(source, graph.Initializers["w"]);
+        Assert.Equal(0, graph.OwnedPackedWeightCount);
+    }
+
+    [SkippableTheory]
+    [InlineData(1024, 4096, 48, false)]
+    [InlineData(1024, 4096, 167, true)]
+    [InlineData(1024, 4096, 89, false)]
+    [InlineData(1024, 4096, 157, true)]
+    [InlineData(1024, 4096, 83, true)]
+    [InlineData(1024, 4096, 61, true)]
+    [InlineData(1024, 4096, 151, true)]
+    [InlineData(1024, 4096, 169, true)]
+    [InlineData(1024, 4096, 50, false)]
+    [InlineData(1024, 4096, 225, true)]
+    [InlineData(4096, 1024, 48, false)]
+    [InlineData(4096, 1024, 167, true)]
+    [InlineData(4096, 1024, 89, false)]
+    [InlineData(4096, 1024, 157, true)]
+    [InlineData(4096, 1024, 83, true)]
+    [InlineData(4096, 1024, 61, true)]
+    [InlineData(4096, 1024, 151, true)]
+    [InlineData(4096, 1024, 169, true)]
+    [InlineData(4096, 1024, 50, false)]
+    [InlineData(4096, 1024, 225, true)]
+    public void ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(int n, int k, int m, bool batched)
+    {
+        Skip.If(!Fma.IsSupported, "Owned packed execution requires FMA.");
+        Assert.True(Fma.IsSupported);
+        var graph = Graph(n, k, m, 0, batched);
+        var input = (Tensor<float>)graph.Inputs["x"]!; var source = (Tensor<float>)graph.Initializers["w"];
+        var expected = Tensor<float>.MatMul(input, source, TensorExecutionOptions.Intrinsics);
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+        var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]); float[] before = (float[])packed.PackedArray.Clone();
+        foreach (var optimization in new[] { OptimizationMode.Speed, OptimizationMode.Memory })
+        {
+            var copies = new CopyAccountant(); var scratch = new ScratchAccountant();
+            var options = new ExecutionOptions(optimization, TensorExecutionOptions.Intrinsics with { CopyReporter = copies, ScratchReporter = scratch });
+            var context = graph.CreateExecution(options);
+            Assert.True(context.Execute(new Dictionary<string, ITensor> { ["x"] = input }, true), context.LastErrorMessage);
+            Exact(expected.ToArray(), Assert.IsAssignableFrom<Tensor<float>>(context.Outputs["y"]).ToArray());
+            Assert.Equal(0L, context.LastCopyBytes);
+            Assert.Equal(0, context.LastScratchBytes); Exact(before, packed.PackedArray);
+        }
+    }
+
+    [SkippableTheory]
+    [InlineData("scalar")]
+    [InlineData("simd")]
+    [InlineData("intrinsics")]
+    [InlineData("parallel")]
+    public void LogicalFallbackRemainsBitExact(string mode)
+    {
+        Skip.If(mode == "intrinsics" && !Fma.IsSupported, "Explicit intrinsic mode requires FMA.");
+        float[] values = Values(7 * 33); var packed = new OwnedPackedTensor(values, 7, 33);
+        var input = new DenseTensor<float>(Values(3 * 7), new[] { 3, 7 });
+        var options = mode switch { "scalar" => TensorExecutionOptions.Scalar, "simd" => TensorExecutionOptions.Simd,
+            "parallel" => TensorExecutionOptions.Parallel(2), _ => TensorExecutionOptions.Intrinsics };
+        var expected = Tensor<float>.MatMul(input, new DenseTensor<float>(values, new[] { 7, 33 }), options);
+        var actual = Tensor<float>.MatMul(input, packed, options);
+        Exact(expected.ToArray(), actual.ToArray()); Exact(values, packed.ToDenseTensor().Buffer.Span);
+    }
+
+    [SkippableTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void PackedStorageDestinationAliasIsRejectedBeforeAnyWrite(bool batched)
+    {
+        Skip.If(!Fma.IsSupported, "Owned packed execution requires FMA.");
+        int m = 48, n = 4096, k = 1024;
+        var source = new OwnedPackedTensor(Values(n * k), n, k); float[] before = (float[])source.PackedArray.Clone();
+        Tensor<float> operand = batched ? source.InsertDim(0).BroadcastDim(0, 2) : source;
+        int[] xd = batched ? new[] { 2, m, n } : new[] { m, n };
+        int[] yd = batched ? new[] { 2, m, k } : new[] { m, k };
+        var input = new DenseTensor<float>(Values((batched ? 2 : 1) * m * n), xd);
+        var alias = new DenseTensor<float>(source.PackedArray.AsMemory(0, (batched ? 2 : 1) * m * k), yd);
+        Assert.Throws<ArgumentException>(() => Tensor<float>.MatMul(input, operand, alias, TensorExecutionOptions.Intrinsics));
+        Exact(before, source.PackedArray);
+        Assert.True(TensorAlias.SharesBackingMemory(alias, source.Slice(new SliceIndex(0, 1), SliceIndex.All)));
+    }
+
+    [SkippableFact]
+    public void ContextsProtectPackedRoots_AndHeldOutputsSurvivePoolReuse()
+    {
+        Skip.If(!Fma.IsSupported, "Owned packed execution requires FMA.");
+        var graph = Graph(4096, 1024, 48, 0, false); var node = graph.Nodes[0]; node.Outputs = new[] { "product" }; graph.Nodes[0] = node;
+        graph.Nodes.Add(new Node { Name = "relu", Op = OpType.Relu, OpTypeName = "Relu", Inputs = new[] { "product" }, Outputs = new[] { "y" } });
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights()); var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]);
+        var first = graph.CreateExecution(ExecutionOptions.Memory); var second = graph.CreateExecution(ExecutionOptions.Memory);
+        Assert.Same(first.Initializers, second.Initializers);
+        var method = typeof(ComputationalGraph).GetMethod("BuildStaticAliasRoots", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var roots = Assert.IsType<HashSet<Array>>(method.Invoke(first, null)); Assert.Contains(packed.PackedArray, roots);
+        var feeds = new Dictionary<string, ITensor> { ["x"] = graph.Inputs["x"]! };
+        Assert.True(first.Execute(feeds, true), first.LastErrorMessage);
+        var held = Assert.IsAssignableFrom<Tensor<float>>(first.Outputs["y"]); float[] before = held.ToArray();
+        first.Reset(); Assert.True(second.Execute(feeds, true), second.LastErrorMessage);
+        Assert.True(first.Execute(feeds, true), first.LastErrorMessage); Exact(before, held.ToArray());
+        Exact(before, Assert.IsAssignableFrom<Tensor<float>>(second.Outputs["y"]).ToArray());
+        Assert.Same(packed, graph.Initializers["w"]);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static (ComputationalGraph Graph, WeakReference<float[]> Original) WithoutSourceRoot()
+    {
+        var graph = Graph(4096, 1024, 48, 0, false); var source = Assert.IsType<DenseTensor<float>>(graph.Initializers["w"]);
+        Assert.True(MemoryMarshal.TryGetArray<float>(source.Buffer, out var segment));
+        var weak = new WeakReference<float[]>(segment.Array!);
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights()); return (graph, weak);
+    }
+
+    [SkippableFact]
+    public void PreparedGraphDoesNotRetainTheReplacedOriginalArray()
+    {
+        Skip.If(!Fma.IsSupported, "Owned packed execution requires FMA.");
+        var value = WithoutSourceRoot(); var context = value.Graph.CreateExecution(ExecutionOptions.Memory);
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true); GC.WaitForPendingFinalizers();
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+        Assert.False(value.Original.TryGetTarget(out _));
+        Assert.IsType<OwnedPackedTensor>(context.Initializers["w"]);
+        GC.KeepAlive(value.Graph); GC.KeepAlive(context);
+    }
+}
+
+public class OwnedPackedUnavailableTests
+{
+    [SkippableFact]
+    public void HardwareDisabledPreparationLeavesOriginals_AndLogicalAutoFallbackWorks()
+    {
+        Skip.If(Fma.IsSupported || Avx2.IsSupported || Avx512F.IsSupported, "This contract requires disabled x86 intrinsics.");
+        Assert.False(Fma.IsSupported); Assert.False(Avx2.IsSupported); Assert.False(Avx512F.IsSupported);
+        var graph = new ComputationalGraph(0); var source = new DenseTensor<float>(new[] { 4096, 1024 });
+        graph.Initializers["w"] = source;
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); Assert.Same(source, graph.Initializers["w"]);
+        var values = Enumerable.Range(0, 7 * 33).Select(i => (float)(i % 19 - 9) / 7).ToArray();
+        var packed = new OwnedPackedTensor(values, 7, 33);
+        var input = new DenseTensor<float>(Enumerable.Range(0, 3 * 7).Select(i => (float)(i % 7)).ToArray(), new[] { 3, 7 });
+        var expected = Tensor<float>.MatMul(input, new DenseTensor<float>(values, new[] { 7, 33 }), TensorExecutionOptions.Auto);
+        var actual = Tensor<float>.MatMul(input, packed, TensorExecutionOptions.Auto);
+        Assert.True(MemoryMarshal.AsBytes(expected.ToArray().AsSpan()).SequenceEqual(MemoryMarshal.AsBytes(actual.ToArray().AsSpan())));
+        Assert.Throws<InvalidOperationException>(() => TensorExecutionOptions.Intrinsics.Validate());
+    }
+}

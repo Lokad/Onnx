@@ -767,7 +767,8 @@ where T : unmanaged
         var coreDims = bd.Append(xdl[0]).Append(ydl[1]).ToArray();
         var target = coreDims.SequenceEqual(destination.dimensions) ? destination : new DenseTensor<float>(destination.Buffer, coreDims);
         if (clearDestination) target.Buffer.Span.Clear();
-        RunBatchedFloatMatMul(bx, by, target, options);
+        if (!TryRunOwnedPackedBatches(bx, by, target, options))
+            RunBatchedFloatMatMul(bx, by, target, options);
         return destination;
     }
 
@@ -826,7 +827,8 @@ where T : unmanaged
             StartOpStage(OpStage.Math);
 
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            RunBatchedFloatMatMul(bx, by, z, options);
+            if (!TryRunOwnedPackedBatches(bx, by, z, options))
+                RunBatchedFloatMatMul(bx, by, z, options);
             core = z;
         }
         return MatMulShapes.Squeeze(core, plan);

@@ -36,6 +36,7 @@ public sealed class ParakeetTranscriber
             generation = new ParakeetGeneration(new ParakeetVocabulary(vocabulary));
         frontend = Load(modelDirectory, "nemo128.onnx", 0);
         encoder = Load(modelDirectory, "encoder-model.onnx", 256L * 1024 * 1024);
+        encoder.PrepareOwnedMatMulWeights();
         decoder = Load(modelDirectory, "decoder_joint-model.onnx", 64L * 1024 * 1024);
         RequireNames(frontend, new[] { "waveforms", "waveforms_lens" }, new[] { "features", "features_lens" });
         RequireNames(encoder, new[] { "audio_signal", "length" }, new[] { "outputs", "encoded_lengths" });

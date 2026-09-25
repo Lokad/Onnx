@@ -36,6 +36,8 @@ public abstract partial class Tensor<T> where T : unmanaged
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
 
+        if (TryRunOwnedPacked2D(x, y, destination, options)) return destination;
+
         if (ResolvePackedKernel(options, y, m) is { } packedB)
         {
             var dx = RequireContiguous(x, nameof(x), options.CopyReporter);
