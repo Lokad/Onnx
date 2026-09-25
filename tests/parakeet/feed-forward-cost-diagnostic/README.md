@@ -61,6 +61,29 @@ sample share includes convolution and decoder work as well as feed-forward work.
 Only a trustworthy cost split can select one implementation. If preparation
 cannot explain useful whole-application savings, stop pursuing packing changes
 and inspect the actual arithmetic route. No new budget or kernel sweep is part
-of this diagnostic. The bounded Core/Data build, capture and analysis adapters
-remain to be implemented and qualified; this directory presently reviews source
-and consumer reuse only.
+of this diagnostic.
+
+The bounded transport (`run.py`), VM worker (`vm.py`) and compiled build review
+(`review_build.py`, `build_checks.py`) are drafted. Preparation requires the
+completed and committed M73 root qualification. It also refuses to freeze the
+tools until the capture auditor and analyzer exist. No diagnostic campaign has
+been prepared or staged.
+
+The build review requires all 3,254 original Core methods: 3,245 unchanged, seven
+wrappers equivalent after removing only profiler markers, and two explicitly
+reviewed enclosing-clock methods. Branches, cleanup regions, locals, stack and
+implementation flags remain checked. All 697 original Data methods remain exact
+except Execute, whose observation scope must match the previously certified
+observer. Reuse both the existing assembly inspector and application consumer.
+The warning check preserves the two existing CS8604 warnings and rejects added
+warnings; this is not a warning-free baseline.
+
+Eleven checker tests pass, including deliberately changed arithmetic, branch
+targets, exception regions, locals and stage labels:
+
+    C:/Python313/python.exe -X utf8 -B -m unittest discover -s tests/parakeet/feed-forward-cost-diagnostic -p test_il_check.py -v
+
+The normalizer was also exercised on all seven actual retained wrapper bodies.
+These validate the checker, not a diagnostic binary. Complete the capture audit
+and analyzer, review the prospective observer limits, then prepare/build only
+after the ongoing release checks finish.
