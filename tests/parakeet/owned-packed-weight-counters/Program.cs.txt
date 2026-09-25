@@ -1,0 +1,135 @@
+using System.Collections;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+using Lokad.Onnx.Tests.Support;
+
+internal static class Program
+{
+    const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+    static void Require(bool value, string message) { if (!value) throw new InvalidDataException(message); }
+    static object Field(object value, string name) => (value is ComputationalGraph ? typeof(ComputationalGraph) : value.GetType())
+        .GetField(name, Flags)?.GetValue(value) ?? throw new InvalidDataException("Missing field " + name);
+    static string Sha(string path) { using var f = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(f)).ToLowerInvariant(); }
+    static string Bits(ITensor tensor) => tensor switch
+    {
+        Tensor<float> f => Convert.ToHexString(SHA256.HashData(MemoryMarshal.AsBytes(f.ToArray().AsSpan()))).ToLowerInvariant(),
+        Tensor<long> l => Convert.ToHexString(SHA256.HashData(MemoryMarshal.AsBytes(l.ToArray().AsSpan()))).ToLowerInvariant(),
+        _ => throw new InvalidDataException("Unexpected diagnostic output type")
+    };
+    static string PcmHash(float[] pcm) => Convert.ToHexString(SHA256.HashData(MemoryMarshal.AsBytes(pcm.AsSpan()))).ToLowerInvariant();
+    static void Identity(string path, JsonElement expected) => Require(new FileInfo(path).Length == expected.GetProperty("bytes").GetInt64()
+        && Sha(path) == expected.GetProperty("sha256").GetString(), "File identity " + path);
+    static void Write(string folder, string name, object value)
+    { using var f = new FileStream(Path.Combine(folder, name), FileMode.CreateNew); JsonSerializer.Serialize(f, value, new JsonSerializerOptions { WriteIndented = true }); }
+    static Dictionary<string, ITensor> Execute(GraphExecution context, Dictionary<string, ITensor> inputs)
+    {
+        context.Reset();
+        Require(context.Execute(inputs, true, ExecutionProvider.CPU, ExecutionOptions.Memory), context.LastErrorMessage ?? "Execution failed");
+        return context.Outputs.ToDictionary(p => p.Key, p => p.Value ?? throw new InvalidDataException("Missing output"));
+    }
+    static Dictionary<string, string> Hashes(IReadOnlyDictionary<string, ITensor> values) => values.ToDictionary(p => p.Key, p => Bits(p.Value));
+    static int[] Shape(string description) => description[(description.LastIndexOf(':') + 1)..].Split('x').Select(int.Parse).ToArray();
+
+    static int Main(string[] args)
+    {
+        Require(OperatingSystem.IsLinux() && args.Length == 4, "spec output role instruction-mode");
+        string specPath = Path.GetFullPath(args[0]), output = Path.GetFullPath(args[1]), role = args[2], mode = args[3];
+        Require((role is "selected" or "candidate") && (mode is "512" or "256"), "Role and mode");
+        Require(!Directory.Exists(output), "Fresh output"); Directory.CreateDirectory(output);
+        using var doc = JsonDocument.Parse(File.ReadAllBytes(specPath)); var spec = doc.RootElement;
+        using var process = Process.GetCurrentProcess();
+        Require(process.ProcessorAffinity == (IntPtr)4 && Environment.ProcessorCount == 1, "CPU2, one processor");
+        Require(RuntimeInformation.FrameworkDescription == ".NET 10.0.8" && Fma.IsSupported && Avx2.IsSupported
+            && Avx512F.IsSupported == (mode == "512"), "Runtime and actual instruction mode");
+        var flags = Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k => k.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase)
+            || k.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) || k.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)).ToArray();
+        Require(mode == "512" ? flags.Length == 0 : flags.SequenceEqual(new[] { "DOTNET_EnableAVX512" })
+            && Environment.GetEnvironmentVariable("DOTNET_EnableAVX512") == "0", "Exact instruction environment");
+        Require(!File.ReadAllText("/proc/self/maps").Contains("onnxruntime", StringComparison.OrdinalIgnoreCase), "No native ORT");
+        var product = spec.GetProperty("products").GetProperty(role);
+        Identity(typeof(ComputationalGraph).Assembly.Location, product.GetProperty("Lokad.Onnx.dll"));
+        Identity(typeof(ParakeetTranscriber).Assembly.Location, product.GetProperty("Lokad.Onnx.Data.dll"));
+        var owner = new ParakeetTranscriber(spec.GetProperty("model_directory").GetString()!);
+        var frontend = (ComputationalGraph)Field(owner, "frontend");
+        var encoder = (ComputationalGraph)Field(owner, "encoder");
+        Require(encoder.Nodes.Count == 2856 && encoder.Initializers.Count == 649, "Encoder census");
+        Require(encoder.MaximumPackedWeightBytes == 268435456 && encoder.RetainedPackedWeightBytes == 268435456, "Retained budget");
+        var maps = (IDictionary)Field(encoder, "PackedWeights"); Require(maps.Count == 37, "Retained maps");
+        var mapEntries = new List<DictionaryEntry>();
+        foreach (DictionaryEntry entry in maps) mapEntries.Add(entry);
+        var bindings = encoder.Initializers.ToDictionary(p => p.Key, p => p.Value);
+        var weights = spec.GetProperty("weights").EnumerateArray().ToDictionary(w => w.GetProperty("Name").GetString()!, w => w);
+        var nodes = encoder.Nodes.Where(n => n.Op == OpType.MatMul && n.Name?.Contains("/feed_forward", StringComparison.Ordinal) == true).ToArray();
+        Require(nodes.Length == 96 && weights.Count == 96, "Feed-forward scope");
+        foreach (var node in nodes)
+        {
+            Require(node.Inputs.Length == 2 && weights.ContainsKey(node.Inputs[1]), "Expected constant B consumer");
+            bool owned = encoder.Initializers[node.Inputs[1]].GetType().FullName == "Lokad.Onnx.OwnedPackedTensor";
+            Require(owned == (role == "candidate" && !weights[node.Inputs[1]].GetProperty("Cached").GetBoolean()), "Owned selection");
+        }
+        Require(encoder.Initializers.Values.Count(v => v.GetType().FullName == "Lokad.Onnx.OwnedPackedTensor") == (role == "candidate" ? 87 : 0), "Owned count");
+        var cases = spec.GetProperty("cases").EnumerateArray().ToArray(); Require(cases.Length == 20, "Complete corpus");
+        var records = new List<object>(); var held = new List<(ITensor Tensor, string Hash)>();
+        for (int index = 0; index < cases.Length; index++)
+        {
+            var item = cases[index]; string name = item.GetProperty("name").GetString()!;
+            string pcmPath = Path.Combine(spec.GetProperty("assets").GetString()!, item.GetProperty("pcm").GetProperty("path").GetString()!);
+            Identity(pcmPath, item.GetProperty("pcm")); var (pcm, shape) = NpySupport.ReadFloat32(pcmPath);
+            Require(shape.SequenceEqual(new[] { item.GetProperty("samples").GetInt32() }) && pcm.All(float.IsFinite) && pcm.Any(v => v != 0), "Finite nonsilent corpus");
+            string inputHash = PcmHash(pcm); Require(inputHash == item.GetProperty("raw_sha256").GetString(), "PCM identity");
+            var pre = frontend.CreateExecution(ExecutionOptions.Memory); var enc = encoder.CreateExecution(ExecutionOptions.Memory);
+            try
+            {
+                var features = Execute(pre, new() { ["waveforms"] = new DenseTensor<float>(pcm.ToArray(), new[] { 1, pcm.Length }),
+                    ["waveforms_lens"] = new DenseTensor<long>(new[] { (long)pcm.Length }, new[] { 1 }) });
+                var featureHashes = Hashes(features);
+                Dictionary<string, ITensor> encoded;
+                using (Profiler.BeginExecution(true)) encoded = Execute(enc, new() { ["audio_signal"] = features["features"], ["length"] = features["features_lens"] });
+                int frames = item.GetProperty("expected").GetProperty("encoded_frames").GetInt32();
+                Require(frames >= 48 && encoded["outputs"].Dims.SequenceEqual(new[] { 1, 1024, frames })
+                    && ((Tensor<long>)encoded["encoded_lengths"]).ToArray().SequenceEqual(new[] { (long)frames }), "Encoder output shape");
+                Require(enc.Options.Tensor.MaxDegreeOfParallelism == 1 && enc.Options.Tensor.UseSimd && enc.Options.Tensor.UseIntrinsics
+                    && !enc.Options.Tensor.DisableBufferPool, "Original sequential options");
+                var profile = enc.LastProfile?.Reverse().ToArray() ?? throw new InvalidDataException("Missing profile");
+                Require(profile.Length == 2856 && profile.Select(p => p.NodeId).SequenceEqual(encoder.Nodes.Select(n => n.ID)), "Complete ordered profile");
+                var byId = profile.ToDictionary(p => p.NodeId); var calls = new List<object>();
+                bool remainder = (frames & 1) != 0 && frames % 3 != 0;
+                foreach (var node in nodes)
+                {
+                    var p = byId[node.ID]; var details = p.Detail.Split(','); Require(details.Length == 2, "Two matrix operands");
+                    int[] a = Shape(details[0]), b = Shape(details[1]);
+                    int[] expectedB = weights[node.Inputs[1]].GetProperty("Shape").EnumerateArray().Select(v => v.GetInt32()).ToArray();
+                    Require(b.SequenceEqual(expectedB) && (a.Length == 2 || a.Length == 3 && a[0] == 1)
+                        && a[^2] == frames && a[^1] == b[0], "Actual matrix geometry");
+                    bool owned = role == "candidate" && !weights[node.Inputs[1]].GetProperty("Cached").GetBoolean();
+                    int copies = p.OpsProfile.Count(s => s.Stage == OpStage.CopyY);
+                    Require(copies == (owned && remainder ? 1 : 0), "Exact B reconstruction stages " + node.Name);
+                    calls.Add(new { node = node.Name, weight = node.Inputs[1], a, b, owned, copy_y_stages = copies });
+                }
+                Require(featureHashes.All(p => Bits(features[p.Key]) == p.Value) && PcmHash(pcm) == inputHash, "Immutable inputs");
+                var hashes = Hashes(encoded);
+                foreach (var p in encoded) held.Add((p.Value, hashes[p.Key]));
+                var record = new { name, frames, remainder, input_hash = inputHash, frontend = featureHashes, encoder = hashes,
+                    copy_bytes = enc.LastCopyBytes, scratch_bytes = enc.LastScratchBytes, calls, passed = true };
+                Write(output, $"{index:D3}.json", record); records.Add(record);
+            }
+            finally { pre.Reset(); enc.Reset(); }
+        }
+        Require(held.All(p => Bits(p.Tensor) == p.Hash), "Held outputs independent");
+        Require(bindings.Count == encoder.Initializers.Count && bindings.All(p => ReferenceEquals(p.Value, encoder.Initializers[p.Key])), "Stable initializer identities");
+        Require(maps.Count == 37 && mapEntries.All(p => ReferenceEquals(p.Value, maps[p.Key])), "Stable prepared map identities");
+        Require(!File.ReadAllText("/proc/self/maps").Contains("onnxruntime", StringComparison.OrdinalIgnoreCase), "No native ORT after execution");
+        Write(output, "result.json", new { passed = true, role, mode, records, held_outputs_independent = true, immutable_inputs = true,
+            product_rebuilt = false, application_scored = false, forced_gc = false,
+            core_sha256 = Sha(typeof(ComputationalGraph).Assembly.Location), data_sha256 = Sha(typeof(ParakeetTranscriber).Assembly.Location),
+            runner_sha256 = Sha(Assembly.GetExecutingAssembly().Location), spec_sha256 = Sha(specPath),
+            runtime = RuntimeInformation.FrameworkDescription, processor_count = 1, affinity = 4, avx512 = Avx512F.IsSupported });
+        GC.KeepAlive(owner); GC.KeepAlive(held);
+        return 0;
+    }
+}

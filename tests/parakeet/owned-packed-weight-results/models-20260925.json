@@ -1,0 +1,169 @@
+{
+  "passed": true,
+  "performance_measured": false,
+  "release_admitted": false,
+  "closure": {
+    "bytes": 891028,
+    "sha256": "bb1a758c6936fa251d921992c67dd7c65ff075fe20829af72f4455b529f1b2ca"
+  },
+  "analysis": {
+    "bytes": 466703,
+    "sha256": "414fbfe7f3acc52c754085b372dad813581a41d2563dd8cdc9e46b8dc6db6096"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 822784,
+        "sha256": "82c02785506b540d3fe590d48b0fdb15fc4b744ffb376cd626d758d5755bb16f"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "3f80f8cb31f4a7e33fdb07247e3e1ed297ac53f7d8e3ebeb272980ff316f8236"
+      }
+    }
+  },
+  "consumers": {
+    "TranscribeReplay": {
+      "bytes": 56832,
+      "sha256": "335ca09d0e45e344068c484c92af9d0db43a6ae0accd1895d7ae7bb88b0afcf9"
+    },
+    "AudioBenchmark": {
+      "bytes": 40448,
+      "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+    }
+  },
+  "jobs": [
+    {
+      "name": "selected-native-512",
+      "passed": true,
+      "arrays": 784,
+      "values": 3090494,
+      "maximum_scaled_error": 3.830720152728115e-05
+    },
+    {
+      "name": "selected-public-512",
+      "passed": true,
+      "public_requests": 20
+    },
+    {
+      "name": "candidate-native-512",
+      "passed": true,
+      "arrays": 784,
+      "values": 3090494,
+      "maximum_scaled_error": 3.830720152728115e-05,
+      "exact_selected_arrays": 784
+    },
+    {
+      "name": "candidate-public-512",
+      "passed": true,
+      "public_requests": 20,
+      "exact_selected_results": 20
+    },
+    {
+      "name": "selected-native-256",
+      "passed": true,
+      "arrays": 784,
+      "values": 3090494,
+      "maximum_scaled_error": 3.830720152728115e-05
+    },
+    {
+      "name": "selected-public-256",
+      "passed": true,
+      "public_requests": 20
+    },
+    {
+      "name": "candidate-native-256",
+      "passed": true,
+      "arrays": 784,
+      "values": 3090494,
+      "maximum_scaled_error": 3.830720152728115e-05,
+      "exact_selected_arrays": 784
+    },
+    {
+      "name": "candidate-public-256",
+      "passed": true,
+      "public_requests": 20,
+      "exact_selected_results": 20
+    }
+  ],
+  "resources": [
+    {
+      "name": "selected-native-512",
+      "samples": 119,
+      "peak_rss": 7179182080,
+      "seconds": 31.97564128600061
+    },
+    {
+      "name": "selected-public-512",
+      "samples": 249,
+      "peak_rss": 8321986560,
+      "seconds": 66.51567886897828
+    },
+    {
+      "name": "candidate-native-512",
+      "samples": 112,
+      "peak_rss": 7643594752,
+      "seconds": 30.81681174505502
+    },
+    {
+      "name": "candidate-public-512",
+      "samples": 239,
+      "peak_rss": 9451032576,
+      "seconds": 65.31531512201764
+    },
+    {
+      "name": "selected-native-256",
+      "samples": 113,
+      "peak_rss": 7179837440,
+      "seconds": 31.790778705035336
+    },
+    {
+      "name": "selected-public-256",
+      "samples": 236,
+      "peak_rss": 8355405824,
+      "seconds": 65.95088267396204
+    },
+    {
+      "name": "candidate-native-256",
+      "samples": 106,
+      "peak_rss": 7651418112,
+      "seconds": 30.457998865051195
+    },
+    {
+      "name": "candidate-public-256",
+      "samples": 225,
+      "peak_rss": 7987400704,
+      "seconds": 64.22736928495578
+    }
+  ],
+  "failed_release_controls": [
+    [
+      "e5-8tok",
+      "candidate"
+    ],
+    [
+      "e5-512tok",
+      "candidate"
+    ]
+  ],
+  "pending": [
+    "actual reconstruction counters",
+    "matched application comparison",
+    "unresolved e5 repeatability",
+    "remaining release qualification"
+  ],
+  "publisher": {
+    "bytes": 5248,
+    "sha256": "9ff168062e578080e10b1001d9bed1d7931d7d8a0ccf9b0b6d521273d1324431"
+  }
+}
