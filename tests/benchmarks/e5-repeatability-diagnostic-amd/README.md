@@ -17,9 +17,27 @@ capture, export one retained trace and require its decompressed bytes to match
 the original complete event export exactly.
 
 Run `C:/Python313/python.exe -X utf8 -B` on `review_reuse.py` to verify source
-recovery and consumer/product provenance. Complete transport, compiled review,
-independent event audit and prospective resource checks before freezing inputs.
+recovery, consumer/product provenance and unchanged compiled/event audit logic.
+Transport, independent audit and publication drafts now exist. After the active
+Parakeet application closes, use `run.py prepare`, `stage`, `launch`, `observe`,
+`collect`, then `audit.py`. Do not repeat completed collection or publication.
 The governing ExecPlan is `.agent/m76-e5-repeatability-diagnostic-20260925.md`.
+
+Preparation verifies all prior closed results and records a storage estimate
+from complete retained traces. The unchanged 512 MiB stage bound remains hard.
+This estimate uses the earlier 30-token input; it does not guarantee the two new
+trace sizes. Stage only with 11 GiB plus the full 512 MiB stage allowance available,
+and 3 GiB free tmpfs. This extra initial headroom accommodates retained traces;
+every worker still uses the original 11 GiB preflight and all original limits.
+If headroom is insufficient, reclaim only verified obsolete duplicates while
+the VM is idle. Never clean up during the active Parakeet score.
+
+The consumer build is followed immediately by compiled instruction review.
+The exporter build must reproduce the complete retained export before any
+new capture. The final audit checks all 6,240 calls and 12,480 markers, with
+every original correctness assertion and all raw events retained. Publication
+uses `../e5-repeatability-diagnostic-results/publish.py`; interpretation follows
+the actual observations. No diagnostic has been prepared or launched yet.
 
 The old failed comparison and every clock remain retained. This observation
 may explain runtime mechanisms; it cannot retroactively assign the original

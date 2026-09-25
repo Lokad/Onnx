@@ -1,4 +1,5 @@
 """Verify the observer/source reuse before freezing any new VM campaign."""
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -64,8 +65,18 @@ def review():
     assert exporter.count(after) == 1 and exporter.replace(after, before) == original
     transfers = [read(ROOT / f'artifacts/e5-runtime-event-transfers-20260924/{role}.json') for role in 'abcd']
     assert all(row['passed'] for row in transfers)
+    def function(path, name):
+        tree = ast.parse(path.read_text(encoding='utf8'))
+        node, = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == name]
+        return ast.dump(node, include_attributes=False)
+    assert function(HERE / 'checks.py', 'compiled_scope') == function(OLD / 'checks.py', 'compiled_scope')
+    assert function(HERE / 'audit.py', 'reconcile') == function(OLD / 'audit.py', 'reconcile')
+    associations = ROOT / 'tests/benchmarks/e5-runtime-diagnostic-results/associations.py'
+    published = read(associations.parent / 'observations-20260924.json')
+    assert pin(associations) == published['inputs'][str(associations.relative_to(ROOT))]
     return dict(passed=True, source_review=source_review, original_consumer=original_consumer,
                 products=payload['products'], observer_key_change_only=True, exporter_sink_change_only=True,
+                compiled_scope_unchanged=True, event_reconciliation_unchanged=True,
                 prior_export_bytes=[row['raw']['bytes'] for row in transfers],
                 prior_compressed_bytes=[row['archive']['bytes'] for row in transfers],
                 exporter_roundtrip_required=True, diagnostic_built=False, diagnostic_run=False,
