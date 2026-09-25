@@ -1,0 +1,7 @@
+managed,native,managed_seconds,ort_seconds,excess_seconds,matrix_calls_predicted,tensor_views_predicted
+/pre_encode/conv/conv.0/Conv,/pre_encode/conv/conv.1/Relu_output_0_nchwc,0.247605734,0.035034666666666665,0.21257106733333334,3059,9177
+/pre_encode/conv/conv.2/Conv,/pre_encode/conv/conv.2/Conv_output_0_nchwc,1.214745605,0.03417866666666667,1.1805669383333335,1368320,4104960
+/pre_encode/conv/conv.3/Conv,/pre_encode/conv/conv.1_1/Relu_output_0_nchwc,0.316658929,0.20061933333333334,0.11603959566666663,20,60
+/pre_encode/conv/conv.5/Conv,/pre_encode/conv/conv.5/Conv_output_0_nchwc,0.3196829726666667,0.009807333333333333,0.30987563933333334,343808,1031424
+/pre_encode/conv/conv.6/Conv,/pre_encode/conv/conv.1_2/Relu_output_0_nchwc,0.08007037033333333,0.049729333333333334,0.030341037,20,60
+,ReorderOutput,0,0.001601,-0.001601,0,0

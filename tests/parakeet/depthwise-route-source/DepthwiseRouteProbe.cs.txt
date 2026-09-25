@@ -1,0 +1,159 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Numerics;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+// Diagnostic-only observer; never part of a candidate/release product.
+internal static class DepthwiseRouteProbe
+{
+    internal sealed class Row
+    {
+        public string key = "";
+        public int[] geometry = Array.Empty<int>();
+        public long calls, tiled_batches, panels, products, views, patch_values, completed_batches;
+        public bool simd, intrinsics, segmented;
+        public int degree;
+        public Dictionary<string,long> layouts = new();
+        public Dictionary<string,long> matrix_shapes = new();
+        public Dictionary<string,long> leaves = new();
+        public Dictionary<int,long> panel_widths = new();
+        public Dictionary<int,long> scratch_elements = new();
+    }
+
+    internal sealed class Report
+    {
+        public bool passed;
+        public string protocol = "parakeet-depthwise-route-v1";
+        public string runtime = Environment.Version.ToString();
+        public int pid = Environment.ProcessId;
+        public int processor_count = Environment.ProcessorCount;
+        public string core_sha256 = "";
+        public bool fma = Fma.IsSupported, avx2 = Avx2.IsSupported, avx512 = Avx512F.IsSupported;
+        public int vector_width = Vector<float>.Count;
+        public Dictionary<string,string> flags = new();
+        public List<Row> rows = new();
+    }
+
+    static readonly string? output = Environment.GetEnvironmentVariable("PARAKEET_DEPTHWISE_COUNTS");
+    static readonly Dictionary<string,Row> rows = new();
+    [ThreadStatic] static Row? active;
+    static int thread;
+
+    static DepthwiseRouteProbe()
+    {
+        if (!string.IsNullOrEmpty(output)) AppDomain.CurrentDomain.ProcessExit += Save;
+    }
+
+    static void Require(bool condition,string message)
+    {
+        if (!condition) throw new InvalidOperationException("Depthwise observation: "+message);
+    }
+
+    static string Layout(Tensor<float> tensor) => tensor.GetType().ToString()+":"+
+        tensor.IsReversedStride+":"+string.Join(",",tensor.Strides.ToArray())+":"+tensor.Length;
+
+    static void Add(Dictionary<string,long> map,string key)
+    {
+        map.TryGetValue(key,out long count);map[key]=count+1;
+    }
+
+    static void Add(Dictionary<int,long> map,int key)
+    {
+        map.TryGetValue(key,out long count);map[key]=count+1;
+    }
+
+    internal static void Enter(Tensor<float> input,Tensor<float> weight,DenseTensor<float> denseInput,
+        DenseTensor<float> denseWeight,int groups,int n,int c,int h,int w,int m,int kh,int kw,
+        int dh,int dw,int sh,int sw,int top,int left,int bottom,int right,int oh,int ow,TensorExecutionOptions options)
+    {
+        if (string.IsNullOrEmpty(output)) return;
+        Require(active is null,"unfinished prior batch");
+        if (groups!=c || c!=m || c<=1 || kh*kw!=9) return;
+        if (thread==0) thread=Environment.CurrentManagedThreadId;
+        Require(thread==Environment.CurrentManagedThreadId && n==1,"single request thread and batch");
+        int[] geometry={n,c,h,w,m,kh,kw,dh,dw,sh,sw,top,left,bottom,right,oh,ow,groups};
+        string key=string.Join(",",geometry);
+        if (!rows.TryGetValue(key,out Row? row))
+        {
+            row=new Row {key=key,geometry=geometry,simd=options.UseSimd,intrinsics=options.UseIntrinsics,
+                segmented=options.UseSegmentedConvolution,degree=options.MaxDegreeOfParallelism};
+            rows.Add(key,row);
+        }
+        Require(row.simd==options.UseSimd && row.intrinsics==options.UseIntrinsics &&
+            row.segmented==options.UseSegmentedConvolution && row.degree==options.MaxDegreeOfParallelism,"options changed");
+        row.calls++;
+        Add(row.layouts,Layout(input)+" -> "+Layout(denseInput)+" | "+Layout(weight)+" -> "+Layout(denseWeight));
+        active=row;
+    }
+
+    internal static void BeginTiled(int batch,int groups,int channels,int height,int width,int filters,
+        int kernelH,int kernelW,int outH,int outW,int blockColumns,int scratchElements)
+    {
+        if (active is not Row row) return;
+        int[] g=row.geometry;
+        Require(batch==0 && groups==g[17] && channels==g[1] && height==g[2] && width==g[3]
+            && filters==g[4] && kernelH==g[5] && kernelW==g[6] && outH==g[15] && outW==g[16],"tiled geometry");
+        Require(blockColumns==32,"unexpected panel width");
+        row.tiled_batches++;Add(row.scratch_elements,scratchElements);
+    }
+
+    internal static void Panel(int columns,int reduction)
+    {
+        if (active is not Row row) return;
+        row.panels++;row.patch_values+=(long)columns*reduction;Add(row.panel_widths,columns);
+    }
+
+    internal static void Views()
+    {
+        if (active is Row row) row.views+=3;
+    }
+
+    internal static void Product(int m,int k,int n)
+    {
+        if (active is not Row row) return;
+        Require(m==1 && k==9 && n>0 && n<=32,"matrix geometry");
+        row.products++;Add(row.matrix_shapes,m+","+k+","+n);
+    }
+
+    internal static void Kernel(string name,int m,int k,int n)
+    {
+        if (active is not Row row) return;
+        Require(m==1 && k==9 && n>0 && n<=32,"leaf geometry");
+        Add(row.leaves,name);
+    }
+
+    internal static void EndTiled()
+    {
+        if (active is not Row row) return;
+        row.completed_batches++;active=null;
+    }
+
+    static void Save(object? sender,EventArgs args)
+    {
+        Require(!string.IsNullOrEmpty(output) && rows.Count>0,"missing output/counts");
+        var report=new Report {passed=true,rows=new List<Row>(rows.Values),
+            core_sha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(typeof(DepthwiseRouteProbe).Assembly.Location)))};
+        foreach(DictionaryEntry entry in Environment.GetEnvironmentVariables())
+        {
+            string name=(string)entry.Key;
+            if (name.StartsWith("LOKAD_",StringComparison.OrdinalIgnoreCase) || name.StartsWith("DOTNET_",StringComparison.OrdinalIgnoreCase)
+                || name.StartsWith("COMPlus_",StringComparison.OrdinalIgnoreCase)) report.flags.Add(name,(string)entry.Value!);
+        }
+        foreach(Row row in report.rows)
+        {
+            Require(row.calls==row.tiled_batches && row.tiled_batches==row.completed_batches,"incomplete route");
+            Require(row.views==3*row.products && row.products>0,"product/view coverage");
+            long leaves=0;foreach(long count in row.leaves.Values) leaves+=count;
+            Require(leaves==row.products,"matrix/leaf coverage");
+        }
+        using var stream=new FileStream(output!,FileMode.CreateNew);
+        JsonSerializer.Serialize(stream,report,new JsonSerializerOptions {WriteIndented=true,IncludeFields=true});
+    }
+}
