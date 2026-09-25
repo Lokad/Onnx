@@ -63,11 +63,10 @@ cannot explain useful whole-application savings, stop pursuing packing changes
 and inspect the actual arithmetic route. No new budget or kernel sweep is part
 of this diagnostic.
 
-The bounded transport (`run.py`), VM worker (`vm.py`) and compiled build review
-(`review_build.py`, `build_checks.py`) are drafted. Preparation requires the
-completed and committed M73 root qualification. It also refuses to freeze the
-tools until the capture auditor and analyzer exist. No diagnostic campaign has
-been prepared or staged.
+The bounded transport (`run.py`), VM worker (`vm.py`), compiled build review
+(`review_build.py`, `build_checks.py`) and capture audit (`audit.py`, `analyze.py`)
+are drafted. Preparation requires the completed and committed M73 root
+qualification. No diagnostic campaign has been prepared or staged.
 
 The build review requires all 3,254 original Core methods: 3,245 unchanged, seven
 wrappers equivalent after removing only profiler markers, and two explicitly
@@ -84,6 +83,31 @@ targets, exception regions, locals and stage labels:
     C:/Python313/python.exe -X utf8 -B -m unittest discover -s tests/parakeet/feed-forward-cost-diagnostic -p test_il_check.py -v
 
 The normalizer was also exercised on all seven actual retained wrapper bodies.
-These validate the checker, not a diagnostic binary. Complete the capture audit
-and analyzer, review the prospective observer limits, then prepare/build only
-after the ongoing release checks finish.
+These validate the checker, not a diagnostic binary.
+
+`reference.py` checks seven retained evidence files, all 2,856 encoder nodes,
+96 complete projection groups and 7,680 matched calls. Their digests and the
+compact reference are bound into the prepared workload. `analyze.py` joins
+each actual shape and route, keeps both output-preparation intervals and every
+separate scale operation, and reconciles stage, node, graph and request clocks.
+Graph counters are fresh; per-node scratch/copy counts and ORT attribution are
+explicitly identified as earlier observations.
+
+Fourteen accounting tests pass, including wrong clock units, omitted scale
+work, wrong shapes, inconsistent packing routes, missing passes and excessive
+observer effects:
+
+    C:/Python313/python.exe -X utf8 -B -m unittest discover -s tests/parakeet/feed-forward-cost-diagnostic -p test_analyze.py -v
+
+The prospective controls require each role's corpus max/min <= 1.10 and each
+clip's max/min <= 1.20 across its three measured passes. Both stages/clock and
+markers/stages corpus ratios must fall in [0.95, 1.05]. The auditor preserves
+all 240 requests, all failed controls and the uncorrected timings. A failed
+control sets `usable_for_candidate_selection` to false; successful collection
+and complete accounting alone do not make the split suitable for a decision.
+
+After the ongoing release checks finish and the qualified product is committed,
+run `run.py prepare`, `stage`, `launch build`, `observe build`, `collect build`,
+then `review_build.py`. Only a passing compiled review permits `launch capture`.
+Observe until terminal, collect once and run `audit.py` once, with stdout outside
+the artifact directory. Keep the first verdict and all failed controls.

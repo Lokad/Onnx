@@ -72,6 +72,8 @@ def prerequisites():
 def prepare():
     assert all((TOOLS / name).is_file() for name in ['audit.py', 'analyze.py']), 'Finish the capture audit before freezing tools'
     applied, product, core, observer = prerequisites()
+    from reference import references
+    reference = references()
     assert not BASE.exists(), 'Preserve the prepared diagnostic'
     # Check every original input before creating a new artifact directory.
     manifest = read(APP / 'collected' / MANIFEST)
@@ -113,6 +115,7 @@ def prepare():
                        ('root-closure.json', ROOT_QUAL / 'closed.json'),
                        ('root-analysis.json', ROOT_QUAL / 'analysis.json')]:
         put('evidence/' + name, path.read_bytes())
+    put('evidence/cost-reference.json', json.dumps(reference, separators=(',', ':'), allow_nan=False))
     runtime_files = {}
     external = {}
     for path in (OBSERVER / 'build-collected/runtime-observed').iterdir():
@@ -133,6 +136,7 @@ def prepare():
     for name in [MANIFEST, 'runtime/protocol.py', 'runtime/campaign_processes.py']:
         external[REMOTE_APP + '/' + name] = pin(APP / 'collected' / name)
     spec = dict(boot=1789634288.0, external=external, product=product, consumer=observer['consumer'],
+        diagnostic_references=reference['inputs'],
         consumer_runtime=REMOTE_OBSERVER + '/runtime-observed',
         product_runtime=REMOTE_MODELS + '/runtimes/candidate', original_runtime_files=runtime_files,
         root_closure=pin(ROOT_QUAL / 'closed.json'), root_source=applied['source_files'],
@@ -166,6 +170,8 @@ def prepared():
         assert pin(ROOT / name) == wanted, name
     for name, wanted in read(BASE / 'bundle/spec.json')['files'].items():
         assert pin(BASE / 'bundle' / name) == wanted, name
+    for name, wanted in read(BASE / 'bundle/spec.json')['diagnostic_references'].items():
+        assert pin(ROOT / name) == wanted, name
 
 
 def observe(kind):
