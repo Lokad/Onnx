@@ -1,0 +1,136 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+
+// Isolated diagnostic Data assembly. Keep the existing SampledAudio consumer's
+// reflection entry points; retain no graph, tensor or profile objects after Save.
+internal static class ParakeetPhaseProbe
+{
+    static readonly string Mode = ReadMode();
+    static readonly List<object> Calls = new();
+    static readonly Dictionary<string, object> Graphs = new(StringComparer.Ordinal);
+    static readonly JsonSerializerOptions Json = new() { IncludeFields = true };
+
+    static void Require(bool value, string message)
+    {
+        if (!value) throw new InvalidDataException(message);
+    }
+
+    static string ReadMode()
+    {
+        Require(Environment.GetEnvironmentVariable("PARAKEET_PHASE_MODE") == "phase", "Original consumer phase mode required");
+        string? mode = Environment.GetEnvironmentVariable("PARAKEET_COST_MODE");
+        Require(mode is "clock" or "stages" or "markers", "Cost diagnostic mode");
+        return mode!;
+    }
+
+    internal static Scope Enter(GraphExecution context)
+    {
+        string graph = Path.GetFileName(context.ModelFile);
+        bool encoder = graph == "encoder-model.onnx";
+        if (!Graphs.ContainsKey(graph))
+        {
+            if (encoder)
+            {
+                Require(context.Nodes.Count == 2856 && !context.Nodes.Any(n => n.Op == OpType.If), "Encoder node census");
+                var targets = context.Nodes.Where(n => n.Op == OpType.MatMul
+                    && n.Name.Contains("/feed_forward", StringComparison.Ordinal)).ToArray();
+                Require(targets.Length == 96, "Feed-forward census");
+                foreach (var node in targets)
+                {
+                    Require(node.Inputs.Length == 2 && context.Initializers.TryGetValue(node.Inputs[1], out _), "Constant feed-forward B");
+                    var b = context.Initializers[node.Inputs[1]];
+                    Require(b is Tensor<float> && b.Dims.Length == 2
+                        && ((b.Dims[0] == 1024 && b.Dims[1] == 4096)
+                            || (b.Dims[0] == 4096 && b.Dims[1] == 1024)), "Feed-forward shape");
+                }
+            }
+            var nodes = context.Nodes.Select(node => new {
+                id = node.ID, name = node.Name, op = node.Op.ToString(), inputs = node.Inputs.ToArray(), outputs = node.Outputs.ToArray(),
+                constant_inputs = node.Inputs.Select(name => context.Initializers.TryGetValue(name, out var tensor)
+                    ? new { name, dims = tensor.Dims.ToArray(), type = tensor.ElementType.ToString() } : null).ToArray()
+            }).ToArray();
+            Graphs.Add(graph, new { model = context.ModelFile, nodes,
+                retained_packed_bytes = context.RetainedPackedWeightBytes,
+                maximum_packed_bytes = context.MaximumPackedWeightBytes });
+        }
+        return new Scope(context, graph, encoder);
+    }
+
+    internal readonly struct Scope : IDisposable
+    {
+        readonly GraphExecution context;
+        readonly string graph;
+        readonly bool stages;
+        readonly ProfilerContext? scope;
+        readonly long start;
+        readonly int thread;
+
+        internal Scope(GraphExecution context, string graph, bool encoder)
+        {
+            this.context = context;
+            this.graph = graph;
+            thread = Environment.CurrentManagedThreadId;
+            stages = encoder && Mode != "clock";
+            scope = stages ? Profiler.BeginExecution(true) : null;
+            start = Stopwatch.GetTimestamp();
+        }
+
+        public void Dispose()
+        {
+            long end = Stopwatch.GetTimestamp();
+            try
+            {
+                Require(Environment.CurrentManagedThreadId == thread, "Graph execution thread changed");
+                Require(context.Options.Tensor.MaxDegreeOfParallelism == 1, "Sequential cost profiling required");
+                var profile = stages ? context.LastProfile?.Reverse().ToArray() : null;
+                var wall = stages ? context.LastWallProfile?.ToArray() : null;
+                if (stages)
+                {
+                    Require(profile is not null && profile.Length == context.Nodes.Count, "Complete stage census");
+                    Require(profile!.Select(n => n.NodeId).SequenceEqual(context.Nodes.Select(n => n.ID)), "Stage node order");
+                    Require(wall is not null && wall.Length == (Mode == "markers" ? context.Nodes.Count : 0), "Enclosing clock census");
+                    if (Mode == "markers")
+                    {
+                        Require(wall!.Select(n => n.NodeId).SequenceEqual(context.Nodes.Select(n => n.ID)), "Enclosing node order");
+                        Require(wall.All(n => start <= n.StartTicks && n.StartTicks <= n.EndTicks && n.EndTicks <= end), "Enclosing node bounds");
+                    }
+                }
+                var nodes = profile?.Select(node => new {
+                    id = node.NodeId, op = node.Op.ToString(), detail = node.Detail,
+                    stages = node.OpsProfile.Reverse().Select(stage => new {
+                        stage = (int)stage.Stage, duration_ticks = stage.Time.Ticks
+                    }).ToArray()
+                }).ToArray();
+                Calls.Add(new { graph, start_ticks = start, end_ticks = end, nodes, wall,
+                    retained_packed_bytes = context.RetainedPackedWeightBytes,
+                    scratch_bytes = context.LastScratchBytes, copy_bytes = context.LastCopyBytes });
+            }
+            finally
+            {
+                scope?.Dispose();
+            }
+        }
+    }
+
+    // The existing consumer calls this after the complete public-request clock.
+    public static void Save(string output, int index, string name, int pass)
+    {
+        Require(Calls.Count > 0, "Missing graph calls");
+        using (var stream = new FileStream(Path.Combine(output, $"cost-{index:D3}.json"), FileMode.CreateNew))
+            JsonSerializer.Serialize(stream, new { name, pass, mode = Mode,
+                frequency = Stopwatch.Frequency, stage_frequency = TimeSpan.TicksPerSecond,
+                calls = Calls.ToArray() }, Json);
+        Calls.Clear();
+        if (index == 0)
+        {
+            using var stream = new FileStream(Path.Combine(output, "graphs.json"), FileMode.CreateNew);
+            JsonSerializer.Serialize(stream, Graphs, Json);
+        }
+    }
+}
