@@ -1,0 +1,184 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+internal static unsafe class Program
+{
+    const int Guard = 16;
+    const int Canary = 0x4e513749;
+    static string output = "";
+    static readonly List<object> results = new();
+    static int failed;
+    static void Require(bool condition, string reason) { if (!condition) throw new InvalidDataException(reason); }
+    static string Hash(ReadOnlySpan<float> values) => Convert.ToHexString(SHA256.HashData(MemoryMarshal.AsBytes(values))).ToLowerInvariant();
+    static string Sha(string path) { using var stream = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant(); }
+    static void Same(ReadOnlySpan<float> expected, ReadOnlySpan<float> actual, string reason) =>
+        Require(MemoryMarshal.AsBytes(expected).SequenceEqual(MemoryMarshal.AsBytes(actual)), reason);
+    static void Write(string name, object value)
+    { using var stream = new FileStream(Path.Combine(output, name), FileMode.CreateNew); JsonSerializer.Serialize(stream, value); }
+    static float[] Values(int count, uint seed, bool special)
+    {
+        var values = new float[count];
+        int[] bits = { 0, unchecked((int)0x80000000), 0x7fc00001, unchecked((int)0xffc12345),
+            0x7f800000, unchecked((int)0xff800000), 1, unchecked((int)0x80000001) };
+        for (int i = 0; i < count; i++)
+        {
+            seed = unchecked(seed * 1664525 + 1013904223);
+            values[i] = special && i % 13 < bits.Length ? BitConverter.Int32BitsToSingle(bits[i % 13])
+                : ((int)(seed >> 8) % 2001 - 1000) / 997.0f;
+        }
+        return values;
+    }
+    static float[] Guarded(ReadOnlySpan<float> values)
+    {
+        var array = new float[values.Length + 2 * Guard];
+        Array.Fill(array, BitConverter.Int32BitsToSingle(Canary)); values.CopyTo(array.AsSpan(Guard)); return array;
+    }
+    static void Guards(float[] values)
+    {
+        Require(values.AsSpan(0, Guard).ToArray().All(v => BitConverter.SingleToInt32Bits(v) == Canary)
+            && values.AsSpan(values.Length - Guard).ToArray().All(v => BitConverter.SingleToInt32Bits(v) == Canary), "Output guards");
+    }
+    static float[] Pack(float[] source, int n, int k)
+    {
+        var packed = Guarded(new float[n * k]);
+        fixed (float* b = source, p = packed) ExistingKernels.Pack(n, k, b + Guard, p + Guard);
+        Guards(packed); return packed;
+    }
+    static object Row(JsonElement item)
+    {
+        Require(Fma.IsSupported && Avx2.IsSupported, "Eligible row intrinsics");
+        int n = item.GetProperty("n").GetInt32(), k = item.GetProperty("k").GetInt32();
+        bool special = item.GetProperty("special").GetBoolean();
+        var a = Guarded(Values(n, 17, special)); var b = Guarded(Values(n * k, 31, special));
+        var p = Pack(b, n, k); var initial = Values(k, 47, special);
+        var expected = Guarded(initial); var actual = Guarded(initial);
+        string ah = Hash(a), bh = Hash(b), ph = Hash(p);
+        long allocated;
+        fixed (float* ap = a, bp = b, pp = p, ep = expected, cp = actual)
+        {
+            ExistingKernels.Remainder(1, n, k, ap + Guard, bp + Guard, ep + Guard);
+            PackedFinalRowKernel.Multiply(n, k, ap + Guard, pp + Guard, cp + Guard);
+            initial.CopyTo(actual.AsSpan(Guard, k)); // Warm the helper before allocation accounting.
+            long before = GC.GetAllocatedBytesForCurrentThread();
+            PackedFinalRowKernel.Multiply(n, k, ap + Guard, pp + Guard, cp + Guard);
+            allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+        }
+        Same(expected, actual, "Packed final row must preserve every result bit and guard"); Guards(actual);
+        Require(allocated == 0 && Hash(a) == ah && Hash(b) == bh && Hash(p) == ph, "No allocation or input mutation");
+        return new { n, k, special, bit_exact = true, nonzero_destination = true, guards_intact = true,
+            inputs_immutable = true, allocated_bytes = allocated, output_sha256 = Hash(actual), packed_sha256 = ph };
+    }
+    static void Route(int m, int n, int k, float* a, float* b, float* p, float* c, bool direct)
+    {
+        if (m % 3 == 0) ExistingKernels.Three(m, n, k, a, p, c);
+        else
+        {
+            int rows = m - m % 2; ExistingKernels.Two(rows, n, k, a, p, c);
+            if (rows != m)
+            {
+                if (direct) PackedFinalRowKernel.Multiply(n, k, a + rows * n, p, c + rows * k);
+                else ExistingKernels.Remainder(1, n, k, a + rows * n, b, c + rows * k);
+            }
+        }
+    }
+    static object FullRoute(JsonElement item)
+    {
+        Require(Fma.IsSupported && Avx2.IsSupported, "Eligible route intrinsics");
+        int n = item.GetProperty("n").GetInt32(), k = item.GetProperty("k").GetInt32(), m = item.GetProperty("m").GetInt32();
+        var a = Guarded(Values(m * n, 53, false)); var b = Guarded(Values(n * k, 67, false)); var p = Pack(b, n, k);
+        string ah = Hash(a), bh = Hash(b), ph = Hash(p);
+        var expected = Guarded(new float[m * k]); var actual = Guarded(new float[m * k]);
+        fixed (float* ap = a, bp = b, pp = p, ep = expected, cp = actual)
+        {
+            Route(m, n, k, ap + Guard, bp + Guard, pp + Guard, ep + Guard, false);
+            Route(m, n, k, ap + Guard, null, pp + Guard, cp + Guard, true);
+        }
+        Same(expected, actual, "Complete existing two-/three-row route and packed final row"); Guards(actual);
+        var denseA = new DenseTensor<float>(a.AsSpan(Guard, m * n).ToArray(), new[] { m, n });
+        var denseB = new DenseTensor<float>(b.AsSpan(Guard, n * k).ToArray(), new[] { n, k });
+        var publicResult = Tensor<float>.MatMul(denseA, denseB, TensorExecutionOptions.Intrinsics);
+        Same(publicResult.ToArray(), actual.AsSpan(Guard, m * k), "Original public MatMul result");
+        Require(Hash(a) == ah && Hash(b) == bh && Hash(p) == ph, "Full-route input immutability");
+        bool remainder = m % 2 != 0 && m % 3 != 0;
+        return new { n, k, m, remainder, bit_exact = true, public_matmul_exact = true,
+            guards_intact = true, inputs_immutable = true, dense_operand_supplied_to_candidate = false,
+            new_row_calls = remainder ? 1 : 0, reconstructed_bytes = 0, output_sha256 = Hash(actual) };
+    }
+    static Tensor<float> Owned(float[] source, int n, int k) => (Tensor<float>)Activator.CreateInstance(
+        typeof(Tensor<float>).Assembly.GetType("Lokad.Onnx.OwnedPackedTensor", true)!,
+        BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { source, n, k }, null)!;
+    static object Fallback(JsonElement item)
+    {
+        string mode = item.GetProperty("option").GetString()!;
+        var options = mode switch { "scalar" => TensorExecutionOptions.Scalar, "simd" => TensorExecutionOptions.Simd,
+            "auto" => TensorExecutionOptions.Auto, _ => throw new InvalidDataException("Fallback option") };
+        var source = Values(7 * 33, 71, false); var owned = Owned(source, 7, 33);
+        var input = new DenseTensor<float>(Values(3 * 7, 83, false), new[] { 3, 7 });
+        string inputHash = Hash(input.ToArray()), sourceHash = Hash(source), ownedHash = Hash(owned.ToArray());
+        var expected = Tensor<float>.MatMul(input, new DenseTensor<float>(source, new[] { 7, 33 }), options);
+        var actual = Tensor<float>.MatMul(input, owned, options);
+        Same(expected.ToArray(), actual.ToArray(), "Existing owned-weight fallback");
+        Require(Hash(input.ToArray()) == inputHash && Hash(source) == sourceHash && Hash(owned.ToArray()) == ownedHash, "Fallback immutable operands");
+        return new { option = mode, bit_exact = true, inputs_immutable = true, packed_row_invoked = false, output_sha256 = Hash(actual.ToArray()) };
+    }
+    static object Unavailable()
+    {
+        Require(!Fma.IsSupported && !Avx2.IsSupported, "Hardware-disabled process");
+        bool rejected = false;
+        try { TensorExecutionOptions.Intrinsics.Validate(); } catch (InvalidOperationException) { rejected = true; }
+        Require(rejected, "Explicit unsupported intrinsics rejected");
+        return new { rejected, packed_row_invoked = false };
+    }
+    static int Main(string[] args)
+    {
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Linux proof");
+        Require(args.Length == 3, "spec output mode"); output = Path.GetFullPath(args[1]); string mode = args[2];
+        Require(!Directory.Exists(output), "Fresh output"); Directory.CreateDirectory(output);
+        using var document = JsonDocument.Parse(File.ReadAllBytes(args[0])); var spec = document.RootElement;
+        using var process = Process.GetCurrentProcess();
+        Require(RuntimeInformation.FrameworkDescription == ".NET 10.0.8" && Environment.ProcessorCount == 1
+            && process.ProcessorAffinity == (IntPtr)4, "Runtime and CPU2");
+        var flags = Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k => k.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase)
+            || k.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) || k.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase))
+            .ToDictionary(k => k, k => Environment.GetEnvironmentVariable(k));
+        bool hardwareDisabled = mode == "hardware-disabled", avx512Disabled = mode == "avx512-disabled";
+        Require(mode is "native" or "avx512-disabled" or "hardware-disabled", "Mode");
+        Require(mode == "native" ? flags.Count == 0 : flags.Count == 1 && flags.GetValueOrDefault(
+            hardwareDisabled ? "DOTNET_EnableHWIntrinsic" : "DOTNET_EnableAVX512") == "0", "Exact instruction flags");
+        Require(Fma.IsSupported == !hardwareDisabled && Avx2.IsSupported == !hardwareDisabled
+            && Avx512F.IsSupported == !(hardwareDisabled || avx512Disabled), "Actual hardware mode");
+        foreach (var file in spec.GetProperty("runtime_files").EnumerateObject())
+        {
+            string path = Path.Combine(AppContext.BaseDirectory, file.Name);
+            Require(new FileInfo(path).Length == file.Value.GetProperty("bytes").GetInt64()
+                && Sha(path) == file.Value.GetProperty("sha256").GetString(), "Runtime identity " + file.Name);
+        }
+        Require(!File.ReadAllText("/proc/self/maps").Contains("onnxruntime", StringComparison.OrdinalIgnoreCase), "No native ORT");
+        foreach (var item in spec.GetProperty("cases").GetProperty(mode).EnumerateArray())
+        {
+            string id = item.GetProperty("id").GetString()!, kind = item.GetProperty("kind").GetString()!;
+            object row;
+            try
+            {
+                Require(!hardwareDisabled || kind is "fallback" or "unavailable", "No unsupported kernel call");
+                object evidence = kind switch { "row" => Row(item), "route" => FullRoute(item), "fallback" => Fallback(item), "unavailable" => Unavailable(), _ => throw new InvalidDataException(kind) };
+                row = new { id, passed = true, evidence };
+            }
+            catch (Exception error) { failed++; row = new { id, passed = false, error = error.ToString() }; }
+            results.Add(row); Write(id + ".json", row);
+        }
+        Require(!File.ReadAllText("/proc/self/maps").Contains("onnxruntime", StringComparison.OrdinalIgnoreCase), "No native ORT after proof");
+        Write("result.json", new { completed = true, passed = failed == 0, failed, mode, cases = results, flags,
+            runtime = RuntimeInformation.FrameworkDescription, affinity = 4, processor_count = Environment.ProcessorCount,
+            fma = Fma.IsSupported, avx2 = Avx2.IsSupported, avx512 = Avx512F.IsSupported,
+            core_sha256 = Sha(typeof(Tensor<float>).Assembly.Location), runner_sha256 = Sha(Assembly.GetExecutingAssembly().Location),
+            spec_sha256 = Sha(args[0]), kernels = ExistingKernels.Identities(), diagnostic_only = true,
+            no_model_execution = true, no_application_score = true, no_product_change = true });
+        return 0; // Preserve test verdict independently from complete capture.
+    }
+}

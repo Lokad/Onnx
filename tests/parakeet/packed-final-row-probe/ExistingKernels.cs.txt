@@ -1,0 +1,20 @@
+using System.Reflection;
+using Lokad.Onnx;
+
+internal static unsafe class ExistingKernels
+{
+    internal delegate void PackKernel(int n, int k, float* source, float* packed);
+    internal delegate void MultiplyKernel(int m, int n, int k, float* a, float* b, float* c);
+    internal static readonly PackKernel Pack = Resolve<PackKernel>("ShortWidePackPanelsB");
+    internal static readonly MultiplyKernel Two = Resolve<MultiplyKernel>("ShortWideMultiply2Rows");
+    internal static readonly MultiplyKernel Three = Resolve<MultiplyKernel>("ShortWideMultiply3Rows");
+    internal static readonly MultiplyKernel Remainder = Resolve<MultiplyKernel>("ShortWideMultiplyRemainder");
+
+    static T Resolve<T>(string name) where T : Delegate =>
+        (typeof(MathOps).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new MissingMethodException(name)).CreateDelegate<T>();
+
+    internal static object[] Identities() => new Delegate[] { Pack, Two, Three, Remainder }
+        .Select(d => (object)new { name = d.Method.Name, token = d.Method.MetadataToken,
+            module = d.Method.Module.ModuleVersionId, assembly = d.Method.DeclaringType!.Assembly.GetName().Name }).ToArray();
+}

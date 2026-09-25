@@ -1,0 +1,1153 @@
+{
+  "passed": true,
+  "proof_only": true,
+  "closure": {
+    "bytes": 35979,
+    "sha256": "f4cc1ea804d95014ac878757f8f5107b220a940223b1497bbf6ab55136ba415f"
+  },
+  "analysis": {
+    "bytes": 62006,
+    "sha256": "5f49990646b5641e34d43b70e23b16505c2f69a16f3033697045391574ba0cf4"
+  },
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 822784,
+      "sha256": "82c02785506b540d3fe590d48b0fdb15fc4b744ffb376cd626d758d5755bb16f"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "3f80f8cb31f4a7e33fdb07247e3e1ed297ac53f7d8e3ebeb272980ff316f8236"
+    }
+  },
+  "helper": {
+    "bytes": 1404,
+    "sha256": "62b91f965f00160b5c37271b03c9356cb355f1949647b28fbbd1ddda312d9f47"
+  },
+  "consumer": {
+    "bytes": 37888,
+    "sha256": "dfc4c4590bdcf983cbd51e3c1459a8720db61c04635173fab95af1836711b37f"
+  },
+  "cases": [
+    {
+      "mode": "native",
+      "id": "row-1-1-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 1,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d6a2c70fc8337ed7e3710461d9d45f4e2091ab17e1663f3a981e1d9496ce7bed"
+    },
+    {
+      "mode": "native",
+      "id": "row-1-1-special",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 1,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d5d1db0a79c08405e557486e34eab854eae294b09145579f16282a8438abc63d"
+    },
+    {
+      "mode": "native",
+      "id": "row-1-8-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 8,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "f8212ebec48534af256e6ffe24647734d22b757ea35c1258d6594351cd6d8861"
+    },
+    {
+      "mode": "native",
+      "id": "row-1-8-special",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 8,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "f7d2116cc64bab5c58aa297925b9ba736e7eb9975589c9d20b7c208a569ebb24"
+    },
+    {
+      "mode": "native",
+      "id": "row-3-7-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 3,
+      "k": 7,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "6b50f6963dd034e7f97919e5652ecd74186b565aea4fb46fcce1d178fc1c4701"
+    },
+    {
+      "mode": "native",
+      "id": "row-3-7-special",
+      "kind": "row",
+      "passed": true,
+      "n": 3,
+      "k": 7,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8a01b254efef1c5fb7e6706b52085bb9f6351687785a062ff7d4f5db728aab22"
+    },
+    {
+      "mode": "native",
+      "id": "row-7-9-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 7,
+      "k": 9,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "b3ea9fe7d3bd8bd367c9e0ee82c63da2e9e63d14cfc06fe116037dc5faf49e40"
+    },
+    {
+      "mode": "native",
+      "id": "row-7-9-special",
+      "kind": "row",
+      "passed": true,
+      "n": 7,
+      "k": 9,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "6af492af401a943e04270859eab864a9263fce27cee05b5c95b858f3eea2df76"
+    },
+    {
+      "mode": "native",
+      "id": "row-8-31-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 8,
+      "k": 31,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "192e937f4100eb7d840ab623c878921904ef7bc06f8268083a7e3e3e78cb17b7"
+    },
+    {
+      "mode": "native",
+      "id": "row-8-31-special",
+      "kind": "row",
+      "passed": true,
+      "n": 8,
+      "k": 31,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "2208805ae8f77aee12d63a2340b2159eac39b0d4ae0677aa93ebf493c9992812"
+    },
+    {
+      "mode": "native",
+      "id": "row-9-32-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 9,
+      "k": 32,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "6814f5d9349e46fd40a114ad47fe389285ee57937b0a6fc1822e4cb684cedbba"
+    },
+    {
+      "mode": "native",
+      "id": "row-9-32-special",
+      "kind": "row",
+      "passed": true,
+      "n": 9,
+      "k": 32,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d44cdefe00315d59204521861367e4d027fb8bdda9cf3798648fa0fe7da62611"
+    },
+    {
+      "mode": "native",
+      "id": "row-17-33-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 17,
+      "k": 33,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d7d56e4738884f23dc4cc5634c2cb818428678081cf84f4708606da622827465"
+    },
+    {
+      "mode": "native",
+      "id": "row-17-33-special",
+      "kind": "row",
+      "passed": true,
+      "n": 17,
+      "k": 33,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8365acf172de682fb747a03ed6d5654a8db0284a836a9ab73bb2d4902df105b5"
+    },
+    {
+      "mode": "native",
+      "id": "row-5-63-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 5,
+      "k": 63,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "fe5b5969e8a8c4bb199b9fb304cfce1f97a85ad9ddcdf5e234a297c2fba79cb4"
+    },
+    {
+      "mode": "native",
+      "id": "row-5-63-special",
+      "kind": "row",
+      "passed": true,
+      "n": 5,
+      "k": 63,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "cbacb4fe385108b1662a3eb4eed614226a35ecfdddb7ae40148c76ef54d93715"
+    },
+    {
+      "mode": "native",
+      "id": "row-4-64-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 4,
+      "k": 64,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8c225a87ffdcf228bbad2388baabeab8658fe1ace947439c10418962069ac617"
+    },
+    {
+      "mode": "native",
+      "id": "row-4-64-special",
+      "kind": "row",
+      "passed": true,
+      "n": 4,
+      "k": 64,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "7388841d4d9c6b03fef1725b4f570452bf8efe14aedb8802df32a5bf450e43d1"
+    },
+    {
+      "mode": "native",
+      "id": "row-11-65-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 11,
+      "k": 65,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "cbb63f4d1d4870f8173b3bed2605deb1e11d2ac169f7f1785edd234cbbcb33ac"
+    },
+    {
+      "mode": "native",
+      "id": "row-11-65-special",
+      "kind": "row",
+      "passed": true,
+      "n": 11,
+      "k": 65,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "c9319bd9ed4cca34d6f57b27fade6cdc066f97167281c57ff331d6a2993a5845"
+    },
+    {
+      "mode": "native",
+      "id": "row-1024-4096-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "7e3f6f6e2996c116c01fe401ff566bb485ae2f0de78cec346287a7ac75a9253a"
+    },
+    {
+      "mode": "native",
+      "id": "row-1024-4096-special",
+      "kind": "row",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "09eded273768516e1961ead01ba6ea43dc4642aa3bfc9db01d25ff7868481cf4"
+    },
+    {
+      "mode": "native",
+      "id": "row-4096-1024-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "40ab75305203c80efb5b384b759cd3d6414d6718c3a07e11e3330c552c14beb6"
+    },
+    {
+      "mode": "native",
+      "id": "row-4096-1024-special",
+      "kind": "row",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8de4bdefc8bbf762a6b8b322b98b6f4b8ddc83b15c94f5e74ecbdd7749afa18c"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-167",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 167,
+      "allocated_bytes": "",
+      "output_sha256": "7f353733dd909321641290bd9bbe64be1c04d9b210f136f0714f11240b267f39"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-89",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 89,
+      "allocated_bytes": "",
+      "output_sha256": "51b337426c1754236cdec56072f95558915be5f0f45fe468219cacc650cbe23c"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-157",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 157,
+      "allocated_bytes": "",
+      "output_sha256": "3998a918996d66741b3fb85e1e79104015b865e848c5ce3e38c8da0b1008eb1e"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-83",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 83,
+      "allocated_bytes": "",
+      "output_sha256": "34ceef7e9dc94965b2542a30dce38882da0c24a9e9fa801d1e7c41c9395b304e"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-61",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 61,
+      "allocated_bytes": "",
+      "output_sha256": "736a40b942e66294e7c08d7b13acc6b217b45faf1b18e21e768b22762bb2aea3"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-151",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 151,
+      "allocated_bytes": "",
+      "output_sha256": "8dc8c8e6e5c06319aea69dc1b5e4e6e1d5f8ec39fb0b86322688ad941649dedf"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-169",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 169,
+      "allocated_bytes": "",
+      "output_sha256": "6c9951bb02bf3d9ac2fd497ce25c1383fae5f233439b092de818be081d4d94e6"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-48",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 48,
+      "allocated_bytes": "",
+      "output_sha256": "a802791a424ad70ea3645328d261d78da791c64cf8b7cd669351a96e48104f2f"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-50",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 50,
+      "allocated_bytes": "",
+      "output_sha256": "e576c9f601a55b89930ce72cc2d497d3b93476c0b8aa69be9c2f8226b671ecb7"
+    },
+    {
+      "mode": "native",
+      "id": "route-1024-4096-225",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 225,
+      "allocated_bytes": "",
+      "output_sha256": "e050e113de8909331358970bb709c69f6bb9be5d94b3650c92e0170ff2ddc1c5"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-167",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 167,
+      "allocated_bytes": "",
+      "output_sha256": "8abc3306fcf4a42b510f060b7138db0018167b65a1e4487d2a8ae9188080adff"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-89",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 89,
+      "allocated_bytes": "",
+      "output_sha256": "cf8d11ca60f25687055d6e640d9ac98cb9316af2cf27f2c4c9cb3d7c3e3685aa"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-157",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 157,
+      "allocated_bytes": "",
+      "output_sha256": "e2e9af6784c12ac82dc9906c6a6d01c17a8af73559c8a96a7eb07eb70469e451"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-83",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 83,
+      "allocated_bytes": "",
+      "output_sha256": "c122200163e6ad3f6436110ff3f961eb75e475137f9b2262edc3a283305e6be7"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-61",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 61,
+      "allocated_bytes": "",
+      "output_sha256": "943fc19706d34c8dfddf33961caf9a6218b2b8fdd82e07ae17b8027429f90803"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-151",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 151,
+      "allocated_bytes": "",
+      "output_sha256": "07a73aa3499ddf1648a71312fd2cb9f59471dff2f85ce5448d3f90b601f819d4"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-169",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 169,
+      "allocated_bytes": "",
+      "output_sha256": "717647bdf5050e116674c47eb4207e312fc6e91c39d2dfe1c4c64b1bef579bb8"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-48",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 48,
+      "allocated_bytes": "",
+      "output_sha256": "a1c15b0d43bc6010269e8762e6d7d3978510df13d2658c83ac3d32d98078380f"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-50",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 50,
+      "allocated_bytes": "",
+      "output_sha256": "781c4345ef89d5f81811e5fa72fc4f4d608e8ae6f27159ab1b869d2332e6dbfa"
+    },
+    {
+      "mode": "native",
+      "id": "route-4096-1024-225",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 225,
+      "allocated_bytes": "",
+      "output_sha256": "c02f6d8b3941a5c3b8d1c575bec26642448ed59f0e7ea5cc12c2a5df05418abf"
+    },
+    {
+      "mode": "native",
+      "id": "fallback-scalar",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "6dde8a7abbaa7b83e43d15abb0005a8204bb951a6429adc291bec686c3b29e2d"
+    },
+    {
+      "mode": "native",
+      "id": "fallback-simd",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "6dde8a7abbaa7b83e43d15abb0005a8204bb951a6429adc291bec686c3b29e2d"
+    },
+    {
+      "mode": "native",
+      "id": "fallback-auto",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "f1529b5f96c1525607fcc21231d1ef4cc3df6751cecc50f29fd186c133823a79"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-1-1-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 1,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d6a2c70fc8337ed7e3710461d9d45f4e2091ab17e1663f3a981e1d9496ce7bed"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-1-1-special",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 1,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d5d1db0a79c08405e557486e34eab854eae294b09145579f16282a8438abc63d"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-1-8-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 8,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "f8212ebec48534af256e6ffe24647734d22b757ea35c1258d6594351cd6d8861"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-1-8-special",
+      "kind": "row",
+      "passed": true,
+      "n": 1,
+      "k": 8,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "f7d2116cc64bab5c58aa297925b9ba736e7eb9975589c9d20b7c208a569ebb24"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-3-7-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 3,
+      "k": 7,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "6b50f6963dd034e7f97919e5652ecd74186b565aea4fb46fcce1d178fc1c4701"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-3-7-special",
+      "kind": "row",
+      "passed": true,
+      "n": 3,
+      "k": 7,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8a01b254efef1c5fb7e6706b52085bb9f6351687785a062ff7d4f5db728aab22"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-7-9-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 7,
+      "k": 9,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "b3ea9fe7d3bd8bd367c9e0ee82c63da2e9e63d14cfc06fe116037dc5faf49e40"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-7-9-special",
+      "kind": "row",
+      "passed": true,
+      "n": 7,
+      "k": 9,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "6af492af401a943e04270859eab864a9263fce27cee05b5c95b858f3eea2df76"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-8-31-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 8,
+      "k": 31,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "192e937f4100eb7d840ab623c878921904ef7bc06f8268083a7e3e3e78cb17b7"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-8-31-special",
+      "kind": "row",
+      "passed": true,
+      "n": 8,
+      "k": 31,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "2208805ae8f77aee12d63a2340b2159eac39b0d4ae0677aa93ebf493c9992812"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-9-32-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 9,
+      "k": 32,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "6814f5d9349e46fd40a114ad47fe389285ee57937b0a6fc1822e4cb684cedbba"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-9-32-special",
+      "kind": "row",
+      "passed": true,
+      "n": 9,
+      "k": 32,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d44cdefe00315d59204521861367e4d027fb8bdda9cf3798648fa0fe7da62611"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-17-33-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 17,
+      "k": 33,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "d7d56e4738884f23dc4cc5634c2cb818428678081cf84f4708606da622827465"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-17-33-special",
+      "kind": "row",
+      "passed": true,
+      "n": 17,
+      "k": 33,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8365acf172de682fb747a03ed6d5654a8db0284a836a9ab73bb2d4902df105b5"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-5-63-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 5,
+      "k": 63,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "fe5b5969e8a8c4bb199b9fb304cfce1f97a85ad9ddcdf5e234a297c2fba79cb4"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-5-63-special",
+      "kind": "row",
+      "passed": true,
+      "n": 5,
+      "k": 63,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "cbacb4fe385108b1662a3eb4eed614226a35ecfdddb7ae40148c76ef54d93715"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-4-64-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 4,
+      "k": 64,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8c225a87ffdcf228bbad2388baabeab8658fe1ace947439c10418962069ac617"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-4-64-special",
+      "kind": "row",
+      "passed": true,
+      "n": 4,
+      "k": 64,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "7388841d4d9c6b03fef1725b4f570452bf8efe14aedb8802df32a5bf450e43d1"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-11-65-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 11,
+      "k": 65,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "cbb63f4d1d4870f8173b3bed2605deb1e11d2ac169f7f1785edd234cbbcb33ac"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-11-65-special",
+      "kind": "row",
+      "passed": true,
+      "n": 11,
+      "k": 65,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "c9319bd9ed4cca34d6f57b27fade6cdc066f97167281c57ff331d6a2993a5845"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-1024-4096-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "7e3f6f6e2996c116c01fe401ff566bb485ae2f0de78cec346287a7ac75a9253a"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-1024-4096-special",
+      "kind": "row",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "09eded273768516e1961ead01ba6ea43dc4642aa3bfc9db01d25ff7868481cf4"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-4096-1024-finite",
+      "kind": "row",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "40ab75305203c80efb5b384b759cd3d6414d6718c3a07e11e3330c552c14beb6"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "row-4096-1024-special",
+      "kind": "row",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": "",
+      "allocated_bytes": 0,
+      "output_sha256": "8de4bdefc8bbf762a6b8b322b98b6f4b8ddc83b15c94f5e74ecbdd7749afa18c"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-167",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 167,
+      "allocated_bytes": "",
+      "output_sha256": "7f353733dd909321641290bd9bbe64be1c04d9b210f136f0714f11240b267f39"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-89",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 89,
+      "allocated_bytes": "",
+      "output_sha256": "51b337426c1754236cdec56072f95558915be5f0f45fe468219cacc650cbe23c"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-157",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 157,
+      "allocated_bytes": "",
+      "output_sha256": "3998a918996d66741b3fb85e1e79104015b865e848c5ce3e38c8da0b1008eb1e"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-83",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 83,
+      "allocated_bytes": "",
+      "output_sha256": "34ceef7e9dc94965b2542a30dce38882da0c24a9e9fa801d1e7c41c9395b304e"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-61",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 61,
+      "allocated_bytes": "",
+      "output_sha256": "736a40b942e66294e7c08d7b13acc6b217b45faf1b18e21e768b22762bb2aea3"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-151",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 151,
+      "allocated_bytes": "",
+      "output_sha256": "8dc8c8e6e5c06319aea69dc1b5e4e6e1d5f8ec39fb0b86322688ad941649dedf"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-169",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 169,
+      "allocated_bytes": "",
+      "output_sha256": "6c9951bb02bf3d9ac2fd497ce25c1383fae5f233439b092de818be081d4d94e6"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-48",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 48,
+      "allocated_bytes": "",
+      "output_sha256": "a802791a424ad70ea3645328d261d78da791c64cf8b7cd669351a96e48104f2f"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-50",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 50,
+      "allocated_bytes": "",
+      "output_sha256": "e576c9f601a55b89930ce72cc2d497d3b93476c0b8aa69be9c2f8226b671ecb7"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-1024-4096-225",
+      "kind": "route",
+      "passed": true,
+      "n": 1024,
+      "k": 4096,
+      "m": 225,
+      "allocated_bytes": "",
+      "output_sha256": "e050e113de8909331358970bb709c69f6bb9be5d94b3650c92e0170ff2ddc1c5"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-167",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 167,
+      "allocated_bytes": "",
+      "output_sha256": "8abc3306fcf4a42b510f060b7138db0018167b65a1e4487d2a8ae9188080adff"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-89",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 89,
+      "allocated_bytes": "",
+      "output_sha256": "cf8d11ca60f25687055d6e640d9ac98cb9316af2cf27f2c4c9cb3d7c3e3685aa"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-157",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 157,
+      "allocated_bytes": "",
+      "output_sha256": "e2e9af6784c12ac82dc9906c6a6d01c17a8af73559c8a96a7eb07eb70469e451"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-83",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 83,
+      "allocated_bytes": "",
+      "output_sha256": "c122200163e6ad3f6436110ff3f961eb75e475137f9b2262edc3a283305e6be7"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-61",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 61,
+      "allocated_bytes": "",
+      "output_sha256": "943fc19706d34c8dfddf33961caf9a6218b2b8fdd82e07ae17b8027429f90803"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-151",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 151,
+      "allocated_bytes": "",
+      "output_sha256": "07a73aa3499ddf1648a71312fd2cb9f59471dff2f85ce5448d3f90b601f819d4"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-169",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 169,
+      "allocated_bytes": "",
+      "output_sha256": "717647bdf5050e116674c47eb4207e312fc6e91c39d2dfe1c4c64b1bef579bb8"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-48",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 48,
+      "allocated_bytes": "",
+      "output_sha256": "a1c15b0d43bc6010269e8762e6d7d3978510df13d2658c83ac3d32d98078380f"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-50",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 50,
+      "allocated_bytes": "",
+      "output_sha256": "781c4345ef89d5f81811e5fa72fc4f4d608e8ae6f27159ab1b869d2332e6dbfa"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "route-4096-1024-225",
+      "kind": "route",
+      "passed": true,
+      "n": 4096,
+      "k": 1024,
+      "m": 225,
+      "allocated_bytes": "",
+      "output_sha256": "c02f6d8b3941a5c3b8d1c575bec26642448ed59f0e7ea5cc12c2a5df05418abf"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "fallback-scalar",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "6dde8a7abbaa7b83e43d15abb0005a8204bb951a6429adc291bec686c3b29e2d"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "fallback-simd",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "6dde8a7abbaa7b83e43d15abb0005a8204bb951a6429adc291bec686c3b29e2d"
+    },
+    {
+      "mode": "avx512-disabled",
+      "id": "fallback-auto",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "f1529b5f96c1525607fcc21231d1ef4cc3df6751cecc50f29fd186c133823a79"
+    },
+    {
+      "mode": "hardware-disabled",
+      "id": "fallback-scalar",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "6dde8a7abbaa7b83e43d15abb0005a8204bb951a6429adc291bec686c3b29e2d"
+    },
+    {
+      "mode": "hardware-disabled",
+      "id": "fallback-simd",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "6dde8a7abbaa7b83e43d15abb0005a8204bb951a6429adc291bec686c3b29e2d"
+    },
+    {
+      "mode": "hardware-disabled",
+      "id": "fallback-auto",
+      "kind": "fallback",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": "6dde8a7abbaa7b83e43d15abb0005a8204bb951a6429adc291bec686c3b29e2d"
+    },
+    {
+      "mode": "hardware-disabled",
+      "id": "unavailable",
+      "kind": "unavailable",
+      "passed": true,
+      "n": "",
+      "k": "",
+      "m": "",
+      "allocated_bytes": "",
+      "output_sha256": ""
+    }
+  ],
+  "resources": [
+    {
+      "name": "native",
+      "samples": 5,
+      "seconds": 2.5259887489955872,
+      "peak_rss": 416477184
+    },
+    {
+      "name": "avx512-disabled",
+      "samples": 5,
+      "seconds": 2.5282922849291936,
+      "peak_rss": 414674944
+    },
+    {
+      "name": "hardware-disabled",
+      "samples": 1,
+      "seconds": 0.5076439999975264,
+      "peak_rss": 10092544
+    }
+  ],
+  "prepared_source": {
+    "bytes": 18903400,
+    "sha256": "e3ca64b50ea4a5dd276d90a19779d602f8ed78b6275b9e5448fe3b021bec5e1b"
+  },
+  "source_files": 433,
+  "model_executed": false,
+  "application_scored": false,
+  "release_admitted": false,
+  "failed_release_controls": [
+    [
+      "e5-8tok",
+      "candidate"
+    ],
+    [
+      "e5-512tok",
+      "candidate"
+    ]
+  ],
+  "prior_quantitative_attribution": false,
+  "publisher": {
+    "bytes": 5994,
+    "sha256": "ddd7a44d424d4f94f936543e6f4c5ca8e88d5146336c4faea99cfc5b57bed766"
+  }
+}
