@@ -56,6 +56,17 @@ def main():
     proof=read(BASE/'closed.json');assert proof['passed'] and proof['diagnostic_only'] and not proof['root_product_changed']
     for name,wanted in proof['files'].items():assert pin(BASE/name)==wanted,name
     analysis=read(BASE/'analysis.json');clocks=[];blocks=[];loads=[];compiles=[];pauses=[];reports={}
+    rejected=ROOT/'artifacts/e5-direct-tier-diagnostic-amd-20260925'
+    rejected_proof=read(rejected/'closed.json')
+    assert pin(rejected/'closed.json')['sha256']=='d1d534621e336b81f404bfcc2d7bf2ae81b1fec4512a50fa9d849f20e33b6d92'
+    assert rejected_proof['evidence_validated'] and not rejected_proof['campaign_passed']
+    for name in ['failure-analysis.json','collected/a-capture/output/result.json','collected/a-capture/output/diagnostic.json']:
+        assert pin(rejected/name)==rejected_proof['files'][name]
+    first=read(rejected/'collected/a-capture/output/result.json')
+    first_observer=read(rejected/'collected/a-capture/output/diagnostic.json')
+    assert first['calls']==len(first['clocks'])==len(first_observer['clocks'])==CALLS
+    rejected_clocks=[dict(phase=phase(c['index']),**c,**{k:v for k,v in o.items() if k!='index'})
+                     for c,o in zip(first['clocks'],first_observer['clocks'],strict=True)]
     for role,report in analysis['reports'].items():
         assert role in ROLES
         value=read(BASE/f'collected/{role}-capture/output/result.json')
@@ -87,6 +98,7 @@ def main():
             blocks=extended,matrix_timelines=tiers,**assoc)
     assert len(clocks)==4*CALLS and len(blocks)==4*CALLS//BLOCK and sum(r['markers'] for r in reports.values())==8*CALLS
     csvfile('clocks-20260925.csv',clocks);csvfile('blocks-20260925.csv',blocks)
+    csvfile('rejected-attempt-release-clocks-20260925.csv',rejected_clocks)
     if loads:csvfile('method-loads-20260925.csv',loads)
     if compiles:csvfile('compilation-20260925.csv',compiles)
     if pauses:csvfile('suspensions-20260925.csv',pauses)
@@ -95,6 +107,7 @@ def main():
         resources=analysis['resources'],peak_rss=analysis['peak_rss'],compiled_review=analysis['compiled_review'],
         observer_review=analysis['observer_review'],products=analysis['products'],
         failed_release_cases=analysis['failed_release_cases'],reused_exporter=analysis['reused_exporter'],
+        rejected_attempt=dict(closure=pin(rejected/'closed.json'),analysis=read(rejected/'failure-analysis.json')),
         release_admitted=False,reports=reports)
     with (OUT/'observations-20260925.json').open('x',encoding='utf8') as f:json.dump(result,f,indent=2,allow_nan=False);f.write('\n')
     lines=['# Exact-candidate short-e5 tier observation','',
@@ -102,6 +115,12 @@ def main():
         '6,000 calls each under unchanged .NET 10.0.8 settings. The first 780 calls',
         'preserve 600 warmup and 180 original measurement labels; later calls are',
         'an unscored diagnostic extension. Every clock remains diagnostic.','',
+        'The first attempt passed both compiled reviews, then rejected a stale',
+        'candidate hash in its manifest before candidate inference. This attempt',
+        'corrects only that identity metadata and repeats the fixed protocol in a',
+        'new namespace. The rejected attempt, its raw release trace and all 6,000',
+        '[completed release clocks](rejected-attempt-release-clocks-20260925.csv)',
+        'remain retained separately; no earlier trace was selected into this set.','',
         '| Process | Product | Method | Final Tier1 observed | Final Tier1 seconds after first call |',
         '|---|---|---|---|---:|']
     for role,report in reports.items():

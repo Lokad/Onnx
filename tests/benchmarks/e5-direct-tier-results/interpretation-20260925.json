@@ -1,0 +1,428 @@
+{
+  "diagnostic_only": true,
+  "new_inference": false,
+  "release_admitted": false,
+  "warmup_policy_changed": false,
+  "retrospective_cause_established": false,
+  "all_original_labels_and_extensions_retained": true,
+  "inputs": {
+    "tests\\benchmarks\\e5-direct-tier-results\\interpret.py": {
+      "bytes": 7320,
+      "sha256": "b893d4e7fe86619dfddcc89febd78d36cb1f29eea6a03a972d547b3a406c22bc"
+    },
+    "artifacts\\e5-direct-tier-diagnostic-v2-amd-20260925\\closed.json": {
+      "bytes": 36397,
+      "sha256": "e61941d9308e33b688f222665a0f79dd985f87b85d56123554a47202d8c531bc"
+    },
+    "artifacts\\e5-direct-tier-diagnostic-v2-amd-20260925\\analysis.json": {
+      "bytes": 7960476,
+      "sha256": "e1cbb14bc36ff2101912605d928be52ebc9d39ec48329fe9b39b899b4ab0a682"
+    },
+    "tests\\benchmarks\\e5-direct-tier-results\\observations-20260925.json": {
+      "bytes": 8023699,
+      "sha256": "a462b39fdb7eb75d7c13dda8e95114361d07779ae3b853aab3b4b441775b7e12"
+    }
+  },
+  "original_label_process_spread": {
+    "current": 1.0391808029602927,
+    "candidate": 1.1686161495218765
+  },
+  "rows": [
+    {
+      "process": "a",
+      "product": "current",
+      "original_label_mean_ms": 10.499982333333334,
+      "original_prefix_seconds": 9.032351056,
+      "tiers": [
+        {
+          "method": "RunFloatMatMulKernel",
+          "method_id": "130631465293488",
+          "signature": "void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 13.910434144,
+          "final_call": 1247,
+          "preceding_call": 1247,
+          "final_native_bytes": 2560,
+          "sizes_by_tier": {
+            "QuickJitted": 1901,
+            "QuickJittedInstrumented": 2761,
+            "OptimizedTier1": 2560
+          }
+        },
+        {
+          "method": "RunBatchedFloatMatMul",
+          "method_id": "130631465293968",
+          "signature": "void  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 14.138744505,
+          "final_call": 1264,
+          "preceding_call": 1264,
+          "final_native_bytes": 10100,
+          "sizes_by_tier": {
+            "QuickJitted": 3552,
+            "QuickJittedInstrumented": 3479,
+            "OptimizedTier1": 10100
+          }
+        }
+      ],
+      "all_600_call_groups": [
+        {
+          "first": 0,
+          "last": 599,
+          "wall_ms": 11.72030842
+        },
+        {
+          "first": 600,
+          "last": 1199,
+          "wall_ms": 10.302609983333333
+        },
+        {
+          "first": 1200,
+          "last": 1799,
+          "wall_ms": 7.783371481666666
+        },
+        {
+          "first": 1800,
+          "last": 2399,
+          "wall_ms": 5.86593278
+        },
+        {
+          "first": 2400,
+          "last": 2999,
+          "wall_ms": 5.841300751666667
+        },
+        {
+          "first": 3000,
+          "last": 3599,
+          "wall_ms": 5.857344078333333
+        },
+        {
+          "first": 3600,
+          "last": 4199,
+          "wall_ms": 5.83555306
+        },
+        {
+          "first": 4200,
+          "last": 4799,
+          "wall_ms": 5.827012593333333
+        },
+        {
+          "first": 4800,
+          "last": 5399,
+          "wall_ms": 5.83534753
+        },
+        {
+          "first": 5400,
+          "last": 5999,
+          "wall_ms": 5.832775773333333
+        }
+      ],
+      "last_product_load": {
+        "ms": 18221.880656,
+        "call": 1698,
+        "thread": 1075768,
+        "method": "ComputeStructureFingerprint",
+        "namespace": "Lokad.Onnx.ComputationalGraph",
+        "tier": "OptimizedTier1",
+        "bytes": 8029,
+        "address": "130631475795584",
+        "since_first_call_seconds": 17.531748128000004
+      }
+    },
+    {
+      "process": "b",
+      "product": "candidate",
+      "original_label_mean_ms": 10.612060783333334,
+      "original_prefix_seconds": 9.045954475,
+      "tiers": [
+        {
+          "method": "RunFloatMatMulKernel",
+          "method_id": "124569328868056",
+          "signature": "void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 13.989721632,
+          "final_call": 1254,
+          "preceding_call": 1254,
+          "final_native_bytes": 3589,
+          "sizes_by_tier": {
+            "QuickJitted": 1901,
+            "QuickJittedInstrumented": 2761,
+            "OptimizedTier1": 3589
+          }
+        },
+        {
+          "method": "RunBatchedFloatMatMul",
+          "method_id": "124569328868536",
+          "signature": "void  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 14.14956091,
+          "final_call": 1265,
+          "preceding_call": 1265,
+          "final_native_bytes": 11735,
+          "sizes_by_tier": {
+            "QuickJitted": 3695,
+            "QuickJittedInstrumented": 3622,
+            "OptimizedTier1": 11735
+          }
+        }
+      ],
+      "all_600_call_groups": [
+        {
+          "first": 0,
+          "last": 599,
+          "wall_ms": 11.721598765
+        },
+        {
+          "first": 600,
+          "last": 1199,
+          "wall_ms": 10.372457673333333
+        },
+        {
+          "first": 1200,
+          "last": 1799,
+          "wall_ms": 7.582804198333333
+        },
+        {
+          "first": 1800,
+          "last": 2399,
+          "wall_ms": 6.040031776666666
+        },
+        {
+          "first": 2400,
+          "last": 2999,
+          "wall_ms": 6.040311821666666
+        },
+        {
+          "first": 3000,
+          "last": 3599,
+          "wall_ms": 6.033858935
+        },
+        {
+          "first": 3600,
+          "last": 4199,
+          "wall_ms": 6.053542853333333
+        },
+        {
+          "first": 4200,
+          "last": 4799,
+          "wall_ms": 6.033241816666667
+        },
+        {
+          "first": 4800,
+          "last": 5399,
+          "wall_ms": 6.033974061666667
+        },
+        {
+          "first": 5400,
+          "last": 5999,
+          "wall_ms": 6.03869632
+        }
+      ],
+      "last_product_load": {
+        "ms": 17239.367279,
+        "call": -1,
+        "thread": 1075887,
+        "method": "System.IDisposable.Dispose",
+        "namespace": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234",
+        "tier": "OptimizedTier1",
+        "bytes": 327,
+        "address": "124569339396944",
+        "since_first_call_seconds": 16.550294602999998
+      }
+    },
+    {
+      "process": "c",
+      "product": "candidate",
+      "original_label_mean_ms": 12.40142561111111,
+      "original_prefix_seconds": 9.449321757,
+      "tiers": [
+        {
+          "method": "RunFloatMatMulKernel",
+          "method_id": "129602533513944",
+          "signature": "void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 14.918853787,
+          "final_call": -1,
+          "preceding_call": 1235,
+          "final_native_bytes": 3703,
+          "sizes_by_tier": {
+            "QuickJitted": 1901,
+            "QuickJittedInstrumented": 2761,
+            "OptimizedTier1": 3703
+          }
+        },
+        {
+          "method": "RunBatchedFloatMatMul",
+          "method_id": "129602533514424",
+          "signature": "void  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 15.147722135,
+          "final_call": 1252,
+          "preceding_call": 1252,
+          "final_native_bytes": 11769,
+          "sizes_by_tier": {
+            "QuickJitted": 3695,
+            "QuickJittedInstrumented": 3622,
+            "OptimizedTier1": 11769
+          }
+        }
+      ],
+      "all_600_call_groups": [
+        {
+          "first": 0,
+          "last": 599,
+          "wall_ms": 11.844882416666666
+        },
+        {
+          "first": 600,
+          "last": 1199,
+          "wall_ms": 12.058938641666668
+        },
+        {
+          "first": 1200,
+          "last": 1799,
+          "wall_ms": 7.659457653333334
+        },
+        {
+          "first": 1800,
+          "last": 2399,
+          "wall_ms": 5.816278611666666
+        },
+        {
+          "first": 2400,
+          "last": 2999,
+          "wall_ms": 5.784984771666666
+        },
+        {
+          "first": 3000,
+          "last": 3599,
+          "wall_ms": 5.777106658333333
+        },
+        {
+          "first": 3600,
+          "last": 4199,
+          "wall_ms": 5.773579651666666
+        },
+        {
+          "first": 4200,
+          "last": 4799,
+          "wall_ms": 5.777514428333333
+        },
+        {
+          "first": 4800,
+          "last": 5399,
+          "wall_ms": 5.758228801666666
+        },
+        {
+          "first": 5400,
+          "last": 5999,
+          "wall_ms": 5.7303504683333335
+        }
+      ],
+      "last_product_load": {
+        "ms": 19246.109337,
+        "call": 1691,
+        "thread": 1076008,
+        "method": "System.IDisposable.Dispose",
+        "namespace": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234",
+        "tier": "OptimizedTier1",
+        "bytes": 327,
+        "address": "129602544040736",
+        "since_first_call_seconds": 18.557111071
+      }
+    },
+    {
+      "process": "d",
+      "product": "current",
+      "original_label_mean_ms": 10.911380072222222,
+      "original_prefix_seconds": 9.073389825,
+      "tiers": [
+        {
+          "method": "RunFloatMatMulKernel",
+          "method_id": "137327269041840",
+          "signature": "void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 13.947110063,
+          "final_call": 1268,
+          "preceding_call": 1268,
+          "final_native_bytes": 3703,
+          "sizes_by_tier": {
+            "QuickJitted": 1901,
+            "QuickJittedInstrumented": 2761,
+            "OptimizedTier1": 3703
+          }
+        },
+        {
+          "method": "RunBatchedFloatMatMul",
+          "method_id": "137327269042320",
+          "signature": "void  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+          "final_seconds": 14.164338041999999,
+          "final_call": 1284,
+          "preceding_call": 1284,
+          "final_native_bytes": 10175,
+          "sizes_by_tier": {
+            "QuickJitted": 3552,
+            "QuickJittedInstrumented": 3479,
+            "OptimizedTier1": 10175
+          }
+        }
+      ],
+      "all_600_call_groups": [
+        {
+          "first": 0,
+          "last": 599,
+          "wall_ms": 11.674549444999998
+        },
+        {
+          "first": 600,
+          "last": 1199,
+          "wall_ms": 10.396211938333332
+        },
+        {
+          "first": 1200,
+          "last": 1799,
+          "wall_ms": 7.338042991666666
+        },
+        {
+          "first": 1800,
+          "last": 2399,
+          "wall_ms": 5.8371715816666665
+        },
+        {
+          "first": 2400,
+          "last": 2999,
+          "wall_ms": 5.830134593333333
+        },
+        {
+          "first": 3000,
+          "last": 3599,
+          "wall_ms": 5.821763546666667
+        },
+        {
+          "first": 3600,
+          "last": 4199,
+          "wall_ms": 5.818997861666666
+        },
+        {
+          "first": 4200,
+          "last": 4799,
+          "wall_ms": 5.807211588333334
+        },
+        {
+          "first": 4800,
+          "last": 5399,
+          "wall_ms": 5.77122733
+        },
+        {
+          "first": 5400,
+          "last": 5999,
+          "wall_ms": 5.777476945
+        }
+      ],
+      "last_product_load": {
+        "ms": 17190.465978,
+        "call": 1569,
+        "thread": 1076116,
+        "method": "System.IDisposable.Dispose",
+        "namespace": "Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__234",
+        "tier": "OptimizedTier1",
+        "bytes": 327,
+        "address": "137327279548416",
+        "since_first_call_seconds": 16.512494123
+      }
+    }
+  ]
+}
