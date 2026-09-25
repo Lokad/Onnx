@@ -1,0 +1,2490 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "application_saving_measured": false,
+  "closure": {
+    "bytes": 17247,
+    "sha256": "abe97a41fbb60648a6ee55968cd5e36c861ac908603336bd2f465379cbb1f3cd"
+  },
+  "build_review": {
+    "bytes": 5166,
+    "sha256": "f5eb75ec198647076236c85cbd4aecf4a6fdb10f20b573258c7cfe9c2a5b7f9f"
+  },
+  "analysis": {
+    "passed": true,
+    "prediction_passed": true,
+    "diagnostic_only": true,
+    "release_admitted": false,
+    "no_product_candidate_selected": true,
+    "no_application_score": true,
+    "original_bytes": 1610612736,
+    "live_arrays": [
+      96,
+      9,
+      0
+    ],
+    "live_tensors": [
+      96,
+      9,
+      0
+    ],
+    "managed_bytes_released": 1610542840,
+    "snapshots": [
+      {
+        "Phase": "original",
+        "Weights": [
+          {
+            "Name": "onnx::MatMul_6398",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6399",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6506",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6507",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6508",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6509",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6544",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6545",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6546",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6547",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6582",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6583",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6584",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6585",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6620",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6621",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6622",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6623",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6658",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6659",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6660",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6661",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6696",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6697",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6698",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6699",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6734",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6735",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6736",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6737",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6772",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6773",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6774",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6775",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6810",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6811",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6812",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6813",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6848",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6849",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6850",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6851",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6886",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6887",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6888",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6889",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6924",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6925",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6926",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6927",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6962",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6963",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6964",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6965",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7000",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7001",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7002",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7003",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7038",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7039",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7040",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7041",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7076",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7077",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7078",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7079",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7114",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7115",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7116",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7117",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7152",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7153",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7154",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7155",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7190",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7191",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7192",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7193",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7228",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7229",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7230",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7231",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7266",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7267",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7268",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7269",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7304",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7305",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7306",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7307",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7342",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7343",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7344",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7345",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7380",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7381",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": false,
+            "Bytes": 16777216
+          }
+        ],
+        "Memory": {
+          "Managed": 2899511536,
+          "Heap": 2937088160,
+          "Committed": 2990956544,
+          "Fragmented": 37584848,
+          "Rss": 3190206464
+        }
+      },
+      {
+        "Phase": "without-original-bindings",
+        "Weights": [
+          {
+            "Name": "onnx::MatMul_6398",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6399",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6506",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6507",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6508",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6509",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6544",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6545",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6546",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6547",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6582",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6583",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6584",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6585",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6620",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6621",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6622",
+            "TensorAlive": true,
+            "ArrayAlive": true,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6623",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6658",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6659",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6660",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6661",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6696",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6697",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6698",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6699",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6734",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6735",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6736",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6737",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6772",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6773",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6774",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6775",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6810",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6811",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6812",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6813",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6848",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6849",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6850",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6851",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6886",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6887",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6888",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6889",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6924",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6925",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6926",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6927",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6962",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6963",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6964",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6965",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7000",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7001",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7002",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7003",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7038",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7039",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7040",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7041",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7076",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7077",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7078",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7079",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7114",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7115",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7116",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7117",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7152",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7153",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7154",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7155",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7190",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7191",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7192",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7193",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7228",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7229",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7230",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7231",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7266",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7267",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7268",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7269",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7304",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7305",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7306",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7307",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7342",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7343",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7344",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7345",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7380",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7381",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          }
+        ],
+        "Memory": {
+          "Managed": 1439961656,
+          "Heap": 2215747112,
+          "Committed": 3031982080,
+          "Fragmented": 775801904,
+          "Rss": 3132768256
+        }
+      },
+      {
+        "Phase": "without-original-map-entries",
+        "Weights": [
+          {
+            "Name": "onnx::MatMul_6398",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6399",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6506",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6507",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6508",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6509",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6544",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6545",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6546",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6547",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6582",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6583",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6584",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6585",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6620",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6621",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6622",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": true,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6623",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6658",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6659",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6660",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6661",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6696",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6697",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6698",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6699",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6734",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6735",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6736",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6737",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6772",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6773",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6774",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6775",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6810",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6811",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6812",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6813",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6848",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6849",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6850",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6851",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6886",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6887",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6888",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6889",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6924",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6925",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6926",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6927",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6962",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6963",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6964",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_6965",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7000",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7001",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7002",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7003",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7038",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7039",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7040",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7041",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7076",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7077",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7078",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7079",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7114",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7115",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7116",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7117",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7152",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7153",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7154",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7155",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7190",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7191",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7192",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7193",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7228",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7229",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7230",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7231",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7266",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7267",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7268",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7269",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7304",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7305",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7306",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7307",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7342",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7343",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7344",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7345",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7380",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          },
+          {
+            "Name": "onnx::MatMul_7381",
+            "TensorAlive": false,
+            "ArrayAlive": false,
+            "Cached": false,
+            "Bytes": 16777216
+          }
+        ],
+        "Memory": {
+          "Managed": 1288968696,
+          "Heap": 2215731224,
+          "Committed": 2991022080,
+          "Fragmented": 926778976,
+          "Rss": 3091992576
+        }
+      }
+    ],
+    "resources": [
+      {
+        "name": "ownership",
+        "samples": 17,
+        "seconds": 8.57791575603187,
+        "peak_rss": 4020441088
+      }
+    ],
+    "public_request": {
+      "bytes": 3532,
+      "sha256": "48e3ed471414a2ad0e56b9ed5cbe4cc01cc3e130192a3f5bd7ec57b22fa237e4"
+    },
+    "weights": {
+      "bytes": 20153,
+      "sha256": "6a436d4bc880135daac273651f043e4e5e37ff6524e7e7d98f57d7cbb59996b1"
+    },
+    "retained": {
+      "bytes": 42838,
+      "sha256": "13e82a22e9e66477f83397bb73eb5db869605c0986097afa30c92e8bca4f397b"
+    },
+    "source": {
+      "bytes": 14863,
+      "sha256": "00580d342875e06d59c318a68f437185d253c516e93efd50078fda1fcb38ef43"
+    },
+    "forced_gc_unscored": true,
+    "modified_graph_never_executed": true,
+    "operating_system_release_not_inferred": true,
+    "replacement_representation_not_tested": true,
+    "failed_release_controls": [
+      [
+        "e5-8tok",
+        "candidate"
+      ],
+      [
+        "e5-512tok",
+        "candidate"
+      ]
+    ]
+  },
+  "public_request": {
+    "name": "1188-133604-0002",
+    "passed": true,
+    "input_sha256": "fc7e92b28c91d1069d001c3101135ff0cab7913957c9ab7d1a7e01c99f6707a9",
+    "result": {
+      "Text": "By being studious of colour they are studious of division, and while the curoscurist devotes himself to the representation of degrees of force in one thing, unseparated light, the colourists have for their function the attainment of beauty by arrangement of the divisions of light.",
+      "TokenIds": [
+        6679,
+        555,
+        381,
+        2495,
+        572,
+        323,
+        592,
+        298,
+        1043,
+        344,
+        2530,
+        1714,
+        2495,
+        572,
+        323,
+        592,
+        1588,
+        290,
+        454,
+        7877,
+        575,
+        1336,
+        787,
+        506,
+        4979,
+        308,
+        7880,
+        344,
+        398,
+        2426,
+        359,
+        283,
+        4384,
+        7870,
+        2658,
+        366,
+        506,
+        427,
+        2386,
+        340,
+        761,
+        592,
+        318,
+        7881,
+        306,
+        283,
+        592,
+        509,
+        463,
+        334,
+        2678,
+        552,
+        381,
+        7877,
+        352,
+        467,
+        1702,
+        6317,
+        3036,
+        988,
+        7877,
+        506,
+        298,
+        1043,
+        344,
+        398,
+        7870,
+        1647,
+        509,
+        4396,
+        3046,
+        3473,
+        506,
+        407,
+        3571,
+        1135,
+        592,
+        555,
+        3580,
+        7893,
+        652,
+        535,
+        570,
+        7881,
+        926,
+        592,
+        506,
+        1588,
+        290,
+        4325,
+        592,
+        3036,
+        988,
+        7883
+      ],
+      "FrameIndices": [
+        4,
+        7,
+        8,
+        11,
+        14,
+        16,
+        17,
+        19,
+        20,
+        21,
+        24,
+        25,
+        27,
+        30,
+        32,
+        33,
+        36,
+        38,
+        40,
+        42,
+        44,
+        47,
+        48,
+        49,
+        51,
+        55,
+        59,
+        61,
+        63,
+        65,
+        67,
+        69,
+        70,
+        71,
+        73,
+        74,
+        76,
+        77,
+        79,
+        82,
+        84,
+        86,
+        88,
+        89,
+        91,
+        93,
+        94,
+        97,
+        99,
+        102,
+        105,
+        109,
+        111,
+        114,
+        118,
+        121,
+        124,
+        127,
+        131,
+        135,
+        139,
+        142,
+        145,
+        146,
+        148,
+        151,
+        154,
+        157,
+        159,
+        162,
+        165,
+        169,
+        174,
+        177,
+        179,
+        182,
+        184,
+        186,
+        188,
+        190,
+        193,
+        196,
+        198,
+        200,
+        201,
+        203,
+        205,
+        207,
+        209,
+        211,
+        213,
+        217,
+        219,
+        222
+      ],
+      "DurationFrames": [
+        3,
+        1,
+        3,
+        3,
+        2,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        2,
+        3,
+        2,
+        1,
+        3,
+        2,
+        2,
+        2,
+        2,
+        3,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        3,
+        2,
+        2,
+        2,
+        1,
+        2,
+        2,
+        1,
+        3,
+        2,
+        3,
+        3,
+        4,
+        2,
+        3,
+        4,
+        3,
+        3,
+        3,
+        4,
+        4,
+        4,
+        3,
+        3,
+        1,
+        2,
+        3,
+        3,
+        3,
+        2,
+        3,
+        3,
+        4,
+        3,
+        3,
+        2,
+        3,
+        2,
+        2,
+        2,
+        2,
+        1,
+        3,
+        2,
+        2,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        4,
+        2,
+        3,
+        2
+      ],
+      "StopReason": 0,
+      "EncodedFrames": 225,
+      "DecoderCalls": 101
+    },
+    "no_timing_score": true
+  },
+  "retained_packed_initializers": 37,
+  "non_target_initializers": 553,
+  "remaining_map_entries": 28,
+  "core_sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8",
+  "data_sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1",
+  "original_failed_build": {
+    "code": 1,
+    "error": "CS0411",
+    "no_model_execution": true,
+    "evidence": {
+      "original_preparation": {
+        "bytes": 1577,
+        "sha256": "ae972b45c1295e0a9d48f30b23c219ad6e834ba282acec441eadc8bd5c06f449"
+      },
+      "original_collection": {
+        "bytes": 3546,
+        "sha256": "4f48344e480fdf76dd17fdfb5659e69e9697dcd05ef6a7a7f8c257887b18cdf3"
+      },
+      "original_transfer": {
+        "bytes": 276,
+        "sha256": "345ee4ec1fa1584549e2557772f80273f1b2d85e31b9269234832d3f9ca80391"
+      },
+      "original_state": {
+        "bytes": 3444,
+        "sha256": "80213baddda8e733897ae940edce3a8940c5aa6f0e517b49b6d155a29e5684b7"
+      },
+      "original_source": {
+        "bytes": 14856,
+        "sha256": "2a26a3b94e017a7ac33876452318238dc1b1c883de92ff34a5a97474e6bf7c8c"
+      },
+      "corrected_source": {
+        "bytes": 14863,
+        "sha256": "00580d342875e06d59c318a68f437185d253c516e93efd50078fda1fcb38ef43"
+      },
+      "before": "MemoryMarshal.TryGetArray(dense.Buffer, out var segment)",
+      "after": "MemoryMarshal.TryGetArray<float>(dense.Buffer, out var segment)",
+      "reason": "CS0411: explicit float type argument for MemoryMarshal.TryGetArray; no change in runtime expression"
+    }
+  },
+  "preceding_cost_diagnosis": {
+    "bytes": 52428,
+    "sha256": "233a927b373399a6c110c59a300c84799873d12e3d71eec6c099a09858d88d06"
+  },
+  "weight_packing_seconds": 3.149526099999997,
+  "diagnostic_feed_forward_gap_seconds": 3.855584772999997,
+  "native_release_source": {
+    "revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+    "path": "onnxruntime/core/framework/session_state.cc",
+    "bytes": 95215,
+    "sha256": "fe38c97116f1f2c6d9868649a094b029ded299dbf2aa423eaf6c4cb791cb189c",
+    "git_object": "3a143946dbfeca9914bc052d858ffc622ed8c5f1",
+    "lines": {
+      "--constant_initializers_use_count[input_name] == 0": 681,
+      "st->initialized_tensors_.erase(ort_value_idx);": 683,
+      "constant_initialized_tensors.erase(ort_value_idx);": 684
+    }
+  },
+  "inference_after_binding_removal": false,
+  "forced_gc_is_diagnostic_only": true,
+  "logical_representation_and_fallback_still_require_proof": true,
+  "publisher": {
+    "bytes": 4261,
+    "sha256": "ee1cc9e39fb69a725bd920f099e0edbaa207e13fa6109211181bbbb76008afb5"
+  }
+}
