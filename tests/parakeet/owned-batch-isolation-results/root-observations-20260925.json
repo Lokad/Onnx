@@ -1,0 +1,320 @@
+{
+  "closure": {
+    "bytes": 216179,
+    "sha256": "c77ef606c76508144c5656bdbe48aeac8948ce28396c8bee645587d31609c475"
+  },
+  "passed": true,
+  "warnings": {
+    "passed": true,
+    "no_new_warning": true,
+    "existing_cs8604_occurrences": 4,
+    "source_warnings": 2,
+    "summary_repeats_included": true,
+    "rows": [
+      {
+        "log": "backend-build.stdout",
+        "text": "0 Warning(s)",
+        "count": 1
+      },
+      {
+        "log": "cli-build.stdout",
+        "text": "2 Warning(s)",
+        "count": 1
+      },
+      {
+        "log": "cli-build.stdout",
+        "text": "CAMPAIGN/source/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,29): warning CS8604: Possible null reference argument for parameter 'x' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [CAMPAIGN/source/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+        "count": 2
+      },
+      {
+        "log": "cli-build.stdout",
+        "text": "CAMPAIGN/source/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,32): warning CS8604: Possible null reference argument for parameter 'y' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [CAMPAIGN/source/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+        "count": 2
+      },
+      {
+        "log": "consumer-build.stdout",
+        "text": "0 Warning(s)",
+        "count": 1
+      },
+      {
+        "log": "tensors-build.stdout",
+        "text": "0 Warning(s)",
+        "count": 1
+      }
+    ],
+    "reference_log": {
+      "bytes": 2325,
+      "sha256": "1799fbeae636c1d63705bad8ab9a6ff918d84870425881db79bba555c4977911"
+    }
+  },
+  "root_source_verified": true,
+  "root_integration": {
+    "bytes": 79887,
+    "sha256": "89786eafc5c4229066c901bcbd390c1d701ba667d00c93932325991a414eba15"
+  },
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 825344,
+      "sha256": "e07a45189b348fe55ce76300415c6c35ba6a2bc0d224f1fc13b0b92c303bccba"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 825344,
+      "sha256": "f3992f40d889a932cd0d15e0323564db801a308f4b24d1848731af30ba3c19f6"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a8e0b583d6cd4f7e01315fd6cef146721cdf2b8ecb5a8d623a43602658bc42b5"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "core_methods": 3281,
+    "data_methods": 697,
+    "public_surface_equal": false,
+    "public_surface_delta_exact": true,
+    "data_friend_removed": true,
+    "method_bodies_equal": true,
+    "implementation_flags_equal": true
+  },
+  "suites": {
+    "backend": {
+      "passed": 3546,
+      "skipped": 42,
+      "census_exact": true,
+      "trx": {
+        "bytes": 5440271,
+        "sha256": "99895b55f0b4bc2e64730ba7d1b393f8e11e3818b10b2f808a4c539ee3a5f7de"
+      }
+    },
+    "tensors": {
+      "passed": 394,
+      "skipped": 0,
+      "census_exact": true,
+      "trx": {
+        "bytes": 580467,
+        "sha256": "335c4b11c04b5e49c0cd4e5d4b567756c450451762151702f66f25cf846dc0b6"
+      }
+    }
+  },
+  "suite256": {
+    "backend": {
+      "passed": 3456,
+      "skipped": 132,
+      "census_exact": true,
+      "avx512_disabled": true,
+      "trx": {
+        "bytes": 5500468,
+        "sha256": "a506030126f4f6ab9a47fda2a3a1561d2efbbd5284432a467274fb59cd305fbb"
+      }
+    },
+    "tensors": {
+      "passed": 394,
+      "skipped": 0,
+      "census_exact": true,
+      "avx512_disabled": true,
+      "trx": {
+        "bytes": 580467,
+        "sha256": "dc0620e3580baaf029d6b0b3e50e5851807041190e61ef7e60a96965be28472b"
+      }
+    }
+  },
+  "package": {
+    "passed": true,
+    "package": {
+      "bytes": 577597,
+      "sha256": "4a6d6602e88da0354da9070cd7f7177a7e21beaacf97c722b34ee12df0992067"
+    },
+    "core": {
+      "bytes": 825344,
+      "sha256": "f3992f40d889a932cd0d15e0323564db801a308f4b24d1848731af30ba3c19f6"
+    },
+    "dependencies": [
+      {
+        "id": "Google.Protobuf",
+        "version": "3.33.5",
+        "exclude": "Build,Analyzers"
+      }
+    ]
+  },
+  "consumer": {
+    "passed": true,
+    "winograd_values": 1056,
+    "winograd_calls": 2,
+    "winograd_weights": 51200,
+    "winograd_scratch": 28800,
+    "prepared_graph_values": 1056,
+    "prepared_graph_calls": 2,
+    "retained_weights": 18432,
+    "scratch": 8384,
+    "ownership": true
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 10063872,
+      "seconds": 0.26077678392175585
+    },
+    {
+      "name": "cli-restore",
+      "samples": 5,
+      "peak_rss": 168656896,
+      "seconds": 1.2940808630082756
+    },
+    {
+      "name": "cli-build",
+      "samples": 60,
+      "peak_rss": 512360448,
+      "seconds": 15.830983362044208
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 168247296,
+      "seconds": 1.592464459943585
+    },
+    {
+      "name": "backend-build",
+      "samples": 59,
+      "peak_rss": 599822336,
+      "seconds": 16.069256486953236
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 4,
+      "peak_rss": 157532160,
+      "seconds": 1.0952063460135832
+    },
+    {
+      "name": "tensors-build",
+      "samples": 20,
+      "peak_rss": 372715520,
+      "seconds": 5.52379785804078
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 3,
+      "peak_rss": 134426624,
+      "seconds": 0.8275760539108887
+    },
+    {
+      "name": "bridge-build",
+      "samples": 11,
+      "peak_rss": 300503040,
+      "seconds": 3.033444448024966
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 182702080,
+      "seconds": 1.1739192160312086
+    },
+    {
+      "name": "backend-tests",
+      "samples": 290,
+      "peak_rss": 1491034112,
+      "seconds": 80.29547219001688
+    },
+    {
+      "name": "tensors-tests",
+      "samples": 44,
+      "peak_rss": 581083136,
+      "seconds": 12.183392098988406
+    },
+    {
+      "name": "backend-tests-256",
+      "samples": 306,
+      "peak_rss": 1744613376,
+      "seconds": 84.93922643805854
+    },
+    {
+      "name": "tensors-tests-256",
+      "samples": 41,
+      "peak_rss": 559665152,
+      "seconds": 11.368062786990777
+    },
+    {
+      "name": "package",
+      "samples": 3,
+      "peak_rss": 136617984,
+      "seconds": 0.8348032060312107
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 156762112,
+      "seconds": 1.1082703860010952
+    },
+    {
+      "name": "consumer-build",
+      "samples": 11,
+      "peak_rss": 303501312,
+      "seconds": 3.0520173780387267
+    },
+    {
+      "name": "consumer-run",
+      "samples": 1,
+      "peak_rss": 10178560,
+      "seconds": 0.2808789979899302
+    }
+  ],
+  "no_performance_measurement": true,
+  "source_qualification": {
+    "passed": true,
+    "source_files": 435,
+    "exact_measured_method_bodies_and_flags": true,
+    "policy_metadata_delta_verified": true,
+    "policy_guards_unchanged": true,
+    "corrected_test_arguments_preserved": true,
+    "no_new_compiler_warnings": true,
+    "warnings": {
+      "passed": true,
+      "no_new_warning": true,
+      "existing_cs8604_occurrences": 4,
+      "source_warnings": 2,
+      "summary_repeats_included": true,
+      "rows": [
+        {
+          "log": "backend-build.stdout",
+          "text": "0 Warning(s)",
+          "count": 1
+        },
+        {
+          "log": "cli-build.stdout",
+          "text": "2 Warning(s)",
+          "count": 1
+        },
+        {
+          "log": "cli-build.stdout",
+          "text": "CAMPAIGN/source/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,29): warning CS8604: Possible null reference argument for parameter 'x' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [CAMPAIGN/source/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+          "count": 2
+        },
+        {
+          "log": "cli-build.stdout",
+          "text": "CAMPAIGN/source/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,32): warning CS8604: Possible null reference argument for parameter 'y' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [CAMPAIGN/source/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+          "count": 2
+        },
+        {
+          "log": "consumer-build.stdout",
+          "text": "0 Warning(s)",
+          "count": 1
+        },
+        {
+          "log": "tensors-build.stdout",
+          "text": "0 Warning(s)",
+          "count": 1
+        }
+      ],
+      "reference_log": {
+        "bytes": 2325,
+        "sha256": "1799fbeae636c1d63705bad8ab9a6ff918d84870425881db79bba555c4977911"
+      }
+    }
+  }
+}

@@ -28,6 +28,7 @@ def read(path): return json.loads(path.read_text(encoding='utf8'))
 def closed(stage):
     suffix = f'{stage}-amd'
     base = ROOT/f'artifacts/parakeet-owned-batch-isolation-{suffix}-20260925'
+    if stage == 'root':base=ROOT/'artifacts/parakeet-owned-batch-isolation-root-policy-amd-20260925'
     if stage == 'graphs':base=ROOT/'artifacts/parakeet-owned-batch-graph-qualification-20260925'
     proof = read(base/'closed.json'); assert proof['passed']
     for name, wanted in proof['files'].items(): assert pin(base/name) == wanted, name
@@ -98,15 +99,20 @@ def pyannote():
 
 
 def source_qualification(base, analysis):
-    adapter=ROOT/'tests/parakeet/owned-batch-isolation-root-amd'
+    adapter=ROOT/'tests/parakeet/owned-batch-isolation-root-policy-amd'
     sys.path.insert(0,str(adapter))
-    from source_scope import verify_source,root_files,CHANGED
+    from source_scope import verify_source,root_files,CORRECTION,FAILED
     from warning_census import compare
     source=verify_source();applied=read(base/'bundle/evidence/root-applied.json')
-    assert applied['source_files']==root_files(source) and applied['changed']==CHANGED
+    assert applied['source_files']==root_files(source)
+    assert applied['changed']==sorted(name for name,wanted in applied['source_files'].items() if source['before'].get(name)!=wanted)
+    assert len(applied['changed'])==16 and applied['policy_correction']==pin(CORRECTION/'applied.json')
+    assert applied['failed_root']==pin(FAILED/'closed.json') and not read(FAILED/'closed.json')['passed']
     assert len(applied['source_files'])==435
     for name,wanted in applied['source_files'].items():assert pin(ROOT/name)==wanted,name
-    assert analysis['inventory']['implementation_flags_equal'] and analysis['inventory']['public_surface_equal']
+    assert analysis['inventory']['implementation_flags_equal'] and analysis['inventory']['method_bodies_equal']
+    assert analysis['inventory']['public_surface_delta_exact'] and analysis['inventory']['data_friend_removed']
+    assert analysis['inventory']['public_surface_equal'] is False
     assert (analysis['inventory']['core_methods'],analysis['inventory']['data_methods'])==(3281,697)
     assert analysis['warnings']==compare(base/'collected')
     assert analysis['warnings']['no_new_warning'] and analysis['warnings']['source_warnings']==2
@@ -117,8 +123,9 @@ def source_qualification(base, analysis):
         for name,wanted in [('backend',expected),('tensors',(394,0))]:
             actual=analysis[mode][name]
             assert actual['census_exact'] and (actual['passed'],actual['skipped'])==wanted
-    return dict(passed=True,source_files=435,exact_measured_product_and_qualified_tests=True,
-        compiled_equivalence_verified=True,no_new_compiler_warnings=True,warnings=analysis['warnings'])
+    return dict(passed=True,source_files=435,exact_measured_method_bodies_and_flags=True,
+        policy_metadata_delta_verified=True,policy_guards_unchanged=True,
+        corrected_test_arguments_preserved=True,no_new_compiler_warnings=True,warnings=analysis['warnings'])
 
 
 def root():
@@ -131,16 +138,25 @@ def root():
             actual=analysis[mode][name]
             assert actual['census_exact'] and (actual['passed'],actual['skipped'])==census
     lines=['# Dispatch relocation: normal root and package qualification','',
-        'All 435 root inputs match the measured candidate and qualified public tests.',
+        'All 435 root inputs match the measured candidate plus the explicit source-policy correction.',
         'Nine portable hardware guards preserve every original owned-weight test',
         'assertion, helper and case. A normal SDK 10.0.204 build preserves all',
-        '3281 Core and 697 Data method bodies, flags and public interfaces.',
+        '3281 Core and 697 Data method bodies and implementation flags.',
+        'The only public API change exposes the existing PrepareOwnedMatMulWeights',
+        'method; the extra Data friend attribute is removed. All other public and',
+        'assembly metadata stays exact. Data now calls the documented public opt-in.',
+        'Both original source-policy tests pass unchanged. All 49 test-helper calls',
+        'supply the same argument values explicitly, with no optional parameters.',
         'Forty ordinary owned-weight cases pass and the unavailable-hardware case',
         'skips on this FMA-capable VM. The 26 added public tensor cases cover',
         'all positional lengths, exact bits, independent ownership and fallbacks.',
         'Seven public depthwise facts pass, including all 59 observed geometries',
         'against the unchanged generic convolution oracle.',
         'Campaign-specific binary identity fixtures are excluded.','',
+        'The first root campaign remains failed at f129f7d8: 392 tensor tests',
+        'passed and two source-policy tests failed. The corrected campaign uses',
+        'the original sixteen jobs plus restore/build of the existing metadata',
+        'inventory helper. Every earlier failure and raw result remains retained.','',
         'The two existing CS8604 warning sites in WideProjectionEntry remain.',
         'Every warning and summary matches the selected release after normalizing',
         'only the campaign directory. There are no new compiler warnings.','',
@@ -231,8 +247,9 @@ The workloads differ, so their absolute times should not be compared to each oth
 
 The selected product is source `{commit}`, measured as Core `{CANDIDATE_CORE[:8]}`
 and Data `{CANDIDATE_DATA[:8]}`. Its [normal root and package qualification]({report}/root-20260925.md)
-verifies all compiled methods, implementation flags and public interfaces against
-those measured binaries. Both full test suites pass in normal and AVX512-disabled
+verifies identical computation methods and implementation flags against those
+measured binaries, with the documented preparation API exposure and removal of
+Data friendship checked separately. Both full test suites pass in normal and AVX512-disabled
 modes, and independent NuGet consumption passes. Ordinary mode passes 3,546 backend
 and 394 tensor tests; the report records the exact hardware-dependent skips.
 
