@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **49.40 GB**, including **35.90 GB** in artifacts.
+The latest inventory is **49.44 GB**, including **35.94 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -52,18 +52,27 @@ current-product comparisons pass. Matched positional profiling now passes at
 projection kernels improve. All160 public requests and1029 resource samples
 pass. The successful control and immediate memory refusal remain; only the
 unstarted candidate ran after idle recovery. Both raw collections remain local.
-The fresh six-process application comparison is live under owner997213/birth
-1790294610.35. No application gain or new release is claimed yet.
+The fresh six-process application comparison is closed atc9e72e57: all480
+requests,2685 resource samples,63 controls and21 gates pass. Candidate latency
+is6.297410% lower than fresh current and1.529181 times fresh ORT. All raw clocks
+remain. The candidate still needs downstream release qualification.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All local raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **49,398,153,467 bytes**, with
-**0.60 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m73-app-started-size.json`.
-Counting the model junction again gives 60.18 GB, which counts the same 10.79 GB
+remain retained. The inventory totals **49,439,415,646 bytes**, with
+**0.56 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m73-app-admitted-size.json`.
+Counting the model junction again gives 60.23 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
+
+A proposed retirement of27 old-worktree build dependencies, totalling
+296,209,349 bytes, was rejected by automatic approval review with reason
+"blocked by policy" before the command launched. All files remain. Each had
+an exact retained counterpart and no dependency in450 prepared manifests;
+the prospective evidence and rejection are retained under
+`artifacts/parakeet-slice-dense-local-retention-20260925`. No deletion was retried.
 
 Before positional profiling and application staging, **160 VM phase-trace
 copies** and **80 VM projection-trace copies** were retired only after verifying
