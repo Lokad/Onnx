@@ -1,0 +1,164 @@
+using System.Collections;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+using Lokad.Onnx.Tests.Support;
+
+internal static class Program
+{
+    const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+    sealed record Weight(string Name, int[] Shape, string LogicalHash, string PayloadHash, bool Cached, string Kind, long Bytes);
+    sealed record Packed(string Name, string Source, string Hash, long Bytes);
+    sealed record Memory(long Managed, long Heap, long Committed, long Rss);
+    static void Require(bool value, string message) { if (!value) throw new InvalidDataException(message); }
+    static object Field(object target, string name) => (target is ComputationalGraph ? typeof(ComputationalGraph) : target.GetType())
+        .GetField(name, Flags)?.GetValue(target) ?? throw new InvalidDataException("Missing field " + name);
+    static object Property(object target, string name) => target.GetType().GetProperty(name, Flags)?.GetValue(target)
+        ?? throw new InvalidDataException("Missing property " + name);
+    static string Hash(ReadOnlySpan<float> values) => Convert.ToHexString(SHA256.HashData(MemoryMarshal.AsBytes(values))).ToLowerInvariant();
+    static string Sha(string path) { using var file = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(file)).ToLowerInvariant(); }
+    static void Identity(string path, JsonElement expected) => Require(new FileInfo(path).Length == expected.GetProperty("bytes").GetInt64()
+        && Sha(path) == expected.GetProperty("sha256").GetString(), "File identity " + path);
+    static void Write(string folder, string name, object value)
+    { using var file = new FileStream(Path.Combine(folder, name), FileMode.CreateNew); JsonSerializer.Serialize(file, value, new JsonSerializerOptions { WriteIndented = true }); }
+    static Memory Measure()
+    {
+        var info = GC.GetGCMemoryInfo(); using var process = Process.GetCurrentProcess();
+        return new(GC.GetTotalMemory(false), info.HeapSizeBytes, info.TotalCommittedBytes, process.WorkingSet64);
+    }
+
+    static Weight[] Weights(ComputationalGraph graph, JsonElement expected)
+    {
+        var map = (IDictionary)Field(graph, "PackedWeights"); var rows = new List<Weight>(); var payloads = new HashSet<float[]>();
+        foreach (var item in expected.EnumerateArray())
+        {
+            string name = item.GetProperty("Name").GetString()!; var tensor = (Tensor<float>)graph.Initializers[name];
+            int[] shape = item.GetProperty("Shape").EnumerateArray().Select(v => v.GetInt32()).ToArray();
+            bool cached = item.GetProperty("Cached").GetBoolean();
+            Require(tensor.Dimensions.SequenceEqual(shape) && tensor.Name == name, "Logical identity " + name);
+            string logical = Hash(tensor.ToDenseTensor().Buffer.Span);
+            Require(logical == item.GetProperty("Hash").GetString(), "Logical weight values " + name);
+            float[] payload;
+            if (cached)
+            {
+                Require(tensor is DenseTensor<float>, "Existing prepared source type " + name);
+                Require(MemoryMarshal.TryGetArray<float>(((DenseTensor<float>)tensor).Buffer, out var window)
+                    && window.Array is not null && window.Offset == 0 && window.Count == window.Array.Length, "Complete retained source");
+                payload = window.Array!;
+                Require(map.Contains(payload) && ReferenceEquals(Property(map[payload]!, "SourceRef"), tensor), "Retained map identity");
+            }
+            else
+            {
+                Require(tensor.GetType().FullName == "Lokad.Onnx.OwnedPackedTensor", "Selected owned representation " + name);
+                payload = (float[])Field(tensor, "PackedArray");
+                Require(!map.Contains(payload), "Owned payload must not enter clone map");
+                Require(tensor.GetType().GetFields(Flags).Where(f => !f.IsStatic && f.FieldType == typeof(float[])).Count() == 1,
+                    "One declared float payload");
+            }
+            Require(payloads.Add(payload) && payload.Length == 4194304, "Independent complete payload " + name);
+            rows.Add(new(name, shape, logical, Hash(payload), cached, tensor.GetType().Name, (long)payload.Length * sizeof(float)));
+        }
+        Require(rows.Count == 96 && rows.Count(r => !r.Cached) == 87, "Expected 96/87 weight census");
+        return rows.ToArray();
+    }
+
+    static Packed[] Maps(ComputationalGraph graph, JsonElement expected)
+    {
+        var hashes = expected.EnumerateArray().Where(r => r.GetProperty("PackedHash").ValueKind != JsonValueKind.Null)
+            .ToDictionary(r => r.GetProperty("Name").GetString()!, r => r.GetProperty("PackedHash").GetString()!);
+        var map = (IDictionary)Field(graph, "PackedWeights"); var rows = new List<Packed>();
+        foreach (DictionaryEntry entry in map)
+        {
+            object record = entry.Value!; string name = (string)Property(record, "PackedName"), source = (string)Property(record, "SourceName");
+            var packed = (DenseTensor<float>)Property(record, "Packed");
+            Require(ReferenceEquals(Property(record, "SourceArray"), entry.Key)
+                && ReferenceEquals(Property(record, "SourceRef"), graph.Initializers[source])
+                && ReferenceEquals(packed, graph.Initializers[name]), "Ordinary map roots " + name);
+            string hash = Hash(packed.Buffer.Span); Require(hashes.TryGetValue(name, out var wanted) && hash == wanted, "Retained packed bytes " + name);
+            rows.Add(new(name, source, hash, packed.Length * sizeof(float)));
+        }
+        Require(rows.Count == 37 && hashes.Count == 37 && rows.Select(r => r.Name).Distinct().Count() == 37, "Existing 37 maps");
+        Require(graph.MaximumPackedWeightBytes == 268435456 && graph.RetainedPackedWeightBytes == 268435456, "Clone budget unchanged");
+        return rows.OrderBy(r => r.Name, StringComparer.Ordinal).ToArray();
+    }
+
+    static void Compare(ParakeetTranscription result, JsonElement expected)
+    {
+        int[] Values(string name) => expected.GetProperty(name).EnumerateArray().Select(v => v.GetInt32()).ToArray();
+        Require(result.Text == expected.GetProperty("text").GetString() && result.TokenIds.SequenceEqual(Values("token_ids"))
+            && result.FrameIndices.SequenceEqual(Values("frame_indices")) && result.DurationFrames.SequenceEqual(Values("duration_frames")), "Public text and decisions");
+        Require(result.StopReason.ToString() == expected.GetProperty("stop_reason").GetString()
+            && result.EncodedFrames == expected.GetProperty("encoded_frames").GetInt32()
+            && result.DecoderCalls == expected.GetProperty("decoder_calls").GetInt32(), "Public completion");
+    }
+
+    static int Main(string[] args)
+    {
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Linux qualification");
+        Require(args.Length == 3 && args[2] is "512" or "256", "spec output mode");
+        string specPath = Path.GetFullPath(args[0]), output = Path.GetFullPath(args[1]);
+        Require(!Directory.Exists(output), "Fresh output"); Directory.CreateDirectory(output);
+        using var document = JsonDocument.Parse(File.ReadAllBytes(specPath)); var spec = document.RootElement;
+        using var process = Process.GetCurrentProcess();
+        Require(process.ProcessorAffinity == (IntPtr)4 && Environment.ProcessorCount == 1, "CPU2 single processor");
+        Require(RuntimeInformation.FrameworkDescription == ".NET 10.0.8" && Fma.IsSupported && Avx2.IsSupported
+            && Avx512F.IsSupported == (args[2] == "512"), "Runtime and actual instruction mode");
+        var flags = Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k => k.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase)
+            || k.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) || k.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)).ToArray();
+        Require(args[2] == "512" ? flags.Length == 0 : flags.SequenceEqual(new[] { "DOTNET_EnableAVX512" })
+            && Environment.GetEnvironmentVariable("DOTNET_EnableAVX512") == "0", "Exact instruction environment");
+        Require(!File.ReadAllText("/proc/self/maps").Contains("onnxruntime", StringComparison.OrdinalIgnoreCase), "No native ORT");
+        var product = spec.GetProperty("product");
+        Identity(typeof(ComputationalGraph).Assembly.Location, product.GetProperty("Lokad.Onnx.dll"));
+        Identity(typeof(ParakeetTranscriber).Assembly.Location, product.GetProperty("Lokad.Onnx.Data.dll"));
+        var owner = new ParakeetTranscriber(spec.GetProperty("model_directory").GetString()!);
+        var graph = (ComputationalGraph)Field(owner, "encoder");
+        var flagsAll = Flags | BindingFlags.Static;
+        var collect = typeof(ComputationalGraph).GetMethod("CollectAliasRoot", flagsAll)!;
+        var attributes = (IEnumerable<ITensor>)typeof(ComputationalGraph).GetMethod("EnumerateAttributeTensors", Flags)!.Invoke(graph, null)!;
+        var roots = new Dictionary<Array, int>(); var rejected = new List<object>();
+        bool Inspect(string name, ITensor? value, bool initializer)
+        {
+            var found = new HashSet<Array>();
+            bool accepted = (bool)collect.Invoke(null, new object?[] { value, found })!;
+            if (!accepted) rejected.Add(new { name, kind = value?.GetType().FullName, initializer });
+            if (initializer) foreach (var array in found) roots[array] = roots.TryGetValue(array, out int count) ? count + 1 : 1;
+            return accepted;
+        }
+        foreach (var entry in graph.Inputs) Inspect("input:" + entry.Key, entry.Value, false);
+        foreach (var entry in graph.Outputs) Inspect("output:" + entry.Key, entry.Value, false);
+        int index = 0; foreach (var value in attributes) Inspect("attribute:" + index++, value, false);
+        foreach (var entry in graph.Initializers) Inspect(entry.Key, entry.Value, true);
+        var folds = ((IDictionary)Field(graph, "FoldedTransposes")).Values.Cast<object>().Select(v => new {
+            source = (string)Property(v, "SourceName"), prepared = (string)Property(v, "PreparedName") }).ToArray();
+        var rows = new List<object>();
+        foreach (var expected in spec.GetProperty("weights").EnumerateArray())
+        {
+            string name = expected.GetProperty("Name").GetString()!; var tensor = (Tensor<float>)graph.Initializers[name];
+            var consumers = graph.Nodes.SelectMany(node => (node.Inputs ?? Array.Empty<string>()).Select((input, position) => new { node, input, position }))
+                .Where(r => r.input == name).Select(r => new { r.node.Name, op = r.node.Op.ToString(), r.node.OpTypeName, r.node.Domain, r.position,
+                    inputs = r.node.Inputs, r.node.Outputs }).ToArray();
+            object? layout = null;
+            if (tensor is DenseTensor<float> dense && MemoryMarshal.TryGetArray<float>(dense.Buffer, out var window) && window.Array is not null)
+                layout = new { dense.IsReversedStride, window.Offset, window.Count, length = window.Array.Length,
+                    aliases = roots.TryGetValue(window.Array, out int count) ? count : 0,
+                    mapped = ((IDictionary)Field(graph, "PackedWeights")).Contains(window.Array) };
+            rows.Add(new { name, kind = tensor.GetType().ToString(), dimensions = tensor.Dimensions.ToArray(), layout, consumers,
+                folded = folds.Where(f => f.source == name || f.prepared == name).ToArray() });
+        }
+        var captured = typeof(ComputationalGraph).GetField("CapturedInputs", Flags)!.GetValue(graph) as IDictionary;
+        var nested = graph.Nodes.Where(n => n.Attributes is not null && n.Attributes.Values.Any(v => v is ComputationalGraph)).Select(n => n.Name).ToArray();
+        Write(output, "selection.json", new { owned_count = (int)Property(graph, "OwnedPackedWeightCount"),
+            owned_bytes = (long)Property(graph, "OwnedPackedWeightBytes"), captured_count = captured?.Count ?? 0, nested,
+            rejected, folds, rows, initializer_count = graph.Initializers.Count, map_count = ((IDictionary)Field(graph, "PackedWeights")).Count });
+        Write(output, "result.json", new { passed = true, diagnostic_only = true, no_inference = true, mode = args[2],
+            core_sha256 = Sha(typeof(ComputationalGraph).Assembly.Location), data_sha256 = Sha(typeof(ParakeetTranscriber).Assembly.Location),
+            runner_sha256 = Sha(Assembly.GetExecutingAssembly().Location), spec_sha256 = Sha(specPath),
+            runtime = RuntimeInformation.FrameworkDescription, affinity = 4, processor_count = 1 });
+        GC.KeepAlive(owner); GC.KeepAlive(graph); return 0;
+    }
+}
