@@ -36,5 +36,10 @@ capture, observe capture, collect capture, then review.py capture. Tools freeze
 at preparation. Preserve every failure and never repeat a completed worker or
 collector. Store audit stdout outside the campaign. The collector uses the
 retained transport with tar dereferencing for the two hardlinked runtime trees.
-Artifacts use parakeet-owned-packed-weight-counters-amd-20260925; the VM uses
-/dev/shm/lokad-parakeet-owned-packed-weight-counters-20260925.
+Artifacts use parakeet-owned-packed-weight-counters-v2-amd-20260925; the VM uses
+/dev/shm/lokad-parakeet-owned-packed-weight-counters-v2-20260925.
+
+The initial build passed compilation but failed its zero-warning review because
+the Linux guard was hidden inside a Require call (CA1416). V2 uses an explicit
+platform rejection. It preserves the entire original build and changes no
+accounting, numerical, resource or product requirement. No original capture ran.
