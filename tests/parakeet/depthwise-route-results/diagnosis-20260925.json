@@ -1,0 +1,4209 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "managed_closure": {
+    "bytes": 287801,
+    "sha256": "b67935928ef3da474296c051d9acef0f8db75d84652590d63063a9749dfe1805"
+  },
+  "native_closure": {
+    "bytes": 3190,
+    "sha256": "4a5c1ce4bd68f280978cf2c80ea22f611b9474d45fd8f3e4aeee703e6e9c8564"
+  },
+  "managed": {
+    "passed": true,
+    "observed": {
+      "passed": true,
+      "shapes": 59,
+      "totals": {
+        "calls": 2080,
+        "tiled_batches": 2080,
+        "completed_batches": 2080,
+        "panels": 35488,
+        "products": 15794176,
+        "views": 47382528,
+        "patch_values": 4339482624
+      },
+      "per_corpus": {
+        "calls": 520,
+        "tiled_batches": 520,
+        "completed_batches": 520,
+        "panels": 8872,
+        "products": 3948544,
+        "views": 11845632,
+        "patch_values": 1084870656
+      },
+      "buckets": [
+        {
+          "key": "1,256,424,64,256,3,3,1,1,2,2,1,1,1,1,212,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:6946816,27136,64,1:6946816 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:6946816,27136,64,1:6946816 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,885,64,256,3,3,1,1,2,2,1,1,1,1,443,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:14499840,56640,64,1:14499840 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:14499840,56640,64,1:14499840 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,447,64,256,3,3,1,1,2,2,1,1,1,1,224,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:7323648,28608,64,1:7323648 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:7323648,28608,64,1:7323648 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,665,64,256,3,3,1,1,2,2,1,1,1,1,333,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:10895360,42560,64,1:10895360 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10895360,42560,64,1:10895360 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,353,64,256,3,3,1,1,2,2,1,1,1,1,177,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:5783552,22592,64,1:5783552 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:5783552,22592,64,1:5783552 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,628,64,256,3,3,1,1,2,2,1,1,1,1,314,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:10289152,40192,64,1:10289152 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10289152,40192,64,1:10289152 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,204,64,256,3,3,1,1,2,2,1,1,1,1,102,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:3342336,13056,64,1:3342336 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3342336,13056,64,1:3342336 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,757,64,256,3,3,1,1,2,2,1,1,1,1,379,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:12402688,48448,64,1:12402688 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:12402688,48448,64,1:12402688 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,352,64,256,3,3,1,1,2,2,1,1,1,1,176,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:5767168,22528,64,1:5767168 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:5767168,22528,64,1:5767168 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,632,64,256,3,3,1,1,2,2,1,1,1,1,316,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:10354688,40448,64,1:10354688 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10354688,40448,64,1:10354688 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,332,64,256,3,3,1,1,2,2,1,1,1,1,166,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:5439488,21248,64,1:5439488 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:5439488,21248,64,1:5439488 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,623,64,256,3,3,1,1,2,2,1,1,1,1,312,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:10207232,39872,64,1:10207232 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10207232,39872,64,1:10207232 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,453,64,256,3,3,1,1,2,2,1,1,1,1,227,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:7421952,28992,64,1:7421952 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:7421952,28992,64,1:7421952 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,899,64,256,3,3,1,1,2,2,1,1,1,1,450,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:14729216,57536,64,1:14729216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:14729216,57536,64,1:14729216 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,242,64,256,3,3,1,1,2,2,1,1,1,1,121,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:3964928,15488,64,1:3964928 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3964928,15488,64,1:3964928 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,622,64,256,3,3,1,1,2,2,1,1,1,1,311,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:10190848,39808,64,1:10190848 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10190848,39808,64,1:10190848 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,407,64,256,3,3,1,1,2,2,1,1,1,1,204,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:6668288,26048,64,1:6668288 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:6668288,26048,64,1:6668288 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,601,64,256,3,3,1,1,2,2,1,1,1,1,301,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:9846784,38464,64,1:9846784 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9846784,38464,64,1:9846784 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,477,64,256,3,3,1,1,2,2,1,1,1,1,239,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:7815168,30528,64,1:7815168 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:7815168,30528,64,1:7815168 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,675,64,256,3,3,1,1,2,2,1,1,1,1,338,32,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:11059200,43200,64,1:11059200 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:11059200,43200,64,1:11059200 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,212,32,256,3,3,1,1,2,2,1,1,1,1,106,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1736704,6784,32,1:1736704 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1736704,6784,32,1:1736704 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,443,32,256,3,3,1,1,2,2,1,1,1,1,222,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:3629056,14176,32,1:3629056 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3629056,14176,32,1:3629056 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,224,32,256,3,3,1,1,2,2,1,1,1,1,112,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1835008,7168,32,1:1835008 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1835008,7168,32,1:1835008 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,333,32,256,3,3,1,1,2,2,1,1,1,1,167,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:2727936,10656,32,1:2727936 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2727936,10656,32,1:2727936 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,177,32,256,3,3,1,1,2,2,1,1,1,1,89,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1449984,5664,32,1:1449984 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1449984,5664,32,1:1449984 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,314,32,256,3,3,1,1,2,2,1,1,1,1,157,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:2572288,10048,32,1:2572288 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2572288,10048,32,1:2572288 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,102,32,256,3,3,1,1,2,2,1,1,1,1,51,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:835584,3264,32,1:835584 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:835584,3264,32,1:835584 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,379,32,256,3,3,1,1,2,2,1,1,1,1,190,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:3104768,12128,32,1:3104768 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3104768,12128,32,1:3104768 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,176,32,256,3,3,1,1,2,2,1,1,1,1,88,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1441792,5632,32,1:1441792 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1441792,5632,32,1:1441792 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,316,32,256,3,3,1,1,2,2,1,1,1,1,158,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:2588672,10112,32,1:2588672 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2588672,10112,32,1:2588672 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,166,32,256,3,3,1,1,2,2,1,1,1,1,83,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1359872,5312,32,1:1359872 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1359872,5312,32,1:1359872 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,312,32,256,3,3,1,1,2,2,1,1,1,1,156,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:2555904,9984,32,1:2555904 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2555904,9984,32,1:2555904 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,227,32,256,3,3,1,1,2,2,1,1,1,1,114,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1859584,7264,32,1:1859584 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1859584,7264,32,1:1859584 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,450,32,256,3,3,1,1,2,2,1,1,1,1,225,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:3686400,14400,32,1:3686400 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3686400,14400,32,1:3686400 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,121,32,256,3,3,1,1,2,2,1,1,1,1,61,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:991232,3872,32,1:991232 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:991232,3872,32,1:991232 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,311,32,256,3,3,1,1,2,2,1,1,1,1,156,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:2547712,9952,32,1:2547712 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2547712,9952,32,1:2547712 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,204,32,256,3,3,1,1,2,2,1,1,1,1,102,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1671168,6528,32,1:1671168 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1671168,6528,32,1:1671168 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,301,32,256,3,3,1,1,2,2,1,1,1,1,151,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:2465792,9632,32,1:2465792 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2465792,9632,32,1:2465792 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,239,32,256,3,3,1,1,2,2,1,1,1,1,120,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:1957888,7648,32,1:1957888 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1957888,7648,32,1:1957888 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,256,338,32,256,3,3,1,1,2,2,1,1,1,1,169,16,256",
+          "requested_bytes": 327680,
+          "actual_bytes": [
+            524288
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:2768896,10816,32,1:2768896 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2768896,10816,32,1:2768896 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+          }
+        },
+        {
+          "key": "1,1024,1,114,1024,1,9,1,1,1,1,0,0,0,0,1,106,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,114,114,1:116736 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,114,114,1:116736 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,230,1024,1,9,1,1,1,1,0,0,0,0,1,222,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:235520,230,230,1:235520 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:235520,230,230,1:235520 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,120,1024,1,9,1,1,1,1,0,0,0,0,1,112,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,120,120,1:122880 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,120,120,1:122880 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,175,1024,1,9,1,1,1,1,0,0,0,0,1,167,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:179200,175,175,1:179200 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:179200,175,175,1:179200 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,97,1024,1,9,1,1,1,1,0,0,0,0,1,89,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:99328,97,97,1:99328 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:99328,97,97,1:99328 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,165,1024,1,9,1,1,1,1,0,0,0,0,1,157,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:168960,165,165,1:168960 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:168960,165,165,1:168960 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,59,1024,1,9,1,1,1,1,0,0,0,0,1,51,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:60416,59,59,1:60416 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:60416,59,59,1:60416 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,198,1024,1,9,1,1,1,1,0,0,0,0,1,190,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:202752,198,198,1:202752 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:202752,198,198,1:202752 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,96,1024,1,9,1,1,1,1,0,0,0,0,1,88,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:98304,96,96,1:98304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:98304,96,96,1:98304 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,166,1024,1,9,1,1,1,1,0,0,0,0,1,158,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:169984,166,166,1:169984 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:169984,166,166,1:169984 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,91,1024,1,9,1,1,1,1,0,0,0,0,1,83,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:93184,91,91,1:93184 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:93184,91,91,1:93184 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,164,1024,1,9,1,1,1,1,0,0,0,0,1,156,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:167936,164,164,1:167936 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:167936,164,164,1:167936 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 192
+          }
+        },
+        {
+          "key": "1,1024,1,122,1024,1,9,1,1,1,1,0,0,0,0,1,114,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:124928,122,122,1:124928 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:124928,122,122,1:124928 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,233,1024,1,9,1,1,1,1,0,0,0,0,1,225,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:238592,233,233,1:238592 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:238592,233,233,1:238592 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,69,1024,1,9,1,1,1,1,0,0,0,0,1,61,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:70656,69,69,1:70656 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:70656,69,69,1:70656 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,110,1024,1,9,1,1,1,1,0,0,0,0,1,102,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:112640,110,110,1:112640 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:112640,110,110,1:112640 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,159,1024,1,9,1,1,1,1,0,0,0,0,1,151,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:162816,159,159,1:162816 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:162816,159,159,1:162816 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,128,1024,1,9,1,1,1,1,0,0,0,0,1,120,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:131072,128,128,1:131072 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:131072,128,128,1:131072 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        },
+        {
+          "key": "1,1024,1,177,1024,1,9,1,1,1,1,0,0,0,0,1,169,1024",
+          "requested_bytes": 1310720,
+          "actual_bytes": [
+            2097152
+          ],
+          "layouts": {
+            "Lokad.Onnx.DenseTensor`1[System.Single]:False:181248,177,177,1:181248 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:181248,177,177,1:181248 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+          }
+        }
+      ],
+      "actual_leaf": "one-row-fma",
+      "all_shapes_and_partial_panels_exact": true
+    },
+    "resources": [
+      {
+        "name": "counts",
+        "samples": 457,
+        "seconds": 234.1757490040036,
+        "peak_rss": 9219780608
+      }
+    ],
+    "products": {
+      "Lokad.Onnx.dll": {
+        "bytes": 828416,
+        "sha256": "c32d14a29b3b5fa3d5b1da9591ece09dd3fc7b596683e2549fa6ba1a916f70dd"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+      }
+    },
+    "consumer": {
+      "bytes": 50176,
+      "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+    },
+    "source": {
+      "bytes": 76880,
+      "sha256": "698087620fd73d6434fbdd03c339d821f061201a1201abf8db3b41b0d5d801c4"
+    },
+    "diagnosis": {
+      "bytes": 306,
+      "sha256": "469e436bf873876ff547db99ec1f42f2f6afd4da7669e83f911f039848944ca9"
+    },
+    "public_requests": 80,
+    "exact_public_results": true,
+    "diagnostic_only": true,
+    "release_admitted": false,
+    "instrumented_times_not_scored": true,
+    "accounting": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0009607983859492973,
+      "foreign_cpu_seconds": 0.8999999999999628,
+      "wall_seconds": 234.18024352495559,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 5,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "raw_counts": {
+      "bytes": 69175,
+      "sha256": "2de88aff1f64b750222a2ee365c633cdc98541d39c89b450d59a307162cc45bc"
+    },
+    "public_result": {
+      "bytes": 268725,
+      "sha256": "f59426eb0cdde4ca58f87e1ec84e23ecd1b6cbca4b157b5f6a80e392df8ffba8"
+    }
+  },
+  "per_corpus_groups": {
+    "stem": {
+      "calls": 40,
+      "panels": 6688,
+      "products": 1712128,
+      "views": 5136384,
+      "patch_values": 492761088
+    },
+    "modules": {
+      "calls": 480,
+      "panels": 2184,
+      "products": 2236416,
+      "views": 6709248,
+      "patch_values": 592109568
+    }
+  },
+  "all_geometry_counters": [
+    {
+      "key": "1,256,424,64,256,3,3,1,1,2,2,1,1,1,1,212,32,256",
+      "geometry": [
+        1,
+        256,
+        424,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        212,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 848,
+      "products": 217088,
+      "views": 651264,
+      "patch_values": 62521344,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:6946816,27136,64,1:6946816 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:6946816,27136,64,1:6946816 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 217088
+      },
+      "leaves": {
+        "one-row-fma": 217088
+      },
+      "panel_widths": {
+        "32": 848
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,212,32,256,3,3,1,1,2,2,1,1,1,1,106,16,256",
+      "geometry": [
+        1,
+        256,
+        212,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        106,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 212,
+      "products": 54272,
+      "views": 162816,
+      "patch_values": 15630336,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1736704,6784,32,1:1736704 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1736704,6784,32,1:1736704 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 54272
+      },
+      "leaves": {
+        "one-row-fma": 54272
+      },
+      "panel_widths": {
+        "32": 212
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,114,1024,1,9,1,1,1,1,0,0,0,0,1,106,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        114,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        106,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 384,
+      "products": 393216,
+      "views": 1179648,
+      "patch_values": 93782016,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,114,114,1:116736 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,114,114,1:116736 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 294912,
+        "1,9,10": 98304
+      },
+      "leaves": {
+        "one-row-fma": 393216
+      },
+      "panel_widths": {
+        "32": 288,
+        "10": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,885,64,256,3,3,1,1,2,2,1,1,1,1,443,32,256",
+      "geometry": [
+        1,
+        256,
+        885,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        443,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1772,
+      "products": 453632,
+      "views": 1360896,
+      "patch_values": 130646016,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:14499840,56640,64,1:14499840 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:14499840,56640,64,1:14499840 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 453632
+      },
+      "leaves": {
+        "one-row-fma": 453632
+      },
+      "panel_widths": {
+        "32": 1772
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,443,32,256,3,3,1,1,2,2,1,1,1,1,222,16,256",
+      "geometry": [
+        1,
+        256,
+        443,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        222,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 444,
+      "products": 113664,
+      "views": 340992,
+      "patch_values": 32735232,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:3629056,14176,32,1:3629056 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3629056,14176,32,1:3629056 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 113664
+      },
+      "leaves": {
+        "one-row-fma": 113664
+      },
+      "panel_widths": {
+        "32": 444
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,230,1024,1,9,1,1,1,1,0,0,0,0,1,222,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        230,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        222,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 672,
+      "products": 688128,
+      "views": 2064384,
+      "patch_values": 196411392,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:235520,230,230,1:235520 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:235520,230,230,1:235520 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 589824,
+        "1,9,30": 98304
+      },
+      "leaves": {
+        "one-row-fma": 688128
+      },
+      "panel_widths": {
+        "32": 576,
+        "30": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,447,64,256,3,3,1,1,2,2,1,1,1,1,224,32,256",
+      "geometry": [
+        1,
+        256,
+        447,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        224,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 896,
+      "products": 229376,
+      "views": 688128,
+      "patch_values": 66060288,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:7323648,28608,64,1:7323648 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:7323648,28608,64,1:7323648 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 229376
+      },
+      "leaves": {
+        "one-row-fma": 229376
+      },
+      "panel_widths": {
+        "32": 896
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,224,32,256,3,3,1,1,2,2,1,1,1,1,112,16,256",
+      "geometry": [
+        1,
+        256,
+        224,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        112,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 224,
+      "products": 57344,
+      "views": 172032,
+      "patch_values": 16515072,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1835008,7168,32,1:1835008 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1835008,7168,32,1:1835008 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 57344
+      },
+      "leaves": {
+        "one-row-fma": 57344
+      },
+      "panel_widths": {
+        "32": 224
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,120,1024,1,9,1,1,1,1,0,0,0,0,1,112,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        120,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        112,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 384,
+      "products": 393216,
+      "views": 1179648,
+      "patch_values": 99090432,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,120,120,1:122880 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,120,120,1:122880 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 294912,
+        "1,9,16": 98304
+      },
+      "leaves": {
+        "one-row-fma": 393216
+      },
+      "panel_widths": {
+        "32": 288,
+        "16": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,665,64,256,3,3,1,1,2,2,1,1,1,1,333,32,256",
+      "geometry": [
+        1,
+        256,
+        665,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        333,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1332,
+      "products": 340992,
+      "views": 1022976,
+      "patch_values": 98205696,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:10895360,42560,64,1:10895360 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10895360,42560,64,1:10895360 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 340992
+      },
+      "leaves": {
+        "one-row-fma": 340992
+      },
+      "panel_widths": {
+        "32": 1332
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,333,32,256,3,3,1,1,2,2,1,1,1,1,167,16,256",
+      "geometry": [
+        1,
+        256,
+        333,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        167,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 336,
+      "products": 86016,
+      "views": 258048,
+      "patch_values": 24625152,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:2727936,10656,32,1:2727936 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2727936,10656,32,1:2727936 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 84992,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 86016
+      },
+      "panel_widths": {
+        "32": 332,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,175,1024,1,9,1,1,1,1,0,0,0,0,1,167,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        175,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        167,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 576,
+      "products": 589824,
+      "views": 1769472,
+      "patch_values": 147750912,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:179200,175,175,1:179200 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:179200,175,175,1:179200 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 491520,
+        "1,9,7": 98304
+      },
+      "leaves": {
+        "one-row-fma": 589824
+      },
+      "panel_widths": {
+        "32": 480,
+        "7": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,353,64,256,3,3,1,1,2,2,1,1,1,1,177,32,256",
+      "geometry": [
+        1,
+        256,
+        353,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        177,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 708,
+      "products": 181248,
+      "views": 543744,
+      "patch_values": 52199424,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:5783552,22592,64,1:5783552 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:5783552,22592,64,1:5783552 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 181248
+      },
+      "leaves": {
+        "one-row-fma": 181248
+      },
+      "panel_widths": {
+        "32": 708
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,177,32,256,3,3,1,1,2,2,1,1,1,1,89,16,256",
+      "geometry": [
+        1,
+        256,
+        177,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        89,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 180,
+      "products": 46080,
+      "views": 138240,
+      "patch_values": 13123584,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1449984,5664,32,1:1449984 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1449984,5664,32,1:1449984 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 45056,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 46080
+      },
+      "panel_widths": {
+        "32": 176,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,97,1024,1,9,1,1,1,1,0,0,0,0,1,89,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        97,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        89,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 288,
+      "products": 294912,
+      "views": 884736,
+      "patch_values": 78741504,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:99328,97,97,1:99328 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:99328,97,97,1:99328 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 196608,
+        "1,9,25": 98304
+      },
+      "leaves": {
+        "one-row-fma": 294912
+      },
+      "panel_widths": {
+        "32": 192,
+        "25": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,628,64,256,3,3,1,1,2,2,1,1,1,1,314,32,256",
+      "geometry": [
+        1,
+        256,
+        628,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        314,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1256,
+      "products": 321536,
+      "views": 964608,
+      "patch_values": 92602368,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:10289152,40192,64,1:10289152 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10289152,40192,64,1:10289152 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 321536
+      },
+      "leaves": {
+        "one-row-fma": 321536
+      },
+      "panel_widths": {
+        "32": 1256
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,314,32,256,3,3,1,1,2,2,1,1,1,1,157,16,256",
+      "geometry": [
+        1,
+        256,
+        314,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        157,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 316,
+      "products": 80896,
+      "views": 242688,
+      "patch_values": 23150592,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:2572288,10048,32,1:2572288 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2572288,10048,32,1:2572288 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 79872,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 80896
+      },
+      "panel_widths": {
+        "32": 312,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,165,1024,1,9,1,1,1,1,0,0,0,0,1,157,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        165,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        157,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 480,
+      "products": 491520,
+      "views": 1474560,
+      "patch_values": 138903552,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:168960,165,165,1:168960 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:168960,165,165,1:168960 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 393216,
+        "1,9,29": 98304
+      },
+      "leaves": {
+        "one-row-fma": 491520
+      },
+      "panel_widths": {
+        "32": 384,
+        "29": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,204,64,256,3,3,1,1,2,2,1,1,1,1,102,32,256",
+      "geometry": [
+        1,
+        256,
+        204,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        102,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 408,
+      "products": 104448,
+      "views": 313344,
+      "patch_values": 30081024,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:3342336,13056,64,1:3342336 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3342336,13056,64,1:3342336 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 104448
+      },
+      "leaves": {
+        "one-row-fma": 104448
+      },
+      "panel_widths": {
+        "32": 408
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,102,32,256,3,3,1,1,2,2,1,1,1,1,51,16,256",
+      "geometry": [
+        1,
+        256,
+        102,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        51,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 104,
+      "products": 26624,
+      "views": 79872,
+      "patch_values": 7520256,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:835584,3264,32,1:835584 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:835584,3264,32,1:835584 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 25600,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 26624
+      },
+      "panel_widths": {
+        "32": 100,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,59,1024,1,9,1,1,1,1,0,0,0,0,1,51,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        59,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        51,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 192,
+      "products": 196608,
+      "views": 589824,
+      "patch_values": 45121536,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:60416,59,59,1:60416 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:60416,59,59,1:60416 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 98304,
+        "1,9,19": 98304
+      },
+      "leaves": {
+        "one-row-fma": 196608
+      },
+      "panel_widths": {
+        "32": 96,
+        "19": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,757,64,256,3,3,1,1,2,2,1,1,1,1,379,32,256",
+      "geometry": [
+        1,
+        256,
+        757,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        379,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1516,
+      "products": 388096,
+      "views": 1164288,
+      "patch_values": 111771648,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:12402688,48448,64,1:12402688 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:12402688,48448,64,1:12402688 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 388096
+      },
+      "leaves": {
+        "one-row-fma": 388096
+      },
+      "panel_widths": {
+        "32": 1516
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,379,32,256,3,3,1,1,2,2,1,1,1,1,190,16,256",
+      "geometry": [
+        1,
+        256,
+        379,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        190,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 380,
+      "products": 97280,
+      "views": 291840,
+      "patch_values": 28016640,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:3104768,12128,32,1:3104768 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3104768,12128,32,1:3104768 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 97280
+      },
+      "leaves": {
+        "one-row-fma": 97280
+      },
+      "panel_widths": {
+        "32": 380
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,198,1024,1,9,1,1,1,1,0,0,0,0,1,190,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        198,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        190,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 576,
+      "products": 589824,
+      "views": 1769472,
+      "patch_values": 168099840,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:202752,198,198,1:202752 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:202752,198,198,1:202752 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 491520,
+        "1,9,30": 98304
+      },
+      "leaves": {
+        "one-row-fma": 589824
+      },
+      "panel_widths": {
+        "32": 480,
+        "30": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,352,64,256,3,3,1,1,2,2,1,1,1,1,176,32,256",
+      "geometry": [
+        1,
+        256,
+        352,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        176,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 704,
+      "products": 180224,
+      "views": 540672,
+      "patch_values": 51904512,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:5767168,22528,64,1:5767168 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:5767168,22528,64,1:5767168 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 180224
+      },
+      "leaves": {
+        "one-row-fma": 180224
+      },
+      "panel_widths": {
+        "32": 704
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,176,32,256,3,3,1,1,2,2,1,1,1,1,88,16,256",
+      "geometry": [
+        1,
+        256,
+        176,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        88,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 176,
+      "products": 45056,
+      "views": 135168,
+      "patch_values": 12976128,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1441792,5632,32,1:1441792 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1441792,5632,32,1:1441792 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 45056
+      },
+      "leaves": {
+        "one-row-fma": 45056
+      },
+      "panel_widths": {
+        "32": 176
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,96,1024,1,9,1,1,1,1,0,0,0,0,1,88,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        96,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        88,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 288,
+      "products": 294912,
+      "views": 884736,
+      "patch_values": 77856768,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:98304,96,96,1:98304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:98304,96,96,1:98304 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 196608,
+        "1,9,24": 98304
+      },
+      "leaves": {
+        "one-row-fma": 294912
+      },
+      "panel_widths": {
+        "32": 192,
+        "24": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,632,64,256,3,3,1,1,2,2,1,1,1,1,316,32,256",
+      "geometry": [
+        1,
+        256,
+        632,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        316,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1264,
+      "products": 323584,
+      "views": 970752,
+      "patch_values": 93192192,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:10354688,40448,64,1:10354688 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10354688,40448,64,1:10354688 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 323584
+      },
+      "leaves": {
+        "one-row-fma": 323584
+      },
+      "panel_widths": {
+        "32": 1264
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,316,32,256,3,3,1,1,2,2,1,1,1,1,158,16,256",
+      "geometry": [
+        1,
+        256,
+        316,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        158,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 316,
+      "products": 80896,
+      "views": 242688,
+      "patch_values": 23298048,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:2588672,10112,32,1:2588672 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2588672,10112,32,1:2588672 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 80896
+      },
+      "leaves": {
+        "one-row-fma": 80896
+      },
+      "panel_widths": {
+        "32": 316
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,166,1024,1,9,1,1,1,1,0,0,0,0,1,158,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        166,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        158,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 480,
+      "products": 491520,
+      "views": 1474560,
+      "patch_values": 139788288,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:169984,166,166,1:169984 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:169984,166,166,1:169984 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 393216,
+        "1,9,30": 98304
+      },
+      "leaves": {
+        "one-row-fma": 491520
+      },
+      "panel_widths": {
+        "32": 384,
+        "30": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,332,64,256,3,3,1,1,2,2,1,1,1,1,166,32,256",
+      "geometry": [
+        1,
+        256,
+        332,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        166,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 664,
+      "products": 169984,
+      "views": 509952,
+      "patch_values": 48955392,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:5439488,21248,64,1:5439488 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:5439488,21248,64,1:5439488 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 169984
+      },
+      "leaves": {
+        "one-row-fma": 169984
+      },
+      "panel_widths": {
+        "32": 664
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,166,32,256,3,3,1,1,2,2,1,1,1,1,83,16,256",
+      "geometry": [
+        1,
+        256,
+        166,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        83,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 168,
+      "products": 43008,
+      "views": 129024,
+      "patch_values": 12238848,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1359872,5312,32,1:1359872 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1359872,5312,32,1:1359872 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 41984,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 43008
+      },
+      "panel_widths": {
+        "32": 164,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,91,1024,1,9,1,1,1,1,0,0,0,0,1,83,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        91,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        83,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 288,
+      "products": 294912,
+      "views": 884736,
+      "patch_values": 73433088,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:93184,91,91,1:93184 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:93184,91,91,1:93184 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 196608,
+        "1,9,19": 98304
+      },
+      "leaves": {
+        "one-row-fma": 294912
+      },
+      "panel_widths": {
+        "32": 192,
+        "19": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,623,64,256,3,3,1,1,2,2,1,1,1,1,312,32,256",
+      "geometry": [
+        1,
+        256,
+        623,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        312,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1248,
+      "products": 319488,
+      "views": 958464,
+      "patch_values": 92012544,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:10207232,39872,64,1:10207232 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10207232,39872,64,1:10207232 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 319488
+      },
+      "leaves": {
+        "one-row-fma": 319488
+      },
+      "panel_widths": {
+        "32": 1248
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,312,32,256,3,3,1,1,2,2,1,1,1,1,156,16,256",
+      "geometry": [
+        1,
+        256,
+        312,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        156,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 312,
+      "products": 79872,
+      "views": 239616,
+      "patch_values": 23003136,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:2555904,9984,32,1:2555904 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2555904,9984,32,1:2555904 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 79872
+      },
+      "leaves": {
+        "one-row-fma": 79872
+      },
+      "panel_widths": {
+        "32": 312
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,164,1024,1,9,1,1,1,1,0,0,0,0,1,156,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        164,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        156,
+        1024
+      ],
+      "calls": 192,
+      "tiled_batches": 192,
+      "panels": 960,
+      "products": 983040,
+      "views": 2949120,
+      "patch_values": 276037632,
+      "completed_batches": 192,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:167936,164,164,1:167936 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:167936,164,164,1:167936 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 192
+      },
+      "matrix_shapes": {
+        "1,9,32": 786432,
+        "1,9,28": 196608
+      },
+      "leaves": {
+        "one-row-fma": 983040
+      },
+      "panel_widths": {
+        "32": 768,
+        "28": 192
+      },
+      "scratch_elements": {
+        "524288": 192
+      }
+    },
+    {
+      "key": "1,256,453,64,256,3,3,1,1,2,2,1,1,1,1,227,32,256",
+      "geometry": [
+        1,
+        256,
+        453,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        227,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 908,
+      "products": 232448,
+      "views": 697344,
+      "patch_values": 66945024,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:7421952,28992,64,1:7421952 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:7421952,28992,64,1:7421952 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 232448
+      },
+      "leaves": {
+        "one-row-fma": 232448
+      },
+      "panel_widths": {
+        "32": 908
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,227,32,256,3,3,1,1,2,2,1,1,1,1,114,16,256",
+      "geometry": [
+        1,
+        256,
+        227,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        114,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 228,
+      "products": 58368,
+      "views": 175104,
+      "patch_values": 16809984,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1859584,7264,32,1:1859584 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1859584,7264,32,1:1859584 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 58368
+      },
+      "leaves": {
+        "one-row-fma": 58368
+      },
+      "panel_widths": {
+        "32": 228
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,122,1024,1,9,1,1,1,1,0,0,0,0,1,114,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        122,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        114,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 384,
+      "products": 393216,
+      "views": 1179648,
+      "patch_values": 100859904,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:124928,122,122,1:124928 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:124928,122,122,1:124928 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 294912,
+        "1,9,18": 98304
+      },
+      "leaves": {
+        "one-row-fma": 393216
+      },
+      "panel_widths": {
+        "32": 288,
+        "18": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,899,64,256,3,3,1,1,2,2,1,1,1,1,450,32,256",
+      "geometry": [
+        1,
+        256,
+        899,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        450,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1800,
+      "products": 460800,
+      "views": 1382400,
+      "patch_values": 132710400,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:14729216,57536,64,1:14729216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:14729216,57536,64,1:14729216 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 460800
+      },
+      "leaves": {
+        "one-row-fma": 460800
+      },
+      "panel_widths": {
+        "32": 1800
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,450,32,256,3,3,1,1,2,2,1,1,1,1,225,16,256",
+      "geometry": [
+        1,
+        256,
+        450,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        225,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 452,
+      "products": 115712,
+      "views": 347136,
+      "patch_values": 33177600,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:3686400,14400,32,1:3686400 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3686400,14400,32,1:3686400 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 114688,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 115712
+      },
+      "panel_widths": {
+        "32": 448,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,233,1024,1,9,1,1,1,1,0,0,0,0,1,225,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        233,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        225,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 768,
+      "products": 786432,
+      "views": 2359296,
+      "patch_values": 199065600,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:238592,233,233,1:238592 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:238592,233,233,1:238592 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 688128,
+        "1,9,1": 98304
+      },
+      "leaves": {
+        "one-row-fma": 786432
+      },
+      "panel_widths": {
+        "32": 672,
+        "1": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,242,64,256,3,3,1,1,2,2,1,1,1,1,121,32,256",
+      "geometry": [
+        1,
+        256,
+        242,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        121,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 484,
+      "products": 123904,
+      "views": 371712,
+      "patch_values": 35684352,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:3964928,15488,64,1:3964928 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:3964928,15488,64,1:3964928 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 123904
+      },
+      "leaves": {
+        "one-row-fma": 123904
+      },
+      "panel_widths": {
+        "32": 484
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,121,32,256,3,3,1,1,2,2,1,1,1,1,61,16,256",
+      "geometry": [
+        1,
+        256,
+        121,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        61,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 124,
+      "products": 31744,
+      "views": 95232,
+      "patch_values": 8994816,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:991232,3872,32,1:991232 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:991232,3872,32,1:991232 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 30720,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 31744
+      },
+      "panel_widths": {
+        "32": 120,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,69,1024,1,9,1,1,1,1,0,0,0,0,1,61,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        69,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        61,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 192,
+      "products": 196608,
+      "views": 589824,
+      "patch_values": 53968896,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:70656,69,69,1:70656 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:70656,69,69,1:70656 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 98304,
+        "1,9,29": 98304
+      },
+      "leaves": {
+        "one-row-fma": 196608
+      },
+      "panel_widths": {
+        "32": 96,
+        "29": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,622,64,256,3,3,1,1,2,2,1,1,1,1,311,32,256",
+      "geometry": [
+        1,
+        256,
+        622,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        311,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1244,
+      "products": 318464,
+      "views": 955392,
+      "patch_values": 91717632,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:10190848,39808,64,1:10190848 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:10190848,39808,64,1:10190848 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 318464
+      },
+      "leaves": {
+        "one-row-fma": 318464
+      },
+      "panel_widths": {
+        "32": 1244
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,311,32,256,3,3,1,1,2,2,1,1,1,1,156,16,256",
+      "geometry": [
+        1,
+        256,
+        311,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        156,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 312,
+      "products": 79872,
+      "views": 239616,
+      "patch_values": 23003136,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:2547712,9952,32,1:2547712 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2547712,9952,32,1:2547712 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 79872
+      },
+      "leaves": {
+        "one-row-fma": 79872
+      },
+      "panel_widths": {
+        "32": 312
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,407,64,256,3,3,1,1,2,2,1,1,1,1,204,32,256",
+      "geometry": [
+        1,
+        256,
+        407,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        204,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 816,
+      "products": 208896,
+      "views": 626688,
+      "patch_values": 60162048,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:6668288,26048,64,1:6668288 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:6668288,26048,64,1:6668288 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 208896
+      },
+      "leaves": {
+        "one-row-fma": 208896
+      },
+      "panel_widths": {
+        "32": 816
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,204,32,256,3,3,1,1,2,2,1,1,1,1,102,16,256",
+      "geometry": [
+        1,
+        256,
+        204,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        102,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 204,
+      "products": 52224,
+      "views": 156672,
+      "patch_values": 15040512,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1671168,6528,32,1:1671168 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1671168,6528,32,1:1671168 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 52224
+      },
+      "leaves": {
+        "one-row-fma": 52224
+      },
+      "panel_widths": {
+        "32": 204
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,110,1024,1,9,1,1,1,1,0,0,0,0,1,102,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        110,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        102,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 384,
+      "products": 393216,
+      "views": 1179648,
+      "patch_values": 90243072,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:112640,110,110,1:112640 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:112640,110,110,1:112640 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 294912,
+        "1,9,6": 98304
+      },
+      "leaves": {
+        "one-row-fma": 393216
+      },
+      "panel_widths": {
+        "32": 288,
+        "6": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,601,64,256,3,3,1,1,2,2,1,1,1,1,301,32,256",
+      "geometry": [
+        1,
+        256,
+        601,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        301,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1204,
+      "products": 308224,
+      "views": 924672,
+      "patch_values": 88768512,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:9846784,38464,64,1:9846784 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9846784,38464,64,1:9846784 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 308224
+      },
+      "leaves": {
+        "one-row-fma": 308224
+      },
+      "panel_widths": {
+        "32": 1204
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,301,32,256,3,3,1,1,2,2,1,1,1,1,151,16,256",
+      "geometry": [
+        1,
+        256,
+        301,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        151,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 304,
+      "products": 77824,
+      "views": 233472,
+      "patch_values": 22265856,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:2465792,9632,32,1:2465792 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2465792,9632,32,1:2465792 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 76800,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 77824
+      },
+      "panel_widths": {
+        "32": 300,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,159,1024,1,9,1,1,1,1,0,0,0,0,1,151,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        159,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        151,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 480,
+      "products": 491520,
+      "views": 1474560,
+      "patch_values": 133595136,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:162816,159,159,1:162816 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:162816,159,159,1:162816 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 393216,
+        "1,9,23": 98304
+      },
+      "leaves": {
+        "one-row-fma": 491520
+      },
+      "panel_widths": {
+        "32": 384,
+        "23": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,477,64,256,3,3,1,1,2,2,1,1,1,1,239,32,256",
+      "geometry": [
+        1,
+        256,
+        477,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        239,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 956,
+      "products": 244736,
+      "views": 734208,
+      "patch_values": 70483968,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:7815168,30528,64,1:7815168 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:7815168,30528,64,1:7815168 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 244736
+      },
+      "leaves": {
+        "one-row-fma": 244736
+      },
+      "panel_widths": {
+        "32": 956
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,239,32,256,3,3,1,1,2,2,1,1,1,1,120,16,256",
+      "geometry": [
+        1,
+        256,
+        239,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        120,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 240,
+      "products": 61440,
+      "views": 184320,
+      "patch_values": 17694720,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1957888,7648,32,1:1957888 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:1957888,7648,32,1:1957888 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 61440
+      },
+      "leaves": {
+        "one-row-fma": 61440
+      },
+      "panel_widths": {
+        "32": 240
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,128,1024,1,9,1,1,1,1,0,0,0,0,1,120,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        128,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        120,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 384,
+      "products": 393216,
+      "views": 1179648,
+      "patch_values": 106168320,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:131072,128,128,1:131072 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:131072,128,128,1:131072 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 294912,
+        "1,9,24": 98304
+      },
+      "leaves": {
+        "one-row-fma": 393216
+      },
+      "panel_widths": {
+        "32": 288,
+        "24": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    },
+    {
+      "key": "1,256,675,64,256,3,3,1,1,2,2,1,1,1,1,338,32,256",
+      "geometry": [
+        1,
+        256,
+        675,
+        64,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        338,
+        32,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 1352,
+      "products": 346112,
+      "views": 1038336,
+      "patch_values": 99680256,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:11059200,43200,64,1:11059200 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:11059200,43200,64,1:11059200 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 346112
+      },
+      "leaves": {
+        "one-row-fma": 346112
+      },
+      "panel_widths": {
+        "32": 1352
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,256,338,32,256,3,3,1,1,2,2,1,1,1,1,169,16,256",
+      "geometry": [
+        1,
+        256,
+        338,
+        32,
+        256,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        169,
+        16,
+        256
+      ],
+      "calls": 4,
+      "tiled_batches": 4,
+      "panels": 340,
+      "products": 87040,
+      "views": 261120,
+      "patch_values": 24920064,
+      "completed_batches": 4,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:2768896,10816,32,1:2768896 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:2768896,10816,32,1:2768896 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,3,1:2304": 4
+      },
+      "matrix_shapes": {
+        "1,9,32": 86016,
+        "1,9,16": 1024
+      },
+      "leaves": {
+        "one-row-fma": 87040
+      },
+      "panel_widths": {
+        "32": 336,
+        "16": 4
+      },
+      "scratch_elements": {
+        "131072": 4
+      }
+    },
+    {
+      "key": "1,1024,1,177,1024,1,9,1,1,1,1,0,0,0,0,1,169,1024",
+      "geometry": [
+        1,
+        1024,
+        1,
+        177,
+        1024,
+        1,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        169,
+        1024
+      ],
+      "calls": 96,
+      "tiled_batches": 96,
+      "panels": 576,
+      "products": 589824,
+      "views": 1769472,
+      "patch_values": 149520384,
+      "completed_batches": 96,
+      "simd": true,
+      "intrinsics": true,
+      "segmented": false,
+      "degree": 1,
+      "layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:181248,177,177,1:181248 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:181248,177,177,1:181248 | Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216 -> Lokad.Onnx.DenseTensor`1[System.Single]:False:9,9,9,1:9216": 96
+      },
+      "matrix_shapes": {
+        "1,9,32": 491520,
+        "1,9,9": 98304
+      },
+      "leaves": {
+        "one-row-fma": 589824
+      },
+      "panel_widths": {
+        "32": 480,
+        "9": 96
+      },
+      "scratch_elements": {
+        "524288": 96
+      }
+    }
+  ],
+  "native": {
+    "passed": true,
+    "commands": [
+      {
+        "command": [
+          "/usr/bin/gcc",
+          "-c",
+          "-x",
+          "assembler-with-cpp",
+          "-I",
+          "/dev/shm/lokad-parakeet-ort-depthwise-kernels-20260925",
+          "/dev/shm/lokad-parakeet-ort-depthwise-kernels-20260925/SgemmKernelM1Avx.S",
+          "-o",
+          "/dev/shm/lokad-parakeet-ort-depthwise-kernels-20260925/SgemmKernelM1Avx.S.o"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ],
+    "matches": [
+      {
+        "target": "MlasConvDepthwiseFloatKernelAvx512F",
+        "complete_text": {
+          "start": 19176512,
+          "end": 19229674,
+          "address": 19176512,
+          "relocations": [],
+          "sha256": "327b159cd601aae317f133b90140be69afb16275c91e8ad86011adbe1f5daff4",
+          "internal_relocations": [
+            {
+              "offset": 528,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output6",
+              "target_offset": 52450,
+              "addend": -4
+            },
+            {
+              "offset": 842,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output3",
+              "target_offset": 52074,
+              "addend": -4
+            },
+            {
+              "offset": 1078,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output2",
+              "target_offset": 51809,
+              "addend": -4
+            },
+            {
+              "offset": 1514,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output6",
+              "target_offset": 51119,
+              "addend": -4
+            },
+            {
+              "offset": 1773,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output3",
+              "target_offset": 50832,
+              "addend": -4
+            },
+            {
+              "offset": 1978,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output2",
+              "target_offset": 50628,
+              "addend": -4
+            },
+            {
+              "offset": 2342,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output6",
+              "target_offset": 50124,
+              "addend": -4
+            },
+            {
+              "offset": 2555,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output3",
+              "target_offset": 49924,
+              "addend": -4
+            },
+            {
+              "offset": 2726,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output2",
+              "target_offset": 49781,
+              "addend": -4
+            },
+            {
+              "offset": 2948,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output6",
+              "target_offset": 49515,
+              "addend": -4
+            },
+            {
+              "offset": 3091,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output3",
+              "target_offset": 49404,
+              "addend": -4
+            },
+            {
+              "offset": 3206,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output2",
+              "target_offset": 49322,
+              "addend": -4
+            },
+            {
+              "offset": 3358,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output1",
+              "target_offset": 49272,
+              "addend": -4
+            },
+            {
+              "offset": 3499,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output1",
+              "target_offset": 49704,
+              "addend": -4
+            },
+            {
+              "offset": 3660,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output1",
+              "target_offset": 50522,
+              "addend": -4
+            },
+            {
+              "offset": 3834,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output1",
+              "target_offset": 51676,
+              "addend": -4
+            },
+            {
+              "offset": 7687,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output6",
+              "target_offset": 52450,
+              "addend": -4
+            },
+            {
+              "offset": 9879,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output3",
+              "target_offset": 52074,
+              "addend": -4
+            },
+            {
+              "offset": 11525,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output2",
+              "target_offset": 51809,
+              "addend": -4
+            },
+            {
+              "offset": 14604,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output6",
+              "target_offset": 51119,
+              "addend": -4
+            },
+            {
+              "offset": 16363,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output3",
+              "target_offset": 50832,
+              "addend": -4
+            },
+            {
+              "offset": 17678,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output2",
+              "target_offset": 50628,
+              "addend": -4
+            },
+            {
+              "offset": 20040,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output6",
+              "target_offset": 50124,
+              "addend": -4
+            },
+            {
+              "offset": 21378,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output3",
+              "target_offset": 49924,
+              "addend": -4
+            },
+            {
+              "offset": 22374,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output2",
+              "target_offset": 49781,
+              "addend": -4
+            },
+            {
+              "offset": 23406,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output6",
+              "target_offset": 49515,
+              "addend": -4
+            },
+            {
+              "offset": 24018,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output3",
+              "target_offset": 49404,
+              "addend": -4
+            },
+            {
+              "offset": 24486,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output2",
+              "target_offset": 49322,
+              "addend": -4
+            },
+            {
+              "offset": 24867,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output1",
+              "target_offset": 49272,
+              "addend": -4
+            },
+            {
+              "offset": 25361,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output1",
+              "target_offset": 49704,
+              "addend": -4
+            },
+            {
+              "offset": 25976,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output1",
+              "target_offset": 50522,
+              "addend": -4
+            },
+            {
+              "offset": 26724,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output1",
+              "target_offset": 51676,
+              "addend": -4
+            },
+            {
+              "offset": 26950,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output6",
+              "target_offset": 49515,
+              "addend": -4
+            },
+            {
+              "offset": 27089,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output3",
+              "target_offset": 49404,
+              "addend": -4
+            },
+            {
+              "offset": 27200,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output2",
+              "target_offset": 49322,
+              "addend": -4
+            },
+            {
+              "offset": 27343,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output1",
+              "target_offset": 49272,
+              "addend": -4
+            },
+            {
+              "offset": 31130,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output6",
+              "target_offset": 52450,
+              "addend": -4
+            },
+            {
+              "offset": 33285,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output3",
+              "target_offset": 52074,
+              "addend": -4
+            },
+            {
+              "offset": 34894,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output2",
+              "target_offset": 51809,
+              "addend": -4
+            },
+            {
+              "offset": 35562,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter4Output1",
+              "target_offset": 51676,
+              "addend": -4
+            },
+            {
+              "offset": 38551,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output6",
+              "target_offset": 51119,
+              "addend": -4
+            },
+            {
+              "offset": 40273,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output3",
+              "target_offset": 50832,
+              "addend": -4
+            },
+            {
+              "offset": 41551,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output2",
+              "target_offset": 50628,
+              "addend": -4
+            },
+            {
+              "offset": 42086,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter3Output1",
+              "target_offset": 50522,
+              "addend": -4
+            },
+            {
+              "offset": 44358,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output6",
+              "target_offset": 50124,
+              "addend": -4
+            },
+            {
+              "offset": 45659,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output3",
+              "target_offset": 49924,
+              "addend": -4
+            },
+            {
+              "offset": 46618,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output2",
+              "target_offset": 49781,
+              "addend": -4
+            },
+            {
+              "offset": 47032,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter2Output1",
+              "target_offset": 49704,
+              "addend": -4
+            },
+            {
+              "offset": 47974,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output6",
+              "target_offset": 49515,
+              "addend": -4
+            },
+            {
+              "offset": 48549,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output3",
+              "target_offset": 49404,
+              "addend": -4
+            },
+            {
+              "offset": 48980,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output2",
+              "target_offset": 49322,
+              "addend": -4
+            },
+            {
+              "offset": 49256,
+              "type": 4,
+              "symbol": "MlasConvPostProcessFloatAvx512FFilter1Output1",
+              "target_offset": 49272,
+              "addend": -4
+            }
+          ]
+        },
+        "text_bytes": 53162,
+        "symbols": [
+          {
+            "name": "MlasConvNchwFloatKernelAvx512F",
+            "info": 18,
+            "section": 1,
+            "value": 0,
+            "size": 0
+          },
+          {
+            "name": "MlasConvNchwcFloatKernelAvx512F",
+            "info": 18,
+            "section": 1,
+            "value": 3856,
+            "size": 0
+          },
+          {
+            "name": "MlasConvDepthwiseFloatKernelAvx512F",
+            "info": 18,
+            "section": 1,
+            "value": 26752,
+            "size": 0
+          },
+          {
+            "name": "MlasConvPointwiseFloatKernelAvx512F",
+            "info": 18,
+            "section": 1,
+            "value": 27360,
+            "size": 0
+          }
+        ],
+        "start": 19203264,
+        "end": 19203872,
+        "bytes": 608,
+        "sha256": "10aa378f0920513437fe8e5d28256de1bd6faf16b21d0c582bca635cc809287a",
+        "boundary": "entry through local helpers/alignment up to next public function or text end; shared epilogues excluded",
+        "object": {
+          "bytes": 56992,
+          "sha256": "3c32907c2426ef1703e681380a58170c0d2b3ee91173213b6a844ed38367b0cd"
+        },
+        "sampled_instruction_addresses": [
+          {
+            "offset": "0x12506e6",
+            "period_ns": 45226125
+          },
+          {
+            "offset": "0x1250565",
+            "period_ns": 35175875
+          },
+          {
+            "offset": "0x1250557",
+            "period_ns": 25125625
+          },
+          {
+            "offset": "0x125054a",
+            "period_ns": 10050250
+          },
+          {
+            "offset": "0x1250716",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x1250543",
+            "period_ns": 5025125
+          }
+        ],
+        "measured_sample_period_ns": 125628125,
+        "estimated_seconds_per_corpus": 0.04187604166666667,
+        "observed": true,
+        "share": 0.0010459375784453184
+      },
+      {
+        "target": "MlasSgemmKernelM1Avx",
+        "complete_text": {
+          "start": 19043408,
+          "end": 19044060,
+          "address": 19043408,
+          "relocations": [
+            {
+              "offset": 50,
+              "type": 2,
+              "symbol": "MlasMaskMoveAvx",
+              "addend": 12,
+              "symbol_address": "0x17932e0",
+              "constant_offset": "0x17932e0"
+            },
+            {
+              "offset": 58,
+              "type": 2,
+              "symbol": "MlasMaskMoveAvx",
+              "addend": -4,
+              "symbol_address": "0x17932e0",
+              "constant_offset": "0x17932e0"
+            }
+          ],
+          "sha256": "ba272304bb46f7ed3a6d507081de5fe0e41c977b9bf4b43e3894fe40b38df31b",
+          "internal_relocations": []
+        },
+        "text_bytes": 652,
+        "symbols": [
+          {
+            "name": "MlasSgemmKernelM1Avx",
+            "info": 18,
+            "section": 1,
+            "value": 0,
+            "size": 0
+          }
+        ],
+        "start": 19043408,
+        "end": 19044060,
+        "bytes": 652,
+        "sha256": "ba272304bb46f7ed3a6d507081de5fe0e41c977b9bf4b43e3894fe40b38df31b",
+        "boundary": "entry through local helpers/alignment up to next public function or text end; shared epilogues excluded",
+        "object": {
+          "bytes": 1448,
+          "sha256": "faa89f51c5424517f00320047affd6594a2775bf09676d96bfe8c0dc702e9785"
+        },
+        "sampled_instruction_addresses": [
+          {
+            "offset": "0x12294a3",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x122951e",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x1229451",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x12296ae",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x1229515",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x1229503",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x12295db",
+            "period_ns": 5025125
+          },
+          {
+            "offset": "0x12296aa",
+            "period_ns": 5025125
+          }
+        ],
+        "measured_sample_period_ns": 40201000,
+        "estimated_seconds_per_corpus": 0.013400333333333334,
+        "observed": true,
+        "share": 0.0003347000251025019
+      }
+    ],
+    "inference_calls": 0,
+    "output_bytes": 170167
+  },
+  "original_native_sample_capture": "2026-09-24",
+  "native_samples_not_node_exclusive": true,
+  "no_new_native_inference": true
+}
