@@ -1,0 +1,250 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+internal static class Program
+{
+    static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
+    static string output = "";
+    static readonly List<object> Cases = new();
+    static int failed;
+    static void Require(bool condition, string reason) { if (!condition) throw new InvalidDataException(reason); }
+    static string Hash(ReadOnlySpan<float> values) => Convert.ToHexString(SHA256.HashData(MemoryMarshal.AsBytes(values))).ToLowerInvariant();
+    static string Sha(string path) { using var file = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(file)).ToLowerInvariant(); }
+    static void Write(string name, object value)
+    { using var file = new FileStream(Path.Combine(output, name), FileMode.CreateNew); JsonSerializer.Serialize(file, value, Json); }
+    static int Bits(float value) => BitConverter.SingleToInt32Bits(value);
+    static void Same(ReadOnlySpan<float> a, ReadOnlySpan<float> b, string reason)
+    { Require(MemoryMarshal.AsBytes(a).SequenceEqual(MemoryMarshal.AsBytes(b)), reason); }
+    static float[] ArrayOf(DenseTensor<float> tensor)
+    {
+        Require(MemoryMarshal.TryGetArray<float>(tensor.Buffer, out var segment)
+            && segment.Array is not null && segment.Offset == 0 && segment.Count == segment.Array.Length, "Complete owned array");
+        return segment.Array!;
+    }
+    static void Throws<T>(Action action, string reason) where T : Exception
+    { try { action(); } catch (T) { return; } throw new InvalidDataException(reason); }
+    static void Case(string id, Func<object> test)
+    {
+        object row;
+        try { row = new { id, passed = true, evidence = test() }; }
+        catch (Exception e) { failed++; row = new { id, passed = false, error = e.ToString() }; }
+        Cases.Add(row); Write(id + ".json", row);
+    }
+
+    static float[] Values(int count, bool finite)
+    {
+        var values = new float[count];
+        int[] special = { 0, unchecked((int)0x80000000), 0x7fc00001, unchecked((int)0xffc12345),
+            0x7f800000, unchecked((int)0xff800000), 1, unchecked((int)0x80000001) };
+        uint state = 0x243f6a88;
+        for (int i = 0; i < count; i++)
+        {
+            state = unchecked(state * 1664525 + 1013904223);
+            values[i] = finite ? ((int)(state >> 8) % 2001 - 1000) / 997.0f
+                : BitConverter.Int32BitsToSingle(i < special.Length ? special[i] : unchecked((int)state));
+        }
+        return values;
+    }
+
+    static object Layout(int n, int k)
+    {
+        var source = Values(checked(n * k), false); string original = Hash(source);
+        var weight = new PackedLogicalWeight(source, n, k); float[] payload = weight.Packed;
+        string packed = Hash(payload);
+        Require(!ReferenceEquals(source, payload), "Packing must own its array");
+        for (int i = 0; i < source.Length; i++) Require(Bits(source[i]) == Bits(weight.GetValue(i)), "Every logical flat element");
+        var dense = weight.ToDenseTensor(); Same(source, dense.Buffer.Span, "Full reconstruction");
+        var clone = (DenseTensor<float>)weight.Clone(); Same(source, clone.Buffer.Span, "Full clone");
+        Require(!ReferenceEquals(ArrayOf(dense), ArrayOf(clone)) && !ReferenceEquals(ArrayOf(dense), payload), "Independent dense outputs");
+        clone.SetValue(0, 19); Require(Bits(weight.GetValue(0)) == Bits(source[0]), "Clone independence");
+        var reshaped = weight.Reshape(new[] { source.Length });
+        Same(source, reshaped.ToArray(), "Reshape logical order");
+        reshaped.SetValue(0, 23); Require(Bits(weight.GetValue(0)) == Bits(source[0]), "Reshape independence");
+        var empty = weight.CloneEmpty<int>(new[] { 2, 3 });
+        Require(empty.Dimensions.SequenceEqual(new[] { 2, 3 }) && empty.ToArray().All(v => v == 0), "CloneEmpty type and values");
+        Require(Hash(payload) == packed && ReferenceEquals(weight.Packed, payload) && Hash(source) == original, "Read-only identity and bytes");
+        bool views = n < 10;
+        if (views)
+        {
+            for (int row = 0; row < n; row++)
+                for (int col = 0; col < k; col++) Require(Bits(weight[row, col]) == Bits(source[row * k + col]), "Coordinates");
+            var slice = weight.Slice(new SliceIndex(1, n, 2), new SliceIndex(0, k, 2));
+            int at = 0;
+            for (int row = 1; row < n; row += 2)
+                for (int col = 0; col < k; col += 2) Require(Bits(slice.GetValue(at++)) == Bits(source[row * k + col]), "Slice logical order");
+            var firstRow = weight.Slice(new SliceIndex(0, 1), SliceIndex.All);
+            var broadcast = firstRow.BroadcastDim(0, 3);
+            for (int i = 0; i < 3 * k; i++) Require(Bits(broadcast.GetValue(i)) == Bits(source[i % k]), "Broadcast logical order");
+            Same(broadcast.ToArray(), broadcast.ToDenseTensor().Buffer.Span, "Broadcast materialization");
+            int changed = k - 1; float before = source[changed];
+            weight.SetValue(changed, BitConverter.Int32BitsToSingle(unchecked((int)0xffc01234)));
+            Require(Bits(weight[0, changed]) == unchecked((int)0xffc01234), "Logical write");
+            weight[0, changed] = before;
+            Require(Hash(payload) == packed && ReferenceEquals(weight.Packed, payload), "Restored write uses same payload");
+        }
+        return new { n, k, elements = source.Length, source_sha256 = original, packed_sha256 = packed,
+            views, bit_exact = true, independent_copies = true, weight.DenseMaterializations, weight.DenseBytes };
+    }
+
+    static object Bounds()
+    {
+        var weight = new PackedLogicalWeight(new float[6], 2, 3);
+        Throws<ArgumentOutOfRangeException>(() => weight.GetValue(-1), "Negative index");
+        Throws<ArgumentOutOfRangeException>(() => weight.SetValue(6, 0), "Past end");
+        Throws<ArgumentOutOfRangeException>(() => { _ = weight[0, 3]; }, "Coordinate cannot spill to next row");
+        Throws<ArgumentException>(() => { _ = weight[new int[] { 0 }]; }, "Coordinate rank");
+        Throws<ArgumentException>(() => new PackedLogicalWeight(new float[5], 2, 3), "Incomplete matrix");
+        Throws<ArgumentOutOfRangeException>(() => new PackedLogicalWeight(Array.Empty<float>(), 0, 3), "Empty shape");
+        Throws<OverflowException>(() => new PackedLogicalWeight(new float[1], int.MaxValue, 2), "Shape overflow");
+        Throws<NotImplementedException>(() => { _ = weight.Storage; }, "Packed bytes cannot appear row-major");
+        return new { checks = 8, raw_storage_not_exposed = true };
+    }
+
+    static object Fallback(int n, int k, int m, string mode)
+    {
+        TensorExecutionOptions options = mode switch { "scalar" => TensorExecutionOptions.Scalar,
+            "simd" => TensorExecutionOptions.Simd, "intrinsics" => TensorExecutionOptions.Intrinsics,
+            "auto" => TensorExecutionOptions.Auto, _ => throw new ArgumentException(nameof(mode)) };
+        var source = Values(n * k, true); string sourceHash = Hash(source);
+        var weight = new PackedLogicalWeight(source, n, k); string packedHash = Hash(weight.Packed);
+        var input = new DenseTensor<float>(Values(m * n, true), new[] { m, n }); string inputHash = Hash(input.Buffer.Span);
+        var ordinary = new DenseTensor<float>(source, new[] { n, k });
+        var expected = Tensor<float>.MatMul(input, ordinary, options);
+        var copies = new CopyAccountant();
+        var actual = Tensor<float>.MatMul(input, weight, options with { CopyReporter = copies });
+        Same(expected.ToArray(), actual.ToArray(), "Existing fallback bit exact");
+        Require(weight.DenseMaterializations == 1 && copies.TotalCopyBytes == (long)n * k * 4, "One explicit fallback copy");
+        var a = ArrayOf((DenseTensor<float>)actual); var e = ArrayOf((DenseTensor<float>)expected);
+        Require(!ReferenceEquals(a, e) && !ReferenceEquals(a, source) && !ReferenceEquals(a, weight.Packed)
+            && !ReferenceEquals(a, ArrayOf(input)), "Output ownership");
+        string outputHash = Hash(a); a[0] = 29;
+        Require(Hash(source) == sourceHash && Hash(weight.Packed) == packedHash && Hash(input.Buffer.Span) == inputHash
+            && Hash(e) == outputHash, "Held inputs and other output unchanged");
+        return new { n, k, m, mode, bit_exact = true, source_sha256 = sourceHash, packed_sha256 = packedHash,
+            output_sha256 = outputHash, weight.DenseMaterializations, weight.DenseBytes, copy_bytes = copies.TotalCopyBytes };
+    }
+
+    static unsafe object ExistingPacked(int n, int k, int m)
+    {
+        Require(Fma.IsSupported && Avx2.IsSupported, "Actual intrinsic support");
+        var source = Values(n * k, true); var weight = new PackedLogicalWeight(source, n, k);
+        string sourceHash = Hash(source), packedHash = Hash(weight.Packed);
+        var input = new DenseTensor<float>(Values(m * n, true), new[] { m, n }); string inputHash = Hash(input.Buffer.Span);
+        var expected = Tensor<float>.MatMul(input, new DenseTensor<float>(source, new[] { n, k }), TensorExecutionOptions.Intrinsics);
+        var fallback = Tensor<float>.MatMul(input, weight, TensorExecutionOptions.Intrinsics);
+        Same(expected.ToArray(), fallback.ToArray(), "Actual-shape fallback");
+        int before = weight.DenseMaterializations;
+        bool three = m % 3 == 0; int rows = three ? m : m - m % 2;
+        var actual = new float[m * k];
+        using (var inputPin = input.Buffer.Pin())
+        fixed (float* p = weight.Packed, c = actual)
+        {
+            float* a = (float*)inputPin.Pointer;
+            if (three) ExistingKernels.Three(rows, n, k, a, p, c);
+            else ExistingKernels.Two(rows, n, k, a, p, c);
+            if (rows != m)
+            {
+                // Preserve the existing row-major remainder and count this reconstruction.
+                var original = weight.ToDenseTensor();
+                using var originalPin = original.Buffer.Pin();
+                ExistingKernels.Remainder(1, n, k, a + rows * n, (float*)originalPin.Pointer, c + rows * k);
+            }
+        }
+        Same(expected.ToArray(), actual, "Unchanged packed arithmetic and remainder");
+        Require(weight.DenseMaterializations - before == (rows == m ? 0 : 1), "Explicit remainder reconstruction count");
+        Require(Hash(source) == sourceHash && Hash(weight.Packed) == packedHash && Hash(input.Buffer.Span) == inputHash, "Read-only packed execution");
+        return new { n, k, m, rows, bit_exact = true, output_sha256 = Hash(actual),
+            multiply = three ? "ShortWideMultiply3Rows" : "ShortWideMultiply2Rows",
+            remainder = rows != m, packed_reconstruction_bytes = rows == m ? 0L : (long)n * k * 4,
+            fallback_reconstruction_bytes = (long)n * k * 4, source_sha256 = sourceHash, packed_sha256 = packedHash };
+    }
+
+    sealed record Roots(PackedLogicalWeight Weight, WeakReference<float[]> Source, string SourceHash, string PackedHash);
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static Roots NewRoots(int n, int k)
+    {
+        var source = Values(n * k, false); var weight = new PackedLogicalWeight(source, n, k);
+        return new(weight, new WeakReference<float[]>(source), Hash(source), Hash(weight.Packed));
+    }
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static WeakReference<float[]> Reconstruction(PackedLogicalWeight weight, string expected)
+    {
+        var dense = weight.ToDenseTensor(); Require(Hash(dense.Buffer.Span) == expected, "Reconstruction after source dies");
+        return new WeakReference<float[]>(ArrayOf(dense));
+    }
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static bool Alive(WeakReference<float[]> value) => value.TryGetTarget(out _);
+    static void Collect()
+    { GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true); GC.WaitForPendingFinalizers(); GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true); }
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static object Ownership(int n, int k)
+    {
+        var roots = NewRoots(n, k); Collect(); bool sourceAlive = Alive(roots.Source);
+        var temporary = Reconstruction(roots.Weight, roots.SourceHash); Collect(); bool temporaryAlive = Alive(temporary);
+        Require(!sourceAlive && !temporaryAlive, "Only the packed payload survives");
+        Require(Hash(roots.Weight.Packed) == roots.PackedHash, "Packed bytes retained after collection");
+        var second = Reconstruction(roots.Weight, roots.SourceHash); Collect();
+        Require(!Alive(second), "No hidden reconstruction cache");
+        var fields = typeof(PackedLogicalWeight).GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+        Require(fields.Count(f => !f.FieldType.IsValueType) == 1 && fields.Single(f => !f.FieldType.IsValueType).FieldType == typeof(float[]), "Single reference field in representation");
+        GC.KeepAlive(roots.Weight);
+        return new { n, k, source_alive = sourceAlive, temporary_alive = temporaryAlive, retained_payload_bytes = (long)n * k * 4,
+            source_sha256 = roots.SourceHash, packed_sha256 = roots.PackedHash, forced_gc_unscored = true, no_dense_cache = true };
+    }
+
+    static int Main(string[] args)
+    {
+        Require(args.Length == 3, "spec, output, mode required"); output = args[1]; string mode = args[2];
+        Require(!Directory.Exists(output), "Fresh output"); Directory.CreateDirectory(output);
+        try
+        {
+            using var document = JsonDocument.Parse(File.ReadAllBytes(args[0])); var spec = document.RootElement;
+            Require(OperatingSystem.IsLinux() && RuntimeInformation.FrameworkDescription == ".NET 10.0.8", "Runtime");
+            Require(Environment.ProcessorCount == 1 && Process.GetCurrentProcess().ProcessorAffinity.ToInt64() == 4, "CPU ownership");
+            var flags = Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k => k.StartsWith("LOKAD_") || k.StartsWith("DOTNET_") || k.StartsWith("COMPlus_")).ToDictionary(k => k, k => Environment.GetEnvironmentVariable(k));
+            bool disabled = mode == "hardware-disabled";
+            Require(disabled ? flags.Count == 1 && flags.GetValueOrDefault("DOTNET_EnableHWIntrinsic") == "0" : mode == "native" && flags.Count == 0, "Instruction flags");
+            Require(disabled ? !Fma.IsSupported && !Avx2.IsSupported && !Avx512F.IsSupported : Fma.IsSupported && Avx2.IsSupported && Avx512F.IsSupported, "Observed hardware mode");
+            foreach (var file in spec.GetProperty("runtime_files").EnumerateObject())
+            {
+                string path = Path.Combine(AppContext.BaseDirectory, file.Name);
+                Require(new FileInfo(path).Length == file.Value.GetProperty("bytes").GetInt64() && Sha(path) == file.Value.GetProperty("sha256").GetString(), "Runtime file identity " + file.Name);
+            }
+            Require(!File.ReadAllText("/proc/self/maps").Contains("onnxruntime", StringComparison.OrdinalIgnoreCase), "No native ORT");
+            if (!disabled)
+            {
+                foreach (var shape in new[] { (7, 33), (8, 64), (1024, 4096), (4096, 1024) })
+                    Case($"layout-{shape.Item1}-{shape.Item2}", () => Layout(shape.Item1, shape.Item2));
+                Case("bounds", Bounds);
+                foreach (var shape in new[] { (1024, 4096), (4096, 1024) })
+                {
+                    foreach (int m in new[] { 167, 225 })
+                        Case($"packed-{shape.Item1}-{shape.Item2}-{m}", () => ExistingPacked(shape.Item1, shape.Item2, m));
+                    Case($"ownership-{shape.Item1}-{shape.Item2}", () => Ownership(shape.Item1, shape.Item2));
+                }
+            }
+            foreach (var shape in new[] { (7, 33), (8, 64) })
+                foreach (int m in new[] { 1, 2, 3 })
+                    foreach (string option in disabled ? new[] { "scalar", "simd", "auto" } : new[] { "scalar", "simd", "intrinsics" })
+                        Case($"fallback-{shape.Item1}-{shape.Item2}-{m}-{option}", () => Fallback(shape.Item1, shape.Item2, m, option));
+            if (disabled)
+                Case("explicit-intrinsics-unavailable", () => { Throws<InvalidOperationException>(() => TensorExecutionOptions.Intrinsics.Validate(), "Unavailable explicit intrinsic request"); return new { rejected = true }; });
+            int expected = disabled ? 19 : 29; Require(Cases.Count == expected, "Complete planned cases");
+            Write("result.json", new { completed = true, passed = failed == 0, failed, mode, cases = Cases,
+                runtime = RuntimeInformation.FrameworkDescription, affinity = 4, processor_count = Environment.ProcessorCount, flags,
+                fma = Fma.IsSupported, avx2 = Avx2.IsSupported, avx512 = Avx512F.IsSupported,
+                kernels = ExistingKernels.Identities(), core_sha256 = Sha(typeof(Tensor<float>).Assembly.Location),
+                runner_sha256 = Sha(Assembly.GetExecutingAssembly().Location), spec_sha256 = Sha(args[0]),
+                diagnostic_only = true, no_model_execution = true, no_application_score = true, no_product_change = true });
+            Console.WriteLine(JsonSerializer.Serialize(new { completed = true, passed = failed == 0, mode, count = Cases.Count, failed }));
+            return 0; // Test verdict is preserved separately from successful capture.
+        }
+        catch (Exception e) { Write("fatal.json", new { error = e.ToString() }); Console.Error.WriteLine(e); return 1; }
+    }
+}

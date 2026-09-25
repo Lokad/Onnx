@@ -1,0 +1,94 @@
+using System.Reflection;
+using Lokad.Onnx;
+
+// Consumer-only representation. Packed bytes are never exposed as Tensor.Storage.
+internal sealed class PackedLogicalWeight : Tensor<float>
+{
+    readonly float[] packed;
+    readonly int rows, columns, blocked;
+    internal float[] Packed => packed;
+    internal int DenseMaterializations { get; private set; }
+    internal long DenseBytes { get; private set; }
+
+    internal PackedLogicalWeight(float[] source, int rows, int columns)
+        : base((ReadOnlySpan<int>)Shape(source, rows, columns), false)
+    {
+        this.rows = rows; this.columns = columns; blocked = columns - columns % 32;
+        packed = new float[source.Length];
+        unsafe
+        {
+            fixed (float* s = source, p = packed) ExistingKernels.Pack(rows, columns, s, p);
+        }
+    }
+
+    static int[] Shape(float[] source, int rows, int columns)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (rows < 1 || columns < 1) throw new ArgumentOutOfRangeException(nameof(rows));
+        if (checked(rows * columns) != source.Length) throw new ArgumentException("Complete source matrix required.");
+        return new[] { rows, columns };
+    }
+
+    int PhysicalIndex(int index)
+    {
+        if ((uint)index >= (uint)packed.Length) throw new ArgumentOutOfRangeException(nameof(index));
+        int row = index / columns, column = index % columns;
+        return column < blocked
+            ? (column / 32) * rows * 32 + row * 32 + column % 32
+            : blocked * rows + row * (columns - blocked) + column - blocked;
+    }
+
+    int LogicalIndex(ReadOnlySpan<int> indices)
+    {
+        if (indices.Length != 2) throw new ArgumentException("Two coordinates required.");
+        if ((uint)indices[0] >= (uint)rows || (uint)indices[1] >= (uint)columns)
+            throw new ArgumentOutOfRangeException(nameof(indices));
+        return indices[0] * columns + indices[1];
+    }
+
+    public override float GetValue(int index) => packed[PhysicalIndex(index)];
+    public override void SetValue(int index, float value) => packed[PhysicalIndex(index)] = value;
+    public override float this[ReadOnlySpan<int> indices]
+    {
+        get => GetValue(LogicalIndex(indices));
+        set => SetValue(LogicalIndex(indices), value);
+    }
+
+    public override DenseTensor<float> ToDenseTensor()
+    {
+        var result = new DenseTensor<float>(new[] { rows, columns });
+        var output = result.Buffer.Span;
+        for (int column = 0; column < blocked; column += 32)
+            for (int row = 0; row < rows; row++)
+                packed.AsSpan(column * rows + row * 32, 32).CopyTo(output.Slice(row * columns + column, 32));
+        int tail = columns - blocked;
+        if (tail > 0)
+            for (int row = 0; row < rows; row++)
+                packed.AsSpan(blocked * rows + row * tail, tail).CopyTo(output.Slice(row * columns + blocked, tail));
+        DenseMaterializations++;
+        DenseBytes += (long)packed.Length * sizeof(float);
+        return result;
+    }
+
+    public override Tensor<float> Clone() => ToDenseTensor();
+    public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions);
+    public override Tensor<float> Reshape(ReadOnlySpan<int> dimensions) => ToDenseTensor().Reshape(dimensions);
+}
+
+internal static unsafe class ExistingKernels
+{
+    internal delegate void PackKernel(int n, int k, float* source, float* packed);
+    internal delegate void MultiplyKernel(int m, int n, int k, float* a, float* b, float* c);
+    internal static readonly PackKernel Pack = Resolve<PackKernel>("ShortWidePackPanelsB");
+    internal static readonly MultiplyKernel Two = Resolve<MultiplyKernel>("ShortWideMultiply2Rows");
+    internal static readonly MultiplyKernel Three = Resolve<MultiplyKernel>("ShortWideMultiply3Rows");
+    internal static readonly MultiplyKernel Remainder = Resolve<MultiplyKernel>("ShortWideMultiplyRemainder");
+
+    static T Resolve<T>(string name) where T : Delegate =>
+        (typeof(MathOps).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new MissingMethodException(name)).CreateDelegate<T>();
+
+    internal static object[] Identities() => new Delegate[] { Pack, Two, Three, Remainder }
+        .Select(d => (object)new { name = d.Method.Name, token = d.Method.MetadataToken,
+            module = d.Method.Module.ModuleVersionId, assembly = d.Method.DeclaringType!.Assembly.GetName().Name }).ToArray();
+}
