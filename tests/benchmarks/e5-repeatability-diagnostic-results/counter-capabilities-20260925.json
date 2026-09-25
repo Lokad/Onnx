@@ -1,0 +1,182 @@
+{
+  "reports": {
+    "hardware": {
+      "closure": {
+        "bytes": 592,
+        "sha256": "ff47d5b633fc430bc36fc3f86d5543663dee44f685ee58381d36565b8602bdec"
+      },
+      "observations": {
+        "boot": 1789634288.0,
+        "kernel": "6.17.0-1022-azure",
+        "sources": {
+          "breakpoint": {
+            "type": "5",
+            "events": []
+          },
+          "kprobe": {
+            "type": "8",
+            "events": []
+          },
+          "msr": {
+            "type": "10",
+            "events": [
+              "aperf",
+              "mperf",
+              "tsc"
+            ]
+          },
+          "software": {
+            "type": "1",
+            "events": []
+          },
+          "tracepoint": {
+            "type": "2",
+            "events": []
+          },
+          "uprobe": {
+            "type": "9",
+            "events": []
+          }
+        },
+        "metadata": {
+          "/proc/sys/kernel/perf_event_paranoid": "4",
+          "/proc/sys/kernel/kptr_restrict": "1",
+          "/sys/devices/system/cpu/cpu2/cpufreq/scaling_driver": null,
+          "/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor": null,
+          "/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq": null,
+          "/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_max_freq": null,
+          "/sys/devices/system/cpu/cpu2/topology/thread_siblings_list": "2-3",
+          "/sys/fs/cgroup/cpu.max": null,
+          "/sys/fs/cgroup/cpu.stat": "usage_usec 307486676000\nuser_usec 294468111000\nsystem_usec 13018565000\nnice_usec 39036000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+          "/proc/self/cgroup": "0::/user.slice/user-1000.slice/session-12034.scope"
+        },
+        "commands": [
+          {
+            "command": [
+              "sudo",
+              "-n",
+              "/usr/bin/perf",
+              "stat",
+              "-x",
+              ";",
+              "-e",
+              "task-clock,context-switches,cpu-migrations,page-faults",
+              "--",
+              "/usr/bin/taskset",
+              "-c",
+              "2",
+              "/usr/bin/python3",
+              "-B",
+              "-c",
+              "value=0\nfor i in range(100000): value=(value+i)%104729\nassert value>=0"
+            ],
+            "code": 0,
+            "stdout": "",
+            "stderr": "20923509;;task-clock;20923509;100.00;0.945;CPUs utilized\n3;;context-switches;20923509;100.00;143.379;/sec\n1;;cpu-migrations;20923509;100.00;47.793;/sec\n1167;;page-faults;20923509;100.00;55.775;K/sec\n",
+            "seconds": 0.07560362003277987
+          },
+          {
+            "command": [
+              "sudo",
+              "-n",
+              "/usr/bin/perf",
+              "stat",
+              "-x",
+              ";",
+              "-e",
+              "cycles:u,instructions:u",
+              "--",
+              "/usr/bin/taskset",
+              "-c",
+              "2",
+              "/usr/bin/python3",
+              "-B",
+              "-c",
+              "value=0\nfor i in range(100000): value=(value+i)%104729\nassert value>=0"
+            ],
+            "code": 0,
+            "stdout": "",
+            "stderr": "<not supported>;;cycles:u;0;100.00;;\n<not supported>;;instructions:u;0;100.00;;\n",
+            "seconds": 0.038413822068832815
+          },
+          {
+            "command": [
+              "sudo",
+              "-n",
+              "/usr/bin/perf",
+              "stat",
+              "-x",
+              ";",
+              "-e",
+              "cache-references:u,cache-misses:u",
+              "--",
+              "/usr/bin/taskset",
+              "-c",
+              "2",
+              "/usr/bin/python3",
+              "-B",
+              "-c",
+              "value=0\nfor i in range(100000): value=(value+i)%104729\nassert value>=0"
+            ],
+            "code": 0,
+            "stdout": "",
+            "stderr": "<not supported>;;cache-references:u;0;100.00;;\n<not supported>;;cache-misses:u;0;100.00;;\n",
+            "seconds": 0.038183753029443324
+          }
+        ],
+        "inference_calls": 0,
+        "system_settings_changed": false,
+        "previous_owners_terminal": true
+      }
+    },
+    "frequency": {
+      "closure": {
+        "bytes": 461,
+        "sha256": "0fefc58e5291cb74e2d98e6b2f5458f2ef253375a60fad6f0fc05587c1b8bf49"
+      },
+      "observations": {
+        "command": [
+          "sudo",
+          "-n",
+          "/usr/bin/perf",
+          "stat",
+          "-a",
+          "-C",
+          "2",
+          "-x",
+          ";",
+          "-e",
+          "msr/aperf/,msr/mperf/,msr/tsc/",
+          "--",
+          "/usr/bin/taskset",
+          "-c",
+          "2",
+          "/usr/bin/python3",
+          "-B",
+          "-c",
+          "value=0\nfor i in range(1000000): value=(value+i)%104729\nassert value>=0"
+        ],
+        "code": 0,
+        "stdout": "",
+        "stderr": "320786449;;msr/aperf/;87537248;100.00;;\n225416204;;msr/mperf/;87537929;100.00;;\n227247124;;msr/tsc/;87535916;100.00;;\n",
+        "seconds": 0.11828580906149,
+        "inference_calls": 0,
+        "system_settings_changed": false,
+        "previous_owners_terminal": true
+      }
+    }
+  },
+  "counters": {
+    "msr/aperf/": 320786449,
+    "msr/mperf/": 225416204,
+    "msr/tsc/": 227247124
+  },
+  "probe_aperf_over_mperf": 1.4230851345540358,
+  "inference_calls": 0,
+  "system_settings_changed": false,
+  "diagnosis_complete": false,
+  "source": {
+    "bytes": 3720,
+    "sha256": "6dddca9d8e695d902f52abbb68de5b92035141a60aad39786f014c812be6d669"
+  }
+}
