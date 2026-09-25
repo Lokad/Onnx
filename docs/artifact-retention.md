@@ -6,7 +6,7 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **49.44 GB**, including **35.94 GB** in artifacts.
+The latest inventory is **49.58 GB**, including **36.08 GB** in artifacts.
 It retains the selected release, rejected trials, exact ORT diagnosis, matched
 Lokad profiles, both independent application admissions and the combined-source
 build qualification. The first combined tensor run's source-policy failure and
@@ -55,15 +55,17 @@ unstarted candidate ran after idle recovery. Both raw collections remain local.
 The fresh six-process application comparison is closed atc9e72e57: all480
 requests,2685 resource samples,63 controls and21 gates pass. Candidate latency
 is6.297410% lower than fresh current and1.529181 times fresh ORT. All raw clocks
-remain. The candidate still needs downstream release qualification.
+remain. Shared/e5 qualification also passes at2f96025a, covering166 arrays and
+5000814 values per role. Its staging memory refusal and resumed unchanged
+preparer remain recorded. The candidate still needs the remaining release checks.
 The first inspection's missing-dependency failure remains recorded. No new
 model copies were needed.
 
 All local raw traces, clocks, native arrays, failed checks and qualification evidence
-remain retained. The inventory totals **49,439,415,646 bytes**, with
-**0.56 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m73-app-admitted-size.json`.
-Counting the model junction again gives 60.23 GB, which counts the same 10.79 GB
+remain retained. The inventory totals **49,583,830,384 bytes**, with
+**0.42 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m73-shared-qualified-size.json`.
+Counting the model junction again gives 60.37 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hardlinked paths separately.
 
@@ -73,6 +75,12 @@ A proposed retirement of27 old-worktree build dependencies, totalling
 an exact retained counterpart and no dependency in450 prepared manifests;
 the prospective evidence and rejection are retained under
 `artifacts/parakeet-slice-dense-local-retention-20260925`. No deletion was retried.
+
+After shared/e5 qualification,160 closed M73 VM phase-trace duplicates were
+retired after verifying exact local originals, terminal owners and every
+deployed input manifest. This recovered60.13 MB physically on the VM; no local
+raw data was removed. Receipt:
+`artifacts/parakeet-slice-dense-release-profile-retention-20260925`.
 
 Before positional profiling and application staging, **160 VM phase-trace
 copies** and **80 VM projection-trace copies** were retired only after verifying
