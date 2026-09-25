@@ -115,8 +115,10 @@ def prepare():
     copy(transferred, bundle / 'evidence/roundtrip-original.json')
     roundtrip = read(transferred)
     assert roundtrip['passed']
-    links['roundtrip/capture.nettrace'] = dict(source=REMOTE_TRACE + '/a-capture/capture.nettrace',
-                                             identity=trace_files['a-capture/capture.nettrace'])
+    # All four VM trace copies were retired after their original audit. Transfer
+    # the complete retained local trace; never infer existence from an old receipt.
+    copy(TRACE / 'collected/a-capture/capture.nettrace', bundle / 'roundtrip/capture.nettrace')
+    assert pin(bundle / 'roundtrip/capture.nettrace') == trace_files['a-capture/capture.nettrace']
     # Retain every event. Estimate from complete prior traces before freezing;
     # the existing hard stage limit still rejects unexpected growth.
     trace_max = max(v['bytes'] for n, v in trace_files.items() if n.endswith('capture.nettrace'))
