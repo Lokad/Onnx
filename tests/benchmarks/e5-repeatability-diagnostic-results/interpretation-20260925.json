@@ -1,0 +1,542 @@
+{
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "measurement_policy_changed": false,
+  "closure": {
+    "bytes": 56134,
+    "sha256": "fe8ec805d18864a3a8d8b5a052543a3eef466535adc2769efc8c6c6747338a7b"
+  },
+  "inputs": {
+    "tests\\benchmarks\\e5-repeatability-diagnostic-results\\interpret.py": {
+      "bytes": 7418,
+      "sha256": "0e9a1d7b48d9927c6d89f4766a36dec77ff419193272d9cc6969789436a368fd"
+    },
+    "artifacts\\e5-repeatability-diagnostic-amd-20260925\\analysis.json": {
+      "bytes": 1794843,
+      "sha256": "945f8b67b39557d5d7b8b262181c8dd75d6649b5583257d02b660dd3b234b7b7"
+    },
+    "tests\\benchmarks\\e5-repeatability-diagnostic-results\\observations-20260925.json": {
+      "bytes": 11514014,
+      "sha256": "140a5c80384e3a9d0e97ee8d6b4f17a3125bd1f499580594ae8bb382f3d48a2f"
+    }
+  },
+  "rows": [
+    {
+      "process": "a",
+      "key": "e5-8tok",
+      "product": "current",
+      "measured_calls": 180,
+      "wall_ms": 11.502035566666667,
+      "process_cpu_ms": 11.517377777777778,
+      "cpu_over_wall": 1.0013338692114266,
+      "compilation_elapsed_overlap_ms": 47.29113000000325,
+      "suspension_elapsed_overlap_ms": 4.497306000001117,
+      "suspension_fraction": 0.002172227097414575,
+      "measured_product_loads": 18,
+      "measured_load_tiers": {
+        "QuickJittedInstrumented": 18
+      },
+      "measured_product_load_calls": [
+        675,
+        676
+      ],
+      "last_product_load_call": 676,
+      "all_events": 39392,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "a",
+          "key": "e5-8tok",
+          "product": "current",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 11.346278983333333,
+          "cpu_ms": 11.36075,
+          "allocated_bytes": 1344135.7333333334,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 1.531684999999925
+        },
+        {
+          "process": "a",
+          "key": "e5-8tok",
+          "product": "current",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 11.630869666666666,
+          "cpu_ms": 11.646516666666665,
+          "allocated_bytes": 1343094.5333333334,
+          "gc_calls": 4,
+          "compilation_overlap_ms": 35.075103000002855,
+          "suspension_overlap_ms": 1.2666940000017348
+        },
+        {
+          "process": "a",
+          "key": "e5-8tok",
+          "product": "current",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 11.52895805,
+          "cpu_ms": 11.544866666666667,
+          "allocated_bytes": 1344686.1333333333,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 12.216027000000395,
+          "suspension_overlap_ms": 1.6989269999994576
+        }
+      ]
+    },
+    {
+      "process": "b",
+      "key": "e5-8tok",
+      "product": "candidate",
+      "measured_calls": 180,
+      "wall_ms": 12.853343283333333,
+      "process_cpu_ms": 12.8717,
+      "cpu_over_wall": 1.0014281666848865,
+      "compilation_elapsed_overlap_ms": 46.61842600000455,
+      "suspension_elapsed_overlap_ms": 6.457335000004605,
+      "suspension_fraction": 0.0027910312937705554,
+      "measured_product_loads": 18,
+      "measured_load_tiers": {
+        "QuickJittedInstrumented": 18
+      },
+      "measured_product_load_calls": [
+        732
+      ],
+      "last_product_load_call": 732,
+      "all_events": 39347,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "b",
+          "key": "e5-8tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 12.477262783333334,
+          "cpu_ms": 12.491666666666667,
+          "allocated_bytes": 1343652.6666666667,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 1.5542880000029982
+        },
+        {
+          "process": "b",
+          "key": "e5-8tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 12.684716466666666,
+          "cpu_ms": 12.703083333333334,
+          "allocated_bytes": 1342706.5333333334,
+          "gc_calls": 4,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 1.3926040000005742
+        },
+        {
+          "process": "b",
+          "key": "e5-8tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 13.3980506,
+          "cpu_ms": 13.420350000000001,
+          "allocated_bytes": 1343448.6666666667,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 46.61842600000455,
+          "suspension_overlap_ms": 3.5104430000010325
+        }
+      ]
+    },
+    {
+      "process": "c",
+      "key": "e5-8tok",
+      "product": "candidate",
+      "measured_calls": 180,
+      "wall_ms": 12.0369145,
+      "process_cpu_ms": 12.049566666666667,
+      "cpu_over_wall": 1.0010511137772613,
+      "compilation_elapsed_overlap_ms": 39.97880500000247,
+      "suspension_elapsed_overlap_ms": 4.594973999999638,
+      "suspension_fraction": 0.0021207788202974548,
+      "measured_product_loads": 18,
+      "measured_load_tiers": {
+        "QuickJittedInstrumented": 18
+      },
+      "measured_product_load_calls": [
+        756,
+        757
+      ],
+      "last_product_load_call": 757,
+      "all_events": 39407,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "c",
+          "key": "e5-8tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 11.878843016666668,
+          "cpu_ms": 11.891816666666667,
+          "allocated_bytes": 1343791.0666666667,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 1.5376409999989846
+        },
+        {
+          "process": "c",
+          "key": "e5-8tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 11.92230735,
+          "cpu_ms": 11.9383,
+          "allocated_bytes": 1343121.4666666666,
+          "gc_calls": 4,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 1.4180899999992107
+        },
+        {
+          "process": "c",
+          "key": "e5-8tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 12.309593133333333,
+          "cpu_ms": 12.318583333333333,
+          "allocated_bytes": 1344400.4,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 39.97880500000247,
+          "suspension_overlap_ms": 1.6392430000014429
+        }
+      ]
+    },
+    {
+      "process": "d",
+      "key": "e5-8tok",
+      "product": "current",
+      "measured_calls": 180,
+      "wall_ms": 12.151080294444444,
+      "process_cpu_ms": 12.16555,
+      "cpu_over_wall": 1.0011908163887429,
+      "compilation_elapsed_overlap_ms": 66.66526699998576,
+      "suspension_elapsed_overlap_ms": 4.541831000001366,
+      "suspension_fraction": 0.002076555650446031,
+      "measured_product_loads": 72,
+      "measured_load_tiers": {
+        "QuickJittedInstrumented": 72
+      },
+      "measured_product_load_calls": [
+        687,
+        773,
+        774,
+        775
+      ],
+      "last_product_load_call": 775,
+      "all_events": 40362,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "d",
+          "key": "e5-8tok",
+          "product": "current",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 11.843058433333333,
+          "cpu_ms": 11.856683333333333,
+          "allocated_bytes": 1344135.7333333334,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 1.501989000001231
+        },
+        {
+          "process": "d",
+          "key": "e5-8tok",
+          "product": "current",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 12.235277166666666,
+          "cpu_ms": 12.246616666666666,
+          "allocated_bytes": 1343094.5333333334,
+          "gc_calls": 4,
+          "compilation_overlap_ms": 34.27089999999771,
+          "suspension_overlap_ms": 1.3121220000011817
+        },
+        {
+          "process": "d",
+          "key": "e5-8tok",
+          "product": "current",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 12.374905283333334,
+          "cpu_ms": 12.39335,
+          "allocated_bytes": 1343967.4666666666,
+          "gc_calls": 5,
+          "compilation_overlap_ms": 32.39436699998805,
+          "suspension_overlap_ms": 1.7277199999989534
+        }
+      ]
+    },
+    {
+      "process": "e",
+      "key": "e5-512tok",
+      "product": "current",
+      "measured_calls": 180,
+      "wall_ms": 371.49386319444443,
+      "process_cpu_ms": 371.4541277777778,
+      "cpu_over_wall": 0.9998930388342758,
+      "compilation_elapsed_overlap_ms": 0,
+      "suspension_elapsed_overlap_ms": 54.86361200007377,
+      "suspension_fraction": 0.0008204653552656922,
+      "measured_product_loads": 0,
+      "measured_load_tiers": {},
+      "measured_product_load_calls": [],
+      "last_product_load_call": 64,
+      "all_events": 111073,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "e",
+          "key": "e5-512tok",
+          "product": "current",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 355.31034538333336,
+          "cpu_ms": 355.27438333333333,
+          "allocated_bytes": 42376392.93333333,
+          "gc_calls": 7,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 13.980315999971936
+        },
+        {
+          "process": "e",
+          "key": "e5-512tok",
+          "product": "current",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 379.14925635,
+          "cpu_ms": 379.11061666666666,
+          "allocated_bytes": 42377244.266666666,
+          "gc_calls": 7,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 18.98460299996077
+        },
+        {
+          "process": "e",
+          "key": "e5-512tok",
+          "product": "current",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 380.02198785,
+          "cpu_ms": 379.9773833333333,
+          "allocated_bytes": 42375628.0,
+          "gc_calls": 8,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 21.898693000141066
+        }
+      ]
+    },
+    {
+      "process": "f",
+      "key": "e5-512tok",
+      "product": "candidate",
+      "measured_calls": 180,
+      "wall_ms": 359.08707073333335,
+      "process_cpu_ms": 359.05014444444447,
+      "cpu_over_wall": 0.9998971661975646,
+      "compilation_elapsed_overlap_ms": 0,
+      "suspension_elapsed_overlap_ms": 38.846717999957036,
+      "suspension_fraction": 0.000601010500208265,
+      "measured_product_loads": 0,
+      "measured_load_tiers": {},
+      "measured_product_load_calls": [],
+      "last_product_load_call": 63,
+      "all_events": 111335,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "f",
+          "key": "e5-512tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 368.4315209833333,
+          "cpu_ms": 368.3942666666666,
+          "allocated_bytes": 42376108.4,
+          "gc_calls": 8,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 12.275629999989178
+        },
+        {
+          "process": "f",
+          "key": "e5-512tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 357.8163149666667,
+          "cpu_ms": 357.7778833333333,
+          "allocated_bytes": 42376619.733333334,
+          "gc_calls": 6,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 10.461116999969818
+        },
+        {
+          "process": "f",
+          "key": "e5-512tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 351.01337625,
+          "cpu_ms": 350.9782833333333,
+          "allocated_bytes": 42377599.6,
+          "gc_calls": 8,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 16.10997099999804
+        }
+      ]
+    },
+    {
+      "process": "g",
+      "key": "e5-512tok",
+      "product": "candidate",
+      "measured_calls": 180,
+      "wall_ms": 360.86407786666666,
+      "process_cpu_ms": 360.82621666666665,
+      "cpu_over_wall": 0.9998950818263103,
+      "compilation_elapsed_overlap_ms": 0,
+      "suspension_elapsed_overlap_ms": 60.00736999983201,
+      "suspension_fraction": 0.0009238222871826572,
+      "measured_product_loads": 0,
+      "measured_load_tiers": {},
+      "measured_product_load_calls": [],
+      "last_product_load_call": 71,
+      "all_events": 111221,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "g",
+          "key": "e5-512tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 357.213057,
+          "cpu_ms": 357.1754833333333,
+          "allocated_bytes": 42377085.06666667,
+          "gc_calls": 8,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 26.82388699997682
+        },
+        {
+          "process": "g",
+          "key": "e5-512tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 347.30136913333337,
+          "cpu_ms": 347.25866666666667,
+          "allocated_bytes": 42377666.53333333,
+          "gc_calls": 6,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 14.86999099998502
+        },
+        {
+          "process": "g",
+          "key": "e5-512tok",
+          "product": "candidate",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 378.0778074666667,
+          "cpu_ms": 378.04449999999997,
+          "allocated_bytes": 42376866.666666664,
+          "gc_calls": 8,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 18.313491999870166
+        }
+      ]
+    },
+    {
+      "process": "h",
+      "key": "e5-512tok",
+      "product": "current",
+      "measured_calls": 180,
+      "wall_ms": 373.0205528,
+      "process_cpu_ms": 372.9770555555556,
+      "cpu_over_wall": 0.9998833918289007,
+      "compilation_elapsed_overlap_ms": 31.713924999989104,
+      "suspension_elapsed_overlap_ms": 50.20034200005466,
+      "suspension_fraction": 0.0007476552881490249,
+      "measured_product_loads": 0,
+      "measured_load_tiers": {},
+      "measured_product_load_calls": [],
+      "last_product_load_call": 64,
+      "all_events": 111806,
+      "unmatched_events": 0,
+      "blocks": [
+        {
+          "process": "h",
+          "key": "e5-512tok",
+          "product": "current",
+          "warmup": false,
+          "first": 600,
+          "last": 659,
+          "wall_ms": 368.78744459999996,
+          "cpu_ms": 368.7461666666667,
+          "allocated_bytes": 42376662.8,
+          "gc_calls": 8,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 15.078838999994332
+        },
+        {
+          "process": "h",
+          "key": "e5-512tok",
+          "product": "current",
+          "warmup": false,
+          "first": 660,
+          "last": 719,
+          "wall_ms": 381.1033256333333,
+          "cpu_ms": 381.0597333333333,
+          "allocated_bytes": 42377497.733333334,
+          "gc_calls": 7,
+          "compilation_overlap_ms": 0,
+          "suspension_overlap_ms": 16.547071999957552
+        },
+        {
+          "process": "h",
+          "key": "e5-512tok",
+          "product": "current",
+          "warmup": false,
+          "first": 720,
+          "last": 779,
+          "wall_ms": 369.17088816666666,
+          "cpu_ms": 369.1252666666667,
+          "allocated_bytes": 42376916.8,
+          "gc_calls": 8,
+          "compilation_overlap_ms": 31.713924999989104,
+          "suspension_overlap_ms": 18.574431000102777
+        }
+      ]
+    }
+  ]
+}
