@@ -1,0 +1,30 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+
+namespace Lokad.Onnx.Backend.Tests;
+
+public class OwnedPackedRuntimeIdentityTests
+{
+    static string Hash(string path)
+    { using var file = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(file)).ToLowerInvariant(); }
+
+    [Fact]
+    public void ActualProductsAndInstructionModeMatchTheDeclaredCandidate()
+    {
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("This qualification runs on Linux.");
+        Assert.Equal(".NET 10.0.8", RuntimeInformation.FrameworkDescription);
+        Assert.Equal(1, Environment.ProcessorCount);
+        Assert.Equal(4, Process.GetCurrentProcess().ProcessorAffinity.ToInt64());
+        Assert.Equal(Environment.GetEnvironmentVariable("OWNED_PACKED_CORE_SHA"), Hash(typeof(ComputationalGraph).Assembly.Location));
+        Assert.Equal(Environment.GetEnvironmentVariable("OWNED_PACKED_DATA_SHA"), Hash(typeof(ParakeetTranscriber).Assembly.Location));
+        Assert.Equal(Environment.GetEnvironmentVariable("OWNED_PACKED_TEST_SHA"), Hash(typeof(OwnedPackedRuntimeIdentityTests).Assembly.Location));
+        string? mode = Environment.GetEnvironmentVariable("OWNED_PACKED_MODE");
+        Assert.Contains(mode, new[] { "512", "256", "scalar" });
+        Assert.Equal(mode != "scalar", Fma.IsSupported);
+        Assert.Equal(mode != "scalar", Avx2.IsSupported);
+        Assert.Equal(mode == "512", Avx512F.IsSupported);
+        Assert.DoesNotContain("onnxruntime", File.ReadAllText("/proc/self/maps"), StringComparison.OrdinalIgnoreCase);
+    }
+}

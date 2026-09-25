@@ -1,0 +1,170 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "performance_measured": false,
+  "source": {
+    "bytes": 185220,
+    "sha256": "0d6b78df6e7d03863b15c42af0b5e5bff564ffdf89ef5bc77ef34307f6e1e3a1"
+  },
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 822784,
+      "sha256": "82c02785506b540d3fe590d48b0fdb15fc4b744ffb376cd626d758d5755bb16f"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "3f80f8cb31f4a7e33fdb07247e3e1ed297ac53f7d8e3ebeb272980ff316f8236"
+    }
+  },
+  "compiled_review": {
+    "bytes": 2936,
+    "sha256": "5a84c53bd547378f39a0e47ccd7270dd40c346c7eebb5ff7fb4f81ff8fb1689b"
+  },
+  "contracts": {
+    "bytes": 315666,
+    "sha256": "0f8bdc94e2aaf27956af6767093acdb8b57c31655713c9af1a6302d2f7aa31ae"
+  },
+  "census": {
+    "bytes": 15765,
+    "sha256": "577a07a60d901cf57c4ba46d70b2c6fc4c02148ab67a1c28fd78d9b4fbcc3d08"
+  },
+  "suites": [
+    {
+      "mode": "512",
+      "passed": 27,
+      "skipped": 0
+    },
+    {
+      "mode": "256",
+      "passed": 27,
+      "skipped": 0
+    },
+    {
+      "mode": "scalar",
+      "passed": 2,
+      "skipped": 0
+    }
+  ],
+  "modes": [
+    {
+      "mode": "512",
+      "result": {
+        "passed": true,
+        "mode": "512",
+        "owned_count": 87,
+        "owned_bytes": 1459617792,
+        "retained_maps": 37,
+        "retained_clone_bytes": 268435456,
+        "original_weight_count": 96,
+        "original_dense_count": 9,
+        "initializer_count": 649,
+        "public_request_passed": true,
+        "idempotent": true,
+        "identities_preserved": true,
+        "logical_hashes_exact": true,
+        "pcm_unchanged": true,
+        "contexts_share_weights": true,
+        "forced_gc": false,
+        "product_rebuilt": false,
+        "application_scored": false,
+        "core_sha256": "82c02785506b540d3fe590d48b0fdb15fc4b744ffb376cd626d758d5755bb16f",
+        "data_sha256": "3f80f8cb31f4a7e33fdb07247e3e1ed297ac53f7d8e3ebeb272980ff316f8236",
+        "runner_sha256": "867d32454c703ca40298871d5ad5d8abfcfe80c61930089be8978debacf83a1b",
+        "spec_sha256": "15c8391b2873f548e6999881fb6c77e1ffa1ff335fbb995eb02184bbcf5cbbf8",
+        "runtime": ".NET 10.0.8",
+        "affinity": 4,
+        "processor_count": 1,
+        "avx512": true,
+        "fma": true
+      },
+      "memory_before": {
+        "Managed": 4426964264,
+        "Heap": 3492628960,
+        "Committed": 4296814592,
+        "Rss": 4567851008
+      },
+      "memory_after": {
+        "Managed": 3302801064,
+        "Heap": 3618670016,
+        "Committed": 5682196480,
+        "Rss": 5798215680
+      }
+    },
+    {
+      "mode": "256",
+      "result": {
+        "passed": true,
+        "mode": "256",
+        "owned_count": 87,
+        "owned_bytes": 1459617792,
+        "retained_maps": 37,
+        "retained_clone_bytes": 268435456,
+        "original_weight_count": 96,
+        "original_dense_count": 9,
+        "initializer_count": 649,
+        "public_request_passed": true,
+        "idempotent": true,
+        "identities_preserved": true,
+        "logical_hashes_exact": true,
+        "pcm_unchanged": true,
+        "contexts_share_weights": true,
+        "forced_gc": false,
+        "product_rebuilt": false,
+        "application_scored": false,
+        "core_sha256": "82c02785506b540d3fe590d48b0fdb15fc4b744ffb376cd626d758d5755bb16f",
+        "data_sha256": "3f80f8cb31f4a7e33fdb07247e3e1ed297ac53f7d8e3ebeb272980ff316f8236",
+        "runner_sha256": "867d32454c703ca40298871d5ad5d8abfcfe80c61930089be8978debacf83a1b",
+        "spec_sha256": "15c8391b2873f548e6999881fb6c77e1ffa1ff335fbb995eb02184bbcf5cbbf8",
+        "runtime": ".NET 10.0.8",
+        "affinity": 4,
+        "processor_count": 1,
+        "avx512": false,
+        "fma": true
+      },
+      "memory_before": {
+        "Managed": 4426958424,
+        "Heap": 3492636248,
+        "Committed": 4296822784,
+        "Rss": 4567212032
+      },
+      "memory_after": {
+        "Managed": 3302801440,
+        "Heap": 3618686352,
+        "Committed": 5682204672,
+        "Rss": 5799665664
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "census-512",
+      "samples": 24,
+      "seconds": 12.087923155049793,
+      "peak_rss": 6465179648
+    },
+    {
+      "name": "census-256",
+      "samples": 24,
+      "seconds": 12.09140962001402,
+      "peak_rss": 6551138304
+    }
+  ],
+  "failed_release_controls": [
+    [
+      "e5-8tok",
+      "candidate"
+    ],
+    [
+      "e5-512tok",
+      "candidate"
+    ]
+  ],
+  "full_model_numerics_pending": true,
+  "full_public_corpus_pending": true,
+  "actual_reconstruction_census_pending": true,
+  "publisher": {
+    "bytes": 5092,
+    "sha256": "aa86b062bbb828e065e2dea898f977fbc646a6948fa7b099aa38e4d510777942"
+  }
+}
