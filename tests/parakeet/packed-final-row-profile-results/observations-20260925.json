@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "managed_closure": {
+    "bytes": 72451,
+    "sha256": "df29a31afb6c5bf4bfd92f150efc4d83f3a5898695a20d1742d159db888d698d"
+  },
+  "native_closure": {
+    "bytes": 632,
+    "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+  },
+  "graph_review": {
+    "bytes": 872,
+    "sha256": "d844dcef266c6ea132c58b68d3e6f2dd04f6a98fed55d4d995badbc21542bf5b"
+  },
+  "groups": [
+    {
+      "reduction": 1024,
+      "columns": 1024,
+      "alpha": 1.0,
+      "nodes": 120,
+      "managed": 9.267426039999995,
+      "ort": 7.988579333333336,
+      "excess": 1.2788467066666591
+    },
+    {
+      "reduction": 1024,
+      "columns": 4096,
+      "alpha": 1.0,
+      "nodes": 48,
+      "managed": 11.194136634333335,
+      "ort": 10.595550666666666,
+      "excess": 0.5985859676666685
+    },
+    {
+      "reduction": 4096,
+      "columns": 1024,
+      "alpha": 0.5,
+      "nodes": 48,
+      "managed": 10.914100927333333,
+      "ort": 10.636331666666667,
+      "excess": 0.2777692606666662
+    },
+    {
+      "reduction": 4096,
+      "columns": 1024,
+      "alpha": 1.0,
+      "nodes": 1,
+      "managed": 0.267517024,
+      "ort": 0.22162166666666666,
+      "excess": 0.04589535733333333
+    }
+  ],
+  "managed_projection_seconds": 31.643180625666666,
+  "ort_projection_seconds": 29.442083333333333,
+  "projection_excess_seconds": 2.2010972923333334,
+  "managed_group_node_count": 265,
+  "managed_phases": {
+    "frontend": 0.5749292213333334,
+    "encoder": 50.296747886666665,
+    "decoder": 4.410203012666667
+  },
+  "ort_phases": {
+    "frontend": 0.22813634166666666,
+    "encoder": 37.573348976333335,
+    "decoder": 1.9047740336666668
+  },
+  "managed_complete": {
+    "control": 55.74424612666667,
+    "phase": 55.40362003266667,
+    "wall": 55.745636010999995
+  },
+  "phase_over_control": 0.9938894842487241,
+  "wall_over_phase": 1.0061731702392671,
+  "profiler_clocks_are_diagnostic": true,
+  "native_profile_is_historical": true,
+  "fresh_cross_engine_score": false,
+  "source_receipt": {
+    "bytes": 22444,
+    "sha256": "ba592033b74d0a1b489d8d712cfc620334e67a25bba3bd2222139a3ce4edb6d0"
+  },
+  "diagnostic_context": {
+    "isolated_candidate": true,
+    "release_admitted": false,
+    "root_product_changed": false,
+    "application_admitted": true,
+    "graph_admitted": false,
+    "graph_controls_passed": true,
+    "failed_graph_cases": [
+      "e5-8tok"
+    ],
+    "original_candidate_application_admitted": true,
+    "original_capture_refused": true,
+    "completed_control_reused": true,
+    "resume_supervisor_success": false,
+    "resume_status_collision": true,
+    "completed_process_checks_passed": true
+  }
+}
