@@ -1,0 +1,304 @@
+{
+  "closure": {
+    "bytes": 317129,
+    "sha256": "6295ad30835b7a2a1694b580a8e1447a6a0cdb28828a5960fa6e0e7c3628576f"
+  },
+  "compiled_review": {
+    "bytes": 36334,
+    "sha256": "18dd2739caca08c7ed4368589b70942c40665dd49ebd0cb107757c0605f119d8"
+  },
+  "source": {
+    "bytes": 18903400,
+    "sha256": "e3ca64b50ea4a5dd276d90a19779d602f8ed78b6275b9e5448fe3b021bec5e1b"
+  },
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 822784,
+      "sha256": "49901366484570493b7a42028e5c5458f30fe2c1703a01335b68d9a5f9a1fea9"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+    }
+  },
+  "proof": {
+    "bytes": 35979,
+    "sha256": "f4cc1ea804d95014ac878757f8f5107b220a940223b1497bbf6ab55136ba415f"
+  },
+  "suites": [
+    {
+      "mode": "512",
+      "passed": 41,
+      "skipped": 0,
+      "trx": {
+        "bytes": 64385,
+        "sha256": "0cecd9956d765a326c5dc10fa289bb9bcf7d3b761847933c87b1bb1e4fe2a474"
+      },
+      "names": [
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.EqualShapePreprocessingProjectionRemainsDense",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 225, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 48, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"input\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 61, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedRuntimeIdentityTests.ActualProductsAndInstructionModeMatchTheDeclaredCandidate",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 89, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 167, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 157, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"parallel\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 157, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"attribute-alias\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 225, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 48, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 89, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"input-alias\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 169, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 83, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 169, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 83, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 50, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PackedStorageDestinationAliasIsRejectedBeforeAnyWrite(batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"second-consumer\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 151, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"scalar\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 167, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 61, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"output\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalViewsSharePackedStorage_ClonesOwnTheirValues(n: 8, k: 64)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 151, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 50, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PreparedGraphDoesNotRetainTheReplacedOriginalArray",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"nested-capture\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"intrinsics\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PackedStorageDestinationAliasIsRejectedBeforeAnyWrite(batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"simd\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"initializer-alias\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ExistingPackedRecordAndBudgetRemainUntouched",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalViewsSharePackedStorage_ClonesOwnTheirValues(n: 7, k: 33)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PreparationIsOptIn_Idempotent_AndSurvivesInvalidation",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ContextsProtectPackedRoots_AndHeldOutputsSurvivePoolReuse"
+      ]
+    },
+    {
+      "mode": "256",
+      "passed": 41,
+      "skipped": 0,
+      "trx": {
+        "bytes": 64385,
+        "sha256": "aa45395fc96e9133d16225682a3165400dc8bf94e377ba1401203f38efcbcb8d"
+      },
+      "names": [
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 167, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PreparedGraphDoesNotRetainTheReplacedOriginalArray",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 83, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 225, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"output\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"initializer-alias\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 157, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"parallel\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ContextsProtectPackedRoots_AndHeldOutputsSurvivePoolReuse",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PreparationIsOptIn_Idempotent_AndSurvivesInvalidation",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"nested-capture\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 169, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"input\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 169, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 50, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"input-alias\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"second-consumer\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"scalar\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PackedStorageDestinationAliasIsRejectedBeforeAnyWrite(batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalViewsSharePackedStorage_ClonesOwnTheirValues(n: 8, k: 64)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 89, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.SharedOrVisibleWeightIsNotConsumed(reason: \"attribute-alias\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 48, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 83, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ExistingPackedRecordAndBudgetRemainUntouched",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 167, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"intrinsics\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 61, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 151, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalViewsSharePackedStorage_ClonesOwnTheirValues(n: 7, k: 33)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 50, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 89, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedRuntimeIdentityTests.ActualProductsAndInstructionModeMatchTheDeclaredCandidate",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 157, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 61, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.EqualShapePreprocessingProjectionRemainsDense",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.LogicalFallbackRemainsBitExact(mode: \"simd\")",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 151, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 1024, k: 4096, m: 225, batched: True)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.ActualShapesUseExistingArithmetic_WithoutRemainderReconstruction(n: 4096, k: 1024, m: 48, batched: False)",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedWeightTests.PackedStorageDestinationAliasIsRejectedBeforeAnyWrite(batched: True)"
+      ]
+    },
+    {
+      "mode": "scalar",
+      "passed": 2,
+      "skipped": 0,
+      "trx": {
+        "bytes": 4601,
+        "sha256": "8e698acffa65ba404323d12532965d57cff1c09fa91e790925e9f75f8a111d4a"
+      },
+      "names": [
+        "Lokad.Onnx.Backend.Tests.OwnedPackedUnavailableTests.HardwareDisabledPreparationLeavesOriginals_AndLogicalAutoFallbackWorks",
+        "Lokad.Onnx.Backend.Tests.OwnedPackedRuntimeIdentityTests.ActualProductsAndInstructionModeMatchTheDeclaredCandidate"
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "assembly": "Lokad.Onnx.dll",
+      "original_methods": 3277,
+      "unchanged": 3273,
+      "differences": [
+        "Lokad.Onnx.Tensor`1[T]::RunOwnedPackedRows::Void RunOwnedPackedRows(Int32, Int32, Int32, Single*, Single*, Single*, Single*)",
+        "Lokad.Onnx.Tensor`1[T]::TryRunOwnedPacked2D::Boolean TryRunOwnedPacked2D(Lokad.Onnx.Tensor`1[System.Single], Lokad.Onnx.Tensor`1[System.Single], Lokad.Onnx.DenseTensor`1[System.Single], Lokad.Onnx.TensorExecutionOptions)",
+        "Lokad.Onnx.Tensor`1[T]::TryRunOwnedPackedBatches::Boolean TryRunOwnedPackedBatches(Lokad.Onnx.Tensor`1[System.Single], Lokad.Onnx.Tensor`1[System.Single], Lokad.Onnx.Tensor`1[System.Single], Lokad.Onnx.TensorExecutionOptions)"
+      ],
+      "added": [
+        "Lokad.Onnx.PackedFinalRowKernel::Multiply::Void Multiply(Int32, Int32, Single*, Single*, Single*)"
+      ],
+      "removed": [
+        "Lokad.Onnx.Tensor`1[T]::OwnedRemainderSource::Lokad.Onnx.DenseTensor`1[System.Single] OwnedRemainderSource(Lokad.Onnx.OwnedPackedTensor, Int32, Lokad.Onnx.TensorExecutionOptions)"
+      ],
+      "compiler_renames": {
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|497_0::Single <Resize>g__TransformCoordinate|497_0(Int32, Int32, Int32, Single, <>c__DisplayClass497_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|496_0::Single <Resize>g__TransformCoordinate|496_0(Int32, Int32, Int32, Single, <>c__DisplayClass496_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|497_1::Int32 <Resize>g__NearestIndex|497_1(Single, Int32, <>c__DisplayClass497_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|496_1::Int32 <Resize>g__NearestIndex|496_1(Single, Int32, <>c__DisplayClass496_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__CubicWeight|497_2::Single <Resize>g__CubicWeight|497_2(Single, Single)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__CubicWeight|496_2::Single <Resize>g__CubicWeight|496_2(Single, Single)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|498_0::Double <Resize>g__TransformCoordinate|498_0(Int32, Int32, Int32, Double, <>c__DisplayClass498_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|497_0::Double <Resize>g__TransformCoordinate|497_0(Int32, Int32, Int32, Double, <>c__DisplayClass497_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|498_1::Int32 <Resize>g__NearestIndex|498_1(Double, Int32, <>c__DisplayClass498_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|497_1::Int32 <Resize>g__NearestIndex|497_1(Double, Int32, <>c__DisplayClass497_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__CubicWeight|498_2::Double <Resize>g__CubicWeight|498_2(Double, Double)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__CubicWeight|497_2::Double <Resize>g__CubicWeight|497_2(Double, Double)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|499_0::Single <Resize>g__TransformCoordinate|499_0(Int32, Int32, Int32, Single, <>c__DisplayClass499_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|498_0::Single <Resize>g__TransformCoordinate|498_0(Int32, Int32, Int32, Single, <>c__DisplayClass498_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|499_1::Int32 <Resize>g__NearestIndex|499_1(Single, Int32, <>c__DisplayClass499_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|498_1::Int32 <Resize>g__NearestIndex|498_1(Single, Int32, <>c__DisplayClass498_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|500_0::Single <Resize>g__TransformCoordinate|500_0(Int32, Int32, Int32, Single, <>c__DisplayClass500_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|499_0::Single <Resize>g__TransformCoordinate|499_0(Int32, Int32, Int32, Single, <>c__DisplayClass499_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|500_1::Int32 <Resize>g__NearestIndex|500_1(Single, Int32, <>c__DisplayClass500_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|499_1::Int32 <Resize>g__NearestIndex|499_1(Single, Int32, <>c__DisplayClass499_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|501_0::Single <Resize>g__TransformCoordinate|501_0(Int32, Int32, Int32, Single, <>c__DisplayClass501_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__TransformCoordinate|500_0::Single <Resize>g__TransformCoordinate|500_0(Int32, Int32, Int32, Single, <>c__DisplayClass500_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|501_1::Int32 <Resize>g__NearestIndex|501_1(Single, Int32, <>c__DisplayClass501_0 ByRef)": "Lokad.Onnx.Tensor`1[T]::<Resize>g__NearestIndex|500_1::Int32 <Resize>g__NearestIndex|500_1(Single, Int32, <>c__DisplayClass500_0 ByRef)",
+        "Lokad.Onnx.Tensor`1[T]::<Reshape>g__NonZeroVolume|521_2::Int32 <Reshape>g__NonZeroVolume|521_2(System.Collections.Generic.IEnumerable`1[System.Int32])": "Lokad.Onnx.Tensor`1[T]::<Reshape>g__NonZeroVolume|520_2::Int32 <Reshape>g__NonZeroVolume|520_2(System.Collections.Generic.IEnumerable`1[System.Int32])",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<Reshape>b__521_0::Boolean <Reshape>b__521_0(Int64)": "Lokad.Onnx.Tensor`1+<>c[T]::<Reshape>b__520_0::Boolean <Reshape>b__520_0(Int64)",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<Reshape>b__521_3::Boolean <Reshape>b__521_3(Int64)": "Lokad.Onnx.Tensor`1+<>c[T]::<Reshape>b__520_3::Boolean <Reshape>b__520_3(Int64)",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<Reshape>b__521_1::Boolean <Reshape>b__521_1(Int64)": "Lokad.Onnx.Tensor`1+<>c[T]::<Reshape>b__520_1::Boolean <Reshape>b__520_1(Int64)",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<NormalizeTransposePerm>b__522_1::Boolean <NormalizeTransposePerm>b__522_1(Int32)": "Lokad.Onnx.Tensor`1+<>c[T]::<NormalizeTransposePerm>b__521_1::Boolean <NormalizeTransposePerm>b__521_1(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<TransposedShape>b__525_1::Boolean <TransposedShape>b__525_1(Int32)": "Lokad.Onnx.Tensor`1+<>c[T]::<TransposedShape>b__524_1::Boolean <TransposedShape>b__524_1(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<Concat>b__529_4::Boolean <Concat>b__529_4(Int32)": "Lokad.Onnx.Tensor`1+<>c[T]::<Concat>b__528_4::Boolean <Concat>b__528_4(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<Concat>b__529_2::Boolean <Concat>b__529_2(Lokad.Onnx.Tensor`1[T])": "Lokad.Onnx.Tensor`1+<>c[T]::<Concat>b__528_2::Boolean <Concat>b__528_2(Lokad.Onnx.Tensor`1[T])",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<Slice>b__530_0::Boolean <Slice>b__530_0(Int32)": "Lokad.Onnx.Tensor`1+<>c[T]::<Slice>b__529_0::Boolean <Slice>b__529_0(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c[T]::<.cctor>b__545_0::System.Numerics.Vector`1[System.Single] <.cctor>b__545_0(System.Numerics.Vector`1[System.Single])": "Lokad.Onnx.Tensor`1+<>c[T]::<.cctor>b__544_0::System.Numerics.Vector`1[System.Single] <.cctor>b__544_0(System.Numerics.Vector`1[System.Single])",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass522_0[T]::<NormalizeTransposePerm>b__0::Boolean <NormalizeTransposePerm>b__0(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass521_0[T]::<NormalizeTransposePerm>b__0::Boolean <NormalizeTransposePerm>b__0(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass522_0[T]::<NormalizeTransposePerm>b__2::Boolean <NormalizeTransposePerm>b__2(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass521_0[T]::<NormalizeTransposePerm>b__2::Boolean <NormalizeTransposePerm>b__2(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass522_0[T]::.ctor::Void .ctor()": "Lokad.Onnx.Tensor`1+<>c__DisplayClass521_0[T]::.ctor::Void .ctor()",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass525_0[T]::<TransposedShape>b__0::Boolean <TransposedShape>b__0(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass524_0[T]::<TransposedShape>b__0::Boolean <TransposedShape>b__0(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass525_0[T]::<TransposedShape>b__2::Boolean <TransposedShape>b__2(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass524_0[T]::<TransposedShape>b__2::Boolean <TransposedShape>b__2(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass525_0[T]::.ctor::Void .ctor()": "Lokad.Onnx.Tensor`1+<>c__DisplayClass524_0[T]::.ctor::Void .ctor()",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::<Concat>b__0::Boolean <Concat>b__0(Lokad.Onnx.Tensor`1[T])": "Lokad.Onnx.Tensor`1+<>c__DisplayClass528_0[T]::<Concat>b__0::Boolean <Concat>b__0(Lokad.Onnx.Tensor`1[T])",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::<Concat>b__1::Boolean <Concat>b__1(Lokad.Onnx.Tensor`1[T])": "Lokad.Onnx.Tensor`1+<>c__DisplayClass528_0[T]::<Concat>b__1::Boolean <Concat>b__1(Lokad.Onnx.Tensor`1[T])",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::<Concat>b__3::Int32 <Concat>b__3(Int32, Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass528_0[T]::<Concat>b__3::Int32 <Concat>b__3(Int32, Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::.ctor::Void .ctor()": "Lokad.Onnx.Tensor`1+<>c__DisplayClass528_0[T]::.ctor::Void .ctor()",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass530_0[T]::<Slice>b__1::Int32 <Slice>b__1(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::<Slice>b__1::Int32 <Slice>b__1(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass530_0[T]::<Slice>b__2::Boolean <Slice>b__2(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::<Slice>b__2::Boolean <Slice>b__2(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass530_0[T]::<Slice>b__3::Int32 <Slice>b__3(Int32, Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::<Slice>b__3::Int32 <Slice>b__3(Int32, Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass530_0[T]::.ctor::Void .ctor()": "Lokad.Onnx.Tensor`1+<>c__DisplayClass529_0[T]::.ctor::Void .ctor()",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass531_0[T]::<Unsqueeze>b__0::Boolean <Unsqueeze>b__0(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass530_0[T]::<Unsqueeze>b__0::Boolean <Unsqueeze>b__0(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass531_0[T]::<Unsqueeze>b__1::Boolean <Unsqueeze>b__1(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass530_0[T]::<Unsqueeze>b__1::Boolean <Unsqueeze>b__1(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass531_0[T]::.ctor::Void .ctor()": "Lokad.Onnx.Tensor`1+<>c__DisplayClass530_0[T]::.ctor::Void .ctor()",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass544_0[T]::<RunWideProjectionMatMul2DCore>b__0::Void <RunWideProjectionMatMul2DCore>b__0(Int32)": "Lokad.Onnx.Tensor`1+<>c__DisplayClass543_0[T]::<RunWideProjectionMatMul2DCore>b__0::Void <RunWideProjectionMatMul2DCore>b__0(Int32)",
+        "Lokad.Onnx.Tensor`1+<>c__DisplayClass544_0[T]::.ctor::Void .ctor()": "Lokad.Onnx.Tensor`1+<>c__DisplayClass543_0[T]::.ctor::Void .ctor()"
+      },
+      "signature_changes": {
+        "Lokad.Onnx.Tensor`1[T]::RunOwnedPackedRows::Void RunOwnedPackedRows(Int32, Int32, Int32, Single*, Single*, Single*, Single*)": "Lokad.Onnx.Tensor`1[T]::RunOwnedPackedRows::Void RunOwnedPackedRows(Int32, Int32, Int32, Single*, Single*, Single*)"
+      }
+    },
+    {
+      "assembly": "Lokad.Onnx.Data.dll",
+      "original_methods": 697,
+      "unchanged": 697,
+      "differences": [],
+      "added": [],
+      "removed": [],
+      "compiler_renames": {},
+      "signature_changes": {}
+    }
+  ],
+  "resources": [
+    {
+      "name": "contracts-512",
+      "samples": 8,
+      "seconds": 4.194872971042059,
+      "peak_rss": 727199744
+    },
+    {
+      "name": "contracts-256",
+      "samples": 8,
+      "seconds": 4.197558362968266,
+      "peak_rss": 699936768
+    },
+    {
+      "name": "contracts-scalar",
+      "samples": 9,
+      "seconds": 4.717862940044142,
+      "peak_rss": 324780032
+    }
+  ],
+  "helper_matches_proof": true,
+  "public_surface_unchanged": true,
+  "zero_added_warnings": true,
+  "release_admitted": false,
+  "no_model_execution": true,
+  "no_application_score": true,
+  "prior_quantitative_attribution": false,
+  "failed_release_controls": [
+    [
+      "e5-8tok",
+      "candidate"
+    ],
+    [
+      "e5-512tok",
+      "candidate"
+    ]
+  ],
+  "terminal_owners": [
+    {
+      "pid": 1036210,
+      "birth": 1790327044.13
+    },
+    {
+      "pid": 1036211,
+      "birth": 1790327044.25
+    },
+    {
+      "pid": 1036225,
+      "birth": 1790327044.69
+    },
+    {
+      "pid": 1036238,
+      "birth": 1790327044.84
+    },
+    {
+      "pid": 1036262,
+      "birth": 1790327048.49
+    },
+    {
+      "pid": 1036276,
+      "birth": 1790327048.91
+    },
+    {
+      "pid": 1036289,
+      "birth": 1790327049.05
+    },
+    {
+      "pid": 1036313,
+      "birth": 1790327052.73
+    },
+    {
+      "pid": 1036329,
+      "birth": 1790327054.13
+    },
+    {
+      "pid": 1036342,
+      "birth": 1790327054.71
+    }
+  ],
+  "publisher": {
+    "bytes": 6058,
+    "sha256": "3e0c1359c5f0ea53dcb842c14190c4fe856eb6b16f6fe627859c9bfc937f1d7c"
+  }
+}

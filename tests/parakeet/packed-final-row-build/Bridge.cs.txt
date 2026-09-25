@@ -1,0 +1,151 @@
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.Loader;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+if (args.Length != 4) throw new ArgumentException("old bin, candidate bin, new result, proof bin");
+var opcodes = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static)
+    .Where(f => f.FieldType == typeof(OpCode)).Select(f => (OpCode)(f.GetValue(null) ?? throw new InvalidDataException()))
+    .ToDictionary(o => unchecked((ushort)o.Value));
+static string Hash(string path) => Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)));
+static string Member(MemberInfo member) => (member.DeclaringType?.ToString() ?? "") + "::" + member;
+
+Dictionary<string, string> Inspect(Assembly assembly)
+{
+    var results = new Dictionary<string, string>();
+    const BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+    foreach (var type in assembly.GetTypes())
+    foreach (var method in type.GetMethods(all).Cast<MethodBase>().Concat(type.GetConstructors(all)))
+    {
+        string key = type + "::" + method.Name + "::" + method;
+        var body = method.GetMethodBody();
+        if (body is null) { results.Add(key, "NO-BODY"); continue; }
+        var code = body.GetILAsByteArray() ?? throw new InvalidDataException("Missing IL");
+        var instructions = new List<object>(); int offset = 0;
+        while (offset < code.Length)
+        {
+            int start = offset; ushort value = code[offset++];
+            if (value == 0xfe) value = (ushort)(0xfe00 | code[offset++]);
+            var op = opcodes[value]; object operand;
+            switch (op.OperandType)
+            {
+                case OperandType.InlineNone: operand = ""; break;
+                case OperandType.InlineString:
+                    operand = method.Module.ResolveString(BitConverter.ToInt32(code, offset)); offset += 4; break;
+                case OperandType.InlineField:
+                case OperandType.InlineMethod:
+                case OperandType.InlineType:
+                case OperandType.InlineTok:
+                    int token = BitConverter.ToInt32(code, offset); offset += 4;
+                    var member = method.Module.ResolveMember(token, type.GetGenericArguments(), method.IsGenericMethod ? method.GetGenericArguments() : null)
+                        ?? throw new InvalidDataException("Unresolved member");
+                    operand = Member(member); break;
+                case OperandType.InlineSig:
+                    operand = Convert.ToHexString(method.Module.ResolveSignature(BitConverter.ToInt32(code, offset))); offset += 4; break;
+                case OperandType.InlineSwitch:
+                    int count = BitConverter.ToInt32(code, offset); offset += 4;
+                    operand = Convert.ToHexString(code.AsSpan(offset, checked(count * 4))); offset += count * 4; break;
+                default:
+                    int size = op.OperandType switch
+                    {
+                        OperandType.ShortInlineBrTarget or OperandType.ShortInlineI or OperandType.ShortInlineVar => 1,
+                        OperandType.InlineVar => 2,
+                        OperandType.InlineBrTarget or OperandType.InlineI or OperandType.ShortInlineR => 4,
+                        OperandType.InlineI8 or OperandType.InlineR => 8,
+                        _ => throw new InvalidDataException("Unsupported operand " + op.OperandType)
+                    };
+                    operand = Convert.ToHexString(code.AsSpan(offset, size)); offset += size; break;
+            }
+            instructions.Add(new { offset = start, opcode = op.Name, operand });
+        }
+        if (offset != code.Length) throw new InvalidDataException("IL boundary");
+        var exceptions = body.ExceptionHandlingClauses.Select(c => new {
+            flags = (int)c.Flags, c.TryOffset, c.TryLength, c.HandlerOffset, c.HandlerLength,
+            filter = c.Flags == ExceptionHandlingClauseOptions.Filter ? c.FilterOffset : -1,
+            caught = c.Flags == ExceptionHandlingClauseOptions.Clause ? c.CatchType?.ToString() : null });
+        results.Add(key, JsonSerializer.Serialize(new { body.InitLocals, body.MaxStackSize,
+            locals = body.LocalVariables.Select(v => new { type = v.LocalType.ToString(), v.IsPinned }), exceptions, instructions }));
+    }
+    return results;
+}
+
+Assembly Load(string directory, string name, string contextName)
+{
+    var context = new AssemblyLoadContext(contextName, isCollectible: false);
+    context.Resolving += (owner, reference) => {
+        string path = Path.Combine(directory, reference.Name + ".dll");
+        return File.Exists(path) ? owner.LoadFromAssemblyPath(path) : null;
+    };
+    return context.LoadFromAssemblyPath(Path.Combine(directory, name));
+}
+
+string[] PublicSurface(Assembly assembly)
+{
+    var result = new List<string>();
+    foreach (var type in assembly.GetExportedTypes())
+    {
+        result.Add($"TYPE {type.FullName} {type.Attributes} {type.BaseType}");
+        result.AddRange(type.GetInterfaces().Select(t => $"INTERFACE {type.FullName} {t}"));
+        foreach (var parameter in type.GetGenericArguments())
+            result.Add($"GENERIC {type.FullName} {parameter} {parameter.GenericParameterAttributes} {string.Join(",", parameter.GetGenericParameterConstraints().Select(t => t.ToString()).Order())}");
+        foreach (var member in type.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
+        {
+            string key = $"MEMBER {type.FullName} {member.MemberType} {member}";
+            result.Add(key);
+            result.AddRange(member.GetCustomAttributesData().Select(a => key + " ATTRIBUTE " + a));
+            if (member is MethodBase method)
+            {
+                result.Add(key + " FLAGS " + method.Attributes);
+                foreach (var parameter in method.GetParameters())
+                    result.Add($"{key} PARAMETER {parameter.Position} {parameter.Name} {parameter.Attributes} {parameter.ParameterType} {parameter.HasDefaultValue} {parameter.RawDefaultValue}");
+            }
+            if (member is FieldInfo field)
+                result.Add($"{key} FIELD {field.Attributes} {(field.IsLiteral ? field.GetRawConstantValue() : null)}");
+        }
+    }
+    return result.Order(StringComparer.Ordinal).ToArray();
+}
+
+Dictionary<string,int> InspectFlags(Assembly assembly)
+{
+    const BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+    return assembly.GetTypes().SelectMany(type => type.GetMethods(all).Cast<MethodBase>().Concat(type.GetConstructors(all)))
+        .ToDictionary(method => method.DeclaringType + "::" + method.Name + "::" + method, method => (int)method.GetMethodImplementationFlags());
+}
+var observations = new List<object>();
+foreach (string name in new[] { "Lokad.Onnx.dll", "Lokad.Onnx.Data.dll" })
+{
+    string before = Path.GetFullPath(args[0]), after = Path.GetFullPath(args[1]);
+    var oldAssembly = Load(before, name, "old-" + name);
+    var newAssembly = Load(after, name, "new-" + name);
+    var oldMethods = Inspect(oldAssembly); var newMethods = Inspect(newAssembly);
+    var oldSurface = PublicSurface(oldAssembly); var newSurface = PublicSurface(newAssembly);
+    var removed = oldMethods.Keys.Except(newMethods.Keys).ToArray();
+    var added = newMethods.Keys.Except(oldMethods.Keys).ToArray();
+    var differences = oldMethods.Keys.Intersect(newMethods.Keys).Where(k => oldMethods[k] != newMethods[k]).ToArray();
+    observations.Add(new { assembly = name, methods = oldMethods.Count,
+        before_sha256 = Hash(Path.Combine(before, name)), after_sha256 = Hash(Path.Combine(after, name)),
+        public_surface_equal = oldSurface.SequenceEqual(newSurface), public_surface = oldSurface, public_surface_after = newSurface,
+        assembly_attributes_before = oldAssembly.GetCustomAttributesData().Select(a => a.ToString()).Order().ToArray(),
+        assembly_attributes_after = newAssembly.GetCustomAttributesData().Select(a => a.ToString()).Order().ToArray(),
+        method_flags_before = InspectFlags(oldAssembly), method_flags_after = InspectFlags(newAssembly),
+        normalized_methods = oldMethods, unchanged_methods = oldMethods.Count - removed.Length - differences.Length,
+        removed, added, differences,
+        candidate_methods = newMethods.Where(p => added.Contains(p.Key) || differences.Contains(p.Key)).ToDictionary(p => p.Key, p => p.Value) });
+}
+var proofAssembly = Load(Path.GetFullPath(args[3]), "PackedFinalRowProbe.dll", "proof-helper");
+var candidateAssembly = Load(Path.GetFullPath(args[1]), "Lokad.Onnx.dll", "candidate-helper");
+const string helperKey = "Lokad.Onnx.PackedFinalRowKernel::Multiply::Void Multiply(Int32, Int32, Single*, Single*, Single*)";
+var helper = new {
+    key = helperKey,
+    proof_assembly_sha256 = Hash(Path.Combine(args[3], "PackedFinalRowProbe.dll")),
+    candidate_assembly_sha256 = Hash(Path.Combine(args[1], "Lokad.Onnx.dll")),
+    proof_body = Inspect(proofAssembly)[helperKey],
+    candidate_body = Inspect(candidateAssembly)[helperKey],
+    proof_flags = InspectFlags(proofAssembly)[helperKey],
+    candidate_flags = InspectFlags(candidateAssembly)[helperKey]
+};
+using (var output = new FileStream(args[2], FileMode.CreateNew))
+    JsonSerializer.Serialize(output, new { inventory_complete = true, observations, helper }, new JsonSerializerOptions { WriteIndented = true });
+Console.WriteLine(JsonSerializer.Serialize(new { passed = true, assemblies = 2, result = args[2] }));
