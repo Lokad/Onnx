@@ -1,0 +1,624 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "performance_measured": false,
+  "release_admitted": false,
+  "closure": {
+    "bytes": 37737,
+    "sha256": "a50f8afaff3d3742f4974e1d306caaf11350f14c542a062a87f21cfaa2371ce4"
+  },
+  "analysis": {
+    "bytes": 19194,
+    "sha256": "a39e4d90ca74ddee7ff73e24d28056029da5c78a7de06f212d72450ef6ac4078"
+  },
+  "products": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 815104,
+        "sha256": "49c3a958850d3e57daa2b7e29e6bd15ff9fc4f27af098d8ce44d8f20b9e065e8"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a893952f583f680ad9dcf677a32b9393541814396a35c6a4eb18a1e7325cbae1"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 822784,
+        "sha256": "49901366484570493b7a42028e5c5458f30fe2c1703a01335b68d9a5f9a1fea9"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+      }
+    }
+  },
+  "model_closure": {
+    "bytes": 890902,
+    "sha256": "1a0da5fcd612d893c4954c6c2761a358af081f2a693e462ee138743fad29777d"
+  },
+  "census_closure": {
+    "bytes": 21306,
+    "sha256": "fa159300cbe217b8ac08df793031850f2794f2149dc65b89e89b93a5d5692a77"
+  },
+  "comparisons": [
+    {
+      "mode": "512",
+      "clips": [
+        {
+          "name": "121-121726-0000",
+          "frames": 106,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 20742144,
+          "candidate_copy": 20742144,
+          "selected_scratch": 1987676032,
+          "candidate_scratch": 528058240,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "121-123852-0000",
+          "frames": 222,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 43548672,
+          "candidate_copy": 43548672,
+          "selected_scratch": 2066627712,
+          "candidate_scratch": 607009920,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "237-126133-0002",
+          "frames": 112,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 21921792,
+          "candidate_copy": 21921792,
+          "selected_scratch": 1991759488,
+          "candidate_scratch": 532141696,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "237-126133-0000",
+          "frames": 167,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 32735232,
+          "candidate_copy": 32735232,
+          "selected_scratch": 2255667328,
+          "candidate_scratch": 796049536,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "260-123286-0000",
+          "frames": 89,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 17399808,
+          "candidate_copy": 17399808,
+          "selected_scratch": 2202552448,
+          "candidate_scratch": 742934656,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "260-123288-0005",
+          "frames": 157,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30769152,
+          "candidate_copy": 30769152,
+          "selected_scratch": 2269868928,
+          "candidate_scratch": 810251136,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "672-122797-0000",
+          "frames": 51,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 9928704,
+          "candidate_copy": 9928704,
+          "selected_scratch": 1950223232,
+          "candidate_scratch": 490605440,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "672-122797-0001",
+          "frames": 190,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 37257216,
+          "candidate_copy": 37257216,
+          "selected_scratch": 2044836992,
+          "candidate_scratch": 585219200,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "908-157963-0005",
+          "frames": 88,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 17203200,
+          "candidate_copy": 17203200,
+          "selected_scratch": 1975418752,
+          "candidate_scratch": 515800960,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "908-157963-0000",
+          "frames": 158,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30965760,
+          "candidate_copy": 30965760,
+          "selected_scratch": 2002114432,
+          "candidate_scratch": 542496640,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1089-134686-0002",
+          "frames": 83,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 16220160,
+          "candidate_copy": 16220160,
+          "selected_scratch": 2198506368,
+          "candidate_scratch": 738888576,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1089-134686-0011",
+          "frames": 156,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30572544,
+          "candidate_copy": 30572544,
+          "selected_scratch": 2021721728,
+          "candidate_scratch": 562103936,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1188-133604-0001",
+          "frames": 114,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 22315008,
+          "candidate_copy": 22315008,
+          "selected_scratch": 1993084032,
+          "candidate_scratch": 533466240,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1188-133604-0002",
+          "frames": 225,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 44138496,
+          "candidate_copy": 44138496,
+          "selected_scratch": 2068707968,
+          "candidate_scratch": 609090176,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1221-135766-0002",
+          "frames": 61,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 11894784,
+          "candidate_copy": 11894784,
+          "selected_scratch": 2180571520,
+          "candidate_scratch": 720953728,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1221-135766-0000",
+          "frames": 156,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30572544,
+          "candidate_copy": 30572544,
+          "selected_scratch": 2021686656,
+          "candidate_scratch": 562068864,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1284-1180-0000",
+          "frames": 102,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 19955712,
+          "candidate_copy": 19955712,
+          "selected_scratch": 1984949888,
+          "candidate_scratch": 525332096,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1284-1180-0018",
+          "frames": 151,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 29589504,
+          "candidate_copy": 29589504,
+          "selected_scratch": 2265743488,
+          "candidate_scratch": 806125696,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1320-122612-0001",
+          "frames": 120,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 23494656,
+          "candidate_copy": 23494656,
+          "selected_scratch": 1997169792,
+          "candidate_scratch": 537552000,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1320-122612-0000",
+          "frames": 169,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 33128448,
+          "candidate_copy": 33128448,
+          "selected_scratch": 2278038144,
+          "candidate_scratch": 818420352,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        }
+      ],
+      "avoided_packs": 1740,
+      "reconstructions": 0,
+      "scratch_reduction": 29192355840,
+      "copy_increase": 0
+    },
+    {
+      "mode": "256",
+      "clips": [
+        {
+          "name": "121-121726-0000",
+          "frames": 106,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 20742144,
+          "candidate_copy": 20742144,
+          "selected_scratch": 1987676032,
+          "candidate_scratch": 528058240,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "121-123852-0000",
+          "frames": 222,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 43548672,
+          "candidate_copy": 43548672,
+          "selected_scratch": 2066627712,
+          "candidate_scratch": 607009920,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "237-126133-0002",
+          "frames": 112,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 21921792,
+          "candidate_copy": 21921792,
+          "selected_scratch": 1991759488,
+          "candidate_scratch": 532141696,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "237-126133-0000",
+          "frames": 167,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 32735232,
+          "candidate_copy": 32735232,
+          "selected_scratch": 2255667328,
+          "candidate_scratch": 796049536,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "260-123286-0000",
+          "frames": 89,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 17399808,
+          "candidate_copy": 17399808,
+          "selected_scratch": 2202552448,
+          "candidate_scratch": 742934656,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "260-123288-0005",
+          "frames": 157,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30769152,
+          "candidate_copy": 30769152,
+          "selected_scratch": 2269868928,
+          "candidate_scratch": 810251136,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "672-122797-0000",
+          "frames": 51,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 9928704,
+          "candidate_copy": 9928704,
+          "selected_scratch": 1950223232,
+          "candidate_scratch": 490605440,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "672-122797-0001",
+          "frames": 190,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 37257216,
+          "candidate_copy": 37257216,
+          "selected_scratch": 2044836992,
+          "candidate_scratch": 585219200,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "908-157963-0005",
+          "frames": 88,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 17203200,
+          "candidate_copy": 17203200,
+          "selected_scratch": 1975418752,
+          "candidate_scratch": 515800960,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "908-157963-0000",
+          "frames": 158,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30965760,
+          "candidate_copy": 30965760,
+          "selected_scratch": 2002114432,
+          "candidate_scratch": 542496640,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1089-134686-0002",
+          "frames": 83,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 16220160,
+          "candidate_copy": 16220160,
+          "selected_scratch": 2198506368,
+          "candidate_scratch": 738888576,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1089-134686-0011",
+          "frames": 156,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30572544,
+          "candidate_copy": 30572544,
+          "selected_scratch": 2021721728,
+          "candidate_scratch": 562103936,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1188-133604-0001",
+          "frames": 114,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 22315008,
+          "candidate_copy": 22315008,
+          "selected_scratch": 1993084032,
+          "candidate_scratch": 533466240,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1188-133604-0002",
+          "frames": 225,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 44138496,
+          "candidate_copy": 44138496,
+          "selected_scratch": 2068707968,
+          "candidate_scratch": 609090176,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1221-135766-0002",
+          "frames": 61,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 11894784,
+          "candidate_copy": 11894784,
+          "selected_scratch": 2180571520,
+          "candidate_scratch": 720953728,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1221-135766-0000",
+          "frames": 156,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 30572544,
+          "candidate_copy": 30572544,
+          "selected_scratch": 2021686656,
+          "candidate_scratch": 562068864,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1284-1180-0000",
+          "frames": 102,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 19955712,
+          "candidate_copy": 19955712,
+          "selected_scratch": 1984949888,
+          "candidate_scratch": 525332096,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1284-1180-0018",
+          "frames": 151,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 29589504,
+          "candidate_copy": 29589504,
+          "selected_scratch": 2265743488,
+          "candidate_scratch": 806125696,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1320-122612-0001",
+          "frames": 120,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 23494656,
+          "candidate_copy": 23494656,
+          "selected_scratch": 1997169792,
+          "candidate_scratch": 537552000,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        },
+        {
+          "name": "1320-122612-0000",
+          "frames": 169,
+          "scratch_reduction": 1459617792,
+          "copy_increase": 0,
+          "selected_copy": 33128448,
+          "candidate_copy": 33128448,
+          "selected_scratch": 2278038144,
+          "candidate_scratch": 818420352,
+          "avoided_packs": 87,
+          "reconstructions": 0,
+          "outputs_exact": true
+        }
+      ],
+      "avoided_packs": 1740,
+      "reconstructions": 0,
+      "scratch_reduction": 29192355840,
+      "copy_increase": 0
+    }
+  ],
+  "resources": [
+    {
+      "name": "selected-512",
+      "samples": 122,
+      "seconds": 61.59490489505697,
+      "peak_rss": 7639654400
+    },
+    {
+      "name": "candidate-512",
+      "samples": 117,
+      "seconds": 59.10905792203266,
+      "peak_rss": 7375912960
+    },
+    {
+      "name": "selected-256",
+      "samples": 121,
+      "seconds": 61.15789484605193,
+      "peak_rss": 7632039936
+    },
+    {
+      "name": "candidate-256",
+      "samples": 114,
+      "seconds": 57.641950387042016,
+      "peak_rss": 7430012928
+    }
+  ],
+  "failed_release_controls": [
+    [
+      "e5-8tok",
+      "candidate"
+    ],
+    [
+      "e5-512tok",
+      "candidate"
+    ]
+  ],
+  "publisher": {
+    "bytes": 4205,
+    "sha256": "e720f7e205f278bc2df32870670db109cdd97e70ea000d8e5e0c1d44a49c4005"
+  }
+}
