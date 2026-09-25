@@ -1,0 +1,194 @@
+{
+  "closure": {
+    "bytes": 887880,
+    "sha256": "1997eeb782df89975f4893820bc0fc246dec60d1839b2c63a86ad2bba1aecd9d"
+  },
+  "analysis": {
+    "bytes": 466704,
+    "sha256": "7e81d718e51d3e7f3cad58f5f4e1da9c8ebcecf13abb759c7a2a7b261fee6848"
+  },
+  "graph_qualification": {
+    "bytes": 815,
+    "sha256": "ec95b9c7f8019b402fe513b6da6938cf83a8bc2c91f1d5ab65fedd4f7b55ed7c"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 825344,
+        "sha256": "40260aef7fd93c5153601ec104a87843a2c017a2720fd64c9e24e3460d455749"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 825344,
+        "sha256": "e07a45189b348fe55ce76300415c6c35ba6a2bc0d224f1fc13b0b92c303bccba"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+      }
+    }
+  },
+  "consumers": {
+    "TranscribeReplay": {
+      "bytes": 56832,
+      "sha256": "335ca09d0e45e344068c484c92af9d0db43a6ae0accd1895d7ae7bb88b0afcf9"
+    },
+    "AudioBenchmark": {
+      "bytes": 40448,
+      "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+    }
+  },
+  "jobs": [
+    {
+      "name": "selected-native-512",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_parent_arrays": 0,
+      "passed": true
+    },
+    {
+      "name": "selected-public-512",
+      "public_requests": 20,
+      "passed": true
+    },
+    {
+      "name": "candidate-native-512",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_parent_arrays": 784,
+      "passed": true
+    },
+    {
+      "name": "candidate-public-512",
+      "public_requests": 20,
+      "passed": true
+    },
+    {
+      "name": "selected-native-256",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_parent_arrays": 0,
+      "passed": true
+    },
+    {
+      "name": "selected-public-256",
+      "public_requests": 20,
+      "passed": true
+    },
+    {
+      "name": "candidate-native-256",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 3.830720152728115e-05,
+      "exact_parent_arrays": 784,
+      "passed": true
+    },
+    {
+      "name": "candidate-public-256",
+      "public_requests": 20,
+      "passed": true
+    }
+  ],
+  "resources": [
+    {
+      "name": "selected-native-512",
+      "samples": 106,
+      "peak_rss": 7739817984,
+      "seconds": 28.535382062895223
+    },
+    {
+      "name": "selected-public-512",
+      "samples": 223,
+      "peak_rss": 7981645824,
+      "seconds": 59.56504809705075
+    },
+    {
+      "name": "candidate-native-512",
+      "samples": 103,
+      "peak_rss": 7752192000,
+      "seconds": 28.399876611074433
+    },
+    {
+      "name": "candidate-public-512",
+      "samples": 218,
+      "peak_rss": 7923470336,
+      "seconds": 59.55253104993608
+    },
+    {
+      "name": "selected-native-256",
+      "samples": 100,
+      "peak_rss": 7744925696,
+      "seconds": 28.119203781010583
+    },
+    {
+      "name": "selected-public-256",
+      "samples": 213,
+      "peak_rss": 7589453824,
+      "seconds": 59.45213597896509
+    },
+    {
+      "name": "candidate-native-256",
+      "samples": 98,
+      "peak_rss": 7749156864,
+      "seconds": 28.198489107075147
+    },
+    {
+      "name": "candidate-public-256",
+      "samples": 208,
+      "peak_rss": 7549362176,
+      "seconds": 59.34758395201061
+    }
+  ],
+  "terminal_owners": [
+    {
+      "pid": 1089102,
+      "birth": 1790370389.37
+    },
+    {
+      "pid": 1089105,
+      "birth": 1790370395.82
+    },
+    {
+      "pid": 1089116,
+      "birth": 1790370457.99
+    },
+    {
+      "pid": 1089215,
+      "birth": 1790370521.22
+    },
+    {
+      "pid": 1089307,
+      "birth": 1790370552.83
+    },
+    {
+      "pid": 1089416,
+      "birth": 1790370615.91
+    },
+    {
+      "pid": 1089427,
+      "birth": 1790370647.22
+    },
+    {
+      "pid": 1089470,
+      "birth": 1790370709.85
+    },
+    {
+      "pid": 1089479,
+      "birth": 1790370741.22
+    }
+  ],
+  "no_performance_measurement": true,
+  "release_admitted": false,
+  "publisher": {
+    "bytes": 5416,
+    "sha256": "9545db4ba0fda32385a2591e394d448a60e05a600bfedbfbde78ec87bd2c4da9"
+  }
+}
