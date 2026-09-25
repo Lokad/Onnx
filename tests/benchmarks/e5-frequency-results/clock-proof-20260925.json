@@ -1,0 +1,111 @@
+{
+  "reports": {
+    "original": {
+      "closure": {
+        "bytes": 2398,
+        "sha256": "6fa201d35312cea680f84aed1deda61c625e0ef8d8fe9bbbdc43ef71316ef448"
+      },
+      "analysis": {
+        "passed": false,
+        "terminal": {
+          "idle": true,
+          "original_owner_terminal": true,
+          "helper_pid_absent": true,
+          "checked": 1790335953.1649444
+        },
+        "inference_calls": 0,
+        "reason": "Enable is acknowledged but does not force immediate interval output; the 20 ms alignment bound correctly rejects the first periodic interval.",
+        "runtime_timestamp_brackets_passed": 1000,
+        "source": {
+          "bytes": 2159,
+          "sha256": "096d8ed2e597a7020c5fd6d9a35fcc502c52a7d4bc2decc50284b9257c522e7e"
+        },
+        "error": "Traceback (most recent call last):\n  File \"/dev/shm/lokad-e5-frequency-proof-20260925/proof.py\", line 100, in main\n    state['anchors'].append(counter.anchor('enable')); observe()\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/dev/shm/lokad-e5-frequency-proof-20260925/counter.py\", line 109, in anchor\n    assert after-before <= UNCERTAINTY_NS, item\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: {'command': 'enable', 'before_ns': 701413799882677, 'ack_ns': 701413799997351, 'after_ns': 701414778718839, 'elapsed_ns': 1000620975, 'output_before_bytes': 0, 'output_after_bytes': 469}\n"
+      }
+    },
+    "-v2": {
+      "closure": {
+        "bytes": 2840,
+        "sha256": "a60acd2f3d47e8488453a107e956b227aaf1ac990cef7799bc4d4c5088731ec2"
+      },
+      "analysis": {
+        "passed": false,
+        "terminal": {
+          "idle": true,
+          "original_owner_terminal": true,
+          "helper_pid_absent": true,
+          "checked": 1790336085.1370077
+        },
+        "inference_calls": 0,
+        "reason": "The acknowledgment reader consumes four bytes but perf writes five including its NUL terminator; the next acknowledgment is rejected. No model executes.",
+        "runtime_timestamp_brackets_passed": 1000,
+        "source": {
+          "bytes": 2166,
+          "sha256": "db7f39c88f9bf2b27f07ba05cf944a9f25f74cba6343120bfa99907a17d9412f"
+        },
+        "error": "Traceback (most recent call last):\n  File \"/dev/shm/lokad-e5-frequency-proof-v2-20260925/proof.py\", line 114, in main\n    state['anchors'].append(counter.finish(perf)); observe()\n                            ^^^^^^^^^^^^^^^^^^^^\n  File \"/dev/shm/lokad-e5-frequency-proof-v2-20260925/counter.py\", line 108, in finish\n    ping = self.control_ack('ping')\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/dev/shm/lokad-e5-frequency-proof-v2-20260925/counter.py\", line 91, in control_ack\n    assert b'ack\\n'.startswith(received)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+      }
+    },
+    "-v3": {
+      "closure": {
+        "bytes": 3868,
+        "sha256": "8f63ad0396ef8fdb762afa2cf88bece14f0d6e9b49c4b033a1ad5906a323778f"
+      },
+      "analysis": {
+        "passed": true,
+        "epoch": {
+          "lower_ns": 701816768231146,
+          "upper_ns": 701816787429145,
+          "uncertainty_ns": 19197999
+        },
+        "anchors": [
+          {
+            "command": "start",
+            "before_ns": 701816761028712,
+            "ack_ns": 701816805866805,
+            "after_ns": 701816805866805,
+            "elapsed_ns": 0,
+            "control": {
+              "command": "enable",
+              "before_ns": 701816805759533,
+              "ack_ns": 701816805866805,
+              "ack_bytes_hex": "61636b0a00"
+            }
+          },
+          {
+            "command": "stop",
+            "before_ns": 701819165348598,
+            "ack_ns": 701819165394478,
+            "after_ns": 701819184546597,
+            "elapsed_ns": 2397117452,
+            "control": {
+              "command": "ping",
+              "before_ns": 701819165348598,
+              "ack_ns": 701819165394478,
+              "ack_bytes_hex": "61636b0a00"
+            },
+            "output_before_bytes": 923,
+            "output_after_bytes": 1359
+          }
+        ],
+        "intervals": 3,
+        "whole_workload_intervals": [
+          2002962154
+        ],
+        "runtime_clock_library": {
+          "bytes": 95272,
+          "sha256": "4334b0419d1817d81ea27633e643a8aba810b07e69f4bdf44dd6a7c066702a11"
+        },
+        "timestamp_brackets": 1000,
+        "samples": 75,
+        "peak_rss": 43630592,
+        "inference_calls": 0,
+        "system_settings_changed": false
+      }
+    }
+  },
+  "source": {
+    "bytes": 4505,
+    "sha256": "b240144b4acdcfb2f267c624860f3534c4ea667c93d4d9f1765e25411a169a47"
+  }
+}
