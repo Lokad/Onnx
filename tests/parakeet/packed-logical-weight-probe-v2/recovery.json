@@ -1,0 +1,33 @@
+{
+  "before": "Require(OperatingSystem.IsLinux() && RuntimeInformation.FrameworkDescription == \".NET 10.0.8\", \"Runtime\");",
+  "after": "if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException(\"Linux required.\");\n            Require(RuntimeInformation.FrameworkDescription == \".NET 10.0.8\", \"Runtime\");",
+  "reason": "Original build succeeds with CA1416; zero-warning admission fails before capture.",
+  "original_preparation": {
+    "bytes": 1833,
+    "sha256": "7ce49a4af3c7ac18e0cdbf7af392c34899cd3290811c532978227d33bcae336b"
+  },
+  "original_collection": {
+    "bytes": 4095,
+    "sha256": "edc4d78492b1b6c9a576c0fd7e3711855724d82c52f5cff7866dfc96010b4af4"
+  },
+  "original_transfer": {
+    "bytes": 276,
+    "sha256": "61da2bd8f6f643e87ed929ea28c83b38570d2b74bfc623583abb275bf085be46"
+  },
+  "original_state": {
+    "bytes": 2832,
+    "sha256": "683df5c52e70db5403986153dffec26fe9122e92ed827c984e9d3f73a002e72e"
+  },
+  "original_source": {
+    "bytes": 17732,
+    "sha256": "5139a519135b7b0abbe4fe3b789a1875aad9843a703c803bcbfbc2013d378139"
+  },
+  "corrected_source": {
+    "bytes": 17807,
+    "sha256": "b6525762db29e20bed0e0300e65c86a3bbd4f169cea24e5f6ddf842435efa8c7"
+  },
+  "original_build_output": {
+    "bytes": 1008,
+    "sha256": "8cb1ed13baf1ca56ad0e8dd43ff27b56ee70d76fbbcdb5186249f8e70cd1c0be"
+  }
+}
