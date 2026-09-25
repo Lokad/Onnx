@@ -7,7 +7,7 @@ from consumer_scope import verify_scope
 ROOT=Path(__file__).resolve().parents[3];TOOLS=Path(__file__).resolve().parent
 BASE=ROOT/'artifacts/parakeet-packed-final-row-pyannote-app-amd-20260925'
 OLD=ROOT/'artifacts/parakeet-observed-dense-where-pyannote-app-amd-20260924';APP_PAYLOAD=OLD/'collected'
-PARAKEET_APP=ROOT/'artifacts/parakeet-packed-final-row-app-amd-20260925'
+PARAKEET_APP=ROOT/'artifacts/parakeet-packed-final-row-release-app-amd-20260925'
 GRAPHS=ROOT/'artifacts/parakeet-packed-final-row-graphs-amd-20260925'
 PRIOR=dict(product=ROOT/'artifacts/parakeet-packed-final-row-models-amd-20260925',
     models=ROOT/'artifacts/parakeet-packed-final-row-pyannote-amd-20260925',
@@ -28,7 +28,7 @@ def previous_closed():
     for role,label in [('current','selected'),('candidate','candidate')]:
         assert graph[role]['Lokad.Onnx.dll']==identities[label]['Lokad.Onnx.dll']
     assert app['candidate']==identities['candidate']
-    assert app['current']==read(PRIOR['parakeet-release']/'analysis.json')['identities']['candidate']
+    assert app['current']==identities['selected']
     assert read(PRIOR['product']/'closed.json')['analysis']==pin(PRIOR['product']/'analysis.json')
     assert read(PRIOR['parakeet']/'closed.json')['analysis']==pin(PRIOR['parakeet']/'analysis.json')
     for folder in [*PRIOR.values(),OLD,PARAKEET_APP,GRAPHS]:

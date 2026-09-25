@@ -11,7 +11,7 @@ PRIOR=dict(baseline=OLD,models=MODELS,product=Path('/dev/shm/lokad-parakeet-pack
     parakeet=Path('/dev/shm/lokad-parakeet-packed-final-row-models-20260925'),
     shared=Path('/dev/shm/lokad-parakeet-packed-final-row-shared-20260925'),
     graphs=Path('/dev/shm/lokad-parakeet-packed-final-row-graphs-20260925'),
-    **{'parakeet-app':Path('/dev/shm/lokad-parakeet-packed-final-row-app-20260925')})
+    **{'parakeet-app':Path('/dev/shm/lokad-parakeet-packed-final-row-release-app-20260925')})
 PRIOR['parakeet-release']=Path('/dev/shm/lokad-parakeet-slice-dense-conversion-models-20260925')
 
 def main():

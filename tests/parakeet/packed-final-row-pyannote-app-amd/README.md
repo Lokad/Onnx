@@ -34,3 +34,9 @@ graph evidence; do not stage or run concurrently with another VM campaign.
 Freeze all tools at preparation. Keep audit stdout outside the artifact directory.
 Local namespace: artifacts/parakeet-packed-final-row-pyannote-app-amd-20260925.
 VM namespace: /dev/shm/lokad-parakeet-packed-final-row-pyannote-app-20260925.
+
+Require the direct release Parakeet application campaign in
+artifacts/parakeet-packed-final-row-release-app-amd-20260925 before preparation.
+Its current product must equal qualified release f95a13c5/Data a893952f, and its
+candidate must equal M78. The intermediate M73-to-M78 score does not satisfy
+this release-baseline prerequisite.
