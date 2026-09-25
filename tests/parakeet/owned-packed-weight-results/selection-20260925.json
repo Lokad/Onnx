@@ -1,0 +1,2656 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "no_inference": true,
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 822784,
+      "sha256": "41bc074a3d9ea05d2322c07184572bc7b9327bb7e994dfa9c24ec1007d91eaa7"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "520ffcfe4840f639ae0c5b3f1803243db7608e9863e876c2956fca1a6ef752c1"
+    }
+  },
+  "selection": {
+    "owned_count": 88,
+    "owned_bytes": 1476395008,
+    "captured_count": 0,
+    "nested": [],
+    "rejected": [],
+    "folds": [],
+    "rows": [
+      {
+        "name": "onnx::MatMul_6398",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.0/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.0/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6398"
+            ],
+            "Outputs": [
+              "/layers.0/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6399",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.0/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.0/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6399"
+            ],
+            "Outputs": [
+              "/layers.0/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6506",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.0/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.0/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6506"
+            ],
+            "Outputs": [
+              "/layers.0/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6507",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.0/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.0/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6507"
+            ],
+            "Outputs": [
+              "/layers.0/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6508",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.1/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.1/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6508"
+            ],
+            "Outputs": [
+              "/layers.1/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6509",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.1/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.1/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6509"
+            ],
+            "Outputs": [
+              "/layers.1/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6544",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.1/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.1/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6544"
+            ],
+            "Outputs": [
+              "/layers.1/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6545",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.1/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.1/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6545"
+            ],
+            "Outputs": [
+              "/layers.1/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6546",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.2/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.2/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6546"
+            ],
+            "Outputs": [
+              "/layers.2/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6547",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.2/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.2/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6547"
+            ],
+            "Outputs": [
+              "/layers.2/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6582",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.2/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.2/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6582"
+            ],
+            "Outputs": [
+              "/layers.2/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6583",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.2/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.2/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6583"
+            ],
+            "Outputs": [
+              "/layers.2/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6584",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.3/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.3/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6584"
+            ],
+            "Outputs": [
+              "/layers.3/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6585",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.3/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.3/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6585"
+            ],
+            "Outputs": [
+              "/layers.3/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6620",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.3/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.3/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6620"
+            ],
+            "Outputs": [
+              "/layers.3/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6621",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.3/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.3/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6621"
+            ],
+            "Outputs": [
+              "/layers.3/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6622",
+        "kind": "Lokad.Onnx.DenseTensor`1[System.Single]",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": {
+          "IsReversedStride": false,
+          "Offset": 0,
+          "Count": 4194304,
+          "length": 4194304,
+          "aliases": 1,
+          "mapped": true
+        },
+        "consumers": [
+          {
+            "Name": "/layers.4/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.4/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6622"
+            ],
+            "Outputs": [
+              "/layers.4/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6623",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.4/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.4/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6623"
+            ],
+            "Outputs": [
+              "/layers.4/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6658",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.4/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.4/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6658"
+            ],
+            "Outputs": [
+              "/layers.4/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6659",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.4/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.4/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6659"
+            ],
+            "Outputs": [
+              "/layers.4/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6660",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.5/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.5/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6660"
+            ],
+            "Outputs": [
+              "/layers.5/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6661",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.5/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.5/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6661"
+            ],
+            "Outputs": [
+              "/layers.5/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6696",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.5/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.5/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6696"
+            ],
+            "Outputs": [
+              "/layers.5/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6697",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.5/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.5/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6697"
+            ],
+            "Outputs": [
+              "/layers.5/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6698",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.6/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.6/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6698"
+            ],
+            "Outputs": [
+              "/layers.6/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6699",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.6/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.6/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6699"
+            ],
+            "Outputs": [
+              "/layers.6/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6734",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.6/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.6/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6734"
+            ],
+            "Outputs": [
+              "/layers.6/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6735",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.6/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.6/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6735"
+            ],
+            "Outputs": [
+              "/layers.6/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6736",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.7/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.7/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6736"
+            ],
+            "Outputs": [
+              "/layers.7/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6737",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.7/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.7/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6737"
+            ],
+            "Outputs": [
+              "/layers.7/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6772",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.7/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.7/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6772"
+            ],
+            "Outputs": [
+              "/layers.7/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6773",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.7/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.7/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6773"
+            ],
+            "Outputs": [
+              "/layers.7/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6774",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.8/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.8/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6774"
+            ],
+            "Outputs": [
+              "/layers.8/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6775",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.8/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.8/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6775"
+            ],
+            "Outputs": [
+              "/layers.8/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6810",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.8/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.8/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6810"
+            ],
+            "Outputs": [
+              "/layers.8/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6811",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.8/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.8/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6811"
+            ],
+            "Outputs": [
+              "/layers.8/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6812",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.9/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.9/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6812"
+            ],
+            "Outputs": [
+              "/layers.9/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6813",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.9/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.9/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6813"
+            ],
+            "Outputs": [
+              "/layers.9/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6848",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.9/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.9/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6848"
+            ],
+            "Outputs": [
+              "/layers.9/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6849",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.9/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.9/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6849"
+            ],
+            "Outputs": [
+              "/layers.9/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6850",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.10/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.10/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6850"
+            ],
+            "Outputs": [
+              "/layers.10/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6851",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.10/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.10/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6851"
+            ],
+            "Outputs": [
+              "/layers.10/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6886",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.10/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.10/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6886"
+            ],
+            "Outputs": [
+              "/layers.10/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6887",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.10/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.10/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6887"
+            ],
+            "Outputs": [
+              "/layers.10/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6888",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.11/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.11/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6888"
+            ],
+            "Outputs": [
+              "/layers.11/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6889",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.11/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.11/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6889"
+            ],
+            "Outputs": [
+              "/layers.11/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6924",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.11/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.11/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6924"
+            ],
+            "Outputs": [
+              "/layers.11/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6925",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.11/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.11/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6925"
+            ],
+            "Outputs": [
+              "/layers.11/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6926",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.12/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.12/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6926"
+            ],
+            "Outputs": [
+              "/layers.12/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6927",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.12/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.12/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6927"
+            ],
+            "Outputs": [
+              "/layers.12/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6962",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.12/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.12/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_6962"
+            ],
+            "Outputs": [
+              "/layers.12/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6963",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.12/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.12/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_6963"
+            ],
+            "Outputs": [
+              "/layers.12/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6964",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.13/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.13/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_6964"
+            ],
+            "Outputs": [
+              "/layers.13/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_6965",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.13/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.13/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_6965"
+            ],
+            "Outputs": [
+              "/layers.13/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7000",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.13/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.13/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7000"
+            ],
+            "Outputs": [
+              "/layers.13/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7001",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.13/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.13/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7001"
+            ],
+            "Outputs": [
+              "/layers.13/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7002",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.14/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.14/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7002"
+            ],
+            "Outputs": [
+              "/layers.14/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7003",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.14/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.14/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7003"
+            ],
+            "Outputs": [
+              "/layers.14/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7038",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.14/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.14/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7038"
+            ],
+            "Outputs": [
+              "/layers.14/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7039",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.14/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.14/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7039"
+            ],
+            "Outputs": [
+              "/layers.14/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7040",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.15/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.15/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7040"
+            ],
+            "Outputs": [
+              "/layers.15/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7041",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.15/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.15/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7041"
+            ],
+            "Outputs": [
+              "/layers.15/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7076",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.15/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.15/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7076"
+            ],
+            "Outputs": [
+              "/layers.15/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7077",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.15/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.15/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7077"
+            ],
+            "Outputs": [
+              "/layers.15/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7078",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.16/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.16/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7078"
+            ],
+            "Outputs": [
+              "/layers.16/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7079",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.16/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.16/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7079"
+            ],
+            "Outputs": [
+              "/layers.16/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7114",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.16/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.16/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7114"
+            ],
+            "Outputs": [
+              "/layers.16/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7115",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.16/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.16/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7115"
+            ],
+            "Outputs": [
+              "/layers.16/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7116",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.17/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.17/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7116"
+            ],
+            "Outputs": [
+              "/layers.17/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7117",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.17/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.17/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7117"
+            ],
+            "Outputs": [
+              "/layers.17/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7152",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.17/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.17/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7152"
+            ],
+            "Outputs": [
+              "/layers.17/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7153",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.17/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.17/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7153"
+            ],
+            "Outputs": [
+              "/layers.17/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7154",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.18/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.18/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7154"
+            ],
+            "Outputs": [
+              "/layers.18/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7155",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.18/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.18/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7155"
+            ],
+            "Outputs": [
+              "/layers.18/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7190",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.18/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.18/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7190"
+            ],
+            "Outputs": [
+              "/layers.18/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7191",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.18/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.18/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7191"
+            ],
+            "Outputs": [
+              "/layers.18/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7192",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.19/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.19/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7192"
+            ],
+            "Outputs": [
+              "/layers.19/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7193",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.19/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.19/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7193"
+            ],
+            "Outputs": [
+              "/layers.19/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7228",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.19/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.19/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7228"
+            ],
+            "Outputs": [
+              "/layers.19/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7229",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.19/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.19/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7229"
+            ],
+            "Outputs": [
+              "/layers.19/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7230",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.20/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.20/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7230"
+            ],
+            "Outputs": [
+              "/layers.20/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7231",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.20/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.20/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7231"
+            ],
+            "Outputs": [
+              "/layers.20/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7266",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.20/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.20/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7266"
+            ],
+            "Outputs": [
+              "/layers.20/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7267",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.20/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.20/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7267"
+            ],
+            "Outputs": [
+              "/layers.20/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7268",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.21/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.21/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7268"
+            ],
+            "Outputs": [
+              "/layers.21/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7269",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.21/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.21/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7269"
+            ],
+            "Outputs": [
+              "/layers.21/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7304",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.21/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.21/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7304"
+            ],
+            "Outputs": [
+              "/layers.21/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7305",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.21/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.21/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7305"
+            ],
+            "Outputs": [
+              "/layers.21/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7306",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.22/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.22/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7306"
+            ],
+            "Outputs": [
+              "/layers.22/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7307",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.22/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.22/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7307"
+            ],
+            "Outputs": [
+              "/layers.22/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7342",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.22/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.22/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7342"
+            ],
+            "Outputs": [
+              "/layers.22/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7343",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.22/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.22/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7343"
+            ],
+            "Outputs": [
+              "/layers.22/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7344",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.23/feed_forward1/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.23/norm_feed_forward1/LayerNormalization_output_0",
+              "onnx::MatMul_7344"
+            ],
+            "Outputs": [
+              "/layers.23/feed_forward1/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7345",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.23/feed_forward1/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.23/feed_forward1/activation/Mul_output_0",
+              "onnx::MatMul_7345"
+            ],
+            "Outputs": [
+              "/layers.23/feed_forward1/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7380",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          1024,
+          4096
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.23/feed_forward2/linear1/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.23/norm_feed_forward2/LayerNormalization_output_0",
+              "onnx::MatMul_7380"
+            ],
+            "Outputs": [
+              "/layers.23/feed_forward2/linear1/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      },
+      {
+        "name": "onnx::MatMul_7381",
+        "kind": "Lokad.Onnx.OwnedPackedTensor",
+        "dimensions": [
+          4096,
+          1024
+        ],
+        "layout": null,
+        "consumers": [
+          {
+            "Name": "/layers.23/feed_forward2/linear2/MatMul",
+            "op": "MatMul",
+            "OpTypeName": "MatMul",
+            "Domain": "",
+            "position": 1,
+            "inputs": [
+              "/layers.23/feed_forward2/activation/Mul_output_0",
+              "onnx::MatMul_7381"
+            ],
+            "Outputs": [
+              "/layers.23/feed_forward2/linear2/MatMul_output_0"
+            ]
+          }
+        ],
+        "folded": []
+      }
+    ],
+    "initializer_count": 649,
+    "map_count": 37
+  },
+  "result": {
+    "passed": true,
+    "diagnostic_only": true,
+    "no_inference": true,
+    "mode": "512",
+    "core_sha256": "41bc074a3d9ea05d2322c07184572bc7b9327bb7e994dfa9c24ec1007d91eaa7",
+    "data_sha256": "520ffcfe4840f639ae0c5b3f1803243db7608e9863e876c2956fca1a6ef752c1",
+    "runner_sha256": "9fac62733158972bfa9e0bb28906d4d17f373eeced48e2bf234542b55590194e",
+    "spec_sha256": "9407094815a8ab208eb5077b6505a040f93c5df8cc7f24b095bec239311be490",
+    "runtime": ".NET 10.0.8",
+    "affinity": 4,
+    "processor_count": 1
+  },
+  "resources": [
+    {
+      "name": "census-512",
+      "samples": 3,
+      "seconds": 1.5170549600152299,
+      "peak_rss": 4193058816
+    }
+  ],
+  "target_count": 87,
+  "actual_total_count": 88,
+  "extra_count": 1,
+  "extra_projection": {
+    "id": 40,
+    "name": "/pre_encode/out/MatMul",
+    "op": "MatMul",
+    "inputs": [
+      "/pre_encode/Reshape_output_0",
+      "onnx::MatMul_6382"
+    ],
+    "outputs": [
+      "/pre_encode/out/MatMul_output_0"
+    ],
+    "constant_inputs": [
+      null,
+      {
+        "name": "onnx::MatMul_6382",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      }
+    ]
+  },
+  "extra_name_inferred_from_exhaustive_matching_graph": true,
+  "graph_metadata": {
+    "bytes": 730436,
+    "sha256": "34d69c2f286d557e4f5dbc9b7305248bfc7890fded30f9dbbbf2e38aed0d0b08"
+  },
+  "original_failed_census": {
+    "bytes": 5148,
+    "sha256": "6580a563bd6937b1868941a564121ce36d7f1218e47d146afd946c06c0c48f41"
+  },
+  "failed_selection_build": {
+    "bytes": 3798,
+    "sha256": "24f72ec20e7108c176f8890d6d9c66cbb04d1d65cc4a7635415d379dbf63cd22"
+  },
+  "next_change": "Restrict owned preparation to the measured feed-forward consumer names; preserve preprocessing weight storage and all arithmetic.",
+  "closure": {
+    "bytes": 17262,
+    "sha256": "fcbde9b4797d0fabfd03a883546296f516996b8f9b44c221fff24458ddebf1af"
+  },
+  "publisher": {
+    "bytes": 4620,
+    "sha256": "5639519a12d28a3d619e0c3ec0123c5e66ccea420075109261828113871b43d2"
+  }
+}
