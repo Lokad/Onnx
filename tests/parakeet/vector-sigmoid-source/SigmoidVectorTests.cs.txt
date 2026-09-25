@@ -1,0 +1,211 @@
+using System.Diagnostics;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+namespace Lokad.Onnx.Backend.Tests;
+
+public class SigmoidVectorTests
+{
+    const float Tolerance = 1e-6f;
+    static float Scalar(float x) => 1f / (1f + MathF.Exp(-x));
+    static DenseTensor<float> Run(Tensor<float> input, ExecutionOptions? options = null)
+    {
+        var result = CPUExecutionProvider.Sigmoid(input, options);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var output = Assert.IsType<DenseTensor<float>>(Assert.Single(result.Outputs!));
+        Assert.Equal(input.Dimensions.ToArray(), output.Dimensions.ToArray());
+        return output;
+    }
+
+    static void EqualBits(float[] expected, float[] actual)
+    {
+        Assert.Equal(expected.Length, actual.Length);
+        for (int i = 0; i < actual.Length; i++)
+            Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(actual[i]));
+    }
+
+    static float Check(float[] values, bool exact = false, ExecutionOptions? options = null)
+    {
+        var saved = values.ToArray();
+        var input = new DenseTensor<float>(values, new[] { values.Length });
+        var output = Run(input, options).Buffer.ToArray();
+        float worst = 0;
+        for (int i = 0; i < values.Length; i++)
+        {
+            float expected = Scalar(values[i]), actual = output[i];
+            if (float.IsNaN(expected)) { Assert.True(float.IsNaN(actual)); continue; }
+            Assert.True(float.IsFinite(actual));
+            Assert.InRange(actual, 0f, 1f);
+            float error = MathF.Abs(expected - actual);
+            Assert.True(error <= Tolerance, $"index={i} input={values[i]:R} expected={expected:R} actual={actual:R} error={error:R}");
+            worst = MathF.Max(worst, error);
+            if (exact) Assert.Equal(BitConverter.SingleToInt32Bits(expected), BitConverter.SingleToInt32Bits(actual));
+        }
+        EqualBits(saved, values);
+        return worst;
+    }
+
+    [Fact]
+    public void AllTailsAndZeroLengthMatchScalar()
+    {
+        int width = Vector<float>.Count;
+        for (int length = 0; length <= 3 * width + 1; length++)
+        {
+            var values = Enumerable.Range(0, length).Select(i => (i - length / 2f) * .371f).ToArray();
+            Check(values);
+            Check(values, exact: true, ExecutionOptions.Scalar);
+        }
+        var scalar = new DenseTensor<float>(new[] { -1.25f }, Array.Empty<int>());
+        Assert.Equal(Scalar(-1.25f), Run(scalar).Buffer.Span[0]);
+        Assert.Empty(Run(new DenseTensor<float>(new[] { 0, 7, 2 })).Buffer.ToArray());
+    }
+
+    [Fact]
+    public void SpecialValuesAtEveryVectorLane()
+    {
+        float[] special = [float.NegativeInfinity, -float.MaxValue, -0f, 0f, float.Epsilon,
+            -float.Epsilon, float.PositiveInfinity, float.MaxValue, float.NaN,
+            BitConverter.Int32BitsToSingle(unchecked((int)0xffc12345)),
+            BitConverter.Int32BitsToSingle(0x7fc12345)];
+        int length = Vector<float>.Count * 3 + 1;
+        for (int offset = 0; offset < length; offset++)
+        {
+            var values = Enumerable.Range(0, length).Select(i => special[(i + offset) % special.Length]).ToArray();
+            Check(values);
+            Check(values, exact: true, ExecutionOptions.Scalar);
+        }
+    }
+
+    [Fact]
+    public void ExponentAndRoundingBoundaries()
+    {
+        var values = new List<float>();
+        float[] centers = [-103.97208f, -88.722839f, -88f, -18f, -1f, -0f, 0f, 1f, 18f, 88f, 88.722839f, 103.97208f];
+        foreach (float center in centers)
+        {
+            float lower = center, upper = center;
+            for (int i = 0; i < 65; i++)
+            {
+                values.Add(lower); values.Add(upper);
+                lower = MathF.BitDecrement(lower); upper = MathF.BitIncrement(upper);
+            }
+        }
+        for (int k = -128; k <= 128; k++)
+        {
+            float center = (k + .5f) * .6931471805599453f;
+            values.Add(MathF.BitDecrement(center)); values.Add(center); values.Add(MathF.BitIncrement(center));
+        }
+        Check(values.ToArray());
+    }
+
+    [Fact]
+    public void DenseFiniteAndBitPatternSweeps()
+    {
+        float maximum = 0;
+        var values = new float[16387];
+        int checkedValues = 0;
+        for (int start = 0; start < 1000001; start += values.Length)
+        {
+            int count = Math.Min(values.Length, 1000001 - start);
+            for (int i = 0; i < count; i++) values[i] = -100f + (start + i) * .0002f;
+            maximum = MathF.Max(maximum, Check(values.AsSpan(0, count).ToArray()));
+            checkedValues += count;
+        }
+        uint state = 0x91e10da5;
+        for (int batch = 0; batch < 64; batch++)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                state ^= state << 13; state ^= state >> 17; state ^= state << 5;
+                values[i] = BitConverter.Int32BitsToSingle(unchecked((int)state));
+            }
+            maximum = MathF.Max(maximum, Check(values)); checkedValues += values.Length;
+        }
+        string? directory = Environment.GetEnvironmentVariable("VECTOR_SIGMOID_EVIDENCE");
+        if (directory is not null)
+        {
+            using var stream = new FileStream(Path.Combine(directory, "sigmoid-sweep-" + Environment.GetEnvironmentVariable("VECTOR_SIGMOID_MODE") + ".json"), FileMode.CreateNew);
+            JsonSerializer.Serialize(stream, new { passed = true, checked_values = checkedValues, maximum_absolute_error = maximum, tolerance = Tolerance });
+        }
+    }
+
+    [Fact]
+    public void LogicalLayoutsAndOffsetsMatchTheirValues()
+    {
+        var original = Enumerable.Range(0, 77).Select(i => (i - 35) * .17f).ToArray();
+        var reversed = new DenseTensor<float>(new[] { 7, 11 }, true);
+        for (int i = 0; i < 7; i++) for (int j = 0; j < 11; j++) reversed[i,j] = original[i*11+j];
+        var source = new DenseTensor<float>(original.ToArray(), new[] { 7, 11 });
+        var slice = new TensorSlice<float>(source, new[] { new SliceIndex(1, 6), new SliceIndex(1, 10, 2) });
+        var offset = new DenseTensor<float>(original.AsMemory(2, 66), new[] { 6, 11 });
+        var small = new DenseTensor<float>(new[] { -1.5f, 0f, 1.5f }, new[] { 1, 3 });
+        foreach (var tensor in new Tensor<float>[] { reversed, slice, offset, small.BroadcastDim(0, 11) })
+        {
+            var logical = tensor.ToArray();
+            var output = Run(tensor).ToArray();
+            Assert.Equal(logical.Length, output.Length);
+            for (int i = 0; i < output.Length; i++) Assert.InRange(MathF.Abs(output[i]-Scalar(logical[i])), 0f, Tolerance);
+            EqualBits(logical, tensor.ToArray());
+        }
+        EqualBits(original, source.Buffer.ToArray());
+    }
+
+    [Fact]
+    public void OutputsAreIndependentOfInputsAndLaterCalls()
+    {
+        var input = new DenseTensor<float>(Enumerable.Range(0, 257).Select(i => (i-128)*.1f).ToArray(), new[] { 257 });
+        var original = input.Buffer.ToArray();
+        var first = Run(input); var saved = first.Buffer.ToArray();
+        var second = Run(input);
+        EqualBits(original, input.Buffer.ToArray());
+        second.Buffer.Span.Fill(-7f); input.Buffer.Span.Fill(91f);
+        EqualBits(saved, first.Buffer.ToArray());
+        first.Buffer.Span.Fill(3f);
+        Assert.All(input.Buffer.ToArray(), x => Assert.Equal(91f, x));
+        Assert.All(second.Buffer.ToArray(), x => Assert.Equal(-7f, x));
+    }
+
+    [Fact]
+    public void DoublePathRemainsExact()
+    {
+        double[] values = [double.NegativeInfinity, -double.MaxValue, -1000, -710, -1.5, -0.0, 0.0, 1.5, 710, 1000, double.MaxValue, double.PositiveInfinity, double.NaN];
+        var input = new DenseTensor<double>(values, new[] { values.Length });
+        var result = CPUExecutionProvider.Sigmoid(input, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var output = ((Tensor<double>)result.Outputs![0]).ToArray();
+        for (int i = 0; i < values.Length; i++)
+        {
+            double expected = 1.0 / (1.0 + Math.Exp(-values[i]));
+            if (double.IsNaN(expected)) Assert.True(double.IsNaN(output[i]));
+            else Assert.Equal(BitConverter.DoubleToInt64Bits(expected), BitConverter.DoubleToInt64Bits(output[i]));
+        }
+    }
+
+    [Fact]
+    public void InvalidTypesAndOptionsKeepTheirContracts()
+    {
+        var input = new DenseTensor<float>(new[] { 1f }, new[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Sigmoid(null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Sigmoid(new DenseTensor<int>(new[] { 1 }, new[] { 1 }), null).Status);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Run(input, new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(false, false, 0))));
+        Assert.Throws<ArgumentException>(() => Run(input, new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(false, true, 1))));
+    }
+
+    [Fact]
+    public void ActualRuntimeAndProductsMatchThisQualification()
+    {
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("AMD Linux qualification only.");
+        Assert.Equal(".NET 10.0.8", RuntimeInformation.FrameworkDescription);
+        Assert.Equal(1, Environment.ProcessorCount);
+        Assert.Equal(4, Process.GetCurrentProcess().ProcessorAffinity.ToInt64());
+        string? mode = Environment.GetEnvironmentVariable("VECTOR_SIGMOID_MODE");
+        Assert.Contains(mode, new[] { "normal", "scalar" });
+        Assert.Equal(mode == "normal", Vector.IsHardwareAccelerated);
+        static string Hash(string path) => Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)));
+        Assert.Equal(Environment.GetEnvironmentVariable("VECTOR_SIGMOID_CORE_SHA"), Hash(typeof(ComputationalGraph).Assembly.Location));
+        Assert.Equal(Environment.GetEnvironmentVariable("VECTOR_SIGMOID_DATA_SHA"), Hash(typeof(ParakeetTranscriber).Assembly.Location));
+        Assert.Equal(Environment.GetEnvironmentVariable("VECTOR_SIGMOID_TEST_SHA"), Hash(typeof(SigmoidVectorTests).Assembly.Location));
+    }
+}

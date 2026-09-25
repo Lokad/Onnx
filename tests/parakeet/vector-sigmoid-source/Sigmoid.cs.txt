@@ -1,0 +1,40 @@
+    public static OpResult Sigmoid(ITensor? X, ExecutionOptions? options)
+    {
+        var op = OpType.Sigmoid;
+        if (X is null) return MissingInput(op, nameof(X));
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                var x = ((Tensor<float>)X).ToDenseTensor();
+                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                int i = 0;
+                if (opts.Tensor.UseSimd && Vector.IsHardwareAccelerated && !x.IsReversedStride)
+                {
+                    int width = Vector<float>.Count;
+                    for (; i <= xs.Length - width; i += width)
+                    {
+                        var exponential = MathOps.ExpVector(-new Vector<float>(xs.Slice(i, width)));
+                        var activated = Vector<float>.One / (Vector<float>.One + exponential);
+                        activated.CopyTo(ys.Slice(i, width));
+                    }
+                }
+                for (; i < xs.Length; i++) ys[i] = 1f / (1f + MathF.Exp(-xs[i]));
+                return Success(op, y);
+            }
+            case TensorElementType.Double:
+            {
+                var x = ((Tensor<double>)X).ToDenseTensor();
+                var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = 1.0 / (1.0 + Math.Exp(-xs[i]));
+                return Success(op, y);
+            }
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
