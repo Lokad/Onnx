@@ -1,0 +1,29 @@
+{
+  "original_preparation": {
+    "bytes": 1577,
+    "sha256": "ae972b45c1295e0a9d48f30b23c219ad6e834ba282acec441eadc8bd5c06f449"
+  },
+  "original_collection": {
+    "bytes": 3546,
+    "sha256": "4f48344e480fdf76dd17fdfb5659e69e9697dcd05ef6a7a7f8c257887b18cdf3"
+  },
+  "original_transfer": {
+    "bytes": 276,
+    "sha256": "345ee4ec1fa1584549e2557772f80273f1b2d85e31b9269234832d3f9ca80391"
+  },
+  "original_state": {
+    "bytes": 3444,
+    "sha256": "80213baddda8e733897ae940edce3a8940c5aa6f0e517b49b6d155a29e5684b7"
+  },
+  "original_source": {
+    "bytes": 14856,
+    "sha256": "2a26a3b94e017a7ac33876452318238dc1b1c883de92ff34a5a97474e6bf7c8c"
+  },
+  "corrected_source": {
+    "bytes": 14863,
+    "sha256": "00580d342875e06d59c318a68f437185d253c516e93efd50078fda1fcb38ef43"
+  },
+  "before": "MemoryMarshal.TryGetArray(dense.Buffer, out var segment)",
+  "after": "MemoryMarshal.TryGetArray<float>(dense.Buffer, out var segment)",
+  "reason": "CS0411: explicit float type argument for MemoryMarshal.TryGetArray; no change in runtime expression"
+}
