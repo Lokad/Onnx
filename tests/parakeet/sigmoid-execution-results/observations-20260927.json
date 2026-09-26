@@ -1,0 +1,3534 @@
+{
+  "diagnostic_only": true,
+  "no_application_score": true,
+  "source_closure": {
+    "bytes": 21547,
+    "sha256": "e2ec74acf9b8fe9c36a48226aa478b5efded38071f6b699a04f64410265dd868"
+  },
+  "source_analysis": {
+    "bytes": 1526707,
+    "sha256": "de023e2e73bd50de99dedb41b5a05ffb033a39d260026de5a116a54d1820aa30"
+  },
+  "source_build_review": {
+    "bytes": 4186,
+    "sha256": "a98b3ba289daea3e91e8d96c70e7d9c890b658597888b24d52d0c06b3dcd65cc"
+  },
+  "references": {
+    "ort": {
+      "path": "artifacts/parakeet-ort-activation-review-20260926/closed.json",
+      "bytes": 1497,
+      "sha256": "41f851c4e473856383c6d51f7b5a0e86d5f0ff8c47947df1f4176b35e2301fc3"
+    },
+    "profile": {
+      "path": "artifacts/parakeet-pad-current-gap-20260927/closed.json",
+      "bytes": 275,
+      "sha256": "bcb8fff63e202147e96995931e02e0f55f7255ea299cb6b51a3878ec2526d549"
+    },
+    "original_rejected_screen": {
+      "path": "artifacts/parakeet-vector-sigmoid-screen-amd-20260925/closed.json",
+      "bytes": 20531,
+      "sha256": "aaca2b2fd3b54f66dec841b948c0673279b833f90733770348fcbe41dfc4201f"
+    }
+  },
+  "products": {
+    "current": {
+      "bytes": 825856,
+      "sha256": "8bb22038d0b4c09b56b2cdae06c49c165b8e646bc73ca28ad400f4ace0bfc659"
+    },
+    "candidate": {
+      "bytes": 823296,
+      "sha256": "9bae182b9c846bd34f5b4f0b4738dcccad60d9aa10a1efd8f08e767dc4d27194"
+    }
+  },
+  "consumer": {
+    "bytes": 33280,
+    "sha256": "5b5c0e87391b10011809671586b20aba2aba8d656438eda837dcc880473b51ac"
+  },
+  "samples": 143520,
+  "warmup_samples": 110400,
+  "measured_samples": 33120,
+  "resources": [
+    {
+      "name": "current-0",
+      "samples": 72,
+      "seconds": 36.33746752294246,
+      "peak_rss": 715898880
+    },
+    {
+      "name": "candidate-1",
+      "samples": 35,
+      "seconds": 17.712742542033084,
+      "peak_rss": 754507776
+    },
+    {
+      "name": "candidate-2",
+      "samples": 35,
+      "seconds": 17.757526797009632,
+      "peak_rss": 892305408
+    },
+    {
+      "name": "current-3",
+      "samples": 71,
+      "seconds": 36.1087175400462,
+      "peak_rss": 720490496
+    }
+  ],
+  "cases": [
+    {
+      "name": "feed-forward-106",
+      "elements": 434176,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0013668850722222223,
+          "name": "feed-forward-106",
+          "batch": 1,
+          "elements": 434176,
+          "minimum_allocated_bytes": 1737008.0,
+          "maximum_allocated_bytes": 1737008.0,
+          "mean_allocated_bytes": 1737008.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0005657559944444445,
+          "name": "feed-forward-106",
+          "batch": 1,
+          "elements": 434176,
+          "minimum_allocated_bytes": 1737008.0,
+          "maximum_allocated_bytes": 1737008.0,
+          "mean_allocated_bytes": 1737008.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0005425415388888889,
+          "name": "feed-forward-106",
+          "batch": 1,
+          "elements": 434176,
+          "minimum_allocated_bytes": 1737008.0,
+          "maximum_allocated_bytes": 1737008.0,
+          "mean_allocated_bytes": 1737008.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0013514682222222222,
+          "name": "feed-forward-106",
+          "batch": 1,
+          "elements": 434176,
+          "minimum_allocated_bytes": 1737008.0,
+          "maximum_allocated_bytes": 1737008.0,
+          "mean_allocated_bytes": 1737008.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-106",
+      "elements": 108544,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.00034355265,
+          "name": "convolution-106",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 434480.0,
+          "mean_allocated_bytes": 434480.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.0001357667888888889,
+          "name": "convolution-106",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 434480.0,
+          "mean_allocated_bytes": 434480.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0001336772888888889,
+          "name": "convolution-106",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 434480.0,
+          "mean_allocated_bytes": 434480.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0003478894611111111,
+          "name": "convolution-106",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 434480.0,
+          "mean_allocated_bytes": 434480.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 1
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "feed-forward-222",
+      "elements": 909312,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.002816020222222222,
+          "name": "feed-forward-222",
+          "batch": 1,
+          "elements": 909312,
+          "minimum_allocated_bytes": 3637552.0,
+          "maximum_allocated_bytes": 3645392.0,
+          "mean_allocated_bytes": 3637595.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0010699456944444445,
+          "name": "feed-forward-222",
+          "batch": 1,
+          "elements": 909312,
+          "minimum_allocated_bytes": 3637552.0,
+          "maximum_allocated_bytes": 3637552.0,
+          "mean_allocated_bytes": 3637552.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0010601904944444445,
+          "name": "feed-forward-222",
+          "batch": 1,
+          "elements": 909312,
+          "minimum_allocated_bytes": 3637552.0,
+          "maximum_allocated_bytes": 3637552.0,
+          "mean_allocated_bytes": 3637552.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.00280911175,
+          "name": "feed-forward-222",
+          "batch": 1,
+          "elements": 909312,
+          "minimum_allocated_bytes": 3637552.0,
+          "maximum_allocated_bytes": 3645392.0,
+          "mean_allocated_bytes": 3637595.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-222",
+      "elements": 227328,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0007187281055555556,
+          "name": "convolution-222",
+          "batch": 1,
+          "elements": 227328,
+          "minimum_allocated_bytes": 909616.0,
+          "maximum_allocated_bytes": 909616.0,
+          "mean_allocated_bytes": 909616.0,
+          "collections": {
+            "gen0": 5,
+            "gen1": 5,
+            "gen2": 5
+          },
+          "batches_with_collection": 5
+        },
+        "candidate-1": {
+          "seconds": 0.0002832095666666667,
+          "name": "convolution-222",
+          "batch": 1,
+          "elements": 227328,
+          "minimum_allocated_bytes": 909616.0,
+          "maximum_allocated_bytes": 909616.0,
+          "mean_allocated_bytes": 909616.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0002726090277777778,
+          "name": "convolution-222",
+          "batch": 1,
+          "elements": 227328,
+          "minimum_allocated_bytes": 909616.0,
+          "maximum_allocated_bytes": 909616.0,
+          "mean_allocated_bytes": 909616.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0007064493555555555,
+          "name": "convolution-222",
+          "batch": 1,
+          "elements": 227328,
+          "minimum_allocated_bytes": 909616.0,
+          "maximum_allocated_bytes": 909616.0,
+          "mean_allocated_bytes": 909616.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "feed-forward-112",
+      "elements": 458752,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0014746499555555557,
+          "name": "feed-forward-112",
+          "batch": 1,
+          "elements": 458752,
+          "minimum_allocated_bytes": 1835312.0,
+          "maximum_allocated_bytes": 1843152.0,
+          "mean_allocated_bytes": 1835398.8,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0005778620833333333,
+          "name": "feed-forward-112",
+          "batch": 1,
+          "elements": 458752,
+          "minimum_allocated_bytes": 1835312.0,
+          "maximum_allocated_bytes": 1842792.0,
+          "mean_allocated_bytes": 1835353.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0005409060222222222,
+          "name": "feed-forward-112",
+          "batch": 1,
+          "elements": 458752,
+          "minimum_allocated_bytes": 1835312.0,
+          "maximum_allocated_bytes": 1835312.0,
+          "mean_allocated_bytes": 1835312.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0014366939444444445,
+          "name": "feed-forward-112",
+          "batch": 1,
+          "elements": 458752,
+          "minimum_allocated_bytes": 1835312.0,
+          "maximum_allocated_bytes": 1835312.0,
+          "mean_allocated_bytes": 1835312.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "convolution-112",
+      "elements": 114688,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.00037809264444444443,
+          "name": "convolution-112",
+          "batch": 1,
+          "elements": 114688,
+          "minimum_allocated_bytes": 459056.0,
+          "maximum_allocated_bytes": 466480.0,
+          "mean_allocated_bytes": 459097.2444444444,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00014664965,
+          "name": "convolution-112",
+          "batch": 1,
+          "elements": 114688,
+          "minimum_allocated_bytes": 459056.0,
+          "maximum_allocated_bytes": 459056.0,
+          "mean_allocated_bytes": 459056.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "candidate-2": {
+          "seconds": 0.0001468194222222222,
+          "name": "convolution-112",
+          "batch": 1,
+          "elements": 114688,
+          "minimum_allocated_bytes": 459056.0,
+          "maximum_allocated_bytes": 459056.0,
+          "mean_allocated_bytes": 459056.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.00037426942222222224,
+          "name": "convolution-112",
+          "batch": 1,
+          "elements": 114688,
+          "minimum_allocated_bytes": 459056.0,
+          "maximum_allocated_bytes": 459056.0,
+          "mean_allocated_bytes": 459056.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "feed-forward-167",
+      "elements": 684032,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.002148628638888889,
+          "name": "feed-forward-167",
+          "batch": 1,
+          "elements": 684032,
+          "minimum_allocated_bytes": 2736432.0,
+          "maximum_allocated_bytes": 2736432.0,
+          "mean_allocated_bytes": 2736432.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.0008620888611111111,
+          "name": "feed-forward-167",
+          "batch": 1,
+          "elements": 684032,
+          "minimum_allocated_bytes": 2736432.0,
+          "maximum_allocated_bytes": 2743552.0,
+          "mean_allocated_bytes": 2736471.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0008252371555555556,
+          "name": "feed-forward-167",
+          "batch": 1,
+          "elements": 684032,
+          "minimum_allocated_bytes": 2736432.0,
+          "maximum_allocated_bytes": 2743912.0,
+          "mean_allocated_bytes": 2736473.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0021358424055555555,
+          "name": "feed-forward-167",
+          "batch": 1,
+          "elements": 684032,
+          "minimum_allocated_bytes": 2736432.0,
+          "maximum_allocated_bytes": 2744272.0,
+          "mean_allocated_bytes": 2736515.111111111,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-167",
+      "elements": 171008,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0005665380666666667,
+          "name": "convolution-167",
+          "batch": 1,
+          "elements": 171008,
+          "minimum_allocated_bytes": 684336.0,
+          "maximum_allocated_bytes": 691816.0,
+          "mean_allocated_bytes": 684377.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00022200727777777778,
+          "name": "convolution-167",
+          "batch": 1,
+          "elements": 171008,
+          "minimum_allocated_bytes": 684336.0,
+          "maximum_allocated_bytes": 690376.0,
+          "mean_allocated_bytes": 684369.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0002200755888888889,
+          "name": "convolution-167",
+          "batch": 1,
+          "elements": 171008,
+          "minimum_allocated_bytes": 684336.0,
+          "maximum_allocated_bytes": 684336.0,
+          "mean_allocated_bytes": 684336.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "current-3": {
+          "seconds": 0.0005441563333333333,
+          "name": "convolution-167",
+          "batch": 1,
+          "elements": 171008,
+          "minimum_allocated_bytes": 684336.0,
+          "maximum_allocated_bytes": 684336.0,
+          "mean_allocated_bytes": 684336.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "feed-forward-89",
+      "elements": 364544,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0011747211444444444,
+          "name": "feed-forward-89",
+          "batch": 1,
+          "elements": 364544,
+          "minimum_allocated_bytes": 1458480.0,
+          "maximum_allocated_bytes": 1464880.0,
+          "mean_allocated_bytes": 1458551.111111111,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-1": {
+          "seconds": 0.0004497844777777778,
+          "name": "feed-forward-89",
+          "batch": 1,
+          "elements": 364544,
+          "minimum_allocated_bytes": 1458480.0,
+          "maximum_allocated_bytes": 1458480.0,
+          "mean_allocated_bytes": 1458480.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0004344164333333333,
+          "name": "feed-forward-89",
+          "batch": 1,
+          "elements": 364544,
+          "minimum_allocated_bytes": 1458480.0,
+          "maximum_allocated_bytes": 1458480.0,
+          "mean_allocated_bytes": 1458480.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0011552880277777779,
+          "name": "feed-forward-89",
+          "batch": 1,
+          "elements": 364544,
+          "minimum_allocated_bytes": 1458480.0,
+          "maximum_allocated_bytes": 1465240.0,
+          "mean_allocated_bytes": 1458553.111111111,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "convolution-89",
+      "elements": 91136,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0002939375333333333,
+          "name": "convolution-89",
+          "batch": 1,
+          "elements": 91136,
+          "minimum_allocated_bytes": 364848.0,
+          "maximum_allocated_bytes": 364848.0,
+          "mean_allocated_bytes": 364848.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "candidate-1": {
+          "seconds": 0.00012929335555555556,
+          "name": "convolution-89",
+          "batch": 1,
+          "elements": 91136,
+          "minimum_allocated_bytes": 364848.0,
+          "maximum_allocated_bytes": 364848.0,
+          "mean_allocated_bytes": 364848.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-2": {
+          "seconds": 0.0001232067222222222,
+          "name": "convolution-89",
+          "batch": 1,
+          "elements": 91136,
+          "minimum_allocated_bytes": 364848.0,
+          "maximum_allocated_bytes": 364848.0,
+          "mean_allocated_bytes": 364848.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.00028704321111111113,
+          "name": "convolution-89",
+          "batch": 1,
+          "elements": 91136,
+          "minimum_allocated_bytes": 364848.0,
+          "maximum_allocated_bytes": 364848.0,
+          "mean_allocated_bytes": 364848.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "feed-forward-157",
+      "elements": 643072,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.002064407388888889,
+          "name": "feed-forward-157",
+          "batch": 1,
+          "elements": 643072,
+          "minimum_allocated_bytes": 2572592.0,
+          "maximum_allocated_bytes": 2580072.0,
+          "mean_allocated_bytes": 2572751.9111111113,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0007949007277777778,
+          "name": "feed-forward-157",
+          "batch": 1,
+          "elements": 643072,
+          "minimum_allocated_bytes": 2572592.0,
+          "maximum_allocated_bytes": 2578992.0,
+          "mean_allocated_bytes": 2572627.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0007744482555555555,
+          "name": "feed-forward-157",
+          "batch": 1,
+          "elements": 643072,
+          "minimum_allocated_bytes": 2572592.0,
+          "maximum_allocated_bytes": 2578272.0,
+          "mean_allocated_bytes": 2572623.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0020500961555555554,
+          "name": "feed-forward-157",
+          "batch": 1,
+          "elements": 643072,
+          "minimum_allocated_bytes": 2572592.0,
+          "maximum_allocated_bytes": 2578992.0,
+          "mean_allocated_bytes": 2572627.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-157",
+      "elements": 160768,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0005194168666666667,
+          "name": "convolution-157",
+          "batch": 1,
+          "elements": 160768,
+          "minimum_allocated_bytes": 643376.0,
+          "maximum_allocated_bytes": 643376.0,
+          "mean_allocated_bytes": 643376.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-1": {
+          "seconds": 0.00020031331666666666,
+          "name": "convolution-157",
+          "batch": 1,
+          "elements": 160768,
+          "minimum_allocated_bytes": 643376.0,
+          "maximum_allocated_bytes": 643376.0,
+          "mean_allocated_bytes": 643376.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0001970369777777778,
+          "name": "convolution-157",
+          "batch": 1,
+          "elements": 160768,
+          "minimum_allocated_bytes": 643376.0,
+          "maximum_allocated_bytes": 643376.0,
+          "mean_allocated_bytes": 643376.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "current-3": {
+          "seconds": 0.0005083542055555556,
+          "name": "convolution-157",
+          "batch": 1,
+          "elements": 160768,
+          "minimum_allocated_bytes": 643376.0,
+          "maximum_allocated_bytes": 643376.0,
+          "mean_allocated_bytes": 643376.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "feed-forward-51",
+      "elements": 208896,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0006770191111111111,
+          "name": "feed-forward-51",
+          "batch": 1,
+          "elements": 208896,
+          "minimum_allocated_bytes": 835888.0,
+          "maximum_allocated_bytes": 843008.0,
+          "mean_allocated_bytes": 835927.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00026359359444444447,
+          "name": "feed-forward-51",
+          "batch": 1,
+          "elements": 208896,
+          "minimum_allocated_bytes": 835888.0,
+          "maximum_allocated_bytes": 835888.0,
+          "mean_allocated_bytes": 835888.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.00025222380555555557,
+          "name": "feed-forward-51",
+          "batch": 1,
+          "elements": 208896,
+          "minimum_allocated_bytes": 835888.0,
+          "maximum_allocated_bytes": 835888.0,
+          "mean_allocated_bytes": 835888.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0006560575944444444,
+          "name": "feed-forward-51",
+          "batch": 1,
+          "elements": 208896,
+          "minimum_allocated_bytes": 835888.0,
+          "maximum_allocated_bytes": 835888.0,
+          "mean_allocated_bytes": 835888.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "convolution-51",
+      "elements": 52224,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0001748536111111111,
+          "name": "convolution-51",
+          "batch": 1,
+          "elements": 52224,
+          "minimum_allocated_bytes": 209200.0,
+          "maximum_allocated_bytes": 209200.0,
+          "mean_allocated_bytes": 209200.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 6.171220555555555e-05,
+          "name": "convolution-51",
+          "batch": 1,
+          "elements": 52224,
+          "minimum_allocated_bytes": 209200.0,
+          "maximum_allocated_bytes": 209200.0,
+          "mean_allocated_bytes": 209200.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 6.563407222222222e-05,
+          "name": "convolution-51",
+          "batch": 1,
+          "elements": 52224,
+          "minimum_allocated_bytes": 209200.0,
+          "maximum_allocated_bytes": 209200.0,
+          "mean_allocated_bytes": 209200.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.00017659268333333332,
+          "name": "convolution-51",
+          "batch": 1,
+          "elements": 52224,
+          "minimum_allocated_bytes": 209200.0,
+          "maximum_allocated_bytes": 215240.0,
+          "mean_allocated_bytes": 209266.8,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "feed-forward-190",
+      "elements": 778240,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0024638423666666666,
+          "name": "feed-forward-190",
+          "batch": 1,
+          "elements": 778240,
+          "minimum_allocated_bytes": 3113264.0,
+          "maximum_allocated_bytes": 3120744.0,
+          "mean_allocated_bytes": 3113455.777777778,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0009686903777777777,
+          "name": "feed-forward-190",
+          "batch": 1,
+          "elements": 778240,
+          "minimum_allocated_bytes": 3113264.0,
+          "maximum_allocated_bytes": 3118472.0,
+          "mean_allocated_bytes": 3113346.0444444446,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0009302184111111111,
+          "name": "feed-forward-190",
+          "batch": 1,
+          "elements": 778240,
+          "minimum_allocated_bytes": 3113264.0,
+          "maximum_allocated_bytes": 3118224.0,
+          "mean_allocated_bytes": 3113309.111111111,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0025042048944444446,
+          "name": "feed-forward-190",
+          "batch": 1,
+          "elements": 778240,
+          "minimum_allocated_bytes": 3113264.0,
+          "maximum_allocated_bytes": 3121048.0,
+          "mean_allocated_bytes": 3113457.1555555556,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-190",
+      "elements": 194560,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0006103916388888889,
+          "name": "convolution-190",
+          "batch": 1,
+          "elements": 194560,
+          "minimum_allocated_bytes": 778544.0,
+          "maximum_allocated_bytes": 778544.0,
+          "mean_allocated_bytes": 778544.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-1": {
+          "seconds": 0.00024664451111111114,
+          "name": "convolution-190",
+          "batch": 1,
+          "elements": 194560,
+          "minimum_allocated_bytes": 778544.0,
+          "maximum_allocated_bytes": 778544.0,
+          "mean_allocated_bytes": 778544.0,
+          "collections": {
+            "gen0": 4,
+            "gen1": 4,
+            "gen2": 4
+          },
+          "batches_with_collection": 4
+        },
+        "candidate-2": {
+          "seconds": 0.00025275375,
+          "name": "convolution-190",
+          "batch": 1,
+          "elements": 194560,
+          "minimum_allocated_bytes": 778544.0,
+          "maximum_allocated_bytes": 785304.0,
+          "mean_allocated_bytes": 778581.5555555555,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "current-3": {
+          "seconds": 0.0006308513444444444,
+          "name": "convolution-190",
+          "batch": 1,
+          "elements": 194560,
+          "minimum_allocated_bytes": 778544.0,
+          "maximum_allocated_bytes": 778544.0,
+          "mean_allocated_bytes": 778544.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        }
+      }
+    },
+    {
+      "name": "feed-forward-88",
+      "elements": 360448,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0011535020722222222,
+          "name": "feed-forward-88",
+          "batch": 1,
+          "elements": 360448,
+          "minimum_allocated_bytes": 1442096.0,
+          "maximum_allocated_bytes": 1442096.0,
+          "mean_allocated_bytes": 1442096.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00044563603333333334,
+          "name": "feed-forward-88",
+          "batch": 1,
+          "elements": 360448,
+          "minimum_allocated_bytes": 1442096.0,
+          "maximum_allocated_bytes": 1442096.0,
+          "mean_allocated_bytes": 1442096.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.00045780140555555553,
+          "name": "feed-forward-88",
+          "batch": 1,
+          "elements": 360448,
+          "minimum_allocated_bytes": 1442096.0,
+          "maximum_allocated_bytes": 1447776.0,
+          "mean_allocated_bytes": 1442215.7777777778,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0011488119222222222,
+          "name": "feed-forward-88",
+          "batch": 1,
+          "elements": 360448,
+          "minimum_allocated_bytes": 1442096.0,
+          "maximum_allocated_bytes": 1448496.0,
+          "mean_allocated_bytes": 1442131.5555555555,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "convolution-88",
+      "elements": 90112,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0003014257388888889,
+          "name": "convolution-88",
+          "batch": 1,
+          "elements": 90112,
+          "minimum_allocated_bytes": 360752.0,
+          "maximum_allocated_bytes": 360752.0,
+          "mean_allocated_bytes": 360752.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00014589621666666666,
+          "name": "convolution-88",
+          "batch": 1,
+          "elements": 90112,
+          "minimum_allocated_bytes": 360752.0,
+          "maximum_allocated_bytes": 366072.0,
+          "mean_allocated_bytes": 360781.55555555556,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.00010912157777777778,
+          "name": "convolution-88",
+          "batch": 1,
+          "elements": 90112,
+          "minimum_allocated_bytes": 360752.0,
+          "maximum_allocated_bytes": 360752.0,
+          "mean_allocated_bytes": 360752.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.00030332759444444445,
+          "name": "convolution-88",
+          "batch": 1,
+          "elements": 90112,
+          "minimum_allocated_bytes": 360752.0,
+          "maximum_allocated_bytes": 360752.0,
+          "mean_allocated_bytes": 360752.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "feed-forward-158",
+      "elements": 647168,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0020309820333333332,
+          "name": "feed-forward-158",
+          "batch": 1,
+          "elements": 647168,
+          "minimum_allocated_bytes": 2588976.0,
+          "maximum_allocated_bytes": 2596096.0,
+          "mean_allocated_bytes": 2589090.6666666665,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0007684927888888889,
+          "name": "feed-forward-158",
+          "batch": 1,
+          "elements": 647168,
+          "minimum_allocated_bytes": 2588976.0,
+          "maximum_allocated_bytes": 2595376.0,
+          "mean_allocated_bytes": 2589043.111111111,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0008211023222222222,
+          "name": "feed-forward-158",
+          "batch": 1,
+          "elements": 647168,
+          "minimum_allocated_bytes": 2588976.0,
+          "maximum_allocated_bytes": 2596096.0,
+          "mean_allocated_bytes": 2589078.6666666665,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0020914355,
+          "name": "feed-forward-158",
+          "batch": 1,
+          "elements": 647168,
+          "minimum_allocated_bytes": 2588976.0,
+          "maximum_allocated_bytes": 2596456.0,
+          "mean_allocated_bytes": 2589136.222222222,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-158",
+      "elements": 161792,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0005039872388888889,
+          "name": "convolution-158",
+          "batch": 1,
+          "elements": 161792,
+          "minimum_allocated_bytes": 647472.0,
+          "maximum_allocated_bytes": 647472.0,
+          "mean_allocated_bytes": 647472.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-1": {
+          "seconds": 0.00021147647222222223,
+          "name": "convolution-158",
+          "batch": 1,
+          "elements": 161792,
+          "minimum_allocated_bytes": 647472.0,
+          "maximum_allocated_bytes": 647472.0,
+          "mean_allocated_bytes": 647472.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-2": {
+          "seconds": 0.0002461870777777778,
+          "name": "convolution-158",
+          "batch": 1,
+          "elements": 161792,
+          "minimum_allocated_bytes": 647472.0,
+          "maximum_allocated_bytes": 654232.0,
+          "mean_allocated_bytes": 647509.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0005217775388888889,
+          "name": "convolution-158",
+          "batch": 1,
+          "elements": 161792,
+          "minimum_allocated_bytes": 647472.0,
+          "maximum_allocated_bytes": 647472.0,
+          "mean_allocated_bytes": 647472.0,
+          "collections": {
+            "gen0": 4,
+            "gen1": 4,
+            "gen2": 4
+          },
+          "batches_with_collection": 4
+        }
+      }
+    },
+    {
+      "name": "feed-forward-83",
+      "elements": 339968,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0010798711777777778,
+          "name": "feed-forward-83",
+          "batch": 1,
+          "elements": 339968,
+          "minimum_allocated_bytes": 1360176.0,
+          "maximum_allocated_bytes": 1360176.0,
+          "mean_allocated_bytes": 1360176.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00042127273333333334,
+          "name": "feed-forward-83",
+          "batch": 1,
+          "elements": 339968,
+          "minimum_allocated_bytes": 1360176.0,
+          "maximum_allocated_bytes": 1364776.0,
+          "mean_allocated_bytes": 1360217.111111111,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.00040852869444444446,
+          "name": "feed-forward-83",
+          "batch": 1,
+          "elements": 339968,
+          "minimum_allocated_bytes": 1360176.0,
+          "maximum_allocated_bytes": 1360176.0,
+          "mean_allocated_bytes": 1360176.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0010896778055555555,
+          "name": "feed-forward-83",
+          "batch": 1,
+          "elements": 339968,
+          "minimum_allocated_bytes": 1360176.0,
+          "maximum_allocated_bytes": 1360176.0,
+          "mean_allocated_bytes": 1360176.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "convolution-83",
+      "elements": 84992,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.00026700411111111114,
+          "name": "convolution-83",
+          "batch": 1,
+          "elements": 84992,
+          "minimum_allocated_bytes": 340272.0,
+          "maximum_allocated_bytes": 340272.0,
+          "mean_allocated_bytes": 340272.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.00010759081666666667,
+          "name": "convolution-83",
+          "batch": 1,
+          "elements": 84992,
+          "minimum_allocated_bytes": 340272.0,
+          "maximum_allocated_bytes": 340272.0,
+          "mean_allocated_bytes": 340272.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.00010090885,
+          "name": "convolution-83",
+          "batch": 1,
+          "elements": 84992,
+          "minimum_allocated_bytes": 340272.0,
+          "maximum_allocated_bytes": 340272.0,
+          "mean_allocated_bytes": 340272.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "current-3": {
+          "seconds": 0.0002674895611111111,
+          "name": "convolution-83",
+          "batch": 1,
+          "elements": 84992,
+          "minimum_allocated_bytes": 340272.0,
+          "maximum_allocated_bytes": 340272.0,
+          "mean_allocated_bytes": 340272.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "feed-forward-156",
+      "elements": 638976,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.002016659016666667,
+          "name": "feed-forward-156",
+          "batch": 1,
+          "elements": 638976,
+          "minimum_allocated_bytes": 2556208.0,
+          "maximum_allocated_bytes": 2563328.0,
+          "mean_allocated_bytes": 2556316.6666666665,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.0008042806722222222,
+          "name": "feed-forward-156",
+          "batch": 1,
+          "elements": 638976,
+          "minimum_allocated_bytes": 2556208.0,
+          "maximum_allocated_bytes": 2561888.0,
+          "mean_allocated_bytes": 2556239.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0007867300111111111,
+          "name": "feed-forward-156",
+          "batch": 1,
+          "elements": 638976,
+          "minimum_allocated_bytes": 2556208.0,
+          "maximum_allocated_bytes": 2558648.0,
+          "mean_allocated_bytes": 2556221.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0020324427222222223,
+          "name": "feed-forward-156",
+          "batch": 1,
+          "elements": 638976,
+          "minimum_allocated_bytes": 2556208.0,
+          "maximum_allocated_bytes": 2563688.0,
+          "mean_allocated_bytes": 2556362.222222222,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-156",
+      "elements": 159744,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0005007559444444445,
+          "name": "convolution-156",
+          "batch": 1,
+          "elements": 159744,
+          "minimum_allocated_bytes": 639280.0,
+          "maximum_allocated_bytes": 639280.0,
+          "mean_allocated_bytes": 639280.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "candidate-1": {
+          "seconds": 0.00020313623333333334,
+          "name": "convolution-156",
+          "batch": 1,
+          "elements": 159744,
+          "minimum_allocated_bytes": 639280.0,
+          "maximum_allocated_bytes": 644600.0,
+          "mean_allocated_bytes": 639327.1111111111,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.00019952470555555555,
+          "name": "convolution-156",
+          "batch": 1,
+          "elements": 159744,
+          "minimum_allocated_bytes": 639280.0,
+          "maximum_allocated_bytes": 639280.0,
+          "mean_allocated_bytes": 639280.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "current-3": {
+          "seconds": 0.0005275173555555555,
+          "name": "convolution-156",
+          "batch": 1,
+          "elements": 159744,
+          "minimum_allocated_bytes": 639280.0,
+          "maximum_allocated_bytes": 639280.0,
+          "mean_allocated_bytes": 639280.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "feed-forward-114",
+      "elements": 466944,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0015213874277777777,
+          "name": "feed-forward-114",
+          "batch": 1,
+          "elements": 466944,
+          "minimum_allocated_bytes": 1868080.0,
+          "maximum_allocated_bytes": 1875504.0,
+          "mean_allocated_bytes": 1868194.3555555556,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.0005823010055555556,
+          "name": "feed-forward-114",
+          "batch": 1,
+          "elements": 466944,
+          "minimum_allocated_bytes": 1868080.0,
+          "maximum_allocated_bytes": 1874480.0,
+          "mean_allocated_bytes": 1868115.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.00058360845,
+          "name": "feed-forward-114",
+          "batch": 1,
+          "elements": 466944,
+          "minimum_allocated_bytes": 1868080.0,
+          "maximum_allocated_bytes": 1870160.0,
+          "mean_allocated_bytes": 1868091.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0014519971055555556,
+          "name": "feed-forward-114",
+          "batch": 1,
+          "elements": 466944,
+          "minimum_allocated_bytes": 1868080.0,
+          "maximum_allocated_bytes": 1874480.0,
+          "mean_allocated_bytes": 1868115.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-114",
+      "elements": 116736,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0004091849944444444,
+          "name": "convolution-114",
+          "batch": 1,
+          "elements": 116736,
+          "minimum_allocated_bytes": 467248.0,
+          "maximum_allocated_bytes": 474728.0,
+          "mean_allocated_bytes": 467330.8,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-1": {
+          "seconds": 0.00014985388333333332,
+          "name": "convolution-114",
+          "batch": 1,
+          "elements": 116736,
+          "minimum_allocated_bytes": 467248.0,
+          "maximum_allocated_bytes": 467248.0,
+          "mean_allocated_bytes": 467248.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-2": {
+          "seconds": 0.0001413071111111111,
+          "name": "convolution-114",
+          "batch": 1,
+          "elements": 116736,
+          "minimum_allocated_bytes": 467248.0,
+          "maximum_allocated_bytes": 467248.0,
+          "mean_allocated_bytes": 467248.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.00037761220555555553,
+          "name": "convolution-114",
+          "batch": 1,
+          "elements": 116736,
+          "minimum_allocated_bytes": 467248.0,
+          "maximum_allocated_bytes": 467248.0,
+          "mean_allocated_bytes": 467248.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "feed-forward-225",
+      "elements": 921600,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.002924458922222222,
+          "name": "feed-forward-225",
+          "batch": 1,
+          "elements": 921600,
+          "minimum_allocated_bytes": 3686704.0,
+          "maximum_allocated_bytes": 3694544.0,
+          "mean_allocated_bytes": 3686789.111111111,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0011603467333333333,
+          "name": "feed-forward-225",
+          "batch": 1,
+          "elements": 921600,
+          "minimum_allocated_bytes": 3686704.0,
+          "maximum_allocated_bytes": 3693464.0,
+          "mean_allocated_bytes": 3686810.6666666665,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0011086693555555555,
+          "name": "feed-forward-225",
+          "batch": 1,
+          "elements": 921600,
+          "minimum_allocated_bytes": 3686704.0,
+          "maximum_allocated_bytes": 3693104.0,
+          "mean_allocated_bytes": 3686739.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.002844456588888889,
+          "name": "feed-forward-225",
+          "batch": 1,
+          "elements": 921600,
+          "minimum_allocated_bytes": 3686704.0,
+          "maximum_allocated_bytes": 3694544.0,
+          "mean_allocated_bytes": 3686779.111111111,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "convolution-225",
+      "elements": 230400,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0007244876333333334,
+          "name": "convolution-225",
+          "batch": 1,
+          "elements": 230400,
+          "minimum_allocated_bytes": 921904.0,
+          "maximum_allocated_bytes": 928664.0,
+          "mean_allocated_bytes": 921941.5555555555,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "candidate-1": {
+          "seconds": 0.00034360955,
+          "name": "convolution-225",
+          "batch": 1,
+          "elements": 230400,
+          "minimum_allocated_bytes": 921904.0,
+          "maximum_allocated_bytes": 929384.0,
+          "mean_allocated_bytes": 921945.5555555555,
+          "collections": {
+            "gen0": 4,
+            "gen1": 4,
+            "gen2": 4
+          },
+          "batches_with_collection": 4
+        },
+        "candidate-2": {
+          "seconds": 0.0002823061277777778,
+          "name": "convolution-225",
+          "batch": 1,
+          "elements": 230400,
+          "minimum_allocated_bytes": 921904.0,
+          "maximum_allocated_bytes": 921904.0,
+          "mean_allocated_bytes": 921904.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "current-3": {
+          "seconds": 0.0007367851222222223,
+          "name": "convolution-225",
+          "batch": 1,
+          "elements": 230400,
+          "minimum_allocated_bytes": 921904.0,
+          "maximum_allocated_bytes": 928664.0,
+          "mean_allocated_bytes": 921941.5555555555,
+          "collections": {
+            "gen0": 5,
+            "gen1": 5,
+            "gen2": 5
+          },
+          "batches_with_collection": 5
+        }
+      }
+    },
+    {
+      "name": "feed-forward-61",
+      "elements": 249856,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0007843497555555556,
+          "name": "feed-forward-61",
+          "batch": 1,
+          "elements": 249856,
+          "minimum_allocated_bytes": 999728.0,
+          "maximum_allocated_bytes": 999728.0,
+          "mean_allocated_bytes": 999728.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0003227700388888889,
+          "name": "feed-forward-61",
+          "batch": 1,
+          "elements": 249856,
+          "minimum_allocated_bytes": 999728.0,
+          "maximum_allocated_bytes": 1003248.0,
+          "mean_allocated_bytes": 999747.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.00031105308333333334,
+          "name": "feed-forward-61",
+          "batch": 1,
+          "elements": 249856,
+          "minimum_allocated_bytes": 999728.0,
+          "maximum_allocated_bytes": 999728.0,
+          "mean_allocated_bytes": 999728.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0007821480777777778,
+          "name": "feed-forward-61",
+          "batch": 1,
+          "elements": 249856,
+          "minimum_allocated_bytes": 999728.0,
+          "maximum_allocated_bytes": 999728.0,
+          "mean_allocated_bytes": 999728.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-61",
+      "elements": 62464,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.00019094787777777778,
+          "name": "convolution-61",
+          "batch": 1,
+          "elements": 62464,
+          "minimum_allocated_bytes": 250160.0,
+          "maximum_allocated_bytes": 250160.0,
+          "mean_allocated_bytes": 250160.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 7.608651666666666e-05,
+          "name": "convolution-61",
+          "batch": 1,
+          "elements": 62464,
+          "minimum_allocated_bytes": 250160.0,
+          "maximum_allocated_bytes": 250160.0,
+          "mean_allocated_bytes": 250160.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 9.763270555555555e-05,
+          "name": "convolution-61",
+          "batch": 1,
+          "elements": 62464,
+          "minimum_allocated_bytes": 250160.0,
+          "maximum_allocated_bytes": 250160.0,
+          "mean_allocated_bytes": 250160.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.00019160944444444444,
+          "name": "convolution-61",
+          "batch": 1,
+          "elements": 62464,
+          "minimum_allocated_bytes": 250160.0,
+          "maximum_allocated_bytes": 250160.0,
+          "mean_allocated_bytes": 250160.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "feed-forward-102",
+      "elements": 417792,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0013502311777777779,
+          "name": "feed-forward-102",
+          "batch": 1,
+          "elements": 417792,
+          "minimum_allocated_bytes": 1671472.0,
+          "maximum_allocated_bytes": 1678592.0,
+          "mean_allocated_bytes": 1671586.6666666667,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0005196860555555556,
+          "name": "feed-forward-102",
+          "batch": 1,
+          "elements": 417792,
+          "minimum_allocated_bytes": 1671472.0,
+          "maximum_allocated_bytes": 1674272.0,
+          "mean_allocated_bytes": 1671487.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0005060788611111111,
+          "name": "feed-forward-102",
+          "batch": 1,
+          "elements": 417792,
+          "minimum_allocated_bytes": 1671472.0,
+          "maximum_allocated_bytes": 1671472.0,
+          "mean_allocated_bytes": 1671472.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 0.0013387022222222222,
+          "name": "feed-forward-102",
+          "batch": 1,
+          "elements": 417792,
+          "minimum_allocated_bytes": 1671472.0,
+          "maximum_allocated_bytes": 1678592.0,
+          "mean_allocated_bytes": 1671590.3555555556,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-102",
+      "elements": 104448,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.00033763605,
+          "name": "convolution-102",
+          "batch": 1,
+          "elements": 104448,
+          "minimum_allocated_bytes": 418096.0,
+          "maximum_allocated_bytes": 418096.0,
+          "mean_allocated_bytes": 418096.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00013220778333333333,
+          "name": "convolution-102",
+          "batch": 1,
+          "elements": 104448,
+          "minimum_allocated_bytes": 418096.0,
+          "maximum_allocated_bytes": 418096.0,
+          "mean_allocated_bytes": 418096.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-2": {
+          "seconds": 0.00013251753333333333,
+          "name": "convolution-102",
+          "batch": 1,
+          "elements": 104448,
+          "minimum_allocated_bytes": 418096.0,
+          "maximum_allocated_bytes": 418096.0,
+          "mean_allocated_bytes": 418096.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0003467263388888889,
+          "name": "convolution-102",
+          "batch": 1,
+          "elements": 104448,
+          "minimum_allocated_bytes": 418096.0,
+          "maximum_allocated_bytes": 424856.0,
+          "mean_allocated_bytes": 418133.55555555556,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "feed-forward-151",
+      "elements": 618496,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0019479213333333334,
+          "name": "feed-forward-151",
+          "batch": 1,
+          "elements": 618496,
+          "minimum_allocated_bytes": 2474288.0,
+          "maximum_allocated_bytes": 2482128.0,
+          "mean_allocated_bytes": 2474331.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.0008323161444444444,
+          "name": "feed-forward-151",
+          "batch": 1,
+          "elements": 618496,
+          "minimum_allocated_bytes": 2474288.0,
+          "maximum_allocated_bytes": 2479608.0,
+          "mean_allocated_bytes": 2474333.111111111,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-2": {
+          "seconds": 0.0007517966277777778,
+          "name": "feed-forward-151",
+          "batch": 1,
+          "elements": 618496,
+          "minimum_allocated_bytes": 2474288.0,
+          "maximum_allocated_bytes": 2479968.0,
+          "mean_allocated_bytes": 2474319.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0019079346277777777,
+          "name": "feed-forward-151",
+          "batch": 1,
+          "elements": 618496,
+          "minimum_allocated_bytes": 2474288.0,
+          "maximum_allocated_bytes": 2474288.0,
+          "mean_allocated_bytes": 2474288.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-151",
+      "elements": 154624,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0004905153777777778,
+          "name": "convolution-151",
+          "batch": 1,
+          "elements": 154624,
+          "minimum_allocated_bytes": 618800.0,
+          "maximum_allocated_bytes": 624840.0,
+          "mean_allocated_bytes": 618833.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 0.00020542301666666668,
+          "name": "convolution-151",
+          "batch": 1,
+          "elements": 154624,
+          "minimum_allocated_bytes": 618800.0,
+          "maximum_allocated_bytes": 618800.0,
+          "mean_allocated_bytes": 618800.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        },
+        "candidate-2": {
+          "seconds": 0.00018716802777777778,
+          "name": "convolution-151",
+          "batch": 1,
+          "elements": 154624,
+          "minimum_allocated_bytes": 618800.0,
+          "maximum_allocated_bytes": 618800.0,
+          "mean_allocated_bytes": 618800.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0004985230166666667,
+          "name": "convolution-151",
+          "batch": 1,
+          "elements": 154624,
+          "minimum_allocated_bytes": 618800.0,
+          "maximum_allocated_bytes": 618800.0,
+          "mean_allocated_bytes": 618800.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 3
+          },
+          "batches_with_collection": 3
+        }
+      }
+    },
+    {
+      "name": "feed-forward-120",
+      "elements": 491520,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.001550540238888889,
+          "name": "feed-forward-120",
+          "batch": 1,
+          "elements": 491520,
+          "minimum_allocated_bytes": 1966384.0,
+          "maximum_allocated_bytes": 1966384.0,
+          "mean_allocated_bytes": 1966384.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.00061917435,
+          "name": "feed-forward-120",
+          "batch": 1,
+          "elements": 491520,
+          "minimum_allocated_bytes": 1966384.0,
+          "maximum_allocated_bytes": 1969184.0,
+          "mean_allocated_bytes": 1966399.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0006165366277777778,
+          "name": "feed-forward-120",
+          "batch": 1,
+          "elements": 491520,
+          "minimum_allocated_bytes": 1966384.0,
+          "maximum_allocated_bytes": 1972064.0,
+          "mean_allocated_bytes": 1966415.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0015702626722222221,
+          "name": "feed-forward-120",
+          "batch": 1,
+          "elements": 491520,
+          "minimum_allocated_bytes": 1966384.0,
+          "maximum_allocated_bytes": 1974224.0,
+          "mean_allocated_bytes": 1966537.911111111,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "convolution-120",
+      "elements": 122880,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0003964894111111111,
+          "name": "convolution-120",
+          "batch": 1,
+          "elements": 122880,
+          "minimum_allocated_bytes": 491824.0,
+          "maximum_allocated_bytes": 491824.0,
+          "mean_allocated_bytes": 491824.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-1": {
+          "seconds": 0.00017336684444444446,
+          "name": "convolution-120",
+          "batch": 1,
+          "elements": 122880,
+          "minimum_allocated_bytes": 491824.0,
+          "maximum_allocated_bytes": 491824.0,
+          "mean_allocated_bytes": 491824.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.00015255817222222223,
+          "name": "convolution-120",
+          "batch": 1,
+          "elements": 122880,
+          "minimum_allocated_bytes": 491824.0,
+          "maximum_allocated_bytes": 491824.0,
+          "mean_allocated_bytes": 491824.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "current-3": {
+          "seconds": 0.00039504329444444444,
+          "name": "convolution-120",
+          "batch": 1,
+          "elements": 122880,
+          "minimum_allocated_bytes": 491824.0,
+          "maximum_allocated_bytes": 491824.0,
+          "mean_allocated_bytes": 491824.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        }
+      }
+    },
+    {
+      "name": "feed-forward-169",
+      "elements": 692224,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.002139809238888889,
+          "name": "feed-forward-169",
+          "batch": 1,
+          "elements": 692224,
+          "minimum_allocated_bytes": 2769200.0,
+          "maximum_allocated_bytes": 2775960.0,
+          "mean_allocated_bytes": 2769237.5555555555,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.0008508426555555556,
+          "name": "feed-forward-169",
+          "batch": 1,
+          "elements": 692224,
+          "minimum_allocated_bytes": 2769200.0,
+          "maximum_allocated_bytes": 2774160.0,
+          "mean_allocated_bytes": 2769227.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 0.0008610828722222222,
+          "name": "feed-forward-169",
+          "batch": 1,
+          "elements": 692224,
+          "minimum_allocated_bytes": 2769200.0,
+          "maximum_allocated_bytes": 2775544.0,
+          "mean_allocated_bytes": 2769333.0222222223,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0021720219333333335,
+          "name": "feed-forward-169",
+          "batch": 1,
+          "elements": 692224,
+          "minimum_allocated_bytes": 2769200.0,
+          "maximum_allocated_bytes": 2776680.0,
+          "mean_allocated_bytes": 2769281.111111111,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "convolution-169",
+      "elements": 173056,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.0005648793111111111,
+          "name": "convolution-169",
+          "batch": 1,
+          "elements": 173056,
+          "minimum_allocated_bytes": 692528.0,
+          "maximum_allocated_bytes": 692528.0,
+          "mean_allocated_bytes": 692528.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-1": {
+          "seconds": 0.00025458272222222224,
+          "name": "convolution-169",
+          "batch": 1,
+          "elements": 173056,
+          "minimum_allocated_bytes": 692528.0,
+          "maximum_allocated_bytes": 699288.0,
+          "mean_allocated_bytes": 692634.3555555556,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.0002163781388888889,
+          "name": "convolution-169",
+          "batch": 1,
+          "elements": 173056,
+          "minimum_allocated_bytes": 692528.0,
+          "maximum_allocated_bytes": 692528.0,
+          "mean_allocated_bytes": 692528.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 0.0005478353,
+          "name": "convolution-169",
+          "batch": 1,
+          "elements": 173056,
+          "minimum_allocated_bytes": 692528.0,
+          "maximum_allocated_bytes": 700008.0,
+          "mean_allocated_bytes": 692569.5555555555,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "scalar-option",
+      "elements": 108544,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 0.00034411645,
+          "name": "scalar-option",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 440880.0,
+          "mean_allocated_bytes": 434515.55555555556,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 0.00045708614444444446,
+          "name": "scalar-option",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 440824.0,
+          "mean_allocated_bytes": 434580.0444444445,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 0.00042767708333333335,
+          "name": "scalar-option",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 437280.0,
+          "mean_allocated_bytes": 434495.55555555556,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 2
+          },
+          "batches_with_collection": 2
+        },
+        "current-3": {
+          "seconds": 0.00034684943888888887,
+          "name": "scalar-option",
+          "batch": 1,
+          "elements": 108544,
+          "minimum_allocated_bytes": 434480.0,
+          "maximum_allocated_bytes": 440824.0,
+          "mean_allocated_bytes": 434515.2444444444,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 1
+          },
+          "batches_with_collection": 1
+        }
+      }
+    },
+    {
+      "name": "double",
+      "elements": 8193,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 4.6213640476190475e-05,
+          "name": "double",
+          "batch": 7,
+          "elements": 8193,
+          "minimum_allocated_bytes": 65848.0,
+          "maximum_allocated_bytes": 65848.0,
+          "mean_allocated_bytes": 65848.0,
+          "collections": {
+            "gen0": 6,
+            "gen1": 5,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "candidate-1": {
+          "seconds": 4.91148626984127e-05,
+          "name": "double",
+          "batch": 7,
+          "elements": 8193,
+          "minimum_allocated_bytes": 65848.0,
+          "maximum_allocated_bytes": 66291.42857142857,
+          "mean_allocated_bytes": 65850.46349206349,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "candidate-2": {
+          "seconds": 4.79558746031746e-05,
+          "name": "double",
+          "batch": 7,
+          "elements": 8193,
+          "minimum_allocated_bytes": 65848.0,
+          "maximum_allocated_bytes": 66645.71428571429,
+          "mean_allocated_bytes": 65856.19682539682,
+          "collections": {
+            "gen0": 4,
+            "gen1": 4,
+            "gen2": 0
+          },
+          "batches_with_collection": 4
+        },
+        "current-3": {
+          "seconds": 4.840599444444444e-05,
+          "name": "double",
+          "batch": 7,
+          "elements": 8193,
+          "minimum_allocated_bytes": 65848.0,
+          "maximum_allocated_bytes": 65848.0,
+          "mean_allocated_bytes": 65848.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 2,
+            "gen2": 0
+          },
+          "batches_with_collection": 3
+        }
+      }
+    },
+    {
+      "name": "tail",
+      "elements": 17,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 1.424167751736111e-07,
+          "name": "tail",
+          "batch": 256,
+          "elements": 17,
+          "minimum_allocated_bytes": 352.0,
+          "maximum_allocated_bytes": 352.0,
+          "mean_allocated_bytes": 352.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 0
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 1.0049273003472222e-07,
+          "name": "tail",
+          "batch": 256,
+          "elements": 17,
+          "minimum_allocated_bytes": 352.0,
+          "maximum_allocated_bytes": 352.0,
+          "mean_allocated_bytes": 352.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-2": {
+          "seconds": 1.4202805989583333e-07,
+          "name": "tail",
+          "batch": 256,
+          "elements": 17,
+          "minimum_allocated_bytes": 352.0,
+          "maximum_allocated_bytes": 352.0,
+          "mean_allocated_bytes": 352.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 0
+          },
+          "batches_with_collection": 2
+        },
+        "current-3": {
+          "seconds": 1.9249292534722223e-07,
+          "name": "tail",
+          "batch": 256,
+          "elements": 17,
+          "minimum_allocated_bytes": 352.0,
+          "maximum_allocated_bytes": 352.0,
+          "mean_allocated_bytes": 352.0,
+          "collections": {
+            "gen0": 3,
+            "gen1": 3,
+            "gen2": 0
+          },
+          "batches_with_collection": 3
+        }
+      }
+    },
+    {
+      "name": "empty",
+      "elements": 0,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 9.113179253472222e-08,
+          "name": "empty",
+          "batch": 256,
+          "elements": 0,
+          "minimum_allocated_bytes": 280.0,
+          "maximum_allocated_bytes": 280.0,
+          "mean_allocated_bytes": 280.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 0
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-1": {
+          "seconds": 9.456128472222223e-08,
+          "name": "empty",
+          "batch": 256,
+          "elements": 0,
+          "minimum_allocated_bytes": 280.0,
+          "maximum_allocated_bytes": 280.0,
+          "mean_allocated_bytes": 280.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 1
+        },
+        "candidate-2": {
+          "seconds": 7.905529513888889e-08,
+          "name": "empty",
+          "batch": 256,
+          "elements": 0,
+          "minimum_allocated_bytes": 280.0,
+          "maximum_allocated_bytes": 280.0,
+          "mean_allocated_bytes": 280.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "current-3": {
+          "seconds": 7.87031032986111e-08,
+          "name": "empty",
+          "batch": 256,
+          "elements": 0,
+          "minimum_allocated_bytes": 280.0,
+          "maximum_allocated_bytes": 280.0,
+          "mean_allocated_bytes": 280.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "scalar",
+      "elements": 1,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 6.214813368055556e-08,
+          "name": "scalar",
+          "batch": 256,
+          "elements": 1,
+          "minimum_allocated_bytes": 216.0,
+          "maximum_allocated_bytes": 216.0,
+          "mean_allocated_bytes": 216.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        },
+        "candidate-1": {
+          "seconds": 1.419078125e-07,
+          "name": "scalar",
+          "batch": 256,
+          "elements": 1,
+          "minimum_allocated_bytes": 216.0,
+          "maximum_allocated_bytes": 216.0,
+          "mean_allocated_bytes": 216.0,
+          "collections": {
+            "gen0": 2,
+            "gen1": 2,
+            "gen2": 0
+          },
+          "batches_with_collection": 2
+        },
+        "candidate-2": {
+          "seconds": 1.300826171875e-07,
+          "name": "scalar",
+          "batch": 256,
+          "elements": 1,
+          "minimum_allocated_bytes": 216.0,
+          "maximum_allocated_bytes": 216.0,
+          "mean_allocated_bytes": 216.0,
+          "collections": {
+            "gen0": 1,
+            "gen1": 1,
+            "gen2": 0
+          },
+          "batches_with_collection": 1
+        },
+        "current-3": {
+          "seconds": 6.962710503472223e-08,
+          "name": "scalar",
+          "batch": 256,
+          "elements": 1,
+          "minimum_allocated_bytes": 216.0,
+          "maximum_allocated_bytes": 216.0,
+          "mean_allocated_bytes": 216.0,
+          "collections": {
+            "gen0": 0,
+            "gen1": 0,
+            "gen2": 0
+          },
+          "batches_with_collection": 0
+        }
+      }
+    },
+    {
+      "name": "reversed",
+      "elements": 561,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 6.523246408045977e-06,
+          "name": "reversed",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5120.275862068966,
+          "mean_allocated_bytes": 5064.312643678161,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "candidate-1": {
+          "seconds": 5.8414118295019154e-06,
+          "name": "reversed",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5064.0,
+          "mean_allocated_bytes": 5064.0,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "candidate-2": {
+          "seconds": 5.847344252873564e-06,
+          "name": "reversed",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5130.482758620689,
+          "mean_allocated_bytes": 5064.369348659004,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "current-3": {
+          "seconds": 6.474074521072797e-06,
+          "name": "reversed",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5064.0,
+          "mean_allocated_bytes": 5064.0,
+          "collections": {
+            "gen0": 5,
+            "gen1": 5,
+            "gen2": 0
+          },
+          "batches_with_collection": 5
+        }
+      }
+    },
+    {
+      "name": "sliced",
+      "elements": 561,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 1.156693275862069e-05,
+          "name": "sliced",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5130.206896551724,
+          "mean_allocated_bytes": 5064.468199233716,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "candidate-1": {
+          "seconds": 1.1852530986590039e-05,
+          "name": "sliced",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5084.758620689655,
+          "mean_allocated_bytes": 5064.292720306514,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "candidate-2": {
+          "seconds": 1.1600736206896551e-05,
+          "name": "sliced",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5124.413793103448,
+          "mean_allocated_bytes": 5064.650957854406,
+          "collections": {
+            "gen0": 7,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 7
+        },
+        "current-3": {
+          "seconds": 1.1627368390804597e-05,
+          "name": "sliced",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5064.0,
+          "maximum_allocated_bytes": 5079.6551724137935,
+          "mean_allocated_bytes": 5064.23908045977,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        }
+      }
+    },
+    {
+      "name": "broadcast",
+      "elements": 561,
+      "equal_minimum_allocation": true,
+      "processes": {
+        "current-0": {
+          "seconds": 2.7347862068965515e-06,
+          "name": "broadcast",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5096.0,
+          "maximum_allocated_bytes": 5096.0,
+          "mean_allocated_bytes": 5096.0,
+          "collections": {
+            "gen0": 7,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 7
+        },
+        "candidate-1": {
+          "seconds": 1.6006363984674329e-06,
+          "name": "broadcast",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5096.0,
+          "maximum_allocated_bytes": 5096.0,
+          "mean_allocated_bytes": 5096.0,
+          "collections": {
+            "gen0": 7,
+            "gen1": 7,
+            "gen2": 1
+          },
+          "batches_with_collection": 6
+        },
+        "candidate-2": {
+          "seconds": 1.6334209770114943e-06,
+          "name": "broadcast",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5096.0,
+          "maximum_allocated_bytes": 5096.0,
+          "mean_allocated_bytes": 5096.0,
+          "collections": {
+            "gen0": 6,
+            "gen1": 6,
+            "gen2": 0
+          },
+          "batches_with_collection": 6
+        },
+        "current-3": {
+          "seconds": 2.9887246168582377e-06,
+          "name": "broadcast",
+          "batch": 116,
+          "elements": 561,
+          "minimum_allocated_bytes": 5096.0,
+          "maximum_allocated_bytes": 5096.0,
+          "mean_allocated_bytes": 5096.0,
+          "collections": {
+            "gen0": 9,
+            "gen1": 8,
+            "gen2": 0
+          },
+          "batches_with_collection": 9
+        }
+      }
+    }
+  ],
+  "code": {
+    "current-0": {
+      "raw_stdout": {
+        "bytes": 121355,
+        "sha256": "7bb0b555afcc1e8a0b6e248e33ab4c4cdf04432a2a3b2c7aefea4165bcf1bdb0"
+      },
+      "vector_width": 8,
+      "emitted_versions": [
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 1738
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 1738
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 342
+        },
+        {
+          "tier": "Tier1",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 3935
+        }
+      ],
+      "optimized_sigmoid_bytes": 3935,
+      "vector_loops": [],
+      "scalar_exp_blocks": [
+        "G_M000_IG55:                ;; offset=0x060E\n       48898510FFFFFF       mov      qword ptr [rbp-0xF0], rax\n       C4A17A100C28         vmovss   xmm1, dword ptr [rax+r13]\n       C5F057054D090000     vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD16]\n       C5F877               vzeroupper \n       E835A9247E           call     System.MathF:Exp(float):float\n       62F17E08104DC9       vmovss   xmm1, dword ptr [rbp-0xDC]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       488B8510FFFFFF       mov      rax, qword ptr [rbp-0xF0]\n       C4C17A110406         vmovss   dword ptr [r14+rax], xmm0\n       4883C004             add      rax, 4\n       41FFCF               dec      r15d\n       62F17E08114DC9       vmovss   dword ptr [rbp-0xDC], xmm1\n       75B7                 jne      SHORT G_M000_IG55\n \n",
+        "G_M000_IG82:                ;; offset=0x0914\n       3BC8                 cmp      ecx, eax\n       0F831A060000         jae      G_M000_IG131\n       8BD1                 mov      edx, ecx\n       488995C8FEFFFF       mov      qword ptr [rbp-0x138], rdx\n       413BCF               cmp      ecx, r15d\n       0F8308060000         jae      G_M000_IG131\n       894DD4               mov      dword ptr [rbp-0x2C], ecx\n       8BF9                 mov      edi, ecx\n       C4C17A1044BD00       vmovss   xmm0, dword ptr [r13+4*rdi]\n       C5F857052E060000     vxorps   xmm0, xmm0, xmmword ptr [reloc @RWD16]\n       C5F877               vzeroupper \n       E816A6247E           call     System.MathF:Exp(float):float\n       62F17E08104DC9       vmovss   xmm1, dword ptr [rbp-0xDC]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       488B95C8FEFFFF       mov      rdx, qword ptr [rbp-0x138]\n       C4C17A110496         vmovss   dword ptr [r14+4*rdx], xmm0\n       8B4DD4               mov      ecx, dword ptr [rbp-0x2C]\n       FFC1                 inc      ecx\n       413BCF               cmp      ecx, r15d\n       62F17E08114DC9       vmovss   dword ptr [rbp-0xDC], xmm1\n       8B8534FFFFFF         mov      eax, dword ptr [rbp-0xCC]\n       7C97                 jl       SHORT G_M000_IG82\n       E9D5FCFFFF           jmp      G_M000_IG56\n \n"
+      ],
+      "first_scalar_osr_instructions": [
+        "cmp      r15d, edx",
+        "jae      G_M000_IG08",
+        "mov      edi, r15d",
+        "mov      qword ptr [rbp-0x40], rdi",
+        "cmp      r15d, eax",
+        "jae      G_M000_IG08",
+        "vmovss   xmm1, dword ptr [r12+4*rdi]",
+        "vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD16]",
+        "call     System.MathF:Exp(float):float",
+        "vmovss   xmm1, dword ptr [rbp-0x34]",
+        "vaddss   xmm0, xmm0, xmm1",
+        "vdivss   xmm0, xmm1, xmm0",
+        "mov      rdi, bword ptr [rbp-0x48]",
+        "mov      rsi, qword ptr [rbp-0x40]",
+        "vmovss   dword ptr [rdi+4*rsi], xmm0",
+        "inc      r15d",
+        "mov      esi, dword ptr [rbp-0x2C]",
+        "cmp      r15d, esi",
+        "mov      eax, esi",
+        "mov      edx, dword ptr [rbp-0x30]",
+        "jl       SHORT G_M000_IG04"
+      ]
+    },
+    "candidate-1": {
+      "raw_stdout": {
+        "bytes": 204522,
+        "sha256": "cc3f226226ff3f20d6368f4a6a3f8587a55d86cd0fdaa7cf7ef07834258d7478"
+      },
+      "vector_width": 8,
+      "emitted_versions": [
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 2221
+        },
+        {
+          "tier": "Tier0",
+          "signature": "Lokad.Onnx.MathOps:ExpVector(System.Numerics.Vector`1[float]):System.Numerics.Vector`1[float]",
+          "native_bytes": 1562
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 929
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.MathOps:ExpVector(System.Numerics.Vector`1[float]):System.Numerics.Vector`1[float]",
+          "native_bytes": 1562
+        },
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 2221
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 922
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 342
+        },
+        {
+          "tier": "Tier1",
+          "signature": "Lokad.Onnx.MathOps:ExpVector(System.Numerics.Vector`1[float]):System.Numerics.Vector`1[float]",
+          "native_bytes": 360
+        },
+        {
+          "tier": "Tier1",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 4487
+        }
+      ],
+      "optimized_sigmoid_bytes": 4487,
+      "vector_loops": [
+        {
+          "assembly": "G_M000_IG62:                ;; offset=0x06C2\n       448BC7               mov      r8d, edi\n       4D8D4808             lea      r9, [r8+0x08]\n       448BD1               mov      r10d, ecx\n       4D3BCA               cmp      r9, r10\n       0F87820A0000         ja       G_M000_IG145\n       49C1E002             shl      r8, 2\n       4F8D1404             lea      r10, bword ptr [r12+r8]\n       C4C17C1002           vmovups  ymm0, ymmword ptr [r10]\n       62F17C385705B40A0000 vxorps   ymm0, ymm0, dword ptr [reloc @RWD00] {1to8}\n       C4E27D180DAF0A0000   vbroadcastss ymm1, dword ptr [reloc @RWD04]\n       C5FC28D1             vmovaps  ymm2, ymm1\n       62F37D2850DA05       vrangeps ymm3, ymm0, ymm2, 5\n       C4E27D18259F0A0000   vbroadcastss ymm4, dword ptr [reloc @RWD08]\n       C5FC28E8             vmovaps  ymm5, ymm0\n       62F36D2854EC00       vfixupimmps ymm5, ymm2, ymm4, 0\n       62F3552854DC00       vfixupimmps ymm3, ymm5, ymm4, 0\n       C4E27D1815880A0000   vbroadcastss ymm2, dword ptr [reloc @RWD12]\n       C5FC28EA             vmovaps  ymm5, ymm2\n       62F3652850F504       vrangeps ymm6, ymm3, ymm5, 4\n       62F3552854DC00       vfixupimmps ymm3, ymm5, ymm4, 0\n       62F3652854F400       vfixupimmps ymm6, ymm3, ymm4, 0\n       62F14C38591D690A0000 vmulps   ymm3, ymm6, dword ptr [reloc @RWD16] {1to8}\n       C5DC57E4             vxorps   ymm4, ymm4, ymm4\n       C5E4C2E40D           vcmpgeps ymm4, ymm3, ymm4\n       C4E27D182D5B0A0000   vbroadcastss ymm5, dword ptr [reloc @RWD20]\n       C5D458FB             vaddps   ymm7, ymm5, ymm3\n       C5E45CDD             vsubps   ymm3, ymm3, ymm5\n       C4E3654ADF40         vblendvps ymm3, ymm3, ymm7, ymm4\n       62F36538541D460A000000 vfixupimmps ymm3, ymm3, dword ptr [reloc @RWD24] {1to8}, 0\n       C5E4C225450A00000D   vcmpgeps ymm4, ymm3, ymmword ptr [reloc @RWD32]\n       C5FE5BDB             vcvttps2dq ymm3, ymm3\n       C4E3654C1D570A000040 vpblendvb ymm3, ymm3, ymmword ptr [reloc @RWD64], ymm4\n       62F265383D1D6D0A0000 vpmaxsd  ymm3, ymm3, dword ptr [reloc @RWD96] {1to8}\n       C4E27D1825680A0000   vbroadcastss ymm4, dword ptr [reloc @RWD100]\n       C4E26539DC           vpminsd  ymm3, ymm3, ymm4\n       C5FC5BFB             vcvtdq2ps ymm7, ymm3\n       C57C28C7             vmovaps  ymm8, ymm7\n       62724D389805550A0000 vfmadd132ps ymm8, ymm6, dword ptr [reloc @RWD104] {1to8}\n       C5FC28F7             vmovaps  ymm6, ymm7\n       62F23D3898354B0A0000 vfmadd132ps ymm6, ymm8, dword ptr [reloc @RWD108] {1to8}\n       C5FCC2F800           vcmpeqps ymm7, ymm0, ymm0\n       C4627D1805410A0000   vbroadcastss ymm8, dword ptr [reloc @RWD112]\n       62724D38A8053B0A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD116] {1to8}\n       62724D38A805350A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD120] {1to8}\n       62724D38A8052F0A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD124] {1to8}\n       62724D38A805290A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD128] {1to8}\n       C4C24DB8E8           vfmadd231ps ymm5, ymm6, ymm8\n       C4627D18051F0A0000   vbroadcastss ymm8, dword ptr [reloc @RWD132]\n       C4C24DA8E8           vfmadd213ps ymm5, ymm6, ymm8\n       C4C255A8F0           vfmadd213ps ymm6, ymm5, ymm8\n       C5FCC2C901           vcmpltps ymm1, ymm0, ymm1\n       C5FCC2C20E           vcmpgtps ymm0, ymm0, ymm2\n       C5DDFED3             vpaddd   ymm2, ymm4, ymm3\n       C5ED72F217           vpslld   ymm2, ymm2, 23\n       C5EC59D6             vmulps   ymm2, ymm2, ymm6\n       C4E36D4A05100A000000 vblendvps ymm0, ymm2, ymmword ptr [reloc @RWD160], ymm0\n       C5F455C0             vandnps  ymm0, ymm1, ymm0\n       62F37D38253D210A0000CA vpternlogd ymm7, ymm0, dword ptr [reloc @RWD192] {1to8}, -54\n       C4C14458C0           vaddps   ymm0, ymm7, ymm8\n       C5BC5EC0             vdivps   ymm0, ymm8, ymm0\n \nG_M000_IG63:                ;; offset=0x0848\n       448BD2               mov      r10d, edx\n       4D3BCA               cmp      r9, r10\n       0F8703090000         ja       G_M000_IG145\n       4C03C0               add      r8, rax\n       C4C17C1100           vmovups  ymmword ptr [r8], ymm0\n       83C708               add      edi, 8\n       3BF7                 cmp      esi, edi\n       7C1C                 jl       SHORT G_M000_IG68\n \nG_M000_IG64:                ;; offset=0x0863\n       488B85A0FEFFFF       mov      rax, bword ptr [rbp-0x160]\n       E953FEFFFF           jmp      G_M000_IG62\n \n",
+          "instructions": 70,
+          "calls": [],
+          "stack_operands": [
+            "mov      rax, bword ptr [rbp-0x160]"
+          ],
+          "ymm_instructions": 54,
+          "zmm_instructions": 0
+        }
+      ],
+      "scalar_exp_blocks": [
+        "G_M000_IG72:                ;; offset=0x08A2\n       448BFF               mov      r15d, edi\n       897DD4               mov      dword ptr [rbp-0x2C], edi\n       8BD7                 mov      edx, edi\n       C4C17A100C94         vmovss   xmm1, dword ptr [r12+4*rdx]\n       C5F05705B8090000     vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD208]\n       C5F877               vzeroupper \n       E8E05C247E           call     System.MathF:Exp(float):float\n       62F17E08104DBB       vmovss   xmm1, dword ptr [rbp-0x114]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       4C8BB5A0FEFFFF       mov      r14, bword ptr [rbp-0x160]\n       C4817A1104BE         vmovss   dword ptr [r14+4*r15], xmm0\n       448B7DD4             mov      r15d, dword ptr [rbp-0x2C]\n       41FFC7               inc      r15d\n       443BBD14FFFFFF       cmp      r15d, dword ptr [rbp-0xEC]\n       62F17E08114DBB       vmovss   dword ptr [rbp-0x114], xmm1\n       418BFF               mov      edi, r15d\n       7CAC                 jl       SHORT G_M000_IG72\n \n",
+        "G_M000_IG137:                ;; offset=0x1089\n       3BFA                 cmp      edi, edx\n       0F83CD000000         jae      G_M000_IG146\n       448BFF               mov      r15d, edi\n       897DD4               mov      dword ptr [rbp-0x2C], edi\n       8BF7                 mov      esi, edi\n       C4C17A1004B4         vmovss   xmm0, dword ptr [r12+4*rsi]\n       C5F85705C9010000     vxorps   xmm0, xmm0, xmmword ptr [reloc @RWD208]\n       C5F877               vzeroupper \n       E8F154247E           call     System.MathF:Exp(float):float\n       C5FA100D6D010000     vmovss   xmm1, dword ptr [reloc @RWD132]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       4C8BB5A0FEFFFF       mov      r14, bword ptr [rbp-0x160]\n       C4817A1104BE         vmovss   dword ptr [r14+4*r15], xmm0\n       448B7DD4             mov      r15d, dword ptr [rbp-0x2C]\n       41FFC7               inc      r15d\n       8BBD14FFFFFF         mov      edi, dword ptr [rbp-0xEC]\n       443BFF               cmp      r15d, edi\n       8B9510FFFFFF         mov      edx, dword ptr [rbp-0xF0]\n       0F8D0EF8FFFF         jge      G_M000_IG73\n \n"
+      ],
+      "first_scalar_osr_instructions": [
+        "cmp      r15d, edx",
+        "jae      G_M000_IG08",
+        "mov      edi, r15d",
+        "mov      qword ptr [rbp-0x40], rdi",
+        "cmp      r15d, eax",
+        "jae      G_M000_IG08",
+        "vmovss   xmm1, dword ptr [r12+4*rdi]",
+        "vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD16]",
+        "call     System.MathF:Exp(float):float",
+        "vmovss   xmm1, dword ptr [rbp-0x34]",
+        "vaddss   xmm0, xmm0, xmm1",
+        "vdivss   xmm0, xmm1, xmm0",
+        "mov      rdi, bword ptr [rbp-0x48]",
+        "mov      rsi, qword ptr [rbp-0x40]",
+        "vmovss   dword ptr [rdi+4*rsi], xmm0",
+        "inc      r15d",
+        "mov      esi, dword ptr [rbp-0x2C]",
+        "cmp      r15d, esi",
+        "mov      eax, esi",
+        "mov      edx, dword ptr [rbp-0x30]",
+        "jl       SHORT G_M000_IG04"
+      ]
+    },
+    "candidate-2": {
+      "raw_stdout": {
+        "bytes": 203738,
+        "sha256": "db4e4d9eff09b04af4b4f08a7ce0ad104c3552e6c36ecc430cb97b1e5c8ce579"
+      },
+      "vector_width": 8,
+      "emitted_versions": [
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 2221
+        },
+        {
+          "tier": "Tier0",
+          "signature": "Lokad.Onnx.MathOps:ExpVector(System.Numerics.Vector`1[float]):System.Numerics.Vector`1[float]",
+          "native_bytes": 1562
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 929
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.MathOps:ExpVector(System.Numerics.Vector`1[float]):System.Numerics.Vector`1[float]",
+          "native_bytes": 1562
+        },
+        {
+          "tier": "Tier1",
+          "signature": "Lokad.Onnx.MathOps:ExpVector(System.Numerics.Vector`1[float]):System.Numerics.Vector`1[float]",
+          "native_bytes": 360
+        },
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 2221
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 922
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 343
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 342
+        },
+        {
+          "tier": "Tier1",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 4431
+        }
+      ],
+      "optimized_sigmoid_bytes": 4431,
+      "vector_loops": [
+        {
+          "assembly": "G_M000_IG61:                ;; offset=0x0695\n       448BC7               mov      r8d, edi\n       4D8D4808             lea      r9, [r8+0x08]\n       448BD1               mov      r10d, ecx\n       4D3BCA               cmp      r9, r10\n       0F87770A0000         ja       G_M000_IG143\n       49C1E002             shl      r8, 2\n       4F8D1404             lea      r10, bword ptr [r12+r8]\n       C4C17C1002           vmovups  ymm0, ymmword ptr [r10]\n       62F17C385705A10A0000 vxorps   ymm0, ymm0, dword ptr [reloc @RWD00] {1to8}\n       C4E27D180D9C0A0000   vbroadcastss ymm1, dword ptr [reloc @RWD04]\n       C5FC28D1             vmovaps  ymm2, ymm1\n       62F37D2850DA05       vrangeps ymm3, ymm0, ymm2, 5\n       C4E27D18258C0A0000   vbroadcastss ymm4, dword ptr [reloc @RWD08]\n       C5FC28E8             vmovaps  ymm5, ymm0\n       62F36D2854EC00       vfixupimmps ymm5, ymm2, ymm4, 0\n       62F3552854DC00       vfixupimmps ymm3, ymm5, ymm4, 0\n       C4E27D1815750A0000   vbroadcastss ymm2, dword ptr [reloc @RWD12]\n       C5FC28EA             vmovaps  ymm5, ymm2\n       62F3652850F504       vrangeps ymm6, ymm3, ymm5, 4\n       62F3552854DC00       vfixupimmps ymm3, ymm5, ymm4, 0\n       62F3652854F400       vfixupimmps ymm6, ymm3, ymm4, 0\n       62F14C38591D560A0000 vmulps   ymm3, ymm6, dword ptr [reloc @RWD16] {1to8}\n       C5DC57E4             vxorps   ymm4, ymm4, ymm4\n       C5E4C2E40D           vcmpgeps ymm4, ymm3, ymm4\n       C4E27D182D480A0000   vbroadcastss ymm5, dword ptr [reloc @RWD20]\n       C5D458FB             vaddps   ymm7, ymm5, ymm3\n       C5E45CDD             vsubps   ymm3, ymm3, ymm5\n       C4E3654ADF40         vblendvps ymm3, ymm3, ymm7, ymm4\n       62F36538541D330A000000 vfixupimmps ymm3, ymm3, dword ptr [reloc @RWD24] {1to8}, 0\n       C5E4C225320A00000D   vcmpgeps ymm4, ymm3, ymmword ptr [reloc @RWD32]\n       C5FE5BDB             vcvttps2dq ymm3, ymm3\n       C4E3654C1D440A000040 vpblendvb ymm3, ymm3, ymmword ptr [reloc @RWD64], ymm4\n       62F265383D1D5A0A0000 vpmaxsd  ymm3, ymm3, dword ptr [reloc @RWD96] {1to8}\n       C4E27D1825550A0000   vbroadcastss ymm4, dword ptr [reloc @RWD100]\n       C4E26539DC           vpminsd  ymm3, ymm3, ymm4\n       C5FC5BFB             vcvtdq2ps ymm7, ymm3\n       C57C28C7             vmovaps  ymm8, ymm7\n       62724D389805420A0000 vfmadd132ps ymm8, ymm6, dword ptr [reloc @RWD104] {1to8}\n       C5FC28F7             vmovaps  ymm6, ymm7\n       62F23D389835380A0000 vfmadd132ps ymm6, ymm8, dword ptr [reloc @RWD108] {1to8}\n       C5FCC2F800           vcmpeqps ymm7, ymm0, ymm0\n       C4627D18052E0A0000   vbroadcastss ymm8, dword ptr [reloc @RWD112]\n       62724D38A805280A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD116] {1to8}\n       62724D38A805220A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD120] {1to8}\n       62724D38A8051C0A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD124] {1to8}\n       62724D38A805160A0000 vfmadd213ps ymm8, ymm6, dword ptr [reloc @RWD128] {1to8}\n       C4C24DB8E8           vfmadd231ps ymm5, ymm6, ymm8\n       C4627D18050C0A0000   vbroadcastss ymm8, dword ptr [reloc @RWD132]\n       C4C24DA8E8           vfmadd213ps ymm5, ymm6, ymm8\n       C4C255A8F0           vfmadd213ps ymm6, ymm5, ymm8\n       C5FCC2C901           vcmpltps ymm1, ymm0, ymm1\n       C5FCC2C20E           vcmpgtps ymm0, ymm0, ymm2\n       C5DDFED3             vpaddd   ymm2, ymm4, ymm3\n       C5ED72F217           vpslld   ymm2, ymm2, 23\n       C5EC59D6             vmulps   ymm2, ymm2, ymm6\n       C4E36D4A05FD09000000 vblendvps ymm0, ymm2, ymmword ptr [reloc @RWD160], ymm0\n       C5F455C0             vandnps  ymm0, ymm1, ymm0\n       62F37D38253D0E0A0000CA vpternlogd ymm7, ymm0, dword ptr [reloc @RWD192] {1to8}, -54\n       C4C14458C0           vaddps   ymm0, ymm7, ymm8\n       C5BC5EC0             vdivps   ymm0, ymm8, ymm0\n \nG_M000_IG62:                ;; offset=0x081B\n       448BD2               mov      r10d, edx\n       4D3BCA               cmp      r9, r10\n       0F87F8080000         ja       G_M000_IG143\n       4C03C0               add      r8, rax\n       C4C17C1100           vmovups  ymmword ptr [r8], ymm0\n       83C708               add      edi, 8\n       3BF7                 cmp      esi, edi\n       7C1C                 jl       SHORT G_M000_IG67\n \nG_M000_IG63:                ;; offset=0x0836\n       488B85A8FEFFFF       mov      rax, bword ptr [rbp-0x158]\n       E953FEFFFF           jmp      G_M000_IG61\n \n",
+          "instructions": 70,
+          "calls": [],
+          "stack_operands": [
+            "mov      rax, bword ptr [rbp-0x158]"
+          ],
+          "ymm_instructions": 54,
+          "zmm_instructions": 0
+        }
+      ],
+      "scalar_exp_blocks": [
+        "G_M000_IG71:                ;; offset=0x0875\n       448BF7               mov      r14d, edi\n       897DD4               mov      dword ptr [rbp-0x2C], edi\n       8BD7                 mov      edx, edi\n       C4C17A100C94         vmovss   xmm1, dword ptr [r12+4*rdx]\n       C5F05705A5090000     vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD208]\n       C5F877               vzeroupper \n       E86D85227E           call     System.MathF:Exp(float):float\n       62F17E08104DBD       vmovss   xmm1, dword ptr [rbp-0x10C]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       4C8BADA8FEFFFF       mov      r13, bword ptr [rbp-0x158]\n       C4817A1144B500       vmovss   dword ptr [r13+4*r14], xmm0\n       448B75D4             mov      r14d, dword ptr [rbp-0x2C]\n       41FFC6               inc      r14d\n       443BB51CFFFFFF       cmp      r14d, dword ptr [rbp-0xE4]\n       62F17E08114DBD       vmovss   dword ptr [rbp-0x10C], xmm1\n       418BFE               mov      edi, r14d\n       7CAB                 jl       SHORT G_M000_IG71\n \n",
+        "G_M000_IG135:                ;; offset=0x1050\n       3BFA                 cmp      edi, edx\n       0F83CE000000         jae      G_M000_IG144\n       448BF7               mov      r14d, edi\n       897DD4               mov      dword ptr [rbp-0x2C], edi\n       8BF7                 mov      esi, edi\n       C4C17A1004B4         vmovss   xmm0, dword ptr [r12+4*rsi]\n       C5F85705C2010000     vxorps   xmm0, xmm0, xmmword ptr [reloc @RWD208]\n       C5F877               vzeroupper \n       E88A7D227E           call     System.MathF:Exp(float):float\n       C5FA100D66010000     vmovss   xmm1, dword ptr [reloc @RWD132]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       4C8BADA8FEFFFF       mov      r13, bword ptr [rbp-0x158]\n       C4817A1144B500       vmovss   dword ptr [r13+4*r14], xmm0\n       448B75D4             mov      r14d, dword ptr [rbp-0x2C]\n       41FFC6               inc      r14d\n       8BBD1CFFFFFF         mov      edi, dword ptr [rbp-0xE4]\n       443BF7               cmp      r14d, edi\n       8B9518FFFFFF         mov      edx, dword ptr [rbp-0xE8]\n       0F8D1AF8FFFF         jge      G_M000_IG72\n \n"
+      ],
+      "first_scalar_osr_instructions": [
+        "cmp      r15d, edx",
+        "jae      G_M000_IG08",
+        "mov      edi, r15d",
+        "mov      qword ptr [rbp-0x40], rdi",
+        "cmp      r15d, eax",
+        "jae      G_M000_IG08",
+        "vmovss   xmm1, dword ptr [r12+4*rdi]",
+        "vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD16]",
+        "call     System.MathF:Exp(float):float",
+        "vmovss   xmm1, dword ptr [rbp-0x34]",
+        "vaddss   xmm0, xmm0, xmm1",
+        "vdivss   xmm0, xmm1, xmm0",
+        "mov      rdi, bword ptr [rbp-0x48]",
+        "mov      rsi, qword ptr [rbp-0x40]",
+        "vmovss   dword ptr [rdi+4*rsi], xmm0",
+        "inc      r15d",
+        "mov      esi, dword ptr [rbp-0x2C]",
+        "cmp      r15d, esi",
+        "mov      eax, esi",
+        "mov      edx, dword ptr [rbp-0x30]",
+        "jl       SHORT G_M000_IG04"
+      ]
+    },
+    "current-3": {
+      "raw_stdout": {
+        "bytes": 121869,
+        "sha256": "3ffe9603939cf99707fbb24e358b10541908adcebe0e1b05d361c3e26d9b350f"
+      },
+      "vector_width": 8,
+      "emitted_versions": [
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 1738
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Instrumented Tier0",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 1738
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 346
+        },
+        {
+          "tier": "Tier1-OSR",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 342
+        },
+        {
+          "tier": "Tier1",
+          "signature": "Lokad.Onnx.CPUExecutionProvider:Sigmoid(Lokad.Onnx.ITensor,Lokad.Onnx.ExecutionOptions):Lokad.Onnx.OpResult",
+          "native_bytes": 3944
+        }
+      ],
+      "optimized_sigmoid_bytes": 3944,
+      "vector_loops": [],
+      "scalar_exp_blocks": [
+        "G_M000_IG61:                ;; offset=0x064E\n       48898510FFFFFF       mov      qword ptr [rbp-0xF0], rax\n       C4A17A100C28         vmovss   xmm1, dword ptr [rax+r13]\n       C5F057051D090000     vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD16]\n       C5F877               vzeroupper \n       E8353F247E           call     System.MathF:Exp(float):float\n       62F17E08104DC9       vmovss   xmm1, dword ptr [rbp-0xDC]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       488B8510FFFFFF       mov      rax, qword ptr [rbp-0xF0]\n       C4C17A110406         vmovss   dword ptr [r14+rax], xmm0\n       4883C004             add      rax, 4\n       41FFCF               dec      r15d\n       62F17E08114DC9       vmovss   dword ptr [rbp-0xDC], xmm1\n       75B7                 jne      SHORT G_M000_IG61\n \n",
+        "G_M000_IG85:                ;; offset=0x0918\n       3BC8                 cmp      ecx, eax\n       0F831F060000         jae      G_M000_IG137\n       8BD1                 mov      edx, ecx\n       488995C8FEFFFF       mov      qword ptr [rbp-0x138], rdx\n       413BCF               cmp      ecx, r15d\n       0F830D060000         jae      G_M000_IG137\n       894DD4               mov      dword ptr [rbp-0x2C], ecx\n       8BF9                 mov      edi, ecx\n       C4C17A1044BD00       vmovss   xmm0, dword ptr [r13+4*rdi]\n       C5F857053A060000     vxorps   xmm0, xmm0, xmmword ptr [reloc @RWD16]\n       C5F877               vzeroupper \n       E8523C247E           call     System.MathF:Exp(float):float\n       62F17E08104DC9       vmovss   xmm1, dword ptr [rbp-0xDC]\n       C5FA58C1             vaddss   xmm0, xmm0, xmm1\n       C5F25EC0             vdivss   xmm0, xmm1, xmm0\n       488B95C8FEFFFF       mov      rdx, qword ptr [rbp-0x138]\n       C4C17A110496         vmovss   dword ptr [r14+4*rdx], xmm0\n       8B4DD4               mov      ecx, dword ptr [rbp-0x2C]\n       FFC1                 inc      ecx\n       413BCF               cmp      ecx, r15d\n       62F17E08114DC9       vmovss   dword ptr [rbp-0xDC], xmm1\n       8B8534FFFFFF         mov      eax, dword ptr [rbp-0xCC]\n       7C97                 jl       SHORT G_M000_IG85\n       E911FDFFFF           jmp      G_M000_IG62\n \n"
+      ],
+      "first_scalar_osr_instructions": [
+        "cmp      r15d, edx",
+        "jae      G_M000_IG08",
+        "mov      edi, r15d",
+        "mov      qword ptr [rbp-0x40], rdi",
+        "cmp      r15d, eax",
+        "jae      G_M000_IG08",
+        "vmovss   xmm1, dword ptr [r12+4*rdi]",
+        "vxorps   xmm0, xmm1, xmmword ptr [reloc @RWD16]",
+        "call     System.MathF:Exp(float):float",
+        "vmovss   xmm1, dword ptr [rbp-0x34]",
+        "vaddss   xmm0, xmm0, xmm1",
+        "vdivss   xmm0, xmm1, xmm0",
+        "mov      rdi, bword ptr [rbp-0x48]",
+        "mov      rsi, qword ptr [rbp-0x40]",
+        "vmovss   dword ptr [rdi+4*rsi], xmm0",
+        "inc      r15d",
+        "mov      esi, dword ptr [rbp-0x2C]",
+        "cmp      r15d, esi",
+        "mov      eax, esi",
+        "mov      edx, dword ptr [rbp-0x30]",
+        "jl       SHORT G_M000_IG04"
+      ]
+    }
+  },
+  "first_scalar_osr_loop_instructions_equal_ignoring_relative_call_bytes": true,
+  "limits": [
+    "No instruction sampling or tier-to-clock join.",
+    "Equal allocation bytes do not establish equal allocation latency.",
+    "Sparse extra allocations are retained; their source is unidentified.",
+    "Synthetic fixture values are not captured model intermediates.",
+    "The original rejected screen retains its failed verdict."
+  ]
+}
