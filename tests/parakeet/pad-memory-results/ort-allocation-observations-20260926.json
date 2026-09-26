@@ -1,0 +1,2117 @@
+{
+  "diagnostic_only": true,
+  "inference_calls": 0,
+  "product_changed": false,
+  "inputs": {
+    "artifacts/parakeet-ort-diagnosis-amd-20260924/closed.json": {
+      "bytes": 632,
+      "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+    },
+    "artifacts/parakeet-ort-diagnosis-amd-20260924/collected/collection.json": {
+      "bytes": 26753,
+      "sha256": "25d6088a3d4f82241818797f368ce688a8d561110ebf19b946e7787215136ea0"
+    },
+    "artifacts/parakeet-ort-diagnosis-amd-20260924/collected/profile/observation.json": {
+      "bytes": 7127647,
+      "sha256": "b36e5d13af235b7454ffa4c1edbfec8e355530796b520f9734cf3a07cd5a2a56"
+    },
+    "artifacts/parakeet-ort-diagnosis-amd-20260924/collected/profile/encoder_2026-09-24_09-17-53_864.json": {
+      "bytes": 106898811,
+      "sha256": "36203609c97aac60b74ae22ae1c80a74c96f7584cd62efea81fd944a1edbe74d"
+    },
+    "artifacts/parakeet-ort-diagnosis-amd-20260924/spec.json": {
+      "bytes": 1462,
+      "sha256": "aaf8169f45aaf07670724224a85dbc2a6c45e2980377dcb88ca05239b50ec318"
+    },
+    "artifacts/parakeet-prepared-recurrence-app-amd-20260924/closed.json": {
+      "bytes": 123397,
+      "sha256": "36b7809016735de7bdeee3b9c5c15c984ca0364c560e3069cc369e05de56ecf0"
+    },
+    "artifacts/parakeet-prepared-recurrence-app-amd-20260924/collected/manifests/current-parakeet.json": {
+      "bytes": 66359,
+      "sha256": "20e92ec54b5576fad6e348e688e0e05c39e8fd655ff2b568afcc54546803c8a0"
+    },
+    "artifacts/parakeet-prepared-recurrence-app-amd-20260924/collected/runtime/audio_adapter.py": {
+      "bytes": 9522,
+      "sha256": "3581323cffefe8ff55e6b514323070c9b8aa606a86d77abda58d2e3abc15358e"
+    }
+  },
+  "generator": {
+    "bytes": 7093,
+    "sha256": "91065e905a88d2ad2511e89455d69f910b806fed2b5f68ab48426be0f71bcc12"
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "source": {
+    "onnxruntime/core/providers/cpu/tensor/pad.cc": {
+      "bytes": 33229,
+      "sha256": "64b7c3367a2d080fd1d88e6c5a4a66320eb1835d6b58a1b1825add4916b63052"
+    },
+    "onnxruntime/core/framework/execution_frame.cc": {
+      "bytes": 44574,
+      "sha256": "d56914ebb7ff8c013c444ce554ed6734f6d681236129e81979c88af391edd871"
+    },
+    "onnxruntime/core/framework/session_state.cc": {
+      "bytes": 95215,
+      "sha256": "fe38c97116f1f2c6d9868649a094b029ded299dbf2aa423eaf6c4cb791cb189c"
+    },
+    "onnxruntime/core/framework/session_options.h": {
+      "bytes": 12099,
+      "sha256": "47468b6d889e617111e616c6edda249c8cbc2b55f6ca77e15c21d02a3dcee636"
+    },
+    "onnxruntime/core/framework/sequential_executor.cc": {
+      "bytes": 33911,
+      "sha256": "c3e074519432105024bb9c38019b70c5142015bd0e3288835e7214b7363fc6cc"
+    },
+    "onnxruntime/core/framework/bfc_arena.cc": {
+      "bytes": 32520,
+      "sha256": "6856f5b46b1b9ea03489780a150e69b9a1bfb13524dd70bdbefd6488718299ac"
+    },
+    "onnxruntime/core/framework/resource_accountant.cc": {
+      "bytes": 14021,
+      "sha256": "9c71713f0baac5f0da427215d2e0fdeef668008d8132dbd73e2eb498c99357c8"
+    }
+  },
+  "allocator_route": "Warm calls obtain live arena space; measured calls add no per-Pad arena space. Memory-pattern explanation is source-derived; addresses and branch PCs were not captured.",
+  "requests": [
+    {
+      "index": 0,
+      "clip": "121-121726-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            847
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 975,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 28465152,
+      "pad_time_us": 1557
+    },
+    {
+      "index": 1,
+      "clip": "121-123852-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1770
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1642,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 98310144,
+      "pad_time_us": 6944
+    },
+    {
+      "index": 2,
+      "clip": "237-126133-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            893
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1021,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 31064064,
+      "pad_time_us": 1585
+    },
+    {
+      "index": 3,
+      "clip": "237-126133-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1330
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1458,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 60040704,
+      "pad_time_us": 3723
+    },
+    {
+      "index": 4,
+      "clip": "260-123286-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            705
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 577,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 21702144,
+      "pad_time_us": 1279
+    },
+    {
+      "index": 5,
+      "clip": "260-123288-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1256
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1128,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 54081024,
+      "pad_time_us": 3619
+    },
+    {
+      "index": 6,
+      "clip": "672-122797-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            408
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 280,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 9795072,
+      "pad_time_us": 893
+    },
+    {
+      "index": 7,
+      "clip": "672-122797-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1514
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1386,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 74913792,
+      "pad_time_us": 5801
+    },
+    {
+      "index": 8,
+      "clip": "908-157963-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            704
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 576,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 21331968,
+      "pad_time_us": 1260
+    },
+    {
+      "index": 9,
+      "clip": "908-157963-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1263
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1135,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 54663168,
+      "pad_time_us": 3195
+    },
+    {
+      "index": 10,
+      "clip": "1089-134686-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            663
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 535,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 19527168,
+      "pad_time_us": 1233
+    },
+    {
+      "index": 11,
+      "clip": "1089-134686-0011",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1245
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1117,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 53501952,
+      "pad_time_us": 3792
+    },
+    {
+      "index": 12,
+      "clip": "1188-133604-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            905
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 777,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 31954944,
+      "pad_time_us": 1699
+    },
+    {
+      "index": 13,
+      "clip": "1188-133604-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1797
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1925,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 100664832,
+      "pad_time_us": 6946
+    },
+    {
+      "index": 14,
+      "clip": "1221-135766-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            483
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 355,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 12498432,
+      "pad_time_us": 1021
+    },
+    {
+      "index": 15,
+      "clip": "1221-135766-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1244
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1116,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 53501952,
+      "pad_time_us": 3310
+    },
+    {
+      "index": 16,
+      "clip": "1284-1180-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            813
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 941,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 26793984,
+      "pad_time_us": 1394
+    },
+    {
+      "index": 17,
+      "clip": "1284-1180-0018",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1201
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1073,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 50652672,
+      "pad_time_us": 2950
+    },
+    {
+      "index": 18,
+      "clip": "1320-122612-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            953
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 825,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 34701312,
+      "pad_time_us": 1962
+    },
+    {
+      "index": 19,
+      "clip": "1320-122612-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1349
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1477,
+      "prior_key": false,
+      "pad_calls": 48,
+      "pad_requested_delta": 61269504,
+      "pad_time_us": 4299
+    },
+    {
+      "index": 20,
+      "clip": "121-121726-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            847
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 975,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1524
+    },
+    {
+      "index": 21,
+      "clip": "121-123852-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1770
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1642,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 5350
+    },
+    {
+      "index": 22,
+      "clip": "237-126133-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            893
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1021,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1488
+    },
+    {
+      "index": 23,
+      "clip": "237-126133-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1330
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1458,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3143
+    },
+    {
+      "index": 24,
+      "clip": "260-123286-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            705
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 577,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1266
+    },
+    {
+      "index": 25,
+      "clip": "260-123288-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1256
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1128,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3133
+    },
+    {
+      "index": 26,
+      "clip": "672-122797-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            408
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 280,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 850
+    },
+    {
+      "index": 27,
+      "clip": "672-122797-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1514
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1386,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3843
+    },
+    {
+      "index": 28,
+      "clip": "908-157963-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            704
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 576,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1209
+    },
+    {
+      "index": 29,
+      "clip": "908-157963-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1263
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1135,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3081
+    },
+    {
+      "index": 30,
+      "clip": "1089-134686-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            663
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 535,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1215
+    },
+    {
+      "index": 31,
+      "clip": "1089-134686-0011",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1245
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1117,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2972
+    },
+    {
+      "index": 32,
+      "clip": "1188-133604-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            905
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 777,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1594
+    },
+    {
+      "index": 33,
+      "clip": "1188-133604-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1797
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1925,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 5279
+    },
+    {
+      "index": 34,
+      "clip": "1221-135766-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            483
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 355,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 943
+    },
+    {
+      "index": 35,
+      "clip": "1221-135766-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1244
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1116,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2908
+    },
+    {
+      "index": 36,
+      "clip": "1284-1180-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            813
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 941,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1481
+    },
+    {
+      "index": 37,
+      "clip": "1284-1180-0018",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1201
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1073,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2894
+    },
+    {
+      "index": 38,
+      "clip": "1320-122612-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            953
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 825,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1621
+    },
+    {
+      "index": 39,
+      "clip": "1320-122612-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1349
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1477,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3367
+    },
+    {
+      "index": 40,
+      "clip": "121-121726-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            847
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 975,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1482
+    },
+    {
+      "index": 41,
+      "clip": "121-123852-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1770
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1642,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 5509
+    },
+    {
+      "index": 42,
+      "clip": "237-126133-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            893
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1021,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1540
+    },
+    {
+      "index": 43,
+      "clip": "237-126133-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1330
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1458,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3458
+    },
+    {
+      "index": 44,
+      "clip": "260-123286-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            705
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 577,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1313
+    },
+    {
+      "index": 45,
+      "clip": "260-123288-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1256
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1128,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3319
+    },
+    {
+      "index": 46,
+      "clip": "672-122797-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            408
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 280,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 896
+    },
+    {
+      "index": 47,
+      "clip": "672-122797-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1514
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1386,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 4338
+    },
+    {
+      "index": 48,
+      "clip": "908-157963-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            704
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 576,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1283
+    },
+    {
+      "index": 49,
+      "clip": "908-157963-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1263
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1135,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3267
+    },
+    {
+      "index": 50,
+      "clip": "1089-134686-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            663
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 535,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1242
+    },
+    {
+      "index": 51,
+      "clip": "1089-134686-0011",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1245
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1117,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2885
+    },
+    {
+      "index": 52,
+      "clip": "1188-133604-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            905
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 777,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1669
+    },
+    {
+      "index": 53,
+      "clip": "1188-133604-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1797
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1925,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 5828
+    },
+    {
+      "index": 54,
+      "clip": "1221-135766-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            483
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 355,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 929
+    },
+    {
+      "index": 55,
+      "clip": "1221-135766-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1244
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1116,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2947
+    },
+    {
+      "index": 56,
+      "clip": "1284-1180-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            813
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 941,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1476
+    },
+    {
+      "index": 57,
+      "clip": "1284-1180-0018",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1201
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1073,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2989
+    },
+    {
+      "index": 58,
+      "clip": "1320-122612-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            953
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 825,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1599
+    },
+    {
+      "index": 59,
+      "clip": "1320-122612-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1349
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1477,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3482
+    },
+    {
+      "index": 60,
+      "clip": "121-121726-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            847
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 975,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1523
+    },
+    {
+      "index": 61,
+      "clip": "121-123852-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1770
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1642,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 5611
+    },
+    {
+      "index": 62,
+      "clip": "237-126133-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            893
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1021,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1517
+    },
+    {
+      "index": 63,
+      "clip": "237-126133-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1330
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1458,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3197
+    },
+    {
+      "index": 64,
+      "clip": "260-123286-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            705
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 577,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1283
+    },
+    {
+      "index": 65,
+      "clip": "260-123288-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1256
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1128,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3052
+    },
+    {
+      "index": 66,
+      "clip": "672-122797-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            408
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 280,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 843
+    },
+    {
+      "index": 67,
+      "clip": "672-122797-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1514
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1386,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3957
+    },
+    {
+      "index": 68,
+      "clip": "908-157963-0005",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            704
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 576,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1284
+    },
+    {
+      "index": 69,
+      "clip": "908-157963-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1263
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1135,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3138
+    },
+    {
+      "index": 70,
+      "clip": "1089-134686-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            663
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 535,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1228
+    },
+    {
+      "index": 71,
+      "clip": "1089-134686-0011",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1245
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1117,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2926
+    },
+    {
+      "index": 72,
+      "clip": "1188-133604-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            905
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 777,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1625
+    },
+    {
+      "index": 73,
+      "clip": "1188-133604-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1797
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1925,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 5505
+    },
+    {
+      "index": 74,
+      "clip": "1221-135766-0002",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            483
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 355,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 900
+    },
+    {
+      "index": 75,
+      "clip": "1221-135766-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1244
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1116,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2879
+    },
+    {
+      "index": 76,
+      "clip": "1284-1180-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            813
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 941,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1441
+    },
+    {
+      "index": 77,
+      "clip": "1284-1180-0018",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1201
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1073,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 2954
+    },
+    {
+      "index": 78,
+      "clip": "1320-122612-0001",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            953
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 825,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 1635
+    },
+    {
+      "index": 79,
+      "clip": "1320-122612-0000",
+      "inputs": {
+        "audio_signal": {
+          "shape": [
+            1,
+            128,
+            1349
+          ],
+          "dtype": "float32"
+        },
+        "length": {
+          "shape": [
+            1
+          ],
+          "dtype": "int64"
+        }
+      },
+      "pattern_key": 1477,
+      "prior_key": true,
+      "pad_calls": 48,
+      "pad_requested_delta": 0,
+      "pad_time_us": 3415
+    }
+  ],
+  "groups": [
+    {
+      "measured": false,
+      "family": "attention",
+      "calls": 480,
+      "zero_requested_delta": 0,
+      "requested_delta_bytes": 620545536,
+      "output_payload_bytes": 620545536,
+      "time_us": 41734
+    },
+    {
+      "measured": false,
+      "family": "convolution",
+      "calls": 480,
+      "zero_requested_delta": 0,
+      "requested_delta_bytes": 278888448,
+      "output_payload_bytes": 278888448,
+      "time_us": 16728
+    },
+    {
+      "measured": true,
+      "family": "attention",
+      "calls": 1440,
+      "zero_requested_delta": 1440,
+      "requested_delta_bytes": 0,
+      "output_payload_bytes": 1861636608,
+      "time_us": 104642
+    },
+    {
+      "measured": true,
+      "family": "convolution",
+      "calls": 1440,
+      "zero_requested_delta": 1440,
+      "requested_delta_bytes": 0,
+      "output_payload_bytes": 836665344,
+      "time_us": 45883
+    }
+  ],
+  "unique_feed_shapes": 20,
+  "unique_pattern_keys": 20
+}
