@@ -862,13 +862,13 @@ public partial class CPUExecutionProvider
         switch (data.ElementType)
         {
             case TensorElementType.Float:
-                return Success(op, PadCore((Tensor<float>)data, padVals, outDims, fill is null ? 0f : ((Tensor<float>)fill).ToArray()[0], reflect));
+                return Success(op, PadDispatch((Tensor<float>)data, padVals, outDims, fill is null ? 0f : ((Tensor<float>)fill).ToArray()[0], reflect));
             case TensorElementType.Double:
-                return Success(op, PadCore((Tensor<double>)data, padVals, outDims, fill is null ? 0.0 : ((Tensor<double>)fill).ToArray()[0], reflect));
+                return Success(op, PadDispatch((Tensor<double>)data, padVals, outDims, fill is null ? 0.0 : ((Tensor<double>)fill).ToArray()[0], reflect));
             case TensorElementType.Int32:
-                return Success(op, PadCore((Tensor<int>)data, padVals, outDims, fill is null ? 0 : ((Tensor<int>)fill).ToArray()[0], reflect));
+                return Success(op, PadDispatch((Tensor<int>)data, padVals, outDims, fill is null ? 0 : ((Tensor<int>)fill).ToArray()[0], reflect));
             case TensorElementType.Int64:
-                return Success(op, PadCore((Tensor<long>)data, padVals, outDims, fill is null ? 0L : ((Tensor<long>)fill).ToArray()[0], reflect));
+                return Success(op, PadDispatch((Tensor<long>)data, padVals, outDims, fill is null ? 0L : ((Tensor<long>)fill).ToArray()[0], reflect));
             default: return InputTypeNotSupported(op, nameof(data), data);
         }
     }
