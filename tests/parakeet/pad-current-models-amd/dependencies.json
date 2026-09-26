@@ -1,0 +1,10 @@
+{
+  "tests/parakeet/pad-current-build-amd/checks.py": {
+    "bytes": 4969,
+    "sha256": "ad48679b8c6f7354d0b8e2830139fe000384368b029dcf65c52da2d1c43dadfb"
+  },
+  "tests/parakeet/pad-current-build-amd/helper-reference.json": {
+    "bytes": 11091,
+    "sha256": "9ffe836cc198521f9d2353c4a855f106e0f361473ad1a6b0389ef3f3612d136b"
+  }
+}
