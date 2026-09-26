@@ -1,0 +1,3572 @@
+{
+  "closure": {
+    "bytes": 120011,
+    "sha256": "2b40b54d8e94de7326ceec5228ad1529c7513964211e8b5dfbb2c921cd798151"
+  },
+  "passed": true,
+  "identities": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 825344,
+        "sha256": "f3992f40d889a932cd0d15e0323564db801a308f4b24d1848731af30ba3c19f6"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a8e0b583d6cd4f7e01315fd6cef146721cdf2b8ecb5a8d623a43602658bc42b5"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 825856,
+        "sha256": "a74acb17524f23be13e81ade871b2b2ffea2afde5bcdd12e339b75e0197edf10"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "be954dc40376400336167f3153fcf5e388bf6bb0df14af595420a0aa30471b5f"
+      }
+    }
+  },
+  "consumers": {
+    "AudioBenchmark": {
+      "bytes": 40448,
+      "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+    }
+  },
+  "prerequisites": {
+    "passed": true,
+    "retained": {
+      "baseline": {
+        "closed": {
+          "bytes": 86078,
+          "sha256": "2e75c249ca3f76fc90c0179e2244cd677e829cf14da18029ec73f0a2ed03abf3"
+        },
+        "analysis": {
+          "bytes": 58265,
+          "sha256": "ab4abf35a98273317b76d0758989efcb3aed764ced9dcee4f70973f70aca7083"
+        }
+      },
+      "models": {
+        "closed": {
+          "bytes": 890503,
+          "sha256": "194eb9a48b64df22d19b51adfc3ebe3accc56004544620123c128c2a76f066bf"
+        },
+        "analysis": {
+          "bytes": 466702,
+          "sha256": "ec2dc6c37ce3b5883a58dea76c3693f6f73d888c4efbe80f91f1da67ae357290"
+        }
+      },
+      "contracts": {
+        "closed": {
+          "bytes": 205822,
+          "sha256": "1835c79eda505c056cf796702ca734b6e43c65e066b3e54bb566ac25885c4018"
+        },
+        "analysis": {
+          "bytes": 3299,
+          "sha256": "b0637d0108113c709627eeddee728f628cf90805733ec449b27cee998f909f09"
+        }
+      },
+      "qualified": {
+        "closed": {
+          "bytes": 216179,
+          "sha256": "c77ef606c76508144c5656bdbe48aeac8948ce28396c8bee645587d31609c475"
+        },
+        "analysis": {
+          "bytes": 7072,
+          "sha256": "061d227320963d5c5684a5d9e07cf4c459ce304325702c7eb931f08b5131935d"
+        }
+      },
+      "screen": {
+        "closed": {
+          "bytes": 16200,
+          "sha256": "5b8d7df749d600238dfc6e1c9ead50486b0027754656c57d0c553573ada1b17d"
+        },
+        "analysis": {
+          "bytes": 14693,
+          "sha256": "a9978791e8c98a3f9f77c7881afbe4a9a8ec0cbb840456a1ce71925972b9129b"
+        }
+      },
+      "memory": {
+        "closed": {
+          "bytes": 17649,
+          "sha256": "51e714628218f2908ac46d0e8336b29003d1f7a266e424bd37ec946fa1c7589b"
+        },
+        "analysis": {
+          "bytes": 2989218,
+          "sha256": "19e89762deead8bf13fcebbbbfd353790ed7a1018414dcff31b7aeb11f1362fe"
+        }
+      }
+    }
+  },
+  "results": {
+    "timing-00-current": {
+      "passed": true,
+      "requests": 80,
+      "complete_retained_results_exact": true,
+      "result": {
+        "bytes": 258230,
+        "sha256": "79639f6bf9511a245b09c0dc6a8df5d76e3eba977bb062935a3f7b4352a9c3ce"
+      }
+    },
+    "timing-01-candidate": {
+      "passed": true,
+      "requests": 80,
+      "complete_retained_results_exact": true,
+      "result": {
+        "bytes": 258250,
+        "sha256": "769993311b955dacd70227e744a4f9463eab33048c43e13163e96f6037f331c7"
+      }
+    },
+    "timing-02-ort": {
+      "passed": true,
+      "requests": 80,
+      "complete_retained_results_exact": false,
+      "result": {
+        "bytes": 248049,
+        "sha256": "5554a713bbbf073ba8e437529b24a3e9793433fb5e754c3d7b0fd8e84ed3f290"
+      }
+    },
+    "timing-03-ort": {
+      "passed": true,
+      "requests": 80,
+      "complete_retained_results_exact": false,
+      "result": {
+        "bytes": 248045,
+        "sha256": "5029d19ba8ff923cece975a432a23dd56337481ab29a86e479c4c3cef54df4cf"
+      }
+    },
+    "timing-04-candidate": {
+      "passed": true,
+      "requests": 80,
+      "complete_retained_results_exact": true,
+      "result": {
+        "bytes": 258249,
+        "sha256": "563d672f4d3e2d038f996748bfd1bddcb1b30fb567ed355b12caf4f99937d39c"
+      }
+    },
+    "timing-05-current": {
+      "passed": true,
+      "requests": 80,
+      "complete_retained_results_exact": true,
+      "result": {
+        "bytes": 258230,
+        "sha256": "b14e2a1eee3ca28e531a8b448777d12e05cb48fe64ce231d1446b95fa45f3adb"
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "timing-00-current",
+      "samples": 436,
+      "peak_rss": 9877069824,
+      "seconds": 220.52649785403628,
+      "accounting": {
+        "valid": true,
+        "foreign_cpu_fraction": 0.00208604540795067,
+        "foreign_cpu_seconds": 1.8399999999999808,
+        "wall_seconds": 220.51293718093075,
+        "logical_cpus": 4,
+        "exited_foreign_processes": 2,
+        "vanished_during_snapshots": 0,
+        "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+      }
+    },
+    {
+      "name": "timing-01-candidate",
+      "samples": 409,
+      "peak_rss": 8031305728,
+      "seconds": 207.12416855199262,
+      "accounting": {
+        "valid": true,
+        "foreign_cpu_fraction": 0.000977737959768815,
+        "foreign_cpu_seconds": 0.8099999999999876,
+        "wall_seconds": 207.11070688907057,
+        "logical_cpus": 4,
+        "exited_foreign_processes": 5,
+        "vanished_during_snapshots": 0,
+        "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+      }
+    },
+    {
+      "name": "timing-02-ort",
+      "samples": 318,
+      "peak_rss": 2907377664,
+      "seconds": 161.26512495800853,
+      "accounting": {
+        "valid": true,
+        "foreign_cpu_fraction": 0.0007131705085786107,
+        "foreign_cpu_seconds": 0.4599999999999794,
+        "wall_seconds": 161.25176043692045,
+        "logical_cpus": 4,
+        "exited_foreign_processes": 2,
+        "vanished_during_snapshots": 0,
+        "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+      }
+    },
+    {
+      "name": "timing-03-ort",
+      "samples": 318,
+      "peak_rss": 2904928256,
+      "seconds": 161.48197455704212,
+      "accounting": {
+        "valid": true,
+        "foreign_cpu_fraction": 0.0007741450202239689,
+        "foreign_cpu_seconds": 0.5000000000000028,
+        "wall_seconds": 161.46845453302376,
+        "logical_cpus": 4,
+        "exited_foreign_processes": 8,
+        "vanished_during_snapshots": 0,
+        "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+      }
+    },
+    {
+      "name": "timing-04-candidate",
+      "samples": 408,
+      "peak_rss": 8870703104,
+      "seconds": 207.52405793697108,
+      "accounting": {
+        "valid": true,
+        "foreign_cpu_fraction": 0.0013734247694531902,
+        "foreign_cpu_seconds": 1.1400000000000219,
+        "wall_seconds": 207.51045586098917,
+        "logical_cpus": 4,
+        "exited_foreign_processes": 1,
+        "vanished_during_snapshots": 0,
+        "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+      }
+    },
+    {
+      "name": "timing-05-current",
+      "samples": 432,
+      "peak_rss": 9919242240,
+      "seconds": 220.04012164997403,
+      "accounting": {
+        "valid": true,
+        "foreign_cpu_fraction": 0.0013407487939819174,
+        "foreign_cpu_seconds": 1.1800000000000102,
+        "wall_seconds": 220.02630270796362,
+        "logical_cpus": 4,
+        "exited_foreign_processes": 5,
+        "vanished_during_snapshots": 0,
+        "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+      }
+    }
+  ],
+  "table": [
+    {
+      "name": "121-121726-0000",
+      "audio_seconds": 8.46,
+      "is_corpus": false,
+      "current": {
+        "seconds": 2.122803055,
+        "exact_mean": {
+          "numerator": 424560611,
+          "denominator": 200000000
+        },
+        "rtf": 0.25092234692671395,
+        "minimum": 2.044672592,
+        "maximum": 2.172493575,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.154707971,
+              2.066973721,
+              2.162865006
+            ],
+            "mean": 2.1281822326666666,
+            "exact_mean": {
+              "numerator": 3192273349,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              2.172493575,
+              2.135105465,
+              2.044672592
+            ],
+            "mean": 2.117423877333333,
+            "exact_mean": {
+              "numerator": 397016977,
+              "denominator": 187500000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.0031912298333334,
+        "exact_mean": {
+          "numerator": 12019147379,
+          "denominator": 6000000000
+        },
+        "rtf": 0.23678383331363279,
+        "minimum": 1.956031808,
+        "maximum": 2.076380564,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              1.964749581,
+              2.076380564,
+              2.023303932
+            ],
+            "mean": 2.0214780256666667,
+            "exact_mean": {
+              "numerator": 6064434077,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              1.977507848,
+              2.021173646,
+              1.956031808
+            ],
+            "mean": 1.984904434,
+            "exact_mean": {
+              "numerator": 992452217,
+              "denominator": 500000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.5376363028333333,
+        "exact_mean": {
+          "numerator": 9225817817,
+          "denominator": 6000000000
+        },
+        "rtf": 0.18175370009850275,
+        "minimum": 1.536427813,
+        "maximum": 1.538890223,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.537692334,
+              1.537537191,
+              1.536427813
+            ],
+            "mean": 1.5372191126666668,
+            "exact_mean": {
+              "numerator": 2305828669,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.538890223,
+              1.53711496,
+              1.538155296
+            ],
+            "mean": 1.538053493,
+            "exact_mean": {
+              "numerator": 1538053493,
+              "denominator": 1000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3805625238480688,
+        "candidate": 1.3027731110030005
+      }
+    },
+    {
+      "name": "121-123852-0000",
+      "audio_seconds": 17.695,
+      "is_corpus": false,
+      "current": {
+        "seconds": 4.277694238333333,
+        "exact_mean": {
+          "numerator": 2566616543,
+          "denominator": 600000000
+        },
+        "rtf": 0.2417459303946501,
+        "minimum": 4.184234071,
+        "maximum": 4.4227847,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              4.299580915,
+              4.186683938,
+              4.310264801
+            ],
+            "mean": 4.265509884666667,
+            "exact_mean": {
+              "numerator": 6398264827,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              4.262617005,
+              4.184234071,
+              4.4227847
+            ],
+            "mean": 4.289878592,
+            "exact_mean": {
+              "numerator": 67029353,
+              "denominator": 15625000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 3.8963847478333333,
+        "exact_mean": {
+          "numerator": 23378308487,
+          "denominator": 6000000000
+        },
+        "rtf": 0.22019693403974758,
+        "minimum": 3.683754129,
+        "maximum": 4.121539291,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.836530312,
+              3.683754129,
+              3.999007869
+            ],
+            "mean": 3.839764103333333,
+            "exact_mean": {
+              "numerator": 1151929231,
+              "denominator": 300000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.845476934,
+              3.891999952,
+              4.121539291
+            ],
+            "mean": 3.9530053923333335,
+            "exact_mean": {
+              "numerator": 11859016177,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 3.2355999245,
+        "exact_mean": {
+          "numerator": 6471199849,
+          "denominator": 2000000000
+        },
+        "rtf": 0.18285390926815484,
+        "minimum": 3.228782979,
+        "maximum": 3.241786359,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              3.231212438,
+              3.241045544,
+              3.230327717
+            ],
+            "mean": 3.234195233,
+            "exact_mean": {
+              "numerator": 3234195233,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              3.24044451,
+              3.241786359,
+              3.228782979
+            ],
+            "mean": 3.237004616,
+            "exact_mean": {
+              "numerator": 404625577,
+              "denominator": 125000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3220714359468806,
+        "candidate": 1.2042232781407438
+      }
+    },
+    {
+      "name": "237-126133-0002",
+      "audio_seconds": 8.92,
+      "is_corpus": false,
+      "current": {
+        "seconds": 2.2864730761666667,
+        "exact_mean": {
+          "numerator": 13718838457,
+          "denominator": 6000000000
+        },
+        "rtf": 0.25633106235052316,
+        "minimum": 2.227616508,
+        "maximum": 2.325693626,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.324424887,
+              2.273305338,
+              2.282763213
+            ],
+            "mean": 2.2934978126666667,
+            "exact_mean": {
+              "numerator": 3440246719,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              2.325693626,
+              2.227616508,
+              2.285034885
+            ],
+            "mean": 2.2794483396666667,
+            "exact_mean": {
+              "numerator": 6838345019,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.139248004666667,
+        "exact_mean": {
+          "numerator": 3208872007,
+          "denominator": 1500000000
+        },
+        "rtf": 0.23982600949177876,
+        "minimum": 2.051853138,
+        "maximum": 2.198901858,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              2.148694729,
+              2.120971511,
+              2.051853138
+            ],
+            "mean": 2.107173126,
+            "exact_mean": {
+              "numerator": 1053586563,
+              "denominator": 500000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              2.156192075,
+              2.198901858,
+              2.158874717
+            ],
+            "mean": 2.171322883333333,
+            "exact_mean": {
+              "numerator": 130279373,
+              "denominator": 60000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.6290880316666667,
+        "exact_mean": {
+          "numerator": 977452819,
+          "denominator": 600000000
+        },
+        "rtf": 0.18263318740657697,
+        "minimum": 1.627554671,
+        "maximum": 1.630456519,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.6294535,
+              1.62832508,
+              1.627554671
+            ],
+            "mean": 1.628444417,
+            "exact_mean": {
+              "numerator": 1628444417,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.629258671,
+              1.629479749,
+              1.630456519
+            ],
+            "mean": 1.6297316463333333,
+            "exact_mean": {
+              "numerator": 4889194939,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.4035294788995847,
+        "candidate": 1.3131567865476685
+      }
+    },
+    {
+      "name": "237-126133-0000",
+      "audio_seconds": 13.29,
+      "is_corpus": false,
+      "current": {
+        "seconds": 3.4441872063333334,
+        "exact_mean": {
+          "numerator": 10332561619,
+          "denominator": 3000000000
+        },
+        "rtf": 0.2591562984449461,
+        "minimum": 3.281705688,
+        "maximum": 3.566936134,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              3.566936134,
+              3.343409332,
+              3.476141528
+            ],
+            "mean": 3.4621623313333334,
+            "exact_mean": {
+              "numerator": 5193243497,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              3.543339839,
+              3.281705688,
+              3.453590717
+            ],
+            "mean": 3.4262120813333334,
+            "exact_mean": {
+              "numerator": 2569659061,
+              "denominator": 750000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 3.1797771311666665,
+        "exact_mean": {
+          "numerator": 19078662787,
+          "denominator": 6000000000
+        },
+        "rtf": 0.23926088270629545,
+        "minimum": 3.080133622,
+        "maximum": 3.231226984,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.172902674,
+              3.197546883,
+              3.188788146
+            ],
+            "mean": 3.186412567666667,
+            "exact_mean": {
+              "numerator": 9559237703,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.208064478,
+              3.080133622,
+              3.231226984
+            ],
+            "mean": 3.1731416946666666,
+            "exact_mean": {
+              "numerator": 2379856271,
+              "denominator": 750000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.4590319535,
+        "exact_mean": {
+          "numerator": 4918063907,
+          "denominator": 2000000000
+        },
+        "rtf": 0.185028739917231,
+        "minimum": 2.455011911,
+        "maximum": 2.462020238,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.45680909,
+              2.457452768,
+              2.455011911
+            ],
+            "mean": 2.4564245896666668,
+            "exact_mean": {
+              "numerator": 7369273769,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.461612023,
+              2.462020238,
+              2.461285691
+            ],
+            "mean": 2.4616393173333333,
+            "exact_mean": {
+              "numerator": 115389343,
+              "denominator": 46875000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.4006272677470246,
+        "candidate": 1.2931011842448052
+      }
+    },
+    {
+      "name": "260-123286-0000",
+      "audio_seconds": 7.04,
+      "is_corpus": false,
+      "current": {
+        "seconds": 1.8924669725,
+        "exact_mean": {
+          "numerator": 756986789,
+          "denominator": 400000000
+        },
+        "rtf": 0.26881633132102273,
+        "minimum": 1.863940542,
+        "maximum": 1.952363842,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              1.863940542,
+              1.886806071,
+              1.952363842
+            ],
+            "mean": 1.9010368183333333,
+            "exact_mean": {
+              "numerator": 1140622091,
+              "denominator": 600000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              1.8683567,
+              1.891263496,
+              1.892071184
+            ],
+            "mean": 1.8838971266666666,
+            "exact_mean": {
+              "numerator": 282584569,
+              "denominator": 150000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 1.7943309013333333,
+        "exact_mean": {
+          "numerator": 84109261,
+          "denominator": 46875000
+        },
+        "rtf": 0.2548765484848485,
+        "minimum": 1.770494994,
+        "maximum": 1.825864853,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              1.794547889,
+              1.777651442,
+              1.770494994
+            ],
+            "mean": 1.7808981083333333,
+            "exact_mean": {
+              "numerator": 213707773,
+              "denominator": 120000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              1.788142163,
+              1.825864853,
+              1.809284067
+            ],
+            "mean": 1.8077636943333333,
+            "exact_mean": {
+              "numerator": 5423291083,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.2942320815,
+        "exact_mean": {
+          "numerator": 2588464163,
+          "denominator": 2000000000
+        },
+        "rtf": 0.18383978430397727,
+        "minimum": 1.292719928,
+        "maximum": 1.299386736,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.299386736,
+              1.293650216,
+              1.292719928
+            ],
+            "mean": 1.2952522933333332,
+            "exact_mean": {
+              "numerator": 48571961,
+              "denominator": 37500000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.29365351,
+              1.293133872,
+              1.292848227
+            ],
+            "mean": 1.2932118696666666,
+            "exact_mean": {
+              "numerator": 3879635609,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.4622315422027343,
+        "candidate": 1.3864058285850283
+      }
+    },
+    {
+      "name": "260-123288-0005",
+      "audio_seconds": 12.55,
+      "is_corpus": false,
+      "current": {
+        "seconds": 3.2655047398333332,
+        "exact_mean": {
+          "numerator": 19593028439,
+          "denominator": 6000000000
+        },
+        "rtf": 0.2601995808632138,
+        "minimum": 3.175591391,
+        "maximum": 3.333331978,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              3.256312047,
+              3.228656909,
+              3.333331978
+            ],
+            "mean": 3.272766978,
+            "exact_mean": {
+              "numerator": 1636383489,
+              "denominator": 500000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              3.276591552,
+              3.322544562,
+              3.175591391
+            ],
+            "mean": 3.2582425016666665,
+            "exact_mean": {
+              "numerator": 1954945501,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 3.0641248956666667,
+        "exact_mean": {
+          "numerator": 9192374687,
+          "denominator": 3000000000
+        },
+        "rtf": 0.24415337814077026,
+        "minimum": 2.992680774,
+        "maximum": 3.13200163,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.13200163,
+              3.077990464,
+              3.027749955
+            ],
+            "mean": 3.079247349666667,
+            "exact_mean": {
+              "numerator": 9237742049,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.116323031,
+              3.03800352,
+              2.992680774
+            ],
+            "mean": 3.0490024416666666,
+            "exact_mean": {
+              "numerator": 365880293,
+              "denominator": 120000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.3039225471666667,
+        "exact_mean": {
+          "numerator": 13823535283,
+          "denominator": 6000000000
+        },
+        "rtf": 0.18357948583001327,
+        "minimum": 2.299504936,
+        "maximum": 2.311785818,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.311785818,
+              2.302277311,
+              2.300814811
+            ],
+            "mean": 2.3049593133333333,
+            "exact_mean": {
+              "numerator": 345743897,
+              "denominator": 150000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.301675833,
+              2.299504936,
+              2.307476574
+            ],
+            "mean": 2.302885781,
+            "exact_mean": {
+              "numerator": 2302885781,
+              "denominator": 1000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.4173674127410263,
+        "candidate": 1.329960028141956
+      }
+    },
+    {
+      "name": "672-122797-0000",
+      "audio_seconds": 4.07,
+      "is_corpus": false,
+      "current": {
+        "seconds": 1.0412347648333333,
+        "exact_mean": {
+          "numerator": 6247408589,
+          "denominator": 6000000000
+        },
+        "rtf": 0.25583163755118754,
+        "minimum": 0.996342966,
+        "maximum": 1.126351345,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              1.041727612,
+              1.011954096,
+              1.027899473
+            ],
+            "mean": 1.027193727,
+            "exact_mean": {
+              "numerator": 1027193727,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              1.043133097,
+              0.996342966,
+              1.126351345
+            ],
+            "mean": 1.0552758026666667,
+            "exact_mean": {
+              "numerator": 197864213,
+              "denominator": 187500000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 0.9974784175,
+        "exact_mean": {
+          "numerator": 398991367,
+          "denominator": 400000000
+        },
+        "rtf": 0.24508069226044227,
+        "minimum": 0.965711121,
+        "maximum": 1.012612272,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              1.011485731,
+              1.012612272,
+              1.005626522
+            ],
+            "mean": 1.009908175,
+            "exact_mean": {
+              "numerator": 40396327,
+              "denominator": 40000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              1.010197608,
+              0.965711121,
+              0.979237251
+            ],
+            "mean": 0.98504866,
+            "exact_mean": {
+              "numerator": 49252433,
+              "denominator": 50000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 0.7592892903333334,
+        "exact_mean": {
+          "numerator": 2277867871,
+          "denominator": 3000000000
+        },
+        "rtf": 0.1865575651924652,
+        "minimum": 0.758847469,
+        "maximum": 0.759685008,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              0.759685008,
+              0.759523405,
+              0.759112496
+            ],
+            "mean": 0.759440303,
+            "exact_mean": {
+              "numerator": 759440303,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              0.75898274,
+              0.759584624,
+              0.758847469
+            ],
+            "mean": 0.7591382776666666,
+            "exact_mean": {
+              "numerator": 2277414833,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3713281328862468,
+        "candidate": 1.3137001011328633
+      }
+    },
+    {
+      "name": "672-122797-0001",
+      "audio_seconds": 15.13,
+      "is_corpus": false,
+      "current": {
+        "seconds": 3.7315455793333334,
+        "exact_mean": {
+          "numerator": 5597318369,
+          "denominator": 1500000000
+        },
+        "rtf": 0.24663222599691562,
+        "minimum": 3.667932964,
+        "maximum": 3.8277173,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              3.764817867,
+              3.8277173,
+              3.701469415
+            ],
+            "mean": 3.764668194,
+            "exact_mean": {
+              "numerator": 1882334097,
+              "denominator": 500000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              3.709359074,
+              3.717976856,
+              3.667932964
+            ],
+            "mean": 3.698422964666667,
+            "exact_mean": {
+              "numerator": 5547634447,
+              "denominator": 1500000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 3.5500250835,
+        "exact_mean": {
+          "numerator": 7100050167,
+          "denominator": 2000000000
+        },
+        "rtf": 0.2346348369795109,
+        "minimum": 3.415288982,
+        "maximum": 3.585926674,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.575871902,
+              3.58180034,
+              3.585926674
+            ],
+            "mean": 3.5811996386666665,
+            "exact_mean": {
+              "numerator": 2685899729,
+              "denominator": 750000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.565392232,
+              3.575870371,
+              3.415288982
+            ],
+            "mean": 3.518850528333333,
+            "exact_mean": {
+              "numerator": 2111310317,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.75069184,
+        "exact_mean": {
+          "numerator": 1074489,
+          "denominator": 390625
+        },
+        "rtf": 0.18180382286847324,
+        "minimum": 2.746368854,
+        "maximum": 2.758906054,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.758906054,
+              2.74668603,
+              2.746368854
+            ],
+            "mean": 2.750653646,
+            "exact_mean": {
+              "numerator": 1375326823,
+              "denominator": 500000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.750766945,
+              2.751299003,
+              2.750124154
+            ],
+            "mean": 2.750730034,
+            "exact_mean": {
+              "numerator": 1375365017,
+              "denominator": 500000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3565843781807756,
+        "candidate": 1.290593527008827
+      }
+    },
+    {
+      "name": "908-157963-0005",
+      "audio_seconds": 7.035,
+      "is_corpus": false,
+      "current": {
+        "seconds": 1.7629205726666666,
+        "exact_mean": {
+          "numerator": 2644380859,
+          "denominator": 1500000000
+        },
+        "rtf": 0.2505928319355603,
+        "minimum": 1.714319239,
+        "maximum": 1.804816655,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              1.750751433,
+              1.804816655,
+              1.728625899
+            ],
+            "mean": 1.7613979956666668,
+            "exact_mean": {
+              "numerator": 5284193987,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              1.775379599,
+              1.803630611,
+              1.714319239
+            ],
+            "mean": 1.7644431496666666,
+            "exact_mean": {
+              "numerator": 5293329449,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 1.7011994221666666,
+        "exact_mean": {
+          "numerator": 10207196533,
+          "denominator": 6000000000
+        },
+        "rtf": 0.24181939192134566,
+        "minimum": 1.645889031,
+        "maximum": 1.719342718,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              1.705445519,
+              1.705879104,
+              1.719342718
+            ],
+            "mean": 1.710222447,
+            "exact_mean": {
+              "numerator": 1710222447,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              1.712428772,
+              1.718211389,
+              1.645889031
+            ],
+            "mean": 1.6921763973333332,
+            "exact_mean": {
+              "numerator": 634566149,
+              "denominator": 375000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.2758886726666667,
+        "exact_mean": {
+          "numerator": 1913833009,
+          "denominator": 1500000000
+        },
+        "rtf": 0.18136299540393272,
+        "minimum": 1.274256847,
+        "maximum": 1.281229464,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.281229464,
+              1.27530252,
+              1.274256847
+            ],
+            "mean": 1.2769296103333334,
+            "exact_mean": {
+              "numerator": 3830788831,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.275296087,
+              1.274260821,
+              1.274986297
+            ],
+            "mean": 1.274847735,
+            "exact_mean": {
+              "numerator": 254969547,
+              "denominator": 200000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3817197459572086,
+        "candidate": 1.3333447177731272
+      }
+    },
+    {
+      "name": "908-157963-0000",
+      "audio_seconds": 12.62,
+      "is_corpus": false,
+      "current": {
+        "seconds": 3.197805097,
+        "exact_mean": {
+          "numerator": 3197805097,
+          "denominator": 1000000000
+        },
+        "rtf": 0.2533918460380349,
+        "minimum": 3.094202193,
+        "maximum": 3.251607782,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              3.225942642,
+              3.251607782,
+              3.094202193
+            ],
+            "mean": 3.1905842056666667,
+            "exact_mean": {
+              "numerator": 9571752617,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              3.2104364,
+              3.211037899,
+              3.193603666
+            ],
+            "mean": 3.2050259883333334,
+            "exact_mean": {
+              "numerator": 1923015593,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.9807208335,
+        "exact_mean": {
+          "numerator": 5961441667,
+          "denominator": 2000000000
+        },
+        "rtf": 0.23619024037242473,
+        "minimum": 2.869412711,
+        "maximum": 3.042146464,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.018319971,
+              2.930411472,
+              2.869412711
+            ],
+            "mean": 2.9393813846666665,
+            "exact_mean": {
+              "numerator": 4409072077,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.042146464,
+              3.025172604,
+              2.998861779
+            ],
+            "mean": 3.0220602823333333,
+            "exact_mean": {
+              "numerator": 9066180847,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.2952087298333335,
+        "exact_mean": {
+          "numerator": 13771252379,
+          "denominator": 6000000000
+        },
+        "rtf": 0.18187073928948758,
+        "minimum": 2.293081873,
+        "maximum": 2.296955172,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.296955172,
+              2.295208682,
+              2.296213488
+            ],
+            "mean": 2.296125780666667,
+            "exact_mean": {
+              "numerator": 3444188671,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.295408943,
+              2.293081873,
+              2.294384221
+            ],
+            "mean": 2.294291679,
+            "exact_mean": {
+              "numerator": 2294291679,
+              "denominator": 1000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3932524111792695,
+        "candidate": 1.298670920320369
+      }
+    },
+    {
+      "name": "1089-134686-0002",
+      "audio_seconds": 6.625,
+      "is_corpus": false,
+      "current": {
+        "seconds": 1.8083427386666666,
+        "exact_mean": {
+          "numerator": 678128527,
+          "denominator": 375000000
+        },
+        "rtf": 0.27295739451572326,
+        "minimum": 1.742819835,
+        "maximum": 1.829738434,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              1.828299786,
+              1.81574949,
+              1.829738434
+            ],
+            "mean": 1.8245959033333334,
+            "exact_mean": {
+              "numerator": 547378771,
+              "denominator": 300000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              1.821989222,
+              1.811459665,
+              1.742819835
+            ],
+            "mean": 1.792089574,
+            "exact_mean": {
+              "numerator": 896044787,
+              "denominator": 500000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 1.693809541,
+        "exact_mean": {
+          "numerator": 1693809541,
+          "denominator": 1000000000
+        },
+        "rtf": 0.2556693646792453,
+        "minimum": 1.669843183,
+        "maximum": 1.753158327,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              1.690579064,
+              1.669843183,
+              1.682585288
+            ],
+            "mean": 1.6810025116666667,
+            "exact_mean": {
+              "numerator": 1008601507,
+              "denominator": 600000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              1.690226033,
+              1.753158327,
+              1.676465351
+            ],
+            "mean": 1.7066165703333334,
+            "exact_mean": {
+              "numerator": 5119849711,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.222302764,
+        "exact_mean": {
+          "numerator": 305575691,
+          "denominator": 250000000
+        },
+        "rtf": 0.18449853041509434,
+        "minimum": 1.221601868,
+        "maximum": 1.223061861,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.223061861,
+              1.222392277,
+              1.222001801
+            ],
+            "mean": 1.222485313,
+            "exact_mean": {
+              "numerator": 1222485313,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.222608961,
+              1.221601868,
+              1.222149816
+            ],
+            "mean": 1.222120215,
+            "exact_mean": {
+              "numerator": 244424043,
+              "denominator": 200000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.4794556569182942,
+        "candidate": 1.3857528518196167
+      }
+    },
+    {
+      "name": "1089-134686-0011",
+      "audio_seconds": 12.445,
+      "is_corpus": false,
+      "current": {
+        "seconds": 3.0034830566666666,
+        "exact_mean": {
+          "numerator": 901044917,
+          "denominator": 300000000
+        },
+        "rtf": 0.24134054292219098,
+        "minimum": 2.867645894,
+        "maximum": 3.19562997,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              3.19562997,
+              2.867645894,
+              2.995588726
+            ],
+            "mean": 3.01962153,
+            "exact_mean": {
+              "numerator": 301962153,
+              "denominator": 100000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              3.183171684,
+              2.8851098,
+              2.893752266
+            ],
+            "mean": 2.9873445833333334,
+            "exact_mean": {
+              "numerator": 7169627,
+              "denominator": 2400000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.868951915333333,
+        "exact_mean": {
+          "numerator": 4303427873,
+          "denominator": 1500000000
+        },
+        "rtf": 0.2305304873710995,
+        "minimum": 2.746934124,
+        "maximum": 3.038096633,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.038096633,
+              2.746934124,
+              2.831945636
+            ],
+            "mean": 2.872325464333333,
+            "exact_mean": {
+              "numerator": 8616976393,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.027032891,
+              2.783015799,
+              2.786686409
+            ],
+            "mean": 2.865578366333333,
+            "exact_mean": {
+              "numerator": 8596735099,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.2805797203333333,
+        "exact_mean": {
+          "numerator": 6841739161,
+          "denominator": 3000000000
+        },
+        "rtf": 0.18325268946029194,
+        "minimum": 2.278898863,
+        "maximum": 2.282876962,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.282876962,
+              2.282711598,
+              2.280591297
+            ],
+            "mean": 2.2820599523333334,
+            "exact_mean": {
+              "numerator": 6846179857,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.279424272,
+              2.27897533,
+              2.278898863
+            ],
+            "mean": 2.2790994883333333,
+            "exact_mean": {
+              "numerator": 1367459693,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3169822698535933,
+        "candidate": 1.2579923822676116
+      }
+    },
+    {
+      "name": "1188-133604-0001",
+      "audio_seconds": 9.04,
+      "is_corpus": false,
+      "current": {
+        "seconds": 2.1705186595,
+        "exact_mean": {
+          "numerator": 4341037319,
+          "denominator": 2000000000
+        },
+        "rtf": 0.24010162162610618,
+        "minimum": 2.104698758,
+        "maximum": 2.205249052,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.19997166,
+              2.166134862,
+              2.104698758
+            ],
+            "mean": 2.1569350933333333,
+            "exact_mean": {
+              "numerator": 40442533,
+              "denominator": 18750000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              2.205249052,
+              2.173672223,
+              2.173385402
+            ],
+            "mean": 2.1841022256666665,
+            "exact_mean": {
+              "numerator": 6552306677,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.0505666308333335,
+        "exact_mean": {
+          "numerator": 2460679957,
+          "denominator": 1200000000
+        },
+        "rtf": 0.2268325919063422,
+        "minimum": 1.961476774,
+        "maximum": 2.099276778,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              2.083255013,
+              2.051456279,
+              2.044194971
+            ],
+            "mean": 2.059635421,
+            "exact_mean": {
+              "numerator": 2059635421,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              2.099276778,
+              1.961476774,
+              2.06373997
+            ],
+            "mean": 2.0414978406666666,
+            "exact_mean": {
+              "numerator": 3062246761,
+              "denominator": 1500000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.6671645275,
+        "exact_mean": {
+          "numerator": 666865811,
+          "denominator": 400000000
+        },
+        "rtf": 0.1844208548119469,
+        "minimum": 1.665897531,
+        "maximum": 1.668280091,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.667957875,
+              1.667222736,
+              1.665897531
+            ],
+            "mean": 1.6670260473333334,
+            "exact_mean": {
+              "numerator": 2500539071,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.668280091,
+              1.66701789,
+              1.666611042
+            ],
+            "mean": 1.6673030076666666,
+            "exact_mean": {
+              "numerator": 5001909023,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3019222900302503,
+        "candidate": 1.2299725654001676
+      }
+    },
+    {
+      "name": "1188-133604-0002",
+      "audio_seconds": 17.96,
+      "is_corpus": false,
+      "current": {
+        "seconds": 4.169981090666667,
+        "exact_mean": {
+          "numerator": 1563742909,
+          "denominator": 375000000
+        },
+        "rtf": 0.2321815752041574,
+        "minimum": 4.017500563,
+        "maximum": 4.273003957,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              4.044814767,
+              4.256964304,
+              4.182262548
+            ],
+            "mean": 4.161347206333334,
+            "exact_mean": {
+              "numerator": 12484041619,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              4.017500563,
+              4.273003957,
+              4.245340405
+            ],
+            "mean": 4.178614975,
+            "exact_mean": {
+              "numerator": 167144599,
+              "denominator": 40000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 3.8461796433333335,
+        "exact_mean": {
+          "numerator": 1153853893,
+          "denominator": 300000000
+        },
+        "rtf": 0.21415254138827022,
+        "minimum": 3.706705936,
+        "maximum": 3.909739612,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.82454922,
+              3.885030317,
+              3.901099709
+            ],
+            "mean": 3.8702264153333332,
+            "exact_mean": {
+              "numerator": 5805339623,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.909739612,
+              3.706705936,
+              3.849953066
+            ],
+            "mean": 3.8221328713333333,
+            "exact_mean": {
+              "numerator": 5733199307,
+              "denominator": 1500000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 3.3330085285,
+        "exact_mean": {
+          "numerator": 6666017057,
+          "denominator": 2000000000
+        },
+        "rtf": 0.18557953944877506,
+        "minimum": 3.331814251,
+        "maximum": 3.334077205,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              3.333114968,
+              3.333650789,
+              3.331814251
+            ],
+            "mean": 3.3328600026666666,
+            "exact_mean": {
+              "numerator": 1249822501,
+              "denominator": 375000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              3.333073651,
+              3.334077205,
+              3.332320307
+            ],
+            "mean": 3.3331570543333333,
+            "exact_mean": {
+              "numerator": 9999471163,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.2511162377803278,
+        "candidate": 1.1539663371531435
+      }
+    },
+    {
+      "name": "1221-135766-0002",
+      "audio_seconds": 4.825,
+      "is_corpus": false,
+      "current": {
+        "seconds": 1.4481990095,
+        "exact_mean": {
+          "numerator": 2896398019,
+          "denominator": 2000000000
+        },
+        "rtf": 0.30014487243523313,
+        "minimum": 1.405248186,
+        "maximum": 1.507411878,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              1.419223292,
+              1.455295063,
+              1.405248186
+            ],
+            "mean": 1.426588847,
+            "exact_mean": {
+              "numerator": 1426588847,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              1.507411878,
+              1.452196416,
+              1.449819222
+            ],
+            "mean": 1.469809172,
+            "exact_mean": {
+              "numerator": 367452293,
+              "denominator": 250000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 1.3652136248333333,
+        "exact_mean": {
+          "numerator": 8191281749,
+          "denominator": 6000000000
+        },
+        "rtf": 0.28294582898100173,
+        "minimum": 1.344174789,
+        "maximum": 1.391906507,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              1.380028537,
+              1.375403088,
+              1.344174789
+            ],
+            "mean": 1.3665354713333333,
+            "exact_mean": {
+              "numerator": 2049803207,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              1.347672358,
+              1.35209647,
+              1.391906507
+            ],
+            "mean": 1.3638917783333333,
+            "exact_mean": {
+              "numerator": 818335067,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 0.9077093213333334,
+        "exact_mean": {
+          "numerator": 680781991,
+          "denominator": 750000000
+        },
+        "rtf": 0.18812628421416236,
+        "minimum": 0.907260149,
+        "maximum": 0.908070322,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              0.907321198,
+              0.907863986,
+              0.907260149
+            ],
+            "mean": 0.9074817776666667,
+            "exact_mean": {
+              "numerator": 2722445333,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              0.907755153,
+              0.90798512,
+              0.908070322
+            ],
+            "mean": 0.907936865,
+            "exact_mean": {
+              "numerator": 181587373,
+              "denominator": 200000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.5954435803002902,
+        "candidate": 1.504020717588283
+      }
+    },
+    {
+      "name": "1221-135766-0000",
+      "audio_seconds": 12.435,
+      "is_corpus": false,
+      "current": {
+        "seconds": 2.9473675986666668,
+        "exact_mean": {
+          "numerator": 2210525699,
+          "denominator": 750000000
+        },
+        "rtf": 0.2370219218871465,
+        "minimum": 2.857475324,
+        "maximum": 2.994679903,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.977750261,
+              2.994679903,
+              2.980577493
+            ],
+            "mean": 2.984335885666667,
+            "exact_mean": {
+              "numerator": 8953007657,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              2.857475324,
+              2.985657498,
+              2.888065113
+            ],
+            "mean": 2.9103993116666667,
+            "exact_mean": {
+              "numerator": 1746239587,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.804493842,
+        "exact_mean": {
+          "numerator": 1402246921,
+          "denominator": 500000000
+        },
+        "rtf": 0.22553227519099317,
+        "minimum": 2.755568227,
+        "maximum": 2.850938291,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              2.829973028,
+              2.83900513,
+              2.783230039
+            ],
+            "mean": 2.8174027323333335,
+            "exact_mean": {
+              "numerator": 8452208197,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              2.755568227,
+              2.768248337,
+              2.850938291
+            ],
+            "mean": 2.7915849516666666,
+            "exact_mean": {
+              "numerator": 1674950971,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.2874298983333334,
+        "exact_mean": {
+          "numerator": 1372457939,
+          "denominator": 600000000
+        },
+        "rtf": 0.1839509367377027,
+        "minimum": 2.28039431,
+        "maximum": 2.295532279,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.283252923,
+              2.282982181,
+              2.293241588
+            ],
+            "mean": 2.2864922306666666,
+            "exact_mean": {
+              "numerator": 1714869173,
+              "denominator": 750000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.289176109,
+              2.28039431,
+              2.295532279
+            ],
+            "mean": 2.288367566,
+            "exact_mean": {
+              "numerator": 1144183783,
+              "denominator": 500000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.2885061967644023,
+        "candidate": 1.2260458097725353
+      }
+    },
+    {
+      "name": "1284-1180-0000",
+      "audio_seconds": 8.12,
+      "is_corpus": false,
+      "current": {
+        "seconds": 1.870252758,
+        "exact_mean": {
+          "numerator": 935126379,
+          "denominator": 500000000
+        },
+        "rtf": 0.23032669433497538,
+        "minimum": 1.842559523,
+        "maximum": 1.946229753,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              1.84913022,
+              1.871104538,
+              1.946229753
+            ],
+            "mean": 1.8888215036666667,
+            "exact_mean": {
+              "numerator": 5666464511,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              1.846371638,
+              1.866120876,
+              1.842559523
+            ],
+            "mean": 1.8516840123333334,
+            "exact_mean": {
+              "numerator": 5555052037,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 1.8426270506666667,
+        "exact_mean": {
+          "numerator": 86373143,
+          "denominator": 46875000
+        },
+        "rtf": 0.22692451362889984,
+        "minimum": 1.811496018,
+        "maximum": 1.874768562,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              1.830364184,
+              1.811496018,
+              1.834157061
+            ],
+            "mean": 1.8253390876666666,
+            "exact_mean": {
+              "numerator": 5476017263,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              1.852677773,
+              1.874768562,
+              1.852298706
+            ],
+            "mean": 1.8599150136666667,
+            "exact_mean": {
+              "numerator": 5579745041,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.511042091,
+        "exact_mean": {
+          "numerator": 1511042091,
+          "denominator": 1000000000
+        },
+        "rtf": 0.1860889274630542,
+        "minimum": 1.509446207,
+        "maximum": 1.513630152,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.510710176,
+              1.510652785,
+              1.513630152
+            ],
+            "mean": 1.511664371,
+            "exact_mean": {
+              "numerator": 1511664371,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.510476452,
+              1.511336774,
+              1.509446207
+            ],
+            "mean": 1.510419811,
+            "exact_mean": {
+              "numerator": 1510419811,
+              "denominator": 1000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.2377237994490784,
+        "candidate": 1.219441246303884
+      }
+    },
+    {
+      "name": "1284-1180-0018",
+      "audio_seconds": 12.005,
+      "is_corpus": false,
+      "current": {
+        "seconds": 3.1720760371666668,
+        "exact_mean": {
+          "numerator": 19032456223,
+          "denominator": 6000000000
+        },
+        "rtf": 0.26422957410801057,
+        "minimum": 3.071254908,
+        "maximum": 3.229102722,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              3.218354748,
+              3.071254908,
+              3.213023008
+            ],
+            "mean": 3.1675442213333334,
+            "exact_mean": {
+              "numerator": 1187829083,
+              "denominator": 375000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              3.226723163,
+              3.229102722,
+              3.073997674
+            ],
+            "mean": 3.176607853,
+            "exact_mean": {
+              "numerator": 3176607853,
+              "denominator": 1000000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.9774007586666666,
+        "exact_mean": {
+          "numerator": 2233050569,
+          "denominator": 750000000
+        },
+        "rtf": 0.24801339097598224,
+        "minimum": 2.873900501,
+        "maximum": 3.00998981,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              2.987650543,
+              2.873900501,
+              3.008134671
+            ],
+            "mean": 2.956561905,
+            "exact_mean": {
+              "numerator": 591312381,
+              "denominator": 200000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.00998981,
+              2.988579809,
+              2.996149218
+            ],
+            "mean": 2.9982396123333332,
+            "exact_mean": {
+              "numerator": 8994718837,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.2293305306666666,
+        "exact_mean": {
+          "numerator": 835998949,
+          "denominator": 375000000
+        },
+        "rtf": 0.18570016915174234,
+        "minimum": 2.227186703,
+        "maximum": 2.235915532,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.228551894,
+              2.235915532,
+              2.227186703
+            ],
+            "mean": 2.230551376333333,
+            "exact_mean": {
+              "numerator": 6691654129,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.228681919,
+              2.227724915,
+              2.227922221
+            ],
+            "mean": 2.228109685,
+            "exact_mean": {
+              "numerator": 445621937,
+              "denominator": 200000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.422882786348455,
+        "candidate": 1.335558239439844
+      }
+    },
+    {
+      "name": "1320-122612-0001",
+      "audio_seconds": 9.52,
+      "is_corpus": false,
+      "current": {
+        "seconds": 2.2990393343333335,
+        "exact_mean": {
+          "numerator": 6897118003,
+          "denominator": 3000000000
+        },
+        "rtf": 0.24149572839635855,
+        "minimum": 2.192979177,
+        "maximum": 2.349659176,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.31896996,
+              2.349659176,
+              2.297901478
+            ],
+            "mean": 2.3221768713333333,
+            "exact_mean": {
+              "numerator": 3483265307,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              2.192979177,
+              2.329453578,
+              2.305272637
+            ],
+            "mean": 2.2759017973333333,
+            "exact_mean": {
+              "numerator": 426731587,
+              "denominator": 187500000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 2.1550660816666665,
+        "exact_mean": {
+          "numerator": 1293039649,
+          "denominator": 600000000
+        },
+        "rtf": 0.226372487570028,
+        "minimum": 2.132546179,
+        "maximum": 2.181570441,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              2.154342072,
+              2.132546179,
+              2.163158662
+            ],
+            "mean": 2.150015637666667,
+            "exact_mean": {
+              "numerator": 6450046913,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              2.181570441,
+              2.146186571,
+              2.152592565
+            ],
+            "mean": 2.1601165256666666,
+            "exact_mean": {
+              "numerator": 6480349577,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 1.7616655788333333,
+        "exact_mean": {
+          "numerator": 10569993473,
+          "denominator": 6000000000
+        },
+        "rtf": 0.18504890533963586,
+        "minimum": 1.759619342,
+        "maximum": 1.764042812,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              1.761296337,
+              1.759619342,
+              1.76011422
+            ],
+            "mean": 1.7603432996666666,
+            "exact_mean": {
+              "numerator": 5281029899,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              1.764042812,
+              1.762630058,
+              1.762290704
+            ],
+            "mean": 1.762987858,
+            "exact_mean": {
+              "numerator": 881493929,
+              "denominator": 500000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.305037324879718,
+        "candidate": 1.2233116816041008
+      }
+    },
+    {
+      "name": "1320-122612-0000",
+      "audio_seconds": 13.48,
+      "is_corpus": false,
+      "current": {
+        "seconds": 3.463895261,
+        "exact_mean": {
+          "numerator": 3463895261,
+          "denominator": 1000000000
+        },
+        "rtf": 0.2569655238130564,
+        "minimum": 3.397093012,
+        "maximum": 3.54709232,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              3.397093012,
+              3.436066998,
+              3.413596687
+            ],
+            "mean": 3.4155855656666665,
+            "exact_mean": {
+              "numerator": 10246756697,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              3.462433786,
+              3.54709232,
+              3.527088763
+            ],
+            "mean": 3.5122049563333335,
+            "exact_mean": {
+              "numerator": 10536614869,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 3.2499638711666665,
+        "exact_mean": {
+          "numerator": 19499783227,
+          "denominator": 6000000000
+        },
+        "rtf": 0.24109524266815036,
+        "minimum": 3.143030383,
+        "maximum": 3.323511598,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              3.251637136,
+              3.323511598,
+              3.143030383
+            ],
+            "mean": 3.239393039,
+            "exact_mean": {
+              "numerator": 3239393039,
+              "denominator": 1000000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              3.243910953,
+              3.239181969,
+              3.298511188
+            ],
+            "mean": 3.260534703333333,
+            "exact_mean": {
+              "numerator": 978160411,
+              "denominator": 300000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 2.5017575693333334,
+        "exact_mean": {
+          "numerator": 1876318177,
+          "denominator": 750000000
+        },
+        "rtf": 0.18559032413452028,
+        "minimum": 2.494164651,
+        "maximum": 2.512325407,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              2.512325407,
+              2.494164651,
+              2.497344801
+            ],
+            "mean": 2.501278286333333,
+            "exact_mean": {
+              "numerator": 7503834859,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              2.502822085,
+              2.502862133,
+              2.501026339
+            ],
+            "mean": 2.502236852333333,
+            "exact_mean": {
+              "numerator": 7506710557,
+              "denominator": 3000000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3845847029546738,
+        "candidate": 1.2990722646370227
+      }
+    },
+    {
+      "name": "complete-corpus",
+      "audio_seconds": 213.265,
+      "is_corpus": true,
+      "current": {
+        "seconds": 53.375790846166666,
+        "exact_mean": {
+          "numerator": 320254745077,
+          "denominator": 6000000000
+        },
+        "rtf": 0.25027918714353814,
+        "minimum": 53.118053523,
+        "maximum": 53.698379726,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              53.698379726,
+              53.166486278,
+              53.438792419
+            ],
+            "mean": 53.43455280766667,
+            "exact_mean": {
+              "numerator": 160303658423,
+              "denominator": 3000000000
+            }
+          },
+          {
+            "index": 5,
+            "seconds": [
+              53.508705954,
+              53.324327177,
+              53.118053523
+            ],
+            "mean": 53.31702888466667,
+            "exact_mean": {
+              "numerator": 79975543327,
+              "denominator": 1500000000
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "seconds": 50.16075362666667,
+        "exact_mean": {
+          "numerator": 1881028261,
+          "denominator": 37500000
+        },
+        "rtf": 0.2352038713650466,
+        "minimum": 49.874124598,
+        "maximum": 50.539536481,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              50.431025368,
+              49.874124598,
+              49.977217868
+            ],
+            "mean": 50.09412261133333,
+            "exact_mean": {
+              "numerator": 75141183917,
+              "denominator": 1500000000
+            }
+          },
+          {
+            "index": 4,
+            "seconds": [
+              50.539536481,
+              49.91446149,
+              50.228155955
+            ],
+            "mean": 50.227384642,
+            "exact_mean": {
+              "numerator": 25113692321,
+              "denominator": 500000000
+            }
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 39.24257990383333,
+        "exact_mean": {
+          "numerator": 235455479423,
+          "denominator": 6000000000
+        },
+        "rtf": 0.18400853353261593,
+        "minimum": 39.217891029,
+        "maximum": 39.273585215,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              39.273585215,
+              39.234184624,
+              39.217891029
+            ],
+            "mean": 39.241886956,
+            "exact_mean": {
+              "numerator": 9810471739,
+              "denominator": 250000000
+            }
+          },
+          {
+            "index": 3,
+            "seconds": [
+              39.25233099,
+              39.235872038,
+              39.241615527
+            ],
+            "mean": 39.24327285166667,
+            "exact_mean": {
+              "numerator": 23545963711,
+              "denominator": 600000000
+            }
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "current": 1.3601498927177507,
+        "candidate": 1.2782226283182472
+      }
+    }
+  ],
+  "performance": {
+    "admitted": true,
+    "controls_passed": true,
+    "controls": [
+      {
+        "name": "121-121726-0000",
+        "role": "current",
+        "process_ratio": 1.0050808699422442,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-121726-0000",
+        "role": "candidate",
+        "process_ratio": 1.018425870303974,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-121726-0000",
+        "role": "ort",
+        "process_ratio": 1.0005427855576723,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "role": "current",
+        "process_ratio": 1.0057129646846985,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "role": "candidate",
+        "process_ratio": 1.0294917307294202,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "role": "ort",
+        "process_ratio": 1.000868649786919,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "role": "current",
+        "process_ratio": 1.006163540868864,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "role": "candidate",
+        "process_ratio": 1.0304435153152829,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "role": "ort",
+        "process_ratio": 1.0007904656246756,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "current",
+        "process_ratio": 1.0104927100677346,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "candidate",
+        "process_ratio": 1.0041822503616227,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "role": "ort",
+        "process_ratio": 1.0021228934479012,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "current",
+        "process_ratio": 1.009097997668797,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "candidate",
+        "process_ratio": 1.0150854144177526,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "role": "ort",
+        "process_ratio": 1.0015777953439235,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "current",
+        "process_ratio": 1.0044577640632653,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "candidate",
+        "process_ratio": 1.0099196076679648,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "role": "ort",
+        "process_ratio": 1.0009004060689597,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "role": "current",
+        "process_ratio": 1.0273386362557748,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "role": "candidate",
+        "process_ratio": 1.0252368395689204,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "role": "ort",
+        "process_ratio": 1.0003978528579294,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "role": "current",
+        "process_ratio": 1.017911750485603,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "role": "candidate",
+        "process_ratio": 1.017718601523795,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "role": "ort",
+        "process_ratio": 1.0000277708537064,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "role": "current",
+        "process_ratio": 1.0017288279011851,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "role": "candidate",
+        "process_ratio": 1.010664402183546,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "role": "ort",
+        "process_ratio": 1.0016330384219048,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "role": "current",
+        "process_ratio": 1.0045263756527778,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "role": "candidate",
+        "process_ratio": 1.0281279925422275,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "role": "ort",
+        "process_ratio": 1.0007994195696452,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "current",
+        "process_ratio": 1.018138786032206,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "candidate",
+        "process_ratio": 1.0152373708479894,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "role": "ort",
+        "process_ratio": 1.0002987414785542,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "role": "current",
+        "process_ratio": 1.0108045609625158,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "role": "candidate",
+        "process_ratio": 1.0023545327111865,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "role": "ort",
+        "process_ratio": 1.0012989621625359,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "role": "current",
+        "process_ratio": 1.0125952479596172,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "role": "candidate",
+        "process_ratio": 1.0088844474738266,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "role": "ort",
+        "process_ratio": 1.0001661403754167,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "role": "current",
+        "process_ratio": 1.0041495621034424,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "role": "candidate",
+        "process_ratio": 1.01258290740249,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "role": "ort",
+        "process_ratio": 1.0000891281561268,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "current",
+        "process_ratio": 1.03029627288261,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "candidate",
+        "process_ratio": 1.0019383451399866,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "role": "ort",
+        "process_ratio": 1.000501483715192,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "role": "current",
+        "process_ratio": 1.0254042714013905,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "role": "candidate",
+        "process_ratio": 1.0092484309500425,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "role": "ort",
+        "process_ratio": 1.0008201800592984,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "role": "current",
+        "process_ratio": 1.0200560630679831,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "role": "candidate",
+        "process_ratio": 1.0189421933895024,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "role": "ort",
+        "process_ratio": 1.0008239828363852,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "current",
+        "process_ratio": 1.0028614065134824,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "candidate",
+        "process_ratio": 1.0140966800873845,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "role": "ort",
+        "process_ratio": 1.0010958577801494,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "role": "current",
+        "process_ratio": 1.0203326321259645,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "role": "candidate",
+        "process_ratio": 1.004698053271353,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "role": "ort",
+        "process_ratio": 1.0015022969291467,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "current",
+        "process_ratio": 1.0282877968679458,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "candidate",
+        "process_ratio": 1.006526427660615,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "role": "ort",
+        "process_ratio": 1.000383230448702,
+        "limit": 1.2,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "current",
+        "process_ratio": 1.0022042474132276,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "candidate",
+        "process_ratio": 1.0026602328520775,
+        "limit": 1.1,
+        "passed": true
+      },
+      {
+        "name": "complete-corpus",
+        "role": "ort",
+        "process_ratio": 1.0000353167437697,
+        "limit": 1.1,
+        "passed": true
+      }
+    ],
+    "gates": [
+      {
+        "name": "121-121726-0000",
+        "candidate_over_current": 0.9436538284204294,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "121-123852-0000",
+        "candidate_over_current": 0.9108609757371147,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0002",
+        "candidate_over_current": 0.93561040668503,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "237-126133-0000",
+        "candidate_over_current": 0.9232300512932465,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "260-123286-0000",
+        "candidate_over_current": 0.948143839447287,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "260-123288-0005",
+        "candidate_over_current": 0.9383311738273744,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0000",
+        "candidate_over_current": 0.95797648252713,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "672-122797-0001",
+        "candidate_over_current": 0.951355144410225,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0005",
+        "candidate_over_current": 0.9649892618777272,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "908-157963-0000",
+        "candidate_over_current": 0.9321146045756021,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0002",
+        "candidate_over_current": 0.9366639989103422,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1089-134686-0011",
+        "candidate_over_current": 0.9552082902433153,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0001",
+        "candidate_over_current": 0.9447357763354595,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1188-133604-0002",
+        "candidate_over_current": 0.9223494207064699,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0002",
+        "candidate_over_current": 0.9426975269819319,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1221-135766-0000",
+        "candidate_over_current": 0.9515249618909769,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0000",
+        "candidate_over_current": 0.9852288910067559,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1284-1180-0018",
+        "candidate_over_current": 0.9386284325410162,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0001",
+        "candidate_over_current": 0.9373767771100726,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "1320-122612-0000",
+        "candidate_over_current": 0.9382396482243597,
+        "limit": 1.05,
+        "passed": true
+      },
+      {
+        "name": "corpus-at-least-three-percent-gain",
+        "candidate_over_current": 0.9397660031161693,
+        "limit": 0.97,
+        "passed": true
+      }
+    ],
+    "ratios": [
+      {
+        "name": "121-121726-0000",
+        "candidate_over_current": 0.9436538284204294
+      },
+      {
+        "name": "121-123852-0000",
+        "candidate_over_current": 0.9108609757371147
+      },
+      {
+        "name": "237-126133-0002",
+        "candidate_over_current": 0.93561040668503
+      },
+      {
+        "name": "237-126133-0000",
+        "candidate_over_current": 0.9232300512932465
+      },
+      {
+        "name": "260-123286-0000",
+        "candidate_over_current": 0.948143839447287
+      },
+      {
+        "name": "260-123288-0005",
+        "candidate_over_current": 0.9383311738273744
+      },
+      {
+        "name": "672-122797-0000",
+        "candidate_over_current": 0.95797648252713
+      },
+      {
+        "name": "672-122797-0001",
+        "candidate_over_current": 0.951355144410225
+      },
+      {
+        "name": "908-157963-0005",
+        "candidate_over_current": 0.9649892618777272
+      },
+      {
+        "name": "908-157963-0000",
+        "candidate_over_current": 0.9321146045756021
+      },
+      {
+        "name": "1089-134686-0002",
+        "candidate_over_current": 0.9366639989103422
+      },
+      {
+        "name": "1089-134686-0011",
+        "candidate_over_current": 0.9552082902433153
+      },
+      {
+        "name": "1188-133604-0001",
+        "candidate_over_current": 0.9447357763354595
+      },
+      {
+        "name": "1188-133604-0002",
+        "candidate_over_current": 0.9223494207064699
+      },
+      {
+        "name": "1221-135766-0002",
+        "candidate_over_current": 0.9426975269819319
+      },
+      {
+        "name": "1221-135766-0000",
+        "candidate_over_current": 0.9515249618909769
+      },
+      {
+        "name": "1284-1180-0000",
+        "candidate_over_current": 0.9852288910067559
+      },
+      {
+        "name": "1284-1180-0018",
+        "candidate_over_current": 0.9386284325410162
+      },
+      {
+        "name": "1320-122612-0001",
+        "candidate_over_current": 0.9373767771100726
+      },
+      {
+        "name": "1320-122612-0000",
+        "candidate_over_current": 0.9382396482243597
+      },
+      {
+        "name": "complete-corpus",
+        "candidate_over_current": 0.9397660031161693
+      }
+    ],
+    "parity_target_met": false,
+    "policy": "Six fresh processes; corpus max/min <=1.10 and each clip <=1.20 for all three engines. Candidate corpus >=3% gain and no clip >5% slower. Every clock retained; no unchanged retry."
+  },
+  "separate_model_qualification_required": true,
+  "root_product_changed": false,
+  "timing_requests": 480,
+  "warmup": 120,
+  "measured": 360,
+  "reference_provenance_verified": true,
+  "application_parity_target": 1.05,
+  "release_admitted": false,
+  "retained_failed_component_controls": [
+    {
+      "role": "candidate",
+      "case": 0,
+      "ratio": {
+        "numerator": 6695177,
+        "denominator": 5389766,
+        "value": 1.242201795031547
+      },
+      "passed": false
+    },
+    {
+      "role": "candidate",
+      "case": 1,
+      "ratio": {
+        "numerator": 6456919,
+        "denominator": 5782982,
+        "value": 1.1165379729696547
+      },
+      "passed": false
+    },
+    {
+      "role": "candidate",
+      "case": 2,
+      "ratio": {
+        "numerator": 23642553,
+        "denominator": 21364699,
+        "value": 1.10661764998421
+      },
+      "passed": false
+    },
+    {
+      "role": "candidate",
+      "case": 5,
+      "ratio": {
+        "numerator": 20086469,
+        "denominator": 15604637,
+        "value": 1.2872115512844036
+      },
+      "passed": false
+    },
+    {
+      "role": "candidate",
+      "case": 6,
+      "ratio": {
+        "numerator": 16652337,
+        "denominator": 14229914,
+        "value": 1.1702345495552537
+      },
+      "passed": false
+    },
+    {
+      "role": "candidate",
+      "case": 8,
+      "ratio": {
+        "numerator": 26745104,
+        "denominator": 14140481,
+        "value": 1.8913857315037585
+      },
+      "passed": false
+    }
+  ]
+}
