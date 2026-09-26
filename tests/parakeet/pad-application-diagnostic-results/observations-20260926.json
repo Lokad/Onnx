@@ -1,0 +1,3410 @@
+{
+  "original_protocol_passed": false,
+  "anchor_reconciliation_passed": true,
+  "admitted": false,
+  "requests": 160,
+  "padding_calls": 7840,
+  "resources": {
+    "samples": 2432,
+    "peak_rss": 9417433088
+  },
+  "original_failure": {
+    "bytes": 102494,
+    "sha256": "0f7c5cd1c4d022aaf72ffc1c8f8a764336e65bad171d0435e5f7892871004020"
+  },
+  "anchor_review_sha256": "dc18a3c23ab1066a10e79e19b127ceb4dc25d0a290f38cee7f3ec6a558c323a3",
+  "reports": {
+    "current": {
+      "corpus": {
+        "seconds": 75.391535527,
+        "frontend_padding_seconds": 0.03641403433333333,
+        "encoder_padding_seconds": 2.8821767549999997
+      },
+      "alignment": {
+        "lower_ms": -808127658.805369,
+        "upper_ms": -808127658.7985951,
+        "uncertainty_ms": 0.006773948669433594,
+        "anchors": 161,
+        "paired_request_anchors": 160,
+        "named_markers": 0,
+        "events": 351528,
+        "clr_events": 332762,
+        "original_marker_gate_passed": false
+      },
+      "requests": [
+        {
+          "index": 0,
+          "name": "121-121726-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.462380869,
+          "frontend_padding_seconds": 0.008052736,
+          "encoder_padding_seconds": 0.115458483,
+          "allocated_bytes": 607239936,
+          "gc_before": [
+            18,
+            14,
+            9
+          ],
+          "gc_after": [
+            28,
+            16,
+            10
+          ]
+        },
+        {
+          "index": 1,
+          "name": "121-123852-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 8.006016766,
+          "frontend_padding_seconds": 0.002867492,
+          "encoder_padding_seconds": 0.456259557,
+          "allocated_bytes": 1301403168,
+          "gc_before": [
+            28,
+            16,
+            10
+          ],
+          "gc_after": [
+            47,
+            17,
+            10
+          ]
+        },
+        {
+          "index": 2,
+          "name": "237-126133-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 3.528986907,
+          "frontend_padding_seconds": 0.003585987,
+          "encoder_padding_seconds": 0.129207071,
+          "allocated_bytes": 605549944,
+          "gc_before": [
+            47,
+            17,
+            10
+          ],
+          "gc_after": [
+            57,
+            17,
+            10
+          ]
+        },
+        {
+          "index": 3,
+          "name": "237-126133-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.984078707,
+          "frontend_padding_seconds": 0.002134124,
+          "encoder_padding_seconds": 0.21042075799999999,
+          "allocated_bytes": 947228624,
+          "gc_before": [
+            57,
+            17,
+            10
+          ],
+          "gc_after": [
+            72,
+            18,
+            11
+          ]
+        },
+        {
+          "index": 4,
+          "name": "260-123286-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.515168448,
+          "frontend_padding_seconds": 0.000991238,
+          "encoder_padding_seconds": 0.066308427,
+          "allocated_bytes": 470687216,
+          "gc_before": [
+            72,
+            18,
+            11
+          ],
+          "gc_after": [
+            80,
+            18,
+            11
+          ]
+        },
+        {
+          "index": 5,
+          "name": "260-123288-0005",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.481301335,
+          "frontend_padding_seconds": 0.001988344,
+          "encoder_padding_seconds": 0.180680474,
+          "allocated_bytes": 866349704,
+          "gc_before": [
+            80,
+            18,
+            11
+          ],
+          "gc_after": [
+            93,
+            18,
+            11
+          ]
+        },
+        {
+          "index": 6,
+          "name": "672-122797-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.764612226,
+          "frontend_padding_seconds": 0.000654488,
+          "encoder_padding_seconds": 0.029256932,
+          "allocated_bytes": 281988616,
+          "gc_before": [
+            93,
+            18,
+            11
+          ],
+          "gc_after": [
+            99,
+            18,
+            11
+          ]
+        },
+        {
+          "index": 7,
+          "name": "672-122797-0001",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 5.161309289,
+          "frontend_padding_seconds": 0.002356619,
+          "encoder_padding_seconds": 0.24338632699999999,
+          "allocated_bytes": 1076938720,
+          "gc_before": [
+            99,
+            18,
+            11
+          ],
+          "gc_after": [
+            114,
+            19,
+            11
+          ]
+        },
+        {
+          "index": 8,
+          "name": "908-157963-0005",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.350744365,
+          "frontend_padding_seconds": 0.001117829,
+          "encoder_padding_seconds": 0.065951131,
+          "allocated_bytes": 465054840,
+          "gc_before": [
+            114,
+            19,
+            11
+          ],
+          "gc_after": [
+            122,
+            20,
+            11
+          ]
+        },
+        {
+          "index": 9,
+          "name": "908-157963-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.342038022,
+          "frontend_padding_seconds": 0.001970587,
+          "encoder_padding_seconds": 0.181967531,
+          "allocated_bytes": 870862672,
+          "gc_before": [
+            122,
+            20,
+            11
+          ],
+          "gc_after": [
+            135,
+            21,
+            11
+          ]
+        },
+        {
+          "index": 10,
+          "name": "1089-134686-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.453268644,
+          "frontend_padding_seconds": 0.001055895,
+          "encoder_padding_seconds": 0.063698204,
+          "allocated_bytes": 445649568,
+          "gc_before": [
+            135,
+            21,
+            11
+          ],
+          "gc_after": [
+            143,
+            22,
+            11
+          ]
+        },
+        {
+          "index": 11,
+          "name": "1089-134686-0011",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.1456544,
+          "frontend_padding_seconds": 0.001970136,
+          "encoder_padding_seconds": 0.179185144,
+          "allocated_bytes": 861970376,
+          "gc_before": [
+            143,
+            22,
+            11
+          ],
+          "gc_after": [
+            156,
+            23,
+            11
+          ]
+        },
+        {
+          "index": 12,
+          "name": "1188-133604-0001",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 3.006972471,
+          "frontend_padding_seconds": 0.001454407,
+          "encoder_padding_seconds": 0.108109464,
+          "allocated_bytes": 614100616,
+          "gc_before": [
+            156,
+            23,
+            11
+          ],
+          "gc_after": [
+            166,
+            24,
+            11
+          ]
+        },
+        {
+          "index": 13,
+          "name": "1188-133604-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 6.197147632,
+          "frontend_padding_seconds": 0.002886029,
+          "encoder_padding_seconds": 0.336575564,
+          "allocated_bytes": 1372625712,
+          "gc_before": [
+            166,
+            24,
+            11
+          ],
+          "gc_after": [
+            187,
+            25,
+            12
+          ]
+        },
+        {
+          "index": 14,
+          "name": "1221-135766-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 3.346797159,
+          "frontend_padding_seconds": 0.00067498,
+          "encoder_padding_seconds": 0.035011974,
+          "allocated_bytes": 326160920,
+          "gc_before": [
+            187,
+            25,
+            12
+          ],
+          "gc_after": [
+            193,
+            26,
+            12
+          ]
+        },
+        {
+          "index": 15,
+          "name": "1221-135766-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.187529328,
+          "frontend_padding_seconds": 0.003335429,
+          "encoder_padding_seconds": 0.178089768,
+          "allocated_bytes": 861845512,
+          "gc_before": [
+            193,
+            26,
+            12
+          ],
+          "gc_after": [
+            206,
+            27,
+            12
+          ]
+        },
+        {
+          "index": 16,
+          "name": "1284-1180-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.724451757,
+          "frontend_padding_seconds": 0.00133698,
+          "encoder_padding_seconds": 0.086679814,
+          "allocated_bytes": 566876744,
+          "gc_before": [
+            206,
+            27,
+            12
+          ],
+          "gc_after": [
+            216,
+            28,
+            12
+          ]
+        },
+        {
+          "index": 17,
+          "name": "1284-1180-0018",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.302121339,
+          "frontend_padding_seconds": 0.001886419,
+          "encoder_padding_seconds": 0.161942222,
+          "allocated_bytes": 859062640,
+          "gc_before": [
+            216,
+            28,
+            12
+          ],
+          "gc_after": [
+            230,
+            30,
+            13
+          ]
+        },
+        {
+          "index": 18,
+          "name": "1320-122612-0001",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 3.068345974,
+          "frontend_padding_seconds": 0.001404922,
+          "encoder_padding_seconds": 0.104505643,
+          "allocated_bytes": 656098096,
+          "gc_before": [
+            230,
+            30,
+            13
+          ],
+          "gc_after": [
+            241,
+            30,
+            13
+          ]
+        },
+        {
+          "index": 19,
+          "name": "1320-122612-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.806606197,
+          "frontend_padding_seconds": 0.002118259,
+          "encoder_padding_seconds": 0.205933354,
+          "allocated_bytes": 958111152,
+          "gc_before": [
+            241,
+            30,
+            13
+          ],
+          "gc_after": [
+            256,
+            30,
+            13
+          ]
+        },
+        {
+          "index": 20,
+          "name": "121-121726-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.944073426,
+          "frontend_padding_seconds": 0.001340574,
+          "encoder_padding_seconds": 0.095149907,
+          "allocated_bytes": 573866752,
+          "gc_before": [
+            256,
+            30,
+            13
+          ],
+          "gc_after": [
+            266,
+            31,
+            13
+          ]
+        },
+        {
+          "index": 21,
+          "name": "121-123852-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 5.66061946,
+          "frontend_padding_seconds": 0.002484613,
+          "encoder_padding_seconds": 0.307985299,
+          "allocated_bytes": 1300249408,
+          "gc_before": [
+            266,
+            31,
+            13
+          ],
+          "gc_after": [
+            284,
+            31,
+            13
+          ]
+        },
+        {
+          "index": 22,
+          "name": "237-126133-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.963765153,
+          "frontend_padding_seconds": 0.001247335,
+          "encoder_padding_seconds": 0.092709559,
+          "allocated_bytes": 605550104,
+          "gc_before": [
+            284,
+            31,
+            13
+          ],
+          "gc_after": [
+            294,
+            31,
+            13
+          ]
+        },
+        {
+          "index": 23,
+          "name": "237-126133-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.706000886,
+          "frontend_padding_seconds": 0.001887811,
+          "encoder_padding_seconds": 0.192028291,
+          "allocated_bytes": 947216912,
+          "gc_before": [
+            294,
+            31,
+            13
+          ],
+          "gc_after": [
+            309,
+            33,
+            14
+          ]
+        },
+        {
+          "index": 24,
+          "name": "260-123286-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.546600787,
+          "frontend_padding_seconds": 0.000993741,
+          "encoder_padding_seconds": 0.069441332,
+          "allocated_bytes": 470700088,
+          "gc_before": [
+            309,
+            33,
+            14
+          ],
+          "gc_after": [
+            317,
+            33,
+            14
+          ]
+        },
+        {
+          "index": 25,
+          "name": "260-123288-0005",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.46158858,
+          "frontend_padding_seconds": 0.00199888,
+          "encoder_padding_seconds": 0.179951722,
+          "allocated_bytes": 866351096,
+          "gc_before": [
+            317,
+            33,
+            14
+          ],
+          "gc_after": [
+            331,
+            34,
+            14
+          ]
+        },
+        {
+          "index": 26,
+          "name": "672-122797-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.690679271,
+          "frontend_padding_seconds": 0.00067538,
+          "encoder_padding_seconds": 0.029497648,
+          "allocated_bytes": 281981192,
+          "gc_before": [
+            331,
+            34,
+            14
+          ],
+          "gc_after": [
+            336,
+            35,
+            14
+          ]
+        },
+        {
+          "index": 27,
+          "name": "672-122797-0001",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 5.178195264,
+          "frontend_padding_seconds": 0.002336109,
+          "encoder_padding_seconds": 0.235853329,
+          "allocated_bytes": 1101462280,
+          "gc_before": [
+            336,
+            35,
+            14
+          ],
+          "gc_after": [
+            353,
+            36,
+            15
+          ]
+        },
+        {
+          "index": 28,
+          "name": "908-157963-0005",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.405180492,
+          "frontend_padding_seconds": 0.002355537,
+          "encoder_padding_seconds": 0.068253113,
+          "allocated_bytes": 474030552,
+          "gc_before": [
+            353,
+            36,
+            15
+          ],
+          "gc_after": [
+            360,
+            36,
+            15
+          ]
+        },
+        {
+          "index": 29,
+          "name": "908-157963-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.36130665,
+          "frontend_padding_seconds": 0.00204636,
+          "encoder_padding_seconds": 0.182196446,
+          "allocated_bytes": 870871216,
+          "gc_before": [
+            360,
+            36,
+            15
+          ],
+          "gc_after": [
+            374,
+            37,
+            15
+          ]
+        },
+        {
+          "index": 30,
+          "name": "1089-134686-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.59028901,
+          "frontend_padding_seconds": 0.001068775,
+          "encoder_padding_seconds": 0.064979305,
+          "allocated_bytes": 445644528,
+          "gc_before": [
+            374,
+            37,
+            15
+          ],
+          "gc_after": [
+            381,
+            38,
+            15
+          ]
+        },
+        {
+          "index": 31,
+          "name": "1089-134686-0011",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.155351172,
+          "frontend_padding_seconds": 0.003572156,
+          "encoder_padding_seconds": 0.167088681,
+          "allocated_bytes": 861961528,
+          "gc_before": [
+            381,
+            38,
+            15
+          ],
+          "gc_after": [
+            395,
+            39,
+            15
+          ]
+        },
+        {
+          "index": 32,
+          "name": "1188-133604-0001",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.859616377,
+          "frontend_padding_seconds": 0.001260985,
+          "encoder_padding_seconds": 0.095879886,
+          "allocated_bytes": 614100960,
+          "gc_before": [
+            395,
+            39,
+            15
+          ],
+          "gc_after": [
+            405,
+            39,
+            15
+          ]
+        },
+        {
+          "index": 33,
+          "name": "1188-133604-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 5.948562008,
+          "frontend_padding_seconds": 0.002501649,
+          "encoder_padding_seconds": 0.316728953,
+          "allocated_bytes": 1348105392,
+          "gc_before": [
+            405,
+            39,
+            15
+          ],
+          "gc_after": [
+            425,
+            40,
+            16
+          ]
+        },
+        {
+          "index": 34,
+          "name": "1221-135766-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.836924534,
+          "frontend_padding_seconds": 0.000682131,
+          "encoder_padding_seconds": 0.036646781,
+          "allocated_bytes": 325631608,
+          "gc_before": [
+            425,
+            40,
+            16
+          ],
+          "gc_after": [
+            431,
+            40,
+            16
+          ]
+        },
+        {
+          "index": 35,
+          "name": "1221-135766-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.150077569,
+          "frontend_padding_seconds": 0.001923986,
+          "encoder_padding_seconds": 0.178811769,
+          "allocated_bytes": 861843272,
+          "gc_before": [
+            431,
+            40,
+            16
+          ],
+          "gc_after": [
+            444,
+            41,
+            16
+          ]
+        },
+        {
+          "index": 36,
+          "name": "1284-1180-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.690657413,
+          "frontend_padding_seconds": 0.001311671,
+          "encoder_padding_seconds": 0.086565468,
+          "allocated_bytes": 558414896,
+          "gc_before": [
+            444,
+            41,
+            16
+          ],
+          "gc_after": [
+            454,
+            42,
+            16
+          ]
+        },
+        {
+          "index": 37,
+          "name": "1284-1180-0018",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.27442885,
+          "frontend_padding_seconds": 0.001939519,
+          "encoder_padding_seconds": 0.162072898,
+          "allocated_bytes": 834543744,
+          "gc_before": [
+            454,
+            42,
+            16
+          ],
+          "gc_after": [
+            467,
+            43,
+            16
+          ]
+        },
+        {
+          "index": 38,
+          "name": "1320-122612-0001",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 3.144852092,
+          "frontend_padding_seconds": 0.001333644,
+          "encoder_padding_seconds": 0.10418182200000001,
+          "allocated_bytes": 670902280,
+          "gc_before": [
+            467,
+            43,
+            16
+          ],
+          "gc_after": [
+            478,
+            45,
+            17
+          ]
+        },
+        {
+          "index": 39,
+          "name": "1320-122612-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.763187545,
+          "frontend_padding_seconds": 0.001887521,
+          "encoder_padding_seconds": 0.197978509,
+          "allocated_bytes": 959431520,
+          "gc_before": [
+            479,
+            45,
+            17
+          ],
+          "gc_after": [
+            494,
+            45,
+            17
+          ]
+        },
+        {
+          "index": 40,
+          "name": "121-121726-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.8473215,
+          "frontend_padding_seconds": 0.001321576,
+          "encoder_padding_seconds": 0.092576603,
+          "allocated_bytes": 582258384,
+          "gc_before": [
+            494,
+            45,
+            17
+          ],
+          "gc_after": [
+            503,
+            45,
+            17
+          ]
+        },
+        {
+          "index": 41,
+          "name": "121-123852-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 5.77096118,
+          "frontend_padding_seconds": 0.002836405,
+          "encoder_padding_seconds": 0.318436226,
+          "allocated_bytes": 1300251336,
+          "gc_before": [
+            503,
+            45,
+            17
+          ],
+          "gc_after": [
+            522,
+            46,
+            17
+          ]
+        },
+        {
+          "index": 42,
+          "name": "237-126133-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 3.103951423,
+          "frontend_padding_seconds": 0.001441327,
+          "encoder_padding_seconds": 0.094236682,
+          "allocated_bytes": 605554624,
+          "gc_before": [
+            522,
+            46,
+            17
+          ],
+          "gc_after": [
+            533,
+            48,
+            18
+          ]
+        },
+        {
+          "index": 43,
+          "name": "237-126133-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.659709429,
+          "frontend_padding_seconds": 0.001858297,
+          "encoder_padding_seconds": 0.196183242,
+          "allocated_bytes": 947213840,
+          "gc_before": [
+            533,
+            48,
+            18
+          ],
+          "gc_after": [
+            548,
+            48,
+            18
+          ]
+        },
+        {
+          "index": 44,
+          "name": "260-123286-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.54888815,
+          "frontend_padding_seconds": 0.001134224,
+          "encoder_padding_seconds": 0.069968798,
+          "allocated_bytes": 470695256,
+          "gc_before": [
+            548,
+            48,
+            18
+          ],
+          "gc_after": [
+            556,
+            48,
+            18
+          ]
+        },
+        {
+          "index": 45,
+          "name": "260-123288-0005",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.399712571,
+          "frontend_padding_seconds": 0.001971798,
+          "encoder_padding_seconds": 0.175189194,
+          "allocated_bytes": 866354872,
+          "gc_before": [
+            556,
+            48,
+            18
+          ],
+          "gc_after": [
+            569,
+            49,
+            18
+          ]
+        },
+        {
+          "index": 46,
+          "name": "672-122797-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.562056629,
+          "frontend_padding_seconds": 0.000673057,
+          "encoder_padding_seconds": 0.027269038,
+          "allocated_bytes": 281979032,
+          "gc_before": [
+            569,
+            49,
+            18
+          ],
+          "gc_after": [
+            575,
+            51,
+            18
+          ]
+        },
+        {
+          "index": 47,
+          "name": "672-122797-0001",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 5.280226654,
+          "frontend_padding_seconds": 0.002108044,
+          "encoder_padding_seconds": 0.249822052,
+          "allocated_bytes": 1076942744,
+          "gc_before": [
+            575,
+            51,
+            18
+          ],
+          "gc_after": [
+            591,
+            52,
+            19
+          ]
+        },
+        {
+          "index": 48,
+          "name": "908-157963-0005",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.369162127,
+          "frontend_padding_seconds": 0.001145109,
+          "encoder_padding_seconds": 0.068869261,
+          "allocated_bytes": 465054128,
+          "gc_before": [
+            591,
+            52,
+            19
+          ],
+          "gc_after": [
+            599,
+            52,
+            19
+          ]
+        },
+        {
+          "index": 49,
+          "name": "908-157963-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.287756244,
+          "frontend_padding_seconds": 0.001969233,
+          "encoder_padding_seconds": 0.179231827,
+          "allocated_bytes": 870863456,
+          "gc_before": [
+            599,
+            52,
+            19
+          ],
+          "gc_after": [
+            612,
+            53,
+            19
+          ]
+        },
+        {
+          "index": 50,
+          "name": "1089-134686-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.335103812,
+          "frontend_padding_seconds": 0.001056115,
+          "encoder_padding_seconds": 0.056622671,
+          "allocated_bytes": 445649880,
+          "gc_before": [
+            612,
+            53,
+            19
+          ],
+          "gc_after": [
+            620,
+            54,
+            19
+          ]
+        },
+        {
+          "index": 51,
+          "name": "1089-134686-0011",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.07895708,
+          "frontend_padding_seconds": 0.001759748,
+          "encoder_padding_seconds": 0.16378105,
+          "allocated_bytes": 861972824,
+          "gc_before": [
+            620,
+            54,
+            19
+          ],
+          "gc_after": [
+            634,
+            56,
+            20
+          ]
+        },
+        {
+          "index": 52,
+          "name": "1188-133604-0001",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.91067524,
+          "frontend_padding_seconds": 0.001268426,
+          "encoder_padding_seconds": 0.102819401,
+          "allocated_bytes": 614101888,
+          "gc_before": [
+            634,
+            56,
+            20
+          ],
+          "gc_after": [
+            644,
+            57,
+            20
+          ]
+        },
+        {
+          "index": 53,
+          "name": "1188-133604-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 6.047654427,
+          "frontend_padding_seconds": 0.002885108,
+          "encoder_padding_seconds": 0.336827653,
+          "allocated_bytes": 1348106448,
+          "gc_before": [
+            645,
+            58,
+            20
+          ],
+          "gc_after": [
+            665,
+            59,
+            20
+          ]
+        },
+        {
+          "index": 54,
+          "name": "1221-135766-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 3.294613649,
+          "frontend_padding_seconds": 0.000795752,
+          "encoder_padding_seconds": 0.035634288,
+          "allocated_bytes": 325623440,
+          "gc_before": [
+            665,
+            59,
+            20
+          ],
+          "gc_after": [
+            670,
+            60,
+            20
+          ]
+        },
+        {
+          "index": 55,
+          "name": "1221-135766-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 3.987691207,
+          "frontend_padding_seconds": 0.001726507,
+          "encoder_padding_seconds": 0.164074932,
+          "allocated_bytes": 861842256,
+          "gc_before": [
+            670,
+            60,
+            20
+          ],
+          "gc_after": [
+            683,
+            61,
+            20
+          ]
+        },
+        {
+          "index": 56,
+          "name": "1284-1180-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.568817597,
+          "frontend_padding_seconds": 0.001133391,
+          "encoder_padding_seconds": 0.079219558,
+          "allocated_bytes": 558416392,
+          "gc_before": [
+            683,
+            61,
+            20
+          ],
+          "gc_after": [
+            693,
+            62,
+            20
+          ]
+        },
+        {
+          "index": 57,
+          "name": "1284-1180-0018",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.293616722,
+          "frontend_padding_seconds": 0.001680398,
+          "encoder_padding_seconds": 0.161258453,
+          "allocated_bytes": 834544464,
+          "gc_before": [
+            693,
+            62,
+            20
+          ],
+          "gc_after": [
+            707,
+            64,
+            21
+          ]
+        },
+        {
+          "index": 58,
+          "name": "1320-122612-0001",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 3.114162658,
+          "frontend_padding_seconds": 0.002509531,
+          "encoder_padding_seconds": 0.110386712,
+          "allocated_bytes": 647112584,
+          "gc_before": [
+            707,
+            64,
+            21
+          ],
+          "gc_after": [
+            717,
+            64,
+            21
+          ]
+        },
+        {
+          "index": 59,
+          "name": "1320-122612-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.812361382,
+          "frontend_padding_seconds": 0.005324252,
+          "encoder_padding_seconds": 0.20655554,
+          "allocated_bytes": 958103872,
+          "gc_before": [
+            717,
+            64,
+            21
+          ],
+          "gc_after": [
+            732,
+            64,
+            21
+          ]
+        },
+        {
+          "index": 60,
+          "name": "121-121726-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.024747451,
+          "frontend_padding_seconds": 0.003596181,
+          "encoder_padding_seconds": 0.095233676,
+          "allocated_bytes": 573873104,
+          "gc_before": [
+            732,
+            64,
+            21
+          ],
+          "gc_after": [
+            742,
+            65,
+            21
+          ]
+        },
+        {
+          "index": 61,
+          "name": "121-123852-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 5.816424867,
+          "frontend_padding_seconds": 0.005827351,
+          "encoder_padding_seconds": 0.316052864,
+          "allocated_bytes": 1300251848,
+          "gc_before": [
+            742,
+            65,
+            21
+          ],
+          "gc_after": [
+            761,
+            67,
+            22
+          ]
+        },
+        {
+          "index": 62,
+          "name": "237-126133-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.053999008,
+          "frontend_padding_seconds": 0.001246693,
+          "encoder_padding_seconds": 0.101996424,
+          "allocated_bytes": 605559264,
+          "gc_before": [
+            761,
+            67,
+            22
+          ],
+          "gc_after": [
+            772,
+            68,
+            22
+          ]
+        },
+        {
+          "index": 63,
+          "name": "237-126133-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.722627494,
+          "frontend_padding_seconds": 0.002089376,
+          "encoder_padding_seconds": 0.202291334,
+          "allocated_bytes": 947228152,
+          "gc_before": [
+            772,
+            68,
+            22
+          ],
+          "gc_after": [
+            787,
+            70,
+            22
+          ]
+        },
+        {
+          "index": 64,
+          "name": "260-123286-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.494924173,
+          "frontend_padding_seconds": 0.001134334,
+          "encoder_padding_seconds": 0.066423293,
+          "allocated_bytes": 470699232,
+          "gc_before": [
+            787,
+            70,
+            22
+          ],
+          "gc_after": [
+            794,
+            70,
+            22
+          ]
+        },
+        {
+          "index": 65,
+          "name": "260-123288-0005",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.308121421,
+          "frontend_padding_seconds": 0.001749112,
+          "encoder_padding_seconds": 0.166471973,
+          "allocated_bytes": 866349720,
+          "gc_before": [
+            795,
+            70,
+            22
+          ],
+          "gc_after": [
+            808,
+            70,
+            22
+          ]
+        },
+        {
+          "index": 66,
+          "name": "672-122797-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.647000649,
+          "frontend_padding_seconds": 0.000586847,
+          "encoder_padding_seconds": 0.027690479,
+          "allocated_bytes": 281985464,
+          "gc_before": [
+            808,
+            70,
+            22
+          ],
+          "gc_after": [
+            813,
+            71,
+            22
+          ]
+        },
+        {
+          "index": 67,
+          "name": "672-122797-0001",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 5.238300616,
+          "frontend_padding_seconds": 0.002134524,
+          "encoder_padding_seconds": 0.246386209,
+          "allocated_bytes": 1076938984,
+          "gc_before": [
+            813,
+            71,
+            22
+          ],
+          "gc_after": [
+            829,
+            72,
+            23
+          ]
+        },
+        {
+          "index": 68,
+          "name": "908-157963-0005",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.372647428,
+          "frontend_padding_seconds": 0.000990586,
+          "encoder_padding_seconds": 0.069082158,
+          "allocated_bytes": 465050672,
+          "gc_before": [
+            829,
+            72,
+            23
+          ],
+          "gc_after": [
+            837,
+            72,
+            23
+          ]
+        },
+        {
+          "index": 69,
+          "name": "908-157963-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.324016697,
+          "frontend_padding_seconds": 0.002000672,
+          "encoder_padding_seconds": 0.183172944,
+          "allocated_bytes": 870860424,
+          "gc_before": [
+            837,
+            72,
+            23
+          ],
+          "gc_after": [
+            850,
+            73,
+            23
+          ]
+        },
+        {
+          "index": 70,
+          "name": "1089-134686-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.344733981,
+          "frontend_padding_seconds": 0.001040932,
+          "encoder_padding_seconds": 0.056918749,
+          "allocated_bytes": 445640192,
+          "gc_before": [
+            850,
+            73,
+            23
+          ],
+          "gc_after": [
+            858,
+            73,
+            23
+          ]
+        },
+        {
+          "index": 71,
+          "name": "1089-134686-0011",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.154468338,
+          "frontend_padding_seconds": 0.001744846,
+          "encoder_padding_seconds": 0.172605745,
+          "allocated_bytes": 861969480,
+          "gc_before": [
+            858,
+            73,
+            23
+          ],
+          "gc_after": [
+            872,
+            75,
+            24
+          ]
+        },
+        {
+          "index": 72,
+          "name": "1188-133604-0001",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.948918605,
+          "frontend_padding_seconds": 0.001499475,
+          "encoder_padding_seconds": 0.105055493,
+          "allocated_bytes": 614097480,
+          "gc_before": [
+            872,
+            75,
+            24
+          ],
+          "gc_after": [
+            882,
+            75,
+            24
+          ]
+        },
+        {
+          "index": 73,
+          "name": "1188-133604-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 5.95010708,
+          "frontend_padding_seconds": 0.002879249,
+          "encoder_padding_seconds": 0.326492636,
+          "allocated_bytes": 1348095816,
+          "gc_before": [
+            882,
+            75,
+            24
+          ],
+          "gc_after": [
+            902,
+            76,
+            24
+          ]
+        },
+        {
+          "index": 74,
+          "name": "1221-135766-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.261450962,
+          "frontend_padding_seconds": 0.000777584,
+          "encoder_padding_seconds": 0.035616117,
+          "allocated_bytes": 325634000,
+          "gc_before": [
+            902,
+            76,
+            24
+          ],
+          "gc_after": [
+            908,
+            76,
+            24
+          ]
+        },
+        {
+          "index": 75,
+          "name": "1221-135766-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.978268087,
+          "frontend_padding_seconds": 0.001736323,
+          "encoder_padding_seconds": 0.163738901,
+          "allocated_bytes": 861843064,
+          "gc_before": [
+            908,
+            76,
+            24
+          ],
+          "gc_after": [
+            921,
+            76,
+            24
+          ]
+        },
+        {
+          "index": 76,
+          "name": "1284-1180-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.673771837,
+          "frontend_padding_seconds": 0.001135736,
+          "encoder_padding_seconds": 0.080186799,
+          "allocated_bytes": 558418480,
+          "gc_before": [
+            921,
+            76,
+            24
+          ],
+          "gc_after": [
+            932,
+            77,
+            25
+          ]
+        },
+        {
+          "index": 77,
+          "name": "1284-1180-0018",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.331660894,
+          "frontend_padding_seconds": 0.001915343,
+          "encoder_padding_seconds": 0.170062418,
+          "allocated_bytes": 834534464,
+          "gc_before": [
+            932,
+            77,
+            25
+          ],
+          "gc_after": [
+            945,
+            79,
+            25
+          ]
+        },
+        {
+          "index": 78,
+          "name": "1320-122612-0001",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.155951151,
+          "frontend_padding_seconds": 0.001503751,
+          "encoder_padding_seconds": 0.114079606,
+          "allocated_bytes": 647107200,
+          "gc_before": [
+            945,
+            79,
+            25
+          ],
+          "gc_after": [
+            955,
+            79,
+            25
+          ]
+        },
+        {
+          "index": 79,
+          "name": "1320-122612-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.767109622,
+          "frontend_padding_seconds": 0.002206513,
+          "encoder_padding_seconds": 0.194008548,
+          "allocated_bytes": 958122936,
+          "gc_before": [
+            955,
+            79,
+            25
+          ],
+          "gc_after": [
+            972,
+            81,
+            26
+          ]
+        }
+      ],
+      "padcore_loads": [
+        {
+          "index": 9404,
+          "seconds": 0.9963252,
+          "tier": "QuickJitted",
+          "method_id": "138856491998400",
+          "address": "138856490763952",
+          "bytes": "2089"
+        },
+        {
+          "index": 9491,
+          "seconds": 0.999344181,
+          "tier": "OptimizedTier1OSR",
+          "method_id": "138856491998400",
+          "address": "138856490767808",
+          "bytes": "587"
+        },
+        {
+          "index": 16212,
+          "seconds": 1.5617997929999998,
+          "tier": "OptimizedTier1OSR",
+          "method_id": "138856491998400",
+          "address": "138856493778208",
+          "bytes": "489"
+        },
+        {
+          "index": 51522,
+          "seconds": 9.709628997,
+          "tier": "QuickJittedInstrumented",
+          "method_id": "138856491998400",
+          "address": "138856497800848",
+          "bytes": "2089"
+        },
+        {
+          "index": 52518,
+          "seconds": 9.778345653,
+          "tier": "OptimizedTier1OSR",
+          "method_id": "138856491998400",
+          "address": "138856497835328",
+          "bytes": "489"
+        },
+        {
+          "index": 65478,
+          "seconds": 13.448178978,
+          "tier": "OptimizedTier1OSR",
+          "method_id": "138856491998400",
+          "address": "138856499487968",
+          "bytes": "587"
+        },
+        {
+          "index": 78334,
+          "seconds": 15.652036249999998,
+          "tier": "OptimizedTier1",
+          "method_id": "138856491998400",
+          "address": "138856500117376",
+          "bytes": "2697"
+        }
+      ],
+      "passes": [
+        {
+          "pass": 0,
+          "seconds": 80.835531835,
+          "frontend_padding_seconds": 0.0438429,
+          "encoder_padding_seconds": 3.138627842
+        },
+        {
+          "pass": 1,
+          "seconds": 75.331956539,
+          "frontend_padding_seconds": 0.034848377,
+          "encoder_padding_seconds": 2.864000718
+        },
+        {
+          "pass": 2,
+          "seconds": 75.273399681,
+          "frontend_padding_seconds": 0.036598298,
+          "encoder_padding_seconds": 2.888963181
+        },
+        {
+          "pass": 3,
+          "seconds": 75.569250361,
+          "frontend_padding_seconds": 0.037795428,
+          "encoder_padding_seconds": 2.893566366
+        }
+      ]
+    },
+    "candidate": {
+      "corpus": {
+        "seconds": 72.27757594766666,
+        "frontend_padding_seconds": 0.036068161333333335,
+        "encoder_padding_seconds": 0.19498790366666666
+      },
+      "alignment": {
+        "lower_ms": -809031239.10964,
+        "upper_ms": -809031239.102805,
+        "uncertainty_ms": 0.006834983825683594,
+        "anchors": 161,
+        "paired_request_anchors": 160,
+        "named_markers": 0,
+        "events": 351476,
+        "clr_events": 332714,
+        "original_marker_gate_passed": false
+      },
+      "requests": [
+        {
+          "index": 0,
+          "name": "121-121726-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.353296593,
+          "frontend_padding_seconds": 0.008677813,
+          "encoder_padding_seconds": 0.015901066,
+          "allocated_bytes": 607228424,
+          "gc_before": [
+            16,
+            12,
+            7
+          ],
+          "gc_after": [
+            25,
+            14,
+            8
+          ]
+        },
+        {
+          "index": 1,
+          "name": "121-123852-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 8.387892744,
+          "frontend_padding_seconds": 0.002882356,
+          "encoder_padding_seconds": 0.030038739000000002,
+          "allocated_bytes": 1301418632,
+          "gc_before": [
+            26,
+            14,
+            8
+          ],
+          "gc_after": [
+            44,
+            15,
+            8
+          ]
+        },
+        {
+          "index": 2,
+          "name": "237-126133-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 3.524752876,
+          "frontend_padding_seconds": 0.001428178,
+          "encoder_padding_seconds": 0.01264528,
+          "allocated_bytes": 605543320,
+          "gc_before": [
+            44,
+            15,
+            8
+          ],
+          "gc_after": [
+            54,
+            15,
+            8
+          ]
+        },
+        {
+          "index": 3,
+          "name": "237-126133-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.771839335,
+          "frontend_padding_seconds": 0.002129748,
+          "encoder_padding_seconds": 0.020954457,
+          "allocated_bytes": 947219600,
+          "gc_before": [
+            54,
+            15,
+            8
+          ],
+          "gc_after": [
+            69,
+            16,
+            8
+          ]
+        },
+        {
+          "index": 4,
+          "name": "260-123286-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.55414118,
+          "frontend_padding_seconds": 0.001143218,
+          "encoder_padding_seconds": 0.008077996,
+          "allocated_bytes": 470689752,
+          "gc_before": [
+            69,
+            16,
+            8
+          ],
+          "gc_after": [
+            77,
+            16,
+            8
+          ]
+        },
+        {
+          "index": 5,
+          "name": "260-123288-0005",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.355453198,
+          "frontend_padding_seconds": 0.00198544,
+          "encoder_padding_seconds": 0.019137509,
+          "allocated_bytes": 866351576,
+          "gc_before": [
+            77,
+            16,
+            8
+          ],
+          "gc_after": [
+            90,
+            16,
+            8
+          ]
+        },
+        {
+          "index": 6,
+          "name": "672-122797-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.686198395,
+          "frontend_padding_seconds": 0.000674729,
+          "encoder_padding_seconds": 0.004085685,
+          "allocated_bytes": 281979840,
+          "gc_before": [
+            90,
+            16,
+            8
+          ],
+          "gc_after": [
+            96,
+            17,
+            8
+          ]
+        },
+        {
+          "index": 7,
+          "name": "672-122797-0001",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.984233481,
+          "frontend_padding_seconds": 0.002431604,
+          "encoder_padding_seconds": 0.021916846,
+          "allocated_bytes": 1076930696,
+          "gc_before": [
+            96,
+            17,
+            8
+          ],
+          "gc_after": [
+            111,
+            17,
+            8
+          ]
+        },
+        {
+          "index": 8,
+          "name": "908-157963-0005",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.327392001,
+          "frontend_padding_seconds": 0.00113148,
+          "encoder_padding_seconds": 0.007663798,
+          "allocated_bytes": 465041520,
+          "gc_before": [
+            111,
+            17,
+            8
+          ],
+          "gc_after": [
+            119,
+            17,
+            8
+          ]
+        },
+        {
+          "index": 9,
+          "name": "908-157963-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.15614223,
+          "frontend_padding_seconds": 0.001996617,
+          "encoder_padding_seconds": 0.018806839,
+          "allocated_bytes": 870863920,
+          "gc_before": [
+            119,
+            17,
+            8
+          ],
+          "gc_after": [
+            132,
+            18,
+            8
+          ]
+        },
+        {
+          "index": 10,
+          "name": "1089-134686-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.409506515,
+          "frontend_padding_seconds": 0.00108533,
+          "encoder_padding_seconds": 0.00717267,
+          "allocated_bytes": 445643808,
+          "gc_before": [
+            132,
+            18,
+            8
+          ],
+          "gc_after": [
+            140,
+            18,
+            8
+          ]
+        },
+        {
+          "index": 11,
+          "name": "1089-134686-0011",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.017752804,
+          "frontend_padding_seconds": 0.002014694,
+          "encoder_padding_seconds": 0.01587901,
+          "allocated_bytes": 861967176,
+          "gc_before": [
+            140,
+            18,
+            8
+          ],
+          "gc_after": [
+            154,
+            19,
+            9
+          ]
+        },
+        {
+          "index": 12,
+          "name": "1188-133604-0001",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.838687186,
+          "frontend_padding_seconds": 0.001285322,
+          "encoder_padding_seconds": 0.008790505,
+          "allocated_bytes": 614099680,
+          "gc_before": [
+            154,
+            19,
+            9
+          ],
+          "gc_after": [
+            164,
+            19,
+            9
+          ]
+        },
+        {
+          "index": 13,
+          "name": "1188-133604-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 5.73228125,
+          "frontend_padding_seconds": 0.002855604,
+          "encoder_padding_seconds": 0.026395442,
+          "allocated_bytes": 1372614784,
+          "gc_before": [
+            164,
+            19,
+            9
+          ],
+          "gc_after": [
+            185,
+            21,
+            10
+          ]
+        },
+        {
+          "index": 14,
+          "name": "1221-135766-0002",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.949300062,
+          "frontend_padding_seconds": 0.000700699,
+          "encoder_padding_seconds": 0.001962344,
+          "allocated_bytes": 326156240,
+          "gc_before": [
+            186,
+            21,
+            10
+          ],
+          "gc_after": [
+            191,
+            21,
+            10
+          ]
+        },
+        {
+          "index": 15,
+          "name": "1221-135766-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 3.97223699,
+          "frontend_padding_seconds": 0.001997158,
+          "encoder_padding_seconds": 0.013372638,
+          "allocated_bytes": 861840792,
+          "gc_before": [
+            191,
+            21,
+            10
+          ],
+          "gc_after": [
+            204,
+            21,
+            10
+          ]
+        },
+        {
+          "index": 16,
+          "name": "1284-1180-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.5622981,
+          "frontend_padding_seconds": 0.00359396,
+          "encoder_padding_seconds": 0.002337242,
+          "allocated_bytes": 566873392,
+          "gc_before": [
+            204,
+            21,
+            10
+          ],
+          "gc_after": [
+            214,
+            21,
+            10
+          ]
+        },
+        {
+          "index": 17,
+          "name": "1284-1180-0018",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.026084535,
+          "frontend_padding_seconds": 0.001702643,
+          "encoder_padding_seconds": 0.004825235,
+          "allocated_bytes": 834528640,
+          "gc_before": [
+            214,
+            21,
+            10
+          ],
+          "gc_after": [
+            227,
+            22,
+            10
+          ]
+        },
+        {
+          "index": 18,
+          "name": "1320-122612-0001",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 2.987858635,
+          "frontend_padding_seconds": 0.00247605,
+          "encoder_padding_seconds": 0.003517422,
+          "allocated_bytes": 647102568,
+          "gc_before": [
+            227,
+            22,
+            10
+          ],
+          "gc_after": [
+            238,
+            22,
+            10
+          ]
+        },
+        {
+          "index": 19,
+          "name": "1320-122612-0000",
+          "pass_index": 0,
+          "phase": "warmup",
+          "seconds": 4.550454238,
+          "frontend_padding_seconds": 0.001897276,
+          "encoder_padding_seconds": 0.010269644999999999,
+          "allocated_bytes": 980525440,
+          "gc_before": [
+            238,
+            22,
+            10
+          ],
+          "gc_after": [
+            254,
+            24,
+            11
+          ]
+        },
+        {
+          "index": 20,
+          "name": "121-121726-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.844123355,
+          "frontend_padding_seconds": 0.001196028,
+          "encoder_padding_seconds": 0.010325793,
+          "allocated_bytes": 582850128,
+          "gc_before": [
+            254,
+            24,
+            11
+          ],
+          "gc_after": [
+            264,
+            24,
+            11
+          ]
+        },
+        {
+          "index": 21,
+          "name": "121-123852-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 5.484648705,
+          "frontend_padding_seconds": 0.002836115,
+          "encoder_padding_seconds": 0.020801434,
+          "allocated_bytes": 1300236416,
+          "gc_before": [
+            264,
+            24,
+            11
+          ],
+          "gc_after": [
+            282,
+            25,
+            11
+          ]
+        },
+        {
+          "index": 22,
+          "name": "237-126133-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.919356697,
+          "frontend_padding_seconds": 0.001414576,
+          "encoder_padding_seconds": 0.002643749,
+          "allocated_bytes": 629347384,
+          "gc_before": [
+            282,
+            25,
+            11
+          ],
+          "gc_after": [
+            293,
+            26,
+            12
+          ]
+        },
+        {
+          "index": 23,
+          "name": "237-126133-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.4508078,
+          "frontend_padding_seconds": 0.00188055,
+          "encoder_padding_seconds": 0.013605334,
+          "allocated_bytes": 948530832,
+          "gc_before": [
+            293,
+            26,
+            12
+          ],
+          "gc_after": [
+            308,
+            26,
+            12
+          ]
+        },
+        {
+          "index": 24,
+          "name": "260-123286-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.478125462,
+          "frontend_padding_seconds": 0.001011447,
+          "encoder_padding_seconds": 0.008246424,
+          "allocated_bytes": 479081736,
+          "gc_before": [
+            308,
+            26,
+            12
+          ],
+          "gc_after": [
+            316,
+            26,
+            12
+          ]
+        },
+        {
+          "index": 25,
+          "name": "260-123288-0005",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.260730478,
+          "frontend_padding_seconds": 0.001998067,
+          "encoder_padding_seconds": 0.0159411,
+          "allocated_bytes": 866343928,
+          "gc_before": [
+            316,
+            26,
+            12
+          ],
+          "gc_after": [
+            329,
+            27,
+            12
+          ]
+        },
+        {
+          "index": 26,
+          "name": "672-122797-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.60705605,
+          "frontend_padding_seconds": 0.000680428,
+          "encoder_padding_seconds": 0.001645522,
+          "allocated_bytes": 281975680,
+          "gc_before": [
+            330,
+            27,
+            12
+          ],
+          "gc_after": [
+            335,
+            28,
+            12
+          ]
+        },
+        {
+          "index": 27,
+          "name": "672-122797-0001",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.810994831,
+          "frontend_padding_seconds": 0.002154524,
+          "encoder_padding_seconds": 0.005629757,
+          "allocated_bytes": 1076939600,
+          "gc_before": [
+            335,
+            28,
+            12
+          ],
+          "gc_after": [
+            351,
+            28,
+            12
+          ]
+        },
+        {
+          "index": 28,
+          "name": "908-157963-0005",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.249078608,
+          "frontend_padding_seconds": 0.001016405,
+          "encoder_padding_seconds": 0.002087365,
+          "allocated_bytes": 465046720,
+          "gc_before": [
+            351,
+            28,
+            12
+          ],
+          "gc_after": [
+            358,
+            28,
+            12
+          ]
+        },
+        {
+          "index": 29,
+          "name": "908-157963-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.238256451,
+          "frontend_padding_seconds": 0.001784615,
+          "encoder_padding_seconds": 0.015623299,
+          "allocated_bytes": 870859720,
+          "gc_before": [
+            358,
+            28,
+            12
+          ],
+          "gc_after": [
+            372,
+            29,
+            13
+          ]
+        },
+        {
+          "index": 30,
+          "name": "1089-134686-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.55214727,
+          "frontend_padding_seconds": 0.000941892,
+          "encoder_padding_seconds": 0.007479804,
+          "allocated_bytes": 445640712,
+          "gc_before": [
+            372,
+            29,
+            13
+          ],
+          "gc_after": [
+            380,
+            29,
+            13
+          ]
+        },
+        {
+          "index": 31,
+          "name": "1089-134686-0011",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.111165582,
+          "frontend_padding_seconds": 0.007696098,
+          "encoder_padding_seconds": 0.017501541,
+          "allocated_bytes": 861961000,
+          "gc_before": [
+            380,
+            29,
+            13
+          ],
+          "gc_after": [
+            393,
+            30,
+            13
+          ]
+        },
+        {
+          "index": 32,
+          "name": "1188-133604-0001",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.83394383,
+          "frontend_padding_seconds": 0.001278421,
+          "encoder_padding_seconds": 0.002596876,
+          "allocated_bytes": 614093352,
+          "gc_before": [
+            393,
+            30,
+            13
+          ],
+          "gc_after": [
+            404,
+            31,
+            14
+          ]
+        },
+        {
+          "index": 33,
+          "name": "1188-133604-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 5.730982521,
+          "frontend_padding_seconds": 0.002537994,
+          "encoder_padding_seconds": 0.026776833,
+          "allocated_bytes": 1348092096,
+          "gc_before": [
+            404,
+            31,
+            14
+          ],
+          "gc_after": [
+            424,
+            31,
+            14
+          ]
+        },
+        {
+          "index": 34,
+          "name": "1221-135766-0002",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.857404566,
+          "frontend_padding_seconds": 0.000722271,
+          "encoder_padding_seconds": 0.005180368,
+          "allocated_bytes": 325626688,
+          "gc_before": [
+            424,
+            31,
+            14
+          ],
+          "gc_after": [
+            430,
+            32,
+            14
+          ]
+        },
+        {
+          "index": 35,
+          "name": "1221-135766-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 3.876022508,
+          "frontend_padding_seconds": 0.001990956,
+          "encoder_padding_seconds": 0.008323389,
+          "allocated_bytes": 861837192,
+          "gc_before": [
+            430,
+            32,
+            14
+          ],
+          "gc_after": [
+            443,
+            32,
+            14
+          ]
+        },
+        {
+          "index": 36,
+          "name": "1284-1180-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.537741984,
+          "frontend_padding_seconds": 0.001168535,
+          "encoder_padding_seconds": 0.003140786,
+          "allocated_bytes": 558411624,
+          "gc_before": [
+            443,
+            32,
+            14
+          ],
+          "gc_after": [
+            453,
+            32,
+            14
+          ]
+        },
+        {
+          "index": 37,
+          "name": "1284-1180-0018",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.023871664,
+          "frontend_padding_seconds": 0.001711745,
+          "encoder_padding_seconds": 0.005152499,
+          "allocated_bytes": 834528704,
+          "gc_before": [
+            453,
+            32,
+            14
+          ],
+          "gc_after": [
+            466,
+            33,
+            14
+          ]
+        },
+        {
+          "index": 38,
+          "name": "1320-122612-0001",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 2.965210402,
+          "frontend_padding_seconds": 0.001380895,
+          "encoder_padding_seconds": 0.003579658,
+          "allocated_bytes": 647097728,
+          "gc_before": [
+            466,
+            33,
+            14
+          ],
+          "gc_after": [
+            477,
+            33,
+            14
+          ]
+        },
+        {
+          "index": 39,
+          "name": "1320-122612-0000",
+          "pass_index": 1,
+          "phase": "measured",
+          "seconds": 4.521985541,
+          "frontend_padding_seconds": 0.001913771,
+          "encoder_padding_seconds": 0.013021627,
+          "allocated_bytes": 958100680,
+          "gc_before": [
+            477,
+            33,
+            14
+          ],
+          "gc_after": [
+            492,
+            34,
+            14
+          ]
+        },
+        {
+          "index": 40,
+          "name": "121-121726-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.74911183,
+          "frontend_padding_seconds": 0.001378082,
+          "encoder_padding_seconds": 0.002844943,
+          "allocated_bytes": 573860224,
+          "gc_before": [
+            492,
+            34,
+            14
+          ],
+          "gc_after": [
+            502,
+            36,
+            15
+          ]
+        },
+        {
+          "index": 41,
+          "name": "121-123852-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 5.586934419,
+          "frontend_padding_seconds": 0.002855112,
+          "encoder_padding_seconds": 0.034040134,
+          "allocated_bytes": 1300237920,
+          "gc_before": [
+            502,
+            36,
+            15
+          ],
+          "gc_after": [
+            520,
+            36,
+            15
+          ]
+        },
+        {
+          "index": 42,
+          "name": "237-126133-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 3.001858171,
+          "frontend_padding_seconds": 0.001441838,
+          "encoder_padding_seconds": 0.00768699,
+          "allocated_bytes": 605553064,
+          "gc_before": [
+            520,
+            36,
+            15
+          ],
+          "gc_after": [
+            531,
+            38,
+            16
+          ]
+        },
+        {
+          "index": 43,
+          "name": "237-126133-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.539154552,
+          "frontend_padding_seconds": 0.002149487,
+          "encoder_padding_seconds": 0.021467139,
+          "allocated_bytes": 947215640,
+          "gc_before": [
+            531,
+            38,
+            16
+          ],
+          "gc_after": [
+            547,
+            39,
+            16
+          ]
+        },
+        {
+          "index": 44,
+          "name": "260-123286-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.477852333,
+          "frontend_padding_seconds": 0.001141525,
+          "encoder_padding_seconds": 0.007817739,
+          "allocated_bytes": 470690360,
+          "gc_before": [
+            547,
+            39,
+            16
+          ],
+          "gc_after": [
+            554,
+            39,
+            16
+          ]
+        },
+        {
+          "index": 45,
+          "name": "260-123288-0005",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.153222938,
+          "frontend_padding_seconds": 0.001789563,
+          "encoder_padding_seconds": 0.005862914,
+          "allocated_bytes": 866349320,
+          "gc_before": [
+            554,
+            39,
+            16
+          ],
+          "gc_after": [
+            568,
+            40,
+            16
+          ]
+        },
+        {
+          "index": 46,
+          "name": "672-122797-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.562101402,
+          "frontend_padding_seconds": 0.000604183,
+          "encoder_padding_seconds": 0.002144599,
+          "allocated_bytes": 281975776,
+          "gc_before": [
+            568,
+            40,
+            16
+          ],
+          "gc_after": [
+            573,
+            42,
+            16
+          ]
+        },
+        {
+          "index": 47,
+          "name": "672-122797-0001",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.886932176,
+          "frontend_padding_seconds": 0.002147023,
+          "encoder_padding_seconds": 0.00656714,
+          "allocated_bytes": 1076926136,
+          "gc_before": [
+            573,
+            42,
+            16
+          ],
+          "gc_after": [
+            589,
+            42,
+            16
+          ]
+        },
+        {
+          "index": 48,
+          "name": "908-157963-0005",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.249123676,
+          "frontend_padding_seconds": 0.001028384,
+          "encoder_padding_seconds": 0.002723273,
+          "allocated_bytes": 465051960,
+          "gc_before": [
+            589,
+            42,
+            16
+          ],
+          "gc_after": [
+            597,
+            42,
+            16
+          ]
+        },
+        {
+          "index": 49,
+          "name": "908-157963-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.011065092,
+          "frontend_padding_seconds": 0.001810976,
+          "encoder_padding_seconds": 0.005791069,
+          "allocated_bytes": 870862952,
+          "gc_before": [
+            597,
+            42,
+            16
+          ],
+          "gc_after": [
+            610,
+            43,
+            16
+          ]
+        },
+        {
+          "index": 50,
+          "name": "1089-134686-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.293958644,
+          "frontend_padding_seconds": 0.000977186,
+          "encoder_padding_seconds": 0.002686512,
+          "allocated_bytes": 445639160,
+          "gc_before": [
+            610,
+            43,
+            16
+          ],
+          "gc_after": [
+            618,
+            43,
+            16
+          ]
+        },
+        {
+          "index": 51,
+          "name": "1089-134686-0011",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.028380881,
+          "frontend_padding_seconds": 0.001770515,
+          "encoder_padding_seconds": 0.016932316,
+          "allocated_bytes": 861956480,
+          "gc_before": [
+            618,
+            43,
+            16
+          ],
+          "gc_after": [
+            631,
+            44,
+            17
+          ]
+        },
+        {
+          "index": 52,
+          "name": "1188-133604-0001",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.790005123,
+          "frontend_padding_seconds": 0.00128456,
+          "encoder_padding_seconds": 0.005946211,
+          "allocated_bytes": 614093056,
+          "gc_before": [
+            631,
+            44,
+            17
+          ],
+          "gc_after": [
+            641,
+            44,
+            17
+          ]
+        },
+        {
+          "index": 53,
+          "name": "1188-133604-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 5.788155834,
+          "frontend_padding_seconds": 0.002942665,
+          "encoder_padding_seconds": 0.027699325,
+          "allocated_bytes": 1348093776,
+          "gc_before": [
+            641,
+            44,
+            17
+          ],
+          "gc_after": [
+            661,
+            44,
+            17
+          ]
+        },
+        {
+          "index": 54,
+          "name": "1221-135766-0002",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.788051041,
+          "frontend_padding_seconds": 0.000709161,
+          "encoder_padding_seconds": 0.0030078740000000002,
+          "allocated_bytes": 325618672,
+          "gc_before": [
+            661,
+            44,
+            17
+          ],
+          "gc_after": [
+            667,
+            45,
+            17
+          ]
+        },
+        {
+          "index": 55,
+          "name": "1221-135766-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.008973973,
+          "frontend_padding_seconds": 0.001790505,
+          "encoder_padding_seconds": 0.013936741,
+          "allocated_bytes": 861846656,
+          "gc_before": [
+            667,
+            45,
+            17
+          ],
+          "gc_after": [
+            681,
+            47,
+            18
+          ]
+        },
+        {
+          "index": 56,
+          "name": "1284-1180-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.611567145,
+          "frontend_padding_seconds": 0.001320213,
+          "encoder_padding_seconds": 0.010413628,
+          "allocated_bytes": 558408200,
+          "gc_before": [
+            681,
+            47,
+            18
+          ],
+          "gc_after": [
+            691,
+            47,
+            18
+          ]
+        },
+        {
+          "index": 57,
+          "name": "1284-1180-0018",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.148372696,
+          "frontend_padding_seconds": 0.001949604,
+          "encoder_padding_seconds": 0.018175987,
+          "allocated_bytes": 834529760,
+          "gc_before": [
+            691,
+            47,
+            18
+          ],
+          "gc_after": [
+            704,
+            48,
+            18
+          ]
+        },
+        {
+          "index": 58,
+          "name": "1320-122612-0001",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 2.962832736,
+          "frontend_padding_seconds": 0.001373775,
+          "encoder_padding_seconds": 0.002903394,
+          "allocated_bytes": 647101744,
+          "gc_before": [
+            704,
+            48,
+            18
+          ],
+          "gc_after": [
+            715,
+            48,
+            18
+          ]
+        },
+        {
+          "index": 59,
+          "name": "1320-122612-0000",
+          "pass_index": 2,
+          "phase": "measured",
+          "seconds": 4.530012103,
+          "frontend_padding_seconds": 0.004936407,
+          "encoder_padding_seconds": 0.004922957,
+          "allocated_bytes": 958119992,
+          "gc_before": [
+            715,
+            48,
+            18
+          ],
+          "gc_after": [
+            731,
+            50,
+            19
+          ]
+        },
+        {
+          "index": 60,
+          "name": "121-121726-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.910630438,
+          "frontend_padding_seconds": 0.002239303,
+          "encoder_padding_seconds": 0.006339764,
+          "allocated_bytes": 573869040,
+          "gc_before": [
+            731,
+            50,
+            19
+          ],
+          "gc_after": [
+            740,
+            50,
+            19
+          ]
+        },
+        {
+          "index": 61,
+          "name": "121-123852-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 5.650700265,
+          "frontend_padding_seconds": 0.005845089,
+          "encoder_padding_seconds": 0.029600256000000002,
+          "allocated_bytes": 1300241872,
+          "gc_before": [
+            741,
+            50,
+            19
+          ],
+          "gc_after": [
+            759,
+            50,
+            19
+          ]
+        },
+        {
+          "index": 62,
+          "name": "237-126133-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.925849262,
+          "frontend_padding_seconds": 0.001398002,
+          "encoder_padding_seconds": 0.005967835,
+          "allocated_bytes": 605551128,
+          "gc_before": [
+            759,
+            50,
+            19
+          ],
+          "gc_after": [
+            769,
+            51,
+            19
+          ]
+        },
+        {
+          "index": 63,
+          "name": "237-126133-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.354462869,
+          "frontend_padding_seconds": 0.001852418,
+          "encoder_padding_seconds": 0.004692056,
+          "allocated_bytes": 947213032,
+          "gc_before": [
+            769,
+            51,
+            19
+          ],
+          "gc_after": [
+            784,
+            51,
+            19
+          ]
+        },
+        {
+          "index": 64,
+          "name": "260-123286-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.408767445,
+          "frontend_padding_seconds": 0.000991798,
+          "encoder_padding_seconds": 0.002790375,
+          "allocated_bytes": 470694192,
+          "gc_before": [
+            784,
+            51,
+            19
+          ],
+          "gc_after": [
+            792,
+            51,
+            19
+          ]
+        },
+        {
+          "index": 65,
+          "name": "260-123288-0005",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.158260267,
+          "frontend_padding_seconds": 0.001750324,
+          "encoder_padding_seconds": 0.005360404,
+          "allocated_bytes": 866334896,
+          "gc_before": [
+            792,
+            51,
+            19
+          ],
+          "gc_after": [
+            805,
+            52,
+            19
+          ]
+        },
+        {
+          "index": 66,
+          "name": "672-122797-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.166534441,
+          "frontend_padding_seconds": 0.000572375,
+          "encoder_padding_seconds": 0.001161279,
+          "allocated_bytes": 281980616,
+          "gc_before": [
+            805,
+            52,
+            19
+          ],
+          "gc_after": [
+            811,
+            54,
+            20
+          ]
+        },
+        {
+          "index": 67,
+          "name": "672-122797-0001",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.965378077,
+          "frontend_padding_seconds": 0.002116356,
+          "encoder_padding_seconds": 0.023004293,
+          "allocated_bytes": 1076936240,
+          "gc_before": [
+            811,
+            54,
+            20
+          ],
+          "gc_after": [
+            827,
+            54,
+            20
+          ]
+        },
+        {
+          "index": 68,
+          "name": "908-157963-0005",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.322816386,
+          "frontend_padding_seconds": 0.000995734,
+          "encoder_padding_seconds": 0.00797728,
+          "allocated_bytes": 465040688,
+          "gc_before": [
+            827,
+            54,
+            20
+          ],
+          "gc_after": [
+            834,
+            54,
+            20
+          ]
+        },
+        {
+          "index": 69,
+          "name": "908-157963-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.236626723,
+          "frontend_padding_seconds": 0.001974713,
+          "encoder_padding_seconds": 0.016228976,
+          "allocated_bytes": 870866048,
+          "gc_before": [
+            834,
+            54,
+            20
+          ],
+          "gc_after": [
+            849,
+            55,
+            21
+          ]
+        },
+        {
+          "index": 70,
+          "name": "1089-134686-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.365770929,
+          "frontend_padding_seconds": 0.000928472,
+          "encoder_padding_seconds": 0.00776009,
+          "allocated_bytes": 445635616,
+          "gc_before": [
+            849,
+            55,
+            21
+          ],
+          "gc_after": [
+            856,
+            55,
+            21
+          ]
+        },
+        {
+          "index": 71,
+          "name": "1089-134686-0011",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.963261778,
+          "frontend_padding_seconds": 0.001977577,
+          "encoder_padding_seconds": 0.016020622,
+          "allocated_bytes": 861957568,
+          "gc_before": [
+            856,
+            55,
+            21
+          ],
+          "gc_after": [
+            870,
+            56,
+            21
+          ]
+        },
+        {
+          "index": 72,
+          "name": "1188-133604-0001",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.75726199,
+          "frontend_padding_seconds": 0.001470311,
+          "encoder_padding_seconds": 0.00265798,
+          "allocated_bytes": 614094688,
+          "gc_before": [
+            870,
+            56,
+            21
+          ],
+          "gc_after": [
+            880,
+            57,
+            21
+          ]
+        },
+        {
+          "index": 73,
+          "name": "1188-133604-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 5.531526792,
+          "frontend_padding_seconds": 0.002637875,
+          "encoder_padding_seconds": 0.007657441,
+          "allocated_bytes": 1348097384,
+          "gc_before": [
+            880,
+            57,
+            21
+          ],
+          "gc_after": [
+            900,
+            57,
+            21
+          ]
+        },
+        {
+          "index": 74,
+          "name": "1221-135766-0002",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.387536229,
+          "frontend_padding_seconds": 0.000683072,
+          "encoder_padding_seconds": 0.002204088,
+          "allocated_bytes": 325621128,
+          "gc_before": [
+            900,
+            57,
+            21
+          ],
+          "gc_after": [
+            905,
+            57,
+            21
+          ]
+        },
+        {
+          "index": 75,
+          "name": "1221-135766-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.847968408,
+          "frontend_padding_seconds": 0.001744966,
+          "encoder_padding_seconds": 0.004795916,
+          "allocated_bytes": 861844984,
+          "gc_before": [
+            905,
+            57,
+            21
+          ],
+          "gc_after": [
+            919,
+            58,
+            21
+          ]
+        },
+        {
+          "index": 76,
+          "name": "1284-1180-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 2.520687672,
+          "frontend_padding_seconds": 0.001133633,
+          "encoder_padding_seconds": 0.003496477,
+          "allocated_bytes": 558412552,
+          "gc_before": [
+            919,
+            58,
+            21
+          ],
+          "gc_after": [
+            928,
+            59,
+            21
+          ]
+        },
+        {
+          "index": 77,
+          "name": "1284-1180-0018",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.153427878,
+          "frontend_padding_seconds": 0.00169484,
+          "encoder_padding_seconds": 0.010761513,
+          "allocated_bytes": 834542248,
+          "gc_before": [
+            928,
+            59,
+            21
+          ],
+          "gc_after": [
+            942,
+            61,
+            22
+          ]
+        },
+        {
+          "index": 78,
+          "name": "1320-122612-0001",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 3.057657608,
+          "frontend_padding_seconds": 0.001326283,
+          "encoder_padding_seconds": 0.011616536,
+          "allocated_bytes": 647100144,
+          "gc_before": [
+            942,
+            61,
+            22
+          ],
+          "gc_after": [
+            952,
+            61,
+            22
+          ]
+        },
+        {
+          "index": 79,
+          "name": "1320-122612-0000",
+          "pass_index": 3,
+          "phase": "measured",
+          "seconds": 4.626281316,
+          "frontend_padding_seconds": 0.002155246,
+          "encoder_padding_seconds": 0.021996487,
+          "allocated_bytes": 958102648,
+          "gc_before": [
+            952,
+            61,
+            22
+          ],
+          "gc_after": [
+            967,
+            61,
+            22
+          ]
+        }
+      ],
+      "padcore_loads": [
+        {
+          "index": 9409,
+          "seconds": 0.994872584,
+          "tier": "QuickJitted",
+          "method_id": "125978384982152",
+          "address": "125978383777616",
+          "bytes": "2089"
+        },
+        {
+          "index": 9496,
+          "seconds": 0.997824915,
+          "tier": "OptimizedTier1OSR",
+          "method_id": "125978384982152",
+          "address": "125978383781472",
+          "bytes": "587"
+        },
+        {
+          "index": 178827,
+          "seconds": 115.809239425,
+          "tier": "QuickJittedInstrumented",
+          "method_id": "125978384982152",
+          "address": "125978393635296",
+          "bytes": "2089"
+        },
+        {
+          "index": 184565,
+          "seconds": 118.285818334,
+          "tier": "OptimizedTier1OSR",
+          "method_id": "125978384982152",
+          "address": "125978393811552",
+          "bytes": "592"
+        },
+        {
+          "index": 271515,
+          "seconds": 224.070622689,
+          "tier": "OptimizedTier1",
+          "method_id": "125978384982152",
+          "address": "125978393933024",
+          "bytes": "2759"
+        }
+      ],
+      "passes": [
+        {
+          "pass": 0,
+          "seconds": 78.147802348,
+          "frontend_padding_seconds": 0.044089919,
+          "encoder_padding_seconds": 0.253750368
+        },
+        {
+          "pass": 1,
+          "seconds": 72.35365430499999,
+          "frontend_padding_seconds": 0.037315333,
+          "encoder_padding_seconds": 0.189303158
+        },
+        {
+          "pass": 2,
+          "seconds": 72.167666765,
+          "frontend_padding_seconds": 0.035400764,
+          "encoder_padding_seconds": 0.203570885
+        },
+        {
+          "pass": 3,
+          "seconds": 72.311406773,
+          "frontend_padding_seconds": 0.035488386999999996,
+          "encoder_padding_seconds": 0.192089668
+        }
+      ]
+    }
+  }
+}
