@@ -1,0 +1,9 @@
+process,phase,calls,minor_mean,minor_median,major,collection_calls,switch_calls,pad_us_mean,pad_us_median,bracket_us_mean,bracket_us_median,allocated_mean,allocated_median,user_us_mean,user_us_median,system_us_mean,system_us_median
+current-screen0-512,before,128,0.03125,0.0,0,0,0,0.025203125,0.03,5.241203124999999,0.922,40,40.0,0,0.0,0,0.0
+current-screen0-512,after,128,0,0.0,0,0,0,0.0239453125,0.02,0.90440625,0.892,40,40.0,0,0.0,0,0.0
+candidate-screen1-512,before,128,0.03125,0.0,0,0,0,0.02496875,0.0205,5.393054687499999,0.921,40,40.0,0,0.0,0,0.0
+candidate-screen1-512,after,128,0,0.0,0,0,0,0.0251171875,0.03,0.8929296875,0.891,40,40.0,0,0.0,0,0.0
+candidate-screen2-512,before,128,0.03125,0.0,0,0,0,0.0250546875,0.0205,5.15159375,0.921,40,40.0,0,0.0,0,0.0
+candidate-screen2-512,after,128,0,0.0,0,0,0,0.024640625,0.02,0.90190625,0.901,40,40.0,0,0.0,0,0.0
+current-screen3-512,before,128,0.03125,0.0,0,0,0,0.026203125,0.03,5.2719609375,0.921,40,40.0,7.7578125,0.0,0.0625,0.0
+current-screen3-512,after,128,0,0.0,0,0,0,0.025031249999999998,0.025500000000000002,0.8987265625,0.891,40,40.0,0,0.0,0,0.0

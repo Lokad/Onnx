@@ -1,0 +1,14 @@
+{
+  "boot_time": 1789634288.0,
+  "page_bytes": 4096,
+  "kernel": "6.17.0-1022-azure",
+  "checked": 1790450031.1917872,
+  "diagnostic_owner": {
+    "pid": 1118532,
+    "birth": 1790449462.33
+  },
+  "all_owners_terminal": true,
+  "available": 11149611008,
+  "tmpfs_free": 3685216256,
+  "inference_calls": 0
+}
