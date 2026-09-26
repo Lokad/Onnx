@@ -25,6 +25,7 @@ def main():
     assert proof['passed'] and proof['analysis'] == pin(BASE/'analysis.json')
     for name, wanted in proof['files'].items(): assert pin(BASE/name) == wanted, name
     managed = read(BASE/'analysis.json')
+    spec = read(BASE/'bundle/spec.json')
     old_proof = read(OLD_GAP/'closed.json')
     assert old_proof['passed'] and old_proof['analysis'] == pin(OLD_GAP/'analysis.json')
     assert pin(OLD_GAP/'analysis.json')['sha256'] == '17f0e96862a89606b7e6f56ac5b3ba13fcd36507efa7388bf8c15fff5e0899a7'
@@ -71,7 +72,9 @@ def main():
     assert math.isclose(sum(r['ort_seconds'] for r in partition),native['phases']['profile']['corpus_seconds'],abs_tol=1e-11)
     value = dict(passed=True,profile_closure=pin(BASE/'closed.json'),mapping_closure=pin(OLD_GAP/'closed.json'),
         mapping_analysis=pin(OLD_GAP/'analysis.json'),native_sources=mapping['sources'],partition=partition,
-        corpus=managed['corpus'],phase_over_control=managed['phase_over_control'],wall_over_phase=managed['wall_over_phase'],
+        corpus=managed['corpus'], product=dict(core=spec['core'],data=spec['data']),
+        reference_product=spec['reference_product'],
+        phase_over_control=managed['phase_over_control'],wall_over_phase=managed['wall_over_phase'],
         all_graph_descriptors_exact=True,nonoverlapping_complete_partition=True,
         native_profile_is_historical=True,fresh_cross_engine_score=False,overhead_subtracted=False,
         selected_optimization=None,resources=managed['resources'])
@@ -79,9 +82,11 @@ def main():
     write(RESULT/'closed.json',dict(passed=True,analysis=pin(RESULT/'analysis.json'),reviewer=pin(TOOLS/'diagnose.py')))
     OUT.mkdir(); write(OUT/'observations-20260925.json',dict(closure=pin(RESULT/'closed.json'),**value))
     lines = ['# Current Parakeet: complete diagnostic attribution','',
-        'The current Core e07a4518 / Data 01e9e784 is measured with the unchanged',
+        f"The current Core {spec['core']['sha256'][:8]} / Data {spec['data']['sha256'][:8]} is measured with the unchanged",
         'request runner and reused, compiled-reviewed Data observer. Every complete',
-        'public result matches the admitted product exactly. No product was rebuilt.','',
+        'public result matches the admitted product exactly. The actual qualified root',
+        'binaries are used; the Data observer is reused through exact compiled-method',
+        'comparison. No product or observer was rebuilt for this profile.','',
         '| Managed process | Seconds per 20-clip corpus |','|---|---:|']
     lines += [f'| {name} | {seconds:.6f} |' for name,seconds in managed['corpus'].items()]
     lines += ['',f"Phase/control is {value['phase_over_control']:.6f}; wall/phase is {value['wall_over_phase']:.6f}.",

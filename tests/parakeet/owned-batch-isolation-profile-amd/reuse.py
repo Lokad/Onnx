@@ -1,9 +1,10 @@
-"""Bind the reviewed observer to unchanged Data and the qualified current Core."""
+"""Bind the reviewed observer to the qualified root through exact compiled bodies."""
 from run import ROOT, ORIGINAL, pin, read, load
 
 OLD = ROOT/'artifacts/parakeet-packed-final-row-profile-amd-20260925'
 CONTRACTS = ROOT/'artifacts/parakeet-owned-batch-isolation-build-amd-20260925'
 DEPTHWISE = ROOT/'artifacts/parakeet-direct-depthwise-build-v2-amd-20260925'
+QUALIFIED_ROOT = ROOT/'artifacts/parakeet-owned-batch-isolation-root-policy-amd-20260925'
 CORE = 'e07a45189b348fe55ce76300415c6c35ba6a2bc0d224f1fc13b0b92c303bccba'
 DATA = '01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1'
 OBSERVER = '51b6d2bb72640a99d8ed4e97334525dde8be60ac1ecb3c25ea690956bfcab2a2'
@@ -65,8 +66,46 @@ def review_observer():
         assert pin(runtime/name) == wanted
         inputs[(runtime/name).relative_to(ROOT).as_posix()] = wanted
     assert product['Lokad.Onnx.dll']['sha256'] == CORE and product['Lokad.Onnx.Data.dll']['sha256'] == DATA
-    return dict(passed=True, observer_rebuilt=False, product=product,
-        core_public_surface_preserved=True, original_review=pin(OLD/'build-review.json'),
+    reference_product = product
+    closure = retain(QUALIFIED_ROOT/'closed.json')
+    assert closure['passed']
+    for name, wanted in closure['files'].items():
+        assert pin(QUALIFIED_ROOT/name) == wanted, name
+    root = retain(QUALIFIED_ROOT/'analysis.json')
+    assert root['passed'] and root['root_source_verified'] and root['measured'] == reference_product
+    assert root['inventory'] == dict(passed=True, core_methods=3281, data_methods=697,
+        public_surface_equal=False, public_surface_delta_exact=True, data_friend_removed=True,
+        method_bodies_equal=True, implementation_flags_equal=True)
+    compiled = retain(QUALIFIED_ROOT/'collected/inventory/instructions.json')
+    assert compiled['inventory_complete']
+    current_core, current_data = compiled['observations']
+    product = root['built']
+    for row, name, count in [(current_core,'Lokad.Onnx.dll',3281),(current_data,'Lokad.Onnx.Data.dll',697)]:
+        assert row['assembly'] == name and row['before_sha256'] == reference_product[name]['sha256']
+        assert row['after_sha256'] == product[name]['sha256']
+        assert row['methods'] == row['unchanged_methods'] == count
+        assert not row['differences'] and not row['added'] and not row['removed'] and not row['candidate_methods']
+        assert row['method_flags_before'] == row['method_flags_after']
+    added = {'MEMBER Lokad.Onnx.ComputationalGraph Method Int32 PrepareOwnedMatMulWeights()',
+        'MEMBER Lokad.Onnx.ComputationalGraph Method Int32 PrepareOwnedMatMulWeights() FLAGS Public, HideBySig'}
+    assert current_core['public_surface'] == second['public_surface_after']
+    assert set(current_core['public_surface_after']) == set(current_core['public_surface']) | added
+    assert set(current_core['assembly_attributes_before']) - set(current_core['assembly_attributes_after']) == {
+        '[System.Runtime.CompilerServices.InternalsVisibleToAttribute("Lokad.Onnx.Data")]'}
+    assert not set(current_core['assembly_attributes_after']) - set(current_core['assembly_attributes_before'])
+    assert current_data['public_surface_equal']
+    assert current_data['public_surface'] == current_data['public_surface_after'] == data['public_surface']
+    assert current_data['assembly_attributes_before'] == current_data['assembly_attributes_after'] == original_data['assembly_attributes_after']
+    assert current_data['normalized_methods'] == data['normalized_methods']
+    assert current_data['method_flags_before'] == data['method_flags_before']
+    for name, wanted in product.items():
+        path = QUALIFIED_ROOT/'collected/runtime'/name
+        assert pin(path) == wanted
+        inputs[path.relative_to(ROOT).as_posix()] = wanted
+    return dict(passed=True, observer_rebuilt=False, product=product, reference_product=reference_product,
+        root_closure=pin(QUALIFIED_ROOT/'closed.json'), root_inventory=pin(QUALIFIED_ROOT/'collected/inventory/instructions.json'),
+        data_compiled_scope_equal=True, root_metadata_delta_verified=True,
+        original_review=pin(OLD/'build-review.json'),
         original_inventory=pin(folder/'inventory/instructions.json'), methods=methods,
         consumer=built['consumer'], observed_data=built['data'], inputs=inputs)
 

@@ -1,9 +1,17 @@
 import copy
 import unittest
+from run import TOOLS, ORIGINAL
 from diagnose import descriptors_equal
 
 
 class MappingChecks(unittest.TestCase):
+    def test_audit_retains_every_check_except_declared_reference_identity(self):
+        before = "assert reference['core_sha256']==spec['core']['sha256'] and reference['data_sha256']==spec['data']['sha256']"
+        after = "assert reference['core_sha256']==spec['reference_product']['Lokad.Onnx.dll']['sha256'] and reference['data_sha256']==spec['reference_product']['Lokad.Onnx.Data.dll']['sha256']"
+        original = (ORIGINAL/'audit.py').read_text(encoding='utf8')
+        self.assertEqual(original.count(before),1)
+        self.assertEqual((TOOLS/'audit.py').read_text(encoding='utf8'),original.replace(before,after))
+
     def setUp(self):
         self.rows = [dict(graph='encoder',id=1,name='projection',op='MatMul',inputs=['a','b'],
             outputs=['c'],calls=60,constant_inputs=[None,dict(dims=[8,16])],ticks=50,corpus_seconds=.5)]

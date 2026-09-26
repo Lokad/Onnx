@@ -2,15 +2,21 @@
 
 Run only after actual root/package qualification and all application admissions.
 Reuse observed Data 51b6d2bb and SampledAudio 38ab5c7e from the closed M78 observer
-build. Its original Data 01e9e784 is byte-identical to the current product.
+build. The qualified root is Core f3992f40 / Data a8e0b583. All 697 Data methods,
+implementation flags, public declarations and assembly attributes exactly match
+the original observer baseline Data 01e9e784 in the compiled inventories.
 Recompute the retained 164-method runner and 697-method Data comparison, preserving
 the single reversible Execute hook, 50 original internal helpers and constructor.
-Verify the Core public declarations and assembly attributes through both intervening
-compiled inventories, then use actual measured Core e07a4518 in both runtimes.
+Verify the intervening Core inventories and the precise root metadata correction:
+one existing method becomes public and the Data friend attribute is removed.
+Use actual root Core f3992f40 in both runtimes and root Data a8e0b583 in control.
 No product or observer build runs. Original build evidence remains dated evidence.
 
-The adapter imports the existing transport and auditor. Its VM worker is copied
-byte-for-byte. Only identities, admission context and namespace change. The new
+The adapter imports the existing transport. Its VM worker is copied byte-for-byte.
+Its auditor changes only the admitted-reference identity assertion: the retained
+reference still truthfully names measured e07a4518 / 01e9e784, while every new
+request must identify the actual root binaries and return the same complete result.
+Only identities, admission context and namespace change. The new
 driver exposes capture only. Preserve control, phase and wall order, all 20 clips,
 one warmup and three measured passes per process: 240 complete requests. Preserve
 all native/public checks, exact admitted outputs, input/held-output checks,
