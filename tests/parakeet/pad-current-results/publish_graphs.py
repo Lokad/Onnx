@@ -14,7 +14,7 @@ TOOLS=ROOT/'tests/parakeet/pad-current-graphs-amd'
 sys.path.insert(0,str(TOOLS))
 from protocol import CASES,ORDER
 loader=importlib.util.spec_from_file_location('pad_graph_statistics',TOOLS/'statistics.py')
-statistics=importlib.util.module_from_spec(loader);loader.exec_module(statistics)
+statistics=importlib.util.module_from_spec(loader);loader.loader.exec_module(statistics)
 
 
 def main():
