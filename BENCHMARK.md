@@ -1,6 +1,6 @@
 # CPU benchmarks for the upcoming release
 
-Current repository product, measured on 2026-09-26–27 UTC. **Lower is better.** Times
+Current repository product, measured on 2026-09-26 UTC. **Lower is better.** Times
 are seconds; Lokad / ORT is the latency ratio, so 1.100 means 10.0% more time.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT | Status |
