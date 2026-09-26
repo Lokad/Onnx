@@ -1,0 +1,241 @@
+{
+  "closure": {
+    "bytes": 1497,
+    "sha256": "41f851c4e473856383c6d51f7b5a0e86d5f0ff8c47947df1f4176b35e2301fc3"
+  },
+  "passed": true,
+  "new_inference_calls": 0,
+  "source_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "sample_closure": {
+    "bytes": 1273,
+    "sha256": "546b3a58af8814772f0a5b816dbcbece710facc01980acebeb2fc93d7f0dcca9"
+  },
+  "source_closure": {
+    "bytes": 306,
+    "sha256": "17f0e96862a89606b7e6f56ac5b3ba13fcd36507efa7388bf8c15fff5e0899a7"
+  },
+  "binary": {
+    "bytes": 30112440,
+    "sha256": "ff54b93f257508c8e32a43f3528382b7eb791f0946730187e4767d7292a290ee"
+  },
+  "build_id": "3f20b61967f5eab0aff0b64364583da1845ca5e7",
+  "binary_receipt": {
+    "bytes": 696,
+    "sha256": "f0ae76b62a97e1f5ff1dda6193298fa39999813ce6d9d59cbdd98b74255901eb"
+  },
+  "native_sources": {
+    "onnxruntime/contrib_ops/cpu/activations.h": {
+      "bytes": 3860,
+      "sha256": "a1f2edae4d4b644502f94093019b250c1281e988eb5aed2f2fb6164af1cbea20"
+    },
+    "onnxruntime/contrib_ops/cpu/activations.cc": {
+      "bytes": 1048,
+      "sha256": "6149dd882b64952fdf9f0e6090f51afa032c5305267f3a6dfcec36cdcafef81f"
+    },
+    "onnxruntime/core/mlas/lib/silu.cpp": {
+      "bytes": 1225,
+      "sha256": "33383d3d631666b2636c1aeba9712a17f7249ac5a72de9ba15f71ad7ceb656da"
+    },
+    "onnxruntime/core/mlas/lib/intrinsics/avx512/silu_avx512f.cpp": {
+      "bytes": 5334,
+      "sha256": "495c0b177ac45982888ea4fe7c4aceaf9fdce888ab10b70a0353df9a81c8e129"
+    },
+    "onnxruntime/core/mlas/lib/platform.cpp": {
+      "bytes": 38692,
+      "sha256": "93f4874452958eedbc6a532031b93c8fb572d39afe101436f04dbd79a0fb0d73"
+    }
+  },
+  "raw_inputs": {
+    "artifacts\\parakeet-ort-native-samples-20260924\\collected\\perf.data": {
+      "bytes": 141104352,
+      "sha256": "5eb5916b2f9208d1f263121ed8d7a6bb7258fbf7417f0b971dcb60eb75fc218a"
+    },
+    "artifacts\\parakeet-ort-native-samples-20260924\\collected\\perf.script": {
+      "bytes": 8526441,
+      "sha256": "59a46b0889e0e651870308c6c1ff36e9606474a4dbf71bfce775d826ceaf49a9"
+    },
+    "artifacts\\parakeet-ort-native-samples-20260924\\collected\\target.maps": {
+      "bytes": 80547,
+      "sha256": "c06d984bcb770407ba45f108a2bebcea059820330e9ea1e4d1926b283a1692ea"
+    },
+    "artifacts\\parakeet-ort-native-samples-20260924\\collected\\requests\\result.json": {
+      "bytes": 248040,
+      "sha256": "f859d60d3816a7a317314d0002c6234edeb63e3deb76aacf48610141b62b1d5c"
+    }
+  },
+  "constants": [
+    {
+      "name": "LogisticLowerRange",
+      "source": "-18.0f",
+      "address": "0x191d028",
+      "bits": "000090c1"
+    },
+    {
+      "name": "LogisticUpperRange",
+      "source": "18.0f",
+      "address": "0x191d02c",
+      "bits": "00009041"
+    },
+    {
+      "name": "Alpha9",
+      "source": "4.37031012579801e-11f",
+      "address": "0x191d030",
+      "bits": "5135402e"
+    },
+    {
+      "name": "Alpha7",
+      "source": "1.15627324459942e-07f",
+      "address": "0x191d034",
+      "bits": "cb4ef833"
+    },
+    {
+      "name": "Alpha5",
+      "source": "6.08574864600143e-05f",
+      "address": "0x191d038",
+      "bits": "3b417f38"
+    },
+    {
+      "name": "Alpha3",
+      "source": "8.51377133304701e-03f",
+      "address": "0x191d03c",
+      "bits": "587d0b3c"
+    },
+    {
+      "name": "Alpha1",
+      "source": "2.48287947061529e-01f",
+      "address": "0x191d040",
+      "bits": "323f7e3e"
+    },
+    {
+      "name": "Beta10",
+      "source": "6.10247389755681e-13f",
+      "address": "0x191d044",
+      "bits": "f5c42b2b"
+    },
+    {
+      "name": "Beta8",
+      "source": "5.76102136993427e-09f",
+      "address": "0x191d048",
+      "bits": "7bf2c531"
+    },
+    {
+      "name": "Beta6",
+      "source": "6.29106785017040e-06f",
+      "address": "0x191d04c",
+      "bits": "dd17d336"
+    },
+    {
+      "name": "Beta4",
+      "source": "1.70198817374094e-03f",
+      "address": "0x191d050",
+      "bits": "3f15df3a"
+    },
+    {
+      "name": "Beta2",
+      "source": "1.16817656904453e-01f",
+      "address": "0x191d0c0",
+      "bits": "183eef3d"
+    },
+    {
+      "name": "Beta0",
+      "source": "9.93151921023180e-01f",
+      "address": "0x191d0c4",
+      "bits": "343f7e3f"
+    },
+    {
+      "name": "OneHalf",
+      "source": "0.5f",
+      "address": "0x178a800",
+      "bits": "0000003f"
+    }
+  ],
+  "leaf": {
+    "name": "MlasSiluKernelAvx512F",
+    "start": "0xf6b550",
+    "end": "0xf6b9cd",
+    "bytes": 1149,
+    "sha256": "6d00d8dbaed97a36a014c16b2d295be657cbcedd3daeb5a5d9be56219bd27caf",
+    "instruction_count": 172,
+    "identification": "source, exact constants, instructions, caller and observed samples",
+    "source_rebuild_byte_match": false
+  },
+  "samples": {
+    "count": 103,
+    "requests": 44,
+    "measured_requests": 60,
+    "measured_samples": 23902,
+    "period_ns": 517587875,
+    "total_measured_period_ns": 120110537750,
+    "share": 0.0043092628231947115,
+    "estimated_seconds_per_corpus": 0.17252929166666667,
+    "instructions": {
+      "0xf6b726": 7,
+      "0xf6b620": 1,
+      "0xf6b68d": 3,
+      "0xf6b6ab": 18,
+      "0xf6b72c": 24,
+      "0xf6b6d8": 2,
+      "0xf6b693": 11,
+      "0xf6b714": 8,
+      "0xf6b6a5": 7,
+      "0xf6b65d": 3,
+      "0xf6b69f": 3,
+      "0xf6b62d": 6,
+      "0xf6b732": 1,
+      "0xf6b720": 4,
+      "0xf6b6b1": 1,
+      "0xf6b67b": 1,
+      "0xf6b550": 1,
+      "0xf6b708": 2
+    }
+  },
+  "caller": {
+    "start": "0xd09e00",
+    "end": "0xd0a917",
+    "call": "0xd0a55d",
+    "call_end": "0xd0a563",
+    "sampled_frame": "0xd0a562",
+    "dispatch_slot": "0x1cb90b8",
+    "alpha": 1.0,
+    "chunk": 4096
+  },
+  "graph": {
+    "quickgelu_nodes": 72,
+    "families": {
+      "feed-forward": 48,
+      "convolution": 24
+    },
+    "older_profile_silu_seconds": 0.17819933333333335
+  },
+  "attribution_only": true,
+  "per_node_sample_join": false,
+  "new_candidate_selected": false,
+  "managed_source_review": {
+    "src\\Lokad.Onnx\\MathOps.cs": {
+      "bytes": 215579,
+      "sha256": "f09ec95f8ba1aba3e235988ebddab54032dc69fac5013cc288ffae5f4ebfe30b"
+    },
+    "src\\Lokad.Onnx\\CPUExecutionProvider.Elementwise.cs": {
+      "bytes": 47691,
+      "sha256": "25af553a44a79e90faaf366be5cc0407129c82c7bff84eded97ba5224ba6c972"
+    },
+    "tests\\parakeet\\vector-sigmoid-source\\Sigmoid.cs.txt": {
+      "bytes": 1817,
+      "sha256": "d09d5e6364aec3aea63f0e0afb722aa51f8750f69fda3a743245a1da9b88ff05"
+    }
+  },
+  "analyst": {
+    "bytes": 14613,
+    "sha256": "7b428100ddf51d014c2a992668adcbdd2e45aa23da15381111d2e7bc62c7a33a"
+  },
+  "tools": {
+    "C:\\Strawberry\\c\\bin\\objdump.exe": {
+      "bytes": 2481166,
+      "sha256": "73a20b926e92c319d24a7b4f7919334cc62edbd7c43a261982484d96f4385a23"
+    },
+    "C:\\Strawberry\\c\\bin\\readelf.exe": {
+      "bytes": 968206,
+      "sha256": "7b2a1f7d50be871bdc74cab21dfa9bce14822679069ea8e1c02067dfad3990eb"
+    }
+  }
+}
