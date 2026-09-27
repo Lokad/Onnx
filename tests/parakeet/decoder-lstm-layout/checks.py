@@ -30,8 +30,8 @@ def compiled(value, baseline, candidate):
                 ('Lokad.Onnx.GraphLstmPacking', 'Prepare'), ('Lokad.Onnx.CPUExecutionProvider', 'Lstm')}
             assert len(row['added']) == 2
             assert {tuple(n.split('::')[:2]) for n in row['added']} == {
-                ('Lokad.Onnx.GraphLstmPacking', 'get_ColumnsPerBlock'),
-                ('Lokad.Onnx.CPUExecutionProvider', 'LstmProjectPreparedOrdered')}
+                ('Lokad.Onnx.PreparedLstmProjection', 'get_ColumnsPerBlock'),
+                ('Lokad.Onnx.PreparedLstmProjection', 'Multiply')}
             assert row['unchanged_methods'] == 3282
         else:
             assert not row['differences'] and not row['added'] and row['unchanged_methods'] == 697

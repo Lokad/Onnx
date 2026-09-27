@@ -25,7 +25,7 @@ public class LstmLayoutContracts
     }
     static float[] Pack(ReadOnlySpan<float> flat, int n, int columns)
     {
-        var result = new float[flat.Length]; int block = GraphLstmPacking.ColumnsPerBlock;
+        var result = new float[flat.Length]; int block = PreparedLstmProjection.ColumnsPerBlock;
         for (int o = 0; o < columns; o++)
         for (int k = 0; k < n; k++)
         {
@@ -42,10 +42,10 @@ public class LstmLayoutContracts
         var expected = Enumerable.Repeat(Guard, columns + 2).ToArray();
         var actual = (float[])expected.Clone();
         CPUExecutionProvider.LstmProjectOrdered(input, flat, expected.AsSpan(1, columns));
-        CPUExecutionProvider.LstmProjectPreparedOrdered(input, packed, actual.AsSpan(1, columns));
+        PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
         Equal(expected, actual);
         long start = GC.GetAllocatedBytesForCurrentThread();
-        for (int i = 0; i < 8; i++) CPUExecutionProvider.LstmProjectPreparedOrdered(input, packed, actual.AsSpan(1, columns));
+        for (int i = 0; i < 8; i++) PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
         Assert.Equal(0, GC.GetAllocatedBytesForCurrentThread() - start);
         Equal(expected, actual); Assert.Equal(inputHash, Hash(input)); Assert.Equal(packedHash, Hash(packed));
     }
@@ -114,7 +114,7 @@ public class LstmLayoutContracts
                 var input = Load(inputs[i == 0 ? 0 : 5]).ToArray();
                 var expected = new float[Outputs]; var actual = new float[Outputs];
                 CPUExecutionProvider.LstmProjectOrdered(input, entry.flat[i], expected);
-                CPUExecutionProvider.LstmProjectPreparedOrdered(input, entry.packed[i], actual);
+                PreparedLstmProjection.Multiply(input, entry.packed[i], actual);
                 Equal(expected, actual); outputHashes.Add(Hash(actual));
             }
             calls++;
@@ -145,7 +145,7 @@ public class LstmLayoutContracts
         using var stream = new FileStream(Environment.GetEnvironmentVariable("LSTM_LAYOUT_IDENTITY")!, FileMode.CreateNew);
         JsonSerializer.Serialize(stream, new { passed = true, mode, pid = process.Id, core_sha256 = Sha(core),
             consumer_sha256 = Sha(Assembly.GetExecutingAssembly().Location), vector_count = Vector<float>.Count,
-            block = GraphLstmPacking.ColumnsPerBlock, avx512 = Avx512F.IsSupported, hardware = Vector.IsHardwareAccelerated,
+            block = PreparedLstmProjection.ColumnsPerBlock, avx512 = Avx512F.IsSupported, hardware = Vector.IsHardwareAccelerated,
             runtime = Environment.Version.ToString(), affinity = process.ProcessorAffinity.ToInt64() });
     }
 }
