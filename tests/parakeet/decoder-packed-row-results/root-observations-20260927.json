@@ -1,0 +1,267 @@
+{
+  "closure": {
+    "bytes": 225160,
+    "sha256": "d0a78cdd3106d6a72a41303f879bbb2f9ea3bd6a298d778333015f38ccdac246"
+  },
+  "passed": true,
+  "warnings": {
+    "passed": true,
+    "no_new_warning": true,
+    "existing_cs8604_occurrences": 4,
+    "source_warnings": 2,
+    "summary_repeats_included": true,
+    "rows": [
+      {
+        "log": "backend-build.stdout",
+        "text": "0 Warning(s)",
+        "count": 1
+      },
+      {
+        "log": "cli-build.stdout",
+        "text": "2 Warning(s)",
+        "count": 1
+      },
+      {
+        "log": "cli-build.stdout",
+        "text": "CAMPAIGN/source/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,29): warning CS8604: Possible null reference argument for parameter 'x' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [CAMPAIGN/source/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+        "count": 2
+      },
+      {
+        "log": "cli-build.stdout",
+        "text": "CAMPAIGN/source/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs(20,32): warning CS8604: Possible null reference argument for parameter 'y' in 'Tensor<float> Tensor<T>.MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)'. [CAMPAIGN/source/src/Lokad.Onnx/Lokad.Onnx.csproj]",
+        "count": 2
+      },
+      {
+        "log": "consumer-build.stdout",
+        "text": "0 Warning(s)",
+        "count": 1
+      },
+      {
+        "log": "tensors-build.stdout",
+        "text": "0 Warning(s)",
+        "count": 1
+      }
+    ],
+    "reference_log": {
+      "bytes": 2248,
+      "sha256": "f18981b951e50c072c5827c47563f9b38358f5469a2ff367b3cc3b39942299d6"
+    }
+  },
+  "root_source_verified": true,
+  "root_integration": {
+    "bytes": 78533,
+    "sha256": "a8f02be9251b53d9b77b450fb611bf718400347e300cf606019de1fe4e90621a"
+  },
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 827392,
+      "sha256": "af19b3b4429a07f7966b5e35ee04e8a31316f45991c300f3683a591caf5e9374"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "da72ca547191de12a52f09bceeed25619a92a14b1bbff271a9e7d10515f40312"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 827392,
+      "sha256": "0d224bcff591563816d64c3a3cc51f7b7cd38f5a1d3c523b05c699a9b82b6b97"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a37453929e6103a187f9849d3040a663fa9d7dd85561e4f6f14d639fe38935d5"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "core_methods": 3284,
+    "data_methods": 697,
+    "public_surface_equal": true,
+    "assembly_attributes_equal": true,
+    "method_bodies_equal": true,
+    "implementation_flags_equal": true
+  },
+  "suites": {
+    "backend": {
+      "passed": 3564,
+      "skipped": 42,
+      "census_exact": true,
+      "trx": {
+        "bytes": 5393947,
+        "sha256": "684535182b1e262a900d2aa7db1d5892e6de783d3897d5c015252ba8a097703f"
+      }
+    },
+    "tensors": {
+      "passed": 394,
+      "skipped": 0,
+      "census_exact": true,
+      "trx": {
+        "bytes": 572587,
+        "sha256": "27ae07fc47e7d0d8252a6f21cb5f31e4b5b8ec560c219f794b47e9fdefb93392"
+      }
+    }
+  },
+  "suite256": {
+    "backend": {
+      "passed": 3474,
+      "skipped": 132,
+      "census_exact": true,
+      "avx512_disabled": true,
+      "trx": {
+        "bytes": 5454144,
+        "sha256": "e8c7072e22925342eaf02cc04166498a1b3b00f51489cfc79a093242d357f42a"
+      }
+    },
+    "tensors": {
+      "passed": 394,
+      "skipped": 0,
+      "census_exact": true,
+      "avx512_disabled": true,
+      "trx": {
+        "bytes": 572587,
+        "sha256": "5b230664211eda33b09bf859456ae48ae0d68d996e3f3e424e55411179d43730"
+      }
+    }
+  },
+  "package": {
+    "passed": true,
+    "package": {
+      "bytes": 578696,
+      "sha256": "af2f65d2b9dde6fff464bff69a3ab3f8aec6965a7fa12e5a3b1e0718e1bf9bd8"
+    },
+    "core": {
+      "bytes": 827392,
+      "sha256": "0d224bcff591563816d64c3a3cc51f7b7cd38f5a1d3c523b05c699a9b82b6b97"
+    },
+    "dependencies": [
+      {
+        "id": "Google.Protobuf",
+        "version": "3.33.5",
+        "exclude": "Build,Analyzers"
+      }
+    ]
+  },
+  "consumer": {
+    "passed": true,
+    "winograd_values": 1056,
+    "winograd_calls": 2,
+    "winograd_weights": 51200,
+    "winograd_scratch": 28800,
+    "prepared_graph_values": 1056,
+    "prepared_graph_calls": 2,
+    "retained_weights": 18432,
+    "scratch": 8384,
+    "ownership": true
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9355264,
+      "seconds": 0.26049411902204156
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 173187072,
+      "seconds": 1.560799655970186
+    },
+    {
+      "name": "cli-build",
+      "samples": 61,
+      "peak_rss": 513458176,
+      "seconds": 16.104161263094284
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 169480192,
+      "seconds": 1.5950321559794247
+    },
+    {
+      "name": "backend-build",
+      "samples": 61,
+      "peak_rss": 603959296,
+      "seconds": 16.620099714957178
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 4,
+      "peak_rss": 155873280,
+      "seconds": 1.0963663230650127
+    },
+    {
+      "name": "tensors-build",
+      "samples": 21,
+      "peak_rss": 367034368,
+      "seconds": 5.801755147986114
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 3,
+      "peak_rss": 132808704,
+      "seconds": 0.8278465699404478
+    },
+    {
+      "name": "bridge-build",
+      "samples": 11,
+      "peak_rss": 300371968,
+      "seconds": 3.035259736003354
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 174100480,
+      "seconds": 1.1761710320133716
+    },
+    {
+      "name": "backend-tests",
+      "samples": 307,
+      "peak_rss": 1744236544,
+      "seconds": 85.1068268729141
+    },
+    {
+      "name": "tensors-tests",
+      "samples": 45,
+      "peak_rss": 496779264,
+      "seconds": 12.471034590969793
+    },
+    {
+      "name": "backend-tests-256",
+      "samples": 325,
+      "peak_rss": 1701191680,
+      "seconds": 90.29731353209354
+    },
+    {
+      "name": "tensors-tests-256",
+      "samples": 41,
+      "peak_rss": 497782784,
+      "seconds": 11.371466624899767
+    },
+    {
+      "name": "package",
+      "samples": 3,
+      "peak_rss": 134844416,
+      "seconds": 0.8370614050654694
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 4,
+      "peak_rss": 155746304,
+      "seconds": 1.1101553459884599
+    },
+    {
+      "name": "consumer-build",
+      "samples": 11,
+      "peak_rss": 302051328,
+      "seconds": 3.0530223310925066
+    },
+    {
+      "name": "consumer-run",
+      "samples": 1,
+      "peak_rss": 10170368,
+      "seconds": 0.2815277880290523
+    }
+  ],
+  "no_performance_measurement": true
+}

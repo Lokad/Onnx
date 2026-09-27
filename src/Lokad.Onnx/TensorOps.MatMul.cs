@@ -143,7 +143,12 @@ where T : unmanaged
         if (!options.UseSimd || !options.UseIntrinsics || !Fma.IsSupported) return null;
         // The 2-row kernel needs even rows; odd counts route packed only when exact
         // 3-row groups cover them (P65).
-        if ((m & 1) != 0 && (m % 3) != 0) return null;
+        if (m == 1)
+        {
+            // Consume an existing preparation only in the current wide one-row territory.
+            if (y.Dimensions[^1] < M1BlockedMinColumns) return null;
+        }
+        else if ((m & 1) != 0 && (m % 3) != 0) return null;
         var found = GraphPacking.ResolvePacked(options.PackedMatMulWeights, y);
         if (found is null || found.Dimensions.Length != 2) return null;
         int n = found.Dimensions[0], k = found.Dimensions[1];
@@ -654,6 +659,11 @@ where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static unsafe void RunPreparedPackedRows(int m, int n, int k, float* x, float* packed, float* dest)
     {
+        if (m == 1)
+        {
+            PreparedSingleRowKernel.Multiply(n, k, x, packed, dest);
+            return;
+        }
         if (AblationSwitches.EnablePackedAvx512Rows)
         {
             if (AblationSwitches.EnablePackedAvx512Panels && TryPackedAvx512Panels(m, n, k, x, packed, dest)) return;
