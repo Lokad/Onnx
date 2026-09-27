@@ -1,0 +1,101 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 165241,
+    "sha256": "dd317fe93e509cc9575237b73e5f9c44cb6b44e51412bc9431dedd9e7fd0b25d"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 827392,
+        "sha256": "0d224bcff591563816d64c3a3cc51f7b7cd38f5a1d3c523b05c699a9b82b6b97"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "a37453929e6103a187f9849d3040a663fa9d7dd85561e4f6f14d639fe38935d5"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 827904,
+        "sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "29b3f633eec461b1113d23d2626952bddff1a628bdba87bb865ef52b6da6dc3d"
+      }
+    }
+  },
+  "consumer": {
+    "bytes": 33280,
+    "sha256": "a50d3e965cf480844559b1f5856e3de318b5c8a269742a9e6504afb9cee6c8c0"
+  },
+  "rows": [
+    {
+      "role": "selected",
+      "mode": "shared",
+      "arrays": 106,
+      "values": 1286766,
+      "maximum_scaled_ort_error": 1.9803643226623535e-05,
+      "exact_current": null
+    },
+    {
+      "role": "selected",
+      "mode": "e5",
+      "arrays": 60,
+      "values": 3714048,
+      "maximum_scaled_ort_error": 1.6391277313232422e-06,
+      "exact_current": null
+    },
+    {
+      "role": "candidate",
+      "mode": "shared",
+      "arrays": 106,
+      "values": 1286766,
+      "maximum_scaled_ort_error": 1.9803643226623535e-05,
+      "exact_current": true
+    },
+    {
+      "role": "candidate",
+      "mode": "e5",
+      "arrays": 60,
+      "values": 3714048,
+      "maximum_scaled_ort_error": 1.6391277313232422e-06,
+      "exact_current": true
+    }
+  ],
+  "totals": {
+    "arrays": 332,
+    "values": 10001628
+  },
+  "resources": [
+    {
+      "name": "selected-shared",
+      "samples": 12,
+      "peak_rss": 2187333632,
+      "seconds": 3.1072744459379464
+    },
+    {
+      "name": "selected-e5",
+      "samples": 67,
+      "peak_rss": 2632830976,
+      "seconds": 17.25027496810071
+    },
+    {
+      "name": "candidate-shared",
+      "samples": 12,
+      "peak_rss": 2187296768,
+      "seconds": 3.1262442489387468
+    },
+    {
+      "name": "candidate-e5",
+      "samples": 67,
+      "peak_rss": 2540994560,
+      "seconds": 17.35681496595498
+    }
+  ],
+  "reference_provenance_verified": true,
+  "no_performance_measurement": true,
+  "release_admitted": false,
+  "retained_component_screen_verdict": "rejected"
+}
