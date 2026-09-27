@@ -1,15 +1,15 @@
 # Refresh the complete managed Parakeet profile
 
 Bind this capture to the actual qualified root containing the one selected
-prepared LSTM layout. Root/package qualification is pending. The shared gate in
-decoder-lstm-layout-ort-profile-amd/run.py intentionally has ROOT_DIGEST unset;
-bind its actual successful closure before preparing either observation. This
-adapter has created no artifact, inference process, product or observer build.
+prepared LSTM layout. Root/package closure efb99eea qualifies source edc1a6c8.
+The shared gate in decoder-lstm-layout-ort-profile-amd/run.py binds that exact
+successful closure. This adapter has created no artifact, inference process,
+product or observer build at this preparation point.
 
 The retained observer compatibility review 7404ed13 proves that runner 38ab5c7e
 and observed Data 51b6d2bb can be reused. All 697 Data methods and flags, both
-public interfaces and assembly attributes match the selected product. The later
-root qualification must establish exact compiled continuity with measured Core
+public interfaces and assembly attributes match the selected product. The
+root qualification establishes exact compiled continuity with measured Core
 ad97b4ad / Data 29b3f633. Use that actual built Core for every mode and its built
 Data for control; use the retained reviewed Data observer for phase and wall.
 File digests may differ despite exact compiled method bodies.

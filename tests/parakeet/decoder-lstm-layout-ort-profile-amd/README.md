@@ -1,9 +1,8 @@
 # Refresh ORT attribution for the exact Parakeet application
 
-This adapter is pending actual root/package qualification of the fixed LSTM
-layout. ROOT_DIGEST is intentionally unset. Bind the successful closure only
-after graph and Pyannote application admission and the actual build. No stage,
-inference, new kernel or observer build has occurred through this adapter.
+This adapter binds successful root/package closure efb99eea of source edc1a6c8,
+after graph and Pyannote application admission. No stage, inference, new kernel
+or observer build has occurred through this adapter at this preparation point.
 
 Reuse tests/parakeet/ort-diagnosis-amd/run.py, observer.py, remote.py and analyze.py
 without changing their functions. Only application and output locations change.
@@ -37,7 +36,7 @@ From repository root, prefix commands with C:/Python313/python.exe -X utf8 -B:
     tests/parakeet/decoder-lstm-layout-ort-profile-amd/run.py collect
     tests/parakeet/decoder-lstm-layout-ort-profile-amd/analyze.py
 
-Review refuses while ROOT_DIGEST is unset. Before staging, verify that the
+Review requires the exact successful ROOT_DIGEST. Before staging, verify that the
 original instrumentation hook accepts the retained native consumer and freeze
 the adapter. Bind the new full managed profile alongside this native capture;
 do not use the old managed partition to rank current excesses. Inspect exact
