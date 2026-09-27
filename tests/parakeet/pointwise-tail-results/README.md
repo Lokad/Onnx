@@ -31,3 +31,13 @@ shortlist table from these exact matched application and graph results. Replace
 the product/source identities, census and evidence links together. Keep DINOv2
 excluded for numerical agreement and Whisper performance deferred. Keep current
 coverage and limitations; omit a historical performance ledger.
+
+The updater verifies that all three published results match their actual closures,
+the measured products agree, the current source matches the qualified build and
+the three integration paths are committed. Review the verified rows, then write:
+
+    tests/parakeet/pointwise-tail-results/update_benchmark.py
+    tests/parakeet/pointwise-tail-results/update_benchmark.py --write
+
+It refuses missing qualification and preserves the previous document until the
+explicit write command. It does not infer a performance result from a profiler.
