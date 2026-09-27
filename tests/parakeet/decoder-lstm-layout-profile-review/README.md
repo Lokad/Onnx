@@ -4,10 +4,10 @@ The selected LSTM layout has an admitted complete-transcription result of
 46.931723 seconds versus ORT 39.513180, ratio 1.187749. Broader release
 qualification is still running. Do not add another mechanism to this candidate.
 
-The [last complete managed partition](../owned-batch-isolation-profile-results/diagnosis-20260925.md)
-predates the qualified padding, sigmoid and prepared-row changes and this LSTM
-layout. Its managed profile was 53.594489 seconds; its native node clocks came
-from September 24. Padding, activation and decoder costs have since changed.
+The [last complete managed partition](../pad-current-profile-results/diagnosis-20260927.md)
+includes the qualified padding change but predates sigmoid, prepared-row and
+this LSTM layout. Its managed profile was 50.142916 seconds; its native node
+clocks came from September 24. Activation and decoder costs have since changed.
 Those old group rankings cannot establish the current largest avoidable cost.
 Likewise, the old isolated LSTM sample's unresolved portion is not evidence that
 activation functions are now the bottleneck.
