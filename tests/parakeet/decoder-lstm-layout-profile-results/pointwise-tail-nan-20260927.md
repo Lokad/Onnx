@@ -48,3 +48,28 @@ under `artifacts/parakeet-pointwise-tail-nan-diagnostic-20260927`: `review.json`
 birth1790528673.06 and capture owner 1220008 / birth1790528689.86 are terminal;
 collections contain 33 and 41 files. Reproduction: [explain.py](../pointwise-tail-nan-diagnostic/explain.py).
 Repair procedure: [README](../pointwise-tail-operand-contracts-amd/README.md).
+
+## Source-order repair did not alter generated code
+
+The repair is tested and ineffective. Candidate Core `1bbb6cff` changes only
+those eight expressions and their comment relative to the first candidate.
+Build review `e5fd1721` verifies the original scope and metadata requirements.
+Both complete helper disassemblies are identical to their first-candidate
+counterparts in each hardware mode: the JIT commutes the expressions back.
+
+AVX512-disabled retains 260 failures. Normal has one exceptional failure at M=70,
+reduction=63, columns=42, output row 0, column 2 (`7fe12345` versus `7fc12345`).
+That case cannot enter either helper, and its first mismatch is in the untouched
+full-panel arithmetic. Its cause is not established. All finite cases and both
+scalar sets pass. No candidate performance has been measured.
+
+Failed closure `1b83bf22` is preserved under
+`artifacts/parakeet-pointwise-tail-operand-contracts-amd-20260927`. Build owner
+1220532 / birth1790529199.53 and capture owner 1221077 / birth1790529248.33 are
+terminal; collections contain 509 and 530 files.
+
+Do not try further operand-spelling variants. The missing facts are the compiler
+rule selecting physical operands and the baseline's within-mode NaN-payload
+stability. Inspect pinned runtime source and isolate baseline behavior before
+choosing a correction. Existing exact-bit verdicts remain failed; neither
+candidate qualifies for promotion. Local allocated storage is 48.969 GB.
