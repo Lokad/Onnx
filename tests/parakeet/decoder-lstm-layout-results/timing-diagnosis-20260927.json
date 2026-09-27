@@ -1,0 +1,1111 @@
+{
+  "screen_admitted": false,
+  "screen_rescored": false,
+  "new_inference_or_build": false,
+  "closure": {
+    "bytes": 213249,
+    "sha256": "ac1b5e0e5400d03d84250d6148253208a6d25d3bc9e565a49718721861772fe2"
+  },
+  "candidate": {
+    "Lokad.Onnx.dll": {
+      "bytes": 827904,
+      "sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "29b3f633eec461b1113d23d2626952bddff1a628bdba87bb865ef52b6da6dc3d"
+    },
+    "Google.Protobuf.dll": {
+      "bytes": 497304,
+      "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+    }
+  },
+  "current": {
+    "Lokad.Onnx.dll": {
+      "bytes": 827392,
+      "sha256": "0d224bcff591563816d64c3a3cc51f7b7cd38f5a1d3c523b05c699a9b82b6b97"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a37453929e6103a187f9849d3040a663fa9d7dd85561e4f6f14d639fe38935d5"
+    },
+    "Google.Protobuf.dll": {
+      "bytes": 497304,
+      "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+    }
+  },
+  "complete_call_clocks": 60800,
+  "exact_output_arrays": 182400,
+  "failed_repeatability_controls": 100,
+  "total_controls": 168,
+  "raw_performance_gates_passed": 28,
+  "raw_corpus_means": [
+    {
+      "path": "prepared",
+      "mode": "512",
+      "group": "corpus",
+      "selected": 0.4274563635,
+      "candidate": 0.2372264378,
+      "candidate_over_selected": 0.5549722920430917
+    },
+    {
+      "path": "prepared",
+      "mode": "256",
+      "group": "corpus",
+      "selected": 0.4165904627,
+      "candidate": 0.2369955614,
+      "candidate_over_selected": 0.5688933919993939
+    },
+    {
+      "path": "fallback",
+      "mode": "512",
+      "group": "corpus",
+      "selected": 1.1056081072,
+      "candidate": 1.1064632304,
+      "candidate_over_selected": 1.0007734415064715
+    },
+    {
+      "path": "fallback",
+      "mode": "256",
+      "group": "corpus",
+      "selected": 1.1066117876,
+      "candidate": 1.1011573103,
+      "candidate_over_selected": 0.9950710110256195
+    }
+  ],
+  "failed_controls_by_group": [
+    {
+      "path": "prepared",
+      "kind": "within-process",
+      "group": "corpus",
+      "count": 8
+    },
+    {
+      "path": "prepared",
+      "kind": "within-process",
+      "group": "case",
+      "count": 45
+    },
+    {
+      "path": "prepared",
+      "kind": "between-processes",
+      "group": "corpus",
+      "count": 2
+    },
+    {
+      "path": "prepared",
+      "kind": "between-processes",
+      "group": "case",
+      "count": 13
+    },
+    {
+      "path": "fallback",
+      "kind": "within-process",
+      "group": "corpus",
+      "count": 8
+    },
+    {
+      "path": "fallback",
+      "kind": "within-process",
+      "group": "case",
+      "count": 24
+    }
+  ],
+  "processes": [
+    {
+      "name": "selected-0-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.392616716,
+            "allocated_bytes": 15155352
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.343070809,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.358257313,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.364480826,
+            "allocated_bytes": 15136848
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.387151555,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.396022069,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.369324659,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.361820574,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.36954245,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.399394236,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 4,
+      "peak_rss": 183992320,
+      "foreign_cpu_fraction": 0.0017030800320026022
+    },
+    {
+      "name": "candidate-0-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.248727619,
+            "allocated_bytes": 15155352
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.217373439,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.217464225,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.227460635,
+            "allocated_bytes": 15141968
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.218860689,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.224853981,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.220575137,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.246563496,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.235117657,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.243265222,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 2,
+      "peak_rss": 184557568,
+      "foreign_cpu_fraction": 0.0
+    },
+    {
+      "name": "candidate-1-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.261705036,
+            "allocated_bytes": 15161544
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.224545943,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.226117072,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.229129522,
+            "allocated_bytes": 15142344
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.220439703,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.21931768,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.222451341,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.253566291,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.251524294,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.255029279,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 4,
+      "peak_rss": 184352768,
+      "foreign_cpu_fraction": 0.0016051366081674763
+    },
+    {
+      "name": "selected-1-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.416981663,
+            "allocated_bytes": 15155352
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.421410021,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.43659699,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.438272536,
+            "allocated_bytes": 15142344
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.423343643,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.457117342,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.456764181,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.485768781,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.506144202,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.472665141,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 3,
+      "peak_rss": 189411328,
+      "foreign_cpu_fraction": 0.0004815395921607157
+    },
+    {
+      "name": "selected-0-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.437145603,
+            "allocated_bytes": 15155352
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.407559954,
+            "allocated_bytes": 15141616
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.430253384,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.482641303,
+            "allocated_bytes": 15139928
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.393960933,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.477455327,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.449061982,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.349423975,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.50564254,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.37479068,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 3,
+      "peak_rss": 185073664,
+      "foreign_cpu_fraction": 0.0
+    },
+    {
+      "name": "candidate-0-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.271918246,
+            "allocated_bytes": 15155352
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.250507958,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.245986765,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.242406114,
+            "allocated_bytes": 15141016
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.228986778,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.228128726,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.225616466,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.243494142,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.207786773,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.215294601,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 2,
+      "peak_rss": 184459264,
+      "foreign_cpu_fraction": 0.0016010596940051862
+    },
+    {
+      "name": "candidate-1-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.273022549,
+            "allocated_bytes": 15155352
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.219363075,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.229225991,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.234042549,
+            "allocated_bytes": 15139264
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.239960271,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.231811974,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.240468533,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.24977811,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.251972377,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.275603912,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 4,
+      "peak_rss": 180879360,
+      "foreign_cpu_fraction": 0.0
+    },
+    {
+      "name": "selected-1-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 0.503272421,
+            "allocated_bytes": 15155352
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.459475131,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.391396211,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.406293597,
+            "allocated_bytes": 15136848
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.454002749,
+            "allocated_bytes": 15135424
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 0.388143949,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 1,
+            "seconds": 0.491526913,
+            "allocated_bytes": 15140464
+          },
+          {
+            "repeat": 2,
+            "seconds": 0.393538168,
+            "allocated_bytes": 15134272
+          },
+          {
+            "repeat": 3,
+            "seconds": 0.400023255,
+            "allocated_bytes": 15135424
+          },
+          {
+            "repeat": 4,
+            "seconds": 0.336297838,
+            "allocated_bytes": 15134272
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 185004032,
+      "foreign_cpu_fraction": 0.0010120107313739393
+    },
+    {
+      "name": "selectedfallback-0-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.088114315,
+            "allocated_bytes": 15115832
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.036932511,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.042190596,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.066432946,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.047069272,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.084204376,
+            "allocated_bytes": 15100424
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.267828154,
+            "allocated_bytes": 15097128
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.043035584,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.061836025,
+            "allocated_bytes": 15103032
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.048499363,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 183418880,
+      "foreign_cpu_fraction": 0.0006558075593325885
+    },
+    {
+      "name": "candidatefallback-0-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.086847784,
+            "allocated_bytes": 15115832
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.040657731,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.041136446,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.05956404,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.040545656,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.092100281,
+            "allocated_bytes": 15103008
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.288240026,
+            "allocated_bytes": 15097008
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.043140595,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.059964442,
+            "allocated_bytes": 15103152
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.048173478,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 183762944,
+      "foreign_cpu_fraction": 0.00043671233779693573
+    },
+    {
+      "name": "candidatefallback-1-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.095129089,
+            "allocated_bytes": 15122024
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.045209769,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.048251171,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.071896738,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.047575468,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.092001123,
+            "allocated_bytes": 15098648
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.283706405,
+            "allocated_bytes": 15097296
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.044049144,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.062508022,
+            "allocated_bytes": 15102840
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.050748788,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 179253248,
+      "foreign_cpu_fraction": 0.0008727987742071583
+    },
+    {
+      "name": "selectedfallback-1-512",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.096279115,
+            "allocated_bytes": 15115832
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.044328687,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.045829353,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.069083409,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.045901011,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.09851592,
+            "allocated_bytes": 15099608
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.289992178,
+            "allocated_bytes": 15097392
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.045722774,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.06542341,
+            "allocated_bytes": 15102696
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.051023288,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 179228672,
+      "foreign_cpu_fraction": 0.0013090212230737522
+    },
+    {
+      "name": "selectedfallback-0-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.097205328,
+            "allocated_bytes": 15115832
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.046202057,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.05006884,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.076128431,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.050975951,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.096197333,
+            "allocated_bytes": 15100032
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.281767994,
+            "allocated_bytes": 15097752
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.044617129,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.063335782,
+            "allocated_bytes": 15102384
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.050611496,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 179437568,
+      "foreign_cpu_fraction": 0.0015263420203875785
+    },
+    {
+      "name": "candidatefallback-0-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.085611097,
+            "allocated_bytes": 15122024
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.037789577,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.044511883,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.068388999,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.048143865,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.089938038,
+            "allocated_bytes": 15095200
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.26301111,
+            "allocated_bytes": 15097080
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.043123605,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.05886689,
+            "allocated_bytes": 15103032
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.046213344,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 181145600,
+      "foreign_cpu_fraction": 0.0006540007506837788
+    },
+    {
+      "name": "candidatefallback-1-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.083391766,
+            "allocated_bytes": 15115832
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.037085546,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.039131308,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.06433899,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.044052033,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.082586296,
+            "allocated_bytes": 15097448
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.27540492,
+            "allocated_bytes": 15096816
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.04315698,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.060770918,
+            "allocated_bytes": 15103320
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.048501002,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 189345792,
+      "foreign_cpu_fraction": 0.0008718311219384303
+    },
+    {
+      "name": "selectedfallback-1-256",
+      "phases": {
+        "warmup": [
+          {
+            "repeat": 0,
+            "seconds": 1.087767265,
+            "allocated_bytes": 15115832
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.042183536,
+            "allocated_bytes": 15095904
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.045593604,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.069293781,
+            "allocated_bytes": 15094752
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.047504223,
+            "allocated_bytes": 15095904
+          }
+        ],
+        "measured": [
+          {
+            "repeat": 0,
+            "seconds": 1.086279433,
+            "allocated_bytes": 15097448
+          },
+          {
+            "repeat": 1,
+            "seconds": 1.291883481,
+            "allocated_bytes": 15097200
+          },
+          {
+            "repeat": 2,
+            "seconds": 1.043612181,
+            "allocated_bytes": 15103872
+          },
+          {
+            "repeat": 3,
+            "seconds": 1.060322979,
+            "allocated_bytes": 15102960
+          },
+          {
+            "repeat": 4,
+            "seconds": 1.047490068,
+            "allocated_bytes": 15094752
+          }
+        ]
+      },
+      "slowest_measured_repeat": 1,
+      "peak_rss": 183599104,
+      "foreign_cpu_fraction": 0.0010888245693786679
+    }
+  ],
+  "all_eight_fallback_processes_slowest_on_measured_repeat": 1,
+  "interpretation": "The raw layout signal is path-specific, but repeatability fails for both products and paths. Every fallback process slows on the second measured pass. Retained durations and allocation counts do not identify GC, JIT, scheduling or cache causes. No sample is dropped and no application trial is admitted.",
+  "next_observation": "One diagnostic baseline-fallback process with unchanged calls, warmups and hardware policy; join call intervals with GC pauses/background work and JIT activity. No layout variant or performance score."
+}
