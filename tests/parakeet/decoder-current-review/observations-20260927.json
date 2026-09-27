@@ -1,0 +1,1201 @@
+{
+  "passed": true,
+  "new_inference_calls": 0,
+  "product_changed": false,
+  "inputs": {
+    "parakeet-pad-current-profile-resume-amd-20260927": {
+      "closure": {
+        "bytes": 69381,
+        "sha256": "5e71163ac5e84c6d5c0b688cf175160e6d80047614b0b162afc4c515c98f06d9"
+      },
+      "analysis": {
+        "bytes": 1974830,
+        "sha256": "693e4a59e66db5aed12dcf14b07529422166ea76bfec57d681ed69b442bef3e0"
+      }
+    },
+    "parakeet-ort-diagnosis-amd-20260924": {
+      "closure": {
+        "bytes": 632,
+        "sha256": "615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85"
+      },
+      "analysis": {
+        "bytes": 16849612,
+        "sha256": "f61c0c798bb71be7e6bdb4d88b863b6634c67bc3b1e1abdadd78fff1b5dee82e"
+      }
+    },
+    "src/Lokad.Onnx/TensorOps.MatMul.cs": {
+      "bytes": 45927,
+      "sha256": "51ff447dfcdd7336e7a448c41fb7f4bf254fda62fce7f5f825ea44a41f6087e2"
+    },
+    "src/Lokad.Onnx/TensorOps.OwnedPackedMatMul.cs": {
+      "bytes": 3464,
+      "sha256": "4676ce2552abb10f0fe2f6af3feeef49917e5a36ba38df21e97c58fe7c6770c7"
+    },
+    "src/Lokad.Onnx/Zzz.IsolatedShortMatMul.cs": {
+      "bytes": 19586,
+      "sha256": "f822940b400e503666a12c7c2b7d98728a96e064517f574b1be1c92922c34093"
+    },
+    "src/Lokad.Onnx/MathOps.cs": {
+      "bytes": 215579,
+      "sha256": "f09ec95f8ba1aba3e235988ebddab54032dc69fac5013cc288ffae5f4ebfe30b"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs": {
+      "bytes": 5562,
+      "sha256": "edce03ddeab91e529356659dabee301306e146203bf58fb139095d85dd11e450"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs": {
+      "bytes": 19133,
+      "sha256": "5c47b97f65cf572d18bb8e6dae6458d7cf1d60a765d12bbe04a81bdb6bc01341"
+    }
+  },
+  "source_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "native_sources": {
+    "onnxruntime/core/providers/cpu/math/matmul.cc": {
+      "bytes": 21228,
+      "sha256": "ae7e12fabee4dc14bf33eab3a74e197e6842bd158f1bc13f48ab38ab39055cc5"
+    },
+    "onnxruntime/core/providers/cpu/math/gemm.cc": {
+      "bytes": 18513,
+      "sha256": "a0cfd76d12fa2d20912076a9eaae198707eb9197b1947f01a67b2ccdd5a8fbc1"
+    },
+    "onnxruntime/core/providers/cpu/rnn/uni_directional_lstm.cc": {
+      "bytes": 31148,
+      "sha256": "ac3bd9d8eae89de081195f7fc5b95e42d3b654ab25aefb4a6f90ad136cf1c272"
+    }
+  },
+  "partition": [
+    {
+      "group": "Both recurrent nodes",
+      "managed_seconds": 2.314125851,
+      "ort_seconds": 0.9950396666666667,
+      "difference_seconds": 1.3190861843333335,
+      "managed_members": [
+        "/decoder/dec_rnn/lstm/LSTM",
+        "/decoder/dec_rnn/lstm/LSTM_1"
+      ],
+      "ort_members": [
+        "/decoder/dec_rnn/lstm/LSTM",
+        "/decoder/dec_rnn/lstm/LSTM_1"
+      ]
+    },
+    {
+      "group": "Final output projection and bias",
+      "managed_seconds": 1.8461704646666668,
+      "ort_seconds": 0.7183153333333333,
+      "difference_seconds": 1.1278551313333334,
+      "managed_members": [
+        "/joint/joint_net/joint_net.2/MatMul",
+        "/joint/joint_net/joint_net.2/Add"
+      ],
+      "ort_members": [
+        "/joint/joint_net/joint_net.2/MatMul",
+        "/joint/joint_net/joint_net.2/Add"
+      ]
+    },
+    {
+      "group": "Prediction projection and transpose",
+      "managed_seconds": 0.06354849833333333,
+      "ort_seconds": 0.06460133333333333,
+      "difference_seconds": -0.001052835000000002,
+      "managed_members": [
+        "/joint/pred/MatMul",
+        "/joint/pred/Add",
+        "/joint/Transpose_1"
+      ],
+      "ort_members": [
+        "/joint/pred/MatMul",
+        "/joint/pred/Add",
+        "/joint/Transpose_1"
+      ]
+    },
+    {
+      "group": "Encoder projection and transpose",
+      "managed_seconds": 0.10337133166666666,
+      "ort_seconds": 0.09973033333333334,
+      "difference_seconds": 0.0036409983333333257,
+      "managed_members": [
+        "/joint/enc/MatMul",
+        "/joint/enc/Add",
+        "/joint/Transpose"
+      ],
+      "ort_members": [
+        "/joint/enc/MatMul/MatmulTransposeFusion/",
+        "/joint/enc/Add"
+      ]
+    },
+    {
+      "group": "All other decoder operators",
+      "managed_seconds": 0.049288729333333337,
+      "ort_seconds": 0.05979,
+      "difference_seconds": -0.010501270666666666,
+      "managed_members": [
+        "/decoder/Cast",
+        "/decoder/Transpose",
+        "/decoder/dec_rnn/lstm/Concat",
+        "/decoder/dec_rnn/lstm/Concat_1",
+        "/decoder/dec_rnn/lstm/Constant",
+        "/decoder/dec_rnn/lstm/Constant_2",
+        "/decoder/dec_rnn/lstm/Constant_9",
+        "/decoder/dec_rnn/lstm/Slice",
+        "/decoder/dec_rnn/lstm/Slice_1",
+        "/decoder/dec_rnn/lstm/Slice_2",
+        "/decoder/dec_rnn/lstm/Slice_3",
+        "/decoder/dec_rnn/lstm/Squeeze",
+        "/decoder/dec_rnn/lstm/Squeeze_1",
+        "/decoder/embed/Gather",
+        "/joint/Add",
+        "/joint/Unsqueeze",
+        "/joint/Unsqueeze_1",
+        "/joint/joint_net/joint_net.0/Relu",
+        "Identity_57"
+      ],
+      "ort_members": [
+        "/decoder/Cast",
+        "/decoder/Transpose",
+        "/decoder/dec_rnn/lstm/Concat",
+        "/decoder/dec_rnn/lstm/Concat_1",
+        "/decoder/dec_rnn/lstm/Slice_2/GatherSliceToSplitFusion",
+        "/decoder/dec_rnn/lstm/Slice_3/GatherSliceToSplitFusion",
+        "/decoder/dec_rnn/lstm/Squeeze",
+        "/decoder/dec_rnn/lstm/Squeeze_1",
+        "/decoder/embed/Gather",
+        "/joint/Add",
+        "/joint/Unsqueeze",
+        "/joint/Unsqueeze_1",
+        "/joint/joint_net/joint_net.0/Relu",
+        "Identity_57"
+      ]
+    },
+    {
+      "group": "Decoder outside timed operators",
+      "managed_seconds": 0.08846099066666646,
+      "ort_seconds": 0.17138609500000013,
+      "difference_seconds": -0.08292510433333367
+    }
+  ],
+  "managed_nodes": [
+    {
+      "graph": "decoder",
+      "id": 0,
+      "name": "/decoder/Cast",
+      "op": "Cast",
+      "inputs": [
+        "targets"
+      ],
+      "outputs": [
+        "/decoder/Cast_output_0"
+      ],
+      "constant_inputs": [
+        null
+      ],
+      "numeric_op": 19,
+      "ticks": 6927718,
+      "calls": 3600,
+      "corpus_seconds": 0.0023092393333333334
+    },
+    {
+      "graph": "decoder",
+      "id": 1,
+      "name": "/decoder/embed/Gather",
+      "op": "Gather",
+      "inputs": [
+        "decoder.prediction.embed.weight",
+        "/decoder/Cast_output_0"
+      ],
+      "outputs": [
+        "/decoder/embed/Gather_output_0"
+      ],
+      "constant_inputs": [
+        {
+          "name": "decoder.prediction.embed.weight",
+          "dims": [
+            8193,
+            640
+          ],
+          "type": "Float"
+        },
+        null
+      ],
+      "numeric_op": 49,
+      "ticks": 8879566,
+      "calls": 3600,
+      "corpus_seconds": 0.0029598553333333335
+    },
+    {
+      "graph": "decoder",
+      "id": 2,
+      "name": "/decoder/Transpose",
+      "op": "Transpose",
+      "inputs": [
+        "/decoder/embed/Gather_output_0"
+      ],
+      "outputs": [
+        "/decoder/Transpose_output_0"
+      ],
+      "constant_inputs": [
+        null
+      ],
+      "numeric_op": 148,
+      "ticks": 9227155,
+      "calls": 3600,
+      "corpus_seconds": 0.0030757183333333334
+    },
+    {
+      "graph": "decoder",
+      "id": 3,
+      "name": "/decoder/dec_rnn/lstm/Constant",
+      "op": "Constant",
+      "inputs": [],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Constant_output_0"
+      ],
+      "constant_inputs": [],
+      "numeric_op": 25,
+      "ticks": 3650467,
+      "calls": 3600,
+      "corpus_seconds": 0.0012168223333333334
+    },
+    {
+      "graph": "decoder",
+      "id": 4,
+      "name": "/decoder/dec_rnn/lstm/Constant_2",
+      "op": "Constant",
+      "inputs": [],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Constant_2_output_0"
+      ],
+      "constant_inputs": [],
+      "numeric_op": 25,
+      "ticks": 1004629,
+      "calls": 3600,
+      "corpus_seconds": 0.00033487633333333333
+    },
+    {
+      "graph": "decoder",
+      "id": 5,
+      "name": "/decoder/dec_rnn/lstm/Slice",
+      "op": "Slice",
+      "inputs": [
+        "input_states_1",
+        "/decoder/dec_rnn/lstm/Constant_output_0",
+        "/decoder/dec_rnn/lstm/Constant_2_output_0",
+        "/decoder/dec_rnn/lstm/Constant_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Slice_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "numeric_op": 132,
+      "ticks": 15018487,
+      "calls": 3600,
+      "corpus_seconds": 0.005006162333333333
+    },
+    {
+      "graph": "decoder",
+      "id": 6,
+      "name": "/decoder/dec_rnn/lstm/Slice_1",
+      "op": "Slice",
+      "inputs": [
+        "input_states_2",
+        "/decoder/dec_rnn/lstm/Constant_output_0",
+        "/decoder/dec_rnn/lstm/Constant_2_output_0",
+        "/decoder/dec_rnn/lstm/Constant_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Slice_1_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "numeric_op": 132,
+      "ticks": 9066641,
+      "calls": 3600,
+      "corpus_seconds": 0.0030222136666666665
+    },
+    {
+      "graph": "decoder",
+      "id": 7,
+      "name": "/decoder/dec_rnn/lstm/LSTM",
+      "op": "LSTM",
+      "inputs": [
+        "/decoder/Transpose_output_0",
+        "onnx::LSTM_205",
+        "onnx::LSTM_206",
+        "onnx::LSTM_207",
+        "",
+        "/decoder/dec_rnn/lstm/Slice_output_0",
+        "/decoder/dec_rnn/lstm/Slice_1_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/LSTM_output_0",
+        "/decoder/dec_rnn/lstm/LSTM_output_1",
+        "/decoder/dec_rnn/lstm/LSTM_output_2"
+      ],
+      "constant_inputs": [
+        null,
+        {
+          "name": "onnx::LSTM_205",
+          "dims": [
+            1,
+            2560,
+            640
+          ],
+          "type": "Float"
+        },
+        {
+          "name": "onnx::LSTM_206",
+          "dims": [
+            1,
+            2560,
+            640
+          ],
+          "type": "Float"
+        },
+        {
+          "name": "onnx::LSTM_207",
+          "dims": [
+            1,
+            5120
+          ],
+          "type": "Float"
+        },
+        null,
+        null,
+        null
+      ],
+      "numeric_op": 66,
+      "ticks": 3495520273,
+      "calls": 3600,
+      "corpus_seconds": 1.1651734243333334
+    },
+    {
+      "graph": "decoder",
+      "id": 8,
+      "name": "/decoder/dec_rnn/lstm/Squeeze",
+      "op": "Squeeze",
+      "inputs": [
+        "/decoder/dec_rnn/lstm/LSTM_output_0",
+        "/decoder/dec_rnn/lstm/Constant_2_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Squeeze_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null
+      ],
+      "numeric_op": 137,
+      "ticks": 9162003,
+      "calls": 3600,
+      "corpus_seconds": 0.003054001
+    },
+    {
+      "graph": "decoder",
+      "id": 9,
+      "name": "/decoder/dec_rnn/lstm/Constant_9",
+      "op": "Constant",
+      "inputs": [],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Constant_9_output_0"
+      ],
+      "constant_inputs": [],
+      "numeric_op": 25,
+      "ticks": 2308458,
+      "calls": 3600,
+      "corpus_seconds": 0.000769486
+    },
+    {
+      "graph": "decoder",
+      "id": 10,
+      "name": "/decoder/dec_rnn/lstm/Slice_2",
+      "op": "Slice",
+      "inputs": [
+        "input_states_1",
+        "/decoder/dec_rnn/lstm/Constant_2_output_0",
+        "/decoder/dec_rnn/lstm/Constant_9_output_0",
+        "/decoder/dec_rnn/lstm/Constant_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Slice_2_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "numeric_op": 132,
+      "ticks": 14474869,
+      "calls": 3600,
+      "corpus_seconds": 0.004824956333333333
+    },
+    {
+      "graph": "decoder",
+      "id": 11,
+      "name": "/decoder/dec_rnn/lstm/Slice_3",
+      "op": "Slice",
+      "inputs": [
+        "input_states_2",
+        "/decoder/dec_rnn/lstm/Constant_2_output_0",
+        "/decoder/dec_rnn/lstm/Constant_9_output_0",
+        "/decoder/dec_rnn/lstm/Constant_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Slice_3_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "numeric_op": 132,
+      "ticks": 5948400,
+      "calls": 3600,
+      "corpus_seconds": 0.0019828
+    },
+    {
+      "graph": "decoder",
+      "id": 12,
+      "name": "/decoder/dec_rnn/lstm/LSTM_1",
+      "op": "LSTM",
+      "inputs": [
+        "/decoder/dec_rnn/lstm/Squeeze_output_0",
+        "onnx::LSTM_225",
+        "onnx::LSTM_226",
+        "onnx::LSTM_227",
+        "",
+        "/decoder/dec_rnn/lstm/Slice_2_output_0",
+        "/decoder/dec_rnn/lstm/Slice_3_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/LSTM_1_output_0",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_1",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_2"
+      ],
+      "constant_inputs": [
+        null,
+        {
+          "name": "onnx::LSTM_225",
+          "dims": [
+            1,
+            2560,
+            640
+          ],
+          "type": "Float"
+        },
+        {
+          "name": "onnx::LSTM_226",
+          "dims": [
+            1,
+            2560,
+            640
+          ],
+          "type": "Float"
+        },
+        {
+          "name": "onnx::LSTM_227",
+          "dims": [
+            1,
+            5120
+          ],
+          "type": "Float"
+        },
+        null,
+        null,
+        null
+      ],
+      "numeric_op": 66,
+      "ticks": 3446857280,
+      "calls": 3600,
+      "corpus_seconds": 1.1489524266666666
+    },
+    {
+      "graph": "decoder",
+      "id": 13,
+      "name": "/decoder/dec_rnn/lstm/Squeeze_1",
+      "op": "Squeeze",
+      "inputs": [
+        "/decoder/dec_rnn/lstm/LSTM_1_output_0",
+        "/decoder/dec_rnn/lstm/Constant_2_output_0"
+      ],
+      "outputs": [
+        "/decoder/dec_rnn/lstm/Squeeze_1_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null
+      ],
+      "numeric_op": 137,
+      "ticks": 11689042,
+      "calls": 3600,
+      "corpus_seconds": 0.0038963473333333332
+    },
+    {
+      "graph": "decoder",
+      "id": 14,
+      "name": "/decoder/dec_rnn/lstm/Concat",
+      "op": "Concat",
+      "inputs": [
+        "/decoder/dec_rnn/lstm/LSTM_output_1",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_1"
+      ],
+      "outputs": [
+        "output_states_1"
+      ],
+      "constant_inputs": [
+        null,
+        null
+      ],
+      "numeric_op": 23,
+      "ticks": 12791947,
+      "calls": 3600,
+      "corpus_seconds": 0.0042639823333333335
+    },
+    {
+      "graph": "decoder",
+      "id": 15,
+      "name": "/decoder/dec_rnn/lstm/Concat_1",
+      "op": "Concat",
+      "inputs": [
+        "/decoder/dec_rnn/lstm/LSTM_output_2",
+        "/decoder/dec_rnn/lstm/LSTM_1_output_2"
+      ],
+      "outputs": [
+        "output_states_2"
+      ],
+      "constant_inputs": [
+        null,
+        null
+      ],
+      "numeric_op": 23,
+      "ticks": 5496676,
+      "calls": 3600,
+      "corpus_seconds": 0.0018322253333333334
+    },
+    {
+      "graph": "decoder",
+      "id": 16,
+      "name": "/joint/Transpose",
+      "op": "Transpose",
+      "inputs": [
+        "encoder_outputs"
+      ],
+      "outputs": [
+        "/joint/Transpose_output_0"
+      ],
+      "constant_inputs": [
+        null
+      ],
+      "numeric_op": 148,
+      "ticks": 13130912,
+      "calls": 3600,
+      "corpus_seconds": 0.004376970666666666
+    },
+    {
+      "graph": "decoder",
+      "id": 17,
+      "name": "/joint/Transpose_1",
+      "op": "Transpose",
+      "inputs": [
+        "/decoder/dec_rnn/lstm/Squeeze_1_output_0"
+      ],
+      "outputs": [
+        "/joint/Transpose_1_output_0"
+      ],
+      "constant_inputs": [
+        null
+      ],
+      "numeric_op": 148,
+      "ticks": 5639251,
+      "calls": 3600,
+      "corpus_seconds": 0.0018797503333333333
+    },
+    {
+      "graph": "decoder",
+      "id": 18,
+      "name": "/joint/enc/MatMul",
+      "op": "MatMul",
+      "inputs": [
+        "/joint/Transpose_output_0",
+        "onnx::MatMul_228"
+      ],
+      "outputs": [
+        "/joint/enc/MatMul_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        {
+          "name": "onnx::MatMul_228",
+          "dims": [
+            1024,
+            640
+          ],
+          "type": "Float"
+        }
+      ],
+      "numeric_op": 72,
+      "ticks": 288468598,
+      "calls": 3600,
+      "corpus_seconds": 0.09615619933333333
+    },
+    {
+      "graph": "decoder",
+      "id": 19,
+      "name": "/joint/enc/Add",
+      "op": "Add",
+      "inputs": [
+        "joint.enc.bias",
+        "/joint/enc/MatMul_output_0"
+      ],
+      "outputs": [
+        "/joint/enc/Add_output_0"
+      ],
+      "constant_inputs": [
+        {
+          "name": "joint.enc.bias",
+          "dims": [
+            640
+          ],
+          "type": "Float"
+        },
+        null
+      ],
+      "numeric_op": 3,
+      "ticks": 8514485,
+      "calls": 3600,
+      "corpus_seconds": 0.002838161666666667
+    },
+    {
+      "graph": "decoder",
+      "id": 20,
+      "name": "/joint/pred/MatMul",
+      "op": "MatMul",
+      "inputs": [
+        "/joint/Transpose_1_output_0",
+        "onnx::MatMul_229"
+      ],
+      "outputs": [
+        "/joint/pred/MatMul_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        {
+          "name": "onnx::MatMul_229",
+          "dims": [
+            640,
+            640
+          ],
+          "type": "Float"
+        }
+      ],
+      "numeric_op": 72,
+      "ticks": 179635081,
+      "calls": 3600,
+      "corpus_seconds": 0.05987836033333333
+    },
+    {
+      "graph": "decoder",
+      "id": 21,
+      "name": "/joint/pred/Add",
+      "op": "Add",
+      "inputs": [
+        "joint.pred.bias",
+        "/joint/pred/MatMul_output_0"
+      ],
+      "outputs": [
+        "/joint/pred/Add_output_0"
+      ],
+      "constant_inputs": [
+        {
+          "name": "joint.pred.bias",
+          "dims": [
+            640
+          ],
+          "type": "Float"
+        },
+        null
+      ],
+      "numeric_op": 3,
+      "ticks": 5371163,
+      "calls": 3600,
+      "corpus_seconds": 0.0017903876666666666
+    },
+    {
+      "graph": "decoder",
+      "id": 22,
+      "name": "/joint/Unsqueeze",
+      "op": "Unsqueeze",
+      "inputs": [
+        "/joint/enc/Add_output_0",
+        "/decoder/dec_rnn/lstm/Constant_9_output_0"
+      ],
+      "outputs": [
+        "/joint/Unsqueeze_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null
+      ],
+      "numeric_op": 151,
+      "ticks": 10005834,
+      "calls": 3600,
+      "corpus_seconds": 0.003335278
+    },
+    {
+      "graph": "decoder",
+      "id": 23,
+      "name": "/joint/Unsqueeze_1",
+      "op": "Unsqueeze",
+      "inputs": [
+        "/joint/pred/Add_output_0",
+        "/decoder/dec_rnn/lstm/Constant_2_output_0"
+      ],
+      "outputs": [
+        "/joint/Unsqueeze_1_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null
+      ],
+      "numeric_op": 151,
+      "ticks": 3325993,
+      "calls": 3600,
+      "corpus_seconds": 0.0011086643333333332
+    },
+    {
+      "graph": "decoder",
+      "id": 24,
+      "name": "/joint/Add",
+      "op": "Add",
+      "inputs": [
+        "/joint/Unsqueeze_output_0",
+        "/joint/Unsqueeze_1_output_0"
+      ],
+      "outputs": [
+        "/joint/Add_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        null
+      ],
+      "numeric_op": 3,
+      "ticks": 3534841,
+      "calls": 3600,
+      "corpus_seconds": 0.0011782803333333332
+    },
+    {
+      "graph": "decoder",
+      "id": 25,
+      "name": "/joint/joint_net/joint_net.0/Relu",
+      "op": "Relu",
+      "inputs": [
+        "/joint/Add_output_0"
+      ],
+      "outputs": [
+        "/joint/joint_net/joint_net.0/Relu_output_0"
+      ],
+      "constant_inputs": [
+        null
+      ],
+      "numeric_op": 185,
+      "ticks": 5124659,
+      "calls": 3600,
+      "corpus_seconds": 0.0017082196666666667
+    },
+    {
+      "graph": "decoder",
+      "id": 26,
+      "name": "/joint/joint_net/joint_net.2/MatMul",
+      "op": "MatMul",
+      "inputs": [
+        "/joint/joint_net/joint_net.0/Relu_output_0",
+        "onnx::MatMul_230"
+      ],
+      "outputs": [
+        "/joint/joint_net/joint_net.2/MatMul_output_0"
+      ],
+      "constant_inputs": [
+        null,
+        {
+          "name": "onnx::MatMul_230",
+          "dims": [
+            640,
+            8198
+          ],
+          "type": "Float"
+        }
+      ],
+      "numeric_op": 72,
+      "ticks": 5513742750,
+      "calls": 3600,
+      "corpus_seconds": 1.83791425
+    },
+    {
+      "graph": "decoder",
+      "id": 27,
+      "name": "/joint/joint_net/joint_net.2/Add",
+      "op": "Add",
+      "inputs": [
+        "joint.joint_net.2.bias",
+        "/joint/joint_net/joint_net.2/MatMul_output_0"
+      ],
+      "outputs": [
+        "outputs"
+      ],
+      "constant_inputs": [
+        {
+          "name": "joint.joint_net.2.bias",
+          "dims": [
+            8198
+          ],
+          "type": "Float"
+        },
+        null
+      ],
+      "numeric_op": 3,
+      "ticks": 24768644,
+      "calls": 3600,
+      "corpus_seconds": 0.008256214666666666
+    },
+    {
+      "graph": "decoder",
+      "id": 28,
+      "name": "Identity_57",
+      "op": "Identity",
+      "inputs": [
+        "target_length"
+      ],
+      "outputs": [
+        "prednet_lengths"
+      ],
+      "constant_inputs": [
+        null
+      ],
+      "numeric_op": 59,
+      "ticks": 10228803,
+      "calls": 3600,
+      "corpus_seconds": 0.003409601
+    }
+  ],
+  "ort_nodes": [
+    {
+      "op": "MatMul",
+      "name": "/joint/joint_net/joint_net.2/MatMul",
+      "calls": 3600,
+      "inclusive_us": 2130373,
+      "exclusive_us": 2130373
+    },
+    {
+      "op": "LSTM",
+      "name": "/decoder/dec_rnn/lstm/LSTM",
+      "calls": 3600,
+      "inclusive_us": 1529524,
+      "exclusive_us": 1529524
+    },
+    {
+      "op": "LSTM",
+      "name": "/decoder/dec_rnn/lstm/LSTM_1",
+      "calls": 3600,
+      "inclusive_us": 1455595,
+      "exclusive_us": 1455595
+    },
+    {
+      "op": "FusedMatMul",
+      "name": "/joint/enc/MatMul/MatmulTransposeFusion/",
+      "calls": 3600,
+      "inclusive_us": 285928,
+      "exclusive_us": 285928
+    },
+    {
+      "op": "MatMul",
+      "name": "/joint/pred/MatMul",
+      "calls": 3600,
+      "inclusive_us": 169842,
+      "exclusive_us": 169842
+    },
+    {
+      "op": "Add",
+      "name": "/joint/joint_net/joint_net.2/Add",
+      "calls": 3600,
+      "inclusive_us": 24573,
+      "exclusive_us": 24573
+    },
+    {
+      "op": "Concat",
+      "name": "/decoder/dec_rnn/lstm/Concat_1",
+      "calls": 3600,
+      "inclusive_us": 18883,
+      "exclusive_us": 18883
+    },
+    {
+      "op": "Split",
+      "name": "/decoder/dec_rnn/lstm/Slice_3/GatherSliceToSplitFusion",
+      "calls": 3600,
+      "inclusive_us": 16607,
+      "exclusive_us": 16607
+    },
+    {
+      "op": "Concat",
+      "name": "/decoder/dec_rnn/lstm/Concat",
+      "calls": 3600,
+      "inclusive_us": 14967,
+      "exclusive_us": 14967
+    },
+    {
+      "op": "Identity",
+      "name": "Identity_57",
+      "calls": 3600,
+      "inclusive_us": 14506,
+      "exclusive_us": 14506
+    },
+    {
+      "op": "Gather",
+      "name": "/decoder/embed/Gather",
+      "calls": 3600,
+      "inclusive_us": 14230,
+      "exclusive_us": 14230
+    },
+    {
+      "op": "Add",
+      "name": "/joint/pred/Add",
+      "calls": 3600,
+      "inclusive_us": 14030,
+      "exclusive_us": 14030
+    },
+    {
+      "op": "Add",
+      "name": "/joint/enc/Add",
+      "calls": 3600,
+      "inclusive_us": 13263,
+      "exclusive_us": 13263
+    },
+    {
+      "op": "Squeeze",
+      "name": "/decoder/dec_rnn/lstm/Squeeze",
+      "calls": 3600,
+      "inclusive_us": 12912,
+      "exclusive_us": 12912
+    },
+    {
+      "op": "Squeeze",
+      "name": "/decoder/dec_rnn/lstm/Squeeze_1",
+      "calls": 3600,
+      "inclusive_us": 12652,
+      "exclusive_us": 12652
+    },
+    {
+      "op": "Add",
+      "name": "/joint/Add",
+      "calls": 3600,
+      "inclusive_us": 12227,
+      "exclusive_us": 12227
+    },
+    {
+      "op": "Split",
+      "name": "/decoder/dec_rnn/lstm/Slice_2/GatherSliceToSplitFusion",
+      "calls": 3600,
+      "inclusive_us": 11486,
+      "exclusive_us": 11486
+    },
+    {
+      "op": "Cast",
+      "name": "/decoder/Cast",
+      "calls": 3600,
+      "inclusive_us": 10655,
+      "exclusive_us": 10655
+    },
+    {
+      "op": "Unsqueeze",
+      "name": "/joint/Unsqueeze",
+      "calls": 3600,
+      "inclusive_us": 10552,
+      "exclusive_us": 10552
+    },
+    {
+      "op": "Unsqueeze",
+      "name": "/joint/Unsqueeze_1",
+      "calls": 3600,
+      "inclusive_us": 10408,
+      "exclusive_us": 10408
+    },
+    {
+      "op": "Relu",
+      "name": "/joint/joint_net/joint_net.0/Relu",
+      "calls": 3600,
+      "inclusive_us": 10314,
+      "exclusive_us": 10314
+    },
+    {
+      "op": "Transpose",
+      "name": "/joint/Transpose_1",
+      "calls": 3600,
+      "inclusive_us": 9932,
+      "exclusive_us": 9932
+    },
+    {
+      "op": "Transpose",
+      "name": "/decoder/Transpose",
+      "calls": 3600,
+      "inclusive_us": 8971,
+      "exclusive_us": 8971
+    }
+  ],
+  "observed_native_shapes": [
+    {
+      "name": "/decoder/dec_rnn/lstm/LSTM",
+      "inputs": [
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            5120
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "float": [
+            1,
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "calls": 4800
+    },
+    {
+      "name": "/decoder/dec_rnn/lstm/LSTM_1",
+      "inputs": [
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            5120
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "float": [
+            1,
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "calls": 4800
+    },
+    {
+      "name": "/joint/joint_net/joint_net.2/MatMul",
+      "inputs": [
+        {
+          "float": [
+            1,
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "float": [
+            1,
+            1,
+            1,
+            8198
+          ]
+        }
+      ],
+      "calls": 4800
+    }
+  ],
+  "managed_corpus_seconds": 50.14291600133333,
+  "managed_decoder_seconds": 4.464965865666667,
+  "ort_decoder_seconds": 2.108862761666667,
+  "current_managed_dispatch_is_source_inferred": true,
+  "native_packed_buffer_dump": false,
+  "native_per_node_leaf_join": false,
+  "overhead_subtracted": false,
+  "native_profile_date": "2026-09-24",
+  "selected_candidate": null
+}
