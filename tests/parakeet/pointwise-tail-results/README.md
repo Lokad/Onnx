@@ -1,8 +1,9 @@
 # Pointwise remainder release results
 
 The [graph comparison](graphs-20260927.md) is admitted: all 24 repeatability
-controls and eight regression gates pass. Complete Pyannote application and
-actual-root qualification remain pending; their publishers are prepared.
+controls and eight regression gates pass. The [complete Pyannote application](pyannote-application-20260927.md)
+passes all 12 repeatability controls and four regression gates, including native
+and long-meeting checks. Actual-root qualification remains pending.
 The publishers read actual closed evidence and verify its file inventory and product
 identity before writing new reports. Existing publications are never overwritten.
 Failed performance controls remain visible; a report does not promote a product.

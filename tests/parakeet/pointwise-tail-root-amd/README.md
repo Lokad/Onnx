@@ -2,8 +2,9 @@
 
 This adapter is prepared locally. The eight-case graph comparison is admitted
 at `faf553e7`, with all 24 repeatability controls and eight regression gates.
-Source application and VM work remain gated on the complete Pyannote application
-comparison. Its closure digest stays unset until that run finishes and passes.
+Complete Pyannote application closure `7e0b08fc` passes all 12 repeatability
+controls and four regression gates, native/public results and both long meetings.
+All prior owners are terminal, and both actual closure digests are bound.
 No further optimization belongs in this integration.
 
 The measured candidate is Core `7cac6788` / Data `dd56902f`; current is Core
