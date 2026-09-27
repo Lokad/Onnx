@@ -1,0 +1,344 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "product_changed": false,
+  "performance_admitted": false,
+  "closure": {
+    "bytes": 42128,
+    "sha256": "ef94387e0517b08fd87d010c08d99e0b801e1bd7d2809c04b1dcec614333397d"
+  },
+  "analysis": {
+    "bytes": 9236518,
+    "sha256": "e2b550df5664c300c597c16a19be5f33b7684f436ce526e3c425f7e353c7bd68"
+  },
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 826368,
+      "sha256": "65f15a41764660af6166c9a965943b6f28cac0c9505117d0fd4beaa2687f9d03"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "da72ca547191de12a52f09bceeed25619a92a14b1bbff271a9e7d10515f40312"
+    }
+  },
+  "consumer": {
+    "bytes": 55808,
+    "sha256": "9fc2b79bc362000ef079b50e9be9bb9d329e246ef239aee4052bad9c904cd8e1"
+  },
+  "supervisor": {
+    "pid": 1165080,
+    "birth": 1790484146.34
+  },
+  "started": 1790484150.385771,
+  "ended": 1790484201.4300954,
+  "jobs": [
+    {
+      "name": "sdk-version",
+      "code": 0
+    },
+    {
+      "name": "observer-restore",
+      "code": 0
+    },
+    {
+      "name": "observer-build",
+      "code": 0
+    },
+    {
+      "name": "tracer-version",
+      "code": 0
+    },
+    {
+      "name": "control-run",
+      "code": 0
+    },
+    {
+      "name": "trace-capture",
+      "code": 0
+    },
+    {
+      "name": "trace-export",
+      "code": 0
+    },
+    {
+      "name": "trace-stacks",
+      "code": 0
+    }
+  ],
+  "resource_observations": 87,
+  "peak_owned_rss": 611868672,
+  "reports": {
+    "control-run": {
+      "calls": 1280,
+      "warmups": 256,
+      "observations": 1024,
+      "decoder_allocated_bytes": 222099432,
+      "decoder_copy_bytes": 13107200,
+      "decoder_scratch_bytes": 0,
+      "decoder_gc_calls": 14,
+      "diagnostic_only": true,
+      "per_node_counters": false,
+      "prepared_mapping_present": true
+    },
+    "trace-capture": {
+      "calls": 1280,
+      "warmups": 256,
+      "observations": 1024,
+      "decoder_allocated_bytes": 222098336,
+      "decoder_copy_bytes": 13107200,
+      "decoder_scratch_bytes": 0,
+      "decoder_gc_calls": 15,
+      "diagnostic_only": true,
+      "per_node_counters": false,
+      "prepared_mapping_present": true
+    }
+  },
+  "mapping": {
+    "present": true,
+    "entries": 3,
+    "shared_with_execution": true,
+    "budget_bytes": 67108864,
+    "retained_bytes": 51461120,
+    "source": {
+      "type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+      "dtype": "Float",
+      "shape": [
+        640,
+        8198
+      ],
+      "strides": [
+        8198,
+        1
+      ],
+      "reversed": false,
+      "sha256": "8dfc0254f3b951595a69e2ad949d2be6a91b62b3e1ea1c1b2f47e3b1aca2319b"
+    },
+    "source_array_offset": 0,
+    "source_array_count": 5246720,
+    "entry": {
+      "source_name": "onnx::MatMul_230",
+      "packed_name": "packed:onnx::MatMul_230",
+      "source_length": 5246720,
+      "source_array_key_exact": true,
+      "source_reference_exact": true,
+      "packed_reference_exact": true,
+      "packed": {
+        "type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "dtype": "Float",
+        "shape": [
+          640,
+          8198
+        ],
+        "strides": [
+          8198,
+          1
+        ],
+        "reversed": false,
+        "sha256": "3b035f560e3ef7c53e3d8fbfebdc2e0dd7ba22b77677cae632c0c84dc8ae00a7"
+      }
+    }
+  },
+  "operands": {
+    "a": {
+      "type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+      "dtype": "Float",
+      "shape": [
+        1,
+        1,
+        1,
+        640
+      ],
+      "strides": [
+        640,
+        640,
+        640,
+        1
+      ],
+      "reversed": false,
+      "sha256": "56a3037c4086988842f16e65bb4e614286da93f8751230a6d47ef96f4c650fe7"
+    },
+    "b": {
+      "type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+      "dtype": "Float",
+      "shape": [
+        640,
+        8198
+      ],
+      "strides": [
+        8198,
+        1
+      ],
+      "reversed": false,
+      "sha256": "8dfc0254f3b951595a69e2ad949d2be6a91b62b3e1ea1c1b2f47e3b1aca2319b"
+    },
+    "output": {
+      "type": "Lokad.Onnx.DenseTensor`1[[System.Single, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+      "dtype": "Float",
+      "shape": [
+        1,
+        1,
+        1,
+        8198
+      ],
+      "strides": [
+        8198,
+        8198,
+        8198,
+        1
+      ],
+      "reversed": false,
+      "sha256": "1316909afa749d822a2952cd9caee93aee14427351aa9750c021d8c36034221c"
+    },
+    "original_weight_reference": true
+  },
+  "exported_records": 42406,
+  "lost_events": 0,
+  "markers": 2560,
+  "method_records": 8085,
+  "sampled_intervals": {
+    "warmup": {
+      "calls": 256,
+      "categories_ms": {
+        "one-row-row-major": 269.9443932804311,
+        "prepared-final-row": 0.0,
+        "packing": 0.0,
+        "other-matmul-kernel": 42.624202344991474,
+        "other": 1078.229064374578,
+        "empty": 0.0
+      },
+      "total_ms": 1390.7976600000006,
+      "row_major_fraction": 0.19409321790233022,
+      "calls_with_row_major_sample_intervals": 238
+    },
+    "observed": {
+      "calls": 1024,
+      "categories_ms": {
+        "one-row-row-major": 1076.0987870099384,
+        "prepared-final-row": 0.0,
+        "packing": 0.0,
+        "other-matmul-kernel": 171.4857326644319,
+        "other": 4513.335806325631,
+        "empty": 0.0
+      },
+      "total_ms": 5760.920326000001,
+      "row_major_fraction": 0.18679286053537728,
+      "calls_with_row_major_sample_intervals": 953
+    },
+    "all": {
+      "calls": 1280,
+      "categories_ms": {
+        "one-row-row-major": 1346.0431802903695,
+        "prepared-final-row": 0.0,
+        "packing": 0.0,
+        "other-matmul-kernel": 214.1099350094234,
+        "other": 5591.564870700209,
+        "empty": 0.0
+      },
+      "total_ms": 7151.717986000002,
+      "row_major_fraction": 0.1882125641594572,
+      "calls_with_row_major_sample_intervals": 1191
+    }
+  },
+  "example_row_major_stack": [
+    "Process64 dotnet (1165316) Args: /dev/shm/lokad-decmap-20260927/runtime/ParakeetDecoderObservation.dll /dev/shm/lokad-decmap-20260927/observation.json trace /dev/shm/lokad-decmap-20260927/trace-capture",
+    "(Non-Activities)",
+    "Threads",
+    "Thread (1165316)",
+    "ParakeetDecoderObservation!Driver.Main(class System.String[])",
+    "Lokad.Onnx!Lokad.Onnx.GraphExecution.Execute(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+    "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCore(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+    "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+    "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+    "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+    "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MatMul(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+    "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+    "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMulInto(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+    "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunBatchedFloatMatMul(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+    "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunIsolatedShortWideKernel(int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+    "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunFloatMatMulKernel(int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+    "Lokad.Onnx!Lokad.Onnx.MathOps.mm_m1_kblocked(int32,int32,int32,float32*,float32*,float32*)"
+  ],
+  "outside": [
+    {
+      "thread": "Thread (1165316)",
+      "category": "empty",
+      "estimated_thread_ms": 0.0
+    },
+    {
+      "thread": "Thread (1165316)",
+      "category": "one-row-row-major",
+      "estimated_thread_ms": 10.837450176023527
+    },
+    {
+      "thread": "Thread (1165316)",
+      "category": "other",
+      "estimated_thread_ms": 238.08640432118932
+    },
+    {
+      "thread": "Thread (1165316)",
+      "category": "other-matmul-kernel",
+      "estimated_thread_ms": 0.053472002785383665
+    },
+    {
+      "thread": "Thread (1165318)",
+      "category": "empty",
+      "estimated_thread_ms": 0.0
+    },
+    {
+      "thread": "Thread (1165318)",
+      "category": "other",
+      "estimated_thread_ms": 6.708315969635009
+    },
+    {
+      "thread": "Thread (1165321) (.NET Finalizer Thread)",
+      "category": "empty",
+      "estimated_thread_ms": 0.0
+    },
+    {
+      "thread": "Thread (1165321) (.NET Finalizer Thread)",
+      "category": "other",
+      "estimated_thread_ms": 356.3573303222656
+    }
+  ],
+  "rounding_adjustments_ms": [],
+  "per_call_jit_version_proved": false,
+  "per_node_allocation_or_copy_proved": false,
+  "node_association": "Named managed MatMul stack plus the exact original graph and source guards; no per-node marker.",
+  "counter_scope": "Complete decoder execution; never per-node allocation or copy attribution",
+  "sample_scope": "Reconstructed sampled-thread intervals; no kernel timer, sample count, or per-call JIT-version proof.",
+  "audit_platform": "Frozen auditor; unavailable local psutil fails on any access; only remote command paths use PurePosixPath. Linux resource observations are unchanged.",
+  "audit_invocations": {
+    "artifacts/parakeet-decoder-projection-observation-v3-audit-20260927.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-audit-20260927.stderr": {
+      "bytes": 654,
+      "sha256": "a9098d7c6e43be235a6b94dd21c8bdb6eddf3290ded7167bbf8540962de1460a"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-offline-audit-20260927.py": {
+      "bytes": 1218,
+      "sha256": "44a56d45ae7525f07f943a3621c89ab235552a881c180646611990ea22a6f48a"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-offline-audit-20260927.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-offline-audit-20260927.stderr": {
+      "bytes": 905,
+      "sha256": "92ef07b8a1bc19da17b2ab33cf6ad8ab4a0c3a18b8044fd3a49f42f17634bd0e"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-offline-audit-v2-20260927.py": {
+      "bytes": 1412,
+      "sha256": "fa09be9649e05ff14f9bd6fb16b4acff0fea9b4a8870d772dd8548bac6e7b288"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-offline-audit-v2-20260927.stdout": {
+      "bytes": 253,
+      "sha256": "eecbdd453bb1c20fc643ede34e4c95b1b2f6a20e0e71cad1130582e5a8b90a10"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-offline-audit-v2-20260927.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
