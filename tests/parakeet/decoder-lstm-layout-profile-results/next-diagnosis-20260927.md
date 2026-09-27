@@ -69,6 +69,13 @@ row block of each of these 48 convolution nodes. The next source inspection
 must follow the unpacked `MlasSgemmOperation` route, including its input packing
 and reduction blocking; the packed-constant LSTM route is a different case.
 
+That source follow-up is now recorded in
+[the exact pointwise review](pointwise-source-20260927.md). ORT uses four or
+eight reduction slices for these widths. Lokad's existing AVX-512 helper rejects
+all 19 widths, even if its dynamic flag is enabled. The retained managed stack
+exports do not separately identify the pointwise boundary, so their older
+percentages cannot choose between arithmetic and data movement here.
+
 ## One bounded diagnostic question
 
 Determine how much of the pointwise difference lies in input packing and matrix

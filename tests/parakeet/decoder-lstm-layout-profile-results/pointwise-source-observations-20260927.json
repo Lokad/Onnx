@@ -1,0 +1,292 @@
+{
+  "passed": true,
+  "inference_calls": 0,
+  "source": {
+    "bytes": 6355,
+    "sha256": "9c54dc982769f80d3cbefa90c7cf54b8543408d4761de8293e596e9c4f352dc4"
+  },
+  "native_profile": {
+    "bytes": 636,
+    "sha256": "17c9be907e142700837ad86da026141882cfabb022fa9273e4c8bdd8971884d7"
+  },
+  "qualified_source": "edc1a6c8",
+  "managed_sources": {
+    "src/Lokad.Onnx/TensorOps.ConvPool.cs": {
+      "bytes": 48959,
+      "sha256": "a4d89d2e49f9518dd66c950cc57dc186fb654e3795a89dc5ed52860e7e944671"
+    },
+    "src/Lokad.Onnx/TensorOps.MatMul.cs": {
+      "bytes": 46261,
+      "sha256": "ef7e2924fdb91e437d4a097b87e7b72597c4ab8799f036ba687520a01c9e9869"
+    },
+    "src/Lokad.Onnx/MathOps.cs": {
+      "bytes": 215579,
+      "sha256": "f09ec95f8ba1aba3e235988ebddab54032dc69fac5013cc288ffae5f4ebfe30b"
+    },
+    "src/Lokad.Onnx/MathOps.PackedAvx512.cs": {
+      "bytes": 14443,
+      "sha256": "7edef35d0ed2bf11399b0cf93f8de4d4e67b5c915fed12fb4a9db383c192daca"
+    },
+    "src/Lokad.Onnx/DenseTensor.cs": {
+      "bytes": 14608,
+      "sha256": "9fcb1c26c7a4dbca34eb741b0e3ab5cd4a74c57f3a602b8c746a25613bc5ad2b"
+    }
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "ort_sources": {
+    "onnxruntime/core/mlas/lib/convolve.cpp": {
+      "bytes": 57470,
+      "sha256": "b96bd7e1d7718089cba66edf2da5ee680b9cf9e2b3ea48a2cdbd61de4022724d"
+    },
+    "onnxruntime/core/mlas/lib/sgemm.cpp": {
+      "bytes": 43141,
+      "sha256": "1554aa0b046c3c02734613ef8ab1105bd55449f7d76116d342d17e1c630cb523"
+    },
+    "onnxruntime/core/mlas/lib/mlasi.h": {
+      "bytes": 98181,
+      "sha256": "24f65d23f6ab83b812049c55d19583f27c471bde077a1d66f1db42e0b5e8ab97"
+    },
+    "onnxruntime/core/mlas/lib/x86_64/FgemmKernelAvx512FCommon.h": {
+      "bytes": 21458,
+      "sha256": "087c70e4469e2cb4c02d4dd3253c5c577825f85f32ef6e251cc686a41e7a413a"
+    }
+  },
+  "pointwise_nodes": 48,
+  "calls_including_warmup": 3840,
+  "blocking": [
+    {
+      "output_columns": 51,
+      "ort_stride_n": 64,
+      "ort_stride_k": 256,
+      "reduction_slices": 4,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 1,
+      "managed_tail_columns": 19,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 61,
+      "ort_stride_n": 64,
+      "ort_stride_k": 256,
+      "reduction_slices": 4,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 1,
+      "managed_tail_columns": 29,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 83,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 2,
+      "managed_tail_columns": 19,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 88,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 2,
+      "managed_tail_columns": 24,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 89,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 2,
+      "managed_tail_columns": 25,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 102,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 3,
+      "managed_tail_columns": 6,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 106,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 3,
+      "managed_tail_columns": 10,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 112,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 3,
+      "managed_tail_columns": 16,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 114,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 3,
+      "managed_tail_columns": 18,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 120,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 1,
+      "managed_full_32_column_panels": 3,
+      "managed_tail_columns": 24,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 151,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 4,
+      "managed_tail_columns": 23,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 156,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 4,
+      "managed_tail_columns": 28,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 157,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 4,
+      "managed_tail_columns": 29,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 158,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 4,
+      "managed_tail_columns": 30,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 167,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 5,
+      "managed_tail_columns": 7,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 169,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 5,
+      "managed_tail_columns": 9,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 190,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 5,
+      "managed_tail_columns": 30,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 222,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 6,
+      "managed_tail_columns": 30,
+      "existing_avx512_helper_accepts": false
+    },
+    {
+      "output_columns": 225,
+      "ort_stride_n": 128,
+      "ort_stride_k": 128,
+      "reduction_slices": 8,
+      "column_slices": 2,
+      "managed_full_32_column_panels": 7,
+      "managed_tail_columns": 1,
+      "existing_avx512_helper_accepts": false
+    }
+  ],
+  "retained_traces": [
+    {
+      "name": "sampled-a",
+      "files": {
+        "artifacts/parakeet-current-profile-amd-20260923/exports/sampled-a/speedscope.speedscope.json": {
+          "bytes": 26000878,
+          "sha256": "0ce781b8a74b8b9020254279afe5cc6f7b4f8c018fa67e1b4946bb6e3429798e"
+        },
+        "artifacts/parakeet-current-profile-amd-20260923/exports/sampled-a/chromium.chromium.json": {
+          "bytes": 108557409,
+          "sha256": "b534d1cf2ea279b454654cac02c9f0689b1ca10a428e2b8fd3ac7795006310c4"
+        }
+      },
+      "cross_export": {
+        "passed": true,
+        "profiles": 2,
+        "events": 476380
+      },
+      "pointwise_frames": [],
+      "pointwise_costs_separately_identifiable": false
+    },
+    {
+      "name": "sampled-b",
+      "files": {
+        "artifacts/parakeet-current-profile-amd-20260923/exports/sampled-b/speedscope.speedscope.json": {
+          "bytes": 26010405,
+          "sha256": "53a6bea15fc289d9a98eb9b2e480fefdbb86d17d30afe5ef73d52faaae7ea50d"
+        },
+        "artifacts/parakeet-current-profile-amd-20260923/exports/sampled-b/chromium.chromium.json": {
+          "bytes": 108623813,
+          "sha256": "25054ded12784ae93a519f26a225274212ed09426287b155f9b91b47c5a93b2e"
+        }
+      },
+      "cross_export": {
+        "passed": true,
+        "profiles": 3,
+        "events": 476768
+      },
+      "pointwise_frames": [],
+      "pointwise_costs_separately_identifiable": false
+    }
+  ],
+  "scope": "Source-derived routes; no new per-node kernel observation or timing attribution.",
+  "next_observation": "Separate materialization, clearing, packing and arithmetic for these 48 pointwise nodes."
+}
