@@ -1,0 +1,49 @@
+using System.Runtime.InteropServices;
+
+internal static class ArithmeticComparison
+{
+    public const int SelfTestCount = 9;
+
+    // Arithmetic may choose different NaN payloads even for two loads of the
+    // identical compiled baseline. Every non-NaN bit must still agree.
+    public static int Same(ReadOnlySpan<float> expected, ReadOnlySpan<float> actual, string reason)
+    {
+        if (expected.Length != actual.Length) throw new InvalidDataException(reason + " length");
+        if (MemoryMarshal.AsBytes(expected).SequenceEqual(MemoryMarshal.AsBytes(actual))) return 0;
+        int payloadDifferences = 0;
+        for (int i = 0; i < expected.Length; i++)
+        {
+            int eb = BitConverter.SingleToInt32Bits(expected[i]);
+            int ab = BitConverter.SingleToInt32Bits(actual[i]);
+            if (eb == ab) continue;
+            if (float.IsNaN(expected[i]) && float.IsNaN(actual[i])) { payloadDifferences++; continue; }
+            throw new InvalidDataException(reason + " index=" + i + " expected=" + eb.ToString("x8") + " actual=" + ab.ToString("x8"));
+        }
+        return payloadDifferences;
+    }
+
+    public static void Verify()
+    {
+        float a = BitConverter.Int32BitsToSingle(0x7fc12345);
+        float b = BitConverter.Int32BitsToSingle(unchecked((int)0xffc54321));
+        void Accept(float[] x, float[] y, int count)
+        {
+            if (Same(x, y, "Comparator selftest") != count) throw new InvalidDataException("Payload accounting");
+        }
+        void Reject(float[] x, float[] y)
+        {
+            bool rejected = false;
+            try { Same(x, y, "Comparator negative control"); } catch (InvalidDataException) { rejected = true; }
+            if (!rejected) throw new InvalidDataException("Comparator accepted a numerical change");
+        }
+        Accept([], [], 0);
+        Accept([1, -0f, float.PositiveInfinity, a], [1, -0f, float.PositiveInfinity, a], 0);
+        Accept([a, b], [b, a], 2);
+        Reject([1], [2]);
+        Reject([0f], [-0f]);
+        Reject([float.PositiveInfinity], [float.NegativeInfinity]);
+        Reject([a], [1]);
+        Reject([1], [b]);
+        Reject([1], []);
+    }
+}

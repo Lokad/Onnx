@@ -73,3 +73,51 @@ rule selecting physical operands and the baseline's within-mode NaN-payload
 stability. Inspect pinned runtime source and isolate baseline behavior before
 choosing a correction. Existing exact-bit verdicts remain failed; neither
 candidate qualifies for promotion. Local allocated storage is 48.969 GB.
+
+## Identical baseline binaries also fail payload equality
+
+The subsequent baseline-only check uses exact Core `47984318` in both assembly
+load contexts, without compiling a product or consumer. It retains all 2,598
+cases and their order. It reports **214 normal and 218 AVX2-only failures**.
+Every first mismatch is NaN versus NaN in complete-vector columns. Respectively
+86 and 90 cases cannot enter the proposed helpers. The first normal failure is
+exactly the previous repair campaign's M=70, reduction=63, columns=42, row 0,
+column 2. Thus the demanded within-mode NaN-payload identity is not stable even
+for the baseline under the existing consumer. All finite cases pass.
+
+Evidence: `artifacts/parakeet-pointwise-tail-baseline-diagnostic-20260927`,
+review `a199e092`, 28 collected files, terminal owner 1221768 / birth1790529827.84.
+The two processes take 5.035 and 5.036 seconds with ten resource samples each.
+These are diagnostic durations. This result does not itself qualify a candidate.
+
+The installed runtime revision `94ea82652cdd4e0f8046b5bd5becbd11461482ca` belongs
+to dotnet/dotnet, the combined .NET source repository. Its
+[source manifest](https://github.com/dotnet/dotnet/blob/94ea82652cdd4e0f8046b5bd5becbd11461482ca/src/source-manifest.json)
+maps runtime to `b82454cad0aaaae3db2cf18fbf2cccc36e201ccc`, matching tag v10.0.8.
+Installed JIT hash is `3cb5bbf7`; exact source files and hashes are retained under
+`artifacts/parakeet-pointwise-tail-jit-review-20260927`.
+
+The applicable [lowering rule](https://github.com/dotnet/runtime/blob/b82454cad0aaaae3db2cf18fbf2cccc36e201ccc/src/coreclr/jit/lowerxarch.cpp#L9869)
+can swap commutative operands to put a memory operand second. Otherwise it uses
+a [register-allocation preference](https://github.com/dotnet/runtime/blob/b82454cad0aaaae3db2cf18fbf2cccc36e201ccc/src/coreclr/jit/lowerxarch.cpp#L7561)
+that favors a local over an expression temporary for that position. This explains
+why spelling B*A does not force that physical order: B is shared while A is a
+broadcast expression. Normal execution can instead fold A's broadcast into the
+second operand. Read-modify-write register swapping is a separate rule; the
+ordinary VEX AVX multiply does not take that rule. No further spelling trial is
+needed. Exact generated code remains the direct evidence for the observed order.
+
+The corrected arithmetic contract therefore requires **exact non-NaN bits and
+matching NaN classification**, counting payload differences separately and marking
+affected raw cases `bit_exact=false`. This preserves signed zero, subnormals,
+signed infinities, every original case, immutable input/packed bytes, guards,
+allocation and independent oracle. It also allows all exceptional cases to reach
+their remaining output and ownership checks instead of stopping at the first
+payload difference. Existing repository tests, copy-bit guarantees and complete
+model error/finiteness/transcript gates remain unchanged.
+
+Keep both previous candidate closures failed. The new
+[arithmetic qualification](../pointwise-tail-arithmetic-contracts-amd/README.md)
+uses original candidate `7cac6788`, baseline A/A controls and both public scalar
+modes. The ineffective source-order edit is not carried forward. No performance
+claim or release promotion follows until numerical and application gates pass.
