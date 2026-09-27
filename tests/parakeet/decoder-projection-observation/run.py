@@ -11,7 +11,9 @@ from prepare import ROOT, TOOLS, PARENT, BASE, QUALIFIED, prepare, previous_clos
 
 loader = importlib.util.spec_from_file_location('decoder_observation_transport', PARENT/'run.py')
 transport = importlib.util.module_from_spec(loader); loader.loader.exec_module(transport)
-REMOTE = '/dev/shm/lokad-parakeet-decoder-projection-observation-v2-20260927'
+REMOTE = '/dev/shm/lokad-decmap-20260927'
+# Linux AF_UNIX paths must also accommodate the CLR diagnostic socket filename.
+assert len(REMOTE + '/tmp/dotnet-diagnostic-' + '9'*10 + '-' + '9'*20 + '-socket') < 108
 transport.PRELUDE = transport.PRELUDE.replace(transport.REMOTE, REMOTE)
 transport.BASE, transport.REMOTE, transport.TOOLS = BASE, REMOTE, TOOLS
 SSH, PRELUDE, ssh = transport.SSH, transport.PRELUDE, transport.ssh

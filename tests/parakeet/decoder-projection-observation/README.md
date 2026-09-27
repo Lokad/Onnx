@@ -82,8 +82,8 @@ Observe the same owner to terminal, collect once, then run audit.py once with
 stdout outside the artifact. Preserve every failure and partial receipt; do not
 restart unchanged. Interpret the mapping and named kernel samples before choosing
 one intervention. Local namespace:
-`artifacts/parakeet-decoder-projection-observation-v2-amd-20260927`; VM namespace:
-`/dev/shm/lokad-parakeet-decoder-projection-observation-v2-20260927`. Neither exists.
+`artifacts/parakeet-decoder-projection-observation-v3-amd-20260927`; VM namespace:
+`/dev/shm/lokad-decmap-20260927`. Neither exists.
 Verify complete-run memory and repository storage headroom before preparation.
 VM compilation, execution and sample interpretation remain pending. This directory
 is preparation for one observation, not evidence that the route or kernel ran.
@@ -112,3 +112,14 @@ exact exporter files are linked from their verified restoration in the terminal
 first campaign, still bound to full-export qualification `35b18e87`. No exporter
 rebuild or download is needed. The old tool bytes remain frozen with the failed
 campaign; these reusable working tools are corrected for the new namespace.
+
+The second attempt is terminal at `8a663cf2`. Its observer builds and all 1,280
+ordinary decoder calls pass exact outputs, mapping and ownership checks. The
+prepared map is present with 51,461,120 bytes retained. The collector cannot
+connect because the campaign TMPDIR plus CLR socket name exceeds Linux's
+108-character path limit; the worker times out before trace markers are enabled.
+All raw outputs and tool bytes are retained in the v2 artifact. The current third
+namespace uses the short VM path above and checks a conservative socket-name
+length before staging. The observer source, product, fixture, controls, trace
+providers and all resource/numerical checks are unchanged. A fresh ordinary
+control still precedes the trace. No ISA, allocation, arithmetic or kernel variant.

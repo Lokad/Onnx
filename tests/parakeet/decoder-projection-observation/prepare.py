@@ -7,7 +7,8 @@ import tarfile
 from fixture import ROOT, BASE as MODELS, CORE, DATA, inspect
 from protocol import TOOLS, PARENT, pin, read, save
 
-BASE = ROOT/'artifacts/parakeet-decoder-projection-observation-v2-amd-20260927'
+BASE = ROOT/'artifacts/parakeet-decoder-projection-observation-v3-amd-20260927'
+CONTROL = ROOT/'artifacts/parakeet-decoder-projection-observation-v2-amd-20260927'
 FAILED = ROOT/'artifacts/parakeet-decoder-projection-observation-amd-20260927'
 QUALIFIED = ROOT/'artifacts/parakeet-rational-sigmoid-root-amd-20260927'
 EVENTS = ROOT/'artifacts/parakeet-dispatch-events-amd-20260923'
@@ -56,6 +57,11 @@ def previous_closed():
     failed = read(FAILED/'failed.json')
     assert not failed['passed'] and failed['evidence_verified'] and failed['terminal'] and not failed['diagnostic_executed']
     for name, wanted in failed['files'].items(): assert pin(FAILED/name) == wanted, name
+    assert pin(CONTROL/'failed.json')['sha256'] == '8a663cf2e289b5a5333239c2ccb73f2af991f0180df96035d7752eeb2c3e7563'
+    control = read(CONTROL/'failed.json')
+    assert not control['passed'] and control['evidence_verified'] and control['terminal']
+    assert control['control_passed'] and not control['trace_executed']
+    for name, wanted in control['files'].items(): assert pin(CONTROL/name) == wanted, name
     original = read(EVENTS/'prepared.json')['files']
     for name in ['protocol.py', 'remote.py', 'run.py']:
         path = PARENT/name
@@ -96,6 +102,9 @@ def prepare():
     copy(FAILED/'failed.json', 'evidence/first-attempt-failed.json')
     copy(FAILED/'frozen-tools.json', 'evidence/first-attempt-tools.json')
     copy(FAILED/'collected/logs/observer-build.stdout', 'evidence/first-attempt-build.stdout')
+    copy(CONTROL/'failed.json', 'evidence/second-attempt-failed.json')
+    copy(CONTROL/'failure-analysis.json', 'evidence/second-attempt-control.json')
+    copy(CONTROL/'collected/logs/trace-capture-collector.stderr', 'evidence/second-attempt-collector.stderr')
     for name, raw in arrays.items():
         path = bundle/name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(raw)
     save(bundle/'observation.json', spec)
