@@ -121,3 +121,36 @@ Keep both previous candidate closures failed. The new
 uses original candidate `7cac6788`, baseline A/A controls and both public scalar
 modes. The ineffective source-order edit is not carried forward. No performance
 claim or release promotion follows until numerical and application gates pass.
+
+## Arithmetic qualification passes; performance remains unmeasured
+
+The corrected contract passes all **10,392 raw cases and 24 scalar cases**.
+Every non-NaN bit, NaN classification, input/packed-byte identity, guard and
+allocation check passes. Nine comparator controls run in each process; three
+local auditor tests reject numerical, classification, ownership, coverage and
+false bit-identity claims. All finite case records agree across the four raw
+processes. Products remain original Core `47984318` and candidate `7cac6788`.
+
+In this new consumer, baseline A/A records no payload differences; the earlier
+214/218 failures remain evidence that the strict payload gate is unstable.
+Candidate normal records 198 differing payload comparisons in one case;
+AVX2-only records 14,097 in 274 cases. Counts span all three comparisons per case.
+These cases are explicitly marked `bit_exact=false`; their complete remaining
+outputs and ownership checks now run and pass.
+
+Closure `558f2a52` and generated-code review `3715408c` are retained under
+`artifacts/parakeet-pointwise-tail-arithmetic-contracts-amd-20260927`.
+Build/capture owners 1222396 / birth1790530359.63 and 1222694 / birth1790530385.84
+are terminal; collections contain 48 and 76 files. All four raw processes take
+about 5.05 seconds, with ten resource samples each; peak owned RSS is 93,544,448
+bytes. Scalar processes take about 0.51 seconds each. These are diagnostic clocks.
+
+Both helpers keep eight independent accumulators without vector stack spills.
+Complete vectors use eight FMA instructions per reduction step; masked vectors
+use eight multiplies and eight separate adds. Their complete generated code
+matches the original candidate in each mode. Normal/AVX2-only sizes are 462/494
+bytes for the full-vector helper and 788/828 for the masked helper.
+
+Numerical qualification now permits the fixed shape experiment in PLAN.md.
+No speedup is measured yet. Parakeet's qualified release remains 46.931723 seconds
+versus ORT 39.513180 seconds, ratio 1.188.
