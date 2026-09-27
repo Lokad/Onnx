@@ -1,0 +1,54 @@
+"""Bind admitted products, terminal owners and the existing offline package feed."""
+import json,os,shutil,psutil
+from pathlib import Path
+from protocol import JOBS,LIMITS,pin,read,save,verify
+from remote import idle,live
+from prerequisites import verify as verify_prerequisites
+BASE=Path(__file__).resolve().parents[1]
+MEASURED=Path('/dev/shm/lokad-parakeet-decoder-packed-row-models-20260927/runtimes/candidate')
+FEED=Path('/dev/shm/lokad-pyannote-blocked-spatial-app-20260922')
+PRIOR=dict(models=Path('/dev/shm/lokad-parakeet-decoder-packed-row-pyannote-20260927'),
+    parakeet=Path('/dev/shm/lokad-parakeet-decoder-packed-row-models-20260927'),
+    shared=Path('/dev/shm/lokad-parakeet-decoder-packed-row-shared-20260927'),
+    baseline=Path('/dev/shm/lokad-parakeet-observed-dense-where-pyannote-app-20260924'),
+    **{'consumer-qualified':Path('/dev/shm/lokad-parakeet-rational-sigmoid-pyannote-app-20260927'),
+       'qualified-root':Path('/dev/shm/lokad-parakeet-rational-sigmoid-root-20260927'),
+       'parakeet-app':Path('/dev/shm/lokad-parakeet-decoder-packed-row-app-20260927'),
+       'graph-qualification':Path('/dev/shm/lokad-parakeet-decoder-packed-row-graphs-20260927'),
+       'pyannote-app':Path('/dev/shm/lokad-parakeet-decoder-packed-row-pyannote-app-20260927')})
+
+
+def main():
+    psutil.Process().cpu_affinity([0]);idle();assert not (BASE/'payload.json').exists()
+    assert psutil.virtual_memory().available>=LIMITS['preflight_available'] and psutil.disk_usage(BASE).free>=LIMITS['preflight_tmpfs']
+    stage=read(BASE/'stage.json')
+    for name,wanted in stage['files'].items():assert pin(BASE/name)==wanted,name
+    verify_prerequisites(BASE,stage)
+    assert (BASE/'source/global.json').is_file() and (BASE/'consumer/PackageProbe.csproj').is_file()
+    assert read(BASE/'evidence/root-applied.json')['graph_qualification']==stage['graph_qualification']['closed']
+    for label,folder in PRIOR.items():
+        for name in ['payload.json','collection.json']:assert pin(folder/name)==pin(BASE/'evidence'/label/name)
+        receipt=read(folder/'collection.json')
+        assert receipt['terminal'] and receipt['code']==0 and receipt['input_error'] is None
+        assert not any(live(identity) for identity in receipt['identities'])
+        for name,wanted in read(folder/'payload.json')['files'].items():assert pin(folder/name)==wanted,name
+    previous=read(PRIOR['qualified-root']/'payload.json')
+    shutil.copytree(MEASURED,BASE/'measured',copy_function=os.link)
+    for name,wanted in stage['measured'].items():assert pin(BASE/'measured'/name)==wanted
+    assert pin(FEED/'payload.json')['sha256']=='229556d67d87085875ade0fc027a1b1df327f5578c5c60d27ad961462aac534f'
+    external=dict(previous['external'])
+    for name,wanted in read(FEED/'payload.json')['files'].items():
+        if name.startswith('nuget-feed/'):
+            source=FEED/name;assert pin(source)==wanted;external[str(source)]=wanted
+    for name,wanted in external.items():assert pin(name)==wanted,name
+    payload=dict(passed=True,jobs=JOBS,limits=LIMITS,previous_owner=receipt['identities'][0],boot_time=1789634288.0,
+        graph_qualification=stage['graph_qualification'],prerequisites=stage['prerequisites'],
+        identities=stage['identities'],consumers=stage['consumers'],source_prepared=stage['source_prepared'],
+        measured=stage['measured'],feed=str(FEED/'nuget-feed'),external=external,interpreter=previous['interpreter'],
+        files={p.relative_to(BASE).as_posix():pin(p) for p in BASE.rglob('*') if p.is_file() and p.name!='transfer.tar.gz'},
+        scope=stage['source_scope'])
+    save(BASE/'payload.json',payload);verify(BASE)
+    print(json.dumps(dict(passed=True,payload=pin(BASE/'payload.json'),files=len(payload['files']))))
+
+
+if __name__=='__main__':main()
