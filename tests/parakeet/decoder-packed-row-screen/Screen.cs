@@ -33,7 +33,8 @@ static class Screen
     }
     static void Main(string[] args)
     {
-        Require(OperatingSystem.IsLinux() && args.Length == 4, "Linux: base role sequence output");
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Linux screen");
+        Require(args.Length == 4, "base role sequence output");
         string folder = Path.GetFullPath(args[0]), role = args[1]; int sequence = int.Parse(args[2]);
         Require(new[] { "current", "candidate", "candidate", "current" }[sequence] == role, "Order");
         Require(Environment.Version.ToString() == "10.0.8" && Environment.ProcessorCount == 1

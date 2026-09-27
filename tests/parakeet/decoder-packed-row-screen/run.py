@@ -11,8 +11,8 @@ TOOLS = Path(__file__).resolve().parent
 loader = importlib.util.spec_from_file_location('decoder_screen_transport', TOOLS.parent/'weight-ownership-probe/run.py')
 prior = importlib.util.module_from_spec(loader); loader.loader.exec_module(prior)
 pin, read, write, ssh = prior.pin, prior.read, prior.write, prior.ssh
-BASE = ROOT/'artifacts/parakeet-decoder-packed-row-screen-amd-20260927'
-REMOTE = '/dev/shm/lokad-decrow-screen-20260927'
+BASE = ROOT/'artifacts/parakeet-decoder-packed-row-screen-v2-amd-20260927'
+REMOTE = '/dev/shm/lokad-decrow-screen2-20260927'
 PRELUDE = prior.PRELUDE.replace(prior.REMOTE, REMOTE)
 prior.BASE, prior.REMOTE, prior.PRELUDE = BASE, REMOTE, PRELUDE
 transport = prior.transport
@@ -43,6 +43,16 @@ def census():
 
 
 def references():
+    failed = ROOT/'artifacts/parakeet-decoder-packed-row-screen-amd-20260927'
+    assert pin(failed/'failed.json')['sha256'] == 'a5d1059582dedff385b9b1e814b5be365c5a9541178f1033920ff87aa398cef0'
+    failure = read(failed/'failed.json'); assert failure['terminal'] and not failure['capture_executed']
+    for name, wanted in failure['files'].items(): assert pin(failed/name) == wanted, name
+    old = (failed/'frozen-tools/Screen.cs').read_text()
+    before = '        Require(OperatingSystem.IsLinux() && args.Length == 4, "Linux: base role sequence output");'
+    after = '        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Linux screen");\n        Require(args.Length == 4, "base role sequence output");'
+    assert old.count(before) == 1 and (TOOLS/'Screen.cs').read_text() == old.replace(before, after)
+    for name in ['audit.py', 'score.py', 'test_score.py']: assert pin(TOOLS/name) == pin(failed/'frozen-tools'/name)
+    assert census() == read(failed/'bundle/census.json')
     path = CONTRACTS/'closed.json'
     assert pin(path)['sha256'] == 'fc00688c8ef0e65e5d5109f1808209add023e740aabc5b4312647e547df7d61d'
     closure = read(path); assert closure['passed']
@@ -53,7 +63,8 @@ def references():
     for role in products: assert products[role] == pin(RUNTIMES[role]/'Lokad.Onnx.dll')
     assert products['current']['sha256'] == '65f15a41764660af6166c9a965943b6f28cac0c9505117d0fd4beaa2687f9d03'
     assert products['candidate']['sha256'] == 'af19b3b4429a07f7966b5e35ee04e8a31316f45991c300f3683a591caf5e9374'
-    return products, {'contracts': pin(path), 'contracts_report': pin(TOOLS.parent/'decoder-packed-row-results/contracts-20260927.json')}
+    return products, {'contracts': pin(path), 'contracts_report': pin(TOOLS.parent/'decoder-packed-row-results/contracts-20260927.json'),
+        'prior_build_warning_failure': pin(failed/'failed.json')}
 
 
 def prepare():

@@ -58,8 +58,14 @@ Run from repository root using `C:/Python313/python.exe -X utf8 -B` with:
     tests/parakeet/decoder-packed-row-screen/audit.py capture
 
 Observe until terminal before collecting; never replay completed commands.
-The local namespace is artifacts/parakeet-decoder-packed-row-screen-amd-20260927;
-VM namespace /dev/shm/lokad-decrow-screen-20260927. A 32 MiB campaign limit and
+The local namespace is artifacts/parakeet-decoder-packed-row-screen-v2-amd-20260927;
+VM namespace /dev/shm/lokad-decrow-screen2-20260927. A 32 MiB campaign limit and
 small collections fit the last 210 MB of the 50 decimal GB allocation budget.
 Keep all canonical models and prior evidence. BENCHMARK.md stays qualified until
 the application and broader release checks pass.
+
+The first namespace is preserved at failure a5d10595. Its consumer built but the
+frozen zero-warning audit rejected CA1416: an assertion helper around the Linux
+test did not satisfy platform analysis. No timing ran. V2 changes only that
+consumer guard to an explicit throw and binds the original source, failed build,
+score code and identical census. The two Core products remain unchanged.
