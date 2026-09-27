@@ -19,7 +19,7 @@ BASE=ROOT/'artifacts/parakeet-pointwise-tail-pyannote-app-amd-20260927'
 OLD=ROOT/'artifacts/parakeet-observed-dense-where-pyannote-app-amd-20260924'
 APP_PAYLOAD=OLD/'collected'
 GRAPHS=ROOT/'artifacts/parakeet-pointwise-tail-graphs-amd-20260927'
-GRAPH_DIGEST=None
+GRAPH_DIGEST='faf553e7c155dc1b63f292eeae993154edaf0e48506ef8ed7b8c2563ba4db946'
 PRIOR=dict(models=ROOT/'artifacts/parakeet-pointwise-tail-pyannote-amd-20260927',
     parakeet=ROOT/'artifacts/parakeet-pointwise-tail-models-amd-20260927',
     shared=ROOT/'artifacts/parakeet-pointwise-tail-shared-amd-20260927',

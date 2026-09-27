@@ -1,8 +1,9 @@
 # Pointwise remainder release results
 
-These publishers are prepared before the remaining comparisons complete.
-No pending graph, Pyannote application or root result has been published.
-They read actual closed evidence and verify its file inventory and product
+The [graph comparison](graphs-20260927.md) is admitted: all 24 repeatability
+controls and eight regression gates pass. Complete Pyannote application and
+actual-root qualification remain pending; their publishers are prepared.
+The publishers read actual closed evidence and verify its file inventory and product
 identity before writing new reports. Existing publications are never overwritten.
 Failed performance controls remain visible; a report does not promote a product.
 

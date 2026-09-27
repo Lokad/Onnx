@@ -3,9 +3,10 @@
 Compare current Core `47984318`, candidate `7cac6788`, both with Data `dd56902f`,
 and fresh ORT. Complete Parakeet, shared/e5 and Pyannote correctness pass; the
 independent Parakeet application comparison admits a 2.132562% gain and a
-1.155498 candidate/ORT ratio. The original eight-case graph comparison is running.
-Its actual admitted closure must be bound to GRAPH_DIGEST before freezing and
-preparing this campaign. No graph verdict is assumed.
+1.155498 candidate/ORT ratio. The original eight-case graph comparison is admitted
+at closure `faf553e7`: all 24 repeatability controls and eight regression gates
+pass, with every original numerical and ownership check. All 72 jobs and their
+supervisor are terminal. GRAPH_DIGEST binds that actual verdict.
 
 Reuse AudioBenchmark `7eca033a` and NaturalMeetings `79e3e799` from the latest
 qualified Pyannote application closure `5942b121`. Compiled provenance connects
