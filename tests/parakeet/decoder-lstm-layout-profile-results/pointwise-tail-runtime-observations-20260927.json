@@ -1,0 +1,2567 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "screen_rescored": false,
+  "capture_closure": {
+    "bytes": 41994,
+    "sha256": "473104209f3a9161dc0600df123581fbb6fe626bea8894be69388b953277332e"
+  },
+  "worker_pid": 1224499,
+  "worker_thread": 1224499,
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 830464,
+      "sha256": "7cac67880fa9a4d519ac18e5887f47f48f0f14903bdf74cc6561b45c851e4f27"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "dd56902f44c640b9226e2e7ee05d1d3e8dc025f59471afb2261194715ca5e311"
+    }
+  },
+  "original_calls": 400,
+  "exact_output_arrays": 400,
+  "raw_events": 27814,
+  "lost": 0,
+  "clock_offset_bounds_ms": [
+    -898088651.519018,
+    -898088651.5154248
+  ],
+  "clock_tolerance_ms": 0.001,
+  "jit_intervals": 285,
+  "gc_intervals": 4,
+  "suspension_reasons": {
+    "SuspendOther": 4378,
+    "SuspendForGC": 4,
+    "SuspendForGCPrep": 3
+  },
+  "phases": [
+    {
+      "phase": "warmup",
+      "repeat": 0,
+      "begin_ms": 995.2922594547272,
+      "end_ms": 1250.7395395040512,
+      "calls": 40,
+      "call_elapsed_ms": 250.76779299999998,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 2.9878400000000056
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.5111359999993965
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 1,
+      "begin_ms": 1417.6299085617065,
+      "end_ms": 1673.2632985115051,
+      "calls": 40,
+      "call_elapsed_ms": 251.18255799999997,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.5920329999994465
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 2,
+      "begin_ms": 1840.1645735502243,
+      "end_ms": 2092.86534845829,
+      "calls": 40,
+      "call_elapsed_ms": 248.340589,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.4977309999987938
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 3,
+      "begin_ms": 2259.7160165309906,
+      "end_ms": 2512.3525334596634,
+      "calls": 40,
+      "call_elapsed_ms": 247.91876,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.4736659999980475
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 4,
+      "begin_ms": 2682.8341034650803,
+      "end_ms": 2941.900896549225,
+      "calls": 40,
+      "call_elapsed_ms": 253.741207,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 14.206530005973491
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.4836729999965428
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 0,
+      "begin_ms": 3108.538122534752,
+      "end_ms": 3363.655151486397,
+      "calls": 40,
+      "call_elapsed_ms": 249.886146,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.49966299999732655
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 1,
+      "begin_ms": 3530.650377511978,
+      "end_ms": 3784.902519464493,
+      "calls": 40,
+      "call_elapsed_ms": 249.158332,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.4885579999977381
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 2,
+      "begin_ms": 3951.77705347538,
+      "end_ms": 4211.942387461662,
+      "calls": 40,
+      "call_elapsed_ms": 254.90908299999998,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.5371010000030765
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 3,
+      "begin_ms": 4379.233201503754,
+      "end_ms": 4630.199181556702,
+      "calls": 40,
+      "call_elapsed_ms": 246.47436199999999,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.5149410000040007
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 4,
+      "begin_ms": 4812.648912549019,
+      "end_ms": 5068.906606554985,
+      "calls": 40,
+      "call_elapsed_ms": 252.59480399999998,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 2.2365129999998317
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 22.780678048301525
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.5000100000079328
+      }
+    }
+  ],
+  "measured_attribution": {
+    "calls": 200,
+    "call_elapsed_ms": 1253.022727,
+    "gc_counter_pause_delta_ms": 0.0,
+    "jit_by_thread": [
+      {
+        "thread": 1224499,
+        "worker_thread": true,
+        "union_elapsed_overlap_ms": 2.2365129999998317
+      },
+      {
+        "thread": 1224501,
+        "worker_thread": false,
+        "union_elapsed_overlap_ms": 0.0
+      },
+      {
+        "thread": 1224505,
+        "worker_thread": false,
+        "union_elapsed_overlap_ms": 22.780678048301525
+      }
+    ],
+    "gc_elapsed_overlap_ms": {
+      "BackgroundGC": 0.0
+    },
+    "suspended_overlap_ms": {
+      "SuspendForGC": 0.0,
+      "SuspendForGCPrep": 0.0,
+      "SuspendOther": 2.5402730000100746
+    }
+  },
+  "shapes": [
+    {
+      "index": 0,
+      "m": 1024,
+      "n": 1024,
+      "k": 51,
+      "control": false,
+      "times_ms": [
+        1.9032779999999998,
+        2.026115,
+        1.986124,
+        1.998513,
+        4.368948
+      ],
+      "max_min_ratio": 2.295485998367028,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 12.282978,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 2.2365129999998317
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.04089100000055623
+      }
+    },
+    {
+      "index": 1,
+      "m": 1024,
+      "n": 1024,
+      "k": 61,
+      "control": false,
+      "times_ms": [
+        2.178775,
+        2.3040149999999997,
+        2.318978,
+        2.0289989999999998,
+        2.4495649999999998
+      ],
+      "max_min_ratio": 1.2072775787469585,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 11.280332,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.015203999998902873
+      }
+    },
+    {
+      "index": 2,
+      "m": 1024,
+      "n": 1024,
+      "k": 83,
+      "control": false,
+      "times_ms": [
+        2.843771,
+        2.7300389999999997,
+        2.733505,
+        2.73076,
+        2.7256519999999997
+      ],
+      "max_min_ratio": 1.043336053171865,
+      "slowest_repeat": 0,
+      "calls": 5,
+      "call_elapsed_ms": 13.763727,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.030979000000570522
+      }
+    },
+    {
+      "index": 3,
+      "m": 1024,
+      "n": 1024,
+      "k": 88,
+      "control": false,
+      "times_ms": [
+        2.6909199999999998,
+        2.542615,
+        2.705422,
+        2.698612,
+        2.696639
+      ],
+      "max_min_ratio": 1.0640313220837603,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 13.334208,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.01985900000181573
+      }
+    },
+    {
+      "index": 4,
+      "m": 1024,
+      "n": 1024,
+      "k": 89,
+      "control": false,
+      "times_ms": [
+        3.2151929999999997,
+        3.2912779999999997,
+        3.237507,
+        3.18012,
+        3.178037
+      ],
+      "max_min_ratio": 1.0356323730655117,
+      "slowest_repeat": 1,
+      "calls": 5,
+      "call_elapsed_ms": 16.102135,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.036834000001363165
+      }
+    },
+    {
+      "index": 5,
+      "m": 1024,
+      "n": 1024,
+      "k": 102,
+      "control": false,
+      "times_ms": [
+        3.1051059999999997,
+        3.045737,
+        2.9955399999999996,
+        2.879285,
+        2.661356
+      ],
+      "max_min_ratio": 1.1667383093430566,
+      "slowest_repeat": 0,
+      "calls": 5,
+      "call_elapsed_ms": 14.687024,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.033298999999715306
+      }
+    },
+    {
+      "index": 6,
+      "m": 1024,
+      "n": 1024,
+      "k": 106,
+      "control": false,
+      "times_ms": [
+        3.058836,
+        3.278228,
+        3.24662,
+        3.2170959999999997,
+        3.234763
+      ],
+      "max_min_ratio": 1.0717240152790146,
+      "slowest_repeat": 1,
+      "calls": 5,
+      "call_elapsed_ms": 16.035543,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.03190700000095603
+      }
+    },
+    {
+      "index": 7,
+      "m": 1024,
+      "n": 1024,
+      "k": 112,
+      "control": false,
+      "times_ms": [
+        3.2380269999999998,
+        3.356407,
+        3.3539619999999997,
+        3.314753,
+        3.146549
+      ],
+      "max_min_ratio": 1.0666946550014,
+      "slowest_repeat": 1,
+      "calls": 5,
+      "call_elapsed_ms": 16.409698,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.032969000001685345
+      }
+    },
+    {
+      "index": 8,
+      "m": 1024,
+      "n": 1024,
+      "k": 114,
+      "control": false,
+      "times_ms": [
+        3.589219,
+        3.5795339999999998,
+        3.582518,
+        3.553705,
+        3.594216
+      ],
+      "max_min_ratio": 1.0113996519125814,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 17.899192,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.042606000002251676
+      }
+    },
+    {
+      "index": 9,
+      "m": 1024,
+      "n": 1024,
+      "k": 120,
+      "control": false,
+      "times_ms": [
+        3.697662,
+        3.677883,
+        3.729962,
+        3.665564,
+        3.6376619999999997
+      ],
+      "max_min_ratio": 1.0253734404131005,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 18.408732999999998,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.03790900000012698
+      }
+    },
+    {
+      "index": 10,
+      "m": 1024,
+      "n": 1024,
+      "k": 151,
+      "control": false,
+      "times_ms": [
+        4.487568,
+        4.50298,
+        4.512435,
+        4.468739,
+        4.479265
+      ],
+      "max_min_ratio": 1.009778149943418,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 22.450986999999998,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.05533399999876565
+      }
+    },
+    {
+      "index": 11,
+      "m": 1024,
+      "n": 1024,
+      "k": 156,
+      "control": false,
+      "times_ms": [
+        4.858218,
+        4.8066699999999996,
+        4.809775,
+        5.088566999999999,
+        4.778557
+      ],
+      "max_min_ratio": 1.0648752332555622,
+      "slowest_repeat": 3,
+      "calls": 5,
+      "call_elapsed_ms": 24.341787,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.05152900000075533
+      }
+    },
+    {
+      "index": 12,
+      "m": 1024,
+      "n": 1024,
+      "k": 157,
+      "control": false,
+      "times_ms": [
+        4.969276,
+        4.784567,
+        4.823505,
+        4.445243,
+        4.795633
+      ],
+      "max_min_ratio": 1.1178862437891472,
+      "slowest_repeat": 0,
+      "calls": 5,
+      "call_elapsed_ms": 23.818224,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.04603900000165595
+      }
+    },
+    {
+      "index": 13,
+      "m": 1024,
+      "n": 1024,
+      "k": 158,
+      "control": false,
+      "times_ms": [
+        4.829314999999999,
+        4.631996,
+        5.043659,
+        4.8822339999999995,
+        4.868614
+      ],
+      "max_min_ratio": 1.0888737814108647,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 24.255817999999998,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.04612999999926615
+      }
+    },
+    {
+      "index": 14,
+      "m": 1024,
+      "n": 1024,
+      "k": 167,
+      "control": false,
+      "times_ms": [
+        4.433275,
+        4.610093,
+        4.28468,
+        4.591415,
+        4.368627
+      ],
+      "max_min_ratio": 1.0759480287909482,
+      "slowest_repeat": 1,
+      "calls": 5,
+      "call_elapsed_ms": 22.28809,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.03462299999955576
+      }
+    },
+    {
+      "index": 15,
+      "m": 1024,
+      "n": 1024,
+      "k": 169,
+      "control": false,
+      "times_ms": [
+        5.106964,
+        4.911709,
+        4.967143,
+        4.9786399999999995,
+        5.402551
+      ],
+      "max_min_ratio": 1.099933037563911,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 25.367007,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.6836639999992258
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.0542730000024676
+      }
+    },
+    {
+      "index": 16,
+      "m": 1024,
+      "n": 1024,
+      "k": 190,
+      "control": false,
+      "times_ms": [
+        5.873673999999999,
+        5.756256,
+        5.911491,
+        5.650557,
+        5.655213
+      ],
+      "max_min_ratio": 1.0461784563893435,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 28.847191,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.06392000000005282
+      }
+    },
+    {
+      "index": 17,
+      "m": 1024,
+      "n": 1024,
+      "k": 222,
+      "control": false,
+      "times_ms": [
+        6.688105999999999,
+        6.754576,
+        6.9086289999999995,
+        6.431017,
+        6.502974999999999
+      ],
+      "max_min_ratio": 1.0742669472029074,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 33.285303,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.07495300000073257
+      }
+    },
+    {
+      "index": 18,
+      "m": 1024,
+      "n": 1024,
+      "k": 225,
+      "control": false,
+      "times_ms": [
+        6.250394,
+        6.193007,
+        6.43371,
+        6.301221,
+        6.32715
+      ],
+      "max_min_ratio": 1.0388669026209723,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 31.505482,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.06765000000314103
+      }
+    },
+    {
+      "index": 19,
+      "m": 2048,
+      "n": 1024,
+      "k": 51,
+      "control": false,
+      "times_ms": [
+        3.8894029999999997,
+        3.818956,
+        3.974812,
+        3.7928569999999997,
+        3.8157409999999996
+      ],
+      "max_min_ratio": 1.0479730714867448,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 19.291769,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.039669999999205174
+      }
+    },
+    {
+      "index": 20,
+      "m": 2048,
+      "n": 1024,
+      "k": 61,
+      "control": false,
+      "times_ms": [
+        4.742323,
+        4.6404689999999995,
+        4.747078999999999,
+        4.630434,
+        4.603292
+      ],
+      "max_min_ratio": 1.0312356895891026,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 23.363597,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.044885999998768966
+      }
+    },
+    {
+      "index": 21,
+      "m": 2048,
+      "n": 1024,
+      "k": 83,
+      "control": false,
+      "times_ms": [
+        5.610856,
+        5.574171,
+        5.469272,
+        5.584416,
+        5.641331999999999
+      ],
+      "max_min_ratio": 1.0314593971555994,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 27.880046999999998,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.47183399999994435
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.050255999998626066
+      }
+    },
+    {
+      "index": 22,
+      "m": 2048,
+      "n": 1024,
+      "k": 88,
+      "control": false,
+      "times_ms": [
+        5.558147,
+        5.224602,
+        5.85795,
+        5.538797,
+        5.158943
+      ],
+      "max_min_ratio": 1.1354942281781364,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 27.338439,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 2.9415890000000218
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.04748100000051636
+      }
+    },
+    {
+      "index": 23,
+      "m": 2048,
+      "n": 1024,
+      "k": 89,
+      "control": false,
+      "times_ms": [
+        6.445138999999999,
+        6.401161999999999,
+        6.604769,
+        5.839141,
+        5.843318
+      ],
+      "max_min_ratio": 1.1311199712423454,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 31.133529,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.05115699999987555
+      }
+    },
+    {
+      "index": 24,
+      "m": 2048,
+      "n": 1024,
+      "k": 102,
+      "control": false,
+      "times_ms": [
+        5.844558999999999,
+        5.844399999999999,
+        6.0735459999999994,
+        5.773433,
+        6.1104519999999996
+      ],
+      "max_min_ratio": 1.0583741077449067,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 29.646389999999997,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.0678290000009838
+      }
+    },
+    {
+      "index": 25,
+      "m": 2048,
+      "n": 1024,
+      "k": 106,
+      "control": false,
+      "times_ms": [
+        6.469575,
+        6.456816,
+        6.706384,
+        6.4644569999999995,
+        6.4505859999999995
+      ],
+      "max_min_ratio": 1.0396550018866504,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 32.547818,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.07337400000369598
+      }
+    },
+    {
+      "index": 26,
+      "m": 2048,
+      "n": 1024,
+      "k": 112,
+      "control": false,
+      "times_ms": [
+        6.4232249999999995,
+        6.472029,
+        6.392028,
+        6.558349,
+        6.540963
+      ],
+      "max_min_ratio": 1.0260200674965754,
+      "slowest_repeat": 3,
+      "calls": 5,
+      "call_elapsed_ms": 32.386594,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.06388499999911801
+      }
+    },
+    {
+      "index": 27,
+      "m": 2048,
+      "n": 1024,
+      "k": 114,
+      "control": false,
+      "times_ms": [
+        6.8882579999999995,
+        7.396837,
+        7.564692,
+        7.243105,
+        7.255203
+      ],
+      "max_min_ratio": 1.098201025571342,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 36.348095,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.07392199999867444
+      }
+    },
+    {
+      "index": 28,
+      "m": 2048,
+      "n": 1024,
+      "k": 120,
+      "control": false,
+      "times_ms": [
+        7.200940999999999,
+        7.2243569999999995,
+        7.3723209999999995,
+        7.121741999999999,
+        7.146309
+      ],
+      "max_min_ratio": 1.0351850712929505,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 36.06567,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.07488000000012107
+      }
+    },
+    {
+      "index": 29,
+      "m": 2048,
+      "n": 1024,
+      "k": 151,
+      "control": false,
+      "times_ms": [
+        8.752828,
+        8.676122,
+        9.302268999999999,
+        9.045190999999999,
+        10.600023
+      ],
+      "max_min_ratio": 1.2217466513264799,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 46.376433,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 8.071284527031821
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.08335700000134239
+      }
+    },
+    {
+      "index": 30,
+      "m": 2048,
+      "n": 1024,
+      "k": 156,
+      "control": false,
+      "times_ms": [
+        9.450192999999999,
+        9.655604,
+        9.855115,
+        9.241097,
+        13.469412
+      ],
+      "max_min_ratio": 1.4575555261458677,
+      "slowest_repeat": 4,
+      "calls": 5,
+      "call_elapsed_ms": 51.671420999999995,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 10.612306521270511
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.09646900000188907
+      }
+    },
+    {
+      "index": 31,
+      "m": 2048,
+      "n": 1024,
+      "k": 157,
+      "control": false,
+      "times_ms": [
+        9.689105,
+        9.709245,
+        10.685372,
+        9.816828,
+        9.695333
+      ],
+      "max_min_ratio": 1.1028234289957637,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 49.595883,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.1042669999978898
+      }
+    },
+    {
+      "index": 32,
+      "m": 2048,
+      "n": 1024,
+      "k": 158,
+      "control": false,
+      "times_ms": [
+        9.88506,
+        9.870339,
+        9.910269,
+        9.687182,
+        9.693742
+      ],
+      "max_min_ratio": 1.023029091432369,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 49.046592,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.09953099999893311
+      }
+    },
+    {
+      "index": 33,
+      "m": 2048,
+      "n": 1024,
+      "k": 167,
+      "control": false,
+      "times_ms": [
+        9.303521,
+        9.132733,
+        9.530365,
+        9.180415,
+        8.455739
+      ],
+      "max_min_ratio": 1.1270883597518797,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 45.602773,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.08186199999590826
+      }
+    },
+    {
+      "index": 34,
+      "m": 2048,
+      "n": 1024,
+      "k": 169,
+      "control": false,
+      "times_ms": [
+        10.16912,
+        9.566089,
+        10.644639,
+        9.884029,
+        9.533239
+      ],
+      "max_min_ratio": 1.1165815731673148,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 49.797116,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.09815799999751107
+      }
+    },
+    {
+      "index": 35,
+      "m": 2048,
+      "n": 1024,
+      "k": 190,
+      "control": false,
+      "times_ms": [
+        12.175925999999999,
+        12.11263,
+        11.679786,
+        11.527465,
+        11.532682999999999
+      ],
+      "max_min_ratio": 1.0562535648557596,
+      "slowest_repeat": 0,
+      "calls": 5,
+      "call_elapsed_ms": 59.02849,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.1142580000050657
+      }
+    },
+    {
+      "index": 36,
+      "m": 2048,
+      "n": 1024,
+      "k": 222,
+      "control": false,
+      "times_ms": [
+        13.385365,
+        13.312666,
+        13.949729,
+        12.890165999999999,
+        12.975705999999999
+      ],
+      "max_min_ratio": 1.0821993293181795,
+      "slowest_repeat": 2,
+      "calls": 5,
+      "call_elapsed_ms": 66.513632,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.14254000000073574
+      }
+    },
+    {
+      "index": 37,
+      "m": 2048,
+      "n": 1024,
+      "k": 225,
+      "control": false,
+      "times_ms": [
+        13.218333,
+        13.015906999999999,
+        12.953280999999999,
+        12.655011,
+        12.045098
+      ],
+      "max_min_ratio": 1.0974035246537637,
+      "slowest_repeat": 0,
+      "calls": 5,
+      "call_elapsed_ms": 63.887629999999994,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.13585399999874426
+      }
+    },
+    {
+      "index": 38,
+      "m": 1024,
+      "n": 1024,
+      "k": 224,
+      "control": true,
+      "times_ms": [
+        5.929749,
+        5.956379,
+        5.9425479999999995,
+        6.0321039999999995,
+        5.6098349999999995
+      ],
+      "max_min_ratio": 1.0752729803996017,
+      "slowest_repeat": 3,
+      "calls": 5,
+      "call_elapsed_ms": 29.470615,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.062137999999777094
+      }
+    },
+    {
+      "index": 39,
+      "m": 2048,
+      "n": 1024,
+      "k": 224,
+      "control": true,
+      "times_ms": [
+        11.836943,
+        12.313113999999999,
+        12.107692,
+        11.863102999999999,
+        11.545883
+      ],
+      "max_min_ratio": 1.0664506127422215,
+      "slowest_repeat": 1,
+      "calls": 5,
+      "call_elapsed_ms": 59.666734999999996,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1224499,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224501,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1224505,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 0.11759099999835598
+      }
+    }
+  ],
+  "measured_jit_intervals": [
+    {
+      "begin_ms": 4812.773836,
+      "end_ms": 4815.010349,
+      "thread": 1224499,
+      "elapsed_ms": 2.2365129999998317,
+      "start_event": 22106,
+      "stop_event": 22121,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "OptimizedTier1OSR",
+      "elapsed_overlap_ms": 2.2365129999998317
+    },
+    {
+      "begin_ms": 4869.608287,
+      "end_ms": 4869.948041,
+      "thread": 1224505,
+      "elapsed_ms": 0.33975399999962974,
+      "start_event": 22353,
+      "stop_event": 22360,
+      "method_id": "135683339594600",
+      "module_id": "135683306307584",
+      "method": "System.Runtime.InteropServices.MemoryMarshal::AsBytes",
+      "signature": "generic value class System.Span`1<unsigned int8>  (value class System.Span`1<!!0>)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.33975399999962974
+    },
+    {
+      "begin_ms": 4869.954611,
+      "end_ms": 4869.981952,
+      "thread": 1224505,
+      "elapsed_ms": 0.02734099999997852,
+      "start_event": 22361,
+      "stop_event": 22363,
+      "method_id": "135683339595968",
+      "module_id": "135683306307584",
+      "method": "System.Runtime.InteropServices.MemoryMarshal::GetReference",
+      "signature": "generic !!0&  (value class System.Span`1<!!0>)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.02734099999997852
+    },
+    {
+      "begin_ms": 4869.985558,
+      "end_ms": 4870.034001,
+      "thread": 1224505,
+      "elapsed_ms": 0.04844299999967916,
+      "start_event": 22364,
+      "stop_event": 22366,
+      "method_id": "135683324051576",
+      "module_id": "135683306307584",
+      "method": "System.Span`1[System.Byte]::.ctor",
+      "signature": "instance void  (!0&,int32)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.04844299999967916
+    },
+    {
+      "begin_ms": 4870.038097,
+      "end_ms": 4870.096506,
+      "thread": 1224505,
+      "elapsed_ms": 0.058409000000210654,
+      "start_event": 22367,
+      "stop_event": 22370,
+      "method_id": "135683324052032",
+      "module_id": "135683306307584",
+      "method": "System.Span`1[System.Byte]::op_Implicit",
+      "signature": "value class System.ReadOnlySpan`1<!0>  (value class System.Span`1<!0>)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.058409000000210654
+    },
+    {
+      "begin_ms": 4870.101974,
+      "end_ms": 4870.311691,
+      "thread": 1224505,
+      "elapsed_ms": 0.2097169999997277,
+      "start_event": 22371,
+      "stop_event": 22378,
+      "method_id": "135683323244176",
+      "module_id": "135683306307584",
+      "method": "System.Runtime.CompilerServices.CastHelpers::StelemRef",
+      "signature": "void  (class System.Object[],int,class System.Object)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.2097169999997277
+    },
+    {
+      "begin_ms": 4903.567429,
+      "end_ms": 4904.039263,
+      "thread": 1224505,
+      "elapsed_ms": 0.47183399999994435,
+      "start_event": 22513,
+      "stop_event": 22519,
+      "method_id": "135683328246880",
+      "module_id": "135683306307584",
+      "method": "System.Collections.Generic.List`1+Enumerator[System.__Canon]::MoveNext",
+      "signature": "instance bool  ()",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.47183399999994435
+    },
+    {
+      "begin_ms": 4907.615332,
+      "end_ms": 4910.556921,
+      "thread": 1224505,
+      "elapsed_ms": 2.9415890000000218,
+      "start_event": 22524,
+      "stop_event": 22531,
+      "method_id": "135683328246928",
+      "module_id": "135683306307584",
+      "method": "System.Collections.Generic.List`1+Enumerator[System.__Canon]::get_Current",
+      "signature": "instance !0  ()",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 2.9415890000000218
+    },
+    {
+      "begin_ms": 4954.707267,
+      "end_ms": 4959.427667,
+      "thread": 1224505,
+      "elapsed_ms": 4.720400000000154,
+      "start_event": 22711,
+      "stop_event": 22736,
+      "method_id": "135683323070336",
+      "module_id": "135683306307584",
+      "method": "System.Array::Copy",
+      "signature": "void  (class System.Array,class System.Array,int32)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 4.720400000000154
+    },
+    {
+      "begin_ms": 4959.448699,
+      "end_ms": 4959.804747,
+      "thread": 1224505,
+      "elapsed_ms": 0.3560480000005555,
+      "start_event": 22738,
+      "stop_event": 22743,
+      "method_id": "135683323280560",
+      "module_id": "135683306307584",
+      "method": "System.SpanHelpers::Memmove",
+      "signature": "void  (unsigned int8&,unsigned int8&,unsigned int)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.3560480000005555
+    },
+    {
+      "begin_ms": 4959.811567,
+      "end_ms": 4959.965901,
+      "thread": 1224505,
+      "elapsed_ms": 0.15433399999983521,
+      "start_event": 22744,
+      "stop_event": 22747,
+      "method_id": "135683323279568",
+      "module_id": "135683306307584",
+      "method": "System.Buffer::MemmoveInternal",
+      "signature": "void  (unsigned int8&,unsigned int8&,unsigned int)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.15433399999983521
+    },
+    {
+      "begin_ms": 4959.976266,
+      "end_ms": 4965.286278,
+      "thread": 1224505,
+      "elapsed_ms": 5.310011999999915,
+      "start_event": 22748,
+      "stop_event": 22759,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 5.172214048301612
+    },
+    {
+      "begin_ms": 4965.313289,
+      "end_ms": 4968.754393,
+      "thread": 1224505,
+      "elapsed_ms": 3.4411040000004505,
+      "start_event": 22761,
+      "stop_event": 22808,
+      "method_id": "135683324107112",
+      "module_id": "135683324058160",
+      "method": "Program+Case::Output",
+      "signature": "instance void  ()",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 3.4411040000004505
+    },
+    {
+      "begin_ms": 4968.76568,
+      "end_ms": 4973.243984,
+      "thread": 1224505,
+      "elapsed_ms": 4.478303999999298,
+      "start_event": 22809,
+      "stop_event": 22837,
+      "method_id": "135683335803784",
+      "module_id": "135683306307584",
+      "method": "System.MemoryExtensions::SequenceEqual",
+      "signature": "generic bool  (value class System.ReadOnlySpan`1<!!0>,value class System.ReadOnlySpan`1<!!0>)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 4.478303999999298
+    },
+    {
+      "begin_ms": 4973.260749,
+      "end_ms": 4973.398017,
+      "thread": 1224505,
+      "elapsed_ms": 0.13726800000040384,
+      "start_event": 22838,
+      "stop_event": 22841,
+      "method_id": "135683329568936",
+      "module_id": "135683324058160",
+      "method": "<>f__AnonymousType2`11[System.__Canon,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean,System.Int64,System.Int64,System.__Canon,System.Boolean]::.ctor",
+      "signature": "instance void  (!0,!1,!2,!3,!4,!5,!6,!7,!8,!9,!10)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.13726800000040384
+    },
+    {
+      "begin_ms": 4973.402413,
+      "end_ms": 4973.421632,
+      "thread": 1224505,
+      "elapsed_ms": 0.019218999999793596,
+      "start_event": 22842,
+      "stop_event": 22844,
+      "method_id": "135683306309368",
+      "module_id": "135683306307584",
+      "method": "System.Object::.ctor",
+      "signature": "instance void  ()",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.019218999999793596
+    },
+    {
+      "begin_ms": 4973.427441,
+      "end_ms": 4973.632141,
+      "thread": 1224505,
+      "elapsed_ms": 0.20470000000022992,
+      "start_event": 22845,
+      "stop_event": 22850,
+      "method_id": "135683324010504",
+      "module_id": "135683306307584",
+      "method": "System.Collections.Generic.List`1[System.__Canon]::Add",
+      "signature": "instance void  (!0)",
+      "tier": "OptimizedTier1",
+      "elapsed_overlap_ms": 0.20470000000022992
+    }
+  ],
+  "direct_measured_jit_intervals": [
+    {
+      "begin_ms": 4812.773836,
+      "end_ms": 4815.010349,
+      "thread": 1224499,
+      "elapsed_ms": 2.2365129999998317,
+      "start_event": 22106,
+      "stop_event": 22121,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "OptimizedTier1OSR",
+      "elapsed_overlap_ms": 2.2365129999998317,
+      "enclosing_calls": [
+        360
+      ]
+    }
+  ],
+  "product_kernel_compilations": [
+    {
+      "begin_ms": 26.778171,
+      "end_ms": 27.536699,
+      "thread": 1224499,
+      "elapsed_ms": 0.7585279999999983,
+      "start_event": 341,
+      "stop_event": 343,
+      "method_id": "135683328296736",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::PackPanelsB",
+      "signature": "void  (int32,int32,float32*,float32*)",
+      "tier": "QuickJitted"
+    },
+    {
+      "begin_ms": 27.622338,
+      "end_ms": 28.199641,
+      "thread": 1224499,
+      "elapsed_ms": 0.5773030000000006,
+      "start_event": 344,
+      "stop_event": 357,
+      "method_id": "135683328296736",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::PackPanelsB",
+      "signature": "void  (int32,int32,float32*,float32*)",
+      "tier": "OptimizedTier1OSR"
+    },
+    {
+      "begin_ms": 28.223067,
+      "end_ms": 29.371904,
+      "thread": 1224499,
+      "elapsed_ms": 1.1488370000000003,
+      "start_event": 358,
+      "stop_event": 365,
+      "method_id": "135683339299576",
+      "module_id": "135683339297592",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "QuickJitted"
+    },
+    {
+      "begin_ms": 29.535512,
+      "end_ms": 30.599721,
+      "thread": 1224499,
+      "elapsed_ms": 1.0642089999999982,
+      "start_event": 366,
+      "stop_event": 374,
+      "method_id": "135683339299576",
+      "module_id": "135683339297592",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "OptimizedTier1OSR"
+    },
+    {
+      "begin_ms": 103.837502,
+      "end_ms": 104.670572,
+      "thread": 1224499,
+      "elapsed_ms": 0.8330700000000064,
+      "start_event": 753,
+      "stop_event": 766,
+      "method_id": "135683328296736",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::PackPanelsB",
+      "signature": "void  (int32,int32,float32*,float32*)",
+      "tier": "OptimizedTier1OSR"
+    },
+    {
+      "begin_ms": 995.299034,
+      "end_ms": 996.050341,
+      "thread": 1224499,
+      "elapsed_ms": 0.7513069999999971,
+      "start_event": 4728,
+      "stop_event": 4735,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "QuickJitted"
+    },
+    {
+      "begin_ms": 996.176231,
+      "end_ms": 998.412764,
+      "thread": 1224499,
+      "elapsed_ms": 2.2365330000000085,
+      "start_event": 4736,
+      "stop_event": 4751,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "OptimizedTier1OSR"
+    },
+    {
+      "begin_ms": 4761.634569,
+      "end_ms": 4762.294087,
+      "thread": 1224505,
+      "elapsed_ms": 0.6595180000003893,
+      "start_event": 21468,
+      "stop_event": 21475,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "QuickJittedInstrumented"
+    },
+    {
+      "begin_ms": 4812.773836,
+      "end_ms": 4815.010349,
+      "thread": 1224499,
+      "elapsed_ms": 2.2365129999998317,
+      "start_event": 22106,
+      "stop_event": 22121,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "OptimizedTier1OSR"
+    },
+    {
+      "begin_ms": 4959.976266,
+      "end_ms": 4965.286278,
+      "thread": 1224505,
+      "elapsed_ms": 5.310011999999915,
+      "start_event": 22748,
+      "stop_event": 22759,
+      "method_id": "135683328296800",
+      "module_id": "135683328295096",
+      "method": "Lokad.Onnx.MathOps::mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "signature": "void  (int32,int32,int32,float32*,float32*,float32*)",
+      "tier": "OptimizedTier1"
+    }
+  ],
+  "limits": "Elapsed JIT/GC overlaps are not CPU time or additive recoverable latency. Sampling suspensions perturb this trace. Old untraced calls have no event attribution and remain uncorrected. No component or application speedup is admitted.",
+  "analysis_closure": {
+    "bytes": 1005,
+    "sha256": "75f3b25985a8ff4efdc7465de0444b3e667deb0c5922755b0da8a8a5770601c4"
+  }
+}
