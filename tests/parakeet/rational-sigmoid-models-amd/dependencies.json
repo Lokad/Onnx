@@ -1,0 +1,94 @@
+{
+  "tests/parakeet/pad-current-models-amd/audit.py": {
+    "bytes": 4912,
+    "sha256": "bfa09771fd16399a1e1f50f3f2538b25371f199c149d015ccaffc27bcdb07ea9"
+  },
+  "tests/parakeet/pad-current-models-amd/checks.py": {
+    "bytes": 4315,
+    "sha256": "bea961c362135dc8e6e1ebf2d392c307e0ff428c23f53084ac85c892b714be1e"
+  },
+  "tests/parakeet/pad-current-models-amd/compatibility.py": {
+    "bytes": 5625,
+    "sha256": "0d6cf31dee13a0dbdff3a715c8b74ddfe2e8ed10b061a509e4f8fd96b6556243"
+  },
+  "tests/parakeet/pad-current-models-amd/dependencies.json": {
+    "bytes": 334,
+    "sha256": "278ff8dc999803e54376fcdc6c4d0eb7478d5a3fc30738111b6df596ddbbc916"
+  },
+  "tests/parakeet/pad-current-models-amd/native_audit.py": {
+    "bytes": 5156,
+    "sha256": "ae014baa22ebb29f6d3183efb779e979784f0f7776a6b19116bf7681a9fedf90"
+  },
+  "tests/parakeet/pad-current-models-amd/prepare.py": {
+    "bytes": 5033,
+    "sha256": "cba2c8ccff729d8e2f16262e34f142bff930134c029acebd9c31dc4f43949b2d"
+  },
+  "tests/parakeet/pad-current-models-amd/protocol.py": {
+    "bytes": 1847,
+    "sha256": "de26d36ea4e1ff56f5df8adbb272d1f90be941b87ce157123c3a15a5e5de3a4b"
+  },
+  "tests/parakeet/pad-current-models-amd/public_audit.py": {
+    "bytes": 13264,
+    "sha256": "b3d91807b4398b1d4dab7a007f1b3f13f86ba3e7142c946e0390c6493d3c926d"
+  },
+  "tests/parakeet/pad-current-models-amd/README.md": {
+    "bytes": 2807,
+    "sha256": "f9345249f3299f05ec14b9f3276a68c6a377df2ac9358f47c8f7bbb26ad051bb"
+  },
+  "tests/parakeet/pad-current-models-amd/remote.py": {
+    "bytes": 7968,
+    "sha256": "bf1d2c3b2ad88dfaf4184a6791d61009dcf1cb66b2ed921f8a4482750680d63f"
+  },
+  "tests/parakeet/pad-current-models-amd/remote_prepare.py": {
+    "bytes": 4304,
+    "sha256": "5e4e1f0a3b4f659ef21f941925fde1f55272779babf985033bcf6f0979303e09"
+  },
+  "tests/parakeet/pad-current-models-amd/run.py": {
+    "bytes": 723,
+    "sha256": "9050768d0502f2eb43c01cb96f8279acbfdd762a5ffc4eb081fafd9264a59bc3"
+  },
+  "tests/parakeet/pad-current-models-amd/test_compatibility.py": {
+    "bytes": 1826,
+    "sha256": "9715f5301ea42d106055e586a22fbfa41e16617415b15d8633e7f6df4c423152"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/audit.py": {
+    "bytes": 4977,
+    "sha256": "70543ab38738ac82689f957d7300383a283a3f5fbc6201ab11940d83b076daad"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/checks.py": {
+    "bytes": 4315,
+    "sha256": "bea961c362135dc8e6e1ebf2d392c307e0ff428c23f53084ac85c892b714be1e"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/native_audit.py": {
+    "bytes": 5156,
+    "sha256": "ae014baa22ebb29f6d3183efb779e979784f0f7776a6b19116bf7681a9fedf90"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/prepare.py": {
+    "bytes": 6270,
+    "sha256": "ad8ce9ce7dbf87875a995d1b429cc3bfdcb4a458e33558af7cc1cec758592065"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/protocol.py": {
+    "bytes": 1847,
+    "sha256": "de26d36ea4e1ff56f5df8adbb272d1f90be941b87ce157123c3a15a5e5de3a4b"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/public_audit.py": {
+    "bytes": 13264,
+    "sha256": "b3d91807b4398b1d4dab7a007f1b3f13f86ba3e7142c946e0390c6493d3c926d"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/README.md": {
+    "bytes": 1847,
+    "sha256": "bb7d17eb41355aa8e3b5d1d7cf1855b2c93a7beb3e7cb4d22170bd47c49411c4"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/remote.py": {
+    "bytes": 7968,
+    "sha256": "bf1d2c3b2ad88dfaf4184a6791d61009dcf1cb66b2ed921f8a4482750680d63f"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/remote_prepare.py": {
+    "bytes": 4142,
+    "sha256": "e3d559ff55f92826b62fd65911590bf77434b101e3dbf28da405cd3df07c8869"
+  },
+  "tests/parakeet/observed-dense-where-models-amd/run.py": {
+    "bytes": 8808,
+    "sha256": "823cb2f248aa6b03ecdf2c3ec6b2971b31258621b66522ac4510a9bd305e60ee"
+  }
+}
