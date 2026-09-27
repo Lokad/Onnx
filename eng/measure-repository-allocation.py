@@ -65,13 +65,19 @@ def main():
                 links=actual.links if error is None else info.st_nlink
                 if links<=1:
                     unique_allocated+=allocated
-                elif info.st_ino and info.st_dev:
-                    identity=(info.st_dev,info.st_ino)
-                    if identity not in linked_files:
-                        linked_files.add(identity);unique_allocated+=allocated
                 else:
-                    # Never merge unidentified files: retain a conservative bound.
-                    unique_allocated+=allocated;unidentified_links+=1
+                    # Windows DirEntry.stat caches zero file/volume identifiers.
+                    # Query only hardlinks directly, avoiding a second call for
+                    # the much larger population of single-link files.
+                    link_info=os.stat(entry.path,follow_symlinks=False)
+                    assert link_info.st_size==info.st_size,relative
+                    if link_info.st_ino and link_info.st_dev:
+                        identity=(link_info.st_dev,link_info.st_ino)
+                        if identity not in linked_files:
+                            linked_files.add(identity);unique_allocated+=allocated
+                    else:
+                        # Never merge unidentified files: retain a conservative bound.
+                        unique_allocated+=allocated;unidentified_links+=1
                 group=groups[relative.parts[0]];group['logical']+=info.st_size;group['allocated']+=allocated;group['files']+=1
                 group['compressed_files']+=bool(info.st_file_attributes & stat.FILE_ATTRIBUTE_COMPRESSED)
     value=dict(checked=time.time(),logical_bytes=sum(g['logical'] for g in groups.values()),
