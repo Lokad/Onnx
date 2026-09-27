@@ -1,0 +1,157 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Runtime.Loader;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+internal static unsafe class Program
+{
+    const int Guard = 7, Canary = 0x4e513749;
+    delegate void Kernel(int m, int n, int k, float* a, float* p, float* c);
+    static void Require(bool condition, string reason) { if (!condition) throw new InvalidDataException(reason); }
+    static string Hash(ReadOnlySpan<float> data) => Convert.ToHexStringLower(SHA256.HashData(MemoryMarshal.AsBytes(data)));
+    static string FileHash(string path) => Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)));
+    static void Same(ReadOnlySpan<float> a, ReadOnlySpan<float> b, string reason)
+    {
+        if (MemoryMarshal.AsBytes(a).SequenceEqual(MemoryMarshal.AsBytes(b))) return;
+        for (int i=0;i<a.Length;i++)
+            if (BitConverter.SingleToInt32Bits(a[i])!=BitConverter.SingleToInt32Bits(b[i]))
+                throw new InvalidDataException(reason+" index="+i+" expected="+BitConverter.SingleToInt32Bits(a[i]).ToString("x8")+" actual="+BitConverter.SingleToInt32Bits(b[i]).ToString("x8"));
+        throw new InvalidDataException(reason);
+    }
+    [MethodImpl(MethodImplOptions.NoInlining)] static float Multiply(float a, float b) => a * b;
+    [MethodImpl(MethodImplOptions.NoInlining)] static float Add(float a, float b) => a + b;
+    static float[] Values(int count, uint seed, bool exceptional)
+    {
+        var data = new float[count + 2 * Guard];
+        Array.Fill(data, BitConverter.Int32BitsToSingle(Canary));
+        int[] bits = { 0, unchecked((int)0x80000000), 1, unchecked((int)0x80000001),
+            0x7f800000, unchecked((int)0xff800000), 0x7fc12345, unchecked((int)0xffc54321), 0x7fa12345 };
+        for (int i = 0; i < count; i++)
+        {
+            seed = unchecked(seed * 1664525 + 1013904223);
+            data[Guard+i] = exceptional && i % 17 < bits.Length
+                ? BitConverter.Int32BitsToSingle(bits[(i+(int)(seed%9))%bits.Length])
+                : ((int)(seed >> 8) % 2001 - 1000) / 997f;
+        }
+        return data;
+    }
+    static void Guards(float[] data)
+    {
+        for (int i = 0; i < Guard; i++) Require(BitConverter.SingleToInt32Bits(data[i]) == Canary &&
+            BitConverter.SingleToInt32Bits(data[data.Length-1-i]) == Canary, "Guard overwritten");
+    }
+    static object Raw(Kernel baseline, int m, int n, int k, bool exceptional, bool oracle)
+    {
+        var a = Values(m*n,17,exceptional); var b = Values(n*k,31,exceptional);
+        var packed = Values(n*k,41,false); var initial = Values(m*k,53,exceptional);
+        var expected = (float[])initial.Clone(); var actual = (float[])initial.Clone();
+        string ah = Hash(a), bh = Hash(b); long allocated;
+        fixed (float* ap=a, bp=b, pp=packed, ep=expected, cp=actual)
+        {
+            MathOps.PackPanelsB(n,k,bp+Guard,pp+Guard);
+            string ph = Hash(packed);
+            for (int repeat=0;repeat<2;repeat++)
+            {
+                baseline(m,n,k,ap+Guard,pp+Guard,ep+Guard);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(m,n,k,ap+Guard,pp+Guard,cp+Guard);
+                Same(expected,actual,"Raw bits differ: " + m+","+n+","+k+","+exceptional+","+repeat);
+            }
+            long before=GC.GetAllocatedBytesForCurrentThread();
+            MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(m,n,k,ap+Guard,pp+Guard,cp+Guard);
+            allocated=GC.GetAllocatedBytesForCurrentThread()-before;
+            baseline(m,n,k,ap+Guard,pp+Guard,ep+Guard);
+            Same(expected,actual,"Repeat bits differ");
+            Require(Hash(packed)==ph,"Packed input mutated");
+        }
+        Require(allocated==0 && Hash(a)==ah && Hash(b)==bh,"Allocation or input mutation");
+        Guards(packed); Guards(actual);
+        if (oracle)
+        {
+            for (int row=0;row<m;row++) for (int col=0;col<k;col++)
+            {
+                float value=initial[Guard+row*k+col];
+                for (int repeat=0;repeat<3;repeat++) for (int j=0;j<n;j++)
+                    value=col<k-k%8 ? MathF.FusedMultiplyAdd(b[Guard+j*k+col],a[Guard+row*n+j],value)
+                        : Add(value,Multiply(a[Guard+row*n+j],b[Guard+j*k+col]));
+                float found=actual[Guard+row*k+col];
+                Require(float.IsNaN(value) ? float.IsNaN(found) : BitConverter.SingleToInt32Bits(value)==BitConverter.SingleToInt32Bits(found),"Independent oracle");
+            }
+        }
+        return new { m,n,k,exceptional,oracle,bit_exact=true,inputs_immutable=true,guards_intact=true,allocated_bytes=allocated,output_sha256=Hash(actual) };
+    }
+    static object Public(int m,int n,int k,string option)
+    {
+        var av=Enumerable.Range(0,m*n).Select(i=>(i%11-5)*.25f).ToArray();
+        var bv=Enumerable.Range(0,n*k).Select(i=>(i%7-3)*.25f).ToArray();
+        string ah=Hash(av),bh=Hash(bv);
+        var a=new DenseTensor<float>(av,new[]{m,n}); var b=new DenseTensor<float>(bv,new[]{n,k});
+        var options=option switch { "auto"=>TensorExecutionOptions.Auto,"simd"=>TensorExecutionOptions.Simd,_=>TensorExecutionOptions.Scalar };
+        var result=Tensor<float>.MatMul2D(a,b,options).ToArray();
+        for(int row=0;row<m;row++) for(int col=0;col<k;col++)
+        {
+            float expected=0;
+            for(int j=0;j<n;j++) expected+=av[row*n+j]*bv[j*k+col];
+            Require(BitConverter.SingleToInt32Bits(expected)==BitConverter.SingleToInt32Bits(result[row*k+col]),"Public oracle");
+        }
+        Require(Hash(av)==ah && Hash(bv)==bh,"Public input mutation");
+        return new {m,n,k,option,bit_exact=true,inputs_immutable=true,output_sha256=Hash(result)};
+    }
+    static int Main(string[] args)
+    {
+        Require(args.Length==4,"spec built output mode");
+        using var specDocument=JsonDocument.Parse(File.ReadAllBytes(args[0]));var spec=specDocument.RootElement;
+        using var builtDocument=JsonDocument.Parse(File.ReadAllBytes(args[1]));var built=builtDocument.RootElement;
+        string output=Path.GetFullPath(args[2]),mode=args[3];
+        Require(!Directory.Exists(output),"Fresh output");Directory.CreateDirectory(output);
+        using var process=Process.GetCurrentProcess();
+        Require(OperatingSystem.IsLinux() && RuntimeInformation.FrameworkDescription==".NET 10.0.8" &&
+            Environment.ProcessorCount==1 && process.ProcessorAffinity==(IntPtr)4,"Runtime/affinity");
+        bool scalar=mode.StartsWith("scalar-",StringComparison.Ordinal);
+        string role=mode=="scalar-baseline" ? "baseline" : "candidate";
+        string actualCore=FileHash(typeof(MathOps).Assembly.Location);
+        Require(actualCore==built.GetProperty("products").GetProperty(role).GetProperty("Lokad.Onnx.dll").GetProperty("sha256").GetString(),"Loaded product");
+        Require(Fma.IsSupported==!scalar && Avx2.IsSupported==!scalar,"Actual intrinsics");
+        Require(Avx512F.IsSupported==(mode=="normal"),"AVX512 mode");
+        var results=new List<object>();int failed=0;
+        var flags=Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k=>k.StartsWith("LOKAD_",StringComparison.OrdinalIgnoreCase)
+            ||k.StartsWith("DOTNET_",StringComparison.OrdinalIgnoreCase)||k.StartsWith("COMPlus_",StringComparison.OrdinalIgnoreCase))
+            .ToDictionary(k=>k,k=>Environment.GetEnvironmentVariable(k));
+        if (scalar)
+        {
+            Require(flags.Count==1 && flags.GetValueOrDefault("DOTNET_EnableHWIntrinsic")=="0","Scalar flags");
+            bool rejected=false;try {TensorExecutionOptions.Intrinsics.Validate();} catch(InvalidOperationException){rejected=true;}
+            Require(rejected,"Explicit unsupported intrinsics must reject");
+            foreach(var item in spec.GetProperty("fallback_cases").EnumerateArray())
+                foreach(string option in new[]{"auto","simd","scalar"})
+                    results.Add(Public(item[0].GetInt32(),item[1].GetInt32(),item[2].GetInt32(),option));
+        }
+        else
+        {
+            Require(mode is "normal" or "avx512-disabled","Mode");
+            Require(mode=="normal" ? flags.Count==1 && flags.GetValueOrDefault("DOTNET_JitDisasm")==spec.GetProperty("disasm").GetString()
+                : flags.Count==1 && flags.GetValueOrDefault("DOTNET_EnableAVX512")=="0","Declared flags");
+            string before=Path.Combine(spec.GetProperty("prior").GetString()!,"Lokad.Onnx.dll");
+            Require(FileHash(before)==built.GetProperty("products").GetProperty("baseline").GetProperty("Lokad.Onnx.dll").GetProperty("sha256").GetString(),"Baseline identity");
+            var context=new AssemblyLoadContext("qualified-baseline",isCollectible:false);
+            context.Resolving+=(ctx,name)=> {string path=Path.Combine(Path.GetDirectoryName(before)!,name.Name+".dll");return File.Exists(path)?ctx.LoadFromAssemblyPath(path):null;};
+            var assembly=context.LoadFromAssemblyPath(before);
+            var baseline=assembly.GetType("Lokad.Onnx.MathOps")!.GetMethod("mm_unsafe_vectorized_intrinsics_2x4packed_bump",BindingFlags.Public|BindingFlags.Static)!.CreateDelegate<Kernel>();
+            foreach(var item in spec.GetProperty("raw_cases").EnumerateArray())
+            {
+                int m=item.GetProperty("m").GetInt32(),n=item.GetProperty("n").GetInt32(),k=item.GetProperty("k").GetInt32();
+                bool exceptional=item.GetProperty("exceptional").GetBoolean(),oracle=item.GetProperty("oracle").GetBoolean();
+                try {results.Add(Raw(baseline,m,n,k,exceptional,oracle));}
+                catch(Exception error) {failed++;results.Add(new {m,n,k,exceptional,oracle,bit_exact=false,error=error.ToString()});}
+            }
+        }
+        using(var stream=new FileStream(Path.Combine(output,"result.json"),FileMode.CreateNew))
+            JsonSerializer.Serialize(stream,new {completed=true,passed=failed==0,failed,mode,pid=Environment.ProcessId,runtime=RuntimeInformation.FrameworkDescription,
+                core_sha256=actualCore,consumer_sha256=FileHash(typeof(Program).Assembly.Location),flags,results},new JsonSerializerOptions{WriteIndented=true});
+        Console.WriteLine(JsonSerializer.Serialize(new {completed=true,passed=failed==0,failed,mode,cases=results.Count}));return 0;
+    }
+}
