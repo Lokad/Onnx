@@ -1,0 +1,184 @@
+{
+  "passed": true,
+  "inputs": {
+    "artifacts/parakeet-pad-current-graphs-v2-amd-20260926/closed.json": {
+      "bytes": 147609,
+      "sha256": "bea082c63f1e4497f2eacfc3e6bd77325e63b4367c6ce40e3fb3fe69964cb96f"
+    },
+    "artifacts/parakeet-rational-sigmoid-models-amd-20260927/closed.json": {
+      "bytes": 893175,
+      "sha256": "3d2e01b5aca3f66c434d5d1e8124c2b0d08327bc14dd37409c0e1884619769d8"
+    },
+    "artifacts/parakeet-pad-current-graphs-v2-amd-20260926/payload.json": {
+      "bytes": 4700625,
+      "sha256": "30781b0a1e1ec283bd314c4ed932bc732e1667d6f8f8af920844706dc77ea9b6"
+    },
+    "artifacts/parakeet-pad-current-graphs-v2-amd-20260926/collected/cases.json": {
+      "bytes": 57300,
+      "sha256": "07377326a435b3f56cc72beade365e25a0b1d0cf75afd783a7db0ecd080f559a"
+    },
+    "artifacts/parakeet-rational-sigmoid-models-amd-20260927/collected/evidence/compatibility.json": {
+      "bytes": 10469,
+      "sha256": "c1a39d274eb6364ae4d426d167503d6ae545876755b10833ebcaf835f969a710"
+    }
+  },
+  "models": [
+    {
+      "model": "models/dinov3-vits16/onnx/model.onnx",
+      "identity": {
+        "bytes": 137969,
+        "sha256": "bb75e9e30ff382ecdbd150266445ab41272be4acc85fd3563218dd89781e36da"
+      },
+      "cases": [
+        "dinov3"
+      ],
+      "graphs": 1,
+      "functions": 0,
+      "nodes": 765,
+      "operators": {
+        "Abs": 1,
+        "Add": 85,
+        "Cast": 2,
+        "Concat": 80,
+        "Conv": 1,
+        "Cos": 1,
+        "Div": 4,
+        "Expand": 4,
+        "Gather": 1,
+        "Gelu": 12,
+        "LayerNormalization": 25,
+        "MatMul": 96,
+        "Mul": 101,
+        "Neg": 24,
+        "Range": 2,
+        "Reshape": 81,
+        "SequenceAt": 48,
+        "Shape": 17,
+        "Sin": 1,
+        "Slice": 72,
+        "Softmax": 12,
+        "SplitToSequence": 24,
+        "Squeeze": 4,
+        "Sub": 2,
+        "Tile": 1,
+        "Transpose": 61,
+        "Unsqueeze": 3
+      },
+      "sigmoid_nodes": 0
+    },
+    {
+      "model": "models/gpt2-onnx/onnx/model.onnx",
+      "identity": {
+        "bytes": 498126358,
+        "sha256": "42c1e92a21c41ebd3c536d4c6f09732450a43db35977593236f696d3346c7c0d"
+      },
+      "cases": [
+        "gpt2"
+      ],
+      "graphs": 1,
+      "functions": 0,
+      "nodes": 1282,
+      "operators": {
+        "Add": 114,
+        "Cast": 3,
+        "Concat": 128,
+        "ConstantOfShape": 2,
+        "Div": 25,
+        "Equal": 2,
+        "Expand": 2,
+        "Gather": 174,
+        "Gemm": 48,
+        "Less": 1,
+        "MatMul": 25,
+        "Mul": 97,
+        "Pow": 37,
+        "Range": 1,
+        "ReduceMean": 50,
+        "Reshape": 148,
+        "Shape": 89,
+        "Slice": 2,
+        "Softmax": 12,
+        "Split": 12,
+        "Sqrt": 25,
+        "Squeeze": 2,
+        "Sub": 27,
+        "Tanh": 12,
+        "Transpose": 61,
+        "Unsqueeze": 178,
+        "Where": 5
+      },
+      "sigmoid_nodes": 0
+    },
+    {
+      "model": "models/multilingual-e5-small/model.onnx",
+      "identity": {
+        "bytes": 470268510,
+        "sha256": "ca456c06b3a9505ddfd9131408916dd79290368331e7d76bb621f1cba6bc8665"
+      },
+      "cases": [
+        "e5-8tok",
+        "e5-30tok",
+        "e5-30pad128",
+        "e5-128tok",
+        "e5-512tok"
+      ],
+      "graphs": 1,
+      "functions": 0,
+      "nodes": 1243,
+      "operators": {
+        "Add": 172,
+        "Cast": 1,
+        "Concat": 48,
+        "Constant": 284,
+        "Div": 49,
+        "Erf": 12,
+        "Gather": 100,
+        "MatMul": 96,
+        "Mul": 50,
+        "Pow": 25,
+        "ReduceMean": 50,
+        "Reshape": 48,
+        "Shape": 97,
+        "Slice": 1,
+        "Softmax": 12,
+        "Sqrt": 25,
+        "Sub": 26,
+        "Transpose": 48,
+        "Unsqueeze": 99
+      },
+      "sigmoid_nodes": 0
+    },
+    {
+      "model": "models/resnet50-onnx/model.onnx",
+      "identity": {
+        "bytes": 93961728,
+        "sha256": "4f0558b775c85b568012f7174cadda33fb4b4e5a253ce17e5d839f123e0bc7e6"
+      },
+      "cases": [
+        "resnet50"
+      ],
+      "graphs": 1,
+      "functions": 0,
+      "nodes": 127,
+      "operators": {
+        "Add": 16,
+        "Concat": 1,
+        "Constant": 2,
+        "Conv": 53,
+        "Gather": 1,
+        "GlobalAveragePool": 1,
+        "MaxPool": 1,
+        "Relu": 49,
+        "Reshape": 1,
+        "Shape": 1,
+        "Unsqueeze": 1
+      },
+      "sigmoid_nodes": 0
+    }
+  ],
+  "onnx_parser_version": "1.22.0",
+  "inference_calls": 0,
+  "graph_transforms_executed": false,
+  "runtime_dispatch_measured": false,
+  "conclusion": "All four exact regression exports, including nested graphs, contain no Sigmoid. Keep the original candidate/current byte-equality check for the fresh graph regression; this static census is not numerical or performance qualification."
+}
