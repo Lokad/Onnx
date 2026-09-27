@@ -1,0 +1,183 @@
+{
+  "passed": true,
+  "performance_measured": false,
+  "model_closure": {
+    "bytes": 971679,
+    "sha256": "f773277daa848121c199c58e67bce3777677c2ee2654fbe26250d02719155960"
+  },
+  "full_analysis": {
+    "bytes": 466700,
+    "sha256": "93af3e7a1f24088b33b07364e8d1c31f79f9f52f7321ee32b34a2a834296b08d"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 827904,
+        "sha256": "47984318b082710c3a4f57a85b1500d49d7c1236c04b1234477d19e48d11207c"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "dd56902f44c640b9226e2e7ee05d1d3e8dc025f59471afb2261194715ca5e311"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 830464,
+        "sha256": "7cac67880fa9a4d519ac18e5887f47f48f0f14903bdf74cc6561b45c851e4f27"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "dd56902f44c640b9226e2e7ee05d1d3e8dc025f59471afb2261194715ca5e311"
+      }
+    }
+  },
+  "consumers": {
+    "TranscribeReplay": {
+      "bytes": 56832,
+      "sha256": "335ca09d0e45e344068c484c92af9d0db43a6ae0accd1895d7ae7bb88b0afcf9"
+    },
+    "AudioBenchmark": {
+      "bytes": 40448,
+      "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+    }
+  },
+  "arrays": 3136,
+  "values": 12361976,
+  "public_requests": 80,
+  "native": {
+    "selected-native-512": {
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 5.155801773071289e-05,
+      "audit_consistent": true,
+      "application_passed": true,
+      "numeric_gate_passed": true,
+      "failures": []
+    },
+    "candidate-native-512": {
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 5.155801773071289e-05,
+      "audit_consistent": true,
+      "application_passed": true,
+      "numeric_gate_passed": true,
+      "failures": [],
+      "exact_current_arrays": 784
+    },
+    "selected-native-256": {
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 5.155801773071289e-05,
+      "audit_consistent": true,
+      "application_passed": true,
+      "numeric_gate_passed": true,
+      "failures": []
+    },
+    "candidate-native-256": {
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 5.155801773071289e-05,
+      "audit_consistent": true,
+      "application_passed": true,
+      "numeric_gate_passed": true,
+      "failures": [],
+      "exact_current_arrays": 784
+    }
+  },
+  "public": {
+    "selected-public-512": {
+      "passed": true,
+      "public_requests": 20,
+      "complete_selected_results_exact": null,
+      "result": {
+        "bytes": 65008,
+        "sha256": "3e8c131f11287f776ad1f7f0dbd18c23527adb3c75e60f94a15963eae43440d0"
+      },
+      "no_performance_measurement": true
+    },
+    "candidate-public-512": {
+      "passed": true,
+      "public_requests": 20,
+      "complete_selected_results_exact": true,
+      "result": {
+        "bytes": 65014,
+        "sha256": "bf5e518beb0a2556772587512cdeff1f2232cc083d2933c434f335a683992400"
+      },
+      "no_performance_measurement": true
+    },
+    "selected-public-256": {
+      "passed": true,
+      "public_requests": 20,
+      "complete_selected_results_exact": null,
+      "result": {
+        "bytes": 65047,
+        "sha256": "36bdde428da318eed2154cc138181b8225f5b71d0ed27d0cb7cb3907906aa5d2"
+      },
+      "no_performance_measurement": true
+    },
+    "candidate-public-256": {
+      "passed": true,
+      "public_requests": 20,
+      "complete_selected_results_exact": true,
+      "result": {
+        "bytes": 65032,
+        "sha256": "3f13525b3fe4a06a2cdedac2b531111786382694302dec7537eef767333b1710"
+      },
+      "no_performance_measurement": true
+    }
+  },
+  "resources": [
+    {
+      "name": "selected-native-512",
+      "samples": 98,
+      "peak_rss": 7754301440,
+      "seconds": 26.386527428985573
+    },
+    {
+      "name": "selected-public-512",
+      "samples": 199,
+      "peak_rss": 8068247552,
+      "seconds": 53.069535098038614
+    },
+    {
+      "name": "candidate-native-512",
+      "samples": 95,
+      "peak_rss": 7740936192,
+      "seconds": 26.171584038995206
+    },
+    {
+      "name": "candidate-public-512",
+      "samples": 191,
+      "peak_rss": 8068173824,
+      "seconds": 52.13732530595735
+    },
+    {
+      "name": "selected-native-256",
+      "samples": 94,
+      "peak_rss": 7742410752,
+      "seconds": 26.444201327045448
+    },
+    {
+      "name": "selected-public-256",
+      "samples": 190,
+      "peak_rss": 8050446336,
+      "seconds": 52.9985726919258
+    },
+    {
+      "name": "candidate-native-256",
+      "samples": 91,
+      "peak_rss": 7752200192,
+      "seconds": 26.24378417490516
+    },
+    {
+      "name": "candidate-public-256",
+      "samples": 183,
+      "peak_rss": 7925440512,
+      "seconds": 52.27065268694423
+    }
+  ],
+  "source": {
+    "bytes": 2039,
+    "sha256": "719c768018b3e3cc77f923483f2e4c286a3e7877629f0cefb7c977e46c2d5735"
+  }
+}
