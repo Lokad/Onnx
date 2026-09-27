@@ -15,6 +15,8 @@ def main():
     folder = BASE/'collected'
     receipt, state, payload = read(folder/'collection.json'), read(folder/'identity.json'), read(BASE/'payload.json')
     assert receipt['terminal'] and receipt['code'] == 0 and receipt['input_error'] is None
+    assert receipt['excluded_regenerable_directories'] == ['http-cache']
+    assert not any(name.startswith('http-cache/') for name in receipt['files'])
     assert receipt['payload'] == pin(BASE/'payload.json') == pin(folder/'payload.json')
     transfer = read(BASE/'collection-transfer.json')
     assert transfer['passed'] and transfer['archive'] == pin(BASE/'results.tar.gz') and transfer['receipt'] == pin(folder/'collection.json')

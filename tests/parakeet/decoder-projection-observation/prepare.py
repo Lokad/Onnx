@@ -7,14 +7,16 @@ import tarfile
 from fixture import ROOT, BASE as MODELS, CORE, DATA, inspect
 from protocol import TOOLS, PARENT, pin, read, save
 
-BASE = ROOT/'artifacts/parakeet-decoder-projection-observation-amd-20260927'
+BASE = ROOT/'artifacts/parakeet-decoder-projection-observation-v2-amd-20260927'
+FAILED = ROOT/'artifacts/parakeet-decoder-projection-observation-amd-20260927'
 QUALIFIED = ROOT/'artifacts/parakeet-rational-sigmoid-root-amd-20260927'
 EVENTS = ROOT/'artifacts/parakeet-dispatch-events-amd-20260923'
 EXPORT = ROOT/'artifacts/parakeet-dispatch-full-export-amd-20260923'
 TRACER = ROOT/'artifacts/parakeet-current-profile-amd-20260923/payload'
 REMOTE_ROOT = '/dev/shm/lokad-parakeet-rational-sigmoid-root-20260927'
 REMOTE_EVENTS = '/dev/shm/lokad-parakeet-dispatch-events-20260923'
-REMOTE_EXPORT = '/dev/shm/lokad-parakeet-dispatch-full-export-20260923'
+# These exact qualified exporter bytes were restored into the terminal first attempt.
+REMOTE_EXPORT = '/dev/shm/lokad-parakeet-decoder-projection-observation-20260927'
 
 
 def root_binding(value):
@@ -50,6 +52,10 @@ def previous_closed():
     for folder, digest in [(EVENTS, 'c6e1e4d42d3f377f77382a4091ad1150c1a62335a72c7d63a38c728d7a753e19'),
                            (EXPORT, '35b18e874e1e0c47a7b9e1fe6f2608b0940c1eb431c289c32ba05855cb2b5afa')]:
         assert pin(folder/'closed.json')['sha256'] == digest and read(folder/'closed.json')['passed']
+    assert pin(FAILED/'failed.json')['sha256'] == '675df06cfc14b8ddc3ba01387209194d91c7616617c931ee2ecc6a14faccfa57'
+    failed = read(FAILED/'failed.json')
+    assert not failed['passed'] and failed['evidence_verified'] and failed['terminal'] and not failed['diagnostic_executed']
+    for name, wanted in failed['files'].items(): assert pin(FAILED/name) == wanted, name
     original = read(EVENTS/'prepared.json')['files']
     for name in ['protocol.py', 'remote.py', 'run.py']:
         path = PARENT/name
@@ -87,6 +93,9 @@ def prepare():
     for name in ['protocol.py', 'remote.py']: copy(PARENT/name, 'tools/'+name.replace('.py', '_base.py'))
     originals[(PARENT/'run.py').relative_to(ROOT).as_posix()] = pin(PARENT/'run.py')
     copy(TOOLS/'README.md', 'prospective-observation.md')
+    copy(FAILED/'failed.json', 'evidence/first-attempt-failed.json')
+    copy(FAILED/'frozen-tools.json', 'evidence/first-attempt-tools.json')
+    copy(FAILED/'collected/logs/observer-build.stdout', 'evidence/first-attempt-build.stdout')
     for name, raw in arrays.items():
         path = bundle/name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(raw)
     save(bundle/'observation.json', spec)

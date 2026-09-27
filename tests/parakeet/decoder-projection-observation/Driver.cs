@@ -39,7 +39,7 @@ internal static class Driver
     {
         Require(tensor is Tensor<float>, "Projection float tensor");
         var value = (Tensor<float>)tensor;
-        return new { type = value.GetType().FullName, dtype = value.ElementType.ToString(), shape = value.Dims,
+        return new { type = value.GetType().FullName, dtype = value.ElementType.ToString(), shape = tensor.Dims,
             strides = value.Strides.ToArray(), reversed = value.IsReversedStride, sha256 = Bits(value) };
     }
     static object Mapping(ComputationalGraph graph, GraphExecution execution)
@@ -79,7 +79,8 @@ internal static class Driver
 
     static void Main(string[] args)
     {
-        Require(args.Length == 3 && OperatingSystem.IsLinux(), "specification control|trace empty-output-directory; Linux only");
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Linux only");
+        Require(args.Length == 3, "specification control|trace empty-output-directory; Linux only");
         string specPath = Path.GetFullPath(args[0]), folder = Path.GetDirectoryName(specPath)!, mode = args[1];
         Require(mode is "control" or "trace", "Fixed diagnostic modes");
         Require(Environment.Version.ToString() == "10.0.8" && Environment.ProcessorCount == 1

@@ -11,7 +11,7 @@ from prepare import ROOT, TOOLS, PARENT, BASE, QUALIFIED, prepare, previous_clos
 
 loader = importlib.util.spec_from_file_location('decoder_observation_transport', PARENT/'run.py')
 transport = importlib.util.module_from_spec(loader); loader.loader.exec_module(transport)
-REMOTE = '/dev/shm/lokad-parakeet-decoder-projection-observation-20260927'
+REMOTE = '/dev/shm/lokad-parakeet-decoder-projection-observation-v2-20260927'
 transport.PRELUDE = transport.PRELUDE.replace(transport.REMOTE, REMOTE)
 transport.BASE, transport.REMOTE, transport.TOOLS = BASE, REMOTE, TOOLS
 SSH, PRELUDE, ssh = transport.SSH, transport.PRELUDE, transport.ssh
@@ -53,6 +53,8 @@ with tarfile.open(archive) as tar:
  assert all(m.isfile() and not Path(m.name).is_absolute() and '..' not in Path(m.name).parts for m in members)
  assert len({{m.name for m in members}})==len(members)
  tar.extractall(base,filter='data')
+import importlib
+importlib.invalidate_caches()
 from protocol import pin,read,save
 assert pin(base/'stage.json')=={spec['stage']!r}
 for name,wanted in read(base/'stage.json')['files'].items():assert pin(base/name)==wanted,name
@@ -94,9 +96,10 @@ assert state['complete'] and not any(live(i) for i in identities)
 error=None
 try:verify(base)
 except BaseException as e:error=repr(e)
-files={p.relative_to(base).as_posix():pin(p) for p in sorted(base.rglob('*')) if p.is_file()}
+assert not any(name.startswith('http-cache/') for name in read(base/'payload.json')['files'])
+files={p.relative_to(base).as_posix():pin(p) for p in sorted(base.rglob('*')) if p.is_file() and p.relative_to(base).parts[0]!='http-cache'}
 assert 'collection.json' not in files
-save(base/'collection.json',dict(terminal=True,identities=identities,code=state['code'],input_error=error,files=files,payload=pin(base/'payload.json')))
+save(base/'collection.json',dict(terminal=True,identities=identities,code=state['code'],input_error=error,files=files,payload=pin(base/'payload.json'),excluded_regenerable_directories=['http-cache']))
 with tarfile.open(fileobj=sys.stdout.buffer,mode='w|gz',dereference=True) as tar:
  for name in [*files,'collection.json']:tar.add(base/name,arcname=name,recursive=False)
 '''

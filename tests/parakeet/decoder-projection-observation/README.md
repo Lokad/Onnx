@@ -82,8 +82,8 @@ Observe the same owner to terminal, collect once, then run audit.py once with
 stdout outside the artifact. Preserve every failure and partial receipt; do not
 restart unchanged. Interpret the mapping and named kernel samples before choosing
 one intervention. Local namespace:
-`artifacts/parakeet-decoder-projection-observation-amd-20260927`; VM namespace:
-`/dev/shm/lokad-parakeet-decoder-projection-observation-20260927`. Neither exists.
+`artifacts/parakeet-decoder-projection-observation-v2-amd-20260927`; VM namespace:
+`/dev/shm/lokad-parakeet-decoder-projection-observation-v2-20260927`. Neither exists.
 Verify complete-run memory and repository storage headroom before preparation.
 VM compilation, execution and sample interpretation remain pending. This directory
 is preparation for one observation, not evidence that the route or kernel ran.
@@ -94,3 +94,21 @@ Read-only fixture check from repository root:
     C:/Python313/python.exe -X utf8 -B -m unittest discover -s tests/parakeet/decoder-projection-observation -p test_*.py
 
 Decision and stopping condition: [bounded observation](../decoder-current-review/next-observation-20260927.md).
+
+The first campaign is terminal at failure receipt `675df06c`: SDK and restore
+passed, then observer compilation failed because the metadata formatter accessed
+`Dims` through `Tensor<float>` rather than `ITensor`. No decoder control or trace
+ran. Its complete archive, original tools and all staging failures are retained
+in `artifacts/parakeet-decoder-projection-observation-amd-20260927`. Two NuGet
+HTTP-cache members have Windows-invalid names; their bytes remain both in the
+archive and under recorded safe local names.
+
+This second namespace changes only that metadata access, a recognized Linux
+guard for the existing platform restriction, extraction import-cache invalidation,
+and omission of regenerable HTTP-cache files from collection. Every original
+input, product, fixture, numerical check, ordinary call, marker, collector and
+resource limit remains. All raw trace/build outputs are retained. The fourteen
+exact exporter files are linked from their verified restoration in the terminal
+first campaign, still bound to full-export qualification `35b18e87`. No exporter
+rebuild or download is needed. The old tool bytes remain frozen with the failed
+campaign; these reusable working tools are corrected for the new namespace.
