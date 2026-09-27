@@ -1,10 +1,11 @@
 # Observe the actual decoder projection before selecting a change
 
-This observer and its bounded adapter are implemented locally. They have not
-been compiled, prepared, staged or executed on the VM. No new performance
-candidate is introduced. Finish the fixed
-rational sigmoid release qualification first, then bind its actual root product
-through that qualification's complete compiled-equivalence proof.
+The rational sigmoid release is qualified. This observer has compiled on the VM,
+and its ordinary decoder control has passed. The trace attempt failed before
+capture because its temporary path exceeded the diagnostic socket limit. The
+fresh third namespace below corrects that path and retains both failed attempts.
+No new performance candidate is introduced. Preparation binds the actual root
+product through its complete compiled-equivalence proof.
 
 The decision is whether the final one-row projection should consume its existing
 packed B. Use exactly the first `english-16k` decoder step from the closed rational
@@ -85,8 +86,9 @@ one intervention. Local namespace:
 `artifacts/parakeet-decoder-projection-observation-v3-amd-20260927`; VM namespace:
 `/dev/shm/lokad-decmap-20260927`. Neither exists.
 Verify complete-run memory and repository storage headroom before preparation.
-VM compilation, execution and sample interpretation remain pending. This directory
-is preparation for one observation, not evidence that the route or kernel ran.
+Execution and sample interpretation in the third namespace remain pending. The
+ordinary second-attempt control establishes the mapping, but cannot establish
+the executed kernel; the failed trace supplies no kernel samples.
 
 Read-only fixture check from repository root:
 
@@ -103,7 +105,7 @@ in `artifacts/parakeet-decoder-projection-observation-amd-20260927`. Two NuGet
 HTTP-cache members have Windows-invalid names; their bytes remain both in the
 archive and under recorded safe local names.
 
-This second namespace changes only that metadata access, a recognized Linux
+The second namespace changed only that metadata access, a recognized Linux
 guard for the existing platform restriction, extraction import-cache invalidation,
 and omission of regenerable HTTP-cache files from collection. Every original
 input, product, fixture, numerical check, ordinary call, marker, collector and
