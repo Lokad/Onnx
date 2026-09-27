@@ -1,0 +1,103 @@
+{
+  "passed": true,
+  "performance_measured": false,
+  "pyannote_closure": {
+    "bytes": 56855,
+    "sha256": "f284cc72de08b0113daa8a5482e2a2dbea2bd6a89ea00e128a569036394eebb8"
+  },
+  "full_analysis": {
+    "bytes": 41130,
+    "sha256": "55256d6f79dbcc4db5b850d4135ee79f953c5cb042fd0b8018f6db8c9695e0d1"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 827904,
+        "sha256": "47984318b082710c3a4f57a85b1500d49d7c1236c04b1234477d19e48d11207c"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "dd56902f44c640b9226e2e7ee05d1d3e8dc025f59471afb2261194715ca5e311"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 830464,
+        "sha256": "7cac67880fa9a4d519ac18e5887f47f48f0f14903bdf74cc6561b45c851e4f27"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "dd56902f44c640b9226e2e7ee05d1d3e8dc025f59471afb2261194715ca5e311"
+      }
+    }
+  },
+  "consumers": {
+    "selected": {
+      "bytes": 36352,
+      "sha256": "d78c45b9059c0f22e55c5112ad12fe54b34d1e0567096f52d23b67d3b141a848"
+    },
+    "candidate": {
+      "bytes": 36352,
+      "sha256": "d78c45b9059c0f22e55c5112ad12fe54b34d1e0567096f52d23b67d3b141a848"
+    }
+  },
+  "identity_guards": {
+    "passed": true,
+    "probes": 4,
+    "guards": [
+      "core",
+      "data"
+    ],
+    "roles": [
+      "selected",
+      "candidate"
+    ],
+    "rejection_before_output": true,
+    "consumer": {
+      "bytes": 36352,
+      "sha256": "d78c45b9059c0f22e55c5112ad12fe54b34d1e0567096f52d23b67d3b141a848"
+    }
+  },
+  "results": {
+    "selected": {
+      "arrays": 18,
+      "values": 2917107,
+      "public_calls": 16,
+      "native_maximum": 3.7282705307006836e-05,
+      "exact_current_arrays": 0,
+      "complete_public_results_exact": null
+    },
+    "candidate": {
+      "arrays": 18,
+      "values": 2917107,
+      "public_calls": 16,
+      "native_maximum": 3.7282705307006836e-05,
+      "exact_current_arrays": 18,
+      "complete_public_results_exact": true
+    }
+  },
+  "resources": [
+    {
+      "name": "identity-probes",
+      "samples": 19,
+      "peak_rss": 78217216,
+      "seconds": 4.856597049976699
+    },
+    {
+      "name": "selected",
+      "samples": 217,
+      "peak_rss": 1141682176,
+      "seconds": 55.52277605398558
+    },
+    {
+      "name": "candidate",
+      "samples": 216,
+      "peak_rss": 1207160832,
+      "seconds": 55.33684477407951
+    }
+  ],
+  "source": {
+    "bytes": 2366,
+    "sha256": "e64ed2ed467fd11369f0b44414a8cf922dc62a8d57f899d2aa6030a134c33e58"
+  }
+}
