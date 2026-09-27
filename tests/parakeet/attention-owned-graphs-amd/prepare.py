@@ -29,7 +29,7 @@ REMOTE = dict(graph='/dev/shm/lokad-pwt-graphs-20260927',
 DIGESTS = dict(graph='faf553e7c155dc1b63f292eeae993154edaf0e48506ef8ed7b8c2563ba4db946',
     models='2d64fad91c26c00ffe7cd003aa128efc4bc92280da96a9bb805a8e2b93412177',
     app='600e9e67e9a18ba324c65a2220cb26de9021d9eb718f26614af90e677e236cf4',
-    shared=None,
+    shared='0f5d4baa922f6dd7e42470a29ca119220d0100123b895001cc39aaf1e462b6df',
     pyannote=None)
 SCOPE = ROOT/'tests/parakeet/rational-sigmoid-results/graph-scope-20260927.json'
 

@@ -23,7 +23,7 @@ DIGESTS = dict(current='e36fe9c83405608659ebdc4d673c185c8805a5414a6b01d401904209
     previous='f284cc72de08b0113daa8a5482e2a2dbea2bd6a89ea00e128a569036394eebb8',
     product='2d64fad91c26c00ffe7cd003aa128efc4bc92280da96a9bb805a8e2b93412177',
     app='600e9e67e9a18ba324c65a2220cb26de9021d9eb718f26614af90e677e236cf4',
-    shared=None)
+    shared='0f5d4baa922f6dd7e42470a29ca119220d0100123b895001cc39aaf1e462b6df')
 MONITOR = ROOT/'tests/parakeet/packing-budgets/common.py'
 loader = importlib.util.spec_from_file_location('pyannote_monitor', MONITOR)
 monitor = importlib.util.module_from_spec(loader); loader.loader.exec_module(monitor)

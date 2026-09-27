@@ -1,8 +1,9 @@
 # Pyannote correctness after attention ownership admission
 
-Preparation is gated on actual successful application and shared/e5 closures;
-those digests are deliberately unbound until the preceding jobs finish. The
-Parakeet model closure is 2d64fad9. Current Core a6f7d9f9 and candidate ee5218db
+Preparation binds admitted application closure 600e9e67 and shared/e5 closure
+0f5d4baa. All 332 arrays / 10,001,628 shared/e5 values pass, and the matched
+Parakeet application gain is 1.128490%. The Parakeet model closure is 2d64fad9.
+Current Core a6f7d9f9 and candidate ee5218db
 share unchanged Data 1ba343fd; only PrepareOwnedMatMulWeights differs.
 
 Reuse GraphQualification d78c45b9 from the qualified pointwise Pyannote closure
