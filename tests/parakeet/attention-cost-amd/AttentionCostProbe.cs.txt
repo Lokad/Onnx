@@ -1,0 +1,175 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Numerics;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+// Isolated diagnostic only. Original arithmetic leaves and dispatch stay intact.
+internal static class AttentionCostProbe
+{
+    internal enum Stage { Rent, Pack, Arithmetic, Return, FinalRow }
+
+    internal sealed class Row
+    {
+        public int index, m, main_rows, thread, scratch_elements, degree;
+        public long start_ticks, end_ticks;
+        public long[] stage_ticks = new long[5];
+        public int[] stage_calls = new int[5];
+        public long[] stage_starts = new long[5];
+        public long[] stage_ends = new long[5];
+        public string weight = "", input_layout = "", weight_layout = "", leaf = "";
+        public bool mapped, row_guard_allows, fallback, simd, intrinsics;
+    }
+
+    internal sealed class Report
+    {
+        public bool passed;
+        public string protocol = "parakeet-attention-cost-v1", runtime = Environment.Version.ToString(), core_sha256 = "";
+        public int pid = Environment.ProcessId, processor_count = Environment.ProcessorCount;
+        public long frequency = Stopwatch.Frequency;
+        public bool fma = Fma.IsSupported, avx2 = Avx2.IsSupported, avx512 = Avx512F.IsSupported;
+        public int vector_width = Vector<float>.Count;
+        public Dictionary<string,string> flags = new();
+        public string[] stages = { "rent", "pack", "arithmetic", "return", "final_row" };
+        public List<Row> rows = new();
+    }
+
+    internal readonly struct Scope : IDisposable
+    {
+        readonly bool selected;
+        internal Scope(bool selected) { this.selected = selected; }
+        public void Dispose() { if (selected) Exit(); }
+    }
+
+    static readonly string? output = Environment.GetEnvironmentVariable("PARAKEET_ATTENTION_COSTS");
+    static readonly List<Row> rows = new();
+    [ThreadStatic] static Row? active;
+    [ThreadStatic] static long stageStart;
+    [ThreadStatic] static int stageIndex;
+    static int thread;
+
+    static AttentionCostProbe()
+    {
+        if (!string.IsNullOrEmpty(output)) AppDomain.CurrentDomain.ProcessExit += Save;
+    }
+
+    static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidOperationException("Attention observation: " + message);
+    }
+
+    static string Layout(Tensor<float> tensor) => tensor.GetType().ToString() + ":" +
+        tensor.IsReversedStride + ":" + string.Join(",", tensor.Strides.ToArray()) + ":" + tensor.Length;
+
+    internal static Scope Enter(ITensor input, ITensor weight, TensorExecutionOptions options)
+    {
+        if (string.IsNullOrEmpty(output)) return default;
+        Require(active is null, "nested MatMul");
+        if (input is not Tensor<float> a || weight is not Tensor<float> b || b.Rank != 2
+            || b.Dimensions[0] != 1024 || b.Dimensions[1] != 1024) return default;
+        Require(a.Rank == 3 && a.Dimensions[0] == 1 && a.Dimensions[2] == 1024, "selected input shape");
+        int m = a.Dimensions[1];
+        Require(m >= 51 && m <= 449 && b is DenseTensor<float> && !b.IsReversedStride, "selected geometry/layout");
+        if (thread == 0) thread = Environment.CurrentManagedThreadId;
+        Require(thread == Environment.CurrentManagedThreadId, "multiple request threads");
+        var row = new Row { index = rows.Count, m = m, thread = thread, weight = b.Name,
+            input_layout = Layout(a), weight_layout = Layout(b),
+            mapped = GraphPacking.ResolvePacked(options.PackedMatMulWeights, b) is not null,
+            row_guard_allows = m % 2 == 0 || m % 3 == 0,
+            simd = options.UseSimd, intrinsics = options.UseIntrinsics, degree = options.MaxDegreeOfParallelism };
+        active = row;
+        stageIndex = -1;
+        row.start_ticks = Stopwatch.GetTimestamp();
+        return new Scope(true);
+    }
+
+    internal static void Route(int m, int n, int k, int mainRows)
+    {
+        if (active is not Row row) return;
+        Require(!row.fallback && row.m == m && n == 1024 && k == 1024, "fallback geometry");
+        row.fallback = true;
+        row.main_rows = mainRows;
+    }
+
+    internal static void Start(Stage stage)
+    {
+        if (active is null) return;
+        Require(stageIndex == -1, "overlapping stages");
+        stageIndex = (int)stage;
+        Require(active.stage_calls[stageIndex] == 0, "repeated stage");
+        stageStart = Stopwatch.GetTimestamp();
+        active.stage_starts[stageIndex] = stageStart;
+    }
+
+    internal static void End()
+    {
+        if (active is not Row row) return;
+        long end = Stopwatch.GetTimestamp();
+        Require(stageIndex >= 0 && end >= stageStart, "unmatched stage");
+        row.stage_ticks[stageIndex] = end - stageStart;
+        row.stage_ends[stageIndex] = end;
+        row.stage_calls[stageIndex]++;
+        stageIndex = -1;
+    }
+
+    internal static void Scratch(int length)
+    {
+        if (active is Row row) row.scratch_elements = length;
+    }
+
+    internal static void Leaf(string name)
+    {
+        if (active is not Row row) return;
+        Require(row.leaf.Length == 0, "repeated leaf");
+        row.leaf = name;
+    }
+
+    static void Exit()
+    {
+        Require(active is not null, "missing active call");
+        var row = active!;
+        row.end_ticks = Stopwatch.GetTimestamp();
+        Require(stageIndex == -1 && row.fallback == !(row.mapped && row.row_guard_allows), "route coverage");
+        long total = 0, previous = row.start_ticks;
+        for (int i = 0; i < 5; i++)
+        {
+            int count = row.fallback && (i != 4 || row.main_rows != row.m) ? 1 : 0;
+            Require(row.stage_calls[i] == count && row.stage_ticks[i] >= 0, "stage coverage");
+            if (count != 0)
+            {
+                Require(previous <= row.stage_starts[i] && row.stage_starts[i] <= row.stage_ends[i]
+                    && row.stage_ends[i] <= row.end_ticks, "stage interval");
+                previous = row.stage_ends[i];
+            }
+            total += row.stage_ticks[i];
+        }
+        Require(total <= row.end_ticks - row.start_ticks, "stage sum exceeds total");
+        if (row.fallback)
+            Require(row.scratch_elements >= 1024 * 1024 && row.leaf ==
+                (row.m % 3 == 0 ? "ShortWideMultiply3Rows" : "ShortWideMultiply2Rows"), "fallback leaf");
+        else Require(row.leaf.Length == 0 && row.scratch_elements == 0, "unexpected prepared stage");
+        rows.Add(row);
+        active = null;
+    }
+
+    static void Save(object? sender, EventArgs args)
+    {
+        Require(active is null && rows.Count == 9600, "incomplete corpus");
+        var report = new Report { passed = true, rows = rows,
+            core_sha256 = Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(typeof(AttentionCostProbe).Assembly.Location))) };
+        foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
+        {
+            string name = (string)entry.Key;
+            if (name.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase) || name.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase)
+                || name.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)) report.flags.Add(name, (string)entry.Value!);
+        }
+        using var stream = new FileStream(output!, FileMode.CreateNew);
+        JsonSerializer.Serialize(stream, report, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
+    }
+}
