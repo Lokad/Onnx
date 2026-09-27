@@ -1,0 +1,3087 @@
+{
+  "closure": {
+    "bytes": 303,
+    "sha256": "e83b34fb3aef0dacfc387c919638fd710fa266cd11a315fb6494195cd29ebc72"
+  },
+  "passed": true,
+  "inputs": {
+    "artifacts/parakeet-projection-route-resume-amd-20260924/closed.json": {
+      "bytes": 2073,
+      "sha256": "916d4c688b19688e837a5bd5891efb31bf34a06a925e2431bdd1883b4e7e900d"
+    },
+    "artifacts/parakeet-projection-route-resume-amd-20260924/analysis.json": {
+      "bytes": 1958,
+      "sha256": "33fe4709f8ddaf9da93dd0de690ba360d80f8082f7f8c989275b45d74d865e2e"
+    },
+    "artifacts/parakeet-projection-route-resume-amd-20260924/observations.json": {
+      "bytes": 26408078,
+      "sha256": "bbf73ba97d93be93f40dcde85b7f34838b98c4547ce15b2a1d8d2f0c7e1f2dc0"
+    },
+    "artifacts/parakeet-projection-route-amd-20260924/build-review.json": {
+      "bytes": 4904,
+      "sha256": "74c37c401fb7213480bb9c09ef7f9a3124fd669552e328e4deab8d28abd7b4aa"
+    },
+    "artifacts/parakeet-projection-route-amd-20260924/bundle/spec.json": {
+      "bytes": 19472,
+      "sha256": "23f3b1699b34728f6c6789d507bf184022c4fcc9a6d39fc4d81e53cb332fbbd3"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/prepared.json": {
+      "bytes": 153332,
+      "sha256": "41f2477c7060c3f543471bebe991c77ea3b853d724708fec098a2cbb505cb0a2"
+    },
+    "artifacts/parakeet-projection-route-amd-20260924/bundle/evidence/graphs.json": {
+      "bytes": 730436,
+      "sha256": "e6a41f004d21ca0b4d458e44cfcffafba2deda11b1a55d9fca4243b3644b475e"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/closed.json": {
+      "bytes": 77908,
+      "sha256": "378f7c1979052e4dcf06af4d2c9edad04cf899cc3d40de5f7a491f2c5f0c13b2"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/analysis.json": {
+      "bytes": 1970219,
+      "sha256": "f435e5581d8e84b1b7d700477ccb449990fde5a231a7765ac39ecffc01e7f158"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/bundle/spec.json": {
+      "bytes": 15569,
+      "sha256": "1baa714ade87911f9239da8cc9208eaaf84a0659b7e244725cb681d467c772c7"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/graphs.json": {
+      "bytes": 730436,
+      "sha256": "34d69c2f286d557e4f5dbc9b7305248bfc7890fded30f9dbbbf2e38aed0d0b08"
+    },
+    "artifacts/parakeet-pointwise-tail-root-amd-20260927/bundle/evidence/root-applied.json": {
+      "bytes": 79226,
+      "sha256": "151202beb53ee299f56e823aee1b5439cb9b09d9722cff79e4aa6aa3fc090e08"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/GraphPacking.cs": {
+      "bytes": 10547,
+      "sha256": "732fee575241985ad6a09e6cc546f39dd2f23f7eceb6ccd281c79785adf260dd"
+    },
+    "src/Lokad.Onnx/GraphPacking.cs": {
+      "bytes": 10547,
+      "sha256": "732fee575241985ad6a09e6cc546f39dd2f23f7eceb6ccd281c79785adf260dd"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/GraphConvPacking.cs": {
+      "bytes": 9031,
+      "sha256": "936d242eafe67e7cf8731b856da94e5e314331c6a43a032e239d42b8c533ee5e"
+    },
+    "src/Lokad.Onnx/GraphConvPacking.cs": {
+      "bytes": 9031,
+      "sha256": "936d242eafe67e7cf8731b856da94e5e314331c6a43a032e239d42b8c533ee5e"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/Zzz.IsolatedShortMatMul.cs": {
+      "bytes": 19586,
+      "sha256": "f822940b400e503666a12c7c2b7d98728a96e064517f574b1be1c92922c34093"
+    },
+    "src/Lokad.Onnx/Zzz.IsolatedShortMatMul.cs": {
+      "bytes": 19586,
+      "sha256": "f822940b400e503666a12c7c2b7d98728a96e064517f574b1be1c92922c34093"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/MathOps.PackedAvx512.cs": {
+      "bytes": 14443,
+      "sha256": "7edef35d0ed2bf11399b0cf93f8de4d4e67b5c915fed12fb4a9db383c192daca"
+    },
+    "src/Lokad.Onnx/MathOps.PackedAvx512.cs": {
+      "bytes": 14443,
+      "sha256": "7edef35d0ed2bf11399b0cf93f8de4d4e67b5c915fed12fb4a9db383c192daca"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/AblationSwitches.cs": {
+      "bytes": 6333,
+      "sha256": "c3a340802dd19ecf1218342d4786c958aadeb3d9b2358b762e6886b021143656"
+    },
+    "src/Lokad.Onnx/AblationSwitches.cs": {
+      "bytes": 6333,
+      "sha256": "c3a340802dd19ecf1218342d4786c958aadeb3d9b2358b762e6886b021143656"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/TensorOps.MatMul.cs": {
+      "bytes": 45792,
+      "sha256": "2d97f599a67b21354cf9463ffe670f81c989f2c46721d2de305e199c43ac241e"
+    },
+    "src/Lokad.Onnx/TensorOps.MatMul.cs": {
+      "bytes": 46261,
+      "sha256": "ef7e2924fdb91e437d4a097b87e7b72597c4ab8799f036ba687520a01c9e9869"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/Zzz.WideProjectionEntry.cs": {
+      "bytes": 4624,
+      "sha256": "ba6fb630d857458427115a9e840d3736172b6d6264b4118c3a8512355cc84c8e"
+    },
+    "src/Lokad.Onnx/Zzz.WideProjectionEntry.cs": {
+      "bytes": 4706,
+      "sha256": "06f4ccec00dd9fd3c1a6ab71ed11410fa16bdcd62e55257342496dbf51bdcd35"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/CPUExecutionProvider.MatMul.cs": {
+      "bytes": 16821,
+      "sha256": "ad913f1c6643d24d89316199858f1d5687bfa6d1dc785617eaed2fba50405c04"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.MatMul.cs": {
+      "bytes": 16918,
+      "sha256": "8e13e51979c5c66c4182a6523d83768f3ff7d612e7448893ed13b3eded5bbf8d"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/MathOps.cs": {
+      "bytes": 215579,
+      "sha256": "f09ec95f8ba1aba3e235988ebddab54032dc69fac5013cc288ffae5f4ebfe30b"
+    },
+    "src/Lokad.Onnx/MathOps.cs": {
+      "bytes": 216116,
+      "sha256": "4543d324811d5cbf3ceb38ad113ddb4d7365b37009924a81968078ffa789704c"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/ComputationalGraph.cs": {
+      "bytes": 86697,
+      "sha256": "b0c1f99c76a66c99833e97a72caee1ce19b40ce7b5e16e51b1a71012f27a0cab"
+    },
+    "src/Lokad.Onnx/ComputationalGraph.cs": {
+      "bytes": 86985,
+      "sha256": "16e8dee92c36364f54ed776302886e9bb1f8e7c5014d38a09f93733ff8ee731a"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx/GraphLstmPacking.cs": {
+      "bytes": 7110,
+      "sha256": "fd403f7804770b078c7d9968501c0a235db7b58d66464bb93f57d7284a95d39d"
+    },
+    "src/Lokad.Onnx/GraphLstmPacking.cs": {
+      "bytes": 7334,
+      "sha256": "c5e9c9042aa39e9c2a741e1d33620ec3e037c5470c6b966e1145bb6ab9917278"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/closed.json": {
+      "bytes": 15765,
+      "sha256": "577a07a60d901cf57c4ba46d70b2c6fc4c02148ab67a1c28fd78d9b4fbcc3d08"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/capture-collected/evidence/compiled-review.json": {
+      "bytes": 2936,
+      "sha256": "5a84c53bd547378f39a0e47ccd7270dd40c346c7eebb5ff7fb4f81ff8fb1689b"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-source-20260925/prepared.json": {
+      "bytes": 185220,
+      "sha256": "0d6b78df6e7d03863b15c42af0b5e5bff564ffdf89ef5bc77ef34307f6e1e3a1"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/capture-collected/probe/512/after.json": {
+      "bytes": 42112,
+      "sha256": "1fd207e5140b9537774fb698c8e9e1570632d434ffa2b2b10a0c94d7c59254cb"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/capture-collected/probe/512/before.json": {
+      "bytes": 42112,
+      "sha256": "e79a48e8f0d806727624549587f87b68900bc0d26dd71f892cffdfeaa0bf01c9"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/capture-collected/probe/512/result.json": {
+      "bytes": 938,
+      "sha256": "f98b3408b0d009f53f05689af2291dfe28ff7e66f7e06afe8796efdbbe274b75"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/capture-collected/probe/256/after.json": {
+      "bytes": 42112,
+      "sha256": "be1427f1320e5a34169b61ee0b9d6a449bfe3b992fae4c82f4e2154bc7dc1269"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/capture-collected/probe/256/before.json": {
+      "bytes": 42112,
+      "sha256": "6c6227ff270068f66b27d3808035008259edf0bba2308c072deb3b2184d48b29"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-census-amd-20260925/capture-collected/probe/256/result.json": {
+      "bytes": 939,
+      "sha256": "d44f76c31da43e1f3b06f633fe895179bcfbf168ed72f82457012db6e1e0866e"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-source-20260925/source/src/Lokad.Onnx/GraphOwnedPacking.cs": {
+      "bytes": 5497,
+      "sha256": "f221b84dc33e2f75f9d3c4e6ed59b2a7a110eea02879726d231adf72b5ed7613"
+    },
+    "src/Lokad.Onnx/GraphOwnedPacking.cs": {
+      "bytes": 6359,
+      "sha256": "7141479461f0bfef59dca2bc00b6f622c4a9d107f099cb048475e31f22e92185"
+    },
+    "artifacts/parakeet-owned-packed-weight-scope-source-20260925/source/src/Lokad.Onnx.Data/ParakeetTranscriber.cs": {
+      "bytes": 9662,
+      "sha256": "cff6f5a2915d91a337c9e675d9d12e0c75c96352644a248fbc50b97d4dc4406e"
+    },
+    "src/Lokad.Onnx.Data/ParakeetTranscriber.cs": {
+      "bytes": 9662,
+      "sha256": "cff6f5a2915d91a337c9e675d9d12e0c75c96352644a248fbc50b97d4dc4406e"
+    },
+    "artifacts/parakeet-observed-dense-where-source-20260924/source/src/Lokad.Onnx.Data/ParakeetTranscriber.cs": {
+      "bytes": 9617,
+      "sha256": "3950a354bfcc523df19a2d5600304f918fb55af122350167d5ca638f1169b9ae"
+    },
+    "artifacts/parakeet-pointwise-tail-gap-20260927/analysis.json": {
+      "bytes": 215442,
+      "sha256": "55434253349ccd4bce1833bab355d032ecfe182092513631a80384b2e867ee72"
+    },
+    "artifacts/parakeet-pointwise-tail-ort-profile-amd-20260927/analysis.json": {
+      "bytes": 16849581,
+      "sha256": "4fac621439c44a5d906e246f5e939018d0184e55c30a596fee16d47256a45268"
+    },
+    "artifacts/parakeet-pointwise-tail-ort-profile-amd-20260927/collected/collection.json": {
+      "bytes": 26757,
+      "sha256": "d186003c31fbc0fcd40b1fa781093f29c3bca216c3301d3e4f893d2450f564bb"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/capture-collection.json": {
+      "bytes": 49739,
+      "sha256": "bbe7d3f10d281f33e9a3a7e3fc159b240fd82193c4133ae3be2991ac74f49b59"
+    },
+    "artifacts/parakeet-projection-route-resume-amd-20260924/capture-collected/capture-collection.json": {
+      "bytes": 20762,
+      "sha256": "5cc7c296c11ade83158bbfa71cf31a03a24555c489c798fc1f721f3b18f8cd64"
+    },
+    "artifacts/parakeet-projection-route-resume-amd-20260924/capture-collected/phase/result.json": {
+      "bytes": 268854,
+      "sha256": "1f22a557e07de16f2d315db8d42f3192ffdb602df001291544bd93b7ba70e854"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/result.json": {
+      "bytes": 268580,
+      "sha256": "92d55bc42e4c6d095b6d721d57200024624f421af48ec6fdbba36b135f47d3ea"
+    },
+    "artifacts/parakeet-pointwise-tail-ort-profile-amd-20260927/collected/profile/observation.json": {
+      "bytes": 7127647,
+      "sha256": "e4ebcf057456f6668ecdb004794dd194fee5f21929ad662595b6015ad9150309"
+    },
+    "artifacts/parakeet-pointwise-tail-ort-profile-amd-20260927/collected/profile/encoder_2026-09-27_21-12-04_257.json": {
+      "bytes": 107213613,
+      "sha256": "25701b45c61a25e94314b4ec3c176924e60f14fe83a93844e77623312c2af064"
+    },
+    "tests/parakeet/pointwise-tail-profile-results/projection-breakdown-20260927.json": {
+      "bytes": 170609,
+      "sha256": "05ea4feb05a6d006d052da7f76d074b52880b0e3f94fefde0be9b274164cb3dd"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-000.json": {
+      "bytes": 333322,
+      "sha256": "78063be5cc0445e69f4ca7bdfbdf67a8411a0404f853bcd60ba6aa68bbcffcd6"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-001.json": {
+      "bytes": 409002,
+      "sha256": "e543c212c99c34e823187fd27a48cadc5f23aa9d18c12c89343ca049d3d863e1"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-002.json": {
+      "bytes": 356972,
+      "sha256": "4fae14d4c906af50a11a4f2c59c59fc8f13d1c990aad5ed9d42b5074bb9577ea"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-003.json": {
+      "bytes": 432652,
+      "sha256": "31a0bc063e5c748c99ce7b7135c886b8adb4477e6a27efd6f6ec10ce3ebfdafe"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-004.json": {
+      "bytes": 319132,
+      "sha256": "82cd7c7b4204b63cd43e3646971ee190b9d9a345d5347f22511a563dbdaa024c"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-005.json": {
+      "bytes": 399542,
+      "sha256": "5cccc76eb526ef2283dad407bcd3a3eb4f91dc56a5adf8293e3d154333ba1583"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-006.json": {
+      "bytes": 281292,
+      "sha256": "8c5698978f59f771b754f6f3ac61a7ee32ac570d5b00e05606978c05a74dd65a"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-007.json": {
+      "bytes": 387717,
+      "sha256": "3b49a64d39e40e96cee362b06226034cb4f40d2240e23e373fb44b1699556b13"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-008.json": {
+      "bytes": 307307,
+      "sha256": "d3da9e3546db0bd7b2e46fb7b62cd71367cf1cb4243f7a04292bfc69129b8854"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-009.json": {
+      "bytes": 385352,
+      "sha256": "1a575899716a3caa39783a02fe915c1d038c8e11df1e3e2a2d4adf50a56b904e"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-010.json": {
+      "bytes": 333323,
+      "sha256": "bb373e1c8bb0f2566eaab3f3ede9626ccf7f35cf9b1f21012b480d6227e885ce"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-011.json": {
+      "bytes": 406638,
+      "sha256": "7f19c7e3a3f0bad0d743f887a790604b875800e777986d31721916c91649c77d"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-012.json": {
+      "bytes": 349878,
+      "sha256": "f642193a5f5ce14a3966e892ae5bacd5b48beb22b47b1fa3aa23d72b4ea8baa4"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-013.json": {
+      "bytes": 470493,
+      "sha256": "b180581d100404bead83479f324eb862718f47febcd3f726f6cc32ba56a6f9aa"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-014.json": {
+      "bytes": 307308,
+      "sha256": "2c543c6c5d5d78c1d984ae80303f5bcff9ebf029c5c8524471fbebef66cb3cdc"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-015.json": {
+      "bytes": 409003,
+      "sha256": "129bed3a5eaca577fe5e25ffe4f06c2f3df1892818ac11ea677fa0120f8e4bee"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-016.json": {
+      "bytes": 368796,
+      "sha256": "cb0aac51ea66489b5116609674c11ec279370cb86f2df703346f63c3a331c0fc"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-017.json": {
+      "bytes": 411366,
+      "sha256": "58ef23e1e1fd218a6666d112825db65d627b788a795596800000ae45d585fb67"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-018.json": {
+      "bytes": 378258,
+      "sha256": "900b3174ea063433cf31d8554d7d4ba521c2083ec12d56477e3f4d2f33a5a58e"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-019.json": {
+      "bytes": 423193,
+      "sha256": "40d06fe054f14a38974643aec3ac4655ccb209fbee8388d2db70490bebcb90ab"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-020.json": {
+      "bytes": 333322,
+      "sha256": "5cd8543ea5e17210d8ff8103e89eeec5d02b79cda01a512caac8dc5611aca102"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-021.json": {
+      "bytes": 409002,
+      "sha256": "c3b516172a2dc5e8ec348eea38f0967b49d51ab6eadadd70d8d953dd9ad91519"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-022.json": {
+      "bytes": 356972,
+      "sha256": "a24f09d14ae1bf053401c0f0fd753f2770963b02c9364499f3baae005c66a5ff"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-023.json": {
+      "bytes": 432652,
+      "sha256": "b5d65577efcadaf5392e4c0dc6fb811d6e5b97d28e02c0187d40750b8b6b8302"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-024.json": {
+      "bytes": 319132,
+      "sha256": "81362f4543ed3e717c2dce464fd4fdae36d6633aeb872e9734144c2030f018a4"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-025.json": {
+      "bytes": 399542,
+      "sha256": "63a801ca8f726a09fde5ed4bd59dd71170cc1a0e3052f9d7b27e7387ec2086ea"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-026.json": {
+      "bytes": 281292,
+      "sha256": "1fef708971f7589ec524471a0e542a51040b84abf6640e9e2ea12ea6af362ada"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-027.json": {
+      "bytes": 387717,
+      "sha256": "06314c0948ad7d9c2c7fa5494aa7fb67871dded8318e269ec2b093d9601bc47a"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-028.json": {
+      "bytes": 307307,
+      "sha256": "f34f7072173e776042533dfc3d949d454cf6685dd051aab85de3832f48d79f11"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-029.json": {
+      "bytes": 385352,
+      "sha256": "257b748a8e2b6236b9ba04b135f8f7f0fe7698bceedfa895d04a1f6790c3db44"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-030.json": {
+      "bytes": 333323,
+      "sha256": "3c9123d31f91cf75d273e57bdc2bca9f108bfe4036ffae83e712358574568fa7"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-031.json": {
+      "bytes": 406638,
+      "sha256": "e87d8e3b7b7f42d96a8d2c62bf6bf40b008752922213cb2c6e5cfebe86dd407d"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-032.json": {
+      "bytes": 349878,
+      "sha256": "72f10ddf89b7b19b3b230ce9c6d72d6cdebbbefddda3e0ce2f4e71d45bed8153"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-033.json": {
+      "bytes": 470493,
+      "sha256": "8fdb2f37c84e23ee61f16a3f6c22edf9a688b0ef992bcad9b3eb9bd69fdc3a2a"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-034.json": {
+      "bytes": 307308,
+      "sha256": "aa460f58b8c01eefedec5a755188304bf1bbc8f21294a0a6197a42f1c66a58ff"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-035.json": {
+      "bytes": 409003,
+      "sha256": "aca8b71e8dd0e845f559c37554172d921f474ee52e2f7f999699d2a08b086bcc"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-036.json": {
+      "bytes": 368796,
+      "sha256": "b4cdd8c7b4a84703fd2bf4a6c3c9c72ebde75d3f469246bfcb5975da537e082f"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-037.json": {
+      "bytes": 411366,
+      "sha256": "bee2b5dc2cf9cc9a3473ea0f68cd537f1a8eaa1fa66a2ac17313fc6fefcfeab3"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-038.json": {
+      "bytes": 378258,
+      "sha256": "318ef144521aebb890f7d75aa69d0177af372de2a4785e425ad873b0bcd14798"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-039.json": {
+      "bytes": 423193,
+      "sha256": "074b9237d8798d4dfd0a88f6092fbc253a406fba387b86b84305c07b61dbce2c"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-040.json": {
+      "bytes": 333322,
+      "sha256": "a2a5a7b821c0ab9f4eb01c0a230f7dd78c35305ad9316f0a9889f4b37f1a0f12"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-041.json": {
+      "bytes": 409002,
+      "sha256": "c0b9644ad87eb1db07f13e05ca804d671c4a9abe5ee422d95a6acd590f870986"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-042.json": {
+      "bytes": 356972,
+      "sha256": "7c53071435fc0a7d7e57684f77b7de6302419ece82cb276e899c3e72106f88be"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-043.json": {
+      "bytes": 432652,
+      "sha256": "f455daf3fabf224af3e8842e4afd997e9185cd2ba11f217cd8207a573f75e4bd"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-044.json": {
+      "bytes": 319132,
+      "sha256": "c0b1dcceac45c9d3ee5a8aefccca09da244e97d3409c14001f557e4cf3725a9d"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-045.json": {
+      "bytes": 399542,
+      "sha256": "257c91727f876425f9f79b5de5166e9d5516f68324b7f340619250b228065159"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-046.json": {
+      "bytes": 281292,
+      "sha256": "b9ea6d19efaaec2123c6201d0dfb54b20dd1be8d326cc8b5204a3c6d9cdfbb4a"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-047.json": {
+      "bytes": 387717,
+      "sha256": "52531e475ac9da23d318d43d77b851b89cae63663e6e51a08869584f7d41f5a3"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-048.json": {
+      "bytes": 307307,
+      "sha256": "63c72e182af07eea2ec59f5e6164bd98fdc76ec10f5084b115fb1e357904ec8e"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-049.json": {
+      "bytes": 385352,
+      "sha256": "d6e16115cc321ea904a6813454e3e5725a2ab68958741c28d8b10f9d88e7af5f"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-050.json": {
+      "bytes": 333323,
+      "sha256": "839062c9dc71ef2312046361691bd85b29f09d7a38fab04555669ceb0ce8a3bd"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-051.json": {
+      "bytes": 406638,
+      "sha256": "e3ba82999c2daddbdeeb7caac29eb4f3e97427c377f4cdb5f33528ad70284815"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-052.json": {
+      "bytes": 349878,
+      "sha256": "9ec0a7cfdf4fe1c86c0efba2d92978e91558d2cc33300c9e231e4f09f554bb25"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-053.json": {
+      "bytes": 470493,
+      "sha256": "495adfbe44ff38e208d6fc6582e505d8b22ffe114550434788fdf22c5f083d0e"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-054.json": {
+      "bytes": 307308,
+      "sha256": "072253a2b0a95f4dfb1dc73753e92f9d17ef2c6cf0525f3d0540f55f4a500243"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-055.json": {
+      "bytes": 409003,
+      "sha256": "d1547a80265f0be3705abab57a81014dda66c4a8f1998d9b08d561ce794caebb"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-056.json": {
+      "bytes": 368796,
+      "sha256": "373099a140baeda678b35d921e31b9986ce6c1ac67cffb31716ae3e2a87b2a54"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-057.json": {
+      "bytes": 411366,
+      "sha256": "65a9133b3eb5af273dcc35bafa856d3a613ce157a7c1867506f4cdbb20cc3936"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-058.json": {
+      "bytes": 378258,
+      "sha256": "6750647c19af181d8a8abdce9cd4d297ffee61aa05d882769f9e940bddc91d62"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-059.json": {
+      "bytes": 423193,
+      "sha256": "4279c71f99be00bf2fb1fbd57f9e4018990b3b683a1321f4a15c877f641e02fd"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-060.json": {
+      "bytes": 333322,
+      "sha256": "f630ad8ffa13464c8da541c790bef24e78dc2b0a4355a07653e961a6f37f1234"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-061.json": {
+      "bytes": 409002,
+      "sha256": "a6e95f938aae526f9e2cc948c851c45ce7501427212a662d5ca3cc7043ad387d"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-062.json": {
+      "bytes": 356972,
+      "sha256": "1b27c355f6d0e255293bf58e2b92d0965ed9d60469251c38640a4e910a9e4bdf"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-063.json": {
+      "bytes": 432652,
+      "sha256": "6361758fef8933fa37d735955bdda681569efcd104d18d59e438ae1fc8d6e1b4"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-064.json": {
+      "bytes": 319132,
+      "sha256": "a98ee135561c0c1c1c0a214c20d5dac121ab79e01b0505911224d0b310ec9341"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-065.json": {
+      "bytes": 399542,
+      "sha256": "cb5eb47bb96f59e4485690f16cb4625debb2736600ccdad5b0f6f70747ce33de"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-066.json": {
+      "bytes": 281292,
+      "sha256": "18aabda03fd37c6e37befb3d8f9f80322506848aa319a424edaa4ea70cac39bd"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-067.json": {
+      "bytes": 387717,
+      "sha256": "c9677c5ea35abe167d1a8ccaf081cc980cc48d798cd41da8ac8b31914b9e715c"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-068.json": {
+      "bytes": 307307,
+      "sha256": "79cc2a19e727b45fb441d468d930fc3e6e920bf0d504a6ee18da8437335682d1"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-069.json": {
+      "bytes": 385352,
+      "sha256": "476562f40bf11151f777a894d393f2fecd9aa3ae325ca46441bac1c31aa0c7fd"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-070.json": {
+      "bytes": 333323,
+      "sha256": "6e48d997ce154d0398507fde6201d130dd77d32bab270dfc02e0a641872655f0"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-071.json": {
+      "bytes": 406638,
+      "sha256": "8ca9726bad7f900b43d3c1b2ccb2cbd676ced10feff23a140910a19dffd76230"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-072.json": {
+      "bytes": 349878,
+      "sha256": "ee39fb61d4cb9586f3d1e00deda097b8a057b405bca963598914b6453438f5dd"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-073.json": {
+      "bytes": 470493,
+      "sha256": "d0e8535bcbb062b329434cb9f52ef479b47039227b21b10ff788318b1142364e"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-074.json": {
+      "bytes": 307308,
+      "sha256": "aad0a75ec425a283883d941ae3eee39540a7a1540b067d272478d0146f51945c"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-075.json": {
+      "bytes": 409003,
+      "sha256": "19eb4d24333199bd2cea701718eed9d693272737eed8a0560ebbdfbf68044e59"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-076.json": {
+      "bytes": 368796,
+      "sha256": "3c13edb86ac9022c38cfed91f15fe6f53583c03e7566e28aaa73f4ab43009738"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-077.json": {
+      "bytes": 411366,
+      "sha256": "c96920a556792cef694acef4fd7501bc81dc81abe79a22d45c7383ab579779de"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-078.json": {
+      "bytes": 378258,
+      "sha256": "0bcdbf99863dbc0f1a3ae10ebeee485b2bb09de3b5886501958057ffa7ea53e0"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-amd-20260927/capture-collected/wall/phase-079.json": {
+      "bytes": 423193,
+      "sha256": "7d4a2b19194c013186d0564d1d0927ed6292e1d8be566d176c9e5fc81e0ecddd"
+    }
+  },
+  "root": {
+    "bytes": 229795,
+    "sha256": "fc11676361a50ef613f783fcb51e4ead488c9c2ee34a3edddcbb561f67037e47"
+  },
+  "partition": {
+    "bytes": 303,
+    "sha256": "b7e24651bfcdcc67900783bb6f33fa215927f20e48f572e3272025fb0b6fbec0"
+  },
+  "interpretation": "Retained route metadata revalidated against current source, graph, shapes and preparation; no new internal-route observation",
+  "source_transformations": {
+    "GraphPacking.cs": 0,
+    "GraphConvPacking.cs": 0,
+    "Zzz.IsolatedShortMatMul.cs": 0,
+    "MathOps.PackedAvx512.cs": 0,
+    "AblationSwitches.cs": 0,
+    "TensorOps.MatMul.cs": 4,
+    "Zzz.WideProjectionEntry.cs": 1,
+    "CPUExecutionProvider.MatMul.cs": 1,
+    "MathOps.cs": 5,
+    "ComputationalGraph.cs": 3,
+    "GraphLstmPacking.cs": "Unchanged preparation before Pack; encoder contains no LSTM"
+  },
+  "observations": 9600,
+  "measured_calls": 7200,
+  "frames": [
+    51,
+    61,
+    83,
+    88,
+    89,
+    102,
+    106,
+    112,
+    114,
+    120,
+    151,
+    156,
+    157,
+    158,
+    167,
+    169,
+    190,
+    222,
+    225
+  ],
+  "cached_attention_weights": 28,
+  "uncached_attention_weights": 92,
+  "complete_fresh_attention_accounting": true,
+  "historical_clocks_used": false,
+  "historical_copy_costs_used": false,
+  "new_inference_calls": 0,
+  "current_internal_route_observed": false,
+  "stage_costs_measured": false,
+  "new_candidate_selected": false,
+  "overhead_subtracted": false,
+  "aggregate": [
+    {
+      "group": [
+        "family-route",
+        "linear_k",
+        "mapped-allowed"
+      ],
+      "measurements": 234,
+      "nodes": 6,
+      "managed_seconds": 0.238197205,
+      "ort_seconds": 0.22204233333333334,
+      "difference": 0.016154871666666654
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_k",
+        "mapped-declined"
+      ],
+      "measurements": 126,
+      "nodes": 6,
+      "managed_seconds": 0.138169788,
+      "ort_seconds": 0.10871133333333333,
+      "difference": 0.02945845466666666
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_k",
+        "unmapped"
+      ],
+      "measurements": 1080,
+      "nodes": 18,
+      "managed_seconds": 1.1605524053333334,
+      "ort_seconds": 0.9968133333333333,
+      "difference": 0.16373907200000004
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_out",
+        "mapped-allowed"
+      ],
+      "measurements": 195,
+      "nodes": 5,
+      "managed_seconds": 0.197926152,
+      "ort_seconds": 0.185426,
+      "difference": 0.012500151999999987
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_out",
+        "mapped-declined"
+      ],
+      "measurements": 105,
+      "nodes": 5,
+      "managed_seconds": 0.11793962066666668,
+      "ort_seconds": 0.09075933333333334,
+      "difference": 0.02718028733333333
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_out",
+        "unmapped"
+      ],
+      "measurements": 1140,
+      "nodes": 19,
+      "managed_seconds": 1.240229541,
+      "ort_seconds": 1.0538233333333333,
+      "difference": 0.1864062076666666
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_pos",
+        "mapped-allowed"
+      ],
+      "measurements": 60,
+      "nodes": 5,
+      "managed_seconds": 0.11394903099999999,
+      "ort_seconds": 0.10217466666666668,
+      "difference": 0.011774364333333315
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_pos",
+        "mapped-declined"
+      ],
+      "measurements": 240,
+      "nodes": 5,
+      "managed_seconds": 0.591034408,
+      "ort_seconds": 0.44647166666666666,
+      "difference": 0.1445627413333333
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_pos",
+        "unmapped"
+      ],
+      "measurements": 1140,
+      "nodes": 19,
+      "managed_seconds": 2.486044102,
+      "ort_seconds": 2.0872596666666667,
+      "difference": 0.3987844353333334
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_q",
+        "mapped-allowed"
+      ],
+      "measurements": 234,
+      "nodes": 6,
+      "managed_seconds": 0.236281504,
+      "ort_seconds": 0.221913,
+      "difference": 0.014368504000000004
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_q",
+        "mapped-declined"
+      ],
+      "measurements": 126,
+      "nodes": 6,
+      "managed_seconds": 0.14072100233333332,
+      "ort_seconds": 0.108715,
+      "difference": 0.03200600233333331
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_q",
+        "unmapped"
+      ],
+      "measurements": 1080,
+      "nodes": 18,
+      "managed_seconds": 1.17692961,
+      "ort_seconds": 0.996406,
+      "difference": 0.18052360999999995
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_v",
+        "mapped-allowed"
+      ],
+      "measurements": 234,
+      "nodes": 6,
+      "managed_seconds": 0.23795469933333332,
+      "ort_seconds": 0.22225733333333333,
+      "difference": 0.01569736599999999
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_v",
+        "mapped-declined"
+      ],
+      "measurements": 126,
+      "nodes": 6,
+      "managed_seconds": 0.138681088,
+      "ort_seconds": 0.10880933333333333,
+      "difference": 0.02987175466666668
+    },
+    {
+      "group": [
+        "family-route",
+        "linear_v",
+        "unmapped"
+      ],
+      "measurements": 1080,
+      "nodes": 18,
+      "managed_seconds": 1.1589425770000001,
+      "ort_seconds": 0.9972706666666666,
+      "difference": 0.1616719103333335
+    },
+    {
+      "group": [
+        "node",
+        "/layers.0/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06598674766666666,
+      "ort_seconds": 0.055070666666666664,
+      "difference": 0.010916081000000001
+    },
+    {
+      "group": [
+        "node",
+        "/layers.0/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06574319766666667,
+      "ort_seconds": 0.055094666666666674,
+      "difference": 0.010648530999999996
+    },
+    {
+      "group": [
+        "node",
+        "/layers.0/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.139273995,
+      "ort_seconds": 0.10946,
+      "difference": 0.02981399500000001
+    },
+    {
+      "group": [
+        "node",
+        "/layers.0/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06407430766666666,
+      "ort_seconds": 0.055002666666666665,
+      "difference": 0.009071640999999998
+    },
+    {
+      "group": [
+        "node",
+        "/layers.0/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.065090104,
+      "ort_seconds": 0.05504866666666666,
+      "difference": 0.010041437333333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.1/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06412936833333334,
+      "ort_seconds": 0.05500533333333333,
+      "difference": 0.00912403500000001
+    },
+    {
+      "group": [
+        "node",
+        "/layers.1/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06371291999999999,
+      "ort_seconds": 0.055195,
+      "difference": 0.008517919999999991
+    },
+    {
+      "group": [
+        "node",
+        "/layers.1/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.170030782,
+      "ort_seconds": 0.11017733333333334,
+      "difference": 0.059853448666666656
+    },
+    {
+      "group": [
+        "node",
+        "/layers.1/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06427847933333333,
+      "ort_seconds": 0.055051666666666665,
+      "difference": 0.009226812666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.1/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06443951199999999,
+      "ort_seconds": 0.055028,
+      "difference": 0.00941151199999999
+    },
+    {
+      "group": [
+        "node",
+        "/layers.10/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064254839,
+      "ort_seconds": 0.055417,
+      "difference": 0.008837838999999993
+    },
+    {
+      "group": [
+        "node",
+        "/layers.10/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06462036933333333,
+      "ort_seconds": 0.055702,
+      "difference": 0.008918369333333329
+    },
+    {
+      "group": [
+        "node",
+        "/layers.10/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13039865766666667,
+      "ort_seconds": 0.110005,
+      "difference": 0.020393657666666662
+    },
+    {
+      "group": [
+        "node",
+        "/layers.10/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.065608082,
+      "ort_seconds": 0.05538133333333333,
+      "difference": 0.010226748666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.10/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06400782366666667,
+      "ort_seconds": 0.05552733333333334,
+      "difference": 0.008480490333333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.11/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06448310266666667,
+      "ort_seconds": 0.05539466666666667,
+      "difference": 0.009088435999999998
+    },
+    {
+      "group": [
+        "node",
+        "/layers.11/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06526597966666667,
+      "ort_seconds": 0.055441333333333336,
+      "difference": 0.009824646333333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.11/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13015458433333335,
+      "ort_seconds": 0.109877,
+      "difference": 0.02027758433333335
+    },
+    {
+      "group": [
+        "node",
+        "/layers.11/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06478854099999999,
+      "ort_seconds": 0.05536733333333333,
+      "difference": 0.00942120766666666
+    },
+    {
+      "group": [
+        "node",
+        "/layers.11/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06398984533333334,
+      "ort_seconds": 0.055374,
+      "difference": 0.008615845333333337
+    },
+    {
+      "group": [
+        "node",
+        "/layers.12/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06418367900000001,
+      "ort_seconds": 0.055416,
+      "difference": 0.008767679000000007
+    },
+    {
+      "group": [
+        "node",
+        "/layers.12/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06452916933333333,
+      "ort_seconds": 0.05542233333333333,
+      "difference": 0.009106836
+    },
+    {
+      "group": [
+        "node",
+        "/layers.12/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.12983902133333333,
+      "ort_seconds": 0.109863,
+      "difference": 0.01997602133333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.12/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064906458,
+      "ort_seconds": 0.055368,
+      "difference": 0.009538458
+    },
+    {
+      "group": [
+        "node",
+        "/layers.12/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06446761433333333,
+      "ort_seconds": 0.05533433333333334,
+      "difference": 0.009133280999999986
+    },
+    {
+      "group": [
+        "node",
+        "/layers.13/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06409136966666666,
+      "ort_seconds": 0.05545233333333333,
+      "difference": 0.008639036333333329
+    },
+    {
+      "group": [
+        "node",
+        "/layers.13/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06437495833333333,
+      "ort_seconds": 0.055506,
+      "difference": 0.00886895833333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.13/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13057831033333334,
+      "ort_seconds": 0.110084,
+      "difference": 0.020494310333333335
+    },
+    {
+      "group": [
+        "node",
+        "/layers.13/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.065567033,
+      "ort_seconds": 0.05548433333333333,
+      "difference": 0.010082699666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.13/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06391150766666667,
+      "ort_seconds": 0.05562266666666666,
+      "difference": 0.008288841000000012
+    },
+    {
+      "group": [
+        "node",
+        "/layers.14/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06554727966666667,
+      "ort_seconds": 0.055469,
+      "difference": 0.010078279666666669
+    },
+    {
+      "group": [
+        "node",
+        "/layers.14/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06501392833333333,
+      "ort_seconds": 0.055490333333333336,
+      "difference": 0.009523594999999996
+    },
+    {
+      "group": [
+        "node",
+        "/layers.14/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13407833366666666,
+      "ort_seconds": 0.109898,
+      "difference": 0.024180333666666665
+    },
+    {
+      "group": [
+        "node",
+        "/layers.14/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06570527033333333,
+      "ort_seconds": 0.055518333333333336,
+      "difference": 0.010186936999999993
+    },
+    {
+      "group": [
+        "node",
+        "/layers.14/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06495234666666667,
+      "ort_seconds": 0.055514666666666664,
+      "difference": 0.00943768000000001
+    },
+    {
+      "group": [
+        "node",
+        "/layers.15/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06409848933333333,
+      "ort_seconds": 0.05539866666666667,
+      "difference": 0.008699822666666655
+    },
+    {
+      "group": [
+        "node",
+        "/layers.15/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06436911833333334,
+      "ort_seconds": 0.05541766666666667,
+      "difference": 0.008951451666666665
+    },
+    {
+      "group": [
+        "node",
+        "/layers.15/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13025324800000002,
+      "ort_seconds": 0.10981933333333332,
+      "difference": 0.02043391466666669
+    },
+    {
+      "group": [
+        "node",
+        "/layers.15/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06496685266666667,
+      "ort_seconds": 0.055361,
+      "difference": 0.009605852666666671
+    },
+    {
+      "group": [
+        "node",
+        "/layers.15/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06464114366666666,
+      "ort_seconds": 0.055444,
+      "difference": 0.009197143666666664
+    },
+    {
+      "group": [
+        "node",
+        "/layers.16/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06419416466666666,
+      "ort_seconds": 0.05539,
+      "difference": 0.008804164666666663
+    },
+    {
+      "group": [
+        "node",
+        "/layers.16/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.067546175,
+      "ort_seconds": 0.055490000000000005,
+      "difference": 0.012056174999999995
+    },
+    {
+      "group": [
+        "node",
+        "/layers.16/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13430535366666665,
+      "ort_seconds": 0.10984033333333333,
+      "difference": 0.024465020333333323
+    },
+    {
+      "group": [
+        "node",
+        "/layers.16/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06565567333333333,
+      "ort_seconds": 0.055336666666666666,
+      "difference": 0.010319006666666665
+    },
+    {
+      "group": [
+        "node",
+        "/layers.16/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064117505,
+      "ort_seconds": 0.055373,
+      "difference": 0.008744505000000007
+    },
+    {
+      "group": [
+        "node",
+        "/layers.17/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06495094766666666,
+      "ort_seconds": 0.055362666666666664,
+      "difference": 0.009588280999999997
+    },
+    {
+      "group": [
+        "node",
+        "/layers.17/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06851022899999999,
+      "ort_seconds": 0.05543633333333334,
+      "difference": 0.013073895666666654
+    },
+    {
+      "group": [
+        "node",
+        "/layers.17/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13095308066666667,
+      "ort_seconds": 0.10978133333333334,
+      "difference": 0.021171747333333324
+    },
+    {
+      "group": [
+        "node",
+        "/layers.17/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06545926333333334,
+      "ort_seconds": 0.05539066666666667,
+      "difference": 0.010068596666666665
+    },
+    {
+      "group": [
+        "node",
+        "/layers.17/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06458158233333333,
+      "ort_seconds": 0.055356333333333334,
+      "difference": 0.009225248999999998
+    },
+    {
+      "group": [
+        "node",
+        "/layers.18/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064576925,
+      "ort_seconds": 0.05535166666666667,
+      "difference": 0.009225258333333326
+    },
+    {
+      "group": [
+        "node",
+        "/layers.18/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06558667433333333,
+      "ort_seconds": 0.05542533333333333,
+      "difference": 0.010161340999999997
+    },
+    {
+      "group": [
+        "node",
+        "/layers.18/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.130550595,
+      "ort_seconds": 0.10985066666666667,
+      "difference": 0.020699928333333326
+    },
+    {
+      "group": [
+        "node",
+        "/layers.18/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06532079633333333,
+      "ort_seconds": 0.055377666666666665,
+      "difference": 0.009943129666666668
+    },
+    {
+      "group": [
+        "node",
+        "/layers.18/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064718516,
+      "ort_seconds": 0.05559266666666667,
+      "difference": 0.009125849333333332
+    },
+    {
+      "group": [
+        "node",
+        "/layers.19/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064865432,
+      "ort_seconds": 0.05529233333333333,
+      "difference": 0.009573098666666668
+    },
+    {
+      "group": [
+        "node",
+        "/layers.19/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06482483633333333,
+      "ort_seconds": 0.05545366666666667,
+      "difference": 0.009371169666666658
+    },
+    {
+      "group": [
+        "node",
+        "/layers.19/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13165609666666667,
+      "ort_seconds": 0.10988266666666667,
+      "difference": 0.021773429999999996
+    },
+    {
+      "group": [
+        "node",
+        "/layers.19/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06613599166666667,
+      "ort_seconds": 0.05528533333333333,
+      "difference": 0.01085065833333334
+    },
+    {
+      "group": [
+        "node",
+        "/layers.19/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06477606200000001,
+      "ort_seconds": 0.05532633333333333,
+      "difference": 0.009449728666666678
+    },
+    {
+      "group": [
+        "node",
+        "/layers.2/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.061115332333333335,
+      "ort_seconds": 0.05503266666666667,
+      "difference": 0.006082665666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.2/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.061446084000000005,
+      "ort_seconds": 0.055319,
+      "difference": 0.006127084000000005
+    },
+    {
+      "group": [
+        "node",
+        "/layers.2/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.131710979,
+      "ort_seconds": 0.10952266666666667,
+      "difference": 0.022188312333333335
+    },
+    {
+      "group": [
+        "node",
+        "/layers.2/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06243640566666667,
+      "ort_seconds": 0.05505366666666667,
+      "difference": 0.007382738999999999
+    },
+    {
+      "group": [
+        "node",
+        "/layers.2/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.062065215666666666,
+      "ort_seconds": 0.05506866666666666,
+      "difference": 0.006996549000000005
+    },
+    {
+      "group": [
+        "node",
+        "/layers.20/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064949152,
+      "ort_seconds": 0.05532600000000001,
+      "difference": 0.009623151999999989
+    },
+    {
+      "group": [
+        "node",
+        "/layers.20/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06545576833333333,
+      "ort_seconds": 0.05543466666666667,
+      "difference": 0.010021101666666664
+    },
+    {
+      "group": [
+        "node",
+        "/layers.20/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.130198665,
+      "ort_seconds": 0.10980766666666668,
+      "difference": 0.020390998333333313
+    },
+    {
+      "group": [
+        "node",
+        "/layers.20/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06534899233333334,
+      "ort_seconds": 0.055289,
+      "difference": 0.010059992333333344
+    },
+    {
+      "group": [
+        "node",
+        "/layers.20/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064440864,
+      "ort_seconds": 0.05533433333333334,
+      "difference": 0.009106530666666661
+    },
+    {
+      "group": [
+        "node",
+        "/layers.21/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06468450466666667,
+      "ort_seconds": 0.055306999999999995,
+      "difference": 0.009377504666666675
+    },
+    {
+      "group": [
+        "node",
+        "/layers.21/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06489330133333333,
+      "ort_seconds": 0.055467333333333334,
+      "difference": 0.009425968
+    },
+    {
+      "group": [
+        "node",
+        "/layers.21/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13088071133333332,
+      "ort_seconds": 0.10980366666666667,
+      "difference": 0.02107704466666664
+    },
+    {
+      "group": [
+        "node",
+        "/layers.21/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06536640866666667,
+      "ort_seconds": 0.05528433333333333,
+      "difference": 0.010082075333333336
+    },
+    {
+      "group": [
+        "node",
+        "/layers.21/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064879002,
+      "ort_seconds": 0.055323000000000004,
+      "difference": 0.009556002000000001
+    },
+    {
+      "group": [
+        "node",
+        "/layers.22/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06393010733333333,
+      "ort_seconds": 0.05533266666666667,
+      "difference": 0.008597440666666664
+    },
+    {
+      "group": [
+        "node",
+        "/layers.22/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.065776712,
+      "ort_seconds": 0.05543633333333334,
+      "difference": 0.010340378666666664
+    },
+    {
+      "group": [
+        "node",
+        "/layers.22/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13102805766666667,
+      "ort_seconds": 0.10976799999999999,
+      "difference": 0.02126005766666668
+    },
+    {
+      "group": [
+        "node",
+        "/layers.22/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06571814166666666,
+      "ort_seconds": 0.05531333333333333,
+      "difference": 0.010404808333333328
+    },
+    {
+      "group": [
+        "node",
+        "/layers.22/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06414036933333334,
+      "ort_seconds": 0.055362999999999996,
+      "difference": 0.00877736933333334
+    },
+    {
+      "group": [
+        "node",
+        "/layers.23/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06501565633333332,
+      "ort_seconds": 0.055419666666666666,
+      "difference": 0.009595989666666659
+    },
+    {
+      "group": [
+        "node",
+        "/layers.23/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06588984433333334,
+      "ort_seconds": 0.055489666666666666,
+      "difference": 0.01040017766666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.23/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13171602133333335,
+      "ort_seconds": 0.10985099999999999,
+      "difference": 0.02186502133333336
+    },
+    {
+      "group": [
+        "node",
+        "/layers.23/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06601279533333333,
+      "ort_seconds": 0.05541133333333333,
+      "difference": 0.010601461999999999
+    },
+    {
+      "group": [
+        "node",
+        "/layers.23/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06459463666666666,
+      "ort_seconds": 0.05549266666666666,
+      "difference": 0.009101970000000001
+    },
+    {
+      "group": [
+        "node",
+        "/layers.3/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06206523566666667,
+      "ort_seconds": 0.05517366666666667,
+      "difference": 0.006891569
+    },
+    {
+      "group": [
+        "node",
+        "/layers.3/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.062050974333333335,
+      "ort_seconds": 0.05533166666666667,
+      "difference": 0.006719307666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.3/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13282565033333335,
+      "ort_seconds": 0.109817,
+      "difference": 0.023008650333333353
+    },
+    {
+      "group": [
+        "node",
+        "/layers.3/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.062432238,
+      "ort_seconds": 0.055065333333333334,
+      "difference": 0.007366904666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.3/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06100472066666667,
+      "ort_seconds": 0.05539966666666666,
+      "difference": 0.005605054000000012
+    },
+    {
+      "group": [
+        "node",
+        "/layers.4/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.062066846,
+      "ort_seconds": 0.055177000000000004,
+      "difference": 0.006889845999999998
+    },
+    {
+      "group": [
+        "node",
+        "/layers.4/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06291259666666667,
+      "ort_seconds": 0.055244999999999995,
+      "difference": 0.007667596666666672
+    },
+    {
+      "group": [
+        "node",
+        "/layers.4/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13114203266666666,
+      "ort_seconds": 0.10966933333333334,
+      "difference": 0.021472699333333317
+    },
+    {
+      "group": [
+        "node",
+        "/layers.4/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.061427034,
+      "ort_seconds": 0.05516566666666667,
+      "difference": 0.00626136733333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.4/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06203866266666667,
+      "ort_seconds": 0.05517766666666667,
+      "difference": 0.006860995999999994
+    },
+    {
+      "group": [
+        "node",
+        "/layers.5/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.061003463,
+      "ort_seconds": 0.055294333333333334,
+      "difference": 0.005709129666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.5/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06511642433333333,
+      "ort_seconds": 0.055384333333333334,
+      "difference": 0.009732090999999991
+    },
+    {
+      "group": [
+        "node",
+        "/layers.5/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.130192783,
+      "ort_seconds": 0.109808,
+      "difference": 0.020384783000000004
+    },
+    {
+      "group": [
+        "node",
+        "/layers.5/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.062354041666666665,
+      "ort_seconds": 0.055289,
+      "difference": 0.007065041666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.5/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.061997572333333334,
+      "ort_seconds": 0.055344000000000004,
+      "difference": 0.00665357233333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.6/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064292005,
+      "ort_seconds": 0.055273666666666665,
+      "difference": 0.009018338333333334
+    },
+    {
+      "group": [
+        "node",
+        "/layers.6/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06429781966666666,
+      "ort_seconds": 0.05534166666666667,
+      "difference": 0.008956152999999988
+    },
+    {
+      "group": [
+        "node",
+        "/layers.6/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.129666176,
+      "ort_seconds": 0.10974833333333334,
+      "difference": 0.019917842666666657
+    },
+    {
+      "group": [
+        "node",
+        "/layers.6/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06496564833333333,
+      "ort_seconds": 0.055227,
+      "difference": 0.009738648333333336
+    },
+    {
+      "group": [
+        "node",
+        "/layers.6/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06425766866666667,
+      "ort_seconds": 0.05525433333333333,
+      "difference": 0.009003335333333341
+    },
+    {
+      "group": [
+        "node",
+        "/layers.7/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06395192866666667,
+      "ort_seconds": 0.055274333333333335,
+      "difference": 0.008677595333333336
+    },
+    {
+      "group": [
+        "node",
+        "/layers.7/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064656265,
+      "ort_seconds": 0.055398333333333334,
+      "difference": 0.00925793166666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.7/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.13018302833333334,
+      "ort_seconds": 0.10980333333333332,
+      "difference": 0.020379695000000017
+    },
+    {
+      "group": [
+        "node",
+        "/layers.7/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06547958333333333,
+      "ort_seconds": 0.055272999999999996,
+      "difference": 0.010206583333333331
+    },
+    {
+      "group": [
+        "node",
+        "/layers.7/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06410601333333334,
+      "ort_seconds": 0.05530433333333334,
+      "difference": 0.00880168
+    },
+    {
+      "group": [
+        "node",
+        "/layers.8/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06447705599999999,
+      "ort_seconds": 0.05548266666666667,
+      "difference": 0.008994389333333318
+    },
+    {
+      "group": [
+        "node",
+        "/layers.8/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06511094633333334,
+      "ort_seconds": 0.055531,
+      "difference": 0.009579946333333339
+    },
+    {
+      "group": [
+        "node",
+        "/layers.8/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.12955493866666667,
+      "ort_seconds": 0.10995733333333334,
+      "difference": 0.019597605333333337
+    },
+    {
+      "group": [
+        "node",
+        "/layers.8/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06500058933333333,
+      "ort_seconds": 0.055371333333333335,
+      "difference": 0.009629255999999996
+    },
+    {
+      "group": [
+        "node",
+        "/layers.8/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.064050324,
+      "ort_seconds": 0.055336666666666666,
+      "difference": 0.00871365733333334
+    },
+    {
+      "group": [
+        "node",
+        "/layers.9/self_attn/linear_k/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06400576666666667,
+      "ort_seconds": 0.055453,
+      "difference": 0.00855276666666667
+    },
+    {
+      "group": [
+        "node",
+        "/layers.9/self_attn/linear_out/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06439102166666667,
+      "ort_seconds": 0.055555,
+      "difference": 0.008836021666666673
+    },
+    {
+      "group": [
+        "node",
+        "/layers.9/self_attn/linear_pos/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.12985643933333332,
+      "ort_seconds": 0.10981099999999999,
+      "difference": 0.02004543933333333
+    },
+    {
+      "group": [
+        "node",
+        "/layers.9/self_attn/linear_q/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06492348933333333,
+      "ort_seconds": 0.055366,
+      "difference": 0.009557489333333336
+    },
+    {
+      "group": [
+        "node",
+        "/layers.9/self_attn/linear_v/MatMul"
+      ],
+      "measurements": 60,
+      "nodes": 1,
+      "managed_seconds": 0.06430975233333333,
+      "ort_seconds": 0.055397,
+      "difference": 0.00891275233333333
+    },
+    {
+      "group": [
+        "route",
+        "mapped-allowed"
+      ],
+      "measurements": 957,
+      "nodes": 28,
+      "managed_seconds": 1.0243085913333332,
+      "ort_seconds": 0.9538133333333333,
+      "difference": 0.0704952579999999
+    },
+    {
+      "group": [
+        "route",
+        "mapped-declined"
+      ],
+      "measurements": 723,
+      "nodes": 28,
+      "managed_seconds": 1.126545907,
+      "ort_seconds": 0.8634666666666666,
+      "difference": 0.2630792403333333
+    },
+    {
+      "group": [
+        "route",
+        "unmapped"
+      ],
+      "measurements": 5520,
+      "nodes": 92,
+      "managed_seconds": 7.2226982353333335,
+      "ort_seconds": 6.1315729999999995,
+      "difference": 1.091125235333334
+    },
+    {
+      "group": [
+        "rows-route",
+        101,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.014702435666666666,
+      "ort_seconds": 0.010402666666666666,
+      "difference": 0.004299769
+    },
+    {
+      "group": [
+        "rows-route",
+        101,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.055003891666666666,
+      "ort_seconds": 0.039788,
+      "difference": 0.015215891666666669
+    },
+    {
+      "group": [
+        "rows-route",
+        102,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.051755585666666666,
+      "ort_seconds": 0.04823233333333333,
+      "difference": 0.0035232523333333376
+    },
+    {
+      "group": [
+        "rows-route",
+        102,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.17240992866666668,
+      "ort_seconds": 0.15421233333333334,
+      "difference": 0.018197595333333344
+    },
+    {
+      "group": [
+        "rows-route",
+        106,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.05972761166666667,
+      "ort_seconds": 0.05009333333333333,
+      "difference": 0.009634278333333343
+    },
+    {
+      "group": [
+        "rows-route",
+        106,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.20471902433333333,
+      "ort_seconds": 0.159791,
+      "difference": 0.044928024333333344
+    },
+    {
+      "group": [
+        "rows-route",
+        112,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.05862531166666667,
+      "ort_seconds": 0.05316866666666667,
+      "difference": 0.005456645000000003
+    },
+    {
+      "group": [
+        "rows-route",
+        112,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.21193570566666667,
+      "ort_seconds": 0.169369,
+      "difference": 0.04256670566666668
+    },
+    {
+      "group": [
+        "rows-route",
+        114,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.05729257133333333,
+      "ort_seconds": 0.053915333333333336,
+      "difference": 0.0033772379999999907
+    },
+    {
+      "group": [
+        "rows-route",
+        114,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.18840496433333334,
+      "ort_seconds": 0.17195400000000002,
+      "difference": 0.016450964333333318
+    },
+    {
+      "group": [
+        "rows-route",
+        120,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.061182927,
+      "ort_seconds": 0.056892,
+      "difference": 0.004290927
+    },
+    {
+      "group": [
+        "rows-route",
+        120,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.19758271400000002,
+      "ort_seconds": 0.18165299999999998,
+      "difference": 0.01592971400000004
+    },
+    {
+      "group": [
+        "rows-route",
+        121,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.016779844,
+      "ort_seconds": 0.012584999999999999,
+      "difference": 0.004194844
+    },
+    {
+      "group": [
+        "rows-route",
+        121,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.063905475,
+      "ort_seconds": 0.04809966666666667,
+      "difference": 0.01580580833333333
+    },
+    {
+      "group": [
+        "rows-route",
+        151,
+        "mapped-declined"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.08906802866666667,
+      "ort_seconds": 0.071662,
+      "difference": 0.01740602866666667
+    },
+    {
+      "group": [
+        "rows-route",
+        151,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.289669681,
+      "ort_seconds": 0.22837866666666665,
+      "difference": 0.061291014333333366
+    },
+    {
+      "group": [
+        "rows-route",
+        156,
+        "mapped-allowed"
+      ],
+      "measurements": 138,
+      "nodes": 23,
+      "managed_seconds": 0.15642524533333332,
+      "ort_seconds": 0.14752733333333332,
+      "difference": 0.008897912000000008
+    },
+    {
+      "group": [
+        "rows-route",
+        156,
+        "unmapped"
+      ],
+      "measurements": 438,
+      "nodes": 73,
+      "managed_seconds": 0.4921515576666667,
+      "ort_seconds": 0.4704486666666667,
+      "difference": 0.021702891000000002
+    },
+    {
+      "group": [
+        "rows-route",
+        157,
+        "mapped-declined"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.092337169,
+      "ort_seconds": 0.07484266666666667,
+      "difference": 0.01749450233333333
+    },
+    {
+      "group": [
+        "rows-route",
+        157,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.29298383133333333,
+      "ort_seconds": 0.238143,
+      "difference": 0.05484083133333334
+    },
+    {
+      "group": [
+        "rows-route",
+        158,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.07865282366666666,
+      "ort_seconds": 0.07474333333333334,
+      "difference": 0.003909490333333321
+    },
+    {
+      "group": [
+        "rows-route",
+        158,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.28670469033333335,
+      "ort_seconds": 0.23869866666666664,
+      "difference": 0.0480060236666667
+    },
+    {
+      "group": [
+        "rows-route",
+        165,
+        "mapped-allowed"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.021121891,
+      "ort_seconds": 0.016945333333333333,
+      "difference": 0.004176557666666667
+    },
+    {
+      "group": [
+        "rows-route",
+        165,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.070583337,
+      "ort_seconds": 0.06479800000000001,
+      "difference": 0.005785336999999988
+    },
+    {
+      "group": [
+        "rows-route",
+        167,
+        "mapped-declined"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.09658478733333332,
+      "ort_seconds": 0.07877433333333334,
+      "difference": 0.01781045399999999
+    },
+    {
+      "group": [
+        "rows-route",
+        167,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.3083723126666667,
+      "ort_seconds": 0.2503633333333333,
+      "difference": 0.05800897933333338
+    },
+    {
+      "group": [
+        "rows-route",
+        169,
+        "mapped-declined"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.09800084033333334,
+      "ort_seconds": 0.08026533333333334,
+      "difference": 0.017735506999999998
+    },
+    {
+      "group": [
+        "rows-route",
+        169,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.30956641133333335,
+      "ort_seconds": 0.25588133333333335,
+      "difference": 0.053685078
+    },
+    {
+      "group": [
+        "rows-route",
+        175,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.023822509000000002,
+      "ort_seconds": 0.018087000000000002,
+      "difference": 0.005735509
+    },
+    {
+      "group": [
+        "rows-route",
+        175,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.08764732966666666,
+      "ort_seconds": 0.069003,
+      "difference": 0.018644329666666667
+    },
+    {
+      "group": [
+        "rows-route",
+        177,
+        "mapped-allowed"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.020009354333333333,
+      "ort_seconds": 0.018854,
+      "difference": 0.001155354333333334
+    },
+    {
+      "group": [
+        "rows-route",
+        177,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.07486615966666667,
+      "ort_seconds": 0.06923266666666666,
+      "difference": 0.005633493000000003
+    },
+    {
+      "group": [
+        "rows-route",
+        190,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.094757457,
+      "ort_seconds": 0.08934333333333333,
+      "difference": 0.005414123666666673
+    },
+    {
+      "group": [
+        "rows-route",
+        190,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.33667016566666663,
+      "ort_seconds": 0.28463299999999997,
+      "difference": 0.05203716566666666
+    },
+    {
+      "group": [
+        "rows-route",
+        203,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.02679284,
+      "ort_seconds": 0.020788666666666667,
+      "difference": 0.006004173333333331
+    },
+    {
+      "group": [
+        "rows-route",
+        203,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.10105470966666667,
+      "ort_seconds": 0.07915933333333333,
+      "difference": 0.02189537633333334
+    },
+    {
+      "group": [
+        "rows-route",
+        211,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.030622907333333334,
+      "ort_seconds": 0.021754333333333334,
+      "difference": 0.008868574
+    },
+    {
+      "group": [
+        "rows-route",
+        211,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.102290716,
+      "ort_seconds": 0.08305900000000001,
+      "difference": 0.019231715999999996
+    },
+    {
+      "group": [
+        "rows-route",
+        222,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.10943307233333333,
+      "ort_seconds": 0.10521599999999999,
+      "difference": 0.004217072333333335
+    },
+    {
+      "group": [
+        "rows-route",
+        222,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.3403713646666667,
+      "ort_seconds": 0.3337053333333333,
+      "difference": 0.006666031333333378
+    },
+    {
+      "group": [
+        "rows-route",
+        223,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.063828438,
+      "ort_seconds": 0.023032999999999998,
+      "difference": 0.040795438
+    },
+    {
+      "group": [
+        "rows-route",
+        223,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.106770036,
+      "ort_seconds": 0.08769766666666667,
+      "difference": 0.019072369333333325
+    },
+    {
+      "group": [
+        "rows-route",
+        225,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.111242746,
+      "ort_seconds": 0.10597566666666668,
+      "difference": 0.005267079333333327
+    },
+    {
+      "group": [
+        "rows-route",
+        225,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.34135196733333334,
+      "ort_seconds": 0.3379186666666667,
+      "difference": 0.003433300666666639
+    },
+    {
+      "group": [
+        "rows-route",
+        227,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.028078670666666666,
+      "ort_seconds": 0.02325366666666667,
+      "difference": 0.004825003999999997
+    },
+    {
+      "group": [
+        "rows-route",
+        227,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.106232543,
+      "ort_seconds": 0.08851633333333332,
+      "difference": 0.017716209666666677
+    },
+    {
+      "group": [
+        "rows-route",
+        239,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.031881306,
+      "ort_seconds": 0.024504333333333333,
+      "difference": 0.007376972666666665
+    },
+    {
+      "group": [
+        "rows-route",
+        239,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.11895297366666667,
+      "ort_seconds": 0.093324,
+      "difference": 0.025628973666666666
+    },
+    {
+      "group": [
+        "rows-route",
+        301,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.039141275999999996,
+      "ort_seconds": 0.030963333333333332,
+      "difference": 0.008177942666666663
+    },
+    {
+      "group": [
+        "rows-route",
+        301,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.150171118,
+      "ort_seconds": 0.117981,
+      "difference": 0.03219011799999999
+    },
+    {
+      "group": [
+        "rows-route",
+        311,
+        "mapped-declined"
+      ],
+      "measurements": 30,
+      "nodes": 5,
+      "managed_seconds": 0.079079386,
+      "ort_seconds": 0.06364666666666667,
+      "difference": 0.01543271933333333
+    },
+    {
+      "group": [
+        "rows-route",
+        311,
+        "unmapped"
+      ],
+      "measurements": 114,
+      "nodes": 19,
+      "managed_seconds": 0.289277026,
+      "ort_seconds": 0.2423856666666667,
+      "difference": 0.0468913593333333
+    },
+    {
+      "group": [
+        "rows-route",
+        313,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.04060172866666666,
+      "ort_seconds": 0.032417,
+      "difference": 0.008184728666666662
+    },
+    {
+      "group": [
+        "rows-route",
+        313,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.15165953966666668,
+      "ort_seconds": 0.12270733333333333,
+      "difference": 0.02895220633333334
+    },
+    {
+      "group": [
+        "rows-route",
+        315,
+        "mapped-allowed"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.03591550033333333,
+      "ort_seconds": 0.032280666666666666,
+      "difference": 0.0036348336666666634
+    },
+    {
+      "group": [
+        "rows-route",
+        315,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.12573407666666667,
+      "ort_seconds": 0.12308566666666666,
+      "difference": 0.002648410000000004
+    },
+    {
+      "group": [
+        "rows-route",
+        333,
+        "mapped-allowed"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.03690228533333333,
+      "ort_seconds": 0.03409466666666667,
+      "difference": 0.002807618666666664
+    },
+    {
+      "group": [
+        "rows-route",
+        333,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.13246162266666667,
+      "ort_seconds": 0.12996233333333332,
+      "difference": 0.002499289333333349
+    },
+    {
+      "group": [
+        "rows-route",
+        337,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.04226812333333333,
+      "ort_seconds": 0.03466266666666667,
+      "difference": 0.007605456666666663
+    },
+    {
+      "group": [
+        "rows-route",
+        337,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.15775252166666667,
+      "ort_seconds": 0.13205666666666668,
+      "difference": 0.02569585499999999
+    },
+    {
+      "group": [
+        "rows-route",
+        379,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.046765527,
+      "ort_seconds": 0.03893233333333333,
+      "difference": 0.007833193666666668
+    },
+    {
+      "group": [
+        "rows-route",
+        379,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.17581714066666665,
+      "ort_seconds": 0.148316,
+      "difference": 0.027501140666666646
+    },
+    {
+      "group": [
+        "rows-route",
+        443,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.05220465766666666,
+      "ort_seconds": 0.04542033333333333,
+      "difference": 0.0067843243333333275
+    },
+    {
+      "group": [
+        "rows-route",
+        443,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.20576069566666666,
+      "ort_seconds": 0.17278366666666667,
+      "difference": 0.03297702899999999
+    },
+    {
+      "group": [
+        "rows-route",
+        449,
+        "mapped-declined"
+      ],
+      "measurements": 15,
+      "nodes": 5,
+      "managed_seconds": 0.05446475866666667,
+      "ort_seconds": 0.04602066666666666,
+      "difference": 0.008444092000000007
+    },
+    {
+      "group": [
+        "rows-route",
+        449,
+        "unmapped"
+      ],
+      "measurements": 57,
+      "nodes": 19,
+      "managed_seconds": 0.21010318966666666,
+      "ort_seconds": 0.17530366666666666,
+      "difference": 0.034799523
+    },
+    {
+      "group": [
+        "rows-route",
+        51,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.027028133,
+      "ort_seconds": 0.024630333333333334,
+      "difference": 0.0023977996666666654
+    },
+    {
+      "group": [
+        "rows-route",
+        51,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.10298036433333334,
+      "ort_seconds": 0.07912066666666666,
+      "difference": 0.02385969766666668
+    },
+    {
+      "group": [
+        "rows-route",
+        61,
+        "mapped-declined"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.042915442,
+      "ort_seconds": 0.029952333333333334,
+      "difference": 0.012963108666666664
+    },
+    {
+      "group": [
+        "rows-route",
+        61,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.13486204733333332,
+      "ort_seconds": 0.09561966666666666,
+      "difference": 0.03924238066666666
+    },
+    {
+      "group": [
+        "rows-route",
+        83,
+        "mapped-declined"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.05954909566666666,
+      "ort_seconds": 0.039196,
+      "difference": 0.02035309566666666
+    },
+    {
+      "group": [
+        "rows-route",
+        83,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.17133382433333333,
+      "ort_seconds": 0.12539066666666668,
+      "difference": 0.04594315766666665
+    },
+    {
+      "group": [
+        "rows-route",
+        88,
+        "mapped-allowed"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.04423607566666667,
+      "ort_seconds": 0.041901,
+      "difference": 0.002335075666666672
+    },
+    {
+      "group": [
+        "rows-route",
+        88,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.17373846766666667,
+      "ort_seconds": 0.13396,
+      "difference": 0.03977846766666668
+    },
+    {
+      "group": [
+        "rows-route",
+        89,
+        "mapped-declined"
+      ],
+      "measurements": 69,
+      "nodes": 23,
+      "managed_seconds": 0.057056136,
+      "ort_seconds": 0.04230233333333333,
+      "difference": 0.01475380266666667
+    },
+    {
+      "group": [
+        "rows-route",
+        89,
+        "unmapped"
+      ],
+      "measurements": 219,
+      "nodes": 73,
+      "managed_seconds": 0.18084511066666667,
+      "ort_seconds": 0.13507233333333332,
+      "difference": 0.04577277733333335
+    },
+    {
+      "group": [
+        "total"
+      ],
+      "measurements": 7200,
+      "nodes": 120,
+      "managed_seconds": 9.373552733666667,
+      "ort_seconds": 7.948853,
+      "difference": 1.4246997336666674
+    }
+  ],
+  "reviewer": {
+    "binding.py": {
+      "bytes": 10218,
+      "sha256": "d80d9fe8e60ae1aaa2c85761f1d9c37cb1665d365c0136fcfa2f983413f855ff"
+    },
+    "review.py": {
+      "bytes": 10860,
+      "sha256": "ffee6a4b0c58489428addb45605f37497efe7a069e51364696922b5884c08b58"
+    },
+    "test_review.py": {
+      "bytes": 1759,
+      "sha256": "b73b8b67e0c588809768e3a534d20c2d39130d85f9e38dfc64b2635d1efcbdc0"
+    }
+  }
+}
