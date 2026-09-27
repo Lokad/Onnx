@@ -1,0 +1,327 @@
+{
+  "passed": true,
+  "root_product_changed": false,
+  "performance_measured": false,
+  "products": {
+    "current": {
+      "bytes": 826368,
+      "sha256": "65f15a41764660af6166c9a965943b6f28cac0c9505117d0fd4beaa2687f9d03"
+    },
+    "candidate": {
+      "bytes": 827392,
+      "sha256": "af19b3b4429a07f7966b5e35ee04e8a31316f45991c300f3683a591caf5e9374"
+    }
+  },
+  "consumer": {
+    "bytes": 29696,
+    "sha256": "8a8b201130eed3e09169ceec257a52647c6254b8c4fe4a6cdb90de19c6c21e14"
+  },
+  "compiled": {
+    "passed": true,
+    "assemblies": [
+      {
+        "assembly": "Lokad.Onnx.dll",
+        "unchanged": 3281,
+        "changed": [
+          "Lokad.Onnx.Tensor`1[T]::ResolvePackedKernel::Lokad.Onnx.DenseTensor`1[System.Single] ResolvePackedKernel(Lokad.Onnx.TensorExecutionOptions, Lokad.Onnx.Tensor`1[System.Single], Int32)",
+          "Lokad.Onnx.Tensor`1[T]::RunPreparedPackedRows::Void RunPreparedPackedRows(Int32, Int32, Int32, Single*, Single*, Single*)"
+        ],
+        "added": [
+          "Lokad.Onnx.PreparedSingleRowKernel::Multiply::Void Multiply(Int32, Int32, Single*, Single*, Single*)"
+        ]
+      },
+      {
+        "assembly": "Lokad.Onnx.Data.dll",
+        "unchanged": 697,
+        "changed": [],
+        "added": []
+      }
+    ],
+    "public_surface_equal": true,
+    "flags_equal": true,
+    "assembly_metadata_equal": true
+  },
+  "public_cases": 270,
+  "raw_cases": 162,
+  "public_output_values": 4970718,
+  "raw_output_values": 218060,
+  "modes": [
+    {
+      "mode": "normal",
+      "role": "current",
+      "public_cases": 45,
+      "public_output_values": 828453,
+      "raw_cases": 0,
+      "raw_output_values": 0,
+      "every_output_exact": true,
+      "kernel_allocated_bytes": 0,
+      "captured_projection": {
+        "name": "captured-projection",
+        "shape": [
+          1,
+          1,
+          1,
+          8198
+        ],
+        "checked_values": 8198,
+        "exact": true,
+        "output_sha256": "1316909afa749d822a2952cd9caee93aee14427351aa9750c021d8c36034221c",
+        "copies": 0,
+        "scratches": 0,
+        "allocated": 35416,
+        "owned_outputs": true,
+        "immutable_inputs": true
+      }
+    },
+    {
+      "mode": "normal",
+      "role": "candidate",
+      "public_cases": 45,
+      "public_output_values": 828453,
+      "raw_cases": 81,
+      "raw_output_values": 109030,
+      "every_output_exact": true,
+      "kernel_allocated_bytes": 0,
+      "captured_projection": {
+        "name": "captured-projection",
+        "shape": [
+          1,
+          1,
+          1,
+          8198
+        ],
+        "checked_values": 8198,
+        "exact": true,
+        "output_sha256": "1316909afa749d822a2952cd9caee93aee14427351aa9750c021d8c36034221c",
+        "copies": 0,
+        "scratches": 0,
+        "allocated": 35520,
+        "owned_outputs": true,
+        "immutable_inputs": true
+      }
+    },
+    {
+      "mode": "noavx512",
+      "role": "current",
+      "public_cases": 45,
+      "public_output_values": 828453,
+      "raw_cases": 0,
+      "raw_output_values": 0,
+      "every_output_exact": true,
+      "kernel_allocated_bytes": 0,
+      "captured_projection": {
+        "name": "captured-projection",
+        "shape": [
+          1,
+          1,
+          1,
+          8198
+        ],
+        "checked_values": 8198,
+        "exact": true,
+        "output_sha256": "1316909afa749d822a2952cd9caee93aee14427351aa9750c021d8c36034221c",
+        "copies": 0,
+        "scratches": 0,
+        "allocated": 35416,
+        "owned_outputs": true,
+        "immutable_inputs": true
+      }
+    },
+    {
+      "mode": "noavx512",
+      "role": "candidate",
+      "public_cases": 45,
+      "public_output_values": 828453,
+      "raw_cases": 81,
+      "raw_output_values": 109030,
+      "every_output_exact": true,
+      "kernel_allocated_bytes": 0,
+      "captured_projection": {
+        "name": "captured-projection",
+        "shape": [
+          1,
+          1,
+          1,
+          8198
+        ],
+        "checked_values": 8198,
+        "exact": true,
+        "output_sha256": "1316909afa749d822a2952cd9caee93aee14427351aa9750c021d8c36034221c",
+        "copies": 0,
+        "scratches": 0,
+        "allocated": 35520,
+        "owned_outputs": true,
+        "immutable_inputs": true
+      }
+    },
+    {
+      "mode": "scalar",
+      "role": "current",
+      "public_cases": 45,
+      "public_output_values": 828453,
+      "raw_cases": 0,
+      "raw_output_values": 0,
+      "every_output_exact": true,
+      "kernel_allocated_bytes": 0,
+      "captured_projection": {
+        "name": "captured-projection",
+        "shape": [
+          1,
+          1,
+          1,
+          8198
+        ],
+        "checked_values": 8198,
+        "exact": true,
+        "output_sha256": "cd11236fd00d3df3207ec476676c043cfc54a91c8fdd227e789b7e5d26d30202",
+        "copies": 0,
+        "scratches": 0,
+        "allocated": 35416,
+        "owned_outputs": true,
+        "immutable_inputs": true
+      }
+    },
+    {
+      "mode": "scalar",
+      "role": "candidate",
+      "public_cases": 45,
+      "public_output_values": 828453,
+      "raw_cases": 0,
+      "raw_output_values": 0,
+      "every_output_exact": true,
+      "kernel_allocated_bytes": 0,
+      "captured_projection": {
+        "name": "captured-projection",
+        "shape": [
+          1,
+          1,
+          1,
+          8198
+        ],
+        "checked_values": 8198,
+        "exact": true,
+        "output_sha256": "cd11236fd00d3df3207ec476676c043cfc54a91c8fdd227e789b7e5d26d30202",
+        "copies": 0,
+        "scratches": 0,
+        "allocated": 35416,
+        "owned_outputs": true,
+        "immutable_inputs": true
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-amd-20260927",
+      "name": "sdk-version",
+      "code": 0,
+      "resource_observations": 1,
+      "peak_observed_owned_rss": 9396224
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-amd-20260927",
+      "name": "core-restore",
+      "code": 0,
+      "resource_observations": 5,
+      "peak_observed_owned_rss": 170893312
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-amd-20260927",
+      "name": "core-build",
+      "code": 0,
+      "resource_observations": 35,
+      "peak_observed_owned_rss": 507699200
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-amd-20260927",
+      "name": "contracts-restore",
+      "code": 0,
+      "resource_observations": 3,
+      "peak_observed_owned_rss": 127250432
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-amd-20260927",
+      "name": "contracts-build",
+      "code": 0,
+      "resource_observations": 13,
+      "peak_observed_owned_rss": 303583232
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-amd-20260927",
+      "name": "inventory",
+      "code": 1,
+      "resource_observations": 5,
+      "peak_observed_owned_rss": 37814272
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v2-amd-20260927",
+      "name": "inventory",
+      "code": 0,
+      "resource_observations": 5,
+      "peak_observed_owned_rss": 204648448
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v2-amd-20260927",
+      "name": "current-normal",
+      "code": 0,
+      "resource_observations": 2,
+      "peak_observed_owned_rss": 68395008
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v2-amd-20260927",
+      "name": "candidate-normal",
+      "code": 0,
+      "resource_observations": 3,
+      "peak_observed_owned_rss": 339070976
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v2-amd-20260927",
+      "name": "current-noavx512",
+      "code": 1,
+      "resource_observations": 5,
+      "peak_observed_owned_rss": 39469056
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v3-amd-20260927",
+      "name": "current-noavx512",
+      "code": 0,
+      "resource_observations": 2,
+      "peak_observed_owned_rss": 66891776
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v3-amd-20260927",
+      "name": "candidate-noavx512",
+      "code": 0,
+      "resource_observations": 3,
+      "peak_observed_owned_rss": 339079168
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v3-amd-20260927",
+      "name": "current-scalar",
+      "code": 0,
+      "resource_observations": 4,
+      "peak_observed_owned_rss": 265347072
+    },
+    {
+      "campaign": "parakeet-decoder-packed-row-contracts-v3-amd-20260927",
+      "name": "candidate-scalar",
+      "code": 0,
+      "resource_observations": 4,
+      "peak_observed_owned_rss": 265101312
+    }
+  ],
+  "prerequisites": {
+    "parakeet-decoder-packed-row-contracts-v3-amd-20260927": {
+      "bytes": 143771,
+      "sha256": "fc00688c8ef0e65e5d5109f1808209add023e740aabc5b4312647e547df7d61d"
+    },
+    "parakeet-decoder-packed-row-contracts-amd-20260927": {
+      "bytes": 238812,
+      "sha256": "6225233c00528cde3170a535ac973ddc7382c3af5086b370d90ff860d023d24d"
+    },
+    "parakeet-decoder-packed-row-contracts-v2-amd-20260927": {
+      "bytes": 288418,
+      "sha256": "2c74d4aede20993b14a988c8a04399f238954f0c6455c78395e1cb1cda581478"
+    }
+  },
+  "limitations": "Operator arithmetic and memory contracts only. Public allocation figures are the recorded correctness calls, not steady-state averages. Full-model and application qualification and performance measurements remain pending."
+}
