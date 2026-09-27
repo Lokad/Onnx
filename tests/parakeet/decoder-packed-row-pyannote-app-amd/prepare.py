@@ -19,7 +19,7 @@ BASE=ROOT/'artifacts/parakeet-decoder-packed-row-pyannote-app-amd-20260927'
 OLD=ROOT/'artifacts/parakeet-observed-dense-where-pyannote-app-amd-20260924'
 APP_PAYLOAD=OLD/'collected'
 GRAPHS=ROOT/'artifacts/parakeet-decoder-packed-row-graphs-amd-20260927'
-GRAPH_DIGEST='PENDING_GRAPH_CLOSURE'
+GRAPH_DIGEST='485769614ee3f0d5becc50ca107a07893e61eb495f162d3301614e53bbe09108'
 PRIOR=dict(models=ROOT/'artifacts/parakeet-decoder-packed-row-pyannote-amd-20260927',
     parakeet=ROOT/'artifacts/parakeet-decoder-packed-row-models-amd-20260927',
     shared=ROOT/'artifacts/parakeet-decoder-packed-row-shared-amd-20260927',

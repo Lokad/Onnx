@@ -3,9 +3,10 @@
 Compare current Core `65f15a41`, candidate `af19b3b4`, both with unchanged Data
 `da72ca54`, against fresh ORT. Require the exact pair's admitted Parakeet
 application, complete Parakeet/shared/Pyannote correctness and all eight fresh
-graph cases. `GRAPH_DIGEST` deliberately prevents preparation until the active
-graph campaign closes with every original gate passed. Bind that actual closure
-before freezing these tools; no artifact or VM namespace is prepared yet.
+graph cases. `GRAPH_DIGEST` binds the admitted closure `48576961`: all 72 workers,
+24 repeatability controls and eight regression gates pass, with exact managed
+outputs and fresh ORT conformance. Freeze these tools before preparation;
+no artifact or VM namespace is prepared yet.
 
 Reuse AudioBenchmark `7eca033a` and NaturalMeetings `79e3e799`, already qualified
 with the rational-sigmoid release. The closed 3,980-method compatibility review
