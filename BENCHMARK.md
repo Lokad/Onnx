@@ -5,12 +5,12 @@ are seconds; Lokad / ORT is the latency ratio, so 1.100 means 10.0% more time.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT | Status |
 |---|---|---:|---:|---:|---|
-| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 48.809282 | 39.215963 | **1.245** | Qualified |
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 9.965163 | 8.945839 | **1.114** | Qualified |
-| multilingual-e5-small | One 30-token forward pass | 0.015966 | 0.015503 | **1.030** | Qualified |
-| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.111629 | 0.101560 | **1.099** | Qualified |
-| ResNet50 | One 224x224 image, feature export | 0.100608 | 0.072880 | **1.380** | Qualified |
-| GPT-2 | Four-token prefill, empty past state | 0.034021 | 0.019916 | **1.708** | Qualified |
+| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 47.416186 | 39.273619 | **1.207** | Qualified |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 9.988436 | 8.955742 | **1.115** | Qualified |
+| multilingual-e5-small | One 30-token forward pass | 0.015988 | 0.015538 | **1.029** | Qualified |
+| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.113185 | 0.101787 | **1.112** | Qualified |
+| ResNet50 | One 224x224 image, feature export | 0.100790 | 0.072763 | **1.385** | Qualified |
+| GPT-2 | Four-token prefill, empty past state | 0.033936 | 0.020035 | **1.694** | Qualified |
 | DINOv2-small | 224x224 image | — | — | — | Excluded: numerical agreement gate |
 | Whisper Large V3 Turbo | Speech transcription | — | — | — | Supported; current-release comparison deferred |
 
@@ -20,12 +20,12 @@ Each row is a matched comparison for that workload. Audio rows measure complete
 applications; embedding, vision and GPT-2 rows measure prepared graph calls.
 The workloads differ, so their absolute times should not be compared to each other.
 
-The selected product is source `e54c56ed`, measured as Core `946ddfb6`
-and Data `dbe95936`. Its [root and package qualification](tests/parakeet/rational-sigmoid-results/root-20260927.md)
-verifies that the normal build (Core `65f15a41`, Data `da72ca54`) preserves all
-3,283 Core and 697 Data method bodies, implementation flags, public declarations
+The selected product is source `a77e6f72`, measured as Core `af19b3b4`
+and Data `da72ca54`. Its [root and package qualification](tests/parakeet/decoder-packed-row-results/root-20260927.md)
+verifies that the normal build (Core `0d224bcf`, Data `a3745392`) preserves all
+3,284 Core and 697 Data method bodies, implementation flags, public declarations
 and assembly attributes. Both full test suites pass in normal and AVX512-disabled
-modes, and independent NuGet consumption passes. Ordinary mode passes 3,560 backend
+modes, and independent NuGet consumption passes. Ordinary mode passes 3,564 backend
 and 394 tensor tests; the report records the exact hardware-dependent skips.
 
 ## What is timed
@@ -53,13 +53,13 @@ disabled. Every clock is retained and no measurements are trimmed.
 
 ## Evidence and coverage
 
-- [Parakeet comparison, all twenty clips and complete clocks](tests/parakeet/rational-sigmoid-results/application-20260927.md):
+- [Parakeet comparison, all twenty clips and complete clocks](tests/parakeet/decoder-packed-row-results/application-20260927.md):
   six measured calls per engine per clip. All 63 repeatability controls, numerical,
   complete public-result, ownership and resource checks pass.
-- [Pyannote comparison and complete clocks](tests/parakeet/rational-sigmoid-results/pyannote-application-20260927.md):
+- [Pyannote comparison and complete clocks](tests/parakeet/decoder-packed-row-results/pyannote-application-20260927.md):
   six measured calls per engine for the dialogue. All repeatability, native-result,
   ownership and resource checks pass; both ten-minute meetings and recovery pass.
-- [Qualified graph comparisons and complete clocks](tests/parakeet/rational-sigmoid-results/graphs-20260927.md):
+- [Qualified graph comparisons and complete clocks](tests/parakeet/decoder-packed-row-results/graphs-20260927.md):
   e5 at 8, 30, 30 padded to 128, 128 and 512 tokens, DINOv3, ResNet50 and GPT-2.
   Every output is checked against ORT at the unchanged scaled-error bound
   `abs(actual-reference) / max(1, abs(reference)) <= 1e-4`, with exact shapes,
@@ -71,6 +71,11 @@ Pad-call repeatability remains unqualified. The vector sigmoid passes its
 numerical checks, but [isolated sigmoid timing](tests/parakeet/rational-sigmoid-results/screen-20260927.md)
 has failed repeatability and fallback gates;
 [double fallback latency remains unresolved](tests/parakeet/rational-sigmoid-results/fallback-diagnosis-20260927.md).
+The [prepared-row operator screen](tests/parakeet/decoder-packed-row-results/screen-20260927.md)
+also fails isolated repeatability and fallback gates. Its
+[individual-call diagnostic](tests/parakeet/decoder-packed-row-results/unmapped-calls-20260927.md)
+shows recovery over several calls when alternating prepared and unprepared weights;
+cache competition is an inference, and universal fallback speed equality is unproven.
 The qualified performance claims cover the listed application and graph workloads.
 
 DINOv2 is excluded by the [known-divergence registry](tests/Lokad.Onnx.Bench/KnownDivergences.cs):
@@ -86,9 +91,9 @@ The audio APIs live in `Lokad.Onnx.Data`; the core NuGet package contains
 
 ## Running comparisons
 
-The [graph protocol](tests/parakeet/rational-sigmoid-graphs-amd/README.md),
-[Pyannote protocol](tests/parakeet/rational-sigmoid-pyannote-app-amd/README.md)
-and [Parakeet protocol](tests/parakeet/rational-sigmoid-app-amd/README.md)
+The [graph protocol](tests/parakeet/decoder-packed-row-graphs-amd/README.md),
+[Pyannote protocol](tests/parakeet/decoder-packed-row-pyannote-app-amd/README.md)
+and [Parakeet protocol](tests/parakeet/decoder-packed-row-app-amd/README.md)
 specify the assets, inputs, process order, boundaries and checks behind the table.
 Use the already downloaded `models/multilingual-e5-small/model.onnx` for e5.
 
