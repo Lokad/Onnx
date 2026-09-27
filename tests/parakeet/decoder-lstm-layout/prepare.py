@@ -10,15 +10,20 @@ from source import TARGETS, changed
 from checks import census
 
 ROOT = TOOLS.parents[2]
-BASE = ROOT/'artifacts/parakeet-decoder-lstm-layout-contracts-amd-20260927'
+BASE = ROOT/'artifacts/parakeet-decoder-lstm-layout-contracts-v2-amd-20260927'
 QUALIFIED = ROOT/'artifacts/parakeet-decoder-packed-row-root-amd-20260927'
 CAPTURE = ROOT/'artifacts/parakeet-prepared-recurrence-calls-amd-v2-20260924'
+FIRST = ROOT/'artifacts/parakeet-decoder-lstm-layout-contracts-amd-20260927'
 REMOTE_ROOT = '/dev/shm/lokad-parakeet-decoder-packed-row-root-20260927'
 REMOTE_CAPTURE = '/dev/shm/lokad-parakeet-prepared-recurrence-calls-v2-20260924'
 FIXTURE = 'tests/Lokad.Onnx.Backend.Tests/LstmLayoutContracts.cs'
 
 
 def previous_closed():
+    assert pin(FIRST/'failed.json')['sha256'] == '63913e638f903907177ca24753295fdd941585e46f4e2b580e0cdaf1e36d5dc3'
+    failure = read(FIRST/'failed.json'); assert failure['local_preparation_failed'] and not failure['remote_contacted']
+    for name, wanted in failure['files'].items(): assert pin(FIRST/name) == wanted, name
+    for name in ['source.py', 'LstmLayoutContracts.cs']: assert pin(TOOLS/name) == pin(FIRST/'frozen-tools'/name)
     for folder, digest in [(QUALIFIED, 'd0a78cdd3106d6a72a41303f879bbb2f9ea3bd6a298d778333015f38ccdac246'),
         (CAPTURE, '20b3bc4b5a2d2ddb6e0834e40fb7e2bcb5220dd1f45c813a7a830466ddbc463d')]:
         assert pin(folder/'closed.json')['sha256'] == digest
@@ -62,8 +67,8 @@ def prepare():
         name = path.name
         if name in current: assert pin(path) == current[name]
         copy(path, 'runtimes/current/'+name)
-    expected = {name: outcome for name, outcome in census(QUALIFIED/'collected/backend-tests/backend.trx').items() if 'lstm' in name.lower()}
-    alternate = {name: outcome for name, outcome in census(QUALIFIED/'collected/backend-tests-256/backend.trx').items() if 'lstm' in name.lower()}
+    expected = census(QUALIFIED/'collected/backend-tests/backend.trx', True)
+    alternate = census(QUALIFIED/'collected/backend-tests-256/backend.trx', True)
     assert expected == alternate and len(expected) == 172 and set(expected.values()) == {'Passed'}
     tests = re.findall(r'\[Fact\]\s+public void (\w+)\(', (TOOLS/'LstmLayoutContracts.cs').read_text())
     assert len(tests) == 4

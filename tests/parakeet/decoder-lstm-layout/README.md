@@ -46,8 +46,17 @@ From the repository root, use Python with bytecode disabled:
 
 Follow that original owner to terminal; then collect and audit once. Keep audit
 stdout/stderr outside the artifact directory. Never rerun a completed namespace.
-Local artifacts: artifacts/parakeet-decoder-lstm-layout-contracts-amd-20260927.
-VM artifacts: /dev/shm/lokad-lstmlayout-20260927.
+Local artifacts: artifacts/parakeet-decoder-lstm-layout-contracts-v2-amd-20260927.
+VM artifacts: /dev/shm/lokad-lstmlayout2-20260927.
+
+The first local preparation stopped before transfer or builds: the complete
+parent TRX contains two pairs of duplicate truncated display names in unrelated
+NpySupport cases. Its original tools, partial bundle and failure are retained
+under artifacts/parakeet-decoder-lstm-layout-contracts-amd-20260927. The corrected
+preparation selects the 172 LSTM cases before checking name uniqueness; all 172
+remain required, with their original passing outcomes. Candidate source and
+contracts are unchanged. The new contract TRX still requires uniqueness of every
+result without filtering.
 
 After exact contracts pass, freeze the component timing schedule around this
 unchanged candidate and original captures. The existing plan requires at least

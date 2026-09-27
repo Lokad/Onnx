@@ -5,7 +5,7 @@ from prepare import TOOLS
 
 loader = importlib.util.spec_from_file_location('lstm_layout_transport', TOOLS.parent/'decoder-projection-observation/run.py')
 transport = importlib.util.module_from_spec(loader); loader.loader.exec_module(transport)
-REMOTE = '/dev/shm/lokad-lstmlayout-20260927'
+REMOTE = '/dev/shm/lokad-lstmlayout2-20260927'
 transport.PRELUDE = transport.PRELUDE.replace(transport.REMOTE, REMOTE)
 transport.REMOTE = REMOTE
 transport.transport.PRELUDE = transport.PRELUDE

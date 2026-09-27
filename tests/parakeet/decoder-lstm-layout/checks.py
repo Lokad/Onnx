@@ -3,9 +3,10 @@ import xml.etree.ElementTree as ET
 from protocol import read, pin
 
 
-def census(path):
+def census(path, lstm_only):
     root = ET.parse(path).getroot(); ns = {'t': 'http://microsoft.com/schemas/VisualStudio/TeamTest/2010'}
     rows = root.findall('.//t:UnitTestResult', ns)
+    if lstm_only: rows = [r for r in rows if 'lstm' in r.attrib['testName'].lower()]
     result = {r.attrib['testName']: r.attrib['outcome'] for r in rows}
     assert rows and len(result) == len(rows)
     return result
@@ -49,7 +50,7 @@ def contracts(folder, spec, built, row):
     assert loaded['runtime'] == '10.0.8' and loaded['affinity'] == 4 and loaded['block'] == 4 * loaded['vector_count']
     assert projections['passed'] and projections['calls'] == 380 and projections['projections'] == 760
     assert projections['values'] == 1945600 and len(projections['hashes']) == 760
-    actual = census(folder/'contracts.trx')
+    actual = census(folder/'contracts.trx', False)
     expected = spec['expected_census']
     # All LSTM cases in the parent pass on normal and AVX512-disabled execution.
     assert set(actual) == set(expected) | set(spec['added_tests'])
