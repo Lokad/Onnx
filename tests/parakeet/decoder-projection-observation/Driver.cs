@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Lokad.Onnx;
@@ -77,7 +79,7 @@ internal static class Driver
 
     static void Main(string[] args)
     {
-        Require(args.Length == 3 && OperatingSystem.IsLinux(), "specification control|trace new-output-directory; Linux only");
+        Require(args.Length == 3 && OperatingSystem.IsLinux(), "specification control|trace empty-output-directory; Linux only");
         string specPath = Path.GetFullPath(args[0]), folder = Path.GetDirectoryName(specPath)!, mode = args[1];
         Require(mode is "control" or "trace", "Fixed diagnostic modes");
         Require(Environment.Version.ToString() == "10.0.8" && Environment.ProcessorCount == 1
@@ -158,7 +160,8 @@ internal static class Driver
         Require(execution.Outputs.Keys.Order(StringComparer.Ordinal).SequenceEqual(outputs), "Ordinary context original outputs only");
 
         string output = Path.GetFullPath(args[2]);
-        Require(!Directory.Exists(output), "Refuse existing output"); Directory.CreateDirectory(output);
+        Require(!Directory.Exists(output) || !Directory.EnumerateFileSystemEntries(output).Any(), "Refuse nonempty output");
+        Directory.CreateDirectory(output);
         using (var stream = new FileStream(Path.Combine(output, "projection-a.f32"), FileMode.CreateNew)) stream.Write(capturedA);
         var events = MatrixEvents.Log;
         int nativeThread = gettid();
@@ -204,6 +207,10 @@ internal static class Driver
         Save(Path.Combine(output, "result.json"), new { passed = true, diagnostic_only = true,
             protocol = "parakeet-decoder-projection-observation-v1", mode, flags, pid = Environment.ProcessId,
             native_thread = nativeThread, runtime = Environment.Version.ToString(), core_sha256 = core,
+            isa = new { vector_float_count = Vector<float>.Count, avx2 = Avx2.IsSupported, fma = Fma.IsSupported, avx512 = Avx512F.IsSupported },
+            options = new { optimization = execution.Options.Optimization.ToString(), simd = execution.Options.Tensor.UseSimd,
+                intrinsics = execution.Options.Tensor.UseIntrinsics, max_degree = execution.Options.Tensor.MaxDegreeOfParallelism,
+                buffer_pool_disabled = execution.Options.Tensor.DisableBufferPool },
             consumer_sha256 = FileHash(Assembly.GetExecutingAssembly().Location), spec_sha256 = FileHash(specPath),
             model_sha256 = FileHash(model), original_node_sha256 = nodes, original_outputs = outputs,
             mapping = beforeMap, mapping_after = afterMap, operands, controls = 3,
