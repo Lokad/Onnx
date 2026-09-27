@@ -5,12 +5,12 @@ are seconds; Lokad / ORT is the latency ratio, so 1.100 means 10.0% more time.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT | Status |
 |---|---|---:|---:|---:|---|
-| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 46.931723 | 39.513180 | **1.188** | Qualified |
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 10.244691 | 9.022760 | **1.135** | Qualified |
-| multilingual-e5-small | One 30-token forward pass | 0.016273 | 0.015997 | **1.017** | Qualified |
-| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.116874 | 0.103423 | **1.130** | Qualified |
-| ResNet50 | One 224x224 image, feature export | 0.103001 | 0.073423 | **1.403** | Qualified |
-| GPT-2 | Four-token prefill, empty past state | 0.036300 | 0.020723 | **1.752** | Qualified |
+| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 45.332654 | 39.232133 | **1.155** | Qualified |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 9.884276 | 8.942847 | **1.105** | Qualified |
+| multilingual-e5-small | One 30-token forward pass | 0.015981 | 0.015427 | **1.036** | Qualified |
+| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.114203 | 0.101600 | **1.124** | Qualified |
+| ResNet50 | One 224x224 image, feature export | 0.092580 | 0.072880 | **1.270** | Qualified |
+| GPT-2 | Four-token prefill, empty past state | 0.033924 | 0.020044 | **1.693** | Qualified |
 | DINOv2-small | 224x224 image | — | — | — | Excluded: numerical agreement gate |
 | Whisper Large V3 Turbo | Speech transcription | — | — | — | Supported; current-release comparison deferred |
 
@@ -20,12 +20,12 @@ Each row is a matched comparison for that workload. Audio rows measure complete
 applications; embedding, vision and GPT-2 rows measure prepared graph calls.
 The workloads differ, so their absolute times should not be compared to each other.
 
-The selected product is source `edc1a6c8`, measured as Core `ad97b4ad`
-and Data `29b3f633`. Its [root and package qualification](tests/parakeet/decoder-lstm-layout-results/root-20260927.md)
-verifies that the normal build (Core `47984318`, Data `dd56902f`) preserves all
-3,286 Core and 697 Data method bodies, implementation flags, public declarations
+The selected product is source `c28b3848`, measured as Core `7cac6788`
+and Data `dd56902f`. Its [root and package qualification](tests/parakeet/pointwise-tail-results/root-20260927.md)
+verifies that the normal build (Core `a6f7d9f9`, Data `1ba343fd`) preserves all
+3,288 Core and 697 Data method bodies, implementation flags, public declarations
 and assembly attributes. Both full test suites pass in normal and AVX512-disabled
-modes, and independent NuGet consumption passes. Ordinary mode passes 3,566 backend
+modes, and independent NuGet consumption passes. Ordinary mode passes 3,568 backend
 and 394 tensor tests; the report records the exact hardware-dependent skips.
 
 ## What is timed
@@ -53,13 +53,13 @@ disabled. Every clock is retained and no measurements are trimmed.
 
 ## Evidence and coverage
 
-- [Parakeet comparison, all twenty clips and complete clocks](tests/parakeet/decoder-lstm-layout-results/application-20260927.md):
+- [Parakeet comparison, all twenty clips and complete clocks](tests/parakeet/decoder-lstm-layout-profile-results/pointwise-tail-app-20260927.md):
   six measured calls per engine per clip. All 63 repeatability controls, numerical,
   complete public-result, ownership and resource checks pass.
-- [Pyannote comparison and complete clocks](tests/parakeet/decoder-lstm-layout-results/pyannote-application-20260927.md):
+- [Pyannote comparison and complete clocks](tests/parakeet/pointwise-tail-results/pyannote-application-20260927.md):
   six measured calls per engine for the dialogue. All repeatability, native-result,
   ownership and resource checks pass; both ten-minute meetings and recovery pass.
-- [Qualified graph comparisons and complete clocks](tests/parakeet/decoder-lstm-layout-results/graphs-20260927.md):
+- [Qualified graph comparisons and complete clocks](tests/parakeet/pointwise-tail-results/graphs-20260927.md):
   e5 at 8, 30, 30 padded to 128, 128 and 512 tokens, DINOv3, ResNet50 and GPT-2.
   Every output is checked against ORT at the unchanged scaled-error bound
   `abs(actual-reference) / max(1, abs(reference)) <= 1e-4`, with exact shapes,
@@ -82,9 +82,9 @@ The audio APIs live in `Lokad.Onnx.Data`; the core NuGet package contains
 
 ## Running comparisons
 
-The [graph protocol](tests/parakeet/decoder-lstm-layout-graphs-amd/README.md),
-[Pyannote protocol](tests/parakeet/decoder-lstm-layout-pyannote-app-amd/README.md)
-and [Parakeet protocol](tests/parakeet/decoder-lstm-layout-app-amd/README.md)
+The [graph protocol](tests/parakeet/pointwise-tail-graphs-amd/README.md),
+[Pyannote protocol](tests/parakeet/pointwise-tail-pyannote-app-amd/README.md)
+and [Parakeet protocol](tests/parakeet/pointwise-tail-app-amd/README.md)
 specify the assets, inputs, process order, boundaries and checks behind the table.
 Use the already downloaded `models/multilingual-e5-small/model.onnx` for e5.
 

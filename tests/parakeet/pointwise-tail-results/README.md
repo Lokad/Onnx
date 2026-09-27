@@ -3,7 +3,9 @@
 The [graph comparison](graphs-20260927.md) is admitted: all 24 repeatability
 controls and eight regression gates pass. The [complete Pyannote application](pyannote-application-20260927.md)
 passes all 12 repeatability controls and four regression gates, including native
-and long-meeting checks. Actual-root qualification remains pending.
+and long-meeting checks. [Actual-root qualification](root-20260927.md) passes all
+18 jobs, both full hardware-mode suites, compiled scope and NuGet consumption.
+Source `c28b3848` is committed and BENCHMARK.md now reflects these results.
 The publishers read actual closed evidence and verify its file inventory and product
 identity before writing new reports. Existing publications are never overwritten.
 Failed performance controls remain visible; a report does not promote a product.
