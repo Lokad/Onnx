@@ -1,0 +1,187 @@
+{
+  "contract_regression_found": false,
+  "original_campaign_passed": false,
+  "original_failure": {
+    "bytes": 463637,
+    "sha256": "59f6f738dcd71beec865e46c511a9bd151207a26d2901c259f015b387a27f63f"
+  },
+  "performance_measured": false,
+  "baseline": {
+    "Lokad.Onnx.dll": {
+      "bytes": 827392,
+      "sha256": "0d224bcff591563816d64c3a3cc51f7b7cd38f5a1d3c523b05c699a9b82b6b97"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a37453929e6103a187f9849d3040a663fa9d7dd85561e4f6f14d639fe38935d5"
+    }
+  },
+  "candidate": {
+    "Lokad.Onnx.dll": {
+      "bytes": 827904,
+      "sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "29b3f633eec461b1113d23d2626952bddff1a628bdba87bb865ef52b6da6dc3d"
+    }
+  },
+  "compiled": {
+    "passed": true,
+    "methods": [
+      {
+        "assembly": "Lokad.Onnx.dll",
+        "unchanged": 3282,
+        "changed": [
+          "Lokad.Onnx.CPUExecutionProvider::Lstm::Lokad.Onnx.OpResult Lstm(Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, Lokad.Onnx.ITensor, System.String, System.String[], Single[], Single[], System.Nullable`1[System.Single], Int32, Boolean, Int32, Int32, Lokad.Onnx.ExecutionOptions, Lokad.Onnx.TensorBufferPool)",
+          "Lokad.Onnx.GraphLstmPacking::Prepare::Lokad.Onnx.PackedLstmWeight Prepare(Source)"
+        ],
+        "added": [
+          "Lokad.Onnx.PreparedLstmProjection::get_ColumnsPerBlock::Int32 get_ColumnsPerBlock()",
+          "Lokad.Onnx.PreparedLstmProjection::Multiply::Void Multiply(System.ReadOnlySpan`1[System.Single], System.ReadOnlySpan`1[System.Single], System.Span`1[System.Single])"
+        ]
+      },
+      {
+        "assembly": "Lokad.Onnx.Data.dll",
+        "unchanged": 697,
+        "changed": [],
+        "added": []
+      }
+    ],
+    "public_surface_equal": true,
+    "flags_equal": true,
+    "attributes_equal": true
+  },
+  "modes": {
+    "normal": {
+      "passed": 176,
+      "failed": 0,
+      "added_passed": 4,
+      "projection_values": 1945600,
+      "projections": 760,
+      "loaded": {
+        "passed": true,
+        "mode": "normal",
+        "pid": 1192352,
+        "core_sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc",
+        "consumer_sha256": "3590c9454b29a415823d510b13be75c779e77fd2bced9ee807ff241ad3586127",
+        "vector_count": 8,
+        "block": 32,
+        "avx512": true,
+        "hardware": true,
+        "runtime": "10.0.8",
+        "affinity": 4
+      },
+      "trx": {
+        "bytes": 260086,
+        "sha256": "407f2437ccc084b0a0ea569b934400990d6ad5698d8136f82f574c5ecdf29252"
+      }
+    },
+    "noavx512": {
+      "passed": 176,
+      "failed": 0,
+      "added_passed": 4,
+      "projection_values": 1945600,
+      "projections": 760,
+      "loaded": {
+        "passed": true,
+        "mode": "noavx512",
+        "pid": 1192464,
+        "core_sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc",
+        "consumer_sha256": "3590c9454b29a415823d510b13be75c779e77fd2bced9ee807ff241ad3586127",
+        "vector_count": 8,
+        "block": 32,
+        "avx512": false,
+        "hardware": true,
+        "runtime": "10.0.8",
+        "affinity": 4
+      },
+      "trx": {
+        "bytes": 260086,
+        "sha256": "6fb3202dc4a9942fc8583c076ad635c9e68538c951320aa4960144587be691ec"
+      }
+    },
+    "scalar": {
+      "passed": 158,
+      "failed": 18,
+      "added_passed": 4,
+      "projection_values": 1945600,
+      "projections": 760,
+      "loaded": {
+        "passed": true,
+        "mode": "scalar",
+        "pid": 1192534,
+        "core_sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc",
+        "consumer_sha256": "3590c9454b29a415823d510b13be75c779e77fd2bced9ee807ff241ad3586127",
+        "vector_count": 4,
+        "block": 16,
+        "avx512": false,
+        "hardware": false,
+        "runtime": "10.0.8",
+        "affinity": 4
+      },
+      "trx": {
+        "bytes": 323901,
+        "sha256": "6ab39515d944642effd8ccf1362ddfefe480988c516593f72be68fb4d3bdfe20"
+      }
+    }
+  },
+  "matched_existing_scalar_cases": 172,
+  "matched_scalar_rejections": 18,
+  "scalar_baseline_result": {
+    "bytes": 5825,
+    "sha256": "3281f2f25a12b804ce938e9efe4e299fd81b214097b557e1496d040573821e25"
+  },
+  "total_projection_values": 5836800,
+  "projection_hashes_equal_across_modes": true,
+  "diagnosis": "Both products reject the same 18 explicit-FMA requests when hardware intrinsics are disabled, before prepared dispatch. All four new facts pass in all modes. The original campaign remains failed; this separate baseline control resolves its cause.",
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9318400
+    },
+    {
+      "name": "backend-restore",
+      "samples": 8,
+      "peak_rss": 173101056
+    },
+    {
+      "name": "backend-build",
+      "samples": 115,
+      "peak_rss": 659861504
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 177758208
+    },
+    {
+      "name": "contracts-normal",
+      "samples": 14,
+      "peak_rss": 664281088
+    },
+    {
+      "name": "contracts-noavx512",
+      "samples": 15,
+      "peak_rss": 649158656
+    },
+    {
+      "name": "contracts-scalar",
+      "samples": 36,
+      "peak_rss": 710152192
+    }
+  ],
+  "baseline_resources": [
+    {
+      "name": "baseline-scalar",
+      "samples": 27,
+      "peak_rss": 554987520
+    }
+  ],
+  "candidate_model_and_performance_qualification_pending": true,
+  "baseline_diagnostic_closure": {
+    "bytes": 27303,
+    "sha256": "63c97822999a74921c2e8a3c64e0af9ec6682a6829ba83de52bba353b93b85ec"
+  }
+}
