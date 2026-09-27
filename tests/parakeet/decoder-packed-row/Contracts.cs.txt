@@ -1,0 +1,192 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+internal static unsafe class Contracts
+{
+    delegate void PackedKernel(int n, int k, float* a, float* packed, float* output);
+    const int Guard = 16;
+    static readonly float Sentinel = BitConverter.Int32BitsToSingle(0x4a654321);
+    static readonly List<object> RawResults = new(), PublicResults = new();
+    static void Require(bool condition, string message) { if (!condition) throw new InvalidDataException(message); }
+    static string Hash(ReadOnlySpan<float> values) => Convert.ToHexStringLower(SHA256.HashData(MemoryMarshal.AsBytes(values)));
+    static string FileHash(string path) { using var file = File.OpenRead(path); return Convert.ToHexStringLower(SHA256.HashData(file)); }
+    static float[] Values(int length, int seed) => Enumerable.Range(0, length).Select(i => ((i * 37 + seed) % 101 - 50) * .03125f).ToArray();
+    static float[] Guarded(float[] values)
+    {
+        var result = Enumerable.Repeat(Sentinel, values.Length + 2 * Guard).ToArray();
+        values.CopyTo(result, Guard); return result;
+    }
+    static void Guards(float[] values)
+    {
+        Require(values.AsSpan(0, Guard).ToArray().All(v => v == Sentinel), "Leading guard");
+        Require(values.AsSpan(values.Length - Guard).ToArray().All(v => v == Sentinel), "Trailing guard");
+    }
+    static void Equal(ReadOnlySpan<float> expected, ReadOnlySpan<float> actual, string label)
+    {
+        Require(expected.Length == actual.Length, label + " length");
+        for (int i = 0; i < expected.Length; i++)
+            Require(BitConverter.SingleToInt32Bits(expected[i]) == BitConverter.SingleToInt32Bits(actual[i]), label + " bits at " + i);
+    }
+    static void Save(string folder, string name, float[] values)
+    {
+        using var file = new FileStream(Path.Combine(folder, name + ".f32"), FileMode.CreateNew);
+        file.Write(MemoryMarshal.AsBytes(values.AsSpan()));
+    }
+    static float[] Pack(float[] b, int n, int k)
+    {
+        var packed = new float[b.Length];
+        fixed (float* source = b, target = packed) MathOps.PackPanelsB(n, k, source, target);
+        return packed;
+    }
+    static Dictionary<float[], PackedMatMulWeight> Mapping(DenseTensor<float> weight, float[] array)
+    {
+        int n = weight.Dimensions[0], k = weight.Dimensions[1];
+        var packed = new DenseTensor<float>(Pack(array, n, k), new[] { n, k });
+        packed.Name = "packed:w";
+        return new() { [array] = new PackedMatMulWeight("w", weight, array.Length, array, "packed:w", packed) };
+    }
+    static void Raw(string folder, string name, int n, int k, float[] aValues, float[] bValues, float[] initial, PackedKernel kernel)
+    {
+        var a = Guarded(aValues); var b = Guarded(bValues);
+        var packed = Guarded(new float[n * k]);
+        var expected = Guarded(initial); var actual = Guarded(initial);
+        string aBefore = Hash(a), bBefore = Hash(b), packedBefore;
+        fixed (float* ap = a, bp = b, pp = packed, ep = expected, cp = actual)
+        {
+            MathOps.PackPanelsB(n, k, bp + Guard, pp + Guard);
+            packedBefore = Hash(packed);
+            MathOps.mm_m1_kblocked(1, n, k, ap + Guard, bp + Guard, ep + Guard);
+            kernel(n, k, ap + Guard, pp + Guard, cp + Guard);
+        }
+        Equal(expected, actual, name); Guards(a); Guards(b); Guards(packed); Guards(actual);
+        Require(Hash(a) == aBefore && Hash(b) == bBefore, name + " immutable raw inputs");
+        Require(Hash(packed) == packedBefore, name + " first packed input");
+        long allocated;
+        fixed (float* ap = a, pp = packed, cp = actual)
+        {
+            // Warm the delegate itself before checking the kernel's allocation contract.
+            kernel(n, k, ap + Guard, pp + Guard, cp + Guard);
+            long start = GC.GetAllocatedBytesForCurrentThread();
+            for (int i = 0; i < 8; i++) kernel(n, k, ap + Guard, pp + Guard, cp + Guard);
+            allocated = GC.GetAllocatedBytesForCurrentThread() - start;
+        }
+        Require(allocated == 0 && Hash(packed) == packedBefore && Hash(a) == aBefore, name + " raw allocation/ownership");
+        Guards(actual);
+        var output = expected.AsSpan(Guard, k).ToArray(); Save(folder, "raw-" + name, output);
+        RawResults.Add(new { name, n, k, checked_values = k, exact = true, guards = true, immutable_inputs = true,
+            allocated_bytes_for_eight_calls = allocated, output_sha256 = Hash(output) });
+    }
+    static void Public(string folder, string name, DenseTensor<float> x, DenseTensor<float> b,
+        IReadOnlyDictionary<float[], PackedMatMulWeight>? map, TensorExecutionOptions mode, string? expectedHash)
+    {
+        string input = Hash(x.Buffer.Span), weight = Hash(b.Buffer.Span);
+        var packedBefore = map?.ToDictionary(p => p.Key, p => Hash(p.Value.Packed.Buffer.Span));
+        var copy = new CopyAccountant(); var scratch = new ScratchAccountant();
+        var options = mode with { PackedMatMulWeights = map, CopyReporter = copy, ScratchReporter = scratch };
+        var reference = Tensor<float>.MatMul(x, b, mode with { PackedMatMulWeights = null }).ToArray();
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        var got = Tensor<float>.MatMul(x, b, options);
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+        float[] held = got.ToArray(); Equal(reference, held, name);
+        if (expectedHash is not null) Require(Hash(held) == expectedHash, "Captured projection output");
+        long copies = copy.TotalCopyBytes, scratches = scratch.TotalScratchBytes;
+        var repeated = Tensor<float>.MatMul(x, b, options);
+        Equal(held, got.ToArray(), name + " held output"); Equal(reference, repeated.ToArray(), name + " repeated output");
+        Require(!TensorAlias.SharesBackingMemory(got, x) && !TensorAlias.SharesBackingMemory(got, b)
+            && !TensorAlias.SharesBackingMemory(got, repeated), name + " owned outputs");
+        var destination = new DenseTensor<float>(Enumerable.Repeat(17.25f, held.Length).ToArray(), got.Dimensions);
+        Require(ReferenceEquals(destination, Tensor<float>.MatMul(x, b, destination, options)), "Destination identity");
+        Equal(reference, destination.Buffer.Span, name + " overwrite destination");
+        Require(Hash(x.Buffer.Span) == input && Hash(b.Buffer.Span) == weight, name + " immutable public inputs");
+        if (map is not null && packedBefore is not null)
+            Require(map.All(p => Hash(p.Value.Packed.Buffer.Span) == packedBefore[p.Key]), name + " immutable prepared inputs");
+        Save(folder, "public-" + name, held);
+        PublicResults.Add(new { name, shape = got.Dimensions.ToArray(), checked_values = held.Length,
+            exact = true, output_sha256 = Hash(held), copies, scratches, allocated,
+            owned_outputs = true, immutable_inputs = true });
+    }
+    static void Main(string[] args)
+    {
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException();
+        Require(args.Length == 4, "campaign role mode output");
+        string root = Path.GetFullPath(args[0]), role = args[1], mode = args[2], output = args[3];
+        Require(role is "current" or "candidate" && mode is "normal" or "noavx512" or "scalar", "Fixed modes");
+        Require(Environment.Version.ToString() == "10.0.8" && Environment.ProcessorCount == 1
+            && Process.GetCurrentProcess().ProcessorAffinity == (nint)4, "Runtime and CPU2");
+        Require(Fma.IsSupported == (mode != "scalar") && Avx512F.IsSupported == (mode == "normal"), "Actual hardware mode");
+        var fixture = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "fixture.json"))).RootElement;
+        var built = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "built.json"))).RootElement;
+        string core = FileHash(typeof(Tensor<float>).Assembly.Location);
+        Require(core == built.GetProperty("products").GetProperty(role).GetProperty("sha256").GetString(), "Core identity");
+        Require(!Directory.EnumerateFileSystemEntries(output).Any(), "Empty output");
+        var normal = TensorExecutionOptions.Auto;
+        foreach (int k in new[] { 8191, 8192, 8193, 8198, 8200, 8223, 8224 })
+        {
+            const int n = 3;
+            float[] weights = Values(n * k, 13);
+            var b = new DenseTensor<float>(weights, new[] { n, k }); var map = Mapping(b, weights);
+            foreach (int rows in new[] { 1, 2, 3, 5 })
+            {
+                var x = new DenseTensor<float>(Values(rows * n, 7), new[] { rows, n });
+                Public(output, $"2d-{rows}-{k}", x, b, map, normal, null);
+            }
+            var batch = new DenseTensor<float>(Values(2 * n, 19), new[] { 2, 1, n });
+            Public(output, $"batch-{k}", batch, b, map, normal, null);
+        }
+        foreach (var selected in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd, normal })
+        {
+            const int n = 7, k = 8198;
+            var x = new DenseTensor<float>(Values(n, 17), new[] { 1, n });
+            float[] weights = Values(n * k, 11); var b = new DenseTensor<float>(weights, new[] { n, k });
+            var map = Mapping(b, weights);
+            string label = $"{selected.UseSimd}-{selected.UseIntrinsics}";
+            // Auto equals another explicit mode on hardware-disabled hosts; name by index below.
+            int id = PublicResults.Count;
+            Public(output, $"options-{id}-{label}", x, b, map, selected, null);
+            Public(output, $"missing-{id}-{label}", x, b, null, selected, null);
+            var replacement = new DenseTensor<float>(Values(n * k, 83), new[] { n, k });
+            Public(output, $"stale-{id}-{label}", x, replacement, map, selected, null);
+        }
+        string model = fixture.GetProperty("model").GetString()!;
+        Require(FileHash(model) == fixture.GetProperty("model_sha256").GetString(), "Original model");
+        var graph = OnnxImport.Load(model, 64L * 1024 * 1024) ?? throw new InvalidDataException(OnnxImport.LastErrorMessage);
+        graph.Prepare();
+        var actualB = (DenseTensor<float>)graph.Initializers["onnx::MatMul_230"];
+        Require(Hash(actualB.Buffer.Span) == fixture.GetProperty("b_sha256").GetString(), "Original B");
+        var record = graph.PackedWeights.Values.Single(r => r.SourceName == "onnx::MatMul_230");
+        Require(Hash(record.Packed.Buffer.Span) == fixture.GetProperty("packed_sha256").GetString(), "Existing packed B");
+        string aPath = Path.Combine(root, "projection-a.f32");
+        Require(FileHash(aPath) == fixture.GetProperty("a_sha256").GetString(), "Captured A");
+        float[] aValues = MemoryMarshal.Cast<byte, float>(File.ReadAllBytes(aPath)).ToArray();
+        var actualA = new DenseTensor<float>(aValues, new[] { 1, 1, 1, 640 });
+        Public(output, "captured-projection", actualA, actualB, graph.PackedWeights, normal,
+            Fma.IsSupported ? fixture.GetProperty("output_sha256").GetString() : null);
+        if (role == "candidate" && Fma.IsSupported)
+        {
+            var type = typeof(Tensor<float>).Assembly.GetType("Lokad.Onnx.PreparedSingleRowKernel", true)!;
+            var kernel = type.GetMethod("Multiply", BindingFlags.Static | BindingFlags.NonPublic)!.CreateDelegate<PackedKernel>();
+            foreach (int n in new[] { 0, 1, 3, 17 })
+            foreach (int k in new[] { 0, 1, 7, 8, 15, 16, 23, 24, 31, 32, 33, 63, 64, 65, 8192, 8198, 8223 })
+                Raw(output, $"boundary-{n}-{k}", n, k, Values(n, 31), Values(n * k, 43), Values(k, 61), kernel);
+            float[] special = [float.NegativeInfinity, float.PositiveInfinity, float.MaxValue, -float.MaxValue,
+                float.Epsilon, -float.Epsilon, -0f, 0f, BitConverter.Int32BitsToSingle(0x7fc12345),
+                BitConverter.Int32BitsToSingle(unchecked((int)0xffc54321)), 1f, -1f];
+            for (int shift = 0; shift < special.Length; shift++)
+                Raw(output, $"special-{shift}", 3, 71,
+                    Enumerable.Range(0, 3).Select(i => special[(i + shift) % special.Length]).ToArray(),
+                    Enumerable.Range(0, 3 * 71).Select(i => special[(i + shift + 4) % special.Length]).ToArray(),
+                    Enumerable.Range(0, 71).Select(i => special[(i + shift + 7) % special.Length]).ToArray(), kernel);
+            Raw(output, "captured", 640, 8198, aValues, actualB.Buffer.ToArray(), new float[8198], kernel);
+        }
+        using var file = new FileStream(Path.Combine(output, "result.json"), FileMode.CreateNew);
+        JsonSerializer.Serialize(file, new { passed = true, role, mode, core_sha256 = core,
+            consumer_sha256 = FileHash(typeof(Contracts).Assembly.Location), pid = Environment.ProcessId,
+            runtime = Environment.Version.ToString(), fma = Fma.IsSupported, avx512 = Avx512F.IsSupported,
+            public_cases = PublicResults, raw_cases = RawResults, performance_admitted = false }, new JsonSerializerOptions { WriteIndented = true });
+    }
+}

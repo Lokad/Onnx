@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Lokad.Onnx.Backend.Tests</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseAppHost>false</UseAppHost>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lokad.Onnx"><HintPath>../../runtimes/current/Lokad.Onnx.dll</HintPath></Reference>
+    <Reference Include="Google.Protobuf"><HintPath>../../runtimes/current/Google.Protobuf.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>
