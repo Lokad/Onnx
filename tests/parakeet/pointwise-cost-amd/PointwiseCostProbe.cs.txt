@@ -1,0 +1,153 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Numerics;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+// Diagnostic snapshot only. Does not change model outputs, dispatch or arithmetic.
+internal static class PointwiseCostProbe
+{
+    internal enum Stage { OutputInitialize, Materialize, Clear, Pack, Arithmetic }
+
+    internal sealed class Row
+    {
+        public int index, filters, columns, thread, scratch_elements;
+        public long start_ticks, end_ticks;
+        public long[] stage_ticks = new long[5];
+        public int[] stage_calls = new int[5];
+        public string input_layout = "", weight_layout = "", dense_input_layout = "", dense_weight_layout = "", leaf = "";
+        public bool input_same, weight_same, simd, intrinsics;
+        public int degree;
+    }
+
+    internal sealed class Report
+    {
+        public bool passed;
+        public string protocol = "parakeet-pointwise-cost-v1", runtime = Environment.Version.ToString(), core_sha256 = "";
+        public int pid = Environment.ProcessId, processor_count = Environment.ProcessorCount;
+        public long frequency = Stopwatch.Frequency;
+        public bool fma = Fma.IsSupported, avx2 = Avx2.IsSupported, avx512 = Avx512F.IsSupported;
+        public int vector_width = Vector<float>.Count;
+        public Dictionary<string,string> flags = new();
+        public string[] stages = { "output_initialize", "materialize", "clear", "pack", "arithmetic" };
+        public List<Row> rows = new();
+    }
+
+    static readonly string? output = Environment.GetEnvironmentVariable("PARAKEET_POINTWISE_COSTS");
+    static readonly List<Row> rows = new();
+    [ThreadStatic] static Row? active;
+    [ThreadStatic] static long stageStart;
+    [ThreadStatic] static int stageIndex;
+    static int thread;
+
+    static PointwiseCostProbe()
+    {
+        if (!string.IsNullOrEmpty(output)) AppDomain.CurrentDomain.ProcessExit += Save;
+    }
+
+    static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidOperationException("Pointwise observation: " + message);
+    }
+
+    static string Layout(Tensor<float> tensor) => tensor.GetType().ToString() + ":" +
+        tensor.IsReversedStride + ":" + string.Join(",", tensor.Strides.ToArray()) + ":" + tensor.Length;
+
+    internal static void Enter(Tensor<float> input, Tensor<float> weight, int n, int c, int h, int w,
+        int m, int groups, int kh, int kw, int dh, int dw, int sh, int sw,
+        int top, int left, int bottom, int right, int oh, int ow, bool hasBias, TensorExecutionOptions options)
+    {
+        if (string.IsNullOrEmpty(output)) return;
+        Require(active is null, "nested convolution");
+        if (n != 1 || c != 1024 || (m != 1024 && m != 2048) || groups != 1 || kh != 1 || kw != 1) return;
+        Require(h == 1 && oh == h && ow == w && dh == 1 && dw == 1 && sh == 1 && sw == 1 &&
+            top == 0 && left == 0 && bottom == 0 && right == 0 && !hasBias, "unexpected selected geometry");
+        if (thread == 0) thread = Environment.CurrentManagedThreadId;
+        Require(thread == Environment.CurrentManagedThreadId, "multiple request threads");
+        var row = new Row { index = rows.Count, filters = m, columns = w, thread = thread,
+            input_layout = Layout(input), weight_layout = Layout(weight),
+            simd = options.UseSimd, intrinsics = options.UseIntrinsics, degree = options.MaxDegreeOfParallelism };
+        active = row;
+        stageIndex = -1;
+        row.start_ticks = Stopwatch.GetTimestamp();
+    }
+
+    internal static void Start(Stage stage)
+    {
+        if (active is null) return;
+        Require(stageIndex == -1, "overlapping stages");
+        stageIndex = (int)stage;
+        stageStart = Stopwatch.GetTimestamp();
+    }
+
+    internal static void End()
+    {
+        if (active is not Row row) return;
+        long end = Stopwatch.GetTimestamp();
+        Require(stageIndex >= 0 && end >= stageStart, "unmatched stage");
+        row.stage_ticks[stageIndex] += end - stageStart;
+        row.stage_calls[stageIndex]++;
+        stageIndex = -1;
+    }
+
+    internal static void Materialized(Tensor<float> input, Tensor<float> weight,
+        DenseTensor<float> denseInput, DenseTensor<float> denseWeight)
+    {
+        if (active is not Row row) return;
+        row.input_same = ReferenceEquals(input, denseInput);
+        row.weight_same = ReferenceEquals(weight, denseWeight);
+        row.dense_input_layout = Layout(denseInput);
+        row.dense_weight_layout = Layout(denseWeight);
+    }
+
+    internal static void Scratch(int length)
+    {
+        if (active is Row row) row.scratch_elements = length;
+    }
+
+    internal static void Kernel(int m, int reduction, int columns)
+    {
+        if (active is not Row row) return;
+        Require(row.leaf.Length == 0 && m == row.filters && reduction == 1024 && columns == row.columns, "matrix route");
+        row.leaf = "mm_unsafe_vectorized_intrinsics_2x4packed_bump";
+        Start(Stage.Arithmetic);
+    }
+
+    internal static void Exit()
+    {
+        if (active is not Row row) return;
+        row.end_ticks = Stopwatch.GetTimestamp();
+        Require(stageIndex == -1, "unfinished stage");
+        long total = 0;
+        for (int i = 0; i < row.stage_ticks.Length; i++)
+        {
+            Require(row.stage_calls[i] == 1 && row.stage_ticks[i] >= 0, "stage coverage");
+            total += row.stage_ticks[i];
+        }
+        Require(row.leaf.Length != 0 && row.scratch_elements >= 1024 * row.columns, "missing route");
+        Require(total <= row.end_ticks - row.start_ticks, "stage sum exceeds total");
+        rows.Add(row);
+        active = null;
+    }
+
+    static void Save(object? sender, EventArgs args)
+    {
+        Require(active is null && rows.Count == 3840, "incomplete corpus");
+        var report = new Report { passed = true, rows = rows,
+            core_sha256 = Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(typeof(PointwiseCostProbe).Assembly.Location))) };
+        foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
+        {
+            string name = (string)entry.Key;
+            if (name.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase) || name.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase)
+                || name.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)) report.flags.Add(name, (string)entry.Value!);
+        }
+        using var stream = new FileStream(output!, FileMode.CreateNew);
+        JsonSerializer.Serialize(stream, report, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
+    }
+}
