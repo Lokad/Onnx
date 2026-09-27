@@ -26,3 +26,9 @@ closure evidence in artifacts/parakeet-pointwise-tail-gap-20260927. Preserve
 existing outputs and failed captures. Inspect the applicable pinned ORT source
 for the largest remaining measured excess before selecting one causal change.
 No further optimization is selected by the publisher.
+
+After publication, projection_review.py splits constant projections into the
+same eight reviewed families, retaining every node, fused scale edge, weight
+shape and observed input shape. It reads only the fresh partition and captures,
+bound to the actual root/application, and writes projection-breakdown-20260927.json.
+Its node-joining and timing calculations are unchanged from the prior reviewer.
