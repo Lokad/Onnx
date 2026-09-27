@@ -1,0 +1,1755 @@
+{
+  "passed": true,
+  "admitted": false,
+  "release_admitted": false,
+  "closure": {
+    "bytes": 20741,
+    "sha256": "3e6a7562db1946954f2cddba10b2ee31958854e66c50fbb55848ed04e3e75148"
+  },
+  "products": {
+    "current": {
+      "bytes": 826368,
+      "sha256": "65f15a41764660af6166c9a965943b6f28cac0c9505117d0fd4beaa2687f9d03"
+    },
+    "candidate": {
+      "bytes": 827392,
+      "sha256": "af19b3b4429a07f7966b5e35ee04e8a31316f45991c300f3683a591caf5e9374"
+    }
+  },
+  "consumer": {
+    "bytes": 29184,
+    "sha256": "e9afd0b6684f34f565306e6eb2ecf5c8a695dc329e625fb2031ecae583d06a45"
+  },
+  "rows": [
+    {
+      "index": 0,
+      "name": "captured-projection",
+      "current": {
+        "numerator": 1235558201,
+        "denominator": 2520000000000,
+        "value": 0.0004903008734126984
+      },
+      "candidate": {
+        "numerator": 43922119,
+        "denominator": 126000000000,
+        "value": 0.000348588246031746
+      },
+      "ratio": {
+        "numerator": 878442380,
+        "denominator": 1235558201,
+        "value": 0.7109680299066705
+      },
+      "limit": {
+        "numerator": 3,
+        "denominator": 4,
+        "value": 0.75
+      },
+      "passed": true
+    },
+    {
+      "index": 1,
+      "name": "captured-unmapped",
+      "current": {
+        "numerator": 1027342537,
+        "denominator": 2520000000000,
+        "value": 0.0004076756099206349
+      },
+      "candidate": {
+        "numerator": 2091696253,
+        "denominator": 2520000000000,
+        "value": 0.0008300381956349207
+      },
+      "ratio": {
+        "numerator": 2091696253,
+        "denominator": 1027342537,
+        "value": 2.036026133122141
+      },
+      "limit": {
+        "numerator": 21,
+        "denominator": 20,
+        "value": 1.05
+      },
+      "passed": false
+    },
+    {
+      "index": 2,
+      "name": "captured-scalar",
+      "current": {
+        "numerator": 5324987137,
+        "denominator": 1260000000000,
+        "value": 0.004226180267460317
+      },
+      "candidate": {
+        "numerator": 1520411569,
+        "denominator": 360000000000,
+        "value": 0.004223365469444444
+      },
+      "ratio": {
+        "numerator": 10642880983,
+        "denominator": 10649974274,
+        "value": 0.9993339616775115
+      },
+      "limit": {
+        "numerator": 21,
+        "denominator": 20,
+        "value": 1.05
+      },
+      "passed": true
+    },
+    {
+      "index": 3,
+      "name": "captured-simd",
+      "current": {
+        "numerator": 172724473,
+        "denominator": 360000000000,
+        "value": 0.00047979020277777776
+      },
+      "candidate": {
+        "numerator": 4786883,
+        "denominator": 10000000000,
+        "value": 0.0004786883
+      },
+      "ratio": {
+        "numerator": 172327788,
+        "denominator": 172724473,
+        "value": 0.9977033654055497
+      },
+      "limit": {
+        "numerator": 21,
+        "denominator": 20,
+        "value": 1.05
+      },
+      "passed": true
+    },
+    {
+      "index": 4,
+      "name": "prediction-width-control",
+      "current": {
+        "numerator": 1020167509,
+        "denominator": 36720000000000,
+        "value": 2.7782339569716776e-05
+      },
+      "candidate": {
+        "numerator": 120117967,
+        "denominator": 4080000000000,
+        "value": 2.944067818627451e-05
+      },
+      "ratio": {
+        "numerator": 1081061703,
+        "denominator": 1020167509,
+        "value": 1.0596903875714394
+      },
+      "limit": {
+        "numerator": 21,
+        "denominator": 20,
+        "value": 1.05
+      },
+      "passed": false
+    },
+    {
+      "index": 5,
+      "name": "encoder-width-control",
+      "current": {
+        "numerator": 543695849,
+        "denominator": 12240000000000,
+        "value": 4.4419595506535945e-05
+      },
+      "candidate": {
+        "numerator": 189088321,
+        "denominator": 4080000000000,
+        "value": 4.634517671568627e-05
+      },
+      "ratio": {
+        "numerator": 567264963,
+        "denominator": 543695849,
+        "value": 1.0433498141347775
+      },
+      "limit": {
+        "numerator": 21,
+        "denominator": 20,
+        "value": 1.05
+      },
+      "passed": true
+    }
+  ],
+  "controls": [
+    {
+      "role": "current",
+      "case": "captured-projection",
+      "ratio": {
+        "numerator": 623465410,
+        "denominator": 612092791,
+        "value": 1.0185798937141868
+      },
+      "passed": true
+    },
+    {
+      "role": "current",
+      "case": "captured-unmapped",
+      "ratio": {
+        "numerator": 516716240,
+        "denominator": 510626297,
+        "value": 1.011926418666213
+      },
+      "passed": true
+    },
+    {
+      "role": "current",
+      "case": "captured-scalar",
+      "ratio": {
+        "numerator": 5328479553,
+        "denominator": 5321494721,
+        "value": 1.0013125695629155
+      },
+      "passed": true
+    },
+    {
+      "role": "current",
+      "case": "captured-simd",
+      "ratio": {
+        "numerator": 604774533,
+        "denominator": 604296778,
+        "value": 1.0007905966362773
+      },
+      "passed": true
+    },
+    {
+      "role": "current",
+      "case": "prediction-width-control",
+      "ratio": {
+        "numerator": 512599940,
+        "denominator": 507567569,
+        "value": 1.009914681920901
+      },
+      "passed": true
+    },
+    {
+      "role": "current",
+      "case": "encoder-width-control",
+      "ratio": {
+        "numerator": 272152304,
+        "denominator": 271543545,
+        "value": 1.0022418466990257
+      },
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "case": "captured-projection",
+      "ratio": {
+        "numerator": 109929377,
+        "denominator": 109681218,
+        "value": 1.0022625478137925
+      },
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "case": "captured-unmapped",
+      "ratio": {
+        "numerator": 1070115910,
+        "denominator": 1021580343,
+        "value": 1.0475102788856225
+      },
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "case": "captured-scalar",
+      "ratio": {
+        "numerator": 5323393284,
+        "denominator": 5319487699,
+        "value": 1.000734203220497
+      },
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "case": "captured-simd",
+      "ratio": {
+        "numerator": 100588091,
+        "denominator": 100460995,
+        "value": 1.001265127823988
+      },
+      "passed": true
+    },
+    {
+      "role": "candidate",
+      "case": "prediction-width-control",
+      "ratio": {
+        "numerator": 578501945,
+        "denominator": 502559758,
+        "value": 1.1511107600461714
+      },
+      "passed": false
+    },
+    {
+      "role": "candidate",
+      "case": "encoder-width-control",
+      "ratio": {
+        "numerator": 101359215,
+        "denominator": 87729106,
+        "value": 1.1553658713905053
+      },
+      "passed": false
+    }
+  ],
+  "gates": [
+    {
+      "case": "captured-projection",
+      "phase": "warmup_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-projection",
+      "phase": "warmup_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-projection",
+      "phase": "measured_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-projection",
+      "phase": "measured_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-unmapped",
+      "phase": "warmup_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-unmapped",
+      "phase": "warmup_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-unmapped",
+      "phase": "measured_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-unmapped",
+      "phase": "measured_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-scalar",
+      "phase": "warmup_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-scalar",
+      "phase": "warmup_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-scalar",
+      "phase": "measured_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-scalar",
+      "phase": "measured_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-simd",
+      "phase": "warmup_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-simd",
+      "phase": "warmup_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-simd",
+      "phase": "measured_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "captured-simd",
+      "phase": "measured_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "prediction-width-control",
+      "phase": "warmup_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "prediction-width-control",
+      "phase": "warmup_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "prediction-width-control",
+      "phase": "measured_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "prediction-width-control",
+      "phase": "measured_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "encoder-width-control",
+      "phase": "warmup_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "encoder-width-control",
+      "phase": "warmup_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "encoder-width-control",
+      "phase": "measured_totals",
+      "kind": "copies",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    },
+    {
+      "case": "encoder-width-control",
+      "phase": "measured_totals",
+      "kind": "scratch",
+      "current": 0,
+      "candidate": 0,
+      "passed": true
+    }
+  ],
+  "processes": {
+    "current-0": [
+      {
+        "numerator": 62346541,
+        "denominator": 126000000000,
+        "value": 0.0004948138174603174
+      },
+      {
+        "numerator": 6458953,
+        "denominator": 15750000000,
+        "value": 0.00041009225396825396
+      },
+      {
+        "numerator": 1776159851,
+        "denominator": 420000000000,
+        "value": 0.004228952026190476
+      },
+      {
+        "numerator": 201591511,
+        "denominator": 420000000000,
+        "value": 0.0004799797880952381
+      },
+      {
+        "numerator": 25629997,
+        "denominator": 918000000000,
+        "value": 2.791938671023965e-05
+      },
+      {
+        "numerator": 17009519,
+        "denominator": 382500000000,
+        "value": 4.446933071895425e-05
+      }
+    ],
+    "candidate-1": [
+      {
+        "numerator": 6093401,
+        "denominator": 17500000000,
+        "value": 0.00034819434285714287
+      },
+      {
+        "numerator": 16215561,
+        "denominator": 20000000000,
+        "value": 0.00081077805
+      },
+      {
+        "numerator": 5319487699,
+        "denominator": 1260000000000,
+        "value": 0.004221815634126984
+      },
+      {
+        "numerator": 20092199,
+        "denominator": 42000000000,
+        "value": 0.0004783856904761905
+      },
+      {
+        "numerator": 115700389,
+        "denominator": 3672000000000,
+        "value": 3.150882053376906e-05
+      },
+      {
+        "numerator": 6757281,
+        "denominator": 136000000000,
+        "value": 4.9685889705882355e-05
+      }
+    ],
+    "candidate-2": [
+      {
+        "numerator": 109929377,
+        "denominator": 315000000000,
+        "value": 0.0003489821492063492
+      },
+      {
+        "numerator": 107011591,
+        "denominator": 126000000000,
+        "value": 0.0008492983412698412
+      },
+      {
+        "numerator": 443616107,
+        "denominator": 105000000000,
+        "value": 0.004224915304761905
+      },
+      {
+        "numerator": 100588091,
+        "denominator": 210000000000,
+        "value": 0.0004789909095238095
+      },
+      {
+        "numerator": 251279879,
+        "denominator": 9180000000000,
+        "value": 2.7372535838779958e-05
+      },
+      {
+        "numerator": 43864553,
+        "denominator": 1020000000000,
+        "value": 4.3004463725490194e-05
+      }
+    ],
+    "current-3": [
+      {
+        "numerator": 612092791,
+        "denominator": 1260000000000,
+        "value": 0.00048578792936507936
+      },
+      {
+        "numerator": 510626297,
+        "denominator": 1260000000000,
+        "value": 0.0004052589658730159
+      },
+      {
+        "numerator": 5321494721,
+        "denominator": 1260000000000,
+        "value": 0.004223408508730158
+      },
+      {
+        "numerator": 302148389,
+        "denominator": 630000000000,
+        "value": 0.00047960061746031747
+      },
+      {
+        "numerator": 507567569,
+        "denominator": 18360000000000,
+        "value": 2.76452924291939e-05
+      },
+      {
+        "numerator": 6034301,
+        "denominator": 136000000000,
+        "value": 4.436986029411765e-05
+      }
+    ]
+  },
+  "accounting": {
+    "current-0": [
+      {
+        "name": "captured-projection",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-unmapped",
+        "warmup_totals": {
+          "allocated": 148747536,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-scalar",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-simd",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "prediction-width-control",
+        "warmup_totals": {
+          "allocated": 296208000,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "encoder-width-control",
+        "warmup_totals": {
+          "allocated": 296208128,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      }
+    ],
+    "candidate-1": [
+      {
+        "name": "captured-projection",
+        "warmup_totals": {
+          "allocated": 149184000,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44755200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35520,
+            "denominator": 1,
+            "value": 35520.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-unmapped",
+        "warmup_totals": {
+          "allocated": 148747224,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-scalar",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-simd",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "prediction-width-control",
+        "warmup_totals": {
+          "allocated": 296208000,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "encoder-width-control",
+        "warmup_totals": {
+          "allocated": 296208128,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      }
+    ],
+    "candidate-2": [
+      {
+        "name": "captured-projection",
+        "warmup_totals": {
+          "allocated": 149184000,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44755200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35520,
+            "denominator": 1,
+            "value": 35520.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-unmapped",
+        "warmup_totals": {
+          "allocated": 148747224,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-scalar",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-simd",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "prediction-width-control",
+        "warmup_totals": {
+          "allocated": 296208000,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "encoder-width-control",
+        "warmup_totals": {
+          "allocated": 296208128,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      }
+    ],
+    "current-3": [
+      {
+        "name": "captured-projection",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-unmapped",
+        "warmup_totals": {
+          "allocated": 148753136,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-scalar",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "captured-simd",
+        "warmup_totals": {
+          "allocated": 148747200,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 44624160,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 35416,
+            "denominator": 1,
+            "value": 35416.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "prediction-width-control",
+        "warmup_totals": {
+          "allocated": 296208000,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      },
+      {
+        "name": "encoder-width-control",
+        "warmup_totals": {
+          "allocated": 296208128,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_totals": {
+          "allocated": 88862400,
+          "copies": 0,
+          "scratch": 0
+        },
+        "measured_bytes_per_call": {
+          "allocated": {
+            "numerator": 4840,
+            "denominator": 1,
+            "value": 4840.0
+          },
+          "copies": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          },
+          "scratch": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0.0
+          }
+        }
+      }
+    ]
+  },
+  "calls": 723840,
+  "samples": 18720,
+  "warmup_calls": 556800,
+  "measured_calls": 167040,
+  "exact_output_checks": 2784,
+  "all_input_weight_output_hashes_equal": true,
+  "resources": [
+    {
+      "name": "current-0",
+      "samples": 75,
+      "seconds": 37.86303319700528,
+      "peak_rss": 270553088
+    },
+    {
+      "name": "candidate-1",
+      "samples": 79,
+      "seconds": 39.99120726506226,
+      "peak_rss": 270643200
+    },
+    {
+      "name": "candidate-2",
+      "samples": 78,
+      "seconds": 39.58877547096927,
+      "peak_rss": 264101888
+    },
+    {
+      "name": "current-3",
+      "samples": 75,
+      "seconds": 38.167003222042695,
+      "peak_rss": 266747904
+    }
+  ],
+  "maximum_foreign_cpu_fraction": 0.0010476750437825248,
+  "sixty_round_blocks_seconds": {
+    "current-0": {
+      "captured-projection": [
+        0.0005427872976190477,
+        0.0005099909404761905,
+        0.0004862878380952381,
+        0.00048341565714285717,
+        0.0004845713452380952,
+        0.00048152440952380955,
+        0.00048520254047619045,
+        0.00048280069761904757,
+        0.00048186269285714286,
+        0.0004820943952380952,
+        0.0005182365023809523,
+        0.0004846594619047619,
+        0.0004815454880952381
+      ],
+      "captured-unmapped": [
+        0.00042460609047619046,
+        0.0004145559404761905,
+        0.0004048679857142857,
+        0.0004069168095238095,
+        0.00040468418333333337,
+        0.0004077951309523809,
+        0.00040415130714285715,
+        0.00040814526666666667,
+        0.0004066079619047619,
+        0.00040821651428571426,
+        0.00041386571428571426,
+        0.00040991684523809525,
+        0.0004064942023809524
+      ],
+      "captured-scalar": [
+        0.004244739019047619,
+        0.004316495402380952,
+        0.004211555128571428,
+        0.004214539395238095,
+        0.004211650069047619,
+        0.004212661552380952,
+        0.004212150626190477,
+        0.0042151102023809525,
+        0.004213220973809524,
+        0.004213564592857143,
+        0.004250352445238095,
+        0.004224258338095238,
+        0.004212245295238095
+      ],
+      "captured-simd": [
+        0.0007780983357142857,
+        0.0006131458904761906,
+        0.000477921269047619,
+        0.0004771543785714286,
+        0.0004784637238095238,
+        0.0004767228642857143,
+        0.00047915852619047616,
+        0.00047646555714285716,
+        0.0004786050452380953,
+        0.0004786602357142857,
+        0.00048320156904761903,
+        0.00047884750476190476,
+        0.00047789029047619043
+      ],
+      "prediction-width-control": [
+        6.932578790849672e-05,
+        3.167032679738562e-05,
+        2.7876975980392155e-05,
+        2.7950608986928104e-05,
+        2.783392156862745e-05,
+        2.7897172058823526e-05,
+        2.788973088235294e-05,
+        2.7922142156862743e-05,
+        2.7789133986928104e-05,
+        2.7977262908496734e-05,
+        2.805756225490196e-05,
+        2.7867108006535948e-05,
+        2.7833489869281047e-05
+      ],
+      "encoder-width-control": [
+        0.0001064403955882353,
+        4.892033071895424e-05,
+        4.42754727124183e-05,
+        4.436189869281047e-05,
+        4.41445816993464e-05,
+        4.415477467320262e-05,
+        4.419622614379085e-05,
+        4.4411921732026146e-05,
+        4.451761486928105e-05,
+        4.4351059640522877e-05,
+        4.440514003267973e-05,
+        4.437598464052288e-05,
+        4.462686748366013e-05
+      ]
+    },
+    "candidate-1": {
+      "captured-projection": [
+        0.0003721892904761905,
+        0.00037071052380952376,
+        0.00034702027619047616,
+        0.00034714432380952376,
+        0.00034773666428571424,
+        0.00034615648333333334,
+        0.0003474512166666667,
+        0.0003459707642857143,
+        0.00034731050238095236,
+        0.00034740070952380954,
+        0.00035029477857142865,
+        0.0003479777357142857,
+        0.0003463105142857143
+      ],
+      "captured-unmapped": [
+        0.000844801407142857,
+        0.0008183012142857143,
+        0.0008137495142857143,
+        0.0008211593023809523,
+        0.0008089431142857143,
+        0.0008092069119047619,
+        0.0008144542976190476,
+        0.0008186500833333333,
+        0.0008074150523809524,
+        0.0008041021642857144,
+        0.0008059148738095237,
+        0.0008100207428571428,
+        0.0008163985333333334
+      ],
+      "captured-scalar": [
+        0.004255406754761905,
+        0.004292683192857143,
+        0.004216086514285715,
+        0.004213883323809523,
+        0.004216024704761905,
+        0.004217282226190476,
+        0.004213806616666667,
+        0.004216940645238095,
+        0.0042146877095238094,
+        0.0042189640404761905,
+        0.004236144357142857,
+        0.004214871128571428,
+        0.004214431416666667
+      ],
+      "captured-simd": [
+        0.0007839687761904762,
+        0.000591008961904762,
+        0.0004788545928571428,
+        0.0004778760666666667,
+        0.00047705295238095237,
+        0.0004786654761904762,
+        0.0004785133761904762,
+        0.00047736218095238096,
+        0.00047837905,
+        0.0004791862,
+        0.0004783045357142857,
+        0.0004785219404761905,
+        0.0004783305952380952
+      ],
+      "prediction-width-control": [
+        7.005526977124184e-05,
+        3.424955555555555e-05,
+        3.148783986928105e-05,
+        3.153574068627451e-05,
+        3.1532006535947716e-05,
+        3.146122450980392e-05,
+        3.1598067973856203e-05,
+        3.154958545751634e-05,
+        3.144953382352941e-05,
+        3.161399869281046e-05,
+        3.158920522875817e-05,
+        3.150747647058823e-05,
+        3.142977990196078e-05
+      ],
+      "encoder-width-control": [
+        0.00010842281323529411,
+        5.1984548366013075e-05,
+        4.965409019607843e-05,
+        4.956100931372549e-05,
+        4.95272862745098e-05,
+        4.962857565359477e-05,
+        4.949223741830065e-05,
+        4.958567647058824e-05,
+        4.9638277124183005e-05,
+        4.964113251633987e-05,
+        4.957579934640523e-05,
+        4.949000931372549e-05,
+        4.999186045751634e-05
+      ]
+    },
+    "candidate-2": {
+      "captured-projection": [
+        0.00037479136904761904,
+        0.0003646176761904762,
+        0.00035060522380952385,
+        0.00034861114999999997,
+        0.00034657238095238093,
+        0.00034752602142857145,
+        0.0003481667833333334,
+        0.0003465898023809524,
+        0.00034829387857142856,
+        0.00034757256190476185,
+        0.00035165328333333336,
+        0.00034740978333333333,
+        0.0003478833809523809
+      ],
+      "captured-unmapped": [
+        0.0008960908476190476,
+        0.0008661794976190477,
+        0.0008423001785714285,
+        0.0008632092880952381,
+        0.0008512660952380952,
+        0.0008473787,
+        0.0008585567928571428,
+        0.0008548992000000001,
+        0.0008522904976190477,
+        0.0008550414595238096,
+        0.0008473178523809524,
+        0.0008410168690476189,
+        0.0008595603023809523
+      ],
+      "captured-scalar": [
+        0.004286463376190476,
+        0.004275913609523809,
+        0.004225128078571429,
+        0.004216340642857143,
+        0.004216349416666667,
+        0.0042278673023809525,
+        0.004214470838095238,
+        0.004214997083333333,
+        0.004214111007142857,
+        0.004220319802380953,
+        0.00424139045952381,
+        0.004216518907142857,
+        0.004216836547619047
+      ],
+      "captured-simd": [
+        0.0007863886952380952,
+        0.0006032733738095238,
+        0.00048266837380952376,
+        0.00047785618809523814,
+        0.000479314780952381,
+        0.00048065789047619045,
+        0.00047753147142857137,
+        0.00047891491190476187,
+        0.00047915578333333335,
+        0.00047937933571428574,
+        0.00047912051190476194,
+        0.0004785646642857143,
+        0.00047928755238095235
+      ],
+      "prediction-width-control": [
+        7.030628496732026e-05,
+        2.9117741013071897e-05,
+        2.7449115032679736e-05,
+        2.747527794117647e-05,
+        2.7315507352941176e-05,
+        2.749265947712418e-05,
+        2.748462336601307e-05,
+        2.7289018137254904e-05,
+        2.7410330065359474e-05,
+        2.738172924836601e-05,
+        2.7404073692810457e-05,
+        2.732764820261438e-05,
+        2.7385885620915036e-05
+      ],
+      "encoder-width-control": [
+        0.00010795921960784314,
+        4.359758153594771e-05,
+        4.336991111111111e-05,
+        4.291615408496732e-05,
+        4.2949345261437914e-05,
+        4.312525849673202e-05,
+        4.2940066176470586e-05,
+        4.302833137254901e-05,
+        4.298555228758169e-05,
+        4.326711160130719e-05,
+        4.294614640522876e-05,
+        4.2962744444444443e-05,
+        4.310450032679739e-05
+      ]
+    },
+    "current-3": {
+      "captured-projection": [
+        0.0005682673857142857,
+        0.0005209952571428571,
+        0.00048308922619047626,
+        0.0004817754595238095,
+        0.00048311795238095234,
+        0.0005067265214285714,
+        0.00048406333095238097,
+        0.0004849639714285714,
+        0.00047793110238095236,
+        0.000481942769047619,
+        0.0004904647857142858,
+        0.00047891365714285714,
+        0.00048798534523809524
+      ],
+      "captured-unmapped": [
+        0.00044021758571428574,
+        0.0004273799738095238,
+        0.00040235407142857145,
+        0.0004059775642857143,
+        0.0004021421,
+        0.0004044477952380953,
+        0.0004029827928571428,
+        0.0004038375142857143,
+        0.00040250198095238094,
+        0.00040574199761904764,
+        0.0004067518238095238,
+        0.0004037410071428571,
+        0.00040528406666666666
+      ],
+      "captured-scalar": [
+        0.004241593661904762,
+        0.004302536076190476,
+        0.004213356473809523,
+        0.004214244780952381,
+        0.004213875935714285,
+        0.004226159183333334,
+        0.004213411269047619,
+        0.004213130173809524,
+        0.004213982769047619,
+        0.004216376028571428,
+        0.004234774838095238,
+        0.0042144685261904765,
+        0.004220982161904762
+      ],
+      "captured-simd": [
+        0.0007722933880952382,
+        0.0006101036785714286,
+        0.00047980000476190475,
+        0.0004761075642857143,
+        0.00047941411904761904,
+        0.00048311780714285714,
+        0.0004790469666666667,
+        0.0004770868904761905,
+        0.00047915274047619045,
+        0.00047983774523809524,
+        0.00047809722380952384,
+        0.00047926318333333333,
+        0.00048144144523809524
+      ],
+      "prediction-width-control": [
+        6.916053627450981e-05,
+        3.0319837908496733e-05,
+        2.7628281535947713e-05,
+        2.7682965849673203e-05,
+        2.76106295751634e-05,
+        2.7803221732026143e-05,
+        2.7567800326797384e-05,
+        2.7598678267973856e-05,
+        2.7382704901960783e-05,
+        2.7638885294117645e-05,
+        2.758564526143791e-05,
+        2.7690568300653597e-05,
+        2.7659663725490195e-05
+      ],
+      "encoder-width-control": [
+        0.00010668274362745098,
+        4.8966694771241825e-05,
+        4.442512009803921e-05,
+        4.409872745098039e-05,
+        4.433295784313726e-05,
+        4.42663251633987e-05,
+        4.4376068790849675e-05,
+        4.430283986928105e-05,
+        4.416692794117648e-05,
+        4.445886764705882e-05,
+        4.4229173529411766e-05,
+        4.4095484803921573e-05,
+        4.478492254901961e-05
+      ]
+    }
+  },
+  "limitation": "Blocks describe every original warmup and measured clock; they never replace the full-mean failed verdict."
+}
