@@ -8,8 +8,9 @@ from protocol import TOOLS, PARENT, pin, read, save
 from source import TARGET, HELPER, changed
 
 ROOT = TOOLS.parents[2]
-BASE = ROOT/'artifacts/parakeet-decoder-packed-row-contracts-v2-amd-20260927'
+BASE = ROOT/'artifacts/parakeet-decoder-packed-row-contracts-v3-amd-20260927'
 FIRST = ROOT/'artifacts/parakeet-decoder-packed-row-contracts-amd-20260927'
+SECOND = ROOT/'artifacts/parakeet-decoder-packed-row-contracts-v2-amd-20260927'
 QUALIFIED = ROOT/'artifacts/parakeet-rational-sigmoid-root-amd-20260927'
 OBSERVATION = ROOT/'artifacts/parakeet-decoder-projection-observation-v3-amd-20260927'
 REMOTE_ROOT = '/dev/shm/lokad-parakeet-rational-sigmoid-root-20260927'
@@ -35,6 +36,11 @@ def previous_closed():
     for name, wanted in failed['files'].items(): assert pin(FIRST/name) == wanted, name
     for name in ['Contracts.cs.txt', 'Contracts.csproj', 'PreparedSingleRowKernel.cs.txt', 'source.py']:
         assert pin(TOOLS/name) == pin(FIRST/'frozen-tools'/name), 'Keep the product and consumer unchanged'
+    assert pin(SECOND/'failed.json')['sha256'] == '2c74d4aede20993b14a988c8a04399f238954f0c6455c78395e1cb1cda581478'
+    second = read(SECOND/'failed.json')
+    assert second['evidence_verified'] and second['terminal'] and second['compiled_passed'] and second['normal_contracts_passed']
+    assert not second['disabled_contracts_executed']
+    for name, wanted in second['files'].items(): assert pin(SECOND/name) == wanted, name
     return applied['source_files']
 
 
@@ -78,6 +84,8 @@ def prepare():
         copy(folder/'collected/collection.json', 'evidence/'+label+'/collection.json')
     copy(FIRST/'failed.json', 'evidence/first-failed.json')
     copy(FIRST/'collected/collection.json', 'evidence/first-collection.json')
+    copy(SECOND/'failed.json', 'evidence/second-failed.json')
+    copy(SECOND/'collected/collection.json', 'evidence/second-collection.json')
     copy(FIRST/'collected/built.json', 'built.json')
     copy(QUALIFIED/'bundle/evidence/root-applied.json', 'evidence/root-applied.json')
     value = read(OBSERVATION/'analysis.json')

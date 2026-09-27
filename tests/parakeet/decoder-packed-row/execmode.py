@@ -3,7 +3,7 @@ import os
 import sys
 
 assert sys.argv[1] in ['noavx512', 'scalar'] and sys.argv[2] == '/home/vermorel/.dotnet/dotnet'
-key = 'DOTNET_EnableAVX512F' if sys.argv[1] == 'noavx512' else 'DOTNET_EnableHWIntrinsic'
+key = 'DOTNET_EnableAVX512' if sys.argv[1] == 'noavx512' else 'DOTNET_EnableHWIntrinsic'
 env = dict(os.environ)
 assert not any(k.lower().startswith(('dotnet_', 'complus_', 'lokad_')) for k in env)
 env[key] = '0'

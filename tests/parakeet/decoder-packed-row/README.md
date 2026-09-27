@@ -61,8 +61,16 @@ inventory plus the six previously unstarted contract processes. It hardlinks
 the exact compiled products and consumer; source, fixtures and arithmetic are
 unchanged, and neither successful build is repeated.
 
-Local artifact: `artifacts/parakeet-decoder-packed-row-contracts-v2-amd-20260927`.
-VM: `/dev/shm/lokad-decrow2-20260927`. Prefix commands below with
+The second campaign closes at failure `2c74d4ae`: inventory and both normal
+processes pass, with 90 public and 81 guarded raw cases. The first AVX512-disabled
+process stops at its hardware guard before arithmetic because the launcher used
+`DOTNET_EnableAVX512F` instead of the existing lane's `DOTNET_EnableAVX512`.
+The third namespace corrects only that launcher switch and executes the four
+remaining processes. It reuses the same binaries and joins the retained normal
+results during auditing; neither the builds, inventory nor normal calls repeat.
+
+Local artifact: `artifacts/parakeet-decoder-packed-row-contracts-v3-amd-20260927`.
+VM: `/dev/shm/lokad-decrow3-20260927`. Prefix commands below with
 `C:/Python313/python.exe -X utf8 -B` from the repository root:
 
     tests/parakeet/decoder-packed-row/run.py prepare

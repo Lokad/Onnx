@@ -28,6 +28,12 @@ def main():
     assert failed['terminal'] and failed['code'] == 1 and failed['input_error'] is None
     assert not any(live(owner) for owner in failed['identities'])
     assert pin(first/'built.json') == pin(BASE/'built.json')
+    second = Path('/dev/shm/lokad-decrow2-20260927')
+    assert pin(second/'collection.json') == pin(BASE/'evidence/second-collection.json')
+    stopped = read(second/'collection.json')
+    assert stopped['terminal'] and stopped['code'] == 1 and stopped['input_error'] is None
+    assert not any(live(owner) for owner in stopped['identities'])
+    assert pin(second/'built.json') == pin(BASE/'built.json')
     for name, item in stage['links'].items():
         target = (BASE/name).resolve(); source = Path(item['source'])
         assert target.is_relative_to(BASE.resolve()) and not target.exists()
