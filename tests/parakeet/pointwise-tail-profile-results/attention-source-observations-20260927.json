@@ -1,0 +1,79 @@
+{
+  "source_commit": "c28b38489077d527c15fe28f50f9b2e456b25659",
+  "root_closure": {
+    "bytes": 229795,
+    "sha256": "fc11676361a50ef613f783fcb51e4ead488c9c2ee34a3edddcbb561f67037e47"
+  },
+  "partition": {
+    "bytes": 303,
+    "sha256": "b7e24651bfcdcc67900783bb6f33fa215927f20e48f572e3272025fb0b6fbec0"
+  },
+  "projection_breakdown": {
+    "bytes": 170609,
+    "sha256": "05ea4feb05a6d006d052da7f76d074b52880b0e3f94fefde0be9b274164cb3dd"
+  },
+  "source_files": {
+    "src/Lokad.Onnx/GraphPacking.cs": {
+      "bytes": 10547,
+      "sha256": "732fee575241985ad6a09e6cc546f39dd2f23f7eceb6ccd281c79785adf260dd"
+    },
+    "src/Lokad.Onnx/GraphOwnedPacking.cs": {
+      "bytes": 6359,
+      "sha256": "7141479461f0bfef59dca2bc00b6f622c4a9d107f099cb048475e31f22e92185"
+    },
+    "src/Lokad.Onnx/TensorOps.MatMul.cs": {
+      "bytes": 46261,
+      "sha256": "ef7e2924fdb91e437d4a097b87e7b72597c4ab8799f036ba687520a01c9e9869"
+    },
+    "src/Lokad.Onnx/Zzz.WideProjectionEntry.cs": {
+      "bytes": 4706,
+      "sha256": "06f4ccec00dd9fd3c1a6ab71ed11410fa16bdcd62e55257342496dbf51bdcd35"
+    },
+    "src/Lokad.Onnx/Zzz.IsolatedShortMatMul.cs": {
+      "bytes": 19586,
+      "sha256": "f822940b400e503666a12c7c2b7d98728a96e064517f574b1be1c92922c34093"
+    },
+    "src/Lokad.Onnx/MathOps.PackedAvx512.cs": {
+      "bytes": 14443,
+      "sha256": "7edef35d0ed2bf11399b0cf93f8de4d4e67b5c915fed12fb4a9db383c192daca"
+    },
+    "src/Lokad.Onnx/AblationSwitches.cs": {
+      "bytes": 6333,
+      "sha256": "c3a340802dd19ecf1218342d4786c958aadeb3d9b2358b762e6886b021143656"
+    },
+    "src/Lokad.Onnx.Data/ParakeetTranscriber.cs": {
+      "bytes": 9662,
+      "sha256": "cff6f5a2915d91a337c9e675d9d12e0c75c96352644a248fbc50b97d4dc4406e"
+    }
+  },
+  "ort_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "ort_source": {
+    "onnxruntime/core/providers/cpu/math/matmul.cc": {
+      "bytes": 21228,
+      "sha256": "ae7e12fabee4dc14bf33eab3a74e197e6842bd158f1bc13f48ab38ab39055cc5"
+    },
+    "onnxruntime/core/mlas/lib/sgemm.cpp": {
+      "bytes": 43141,
+      "sha256": "1554aa0b046c3c02734613ef8ab1105bd55449f7d76116d342d17e1c630cb523"
+    },
+    "onnxruntime/core/mlas/lib/mlasi.h": {
+      "bytes": 98181,
+      "sha256": "24f65d23f6ab83b812049c55d19583f27c471bde077a1d66f1db42e0b5e8ab97"
+    }
+  },
+  "attention": {
+    "matrices": 120,
+    "managed_seconds": 9.373552733666667,
+    "ort_seconds": 7.948853,
+    "difference": 1.4246997336666674
+  },
+  "prior_route_report": {
+    "bytes": 280288,
+    "sha256": "e03fcfaf7f9c752764e0c1b2a968234cf8f2205495b7424951022d86db2914a6"
+  },
+  "inference_calls": 0,
+  "new_optimization": null,
+  "current_cache_membership_measured": false,
+  "current_internal_kernel_dispatch_measured": false,
+  "prior_route_clocks_used": false
+}

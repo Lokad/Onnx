@@ -4,6 +4,11 @@ Source `c28b3848` is qualified at root closure `fc116763`. The independent
 application result is 45.332653922 seconds versus ORT 39.232132721, a 1.155498
 ratio. These fresh profiles provide attribution only and cannot update that score.
 
+Both captures and publication are complete. Managed closure `378f7c19`, native
+closure `68bb93e6` / context `6982eba8` and full partition `b7e24651` pass.
+See the [current partition](diagnosis-20260927.md) and [next bounded diagnosis](next-diagnosis-20260927.md).
+All owners are terminal. Do not replay the commands or overwrite publications.
+
 The publisher requires both new captures, their actual audits and a common
 qualified source, product and twenty-clip manifest. Reuse exact node membership
 from mapping closure `17f0e968` / analysis `0faf7f22`, but take every clock from
