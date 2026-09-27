@@ -1,0 +1,2910 @@
+{
+  "closure": {
+    "bytes": 144804,
+    "sha256": "f7b0a361e4019f44541efe270e80e55b3bbadf341fa97820c88d1f077c9bdf48"
+  },
+  "admitted": true,
+  "passed": true,
+  "performance": [
+    {
+      "key": "e5-8tok",
+      "means": {
+        "current-a": 0.006058553938888889,
+        "candidate-a": 0.006148019244444444,
+        "ort-a": 0.006039746566666667,
+        "ort-b": 0.005931203388888889,
+        "candidate-b": 0.005884148138888889,
+        "current-b": 0.0058704861
+      },
+      "current": 0.005964520019444444,
+      "candidate": 0.006016083691666667,
+      "ort": 0.005985474977777778,
+      "ratio": 1.0051138320688884,
+      "current_over_ort": 0.9964990316706472,
+      "candidate_over_current": 1.0086450665022708,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0320361611773323,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0448444021678527,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0183003634609993,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-30tok",
+      "means": {
+        "current-a": 0.016298412055555555,
+        "candidate-a": 0.01624376621111111,
+        "ort-a": 0.01594013071111111,
+        "ort-b": 0.016054841883333334,
+        "candidate-b": 0.01630217427777778,
+        "current-b": 0.016299440394444444
+      },
+      "current": 0.016298926225,
+      "candidate": 0.016272970244444445,
+      "ort": 0.01599748629722222,
+      "ratio": 1.0172204521450383,
+      "current_over_ort": 1.0188429558355128,
+      "candidate_over_current": 0.9984075036479555,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0000630944220446,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0035957219469653,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0071963758830573,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-30pad128",
+      "means": {
+        "current-a": 0.06352147861666667,
+        "candidate-a": 0.06288651412222222,
+        "ort-a": 0.06361641450555555,
+        "ort-b": 0.06352713893333334,
+        "candidate-b": 0.0626299985,
+        "current-b": 0.06277741431666667
+      },
+      "current": 0.06314944646666666,
+      "candidate": 0.06275825631111111,
+      "ort": 0.06357177671944444,
+      "ratio": 0.9872031198384847,
+      "current_over_ort": 0.9933566391475637,
+      "candidate_over_current": 0.9938053272444431,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.011852420302734,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0040957309335115,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0014053139134111,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-128tok",
+      "means": {
+        "current-a": 0.06323773355,
+        "candidate-a": 0.06346635642777777,
+        "ort-a": 0.06412296387777777,
+        "ort-b": 0.06298506286666666,
+        "candidate-b": 0.06305515117222223,
+        "current-b": 0.06332052055555555
+      },
+      "current": 0.06327912705277777,
+      "candidate": 0.0632607538,
+      "ort": 0.06355401337222222,
+      "ratio": 0.9953856639941105,
+      "current_over_ort": 0.9956747606506847,
+      "candidate_over_current": 0.999709647499365,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.001309139352537,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0065213586505,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0180662042605235,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "e5-512tok",
+      "means": {
+        "current-a": 0.3824008003277778,
+        "candidate-a": 0.3543930275777778,
+        "ort-a": 0.30229949237777776,
+        "ort-b": 0.2980442773277778,
+        "candidate-b": 0.3531737298777778,
+        "current-b": 0.3592699483
+      },
+      "current": 0.3708353743138889,
+      "candidate": 0.35378337872777776,
+      "ort": 0.3001718848527778,
+      "ratio": 1.1786026492830741,
+      "current_over_ort": 1.235410086776677,
+      "candidate_over_current": 0.9540173436321702,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0643829302651913,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0034524020244144,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0142771238158024,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "dinov3",
+      "means": {
+        "current-a": 0.11525773156666666,
+        "candidate-a": 0.11684441820555555,
+        "ort-a": 0.10380223286666666,
+        "ort-b": 0.10304428923888889,
+        "candidate-b": 0.11690378877777778,
+        "current-b": 0.1171353539
+      },
+      "current": 0.11619654273333334,
+      "candidate": 0.11687410349166667,
+      "ort": 0.10342326105277778,
+      "ratio": 1.1300562591236105,
+      "current_over_ort": 1.1235049209484629,
+      "candidate_over_current": 1.0058311610861634,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0162906410512451,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0005081164606235,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0073555131815275,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "resnet50",
+      "means": {
+        "current-a": 0.10289183638333334,
+        "candidate-a": 0.10336744333888889,
+        "ort-a": 0.07333889974444445,
+        "ort-b": 0.07350740190555556,
+        "candidate-b": 0.10263416597777777,
+        "current-b": 0.1041565433
+      },
+      "current": 0.10352418984166667,
+      "candidate": 0.10300080465833333,
+      "ort": 0.073423150825,
+      "ratio": 1.4028382533436903,
+      "current_over_ort": 1.4099665933488856,
+      "candidate_over_current": 0.9949443199301167,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.0122916157503,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0071445736819247,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.002297582343044,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    },
+    {
+      "key": "gpt2",
+      "means": {
+        "current-a": 0.03780698698333333,
+        "candidate-a": 0.03532400022222222,
+        "ort-a": 0.020998113411111113,
+        "ort-b": 0.020447780427777777,
+        "candidate-b": 0.03727566772777778,
+        "current-b": 0.03831264255
+      },
+      "current": 0.038059814766666665,
+      "candidate": 0.036299833975,
+      "ort": 0.020722946919444443,
+      "ratio": 1.7516733559231232,
+      "current_over_ort": 1.83660243471236,
+      "candidate_over_current": 0.9537575050625816,
+      "regression_passed": true,
+      "controls": [
+        {
+          "role": "current",
+          "ratio": 1.013374659210203,
+          "passed": true
+        },
+        {
+          "role": "candidate",
+          "ratio": 1.0552504669142133,
+          "passed": true
+        },
+        {
+          "role": "ort",
+          "ratio": 1.0269140694892107,
+          "passed": true
+        }
+      ],
+      "qualified": true
+    }
+  ],
+  "numerics": [
+    {
+      "process": "verify-e5-8tok-current",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "verify-e5-8tok-candidate",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "verify-e5-8tok-ort",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-8tok-current-a",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "timing-e5-8tok-candidate-a",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "timing-e5-8tok-ort-a",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-8tok-ort-b",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-8tok-candidate-b",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "timing-e5-8tok-current-b",
+      "output": "last_hidden_state",
+      "values": 3072,
+      "max_scaled_error": 1.0207295417785645e-06
+    },
+    {
+      "process": "verify-e5-30tok-current",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "verify-e5-30tok-candidate",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "verify-e5-30tok-ort",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30tok-current-a",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "timing-e5-30tok-candidate-a",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "timing-e5-30tok-ort-a",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30tok-ort-b",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30tok-candidate-b",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "timing-e5-30tok-current-b",
+      "output": "last_hidden_state",
+      "values": 11520,
+      "max_scaled_error": 1.519918441772461e-06
+    },
+    {
+      "process": "verify-e5-30pad128-current",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.7657876014709473e-06
+    },
+    {
+      "process": "verify-e5-30pad128-candidate",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.7657876014709473e-06
+    },
+    {
+      "process": "verify-e5-30pad128-ort",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30pad128-current-a",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.7657876014709473e-06
+    },
+    {
+      "process": "timing-e5-30pad128-candidate-a",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.7657876014709473e-06
+    },
+    {
+      "process": "timing-e5-30pad128-ort-a",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30pad128-ort-b",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-30pad128-candidate-b",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.7657876014709473e-06
+    },
+    {
+      "process": "timing-e5-30pad128-current-b",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.7657876014709473e-06
+    },
+    {
+      "process": "verify-e5-128tok-current",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.1003576219081879e-06
+    },
+    {
+      "process": "verify-e5-128tok-candidate",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.1003576219081879e-06
+    },
+    {
+      "process": "verify-e5-128tok-ort",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-128tok-current-a",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.1003576219081879e-06
+    },
+    {
+      "process": "timing-e5-128tok-candidate-a",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.1003576219081879e-06
+    },
+    {
+      "process": "timing-e5-128tok-ort-a",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-128tok-ort-b",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-128tok-candidate-b",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.1003576219081879e-06
+    },
+    {
+      "process": "timing-e5-128tok-current-b",
+      "output": "last_hidden_state",
+      "values": 49152,
+      "max_scaled_error": 1.1003576219081879e-06
+    },
+    {
+      "process": "verify-e5-512tok-current",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 1.7285346984863281e-06
+    },
+    {
+      "process": "verify-e5-512tok-candidate",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 1.7285346984863281e-06
+    },
+    {
+      "process": "verify-e5-512tok-ort",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-512tok-current-a",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 1.7285346984863281e-06
+    },
+    {
+      "process": "timing-e5-512tok-candidate-a",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 1.7285346984863281e-06
+    },
+    {
+      "process": "timing-e5-512tok-ort-a",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-512tok-ort-b",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-e5-512tok-candidate-b",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 1.7285346984863281e-06
+    },
+    {
+      "process": "timing-e5-512tok-current-b",
+      "output": "last_hidden_state",
+      "values": 196608,
+      "max_scaled_error": 1.7285346984863281e-06
+    },
+    {
+      "process": "verify-dinov3-current",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "verify-dinov3-current",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "verify-dinov3-candidate",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "verify-dinov3-candidate",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "verify-dinov3-ort",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-dinov3-ort",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-dinov3-current-a",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "timing-dinov3-current-a",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "timing-dinov3-candidate-a",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "timing-dinov3-candidate-a",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "timing-dinov3-ort-a",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-dinov3-ort-a",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-dinov3-ort-b",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-dinov3-ort-b",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-dinov3-candidate-b",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "timing-dinov3-candidate-b",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "timing-dinov3-current-b",
+      "output": "last_hidden_state",
+      "values": 77184,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "timing-dinov3-current-b",
+      "output": "pooler_output",
+      "values": 384,
+      "max_scaled_error": 5.364418029785156e-06
+    },
+    {
+      "process": "verify-resnet50-current",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 4.231929779052734e-06
+    },
+    {
+      "process": "verify-resnet50-candidate",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 4.231929779052734e-06
+    },
+    {
+      "process": "verify-resnet50-ort",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-resnet50-current-a",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 4.231929779052734e-06
+    },
+    {
+      "process": "timing-resnet50-candidate-a",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 4.231929779052734e-06
+    },
+    {
+      "process": "timing-resnet50-ort-a",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-resnet50-ort-b",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-resnet50-candidate-b",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 4.231929779052734e-06
+    },
+    {
+      "process": "timing-resnet50-current-b",
+      "output": "output",
+      "values": 2048,
+      "max_scaled_error": 4.231929779052734e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 7.547453851144423e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 2.0966189084834232e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 6.784782377681187e-07
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 2.9206275939941406e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 1.7209652228495077e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 3.7550926208496094e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 2.294778823852539e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 6.9141387939453125e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 2.6971101760864258e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 6.198883056640625e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 3.873019633931297e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 6.079673767089844e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 4.172325134277344e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 6.467103958129883e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 4.675239324569702e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 6.4373016357421875e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 5.487352609634399e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 5.442071280722859e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 4.9173831939697266e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 4.5299530029296875e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 4.827976226806641e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 5.662441253662109e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 5.4836273193359375e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 5.3942203521728516e-06
+    },
+    {
+      "process": "verify-gpt2-current",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 5.564217874988099e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 7.547453851144423e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 2.0966189084834232e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 6.784782377681187e-07
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 2.9206275939941406e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 1.7209652228495077e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 3.7550926208496094e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 2.294778823852539e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 6.9141387939453125e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 2.6971101760864258e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 6.198883056640625e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 3.873019633931297e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 6.079673767089844e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 4.172325134277344e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 6.467103958129883e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 4.675239324569702e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 6.4373016357421875e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 5.487352609634399e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 5.442071280722859e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 4.9173831939697266e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 4.5299530029296875e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 4.827976226806641e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 5.662441253662109e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 5.4836273193359375e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 5.3942203521728516e-06
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 5.564217874988099e-06
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 7.547453851144423e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 2.0966189084834232e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 6.784782377681187e-07
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 2.9206275939941406e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 1.7209652228495077e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 3.7550926208496094e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 2.294778823852539e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 6.9141387939453125e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 2.6971101760864258e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 6.198883056640625e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 3.873019633931297e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 6.079673767089844e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 4.172325134277344e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 6.467103958129883e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 4.675239324569702e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 6.4373016357421875e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 5.487352609634399e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 5.442071280722859e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 4.9173831939697266e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 4.5299530029296875e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 4.827976226806641e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 5.662441253662109e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 5.4836273193359375e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 5.3942203521728516e-06
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 5.564217874988099e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 7.547453851144423e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 2.0966189084834232e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 6.784782377681187e-07
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 2.9206275939941406e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 1.7209652228495077e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 3.7550926208496094e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 2.294778823852539e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 6.9141387939453125e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 2.6971101760864258e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 6.198883056640625e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 3.873019633931297e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 6.079673767089844e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 4.172325134277344e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 6.467103958129883e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 4.675239324569702e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 6.4373016357421875e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 5.487352609634399e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 5.442071280722859e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 4.9173831939697266e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 4.5299530029296875e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 4.827976226806641e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 5.662441253662109e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 5.4836273193359375e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 5.3942203521728516e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 5.564217874988099e-06
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 0.0
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 7.547453851144423e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 2.0966189084834232e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 6.784782377681187e-07
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 2.9206275939941406e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 1.7209652228495077e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 3.7550926208496094e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 2.294778823852539e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 6.9141387939453125e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 2.6971101760864258e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 6.198883056640625e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 3.873019633931297e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 6.079673767089844e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 4.172325134277344e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 6.467103958129883e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 4.675239324569702e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 6.4373016357421875e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 5.487352609634399e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 5.442071280722859e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 4.9173831939697266e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 4.5299530029296875e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 4.827976226806641e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 5.662441253662109e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 5.4836273193359375e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 5.3942203521728516e-06
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 5.564217874988099e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "logits",
+      "values": 201028,
+      "max_scaled_error": 7.547453851144423e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.0.key",
+      "values": 3072,
+      "max_scaled_error": 2.0966189084834232e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.0.value",
+      "values": 3072,
+      "max_scaled_error": 6.784782377681187e-07
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.1.key",
+      "values": 3072,
+      "max_scaled_error": 2.9206275939941406e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.1.value",
+      "values": 3072,
+      "max_scaled_error": 1.7209652228495077e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.2.key",
+      "values": 3072,
+      "max_scaled_error": 3.7550926208496094e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.2.value",
+      "values": 3072,
+      "max_scaled_error": 2.294778823852539e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.3.key",
+      "values": 3072,
+      "max_scaled_error": 6.9141387939453125e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.3.value",
+      "values": 3072,
+      "max_scaled_error": 2.6971101760864258e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.4.key",
+      "values": 3072,
+      "max_scaled_error": 6.198883056640625e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.4.value",
+      "values": 3072,
+      "max_scaled_error": 3.873019633931297e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.5.key",
+      "values": 3072,
+      "max_scaled_error": 6.079673767089844e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.5.value",
+      "values": 3072,
+      "max_scaled_error": 4.172325134277344e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.6.key",
+      "values": 3072,
+      "max_scaled_error": 6.467103958129883e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.6.value",
+      "values": 3072,
+      "max_scaled_error": 4.675239324569702e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.7.key",
+      "values": 3072,
+      "max_scaled_error": 6.4373016357421875e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.7.value",
+      "values": 3072,
+      "max_scaled_error": 5.487352609634399e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.8.key",
+      "values": 3072,
+      "max_scaled_error": 5.442071280722859e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.8.value",
+      "values": 3072,
+      "max_scaled_error": 4.9173831939697266e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.9.key",
+      "values": 3072,
+      "max_scaled_error": 4.5299530029296875e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.9.value",
+      "values": 3072,
+      "max_scaled_error": 4.827976226806641e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.10.key",
+      "values": 3072,
+      "max_scaled_error": 5.662441253662109e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.10.value",
+      "values": 3072,
+      "max_scaled_error": 5.4836273193359375e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.11.key",
+      "values": 3072,
+      "max_scaled_error": 5.3942203521728516e-06
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "output": "present.11.value",
+      "values": 3072,
+      "max_scaled_error": 5.564217874988099e-06
+    }
+  ],
+  "resources": [
+    {
+      "name": "verify-e5-8tok-current",
+      "samples": 4,
+      "peak_rss": 1415626752,
+      "seconds": 1.023236809996888
+    },
+    {
+      "name": "verify-e5-8tok-candidate",
+      "samples": 4,
+      "peak_rss": 1413394432,
+      "seconds": 1.0242381650023162
+    },
+    {
+      "name": "verify-e5-8tok-ort",
+      "samples": 2,
+      "peak_rss": 863698944,
+      "seconds": 0.5148680050624534
+    },
+    {
+      "name": "verify-e5-30tok-current",
+      "samples": 4,
+      "peak_rss": 1413111808,
+      "seconds": 1.0255790700903162
+    },
+    {
+      "name": "verify-e5-30tok-candidate",
+      "samples": 4,
+      "peak_rss": 1418084352,
+      "seconds": 1.0256074899807572
+    },
+    {
+      "name": "verify-e5-30tok-ort",
+      "samples": 2,
+      "peak_rss": 899391488,
+      "seconds": 0.5160236320225522
+    },
+    {
+      "name": "verify-e5-30pad128-current",
+      "samples": 5,
+      "peak_rss": 1449639936,
+      "seconds": 1.2829345660284162
+    },
+    {
+      "name": "verify-e5-30pad128-candidate",
+      "samples": 5,
+      "peak_rss": 1441927168,
+      "seconds": 1.2842964719748124
+    },
+    {
+      "name": "verify-e5-30pad128-ort",
+      "samples": 3,
+      "peak_rss": 918499328,
+      "seconds": 0.7737692639930174
+    },
+    {
+      "name": "verify-e5-128tok-current",
+      "samples": 5,
+      "peak_rss": 1437401088,
+      "seconds": 1.2882846409920603
+    },
+    {
+      "name": "verify-e5-128tok-candidate",
+      "samples": 5,
+      "peak_rss": 1441431552,
+      "seconds": 1.2917104159714654
+    },
+    {
+      "name": "verify-e5-128tok-ort",
+      "samples": 3,
+      "peak_rss": 555315200,
+      "seconds": 0.7732878630049527
+    },
+    {
+      "name": "verify-e5-512tok-current",
+      "samples": 9,
+      "peak_rss": 1597751296,
+      "seconds": 2.313610226032324
+    },
+    {
+      "name": "verify-e5-512tok-candidate",
+      "samples": 9,
+      "peak_rss": 1580761088,
+      "seconds": 2.3137246520491317
+    },
+    {
+      "name": "verify-e5-512tok-ort",
+      "samples": 6,
+      "peak_rss": 614371328,
+      "seconds": 1.5441136879380792
+    },
+    {
+      "name": "verify-dinov3-current",
+      "samples": 4,
+      "peak_rss": 343904256,
+      "seconds": 1.0297317280201241
+    },
+    {
+      "name": "verify-dinov3-candidate",
+      "samples": 4,
+      "peak_rss": 339718144,
+      "seconds": 1.030520797939971
+    },
+    {
+      "name": "verify-dinov3-ort",
+      "samples": 3,
+      "peak_rss": 170221568,
+      "seconds": 0.7757616499438882
+    },
+    {
+      "name": "verify-resnet50-current",
+      "samples": 4,
+      "peak_rss": 416497664,
+      "seconds": 1.0313633530167863
+    },
+    {
+      "name": "verify-resnet50-candidate",
+      "samples": 4,
+      "peak_rss": 416317440,
+      "seconds": 1.0315084779867902
+    },
+    {
+      "name": "verify-resnet50-ort",
+      "samples": 2,
+      "peak_rss": 305106944,
+      "seconds": 0.5183298679767177
+    },
+    {
+      "name": "verify-gpt2-current",
+      "samples": 5,
+      "peak_rss": 1755693056,
+      "seconds": 1.2913931090151891
+    },
+    {
+      "name": "verify-gpt2-candidate",
+      "samples": 5,
+      "peak_rss": 1752195072,
+      "seconds": 1.2930570939788595
+    },
+    {
+      "name": "verify-gpt2-ort",
+      "samples": 3,
+      "peak_rss": 865062912,
+      "seconds": 0.7797971060499549
+    },
+    {
+      "name": "timing-e5-8tok-current-a",
+      "samples": 174,
+      "peak_rss": 1418801152,
+      "seconds": 45.0168349170126
+    },
+    {
+      "name": "timing-e5-8tok-candidate-a",
+      "samples": 174,
+      "peak_rss": 1411133440,
+      "seconds": 45.03400679293554
+    },
+    {
+      "name": "timing-e5-8tok-ort-a",
+      "samples": 156,
+      "peak_rss": 554016768,
+      "seconds": 40.421527671045624
+    },
+    {
+      "name": "timing-e5-8tok-ort-b",
+      "samples": 155,
+      "peak_rss": 558284800,
+      "seconds": 40.140446458011866
+    },
+    {
+      "name": "timing-e5-8tok-candidate-b",
+      "samples": 170,
+      "peak_rss": 1418289152,
+      "seconds": 44.057796165929176
+    },
+    {
+      "name": "timing-e5-8tok-current-b",
+      "samples": 169,
+      "peak_rss": 1408860160,
+      "seconds": 43.813802718999796
+    },
+    {
+      "name": "timing-e5-30tok-current-a",
+      "samples": 112,
+      "peak_rss": 1416060928,
+      "seconds": 29.047482574009337
+    },
+    {
+      "name": "timing-e5-30tok-candidate-a",
+      "samples": 112,
+      "peak_rss": 1418887168,
+      "seconds": 29.073899128008634
+    },
+    {
+      "name": "timing-e5-30tok-ort-a",
+      "samples": 88,
+      "peak_rss": 559251456,
+      "seconds": 22.82312804297544
+    },
+    {
+      "name": "timing-e5-30tok-ort-b",
+      "samples": 88,
+      "peak_rss": 561709056,
+      "seconds": 22.841153142042458
+    },
+    {
+      "name": "timing-e5-30tok-candidate-b",
+      "samples": 111,
+      "peak_rss": 1416892416,
+      "seconds": 28.842134636011906
+    },
+    {
+      "name": "timing-e5-30tok-current-b",
+      "samples": 111,
+      "peak_rss": 1434157056,
+      "seconds": 28.85746437695343
+    },
+    {
+      "name": "timing-e5-30pad128-current-a",
+      "samples": 207,
+      "peak_rss": 2218934272,
+      "seconds": 53.80473660596181
+    },
+    {
+      "name": "timing-e5-30pad128-candidate-a",
+      "samples": 208,
+      "peak_rss": 2224443392,
+      "seconds": 54.11499938706402
+    },
+    {
+      "name": "timing-e5-30pad128-ort-a",
+      "samples": 195,
+      "peak_rss": 559587328,
+      "seconds": 50.69764750497416
+    },
+    {
+      "name": "timing-e5-30pad128-ort-b",
+      "samples": 195,
+      "peak_rss": 560873472,
+      "seconds": 50.74639985698741
+    },
+    {
+      "name": "timing-e5-30pad128-candidate-b",
+      "samples": 205,
+      "peak_rss": 2221576192,
+      "seconds": 53.36181016394403
+    },
+    {
+      "name": "timing-e5-30pad128-current-b",
+      "samples": 206,
+      "peak_rss": 2204913664,
+      "seconds": 53.66618865705095
+    },
+    {
+      "name": "timing-e5-128tok-current-a",
+      "samples": 206,
+      "peak_rss": 2215825408,
+      "seconds": 53.677918090019375
+    },
+    {
+      "name": "timing-e5-128tok-candidate-a",
+      "samples": 208,
+      "peak_rss": 2217832448,
+      "seconds": 54.23844006098807
+    },
+    {
+      "name": "timing-e5-128tok-ort-a",
+      "samples": 196,
+      "peak_rss": 562401280,
+      "seconds": 51.09450474998448
+    },
+    {
+      "name": "timing-e5-128tok-ort-b",
+      "samples": 193,
+      "peak_rss": 897454080,
+      "seconds": 50.3261463890085
+    },
+    {
+      "name": "timing-e5-128tok-candidate-b",
+      "samples": 205,
+      "peak_rss": 2215723008,
+      "seconds": 53.51324705698062
+    },
+    {
+      "name": "timing-e5-128tok-current-b",
+      "samples": 206,
+      "peak_rss": 2223448064,
+      "seconds": 53.813141059014015
+    },
+    {
+      "name": "timing-e5-512tok-current-a",
+      "samples": 1111,
+      "peak_rss": 3022598144,
+      "seconds": 290.3454772440018
+    },
+    {
+      "name": "timing-e5-512tok-candidate-a",
+      "samples": 1100,
+      "peak_rss": 2778329088,
+      "seconds": 287.56937055604067
+    },
+    {
+      "name": "timing-e5-512tok-ort-a",
+      "samples": 909,
+      "peak_rss": 620412928,
+      "seconds": 237.610475140973
+    },
+    {
+      "name": "timing-e5-512tok-ort-b",
+      "samples": 904,
+      "peak_rss": 625012736,
+      "seconds": 236.30932040303014
+    },
+    {
+      "name": "timing-e5-512tok-candidate-b",
+      "samples": 1041,
+      "peak_rss": 2354892800,
+      "seconds": 272.3892741340678
+    },
+    {
+      "name": "timing-e5-512tok-current-b",
+      "samples": 1110,
+      "peak_rss": 2358611968,
+      "seconds": 290.68777666206006
+    },
+    {
+      "name": "timing-dinov3-current-a",
+      "samples": 360,
+      "peak_rss": 625147904,
+      "seconds": 94.27660214295611
+    },
+    {
+      "name": "timing-dinov3-candidate-a",
+      "samples": 363,
+      "peak_rss": 995848192,
+      "seconds": 95.17976636404637
+    },
+    {
+      "name": "timing-dinov3-ort-a",
+      "samples": 314,
+      "peak_rss": 174358528,
+      "seconds": 82.29044523404445
+    },
+    {
+      "name": "timing-dinov3-ort-b",
+      "samples": 313,
+      "peak_rss": 174854144,
+      "seconds": 82.08751774404664
+    },
+    {
+      "name": "timing-dinov3-candidate-b",
+      "samples": 363,
+      "peak_rss": 964923392,
+      "seconds": 95.30328688607551
+    },
+    {
+      "name": "timing-dinov3-current-b",
+      "samples": 365,
+      "peak_rss": 629870592,
+      "seconds": 95.83931193803437
+    },
+    {
+      "name": "timing-resnet50-current-a",
+      "samples": 320,
+      "peak_rss": 792391680,
+      "seconds": 84.05758804699872
+    },
+    {
+      "name": "timing-resnet50-candidate-a",
+      "samples": 319,
+      "peak_rss": 671686656,
+      "seconds": 83.89273103291634
+    },
+    {
+      "name": "timing-resnet50-ort-a",
+      "samples": 221,
+      "peak_rss": 300781568,
+      "seconds": 58.08154765004292
+    },
+    {
+      "name": "timing-resnet50-ort-b",
+      "samples": 221,
+      "peak_rss": 300769280,
+      "seconds": 58.10579634492751
+    },
+    {
+      "name": "timing-resnet50-candidate-b",
+      "samples": 321,
+      "peak_rss": 793796608,
+      "seconds": 84.52233908697963
+    },
+    {
+      "name": "timing-resnet50-current-b",
+      "samples": 325,
+      "peak_rss": 793370624,
+      "seconds": 85.56322425301187
+    },
+    {
+      "name": "timing-gpt2-current-a",
+      "samples": 136,
+      "peak_rss": 2545201152,
+      "seconds": 35.901695303968154
+    },
+    {
+      "name": "timing-gpt2-candidate-a",
+      "samples": 133,
+      "peak_rss": 2544992256,
+      "seconds": 35.13788795704022
+    },
+    {
+      "name": "timing-gpt2-ort-a",
+      "samples": 72,
+      "peak_rss": 944803840,
+      "seconds": 19.083762684022076
+    },
+    {
+      "name": "timing-gpt2-ort-b",
+      "samples": 75,
+      "peak_rss": 944787456,
+      "seconds": 19.843167693004943
+    },
+    {
+      "name": "timing-gpt2-candidate-b",
+      "samples": 134,
+      "peak_rss": 2542043136,
+      "seconds": 35.47799431998283
+    },
+    {
+      "name": "timing-gpt2-current-b",
+      "samples": 136,
+      "peak_rss": 2539978752,
+      "seconds": 36.074526931974106
+    }
+  ],
+  "consumer": {
+    "passed": true,
+    "methods": 66,
+    "unchanged_methods": 65,
+    "changes": [
+      {
+        "index": 281,
+        "before": 120,
+        "after": 780
+      },
+      {
+        "index": 521,
+        "before": 60,
+        "after": 600
+      }
+    ],
+    "main_instructions": 657,
+    "branches_locals_exceptions_equal": true,
+    "implementation_flags_equal": true,
+    "previous_consumer": {
+      "bytes": 27648,
+      "sha256": "af01388794b5c86ad5c6dc1c2a3631d4af8590057cb60ae66ade262a90c3388a"
+    },
+    "consumer": {
+      "bytes": 27648,
+      "sha256": "d827e3b9f1e5158e10bd24a5ca009fa7950fd08d08bb5260b84e36b5a853ac02"
+    },
+    "product_changed": false
+  },
+  "e5_consumer": {
+    "passed": true,
+    "methods": 66,
+    "unchanged_methods": 65,
+    "changes": [
+      {
+        "index": 281,
+        "before": 780,
+        "after": 1380
+      },
+      {
+        "index": 521,
+        "before": 600,
+        "after": 1200
+      }
+    ],
+    "main_instructions": 657,
+    "branches_locals_exceptions_equal": true,
+    "implementation_flags_equal": true,
+    "previous_consumer": {
+      "bytes": 27648,
+      "sha256": "d827e3b9f1e5158e10bd24a5ca009fa7950fd08d08bb5260b84e36b5a853ac02"
+    },
+    "consumer": {
+      "bytes": 27648,
+      "sha256": "0b228b2d22eef7080a64fb5fbababc24e24a94b18deae2fead5075fbf90b4930"
+    },
+    "product_changed": false
+  },
+  "short_consumer": {
+    "passed": true,
+    "methods": 66,
+    "unchanged_methods": 65,
+    "changes": [
+      {
+        "index": 281,
+        "before": 780,
+        "after": 6180
+      },
+      {
+        "index": 521,
+        "before": 600,
+        "after": 6000
+      }
+    ],
+    "main_instructions": 657,
+    "branches_locals_exceptions_equal": true,
+    "implementation_flags_equal": true,
+    "previous_consumer": {
+      "bytes": 27648,
+      "sha256": "d827e3b9f1e5158e10bd24a5ca009fa7950fd08d08bb5260b84e36b5a853ac02"
+    },
+    "consumer": {
+      "bytes": 27648,
+      "sha256": "e437850d39cafd15fc4c29b45ac70a0062f1039260c52ae89ffde490e2fad354"
+    },
+    "product_changed": false
+  },
+  "clocks": 73512,
+  "measured": 8640,
+  "setups": [
+    {
+      "process": "verify-e5-8tok-current",
+      "seconds": 0.6362363
+    },
+    {
+      "process": "verify-e5-8tok-candidate",
+      "seconds": 0.6188355
+    },
+    {
+      "process": "verify-e5-8tok-ort",
+      "seconds": 0.285223567
+    },
+    {
+      "process": "verify-e5-30tok-current",
+      "seconds": 0.6341989
+    },
+    {
+      "process": "verify-e5-30tok-candidate",
+      "seconds": 0.6379367
+    },
+    {
+      "process": "verify-e5-30tok-ort",
+      "seconds": 0.283720595
+    },
+    {
+      "process": "verify-e5-30pad128-current",
+      "seconds": 0.61694
+    },
+    {
+      "process": "verify-e5-30pad128-candidate",
+      "seconds": 0.6455835
+    },
+    {
+      "process": "verify-e5-30pad128-ort",
+      "seconds": 0.285463248
+    },
+    {
+      "process": "verify-e5-128tok-current",
+      "seconds": 0.6509077
+    },
+    {
+      "process": "verify-e5-128tok-candidate",
+      "seconds": 0.6523809
+    },
+    {
+      "process": "verify-e5-128tok-ort",
+      "seconds": 0.274744314
+    },
+    {
+      "process": "verify-e5-512tok-current",
+      "seconds": 0.6503094
+    },
+    {
+      "process": "verify-e5-512tok-candidate",
+      "seconds": 0.6444469
+    },
+    {
+      "process": "verify-e5-512tok-ort",
+      "seconds": 0.280336807
+    },
+    {
+      "process": "verify-dinov3-current",
+      "seconds": 0.1892978
+    },
+    {
+      "process": "verify-dinov3-candidate",
+      "seconds": 0.1926254
+    },
+    {
+      "process": "verify-dinov3-ort",
+      "seconds": 0.10996984
+    },
+    {
+      "process": "verify-resnet50-current",
+      "seconds": 0.289411
+    },
+    {
+      "process": "verify-resnet50-candidate",
+      "seconds": 0.2876027
+    },
+    {
+      "process": "verify-resnet50-ort",
+      "seconds": 0.121476337
+    },
+    {
+      "process": "verify-gpt2-current",
+      "seconds": 0.8511427
+    },
+    {
+      "process": "verify-gpt2-candidate",
+      "seconds": 0.8574172
+    },
+    {
+      "process": "verify-gpt2-ort",
+      "seconds": 0.538140638
+    },
+    {
+      "process": "timing-e5-8tok-current-a",
+      "seconds": 0.6195166
+    },
+    {
+      "process": "timing-e5-8tok-candidate-a",
+      "seconds": 0.6607159
+    },
+    {
+      "process": "timing-e5-8tok-ort-a",
+      "seconds": 0.276275718
+    },
+    {
+      "process": "timing-e5-8tok-ort-b",
+      "seconds": 0.276593503
+    },
+    {
+      "process": "timing-e5-8tok-candidate-b",
+      "seconds": 0.6502926
+    },
+    {
+      "process": "timing-e5-8tok-current-b",
+      "seconds": 0.6406573
+    },
+    {
+      "process": "timing-e5-30tok-current-a",
+      "seconds": 0.6381391
+    },
+    {
+      "process": "timing-e5-30tok-candidate-a",
+      "seconds": 0.6308615
+    },
+    {
+      "process": "timing-e5-30tok-ort-a",
+      "seconds": 0.277020554
+    },
+    {
+      "process": "timing-e5-30tok-ort-b",
+      "seconds": 0.280224505
+    },
+    {
+      "process": "timing-e5-30tok-candidate-b",
+      "seconds": 0.6261446
+    },
+    {
+      "process": "timing-e5-30tok-current-b",
+      "seconds": 0.6398722
+    },
+    {
+      "process": "timing-e5-30pad128-current-a",
+      "seconds": 0.6299976
+    },
+    {
+      "process": "timing-e5-30pad128-candidate-a",
+      "seconds": 0.6333024
+    },
+    {
+      "process": "timing-e5-30pad128-ort-a",
+      "seconds": 0.276505862
+    },
+    {
+      "process": "timing-e5-30pad128-ort-b",
+      "seconds": 0.27830344
+    },
+    {
+      "process": "timing-e5-30pad128-candidate-b",
+      "seconds": 0.630549
+    },
+    {
+      "process": "timing-e5-30pad128-current-b",
+      "seconds": 0.6202567
+    },
+    {
+      "process": "timing-e5-128tok-current-a",
+      "seconds": 0.6452542
+    },
+    {
+      "process": "timing-e5-128tok-candidate-a",
+      "seconds": 0.6456863
+    },
+    {
+      "process": "timing-e5-128tok-ort-a",
+      "seconds": 0.28224806
+    },
+    {
+      "process": "timing-e5-128tok-ort-b",
+      "seconds": 0.29402324
+    },
+    {
+      "process": "timing-e5-128tok-candidate-b",
+      "seconds": 0.6454545
+    },
+    {
+      "process": "timing-e5-128tok-current-b",
+      "seconds": 0.6443386
+    },
+    {
+      "process": "timing-e5-512tok-current-a",
+      "seconds": 0.6455439
+    },
+    {
+      "process": "timing-e5-512tok-candidate-a",
+      "seconds": 0.6460168
+    },
+    {
+      "process": "timing-e5-512tok-ort-a",
+      "seconds": 0.275494618
+    },
+    {
+      "process": "timing-e5-512tok-ort-b",
+      "seconds": 0.279604998
+    },
+    {
+      "process": "timing-e5-512tok-candidate-b",
+      "seconds": 0.643222
+    },
+    {
+      "process": "timing-e5-512tok-current-b",
+      "seconds": 0.654376
+    },
+    {
+      "process": "timing-dinov3-current-a",
+      "seconds": 0.1950093
+    },
+    {
+      "process": "timing-dinov3-candidate-a",
+      "seconds": 0.1972443
+    },
+    {
+      "process": "timing-dinov3-ort-a",
+      "seconds": 0.108051097
+    },
+    {
+      "process": "timing-dinov3-ort-b",
+      "seconds": 0.113444747
+    },
+    {
+      "process": "timing-dinov3-candidate-b",
+      "seconds": 0.1897247
+    },
+    {
+      "process": "timing-dinov3-current-b",
+      "seconds": 0.1912667
+    },
+    {
+      "process": "timing-resnet50-current-a",
+      "seconds": 0.2876262
+    },
+    {
+      "process": "timing-resnet50-candidate-a",
+      "seconds": 0.2870462
+    },
+    {
+      "process": "timing-resnet50-ort-a",
+      "seconds": 0.119571335
+    },
+    {
+      "process": "timing-resnet50-ort-b",
+      "seconds": 0.115091373
+    },
+    {
+      "process": "timing-resnet50-candidate-b",
+      "seconds": 0.29751
+    },
+    {
+      "process": "timing-resnet50-current-b",
+      "seconds": 0.2872094
+    },
+    {
+      "process": "timing-gpt2-current-a",
+      "seconds": 0.9435022
+    },
+    {
+      "process": "timing-gpt2-candidate-a",
+      "seconds": 0.8809454
+    },
+    {
+      "process": "timing-gpt2-ort-a",
+      "seconds": 0.53371279
+    },
+    {
+      "process": "timing-gpt2-ort-b",
+      "seconds": 0.529993781
+    },
+    {
+      "process": "timing-gpt2-candidate-b",
+      "seconds": 0.8625606
+    },
+    {
+      "process": "timing-gpt2-current-b",
+      "seconds": 0.8642922
+    }
+  ],
+  "products": {
+    "current": {
+      "Lokad.Onnx.dll": {
+        "bytes": 827392,
+        "sha256": "0d224bcff591563816d64c3a3cc51f7b7cd38f5a1d3c523b05c699a9b82b6b97"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 827904,
+        "sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc"
+      }
+    }
+  },
+  "root_product_changed": false
+}

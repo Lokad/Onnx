@@ -4,9 +4,10 @@ Compare current Core `0d224bcf` / Data `a3745392`, candidate Core `ad97b4ad` /
 Data `29b3f633`, and fresh ORT. The fixed candidate has passed complete Parakeet,
 shared/e5 and Pyannote correctness and the independent Parakeet application
 comparison: 2.444120648% gain and candidate/ORT 1.187748548. The original eight
-graph cases are running separately. GRAPH_DIGEST remains unset until that
-campaign passes its original audit; preparation must reject until then. Bind
-the actual successful closure and freeze these sources before preparation.
+graph cases are admitted at closure f7b0a361: all 24 repeatability controls and
+eight regression gates pass, with every numerical check and all 73,512 calls
+retained. All 72 jobs and owners are terminal; collection, audit and publication
+are complete. GRAPH_DIGEST binds that actual closure. Freeze before preparation.
 
 Reuse AudioBenchmark `7eca033a` and NaturalMeetings `79e3e799`, qualified in
 the prepared-row application closure `17861b38`. The compiled compatibility
@@ -52,5 +53,5 @@ Only after binding the actual admitted graph closure and freezing sources:
 Follow the original owner to terminal; collect and audit once, with audit output
 outside the artifact. Never replay a completed phase. Local namespace:
 artifacts/parakeet-decoder-lstm-layout-pyannote-app-amd-20260927; VM namespace:
-/dev/shm/lokad-lstmlayout-pyannote-app-20260927. Actual-root and package checks
-still precede source integration and BENCHMARK.md promotion.
+/dev/shm/lokad-lstmlayout-pyannote-app-20260927. Source promotion and the
+BENCHMARK.md update still require actual-root and package qualification.

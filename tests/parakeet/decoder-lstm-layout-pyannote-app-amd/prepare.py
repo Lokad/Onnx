@@ -19,7 +19,7 @@ BASE=ROOT/'artifacts/parakeet-decoder-lstm-layout-pyannote-app-amd-20260927'
 OLD=ROOT/'artifacts/parakeet-observed-dense-where-pyannote-app-amd-20260924'
 APP_PAYLOAD=OLD/'collected'
 GRAPHS=ROOT/'artifacts/parakeet-decoder-lstm-layout-graphs-amd-20260927'
-GRAPH_DIGEST=None  # Bind the actual new graph closure after its original audit passes.
+GRAPH_DIGEST='f7b0a361e4019f44541efe270e80e55b3bbadf341fa97820c88d1f077c9bdf48'
 PRIOR=dict(models=ROOT/'artifacts/parakeet-decoder-lstm-layout-pyannote-amd-20260927',
     parakeet=ROOT/'artifacts/parakeet-decoder-lstm-layout-models-amd-20260927',
     shared=ROOT/'artifacts/parakeet-decoder-lstm-layout-shared-amd-20260927',
