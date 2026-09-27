@@ -68,9 +68,6 @@ disabled. Every clock is retained and no measurements are trimmed.
 
 The performance claims cover the listed complete application and graph workloads.
 They do not establish uniform speedups for isolated operators or fallback paths.
-[Isolated LSTM timing](tests/parakeet/decoder-lstm-layout-results/timing-20260927.md)
-and [double-precision sigmoid fallback timing](tests/parakeet/rational-sigmoid-results/fallback-diagnosis-20260927.md)
-remain unqualified; the table must not be extrapolated to those cases.
 
 DINOv2 is excluded by the [known-divergence registry](tests/Lokad.Onnx.Bench/KnownDivergences.cs):
 its registered output exceeds the 1e-4 agreement bound, so the runner withholds
