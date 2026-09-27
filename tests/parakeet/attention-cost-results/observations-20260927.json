@@ -1,0 +1,2269 @@
+{
+  "closure": {
+    "bytes": 309940,
+    "sha256": "5ff17ed5e3e9596789bf27b27abc01584342b08f81005a4a25643b0df045b5f2"
+  },
+  "qualified_root": {
+    "bytes": 229795,
+    "sha256": "fc11676361a50ef613f783fcb51e4ead488c9c2ee34a3edddcbb561f67037e47"
+  },
+  "compiled_review": {
+    "bytes": 5020,
+    "sha256": "9f8740d0f8ad46902ff58056ebe17b0fe75f40d8c2336c568da051c9552dd744"
+  },
+  "observer_product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 836096,
+      "sha256": "ae3829bf4e08a0fc89a576fcb1bb857cfaad42a21d48ac208c8138bef5bd025a"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "1ba343fd8b00fd85bddb33c57aaebf4217431955c40bbe45576448467e59c99f"
+    }
+  },
+  "source": {
+    "bytes": 171011,
+    "sha256": "09ef4b84eeea8c606eece94feff7990608f30db7beb0087f2acaaf0502ff2e0c"
+  },
+  "route_binding": {
+    "bytes": 303,
+    "sha256": "e83b34fb3aef0dacfc387c919638fd710fa266cd11a315fb6494195cd29ebc72"
+  },
+  "clocks": {
+    "bytes": 4628821,
+    "sha256": "d1b66485f9c507ad1153284a3932670a244d1b46b3a95bcb06fd968ac16f6e28"
+  },
+  "publisher": {
+    "bytes": 2716,
+    "sha256": "d8ace6000ec5f2e1463127a753a8e0bdafd390a34f5654e6fccf7a62f1bc06d9"
+  },
+  "observations": 9600,
+  "frequency": 1000000000,
+  "overhead_subtracted": false,
+  "benchmark_updated": false,
+  "passed": true,
+  "usable_for_candidate_selection": true,
+  "corpus_seconds": {
+    "control": 44.89458430333334,
+    "observed": 45.37015199966667
+  },
+  "observer_over_control": 1.010592985851481,
+  "observer_over_control_limit": 1.05,
+  "groups": [
+    {
+      "group": [
+        "route",
+        "mapped-allowed"
+      ],
+      "measured_calls": 957,
+      "corpus_seconds": 1.020954904,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 1.020954904,
+      "leaves": {
+        "prepared-leaf-not-observed": 957
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:108544,1024,1:108544": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:227328,1024,1:227328": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:114688,1024,1:114688": 69,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:340992,1024,1:340992": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:181248,1024,1:181248": 15,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:52224,1024,1:52224": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:194560,1024,1:194560": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:90112,1024,1:90112": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:161792,1024,1:161792": 69,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:322560,1024,1:322560": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:168960,1024,1:168960": 15,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:159744,1024,1:159744": 138,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,1024,1:116736": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:230400,1024,1:230400": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:104448,1024,1:104448": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,1024,1:122880": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 957
+      }
+    },
+    {
+      "group": [
+        "route",
+        "mapped-declined"
+      ],
+      "measured_calls": 723,
+      "corpus_seconds": 1.090513681,
+      "stages": {
+        "rent": 9.733533333333334e-05,
+        "pack": 0.109876946,
+        "arithmetic": 0.9292988376666667,
+        "return": 7.236533333333334e-05,
+        "final_row": 0.023947737
+      },
+      "remainder_seconds": 0.027220459666666665,
+      "leaves": {
+        "ShortWideMultiply2Rows": 723
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:216064,1024,1:216064": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:453632,1024,1:453632": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:228352,1024,1:228352": 15,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:171008,1024,1:171008": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:91136,1024,1:91136": 69,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:160768,1024,1:160768": 69,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:320512,1024,1:320512": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:103424,1024,1:103424": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:388096,1024,1:388096": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:179200,1024,1:179200": 15,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:84992,1024,1:84992": 69,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:318464,1024,1:318464": 30,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:232448,1024,1:232448": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:459776,1024,1:459776": 15,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:62464,1024,1:62464": 69,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:123904,1024,1:123904": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:207872,1024,1:207872": 15,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:154624,1024,1:154624": 69,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:308224,1024,1:308224": 15,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:244736,1024,1:244736": 15,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:173056,1024,1:173056": 69,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:345088,1024,1:345088": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 723
+      }
+    },
+    {
+      "group": [
+        "route",
+        "unmapped"
+      ],
+      "measured_calls": 5520,
+      "corpus_seconds": 7.228941095,
+      "stages": {
+        "rent": 0.000601212,
+        "pack": 0.8177845906666666,
+        "arithmetic": 6.149209443,
+        "return": 0.00043055333333333334,
+        "final_row": 0.08089354866666666
+      },
+      "remainder_seconds": 0.18002174733333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 3540,
+        "ShortWideMultiply3Rows": 1980
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:216064,1024,1:216064": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:108544,1024,1:108544": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:453632,1024,1:453632": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:227328,1024,1:227328": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:228352,1024,1:228352": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:114688,1024,1:114688": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:340992,1024,1:340992": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:171008,1024,1:171008": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:181248,1024,1:181248": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:91136,1024,1:91136": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:320512,1024,1:320512": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:160768,1024,1:160768": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:103424,1024,1:103424": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:52224,1024,1:52224": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:388096,1024,1:388096": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:194560,1024,1:194560": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:179200,1024,1:179200": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:90112,1024,1:90112": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:322560,1024,1:322560": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:161792,1024,1:161792": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:168960,1024,1:168960": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:84992,1024,1:84992": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:318464,1024,1:318464": 114,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:159744,1024,1:159744": 438,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:232448,1024,1:232448": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,1024,1:116736": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:459776,1024,1:459776": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:230400,1024,1:230400": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:123904,1024,1:123904": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:62464,1024,1:62464": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:207872,1024,1:207872": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:104448,1024,1:104448": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:308224,1024,1:308224": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:154624,1024,1:154624": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:244736,1024,1:244736": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,1024,1:122880": 219,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:345088,1024,1:345088": 57,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:173056,1024,1:173056": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 5520
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        102
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.051613488666666665,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.051613488666666665,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:104448,1024,1:104448": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        106
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.05848234066666667,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.05848234066666667,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:108544,1024,1:108544": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        112
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.055956488,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.055956488,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:114688,1024,1:114688": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        114
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.05735369133333333,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.05735369133333333,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,1024,1:116736": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        120
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.060563161666666664,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.060563161666666664,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,1024,1:122880": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        156
+      ],
+      "measured_calls": 138,
+      "corpus_seconds": 0.15572436033333334,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.15572436033333334,
+      "leaves": {
+        "prepared-leaf-not-observed": 138
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:159744,1024,1:159744": 138
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 138
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        158
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.07852526366666666,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.07852526366666666,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:161792,1024,1:161792": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        165
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.020285854,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.020285854,
+      "leaves": {
+        "prepared-leaf-not-observed": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:168960,1024,1:168960": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        177
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.020651763666666666,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.020651763666666666,
+      "leaves": {
+        "prepared-leaf-not-observed": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:181248,1024,1:181248": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        190
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.09434927833333333,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.09434927833333333,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:194560,1024,1:194560": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        222
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.10929552433333334,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.10929552433333334,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:227328,1024,1:227328": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        225
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.112427685,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.112427685,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:230400,1024,1:230400": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        315
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.03564548533333333,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.03564548533333333,
+      "leaves": {
+        "prepared-leaf-not-observed": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:322560,1024,1:322560": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        333
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.038888721,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.038888721,
+      "leaves": {
+        "prepared-leaf-not-observed": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:340992,1024,1:340992": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        51
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.026945474,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.026945474,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:52224,1024,1:52224": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-allowed",
+        88
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.044246324,
+      "stages": {
+        "rent": 0.0,
+        "pack": 0.0,
+        "arithmetic": 0.0,
+        "return": 0.0,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.044246324,
+      "leaves": {
+        "prepared-leaf-not-observed": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:90112,1024,1:90112": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        101
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.014718257666666667,
+      "stages": {
+        "rent": 4.466e-06,
+        "pack": 0.002248882,
+        "arithmetic": 0.011177622,
+        "return": 1.87e-06,
+        "final_row": 0.00047683333333333334
+      },
+      "remainder_seconds": 0.0008085843333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:103424,1024,1:103424": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        121
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.017103462333333333,
+      "stages": {
+        "rent": 5.443333333333333e-07,
+        "pack": 0.0022387736666666666,
+        "arithmetic": 0.013377746666666667,
+        "return": 9.616666666666666e-07,
+        "final_row": 0.0005047583333333334
+      },
+      "remainder_seconds": 0.0009806776666666666,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:123904,1024,1:123904": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        151
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.088858425,
+      "stages": {
+        "rent": 7.150666666666667e-06,
+        "pack": 0.010228943666666667,
+        "arithmetic": 0.07589655366666667,
+        "return": 5.98e-06,
+        "final_row": 0.002321680333333333
+      },
+      "remainder_seconds": 0.00039811666666666665,
+      "leaves": {
+        "ShortWideMultiply2Rows": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:154624,1024,1:154624": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        157
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.091765638,
+      "stages": {
+        "rent": 6.08e-06,
+        "pack": 0.010141101666666666,
+        "arithmetic": 0.07899928566666667,
+        "return": 5.9053333333333334e-06,
+        "final_row": 0.002206947
+      },
+      "remainder_seconds": 0.00040631833333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:160768,1024,1:160768": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        167
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.09741886633333334,
+      "stages": {
+        "rent": 7.539333333333333e-06,
+        "pack": 0.010220100333333332,
+        "arithmetic": 0.084384797,
+        "return": 6.459e-06,
+        "final_row": 0.0023889483333333333
+      },
+      "remainder_seconds": 0.00041102233333333336,
+      "leaves": {
+        "ShortWideMultiply2Rows": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:171008,1024,1:171008": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        169
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.097865803,
+      "stages": {
+        "rent": 6.1043333333333336e-06,
+        "pack": 0.010192454,
+        "arithmetic": 0.08492289633333333,
+        "return": 6.099333333333334e-06,
+        "final_row": 0.002298001666666667
+      },
+      "remainder_seconds": 0.0004402473333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:173056,1024,1:173056": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        175
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.023603422,
+      "stages": {
+        "rent": 4.093e-06,
+        "pack": 0.0022923933333333334,
+        "arithmetic": 0.019419483666666668,
+        "return": 2.0386666666666667e-06,
+        "final_row": 0.00054305
+      },
+      "remainder_seconds": 0.0013423633333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:179200,1024,1:179200": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        203
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.026282887666666668,
+      "stages": {
+        "rent": 4.327e-06,
+        "pack": 0.0022658123333333335,
+        "arithmetic": 0.022397637333333335,
+        "return": 2.136333333333333e-06,
+        "final_row": 0.0005314166666666667
+      },
+      "remainder_seconds": 0.001081558,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:207872,1024,1:207872": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        211
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.03160412966666667,
+      "stages": {
+        "rent": 4.241e-06,
+        "pack": 0.0032915126666666667,
+        "arithmetic": 0.025791931333333334,
+        "return": 2.5076666666666667e-06,
+        "final_row": 0.000570737
+      },
+      "remainder_seconds": 0.0019432,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:216064,1024,1:216064": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        223
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.030088646333333333,
+      "stages": {
+        "rent": 4.226666666666666e-06,
+        "pack": 0.0022714456666666667,
+        "arithmetic": 0.024991547,
+        "return": 2.026e-06,
+        "final_row": 0.000565935
+      },
+      "remainder_seconds": 0.002253466,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:228352,1024,1:228352": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        227
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.02903610766666667,
+      "stages": {
+        "rent": 4.146e-06,
+        "pack": 0.0022981396666666666,
+        "arithmetic": 0.025054392333333335,
+        "return": 1.9193333333333334e-06,
+        "final_row": 0.0005687116666666667
+      },
+      "remainder_seconds": 0.0011087986666666666,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:232448,1024,1:232448": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        239
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.030822673333333335,
+      "stages": {
+        "rent": 4.125666666666667e-06,
+        "pack": 0.002251631333333333,
+        "arithmetic": 0.026398574,
+        "return": 1.9666666666666668e-06,
+        "final_row": 0.0004374403333333333
+      },
+      "remainder_seconds": 0.0017289353333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:244736,1024,1:244736": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        301
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.03851596366666667,
+      "stages": {
+        "rent": 7.85e-07,
+        "pack": 0.002316824,
+        "arithmetic": 0.033359379,
+        "return": 1.5636666666666668e-06,
+        "final_row": 0.000542792
+      },
+      "remainder_seconds": 0.00229462,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:308224,1024,1:308224": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        311
+      ],
+      "measured_calls": 30,
+      "corpus_seconds": 0.07600845933333333,
+      "stages": {
+        "rent": 8.305e-06,
+        "pack": 0.004645915333333334,
+        "arithmetic": 0.06824377066666666,
+        "return": 3.794e-06,
+        "final_row": 0.0008962423333333334
+      },
+      "remainder_seconds": 0.002210432,
+      "leaves": {
+        "ShortWideMultiply2Rows": 30
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:318464,1024,1:318464": 30
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 30
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        313
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.03851812566666667,
+      "stages": {
+        "rent": 7.683333333333333e-07,
+        "pack": 0.0022709546666666667,
+        "arithmetic": 0.03433904166666667,
+        "return": 1.3453333333333333e-06,
+        "final_row": 0.0005209403333333334
+      },
+      "remainder_seconds": 0.0013850753333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:320512,1024,1:320512": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        337
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.04135146233333333,
+      "stages": {
+        "rent": 6.503333333333333e-07,
+        "pack": 0.0023115323333333334,
+        "arithmetic": 0.036965759333333334,
+        "return": 1.3203333333333333e-06,
+        "final_row": 0.0005371983333333333
+      },
+      "remainder_seconds": 0.0015350016666666666,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:345088,1024,1:345088": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        379
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.04695207666666667,
+      "stages": {
+        "rent": 4.216333333333333e-06,
+        "pack": 0.002334333666666667,
+        "arithmetic": 0.041849043333333336,
+        "return": 2.326e-06,
+        "final_row": 0.0006134366666666666
+      },
+      "remainder_seconds": 0.0021487206666666665,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:388096,1024,1:388096": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        443
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.052627617333333335,
+      "stages": {
+        "rent": 4.209666666666666e-06,
+        "pack": 0.0023700206666666668,
+        "arithmetic": 0.04870285466666667,
+        "return": 2.457333333333333e-06,
+        "final_row": 0.0006321896666666667
+      },
+      "remainder_seconds": 0.0009158853333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:453632,1024,1:453632": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        449
+      ],
+      "measured_calls": 15,
+      "corpus_seconds": 0.05678401733333333,
+      "stages": {
+        "rent": 4.383666666666667e-06,
+        "pack": 0.0023719523333333332,
+        "arithmetic": 0.050719932333333335,
+        "return": 2.985e-06,
+        "final_row": 0.000645822
+      },
+      "remainder_seconds": 0.003038942,
+      "leaves": {
+        "ShortWideMultiply2Rows": 15
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:459776,1024,1:459776": 15
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 15
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        61
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.042998686,
+      "stages": {
+        "rent": 5.736666666666667e-06,
+        "pack": 0.009934678666666667,
+        "arithmetic": 0.030822130333333333,
+        "return": 5.155e-06,
+        "final_row": 0.002011431
+      },
+      "remainder_seconds": 0.00021955433333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:62464,1024,1:62464": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        83
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.060555335,
+      "stages": {
+        "rent": 5.508666666666667e-06,
+        "pack": 0.01132305,
+        "arithmetic": 0.04691386333333333,
+        "return": 6.068e-06,
+        "final_row": 0.002025768
+      },
+      "remainder_seconds": 0.000281077,
+      "leaves": {
+        "ShortWideMultiply2Rows": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:84992,1024,1:84992": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "mapped-declined",
+        89
+      ],
+      "measured_calls": 69,
+      "corpus_seconds": 0.05703361866666667,
+      "stages": {
+        "rent": 5.727666666666667e-06,
+        "pack": 0.010056494,
+        "arithmetic": 0.044570596,
+        "return": 5.4806666666666665e-06,
+        "final_row": 0.002107457
+      },
+      "remainder_seconds": 0.00028786333333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 69
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:91136,1024,1:91136": 69
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 69
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        101
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.054434943,
+      "stages": {
+        "rent": 2.3586666666666666e-06,
+        "pack": 0.008395299,
+        "arithmetic": 0.04163773566666667,
+        "return": 3.196333333333333e-06,
+        "final_row": 0.00158302
+      },
+      "remainder_seconds": 0.0028133333333333335,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:103424,1024,1:103424": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        102
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.17067441966666666,
+      "stages": {
+        "rent": 2.5123e-05,
+        "pack": 0.032240208666666666,
+        "arithmetic": 0.13749748733333333,
+        "return": 1.4537666666666666e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.000897063,
+      "leaves": {
+        "ShortWideMultiply3Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:104448,1024,1:104448": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        106
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.20352313533333333,
+      "stages": {
+        "rent": 2.3117e-05,
+        "pack": 0.03210971766666667,
+        "arithmetic": 0.17043860933333332,
+        "return": 1.5566333333333334e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.000936125,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:108544,1024,1:108544": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        112
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.21125207633333334,
+      "stages": {
+        "rent": 2.6511666666666666e-05,
+        "pack": 0.031417847666666665,
+        "arithmetic": 0.17879677233333333,
+        "return": 1.6565333333333332e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0009943793333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:114688,1024,1:114688": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        114
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.18713014533333333,
+      "stages": {
+        "rent": 2.6406e-05,
+        "pack": 0.032352809,
+        "arithmetic": 0.15377685233333332,
+        "return": 1.3801e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.000960277,
+      "leaves": {
+        "ShortWideMultiply3Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,1024,1:116736": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        120
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.195387743,
+      "stages": {
+        "rent": 2.5811e-05,
+        "pack": 0.032340238,
+        "arithmetic": 0.16200013066666666,
+        "return": 1.4519e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0010070443333333333,
+      "leaves": {
+        "ShortWideMultiply3Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,1024,1:122880": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        121
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.06456388533333333,
+      "stages": {
+        "rent": 2.596e-06,
+        "pack": 0.008241882333333334,
+        "arithmetic": 0.049950552,
+        "return": 3.276e-06,
+        "final_row": 0.00175975
+      },
+      "remainder_seconds": 0.004605829,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:123904,1024,1:123904": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        151
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.281166415,
+      "stages": {
+        "rent": 3.0949666666666666e-05,
+        "pack": 0.032448466333333335,
+        "arithmetic": 0.239679747,
+        "return": 1.8897333333333333e-05,
+        "final_row": 0.007506529
+      },
+      "remainder_seconds": 0.0014818256666666667,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:154624,1024,1:154624": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        156
+      ],
+      "measured_calls": 438,
+      "corpus_seconds": 0.49275248066666666,
+      "stages": {
+        "rent": 5.3005e-05,
+        "pack": 0.066131987,
+        "arithmetic": 0.424083189,
+        "return": 3.397266666666667e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.002450327,
+      "leaves": {
+        "ShortWideMultiply3Rows": 438
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:159744,1024,1:159744": 438
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 438
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        157
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.289704459,
+      "stages": {
+        "rent": 2.5929666666666667e-05,
+        "pack": 0.032220200666666664,
+        "arithmetic": 0.24902618,
+        "return": 1.8554333333333333e-05,
+        "final_row": 0.007134879333333333
+      },
+      "remainder_seconds": 0.001278715,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:160768,1024,1:160768": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        158
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.28565956,
+      "stages": {
+        "rent": 2.6528e-05,
+        "pack": 0.03203084666666667,
+        "arithmetic": 0.2523222196666667,
+        "return": 1.8341e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0012616246666666666,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:161792,1024,1:161792": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        165
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.067814383,
+      "stages": {
+        "rent": 1.5436666666666667e-06,
+        "pack": 0.008469254666666667,
+        "arithmetic": 0.05791133133333334,
+        "return": 2.857e-06,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0014293963333333333,
+      "leaves": {
+        "ShortWideMultiply3Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:168960,1024,1:168960": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        167
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.309404362,
+      "stages": {
+        "rent": 3.0531e-05,
+        "pack": 0.033527185333333334,
+        "arithmetic": 0.26682670833333333,
+        "return": 1.9905333333333334e-05,
+        "final_row": 0.0076535656666666665
+      },
+      "remainder_seconds": 0.0013464663333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:171008,1024,1:171008": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        169
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.31060403166666667,
+      "stages": {
+        "rent": 2.861e-05,
+        "pack": 0.03248038366666667,
+        "arithmetic": 0.269229542,
+        "return": 1.9042e-05,
+        "final_row": 0.007491739666666667
+      },
+      "remainder_seconds": 0.0013547143333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:173056,1024,1:173056": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        175
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.08785290666666666,
+      "stages": {
+        "rent": 2.8613333333333334e-06,
+        "pack": 0.008461817333333333,
+        "arithmetic": 0.07246751133333333,
+        "return": 3.994e-06,
+        "final_row": 0.001849491
+      },
+      "remainder_seconds": 0.0050672316666666665,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:179200,1024,1:179200": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        177
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.076087896,
+      "stages": {
+        "rent": 2.6863333333333334e-06,
+        "pack": 0.008589232666666667,
+        "arithmetic": 0.06219301666666667,
+        "return": 3.4093333333333335e-06,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.005299551,
+      "leaves": {
+        "ShortWideMultiply3Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:181248,1024,1:181248": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        190
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.33685745266666667,
+      "stages": {
+        "rent": 3.0258333333333335e-05,
+        "pack": 0.031868146666666666,
+        "arithmetic": 0.3034710993333333,
+        "return": 1.8819e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0014691293333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:194560,1024,1:194560": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        203
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.100459014,
+      "stages": {
+        "rent": 2.8333333333333335e-06,
+        "pack": 0.008462002333333333,
+        "arithmetic": 0.08411266066666667,
+        "return": 4.437e-06,
+        "final_row": 0.001796692
+      },
+      "remainder_seconds": 0.006080388666666666,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:207872,1024,1:207872": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        211
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.105401238,
+      "stages": {
+        "rent": 2.842e-06,
+        "pack": 0.008561908333333333,
+        "arithmetic": 0.090137571,
+        "return": 4.146666666666667e-06,
+        "final_row": 0.0018606763333333333
+      },
+      "remainder_seconds": 0.0048340936666666666,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:216064,1024,1:216064": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        222
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.337030155,
+      "stages": {
+        "rent": 3.085466666666667e-05,
+        "pack": 0.03281333966666666,
+        "arithmetic": 0.3025204203333333,
+        "return": 1.7193333333333334e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.001648347,
+      "leaves": {
+        "ShortWideMultiply3Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:227328,1024,1:227328": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        223
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.11177339633333333,
+      "stages": {
+        "rent": 3.574666666666667e-06,
+        "pack": 0.008503104333333334,
+        "arithmetic": 0.09270217866666666,
+        "return": 4.945333333333333e-06,
+        "final_row": 0.001864815
+      },
+      "remainder_seconds": 0.008694778333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:228352,1024,1:228352": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        225
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.33932597233333334,
+      "stages": {
+        "rent": 3.3732333333333336e-05,
+        "pack": 0.03309798533333334,
+        "arithmetic": 0.30434764233333333,
+        "return": 1.8422e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0018281903333333333,
+      "leaves": {
+        "ShortWideMultiply3Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:230400,1024,1:230400": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        227
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.111001209,
+      "stages": {
+        "rent": 2.8773333333333334e-06,
+        "pack": 0.008484843,
+        "arithmetic": 0.09429901666666667,
+        "return": 4.438666666666667e-06,
+        "final_row": 0.0018720176666666667
+      },
+      "remainder_seconds": 0.006338015666666667,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:232448,1024,1:232448": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        239
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.1163548,
+      "stages": {
+        "rent": 3.3456666666666666e-06,
+        "pack": 0.008508544666666666,
+        "arithmetic": 0.09914110033333333,
+        "return": 4.637333333333333e-06,
+        "final_row": 0.0018564336666666667
+      },
+      "remainder_seconds": 0.006840738333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:244736,1024,1:244736": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        301
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.14596168133333334,
+      "stages": {
+        "rent": 3.830666666666667e-06,
+        "pack": 0.008700912,
+        "arithmetic": 0.125415869,
+        "return": 5.094e-06,
+        "final_row": 0.0019906256666666665
+      },
+      "remainder_seconds": 0.00984535,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:308224,1024,1:308224": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        311
+      ],
+      "measured_calls": 114,
+      "corpus_seconds": 0.31904995633333333,
+      "stages": {
+        "rent": 5.819666666666667e-06,
+        "pack": 0.017275426333333333,
+        "arithmetic": 0.258105127,
+        "return": 9.454333333333334e-06,
+        "final_row": 0.003742727
+      },
+      "remainder_seconds": 0.039911402,
+      "leaves": {
+        "ShortWideMultiply2Rows": 114
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:318464,1024,1:318464": 114
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 114
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        313
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.146235211,
+      "stages": {
+        "rent": 2.3866666666666665e-06,
+        "pack": 0.008727750333333333,
+        "arithmetic": 0.129816111,
+        "return": 4.4276666666666666e-06,
+        "final_row": 0.002031101
+      },
+      "remainder_seconds": 0.005653434333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:320512,1024,1:320512": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        315
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.12505402233333332,
+      "stages": {
+        "rent": 2.6783333333333332e-06,
+        "pack": 0.008698022,
+        "arithmetic": 0.11101245466666666,
+        "return": 5.357333333333333e-06,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.00533551,
+      "leaves": {
+        "ShortWideMultiply3Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:322560,1024,1:322560": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        333
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.137626664,
+      "stages": {
+        "rent": 3.9926666666666665e-06,
+        "pack": 0.008695068,
+        "arithmetic": 0.11769817,
+        "return": 5.342333333333333e-06,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.011224091,
+      "leaves": {
+        "ShortWideMultiply3Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:340992,1024,1:340992": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        337
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.15724103166666667,
+      "stages": {
+        "rent": 2.9836666666666665e-06,
+        "pack": 0.008612946666666666,
+        "arithmetic": 0.139773439,
+        "return": 4.845e-06,
+        "final_row": 0.0019063213333333333
+      },
+      "remainder_seconds": 0.006940496,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:345088,1024,1:345088": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        379
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.17784393433333334,
+      "stages": {
+        "rent": 3.454e-06,
+        "pack": 0.008756674,
+        "arithmetic": 0.15777402866666668,
+        "return": 5.747666666666667e-06,
+        "final_row": 0.002078675
+      },
+      "remainder_seconds": 0.009225355,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:388096,1024,1:388096": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        443
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.20136835433333333,
+      "stages": {
+        "rent": 3.0516666666666665e-06,
+        "pack": 0.008811587333333334,
+        "arithmetic": 0.18420743233333334,
+        "return": 5.495333333333333e-06,
+        "final_row": 0.0021091506666666665
+      },
+      "remainder_seconds": 0.006231637,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:453632,1024,1:453632": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        449
+      ],
+      "measured_calls": 57,
+      "corpus_seconds": 0.20964565166666665,
+      "stages": {
+        "rent": 3.811666666666667e-06,
+        "pack": 0.008668227333333334,
+        "arithmetic": 0.18779850766666667,
+        "return": 6.0803333333333335e-06,
+        "final_row": 0.002201759
+      },
+      "remainder_seconds": 0.010967265666666667,
+      "leaves": {
+        "ShortWideMultiply2Rows": 57
+      },
+      "input_layouts": {
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:459776,1024,1:459776": 57
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 57
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        51
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.10165019666666666,
+      "stages": {
+        "rent": 2.2591666666666666e-05,
+        "pack": 0.03205792066666667,
+        "arithmetic": 0.068973104,
+        "return": 1.3691666666666666e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0005828886666666667,
+      "leaves": {
+        "ShortWideMultiply3Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:52224,1024,1:52224": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        61
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.13547210466666668,
+      "stages": {
+        "rent": 2.6600333333333333e-05,
+        "pack": 0.031071070333333332,
+        "arithmetic": 0.09678742333333333,
+        "return": 1.5764e-05,
+        "final_row": 0.006894883666666666
+      },
+      "remainder_seconds": 0.000676363,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:62464,1024,1:62464": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        83
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.17150126366666665,
+      "stages": {
+        "rent": 2.2034666666666668e-05,
+        "pack": 0.03232434766666667,
+        "arithmetic": 0.13163041433333333,
+        "return": 1.6269e-05,
+        "final_row": 0.006674624666666667
+      },
+      "remainder_seconds": 0.0008335733333333334,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:84992,1024,1:84992": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        88
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.17303846266666667,
+      "stages": {
+        "rent": 2.4251e-05,
+        "pack": 0.031511219666666666,
+        "arithmetic": 0.14065661433333335,
+        "return": 1.8455333333333333e-05,
+        "final_row": 0.0
+      },
+      "remainder_seconds": 0.0008279223333333333,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:90112,1024,1:90112": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "route-rows",
+        "unmapped",
+        89
+      ],
+      "measured_calls": 219,
+      "corpus_seconds": 0.181036481,
+      "stages": {
+        "rent": 2.8839e-05,
+        "pack": 0.032116167333333334,
+        "arithmetic": 0.14099147333333334,
+        "return": 1.7055333333333333e-05,
+        "final_row": 0.007034071333333333
+      },
+      "remainder_seconds": 0.0008488746666666666,
+      "leaves": {
+        "ShortWideMultiply2Rows": 219
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:91136,1024,1:91136": 219
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 219
+      }
+    },
+    {
+      "group": [
+        "total"
+      ],
+      "measured_calls": 7200,
+      "corpus_seconds": 9.34040968,
+      "stages": {
+        "rent": 0.0006985473333333334,
+        "pack": 0.9276615366666666,
+        "arithmetic": 7.078508280666667,
+        "return": 0.0005029186666666666,
+        "final_row": 0.10484128566666667
+      },
+      "remainder_seconds": 1.228197111,
+      "leaves": {
+        "prepared-leaf-not-observed": 957,
+        "ShortWideMultiply2Rows": 4263,
+        "ShortWideMultiply3Rows": 1980
+      },
+      "input_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:108544,1024,1:108544": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:216064,1024,1:216064": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:227328,1024,1:227328": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:453632,1024,1:453632": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:114688,1024,1:114688": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:228352,1024,1:228352": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:171008,1024,1:171008": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:340992,1024,1:340992": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:91136,1024,1:91136": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:181248,1024,1:181248": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:160768,1024,1:160768": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:320512,1024,1:320512": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:52224,1024,1:52224": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:103424,1024,1:103424": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:194560,1024,1:194560": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:388096,1024,1:388096": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:90112,1024,1:90112": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:179200,1024,1:179200": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:161792,1024,1:161792": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:322560,1024,1:322560": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:84992,1024,1:84992": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:168960,1024,1:168960": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:159744,1024,1:159744": 576,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:318464,1024,1:318464": 144,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:116736,1024,1:116736": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:232448,1024,1:232448": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:230400,1024,1:230400": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:459776,1024,1:459776": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:62464,1024,1:62464": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:123904,1024,1:123904": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:104448,1024,1:104448": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:207872,1024,1:207872": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:154624,1024,1:154624": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:308224,1024,1:308224": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:122880,1024,1:122880": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:244736,1024,1:244736": 72,
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:173056,1024,1:173056": 288,
+        "Lokad.Onnx.TensorSlice`1[System.Single]:False:345088,1024,1:345088": 72
+      },
+      "weight_layouts": {
+        "Lokad.Onnx.DenseTensor`1[System.Single]:False:1024,1:1048576": 7200
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "control",
+      "samples": 364,
+      "seconds": 186.60779242694844,
+      "peak_rss": 10402693120
+    },
+    {
+      "name": "observed",
+      "samples": 367,
+      "seconds": 188.88357225991786,
+      "peak_rss": 7958315008
+    }
+  ],
+  "requests": 160,
+  "observed_attention_calls": 9600,
+  "original_public_results_exact": true,
+  "diagnostic_only": true,
+  "release_admitted": false,
+  "raw_costs": {
+    "bytes": 10316240,
+    "sha256": "14f2a1f607f289e5865306dd6748e22cf4901902b0bdd343978b27568a27c416"
+  },
+  "reviewer": {
+    "bytes": 10833,
+    "sha256": "ff0f983ded2b4ed8e5b9a72abf124d7ea997c85c68cf265bb1c603deeea163ab"
+  }
+}
