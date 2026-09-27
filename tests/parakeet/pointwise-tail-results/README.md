@@ -1,0 +1,33 @@
+# Pointwise remainder release results
+
+These publishers are prepared before the remaining comparisons complete.
+No pending graph, Pyannote application or root result has been published.
+They read actual closed evidence and verify its file inventory and product
+identity before writing new reports. Existing publications are never overwritten.
+Failed performance controls remain visible; a report does not promote a product.
+
+From repository root, prefix with C:/Python313/python.exe -X utf8 -B. Run each
+publisher once, after that campaign is terminal, collected and audited:
+
+    tests/parakeet/pointwise-tail-results/publish_graphs.py
+    tests/parakeet/pointwise-tail-results/publish_pyannote_application.py
+    tests/parakeet/pointwise-tail-results/publish_root.py
+
+The graph publisher preserves all 73,512 calls, 8,640 measurements and 72 setup
+intervals and recomputes the unchanged eight-case scoring. Pyannote preserves
+all 96 timing requests, its six setup intervals and the original scorer, native
+checks and complete long-meeting results. Root publication reconciles actual
+source, all compiled methods, complete test census, package and held-output
+checks against the measured candidate; it assigns no new timing.
+
+The already admitted [Parakeet application result](../decoder-lstm-layout-profile-results/pointwise-tail-app-20260927.md)
+is the timing source for this candidate. It takes 45.332653922 seconds versus
+ORT's 39.232132721, with a 2.132562% matched gain. The
+[component screen](../decoder-lstm-layout-profile-results/pointwise-tail-timing-20260927.md)
+remains rejected; its clocks cannot support a release speedup claim.
+
+After actual root qualification and source commit, update BENCHMARK.md's leading
+shortlist table from these exact matched application and graph results. Replace
+the product/source identities, census and evidence links together. Keep DINOv2
+excluded for numerical agreement and Whisper performance deferred. Keep current
+coverage and limitations; omit a historical performance ledger.
