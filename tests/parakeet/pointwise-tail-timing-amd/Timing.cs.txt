@@ -1,0 +1,93 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Runtime.Loader;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+internal static unsafe class Program
+{
+    const int Guard=7, Canary=0x4e513749;
+    delegate void Kernel(int m,int n,int k,float* a,float* p,float* c);
+    static void Require(bool ok,string why) { if(!ok) throw new InvalidDataException(why); }
+    static string Hash(ReadOnlySpan<float> data)=>Convert.ToHexStringLower(SHA256.HashData(MemoryMarshal.AsBytes(data)));
+    static string FileHash(string path)=>Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)));
+    static float[] Values(int count,uint seed)
+    {
+        var a=new float[count+2*Guard];Array.Fill(a,BitConverter.Int32BitsToSingle(Canary));
+        for(int i=0;i<count;i++){seed=unchecked(seed*1664525+1013904223);a[Guard+i]=((int)(seed>>8)%2001-1000)/997f;}
+        return a;
+    }
+    sealed class Case
+    {
+        public int M,N,K,Index; public bool Control;
+        public float[] A=[],B=[],Packed=[],Initial=[],Expected=[],Actual=[];
+        public string AH="",BH="",PH="",OutputHash="";
+        public void Immutable()=>Require(Hash(A)==AH && Hash(B)==BH && Hash(Packed)==PH,"Input/packed mutation");
+        public void Output()=>Require(MemoryMarshal.AsBytes(Expected.AsSpan()).SequenceEqual(MemoryMarshal.AsBytes(Actual.AsSpan())),"Output bits/guards");
+    }
+    [MethodImpl(MethodImplOptions.NoInlining|MethodImplOptions.AggressiveOptimization)]
+    static (long ticks,long allocated) Measure(Kernel kernel,Case c)
+    {
+        fixed(float* a=c.A,p=c.Packed,o=c.Actual)
+        {
+            long allocated=GC.GetAllocatedBytesForCurrentThread();
+            long begin=Stopwatch.GetTimestamp();
+            kernel(c.M,c.N,c.K,a+Guard,p+Guard,o+Guard);
+            long end=Stopwatch.GetTimestamp();
+            return(end-begin,GC.GetAllocatedBytesForCurrentThread()-allocated);
+        }
+    }
+    static int Main(string[] args)
+    {
+        Require(args.Length==4,"spec built output role");
+        using var sd=JsonDocument.Parse(File.ReadAllBytes(args[0]));var spec=sd.RootElement;
+        using var bd=JsonDocument.Parse(File.ReadAllBytes(args[1]));var built=bd.RootElement;
+        string output=Path.GetFullPath(args[2]),role=args[3];Require(!Directory.Exists(output),"Fresh output");Directory.CreateDirectory(output);
+        using var process=Process.GetCurrentProcess();
+        Require(OperatingSystem.IsLinux() && RuntimeInformation.FrameworkDescription==".NET 10.0.8" &&
+            Environment.ProcessorCount==1 && process.ProcessorAffinity==(IntPtr)4 && Avx512F.IsSupported && Avx2.IsSupported && Fma.IsSupported,"Runtime/affinity/ISA");
+        var flags=Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k=>k.StartsWith("LOKAD_",StringComparison.OrdinalIgnoreCase)
+            ||k.StartsWith("DOTNET_",StringComparison.OrdinalIgnoreCase)||k.StartsWith("COMPlus_",StringComparison.OrdinalIgnoreCase)).ToArray();
+        Require(flags.Length==0,"Default runtime flags");
+        string core=FileHash(typeof(MathOps).Assembly.Location);
+        Require(core==built.GetProperty("products").GetProperty(role).GetProperty("Lokad.Onnx.dll").GetProperty("sha256").GetString(),"Loaded product");
+        string path=Path.Combine(spec.GetProperty("prior").GetString()!,"Lokad.Onnx.dll");
+        Require(FileHash(path)==built.GetProperty("products").GetProperty("baseline").GetProperty("Lokad.Onnx.dll").GetProperty("sha256").GetString(),"Reference product");
+        var context=new AssemblyLoadContext("qualified-reference",isCollectible:false);
+        context.Resolving+=(ctx,name)=>{string p=Path.Combine(Path.GetDirectoryName(path)!,name.Name+".dll");return File.Exists(p)?ctx.LoadFromAssemblyPath(p):null;};
+        var reference=context.LoadFromAssemblyPath(path).GetType("Lokad.Onnx.MathOps")!.GetMethod("mm_unsafe_vectorized_intrinsics_2x4packed_bump",BindingFlags.Public|BindingFlags.Static)!.CreateDelegate<Kernel>();
+        var kernel=typeof(MathOps).GetMethod("mm_unsafe_vectorized_intrinsics_2x4packed_bump",BindingFlags.Public|BindingFlags.Static)!.CreateDelegate<Kernel>();
+        var cases=new List<Case>();
+        foreach(var row in spec.GetProperty("shapes").EnumerateArray())
+        {
+            var c=new Case{M=row.GetProperty("m").GetInt32(),N=row.GetProperty("n").GetInt32(),K=row.GetProperty("k").GetInt32(),Control=row.GetProperty("control").GetBoolean(),Index=cases.Count};
+            c.A=Values(c.M*c.N,17);c.B=Values(c.N*c.K,31);c.Packed=Values(c.N*c.K,41);c.Initial=Values(c.M*c.K,53);
+            c.Expected=(float[])c.Initial.Clone();c.Actual=(float[])c.Initial.Clone();c.AH=Hash(c.A);c.BH=Hash(c.B);
+            fixed(float* a=c.A,b=c.B,p=c.Packed,o=c.Expected)
+            {MathOps.PackPanelsB(c.N,c.K,b+Guard,p+Guard);reference(c.M,c.N,c.K,a+Guard,p+Guard,o+Guard);}
+            c.PH=Hash(c.Packed);c.OutputHash=Hash(c.Expected);c.Immutable();cases.Add(c);
+        }
+        int warmups=spec.GetProperty("warmups").GetInt32(),measurements=spec.GetProperty("measurements").GetInt32();
+        var records=new List<object>();long started=Stopwatch.GetTimestamp();
+        for(int pass=0;pass<warmups+measurements;pass++)
+        {
+            foreach(var c in cases)
+            {
+                Array.Copy(c.Initial,c.Actual,c.Initial.Length);
+                var t=Measure(kernel,c);Require(t.ticks>0 && t.allocated==0,"Clock/allocation");c.Output();
+                records.Add(new {phase=pass<warmups?"warmup":"measured",pass=pass<warmups?pass:pass-warmups,index=c.Index,m=c.M,n=c.N,k=c.K,control=c.Control,
+                    ticks=t.ticks,allocated_bytes=t.allocated,output_sha256=c.OutputHash,bit_exact=true});
+            }
+            foreach(var c in cases)c.Immutable();
+        }
+        using(var stream=new FileStream(Path.Combine(output,"result.json"),FileMode.CreateNew))
+            JsonSerializer.Serialize(stream,new{completed=true,passed=true,role,pid=Environment.ProcessId,runtime=RuntimeInformation.FrameworkDescription,
+                core_sha256=core,consumer_sha256=FileHash(typeof(Program).Assembly.Location),flags,frequency=Stopwatch.Frequency,
+                started_ticks=started,ended_ticks=Stopwatch.GetTimestamp(),inputs_immutable=true,records},new JsonSerializerOptions{WriteIndented=true});
+        Console.WriteLine(JsonSerializer.Serialize(new{passed=true,role,clocks=records.Count}));return 0;
+    }
+}
