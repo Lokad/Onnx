@@ -1,7 +1,8 @@
 # Shared-model and e5 qualification for owned attention weights
 
-This adapter awaits the actual application verdict. APP_DIGEST is deliberately
-unbound; preparation refuses until the admitted full-application closure exists.
+Application closure 600e9e67 admits the unchanged candidate: all 63 controls and
+21 gates pass, with 1.128490% matched gain and candidate/ORT 1.147329. APP_DIGEST
+binds that actual complete result; parity remains open.
 The completed Parakeet model closure is 2d64fad9, focused contracts a293403a and
 exact-model census ef4e41ec. Current Core a6f7d9f9 and candidate ee5218db differ
 only in PrepareOwnedMatMulWeights; 3,287 other Core methods and 697 Data methods,
