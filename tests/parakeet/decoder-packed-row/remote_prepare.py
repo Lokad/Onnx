@@ -22,11 +22,18 @@ def main():
         receipt = read(folder/'collection.json')
         assert receipt['terminal'] and receipt['code'] == 0 and receipt['input_error'] is None
         assert not any(live(owner) for owner in receipt['identities'])
+    first = Path('/dev/shm/lokad-decrow-20260927')
+    assert pin(first/'collection.json') == pin(BASE/'evidence/first-collection.json')
+    failed = read(first/'collection.json')
+    assert failed['terminal'] and failed['code'] == 1 and failed['input_error'] is None
+    assert not any(live(owner) for owner in failed['identities'])
+    assert pin(first/'built.json') == pin(BASE/'built.json')
     for name, item in stage['links'].items():
         target = (BASE/name).resolve(); source = Path(item['source'])
         assert target.is_relative_to(BASE.resolve()) and not target.exists()
         assert pin(source) == item['identity']; target.parent.mkdir(parents=True, exist_ok=True)
         os.link(source, target)
+    for name, wanted in read(BASE/'built.json')['files'].items(): assert pin(BASE/name) == wanted, name
     prior = read(PRIOR/'payload.json')
     external = dict(prior['external']); external[stage['model_path']] = stage['model']
     for name, wanted in external.items(): assert pin(name) == wanted, name

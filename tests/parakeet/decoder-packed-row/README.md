@@ -47,13 +47,22 @@ performance search. Hardware-disabled processes exercise only public fallbacks.
 Reuse the existing serial resource supervisor and verified transport. CPU 2 runs
 builds/contracts; CPU 0 monitors. Require SDK 10.0.204, runtime 10.0.8, 2 GiB free
 RAM and 1 GiB tmpfs before each job, less than 3 GiB owned RSS, at least 1 GiB
-remaining RAM/tmpfs, at most 32 MiB job output and 128 MiB total campaign files,
+remaining RAM/tmpfs, at most 32 MiB job output and 64 MiB total resumed campaign files,
 and 300 seconds/job. Restore only from the existing offline feed. Every .NET
 build command disables terminal logging. Collection retains all source, binaries,
 raw results and resource observations, excluding only regenerable HTTP cache.
 
-Local artifact: `artifacts/parakeet-decoder-packed-row-contracts-amd-20260927`.
-VM: `/dev/shm/lokad-decrow-20260927`. Prefix commands below with
+The first campaign built Core and the consumer successfully, then failed before
+inventory inspection because the bridge invocation supplied three arguments to
+the qualified four-argument bridge. Its failure `6225233c` retains all 751
+collected files and original tools. No numerical or performance process ran.
+The fresh second namespace supplies the fourth argument and runs only the
+inventory plus the six previously unstarted contract processes. It hardlinks
+the exact compiled products and consumer; source, fixtures and arithmetic are
+unchanged, and neither successful build is repeated.
+
+Local artifact: `artifacts/parakeet-decoder-packed-row-contracts-v2-amd-20260927`.
+VM: `/dev/shm/lokad-decrow2-20260927`. Prefix commands below with
 `C:/Python313/python.exe -X utf8 -B` from the repository root:
 
     tests/parakeet/decoder-packed-row/run.py prepare

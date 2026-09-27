@@ -13,7 +13,8 @@ def command_for(base, name, spec):
         command += ['--source', spec['feed'], '--packages', base/'packages'] if action == 'restore' else ['-c', 'Release', '--no-restore', '--disable-build-servers']
         return command, True, 2
     if name == 'inventory':
-        return [DOTNET, base/'bridge/Bridge.dll', base/'runtimes/current', base/'runtimes/candidate', base/'inventory/instructions.json'], False, 2
+        return [DOTNET, base/'bridge/Bridge.dll', base/'runtimes/current', base/'runtimes/candidate',
+            base/'inventory/instructions.json', base/'runtimes/current'], False, 2
     role, mode = name.split('-')
     assert role in ['current', 'candidate'] and mode in ['normal', 'noavx512', 'scalar']
     command = [DOTNET, base/'runtimes'/role/'Lokad.Onnx.Backend.Tests.dll', base, role, mode, base/name]

@@ -8,10 +8,12 @@ from protocol import TOOLS, PARENT, pin, read, save
 from source import TARGET, HELPER, changed
 
 ROOT = TOOLS.parents[2]
-BASE = ROOT/'artifacts/parakeet-decoder-packed-row-contracts-amd-20260927'
+BASE = ROOT/'artifacts/parakeet-decoder-packed-row-contracts-v2-amd-20260927'
+FIRST = ROOT/'artifacts/parakeet-decoder-packed-row-contracts-amd-20260927'
 QUALIFIED = ROOT/'artifacts/parakeet-rational-sigmoid-root-amd-20260927'
 OBSERVATION = ROOT/'artifacts/parakeet-decoder-projection-observation-v3-amd-20260927'
 REMOTE_ROOT = '/dev/shm/lokad-parakeet-rational-sigmoid-root-20260927'
+REMOTE_FIRST = '/dev/shm/lokad-decrow-20260927'
 
 
 def previous_closed():
@@ -26,6 +28,13 @@ def previous_closed():
     original_tools = read(OBSERVATION/'prepared.json')['files']
     for path in [PARENT/'protocol.py', PARENT/'remote.py', PARENT/'run.py', TOOLS.parent/'decoder-projection-observation/run.py']:
         assert pin(path) == original_tools[path.relative_to(ROOT).as_posix()], path
+    assert pin(FIRST/'failed.json')['sha256'] == '6225233c00528cde3170a535ac973ddc7382c3af5086b370d90ff860d023d24d'
+    failed = read(FIRST/'failed.json')
+    assert failed['evidence_verified'] and failed['terminal'] and failed['builds_passed']
+    assert not failed['inventory_executed'] and not failed['contracts_executed']
+    for name, wanted in failed['files'].items(): assert pin(FIRST/name) == wanted, name
+    for name in ['Contracts.cs.txt', 'Contracts.csproj', 'PreparedSingleRowKernel.cs.txt', 'source.py']:
+        assert pin(TOOLS/name) == pin(FIRST/'frozen-tools'/name), 'Keep the product and consumer unchanged'
     return applied['source_files']
 
 
@@ -67,6 +76,9 @@ def prepare():
             if label == 'observation' and name == 'analysis.json': continue
             copy(folder/name, 'evidence/'+label+'/'+name)
         copy(folder/'collected/collection.json', 'evidence/'+label+'/collection.json')
+    copy(FIRST/'failed.json', 'evidence/first-failed.json')
+    copy(FIRST/'collected/collection.json', 'evidence/first-collection.json')
+    copy(FIRST/'collected/built.json', 'built.json')
     copy(QUALIFIED/'bundle/evidence/root-applied.json', 'evidence/root-applied.json')
     value = read(OBSERVATION/'analysis.json')
     model = read(OBSERVATION/'collected/observation.json')
@@ -77,26 +89,23 @@ def prepare():
         output_sha256=value['operands']['output']['sha256'])
     save(bundle/'fixture.json', fixture)
     links = {}
-    root_closed = read(QUALIFIED/'closed.json')
+    first_collection = read(FIRST/'collected/collection.json')
 
     def link(name, source):
-        local = QUALIFIED/'collected'/source
-        wanted = root_closed['files']['collected/'+source]
+        local = FIRST/'collected'/source
+        wanted = first_collection['files'][source]
         assert pin(local) == wanted
         original[local.relative_to(ROOT).as_posix()] = wanted
-        links[name] = dict(source=REMOTE_ROOT+'/'+source, identity=wanted)
+        links[name] = dict(source=REMOTE_FIRST+'/'+source, identity=wanted)
 
-    names = ['Lokad.Onnx', 'Lokad.Onnx.Data', 'Google.Protobuf', 'FastBertTokenizer', 'Lokad.Tokenizers', 'SixLabors.ImageSharp']
-    for role in ['current', 'candidate']:
-        for name in names:
-            if role == 'candidate' and name == 'Lokad.Onnx': continue
-            link('runtimes/'+role+'/'+name+'.dll', 'runtime/'+name+'.dll')
-    for suffix in ['dll', 'deps.json', 'runtimeconfig.json']: link('bridge/Bridge.'+suffix, 'built/Bridge.'+suffix)
+    for name in read(FIRST/'collected/built.json')['files']: link(name, name)
+    for suffix in ['dll', 'deps.json', 'runtimeconfig.json']: link('bridge/Bridge.'+suffix, 'bridge/Bridge.'+suffix)
     stage = dict(passed=True, links=links, current_product=value['product'], model=pin(ROOT/'models/parakeet-tdt-0.6b-v3/decoder_joint-model.onnx'),
         model_path=fixture['model'], changed_methods=['ResolvePackedKernel', 'RunPreparedPackedRows'], added_method='PreparedSingleRowKernel.Multiply',
         source={name: pin(bundle/'source'/name) for name in [*sources, HELPER]},
         files={p.relative_to(bundle).as_posix(): pin(p) for p in bundle.rglob('*') if p.is_file()})
     assert stage['model']['sha256'] == fixture['model_sha256']
+    assert stage['source'] == read(FIRST/'bundle/stage.json')['source']
     save(bundle/'stage.json', stage)
     for path in TOOLS.iterdir():
         if path.is_file(): original[path.relative_to(ROOT).as_posix()] = pin(path)

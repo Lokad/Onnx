@@ -14,6 +14,9 @@ def review(value, built, baseline):
         assert not row['removed']
         assert {k: row['method_flags_after'][k] for k in row['method_flags_before']} == row['method_flags_before']
         if core:
+            assert value['release']['sha256'] == row['before_sha256']
+            assert value['release']['methods'] == {k: v for k, v in row['normalized_methods'].items() if '::RunBatchedFloatMatMul::' in k}
+            assert len(value['release']['methods']) == 1
             assert len(row['differences']) == 2 and {n.split('::')[1] for n in row['differences']} == {'ResolvePackedKernel', 'RunPreparedPackedRows'}
             assert all(n.startswith('Lokad.Onnx.Tensor`1[T]::') for n in row['differences'])
             assert len(row['added']) == 1 and row['added'][0].startswith('Lokad.Onnx.PreparedSingleRowKernel::Multiply::')
