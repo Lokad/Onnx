@@ -198,8 +198,8 @@ public partial class CPUExecutionProvider
                     int xOff = (t * batch + b) * inputSize;
                     if (preparedInput is not null && preparedRecurrent is not null)
                     {
-                        LstmProjectOrdered(xs.Slice(xOff, inputSize), preparedInput, xw);
-                        LstmProjectOrdered(hv, preparedRecurrent, hr);
+                        PreparedLstmProjection.Multiply(xs.Slice(xOff, inputSize), preparedInput, xw);
+                        PreparedLstmProjection.Multiply(hv, preparedRecurrent, hr);
                     }
                     else if (projections is not null)
                     {

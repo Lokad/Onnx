@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-/// <summary>An independently owned [direction, input, gate] transpose of a constant LSTM weight.</summary>
+/// <summary>Independently owned constant LSTM weights grouped by four output vectors.</summary>
 internal sealed record PackedLstmWeight(string SourceName, DenseTensor<float> Source,
     float[] SourceArray, int[] Shape, float[] Values);
 
@@ -99,9 +99,14 @@ internal static class GraphLstmPacking
     static PackedLstmWeight Prepare(Source source)
     {
         var values = new float[Elements]; var input = source.Tensor.Buffer.Span;
-        for (int k = 0; k < HiddenSize; k++)
-        for (int o = 0; o < 4 * HiddenSize; o++)
-            values[k * 4 * HiddenSize + o] = input[o * HiddenSize + k];
+        int block = PreparedLstmProjection.ColumnsPerBlock;
+        for (int o = 0; o < 4 * HiddenSize; o += block)
+        {
+            int columns = Math.Min(block, 4 * HiddenSize - o);
+            for (int k = 0; k < HiddenSize; k++)
+            for (int lane = 0; lane < columns; lane++)
+                values[o * HiddenSize + k * columns + lane] = input[(o + lane) * HiddenSize + k];
+        }
         return new PackedLstmWeight(source.Name, source.Tensor, source.Array, source.Tensor.Dimensions.ToArray(), values);
     }
 
