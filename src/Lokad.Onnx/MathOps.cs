@@ -1989,9 +1989,13 @@ public partial class MathOps
         {
             float* T = P + tiles * N * (4 * Vector256<float>.Count);
             int rv = rem / Vector256<float>.Count;
+            int sharedRows = M >= 64 && N >= 64 ? M - M % 8 : 0;
             for (int tt = 0; tt < rv; tt++)
             {
-                for (int i = 0; i < M; i += 2)
+                if (sharedRows > 0)
+                    PackedColumnTailEightRows(sharedRows, N, K, rem, A,
+                        T + tt * Vector256<float>.Count, C + blocked + tt * Vector256<float>.Count);
+                for (int i = sharedRows; i < M; i += 2)
                 {
                     var Ap1 = A + i * N;
                     var Ap2 = Ap1 + N;
@@ -2016,8 +2020,12 @@ public partial class MathOps
             // of the loop it replaces, so results agree bit-wise while each C
             // row is loaded once and stored once.
             int tail = rem - vcols;
+            int maskedRows = tail > 0 && Avx2.IsSupported ? sharedRows : 0;
+            if (maskedRows > 0)
+                PackedColumnMaskedEightRows(maskedRows, N, K, rem, tail, A,
+                    T + vcols, C + blocked + vcols);
             if (tail > 0)
-            for (int i = 0; i < M; i += 2)
+            for (int i = maskedRows; i < M; i += 2)
             {
                 var Ap1 = A + i * N;
                 var Ap2 = Ap1 + N;
