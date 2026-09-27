@@ -66,17 +66,11 @@ disabled. Every clock is retained and no measurements are trimmed.
   finite values and ownership checks. A qualified row requires repeated process
   means within 10% for each engine.
 
-The complete applications and graphs pass their repeatability gates. Isolated
-Pad-call repeatability remains unqualified. The vector sigmoid passes its
-numerical checks, but [isolated sigmoid timing](tests/parakeet/rational-sigmoid-results/screen-20260927.md)
-has failed repeatability and fallback gates;
-[double fallback latency remains unresolved](tests/parakeet/rational-sigmoid-results/fallback-diagnosis-20260927.md).
-The [prepared-row operator screen](tests/parakeet/decoder-packed-row-results/screen-20260927.md)
-also fails isolated repeatability and fallback gates. Its
-[individual-call diagnostic](tests/parakeet/decoder-packed-row-results/unmapped-calls-20260927.md)
-shows recovery over several calls when alternating prepared and unprepared weights;
-cache competition is an inference, and universal fallback speed equality is unproven.
-The qualified performance claims cover the listed application and graph workloads.
+The performance claims cover the listed complete application and graph workloads.
+They do not establish uniform speedups for isolated operators or fallback paths.
+[Unprepared-path timing](tests/parakeet/decoder-packed-row-results/screen-20260927.md)
+and [double-precision sigmoid fallback timing](tests/parakeet/rational-sigmoid-results/fallback-diagnosis-20260927.md)
+remain unqualified; the table must not be extrapolated to those cases.
 
 DINOv2 is excluded by the [known-divergence registry](tests/Lokad.Onnx.Bench/KnownDivergences.cs):
 its registered output exceeds the 1e-4 agreement bound, so the runner withholds
