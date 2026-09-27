@@ -1,0 +1,593 @@
+{
+  "passed": true,
+  "diagnostic_only": true,
+  "screen_rescored": false,
+  "capture_closure": {
+    "bytes": 109484,
+    "sha256": "a00f9195ab9be512b1230357d68e3e1142593014a79680198cc5d517e95b6c85"
+  },
+  "worker_pid": 1195033,
+  "worker_thread": 1195033,
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 827392,
+      "sha256": "0d224bcff591563816d64c3a3cc51f7b7cd38f5a1d3c523b05c699a9b82b6b97"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a37453929e6103a187f9849d3040a663fa9d7dd85561e4f6f14d639fe38935d5"
+    },
+    "Google.Protobuf.dll": {
+      "bytes": 497304,
+      "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+    }
+  },
+  "original_calls": 3800,
+  "exact_output_arrays": 11400,
+  "raw_events": 76708,
+  "lost": 0,
+  "clock_offset_bounds_ms": [
+    -873116661.938709,
+    -873116661.9359379
+  ],
+  "clock_tolerance_ms": 0.001,
+  "jit_intervals": 1532,
+  "gc_intervals": 21,
+  "suspension_reasons": {
+    "SuspendOther": 9265,
+    "SuspendForGC": 18,
+    "SuspendForGCPrep": 4
+  },
+  "phases": [
+    {
+      "phase": "warmup",
+      "repeat": 0,
+      "begin_ms": 167.61927449703217,
+      "end_ms": 1402.8135994672775,
+      "calls": 380,
+      "call_elapsed_ms": 1229.515704,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 43.22576499999994
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 4.4457480000017995
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 1,
+      "begin_ms": 1425.9813685417175,
+      "end_ms": 2613.257612466812,
+      "calls": 380,
+      "call_elapsed_ms": 1181.9042279999999,
+      "gc_counter_pause_delta_ms": 5.143,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 11.772083958114763,
+        "NonConcurrentGC": 4.634670999999798
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 4.879311000000143,
+        "SuspendForGCPrep": 0.08101200000010067,
+        "SuspendOther": 4.297766999996156
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 2,
+      "begin_ms": 2630.6425864696503,
+      "end_ms": 3860.216164469719,
+      "calls": 380,
+      "call_elapsed_ms": 1223.922953,
+      "gc_counter_pause_delta_ms": 1.686,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 172.31569132402046
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 1.609632000000147
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 1.6918660000001182,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 3.866772000002584
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 3,
+      "begin_ms": 3879.1221455335617,
+      "end_ms": 5063.433827519417,
+      "calls": 380,
+      "call_elapsed_ms": 1179.893043,
+      "gc_counter_pause_delta_ms": 1.334,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 41.82464023606917
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 1.2582910000000993
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 1.3381509999999253,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 3.7698019999947974
+      }
+    },
+    {
+      "phase": "warmup",
+      "repeat": 4,
+      "begin_ms": 5084.871693491936,
+      "end_ms": 6255.611652493477,
+      "calls": 380,
+      "call_elapsed_ms": 1166.710898,
+      "gc_counter_pause_delta_ms": 1.234,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 1.1420650000000023
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 1.237239000000045,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 3.767099999988204
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 0,
+      "begin_ms": 6272.443790555,
+      "end_ms": 7704.574276566505,
+      "calls": 380,
+      "call_elapsed_ms": 1426.123762,
+      "gc_counter_pause_delta_ms": 4.007,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 34.1261029999996
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 697.5420755352534
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 14.154423079697153,
+        "NonConcurrentGC": 1.4633510000003298
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 1.6321659999994154,
+        "SuspendForGCPrep": 0.08657099999982165,
+        "SuspendOther": 4.017815000018345
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 1,
+      "begin_ms": 7730.751792550087,
+      "end_ms": 8924.000195503235,
+      "calls": 380,
+      "call_elapsed_ms": 1190.4671799999999,
+      "gc_counter_pause_delta_ms": 4.534,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.11239999999997963
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 23.86795131492636
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 4.448651000000609
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 4.5415610000000015,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 4.089577000013378
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 2,
+      "begin_ms": 8942.046427488327,
+      "end_ms": 10139.726725459099,
+      "calls": 380,
+      "call_elapsed_ms": 1194.301776,
+      "gc_counter_pause_delta_ms": 0.0,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 34.919594111930564
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 0.0
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 0.0,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 4.286569000001691
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 3,
+      "begin_ms": 10167.123863458633,
+      "end_ms": 11359.674808502197,
+      "calls": 380,
+      "call_elapsed_ms": 1189.984074,
+      "gc_counter_pause_delta_ms": 3.027,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 2.9274230000009993
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 3.0307389999998122,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 3.889561000009053
+      }
+    },
+    {
+      "phase": "measured",
+      "repeat": 4,
+      "begin_ms": 11366.438846468925,
+      "end_ms": 12533.367099523544,
+      "calls": 380,
+      "call_elapsed_ms": 1164.9001819999999,
+      "gc_counter_pause_delta_ms": 1.18,
+      "jit_by_thread": [
+        {
+          "thread": 1195033,
+          "worker_thread": true,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195035,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195038,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        },
+        {
+          "thread": 1195039,
+          "worker_thread": false,
+          "union_elapsed_overlap_ms": 0.0
+        }
+      ],
+      "gc_elapsed_overlap_ms": {
+        "BackgroundGC": 0.0,
+        "NonConcurrentGC": 1.0992409999998927
+      },
+      "suspended_overlap_ms": {
+        "SuspendForGC": 1.1838790000001609,
+        "SuspendForGCPrep": 0.0,
+        "SuspendOther": 3.2449939999823982
+      }
+    }
+  ],
+  "slowest_measured_repeat": 0,
+  "jit_intervals_overlapping_slow_phase": 569,
+  "slow_phase_jit_tiers": {
+    "QuickJittedInstrumented": 160,
+    "OptimizedTier1Instrumented": 78,
+    "OptimizedTier1": 329,
+    "OptimizedTier1OSR": 1,
+    "Optimized": 1
+  },
+  "slow_phase_largest_jit_intervals": [
+    {
+      "begin_ms": 7655.141014,
+      "end_ms": 7749.351125,
+      "thread": 1195039,
+      "elapsed_ms": 94.21011100000032,
+      "start_event": 45078,
+      "stop_event": 45958,
+      "method_id": "137910101712304",
+      "module_id": "137910084147488",
+      "method": "Lokad.Onnx.CPUExecutionProvider::Lstm",
+      "signature": "value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "tier": "OptimizedTier1"
+    },
+    {
+      "begin_ms": 7570.082959,
+      "end_ms": 7633.117854,
+      "thread": 1195039,
+      "elapsed_ms": 63.03489499999978,
+      "start_event": 44069,
+      "stop_event": 44778,
+      "method_id": "137910087392448",
+      "module_id": "137910084147488",
+      "method": "Lokad.Onnx.Node::ExecuteCPU",
+      "signature": "instance value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+      "tier": "OptimizedTier1"
+    },
+    {
+      "begin_ms": 7412.550699,
+      "end_ms": 7461.508448,
+      "thread": 1195039,
+      "elapsed_ms": 48.95774899999924,
+      "start_event": 42495,
+      "stop_event": 42978,
+      "method_id": "137910084152432",
+      "module_id": "137910084147488",
+      "method": "Lokad.Onnx.ComputationalGraph::RunCoreInner",
+      "signature": "instance bool  (class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+      "tier": "OptimizedTier1"
+    },
+    {
+      "begin_ms": 7465.340337,
+      "end_ms": 7510.955907,
+      "thread": 1195039,
+      "elapsed_ms": 45.615569999999934,
+      "start_event": 43015,
+      "stop_event": 43410,
+      "method_id": "137910084152248",
+      "module_id": "137910084147488",
+      "method": "Lokad.Onnx.ComputationalGraph::ResolveInputs",
+      "signature": "instance bool  (class System.Collections.Generic.Dictionary`2<class System.String,class Lokad.Onnx.ITensor>,bool)",
+      "tier": "OptimizedTier1"
+    },
+    {
+      "begin_ms": 7082.031331,
+      "end_ms": 7116.157434,
+      "thread": 1195033,
+      "elapsed_ms": 34.1261029999996,
+      "start_event": 37971,
+      "stop_event": 39162,
+      "method_id": "137910101712304",
+      "module_id": "137910084147488",
+      "method": "Lokad.Onnx.CPUExecutionProvider::Lstm",
+      "signature": "value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "tier": "OptimizedTier1OSR"
+    },
+    {
+      "begin_ms": 7385.241513,
+      "end_ms": 7407.799892,
+      "thread": 1195039,
+      "elapsed_ms": 22.55837900000006,
+      "start_event": 42143,
+      "stop_event": 42400,
+      "method_id": "137910084153096",
+      "module_id": "137910084147488",
+      "method": "Lokad.Onnx.ComputationalGraph::ComputeStructureFingerprint",
+      "signature": "instance int64  (class System.Collections.Generic.HashSet`1<class Lokad.Onnx.ComputationalGraph>,class System.Collections.Generic.List`1<value class FingerprintString>)",
+      "tier": "OptimizedTier1"
+    },
+    {
+      "begin_ms": 7090.752456,
+      "end_ms": 7104.422226,
+      "thread": 1195039,
+      "elapsed_ms": 13.669769999999517,
+      "start_event": 38444,
+      "stop_event": 38986,
+      "method_id": "137910083309528",
+      "module_id": "137910066364416",
+      "method": "System.String::Join",
+      "signature": "class System.String  (class System.String,class System.Collections.Generic.IEnumerable`1<class System.String>)",
+      "tier": "OptimizedTier1"
+    },
+    {
+      "begin_ms": 7525.736235,
+      "end_ms": 7536.376169,
+      "thread": 1195039,
+      "elapsed_ms": 10.639933999999812,
+      "start_event": 43544,
+      "stop_event": 43627,
+      "method_id": "137910083361864",
+      "module_id": "137910066364416",
+      "method": "System.Collections.Generic.Dictionary`2[System.__Canon,System.__Canon]::AddRange",
+      "signature": "instance void  (class System.Collections.Generic.IEnumerable`1<value class System.Collections.Generic.KeyValuePair`2<!0,!1>>)",
+      "tier": "OptimizedTier1"
+    }
+  ],
+  "direct_lstm_osr_interval": {
+    "begin_ms": 7082.031331,
+    "end_ms": 7116.157434,
+    "thread": 1195033,
+    "elapsed_ms": 34.1261029999996,
+    "start_event": 37971,
+    "stop_event": 39162,
+    "method_id": "137910101712304",
+    "module_id": "137910084147488",
+    "method": "Lokad.Onnx.CPUExecutionProvider::Lstm",
+    "signature": "value class Lokad.Onnx.OpResult  (class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+    "tier": "OptimizedTier1OSR"
+  },
+  "enclosing_lstm_call": {
+    "ordinal": 2146,
+    "phase": "measured",
+    "repeat": 0,
+    "call": 246,
+    "begin_ms": 7081.911725521088,
+    "end_ms": 7119.519177556038,
+    "elapsed_ms": 37.607451999999995,
+    "gc_deltas": [
+      0,
+      0,
+      0
+    ],
+    "pause_delta_ms": 0.0
+  },
+  "conclusion": "The declared measured region includes substantial tiered compilation, including an LSTM OSR compilation inside one call. GC is not the primary observed disturbance. Tracing shifts the slow pass, so the original untraced pass cannot be assigned an exact cause or corrected retrospectively.",
+  "limits": "JIT/GC spans and their overlaps are elapsed intervals, not CPU time or additive recoverable latency. SuspendOther includes profiler activity and is not a GC collection. Prepared-path between-process variability remains unresolved.",
+  "next_decision": "Keep the layout candidate unchanged. Qualify complete Parakeet correctness, then judge its application benefit independently at the existing complete-transcription boundary; retain the failed component screen and its limitations.",
+  "analysis_closure": {
+    "bytes": 729,
+    "sha256": "dfa4cef574312c04e8d86e6c69151133b2ab4b4f8646bd74fcbe77c12ef23c68"
+  }
+}
