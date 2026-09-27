@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>ParakeetDecoderObservation</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Deterministic>true</Deterministic>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lokad.Onnx"><HintPath>../../runtime/Lokad.Onnx.dll</HintPath></Reference>
+    <Reference Include="Google.Protobuf"><HintPath>../../runtime/Google.Protobuf.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>
