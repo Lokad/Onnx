@@ -607,7 +607,7 @@ public partial class CPUExecutionProvider
     {
         var op = OpType.Sigmoid;
         if (X is null) return MissingInput(op, nameof(X));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
@@ -617,6 +617,12 @@ public partial class CPUExecutionProvider
                 var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
+                if (xs.Length >= Vector<float>.Count && opts.Tensor.UseSimd
+                    && Vector.IsHardwareAccelerated && !x.IsReversedStride)
+                {
+                    SigmoidRationalVector(xs, ys);
+                    return Success(op, y);
+                }
                 for (int i = 0; i < xs.Length; i++) ys[i] = 1f / (1f + MathF.Exp(-xs[i]));
                 return Success(op, y);
             }
