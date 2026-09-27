@@ -1,0 +1,238 @@
+{
+  "passed": true,
+  "new_inference_calls": 0,
+  "product_changed": false,
+  "selected_candidate": null,
+  "inputs": {
+    "artifacts/parakeet-decoder-projection-observation-v3-amd-20260927/closed.json": {
+      "bytes": 42128,
+      "sha256": "ef94387e0517b08fd87d010c08d99e0b801e1bd7d2809c04b1dcec614333397d"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-amd-20260927/analysis.json": {
+      "bytes": 9236518,
+      "sha256": "e2b550df5664c300c597c16a19be5f33b7684f436ce526e3c425f7e353c7bd68"
+    },
+    "artifacts/parakeet-rational-sigmoid-root-amd-20260927/closed.json": {
+      "bytes": 224764,
+      "sha256": "f6df53ce2ab773898bc84f144abeda97908d383fef9a4df4b7299a22a4d3594d"
+    },
+    "artifacts/parakeet-rational-sigmoid-root-amd-20260927/analysis.json": {
+      "bytes": 7030,
+      "sha256": "60ca26a57d18e5d77d64facadf4b575e2bd7a1933069a05cae27467d1feeda66"
+    },
+    "artifacts/parakeet-decoder-current-review-20260927/closed.json": {
+      "bytes": 2453,
+      "sha256": "0faf5c988673b253edfdf07835f14db30b2dad43dd696e00224a99a0deb6a30f"
+    },
+    "artifacts/parakeet-decoder-current-review-20260927/analysis.json": {
+      "bytes": 28943,
+      "sha256": "a89fd3a52ab0b8e5acfd4e84021233517447f118e3bdaff56482f06aeb3db0c1"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-amd-20260927/collected/trace-stacks/speedscope.speedscope.json": {
+      "bytes": 3660822,
+      "sha256": "940273cfb258b4e3da8cbb3eb0b8090ebc505511388cd536ac63d77de4283d45"
+    },
+    "artifacts/parakeet-decoder-projection-observation-v3-amd-20260927/collected/trace-capture/result.json": {
+      "bytes": 471278,
+      "sha256": "f1a18eb5ade077a2833f0262afcb141a93bf322c641c4719dca8c7a97b0a74e6"
+    },
+    "tests/parakeet/decoder-projection-observation/events.py": {
+      "bytes": 8701,
+      "sha256": "8207a0bd35c65eb3b454fff31d9326715ba850a04acfdd3ac148adc3e6f32323"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs": {
+      "bytes": 19133,
+      "sha256": "5c47b97f65cf572d18bb8e6dae6458d7cf1d60a765d12bbe04a81bdb6bc01341"
+    },
+    "src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs": {
+      "bytes": 5562,
+      "sha256": "edce03ddeab91e529356659dabee301306e146203bf58fb139095d85dd11e450"
+    },
+    "src/Lokad.Onnx/GraphLstmPacking.cs": {
+      "bytes": 7110,
+      "sha256": "fd403f7804770b078c7d9968501c0a235db7b58d66464bb93f57d7284a95d39d"
+    }
+  },
+  "product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 826368,
+      "sha256": "65f15a41764660af6166c9a965943b6f28cac0c9505117d0fd4beaa2687f9d03"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "da72ca547191de12a52f09bceeed25619a92a14b1bbff271a9e7d10515f40312"
+    }
+  },
+  "fixture_scope": "One retained original decoder fixture; 1,024 post-warmup calls.",
+  "intervals_ms": {
+    "lstm-ordered-projection": 2128.3783316018985,
+    "lstm-unresolved": 1155.7916809020717,
+    "other": 1400.6515264860927,
+    "vocabulary-row-major": 1076.0987870099384
+  },
+  "total_observed_decoder_ms": 5760.920326000001,
+  "projection_fraction_of_lstm": 0.6480719096448804,
+  "unresolved_fraction_of_lstm": 0.3519280903551197,
+  "unresolved_leaves_ms": {
+    "CPU_TIME": 1154.5106767558514,
+    "UNMANAGED_CODE_TIME": 1.2809360325336456,
+    "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)": 6.811368666603812e-05
+  },
+  "source_revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "native_sources": {
+    "deep_cpu_lstm.cc": {
+      "bytes": 15719,
+      "sha256": "35ec8eb9a7124bc6d6bab13f863c82dff77abe1f34d608169afd6dcbd2f258dd"
+    },
+    "uni_directional_lstm.cc": {
+      "bytes": 31148,
+      "sha256": "ac3bd9d8eae89de081195f7fc5b95e42d3b654ab25aefb4a6f90ad136cf1c272"
+    },
+    "rnn_helpers.cc": {
+      "bytes": 31725,
+      "sha256": "a2e8da6ffd00cdf58e906ebf85dfb469982474e11a161e033e8f4ea7d22b644a"
+    }
+  },
+  "prior_profile_lstm": {
+    "group": "Both recurrent nodes",
+    "managed_seconds": 2.314125851,
+    "ort_seconds": 0.9950396666666667,
+    "difference_seconds": 1.3190861843333335,
+    "managed_members": [
+      "/decoder/dec_rnn/lstm/LSTM",
+      "/decoder/dec_rnn/lstm/LSTM_1"
+    ],
+    "ort_members": [
+      "/decoder/dec_rnn/lstm/LSTM",
+      "/decoder/dec_rnn/lstm/LSTM_1"
+    ]
+  },
+  "native_profile_shapes": [
+    {
+      "name": "/decoder/dec_rnn/lstm/LSTM",
+      "inputs": [
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            5120
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "float": [
+            1,
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "calls": 4800
+    },
+    {
+      "name": "/decoder/dec_rnn/lstm/LSTM_1",
+      "inputs": [
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            5120
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "float": [
+            1,
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        },
+        {
+          "float": [
+            1,
+            1,
+            640
+          ]
+        }
+      ],
+      "calls": 4800
+    }
+  ],
+  "managed_projection_geometry": {
+    "rows": 1,
+    "reduction": 640,
+    "outputs": 2560,
+    "prepared_row_stride_bytes": 10240,
+    "weight_bytes": 6553600,
+    "separate_input_recurrent_outputs": true
+  },
+  "per_node_native_kernel_proved": false,
+  "per_call_jit_version_proved": false,
+  "activation_time_measured": false,
+  "scope": "Reclassified sampled-thread intervals, not kernel timers or a new score. Keep unresolved frames unresolved."
+}
