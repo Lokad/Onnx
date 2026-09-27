@@ -90,3 +90,9 @@ affected complete calls. The 2.028903-second profiled difference is an opportuni
 estimate, about 4.3% of qualified application time, not promised savings.
 No new kernel, flag change, packing-budget change or optimization trial is selected
 by this report. Keep Parakeet first, Pyannote second and Whisper deferred.
+
+The subsequent [scoped cost observation](pointwise-costs-20260927.md) is now
+complete. It assigns 95.77% of pointwise time to arithmetic, confirms the actual
+two-row leaf and dense inputs, and selects one column-remainder intervention
+from source and measured shape dependence. That report supersedes this open
+diagnostic question; no optimization has yet been scored.

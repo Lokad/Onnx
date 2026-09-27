@@ -1,0 +1,244 @@
+{
+  "passed": true,
+  "inference_calls": 0,
+  "closure": {
+    "bytes": 408364,
+    "sha256": "4cd3c5c3ffb4c71c40483544024426b655556b14a33e0c562304a84800e705f0"
+  },
+  "source": {
+    "bytes": 4350,
+    "sha256": "c89110d8be2424545b095fc3ef3d698ce36f1075140138de262d06093acabcce"
+  },
+  "corpus": {
+    "control": 47.25938598166667,
+    "observed": 47.36064236866667
+  },
+  "observer_over_control": 1.0021425667070512,
+  "pointwise_seconds": 6.490502022666666,
+  "stages": {
+    "output_initialize": 0.055820792,
+    "materialize": 4.7869e-05,
+    "clear": 0.186865292,
+    "pack": 0.027000555333333332,
+    "arithmetic": 6.21591694,
+    "remainder": 0.004850574333333333
+  },
+  "arithmetic_fraction": 0.9576943229186683,
+  "all_measured_inputs_and_weights_reused": true,
+  "full_column_operation_fraction": 0.8487112439297722,
+  "shapes": [
+    {
+      "columns": 51,
+      "measured_calls": 144,
+      "full32": 1,
+      "tail8": 2,
+      "masked": 3,
+      "mean_arithmetic_seconds": 0.003712953090277778
+    },
+    {
+      "columns": 61,
+      "measured_calls": 144,
+      "full32": 1,
+      "tail8": 3,
+      "masked": 5,
+      "mean_arithmetic_seconds": 0.004651792180555556
+    },
+    {
+      "columns": 83,
+      "measured_calls": 144,
+      "full32": 2,
+      "tail8": 2,
+      "masked": 3,
+      "mean_arithmetic_seconds": 0.004845462743055556
+    },
+    {
+      "columns": 88,
+      "measured_calls": 144,
+      "full32": 2,
+      "tail8": 3,
+      "masked": 0,
+      "mean_arithmetic_seconds": 0.004931972020833333
+    },
+    {
+      "columns": 89,
+      "measured_calls": 144,
+      "full32": 2,
+      "tail8": 3,
+      "masked": 1,
+      "mean_arithmetic_seconds": 0.005679348472222222
+    },
+    {
+      "columns": 102,
+      "measured_calls": 144,
+      "full32": 3,
+      "tail8": 0,
+      "masked": 6,
+      "mean_arithmetic_seconds": 0.004075029256944445
+    },
+    {
+      "columns": 106,
+      "measured_calls": 144,
+      "full32": 3,
+      "tail8": 1,
+      "masked": 2,
+      "mean_arithmetic_seconds": 0.005142504951388889
+    },
+    {
+      "columns": 112,
+      "measured_calls": 144,
+      "full32": 3,
+      "tail8": 2,
+      "masked": 0,
+      "mean_arithmetic_seconds": 0.005138306979166667
+    },
+    {
+      "columns": 114,
+      "measured_calls": 144,
+      "full32": 3,
+      "tail8": 2,
+      "masked": 2,
+      "mean_arithmetic_seconds": 0.005835306076388889
+    },
+    {
+      "columns": 120,
+      "measured_calls": 144,
+      "full32": 3,
+      "tail8": 3,
+      "masked": 0,
+      "mean_arithmetic_seconds": 0.006011274222222222
+    },
+    {
+      "columns": 151,
+      "measured_calls": 144,
+      "full32": 4,
+      "tail8": 2,
+      "masked": 7,
+      "mean_arithmetic_seconds": 0.006913527395833333
+    },
+    {
+      "columns": 156,
+      "measured_calls": 288,
+      "full32": 4,
+      "tail8": 3,
+      "masked": 4,
+      "mean_arithmetic_seconds": 0.007873897583333333
+    },
+    {
+      "columns": 157,
+      "measured_calls": 144,
+      "full32": 4,
+      "tail8": 3,
+      "masked": 5,
+      "mean_arithmetic_seconds": 0.007879251215277779
+    },
+    {
+      "columns": 158,
+      "measured_calls": 144,
+      "full32": 4,
+      "tail8": 3,
+      "masked": 6,
+      "mean_arithmetic_seconds": 0.007884332840277779
+    },
+    {
+      "columns": 167,
+      "measured_calls": 144,
+      "full32": 5,
+      "tail8": 0,
+      "masked": 7,
+      "mean_arithmetic_seconds": 0.006251315791666667
+    },
+    {
+      "columns": 169,
+      "measured_calls": 144,
+      "full32": 5,
+      "tail8": 1,
+      "masked": 1,
+      "mean_arithmetic_seconds": 0.007158873104166667
+    },
+    {
+      "columns": 190,
+      "measured_calls": 144,
+      "full32": 5,
+      "tail8": 3,
+      "masked": 6,
+      "mean_arithmetic_seconds": 0.009054527465277778
+    },
+    {
+      "columns": 222,
+      "measured_calls": 144,
+      "full32": 6,
+      "tail8": 3,
+      "masked": 6,
+      "mean_arithmetic_seconds": 0.010199170270833334
+    },
+    {
+      "columns": 225,
+      "measured_calls": 144,
+      "full32": 7,
+      "tail8": 0,
+      "masked": 1,
+      "mean_arithmetic_seconds": 0.008385526340277777
+    }
+  ],
+  "fit_terms": [
+    "full32",
+    "tail8",
+    "masked_tail",
+    "fixed"
+  ],
+  "pooled_fit": {
+    "calls": 2880,
+    "nanoseconds_per_output_row": [
+      709.2624802407397,
+      593.6148119318796,
+      508.05469174210003,
+      13.693271310663306
+    ],
+    "r_squared": 0.9418608685896793,
+    "median_absolute_relative_residual": 0.010765986673564985,
+    "estimated_corpus_seconds": [
+      3.712767794166429,
+      1.8381733798727655,
+      0.6367835573169426,
+      0.020191550143851274
+    ]
+  },
+  "fits_by_filters": {
+    "1024": {
+      "calls": 1440,
+      "nanoseconds_per_output_row": [
+        706.3714962721635,
+        592.1578215413525,
+        497.6002850369083,
+        19.624808530278585
+      ],
+      "r_squared": 0.943139902216033,
+      "median_absolute_relative_residual": 0.008934378051397414,
+      "estimated_corpus_seconds": [
+        1.2325447983593185,
+        0.6112205661324037,
+        0.2078934182861398,
+        0.009645985888802616
+      ]
+    },
+    "2048": {
+      "calls": 1440,
+      "nanoseconds_per_output_row": [
+        712.153464209312,
+        595.0718023224098,
+        518.509098447293,
+        7.761734091048595
+      ],
+      "r_squared": 0.9410349526216145,
+      "median_absolute_relative_residual": 0.011529168776664264,
+      "estimated_corpus_seconds": [
+        2.485267462169905,
+        1.2284567075655644,
+        0.4332579065169773,
+        0.007630095080864496
+      ]
+    }
+  },
+  "limitation": "Fits are descriptive estimates from natural shape variation, not direct loop timers or causal speedup measurements.",
+  "selected_mechanism": "Share AVX2 column-remainder input vectors across eight rows instead of two; retain full panels, packing, reduction and FMA policies."
+}
