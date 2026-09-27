@@ -1,9 +1,9 @@
 # Graph release checks for the single attention ownership candidate
 
-This is a gated draft: require actual admitted Parakeet application evidence,
-shared/e5 correctness and Pyannote correctness before staging. Those digests
-remain unbound. Complete Parakeet model closure 2d64fad9 and prior graph closure
-faf553e7 are retained. Current Core a6f7d9f9 and candidate ee5218db differ in one
+All actual prerequisites are bound: Parakeet application 600e9e67 admits
+1.128490% gain, shared/e5 0f5d4baa and Pyannote correctness ad6afcc3 pass.
+Complete Parakeet models 2d64fad9 and prior graph closure faf553e7 are retained.
+Every preceding VM owner is terminal. Current Core a6f7d9f9 and candidate ee5218db differ in one
 preparation-policy method; all arithmetic leaves, flags and public bindings agree.
 
 Reuse the original three ReleaseBenchmark consumers: d827e3b9 for ordinary

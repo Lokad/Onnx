@@ -24,7 +24,7 @@ PRIOR=dict(models=ROOT/'artifacts/parakeet-attention-owned-pyannote-amd-20260928
     parakeet=ROOT/'artifacts/parakeet-attention-owned-models-amd-20260928',
     shared=ROOT/'artifacts/parakeet-attention-owned-shared-amd-20260928',
     **{'parakeet-app':ROOT/'artifacts/parakeet-attention-owned-app-amd-20260928'},baseline=OLD)
-DIGESTS=dict(models=None,
+DIGESTS=dict(models='ad6afcc335eb0e810630ae3ead312a6d94a64c0a71cb63ff98918a0c64568503',
     parakeet='2d64fad91c26c00ffe7cd003aa128efc4bc92280da96a9bb805a8e2b93412177',
     shared='0f5d4baa922f6dd7e42470a29ca119220d0100123b895001cc39aaf1e462b6df',
     **{'parakeet-app':'600e9e67e9a18ba324c65a2220cb26de9021d9eb718f26614af90e677e236cf4'},
