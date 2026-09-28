@@ -28,7 +28,7 @@ DIGESTS=dict(models='3188186fc659d1846fccb3b6c251f7a91f24ecda641dff32ce052b98f1c
        'qualified-root':'ee4a38ff671cc3fd8cd608c0dc3008f5c1b99f61ba6c139f3deeaf0e9039305e',
        'parakeet-app':'2e4741a67772d71e4442630d7f9cf751dfba2a52e12631fffed3b2db62fefd85'})
 GRAPH_DIGEST='147df8e4221d21fb80d2c9f69444b076c247a77e795b18e0d2973fab0bf941f5'
-PYANNOTE_APP_DIGEST=None
+PYANNOTE_APP_DIGEST='a25671c2480b7b9db3ec03b9e24a97253cc75d9464715515237c26b785c36899'
 COMPATIBLE=PRIOR['parakeet']/'collected/evidence/compatibility.json'
 MONITOR=ROOT/'tests/parakeet/packing-budgets/common.py'
 monitor=load('padding_root_monitor',MONITOR)

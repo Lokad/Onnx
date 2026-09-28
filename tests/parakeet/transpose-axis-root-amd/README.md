@@ -1,7 +1,9 @@
 # Qualify the measured transpose change as the release package
 
-This adapter must bind actual graph and complete Pyannote application admissions
-before changing root source. Parakeet application 2e4741a6 already admits a
+Actual graph admission 147df8e4 and complete Pyannote application admission
+a25671c2 are bound before changing root source. All 24 graph controls/eight
+regression gates and all 12 Pyannote controls/four regression gates pass.
+Parakeet application 2e4741a6 admits a
 2.420895% matched gain: 43.459338592 seconds versus current 44.537545594 and
 ORT 39.202810428, ratio 1.108577118. All 63 repeatability controls and 21 gates
 pass. The prospective saving of at least 0.45 seconds is met; parity <=1.05
