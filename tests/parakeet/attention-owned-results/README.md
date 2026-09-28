@@ -10,8 +10,9 @@ The <=1.05 parity target remains open.
 [complete Parakeet outputs](models-20260928.md), [shared/e5](shared-20260928.md)
 and [Pyannote outputs](pyannote-20260928.md) pass. The [graph comparison](graphs-20260928.md)
 is admitted at 0878b709: all 24 controls and eight regression gates pass.
-Complete Pyannote application and actual-root/package qualification
-remain pending. Product source and BENCHMARK.md retain the qualified release.
+The [complete Pyannote application](pyannote-application-20260928.md) is also
+admitted at d74cdd3d: all 12 controls and four regression gates pass, with exact
+long-meeting results. Actual-root/package qualification remains pending.
 
 The three new publishers require actual closed evidence, verify all file hashes
 and identities, and preserve every clock and failed control. They never rerun
@@ -23,8 +24,8 @@ terminal, collected and audited:
     tests/parakeet/attention-owned-results/publish_pyannote_application.py
     tests/parakeet/attention-owned-results/publish_root.py
 
-Graph publication is complete. Do not rerun its publisher or overwrite its
-reports. The remaining two publishers await their actual completed campaigns.
+Graph and Pyannote application publications are complete. Do not rerun their
+publishers or overwrite their reports. Root publication awaits its actual build.
 
 Graph publication retains all 73,512 calls, 8,640 measurements and 72 setup
 intervals. Pyannote retains all 96 timing requests, six setup intervals, native

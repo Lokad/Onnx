@@ -1,9 +1,10 @@
 # Qualify the measured attention preparation change as the release package
 
-This adapter is a local draft. The original eight-case graph comparison is
+This adapter is ready for actual-root qualification. The eight-case graph comparison is
 admitted at 0878b709, with all 24 controls and eight regression gates passing.
-That actual closure is bound. Complete Pyannote application admission remains
-unset, so source application and preparation still refuse to run.
+Complete Pyannote application closure d74cdd3d passes all 12 controls and four
+regression gates, fresh native conformance, both ten-minute meetings and recovery.
+Both actual closures are bound and all preceding VM owners are terminal.
 
 ORT prepares constant attention weights once. Scoped capture `5ff17ed5`
 measures 0.817785 seconds of repeated packing for 92 unprepared Lokad attention
