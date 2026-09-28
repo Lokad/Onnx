@@ -1,8 +1,8 @@
 # Diagnose the remaining Parakeet gap after attention preparation
 
-This publisher is prepared locally. Actual root/package qualification and both
-fresh captures are still pending. It refuses to create results until those
-audits pass and bind the same qualified product and twenty-clip application.
+This publisher requires actual root/package qualification and both fresh
+capture audits before creating results. They must bind the same qualified
+product and twenty-clip application.
 The existing independent application comparison admits a 1.128490% matched
 gain, ratio 1.147329058 to ORT. Profiling cannot change that score.
 
@@ -30,6 +30,11 @@ outputs are never overwritten. Use the measured leading excess to choose the
 next bounded diagnosis and inspect its applicable pinned ORT implementation.
 Do not assume attention remains the leading cost or preselect another variant.
 
+Both captures and publication are now complete. See
+[the complete attribution](diagnosis-20260928.md) and
+[the selected transpose diagnosis](transpose-diagnosis-20260928.md).
+Do not rerun the completed publisher or either capture.
+
 After the fresh partition is published, `projection_review.py` can decompose its
 constant-projection group using the unchanged reviewed grouping: 217 matrices,
 265 managed nodes, exact weight dimensions, fused-scale edges and all observed
@@ -37,3 +42,9 @@ row counts. It writes `projection-breakdown-20260928.json` once and runs no
 inference. All clocks come from the new captures. This separates projection
 families without selecting an optimization or assuming the preceding attention
 bottleneck remains dominant.
+
+`transpose_review.py` checks the actual model attributes and all native runtime
+shapes for the four selected transpose families, binding the fresh partition
+and pinned product/ORT source. Its completed output is
+`transpose-breakdown-20260928.json`. It runs no inference and distinguishes the
+source-derived native route from a sampled native implementation.

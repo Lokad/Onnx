@@ -1,0 +1,8583 @@
+{
+  "passed": true,
+  "inference_calls": 0,
+  "source": {
+    "bytes": 4480,
+    "sha256": "616db0626a9b09fce046faedf21a2748cc7c3fff53a4a049ed8e2e967070206c"
+  },
+  "partition": {
+    "bytes": 303,
+    "sha256": "cc7ebb4355e8885f6d2014df5e4fc5712d767b030346c0feae6d266fad7c9732"
+  },
+  "groups": [
+    {
+      "group": "Feed-forward expansion",
+      "matrices": 48,
+      "managed_seconds": 11.203021953,
+      "ort_seconds": 10.529738333333333,
+      "difference": 0.6732836196666678
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "matrices": 48,
+      "managed_seconds": 10.939113436333333,
+      "ort_seconds": 10.571368333333334,
+      "difference": 0.36774510299999896
+    },
+    {
+      "group": "linear_k",
+      "matrices": 24,
+      "managed_seconds": 1.383942822,
+      "ort_seconds": 1.326057,
+      "difference": 0.05788582200000003
+    },
+    {
+      "group": "linear_out",
+      "matrices": 24,
+      "managed_seconds": 1.379881646,
+      "ort_seconds": 1.32724,
+      "difference": 0.0526416460000001
+    },
+    {
+      "group": "linear_pos",
+      "matrices": 24,
+      "managed_seconds": 3.0111388653333333,
+      "ort_seconds": 2.633316333333333,
+      "difference": 0.37782253200000016
+    },
+    {
+      "group": "linear_q",
+      "matrices": 24,
+      "managed_seconds": 1.3816422323333333,
+      "ort_seconds": 1.325407,
+      "difference": 0.056235232333333274
+    },
+    {
+      "group": "linear_v",
+      "matrices": 24,
+      "managed_seconds": 1.3876642353333333,
+      "ort_seconds": 1.3254496666666666,
+      "difference": 0.062214568666666636
+    },
+    {
+      "group": "Stem output projection",
+      "matrices": 1,
+      "managed_seconds": 0.27010917933333334,
+      "ort_seconds": 0.220855,
+      "difference": 0.04925417933333334
+    }
+  ],
+  "records": [
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.0/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.0/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6398",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.25452473866666664,
+      "ort_seconds": 0.21967866666666666
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.0/feed_forward1/linear2/MatMul",
+        "/layers.0/Mul"
+      ],
+      "native": "/layers.0/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6399",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.27436482866666667,
+      "ort_seconds": 0.22071566666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.0/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.0/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6506",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.25667876366666664,
+      "ort_seconds": 0.220402
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.0/feed_forward2/linear2/MatMul",
+        "/layers.0/Mul_1"
+      ],
+      "native": "/layers.0/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6507",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.230948146,
+      "ort_seconds": 0.22025966666666666
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.0/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.0/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6410",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06653799266666667,
+      "ort_seconds": 0.05492166666666667
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.0/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.0/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6500",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06384256833333334,
+      "ort_seconds": 0.05513133333333333
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.0/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.0/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6412",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.136821718,
+      "ort_seconds": 0.10930533333333334
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.0/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.0/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6400",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06287567033333333,
+      "ort_seconds": 0.055592333333333334
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.0/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.0/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6411",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.066825028,
+      "ort_seconds": 0.054821666666666664
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.1/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.1/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6508",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.2541326933333333,
+      "ort_seconds": 0.219556
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.1/feed_forward1/linear2/MatMul",
+        "/layers.1/Mul"
+      ],
+      "native": "/layers.1/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6509",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.23240970533333333,
+      "ort_seconds": 0.22018066666666666
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.1/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.1/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6544",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.25677148233333336,
+      "ort_seconds": 0.21940766666666667
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.1/feed_forward2/linear2/MatMul",
+        "/layers.1/Mul_1"
+      ],
+      "native": "/layers.1/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6545",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22805361433333335,
+      "ort_seconds": 0.22017833333333334
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.1/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.1/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6520",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06112041966666667,
+      "ort_seconds": 0.054828666666666664
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.1/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.1/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6538",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.063442638,
+      "ort_seconds": 0.054926666666666665
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.1/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.1/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6522",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.135628364,
+      "ort_seconds": 0.10937933333333333
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.1/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.1/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6510",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06370323433333333,
+      "ort_seconds": 0.054828666666666664
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.1/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.1/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6521",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.063865812,
+      "ort_seconds": 0.054867
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.10/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.10/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6850",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22802930166666666,
+      "ort_seconds": 0.21935966666666668
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.10/feed_forward1/linear2/MatMul",
+        "/layers.10/Mul"
+      ],
+      "native": "/layers.10/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6851",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22583376566666666,
+      "ort_seconds": 0.220258
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.10/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.10/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6886",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.229406739,
+      "ort_seconds": 0.219329
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.10/feed_forward2/linear2/MatMul",
+        "/layers.10/Mul_1"
+      ],
+      "native": "/layers.10/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6887",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22607561166666668,
+      "ort_seconds": 0.22026433333333334
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.10/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.10/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6862",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053809791,
+      "ort_seconds": 0.055268333333333336
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.10/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.10/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6880",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053623639333333334,
+      "ort_seconds": 0.055411
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.10/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.10/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6864",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12317722433333333,
+      "ort_seconds": 0.10978133333333333
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.10/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.10/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6852",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056806859,
+      "ort_seconds": 0.05524166666666667
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.10/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.10/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6863",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056974355,
+      "ort_seconds": 0.05531066666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.11/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.11/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6888",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22790833666666666,
+      "ort_seconds": 0.21940066666666666
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.11/feed_forward1/linear2/MatMul",
+        "/layers.11/Mul"
+      ],
+      "native": "/layers.11/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6889",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22737966733333334,
+      "ort_seconds": 0.22018933333333332
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.11/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.11/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6924",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22904410333333333,
+      "ort_seconds": 0.21934
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.11/feed_forward2/linear2/MatMul",
+        "/layers.11/Mul_1"
+      ],
+      "native": "/layers.11/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6925",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22695468266666666,
+      "ort_seconds": 0.22010466666666667
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.11/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.11/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6900",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057001733,
+      "ort_seconds": 0.055335333333333334
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.11/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.11/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6918",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056956318666666665,
+      "ort_seconds": 0.055378333333333335
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.11/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.11/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6902",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.1229646,
+      "ort_seconds": 0.10985566666666667
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.11/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.11/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6890",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05678934833333334,
+      "ort_seconds": 0.055354
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.11/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.11/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6901",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053792362,
+      "ort_seconds": 0.055350666666666666
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.12/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.12/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6926",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.228045326,
+      "ort_seconds": 0.219259
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.12/feed_forward1/linear2/MatMul",
+        "/layers.12/Mul"
+      ],
+      "native": "/layers.12/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6927",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.225991476,
+      "ort_seconds": 0.22014866666666666
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.12/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.12/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6962",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.229280542,
+      "ort_seconds": 0.21913866666666668
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.12/feed_forward2/linear2/MatMul",
+        "/layers.12/Mul_1"
+      ],
+      "native": "/layers.12/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6963",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22663404866666664,
+      "ort_seconds": 0.22007333333333334
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.12/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.12/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6938",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05697645933333333,
+      "ort_seconds": 0.055328333333333334
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.12/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.12/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6956",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056823942333333335,
+      "ort_seconds": 0.05539633333333333
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.12/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.12/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6940",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.11460510366666667,
+      "ort_seconds": 0.10981066666666667
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.12/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.12/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6928",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05363780866666667,
+      "ort_seconds": 0.05531966666666667
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.12/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.12/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6939",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056910492666666666,
+      "ort_seconds": 0.05536566666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.13/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.13/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6964",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.227929031,
+      "ort_seconds": 0.219319
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.13/feed_forward1/linear2/MatMul",
+        "/layers.13/Mul"
+      ],
+      "native": "/layers.13/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6965",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22633712633333333,
+      "ort_seconds": 0.22012
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.13/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.13/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7000",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22917349866666667,
+      "ort_seconds": 0.21943066666666666
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.13/feed_forward2/linear2/MatMul",
+        "/layers.13/Mul_1"
+      ],
+      "native": "/layers.13/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7001",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22752338166666666,
+      "ort_seconds": 0.220089
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.13/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.13/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6976",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053863182,
+      "ort_seconds": 0.056323
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.13/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.13/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6994",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.054108939,
+      "ort_seconds": 0.05529666666666667
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.13/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.13/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6978",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12317472233333333,
+      "ort_seconds": 0.10983966666666667
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.13/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.13/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6966",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05685208233333333,
+      "ort_seconds": 0.05524233333333333
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.13/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.13/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6977",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057048477,
+      "ort_seconds": 0.05527033333333333
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.14/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.14/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7002",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.23162308,
+      "ort_seconds": 0.219297
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.14/feed_forward1/linear2/MatMul",
+        "/layers.14/Mul"
+      ],
+      "native": "/layers.14/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7003",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.23071164400000002,
+      "ort_seconds": 0.220487
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.14/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.14/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7038",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.228901903,
+      "ort_seconds": 0.21932733333333335
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.14/feed_forward2/linear2/MatMul",
+        "/layers.14/Mul_1"
+      ],
+      "native": "/layers.14/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7039",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.227442243,
+      "ort_seconds": 0.21996266666666667
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.14/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.14/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7014",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057618037,
+      "ort_seconds": 0.055346
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.14/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.14/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7032",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056863474,
+      "ort_seconds": 0.055381
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.14/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.14/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7016",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.126290887,
+      "ort_seconds": 0.10999833333333334
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.14/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.14/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7004",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057605904666666666,
+      "ort_seconds": 0.055285
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.14/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.14/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7015",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05546763266666667,
+      "ort_seconds": 0.055321333333333333
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.15/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.15/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7040",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22906585166666665,
+      "ort_seconds": 0.2193
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.15/feed_forward1/linear2/MatMul",
+        "/layers.15/Mul"
+      ],
+      "native": "/layers.15/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7041",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.2271444363333333,
+      "ort_seconds": 0.220178
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.15/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.15/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7076",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.229962843,
+      "ort_seconds": 0.219344
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.15/feed_forward2/linear2/MatMul",
+        "/layers.15/Mul_1"
+      ],
+      "native": "/layers.15/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7077",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.226180363,
+      "ort_seconds": 0.22013933333333333
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.15/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.15/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7052",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05732048966666667,
+      "ort_seconds": 0.05525533333333333
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.15/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.15/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7070",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05720737133333333,
+      "ort_seconds": 0.055385
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.15/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.15/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7054",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.11510073866666666,
+      "ort_seconds": 0.109783
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.15/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.15/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7042",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053974130333333335,
+      "ort_seconds": 0.055263
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.15/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.15/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7053",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05727419466666667,
+      "ort_seconds": 0.05525466666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.16/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.16/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7078",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22782001666666668,
+      "ort_seconds": 0.219188
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.16/feed_forward1/linear2/MatMul",
+        "/layers.16/Mul"
+      ],
+      "native": "/layers.16/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7079",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22603453066666668,
+      "ort_seconds": 0.22031233333333333
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.16/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.16/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7114",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.229721484,
+      "ort_seconds": 0.21925233333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.16/feed_forward2/linear2/MatMul",
+        "/layers.16/Mul_1"
+      ],
+      "native": "/layers.16/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7115",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22638775,
+      "ort_seconds": 0.22028066666666668
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.16/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.16/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7090",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053849994,
+      "ort_seconds": 0.05541366666666667
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.16/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.16/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7108",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053601662,
+      "ort_seconds": 0.05540966666666667
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.16/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.16/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7092",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12330792,
+      "ort_seconds": 0.109834
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.16/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.16/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7080",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05688272133333333,
+      "ort_seconds": 0.05531166666666667
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.16/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.16/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7091",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056993868,
+      "ort_seconds": 0.055339
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.17/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.17/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7116",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22776315366666666,
+      "ort_seconds": 0.21920733333333334
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.17/feed_forward1/linear2/MatMul",
+        "/layers.17/Mul"
+      ],
+      "native": "/layers.17/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7117",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.228707644,
+      "ort_seconds": 0.220177
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.17/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.17/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7152",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22894608533333333,
+      "ort_seconds": 0.21927233333333335
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.17/feed_forward2/linear2/MatMul",
+        "/layers.17/Mul_1"
+      ],
+      "native": "/layers.17/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7153",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22610377133333334,
+      "ort_seconds": 0.22015933333333335
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.17/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.17/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7128",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056979597,
+      "ort_seconds": 0.05537633333333333
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.17/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.17/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7146",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056881608666666666,
+      "ort_seconds": 0.055433666666666666
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.17/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.17/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7130",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12311862633333333,
+      "ort_seconds": 0.10987533333333334
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.17/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.17/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7118",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056801035,
+      "ort_seconds": 0.05535866666666667
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.17/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.17/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7129",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05379593966666667,
+      "ort_seconds": 0.055439666666666665
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.18/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.18/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7154",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22787653433333332,
+      "ort_seconds": 0.21934333333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.18/feed_forward1/linear2/MatMul",
+        "/layers.18/Mul"
+      ],
+      "native": "/layers.18/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7155",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22597130766666668,
+      "ort_seconds": 0.220336
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.18/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.18/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7190",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.230193935,
+      "ort_seconds": 0.21932433333333334
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.18/feed_forward2/linear2/MatMul",
+        "/layers.18/Mul_1"
+      ],
+      "native": "/layers.18/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7191",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22605963333333334,
+      "ort_seconds": 0.22025233333333333
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.18/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.18/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7166",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05695332633333333,
+      "ort_seconds": 0.05528366666666667
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.18/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.18/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7184",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056804382,
+      "ort_seconds": 0.055418666666666665
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.18/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.18/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7168",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.11443981,
+      "ort_seconds": 0.109905
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.18/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.18/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7156",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053537961333333335,
+      "ort_seconds": 0.055312
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.18/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.18/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7167",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056952973,
+      "ort_seconds": 0.055352
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.19/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.19/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7192",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22777791966666666,
+      "ort_seconds": 0.21935666666666667
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.19/feed_forward1/linear2/MatMul",
+        "/layers.19/Mul"
+      ],
+      "native": "/layers.19/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7193",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22587898266666667,
+      "ort_seconds": 0.22091466666666668
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.19/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.19/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7228",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22894804366666666,
+      "ort_seconds": 0.21923033333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.19/feed_forward2/linear2/MatMul",
+        "/layers.19/Mul_1"
+      ],
+      "native": "/layers.19/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7229",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22623579866666665,
+      "ort_seconds": 0.220184
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.19/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.19/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7204",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05378656066666666,
+      "ort_seconds": 0.05533766666666667
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.19/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.19/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7222",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.055842660333333335,
+      "ort_seconds": 0.05542166666666667
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.19/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.19/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7206",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12385165033333333,
+      "ort_seconds": 0.10976666666666667
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.19/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.19/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7194",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05687515433333333,
+      "ort_seconds": 0.05531866666666667
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.19/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.19/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7205",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056958697333333336,
+      "ort_seconds": 0.05543
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.2/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.2/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6546",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.2518323336666667,
+      "ort_seconds": 0.21934766666666666
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.2/feed_forward1/linear2/MatMul",
+        "/layers.2/Mul"
+      ],
+      "native": "/layers.2/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6547",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22706157266666666,
+      "ort_seconds": 0.22015733333333334
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.2/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.2/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6582",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.251317033,
+      "ort_seconds": 0.219388
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.2/feed_forward2/linear2/MatMul",
+        "/layers.2/Mul_1"
+      ],
+      "native": "/layers.2/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6583",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22625779366666665,
+      "ort_seconds": 0.22014133333333333
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.2/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.2/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6558",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.062001339,
+      "ort_seconds": 0.05480733333333333
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.2/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.2/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6576",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06203591566666666,
+      "ort_seconds": 0.05496633333333333
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.2/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.2/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6560",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.13221085133333332,
+      "ort_seconds": 0.109427
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.2/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.2/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6548",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06220049833333333,
+      "ort_seconds": 0.054833
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.2/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.2/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6559",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.061183856,
+      "ort_seconds": 0.05506933333333333
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.20/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.20/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7230",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.227849418,
+      "ort_seconds": 0.21928966666666666
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.20/feed_forward1/linear2/MatMul",
+        "/layers.20/Mul"
+      ],
+      "native": "/layers.20/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7231",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.225970921,
+      "ort_seconds": 0.220248
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.20/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.20/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7266",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22925076566666666,
+      "ort_seconds": 0.21933033333333332
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.20/feed_forward2/linear2/MatMul",
+        "/layers.20/Mul_1"
+      ],
+      "native": "/layers.20/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7267",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22622429166666666,
+      "ort_seconds": 0.22004133333333334
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.20/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.20/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7242",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05697385766666667,
+      "ort_seconds": 0.055364
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.20/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.20/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7260",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056805511333333336,
+      "ort_seconds": 0.055445666666666664
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.20/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.20/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7244",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12304884933333333,
+      "ort_seconds": 0.10987866666666667
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.20/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.20/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7232",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056810788,
+      "ort_seconds": 0.055308333333333334
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.20/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.20/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7243",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053815193,
+      "ort_seconds": 0.05534033333333333
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.21/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.21/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7268",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22791972266666666,
+      "ort_seconds": 0.21919
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.21/feed_forward1/linear2/MatMul",
+        "/layers.21/Mul"
+      ],
+      "native": "/layers.21/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7269",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22597819466666666,
+      "ort_seconds": 0.22003666666666666
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.21/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.21/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7304",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22899179833333333,
+      "ort_seconds": 0.21929066666666666
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.21/feed_forward2/linear2/MatMul",
+        "/layers.21/Mul_1"
+      ],
+      "native": "/layers.21/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7305",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22620233233333334,
+      "ort_seconds": 0.220926
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.21/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.21/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7280",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056992684,
+      "ort_seconds": 0.055407
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.21/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.21/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7298",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057120481,
+      "ort_seconds": 0.055409
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.21/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.21/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7282",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.114376334,
+      "ort_seconds": 0.109803
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.21/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.21/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7270",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053646726666666665,
+      "ort_seconds": 0.05563233333333333
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.21/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.21/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7281",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05691883366666667,
+      "ort_seconds": 0.055288333333333335
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.22/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.22/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7306",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22779759266666666,
+      "ort_seconds": 0.21976666666666667
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.22/feed_forward1/linear2/MatMul",
+        "/layers.22/Mul"
+      ],
+      "native": "/layers.22/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7307",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.225877289,
+      "ort_seconds": 0.22058133333333332
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.22/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.22/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7342",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22891879,
+      "ort_seconds": 0.21935366666666667
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.22/feed_forward2/linear2/MatMul",
+        "/layers.22/Mul_1"
+      ],
+      "native": "/layers.22/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7343",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22611861566666666,
+      "ort_seconds": 0.220274
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.22/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.22/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7318",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053764918333333335,
+      "ort_seconds": 0.055325
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.22/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.22/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7336",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053879121,
+      "ort_seconds": 0.055349666666666665
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.22/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.22/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7320",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12324129266666667,
+      "ort_seconds": 0.10977433333333333
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.22/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.22/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7308",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056790148666666665,
+      "ort_seconds": 0.05530433333333333
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.22/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.22/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7319",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056947288,
+      "ort_seconds": 0.055365
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.23/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.23/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7344",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.227930233,
+      "ort_seconds": 0.21934533333333334
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.23/feed_forward1/linear2/MatMul",
+        "/layers.23/Mul"
+      ],
+      "native": "/layers.23/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7345",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.2276658706666667,
+      "ort_seconds": 0.22019
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.23/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.23/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7380",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.23105757333333332,
+      "ort_seconds": 0.22007366666666667
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.23/feed_forward2/linear2/MatMul",
+        "/layers.23/Mul_1"
+      ],
+      "native": "/layers.23/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_7381",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22748127966666667,
+      "ort_seconds": 0.22045433333333334
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.23/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.23/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7356",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05797629966666667,
+      "ort_seconds": 0.055438666666666664
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.23/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.23/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7374",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05720755266666667,
+      "ort_seconds": 0.05563066666666667
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.23/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.23/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7358",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.164566905,
+      "ort_seconds": 0.11009266666666667
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.23/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.23/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7346",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057807502,
+      "ort_seconds": 0.055425
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.23/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.23/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_7357",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05484488133333333,
+      "ort_seconds": 0.055455
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.3/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.3/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6584",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.24955508733333334,
+      "ort_seconds": 0.21936333333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.3/feed_forward1/linear2/MatMul",
+        "/layers.3/Mul"
+      ],
+      "native": "/layers.3/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6585",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.226216157,
+      "ort_seconds": 0.22018566666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.3/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.3/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6620",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.25204551066666664,
+      "ort_seconds": 0.219277
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.3/feed_forward2/linear2/MatMul",
+        "/layers.3/Mul_1"
+      ],
+      "native": "/layers.3/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6621",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22631447166666668,
+      "ort_seconds": 0.220163
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.3/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.3/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6596",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.062034549333333334,
+      "ort_seconds": 0.054907333333333336
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.3/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.3/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6614",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.062170884,
+      "ort_seconds": 0.054995
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.3/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.3/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6598",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.13250925133333333,
+      "ort_seconds": 0.10943966666666667
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.3/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.3/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6586",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.061675668,
+      "ort_seconds": 0.054899
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.3/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.3/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6597",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06197356566666667,
+      "ort_seconds": 0.05499933333333333
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.4/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.4/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6622",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.249811293,
+      "ort_seconds": 0.21931433333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.4/feed_forward1/linear2/MatMul",
+        "/layers.4/Mul"
+      ],
+      "native": "/layers.4/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6623",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22621372566666667,
+      "ort_seconds": 0.22019233333333332
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.4/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.4/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6658",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22984178266666666,
+      "ort_seconds": 0.21928066666666668
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.4/feed_forward2/linear2/MatMul",
+        "/layers.4/Mul_1"
+      ],
+      "native": "/layers.4/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6659",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22648935266666667,
+      "ort_seconds": 0.22006966666666666
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.4/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.4/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6634",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06109463166666667,
+      "ort_seconds": 0.05503
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.4/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.4/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6652",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06240502133333333,
+      "ort_seconds": 0.05514533333333333
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.4/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.4/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6636",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.13203615066666666,
+      "ort_seconds": 0.109528
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.4/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.4/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6624",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.062181403,
+      "ort_seconds": 0.054941
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.4/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.4/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6635",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.06210396333333333,
+      "ort_seconds": 0.05504033333333333
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.5/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.5/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6660",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22787649866666668,
+      "ort_seconds": 0.21936733333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.5/feed_forward1/linear2/MatMul",
+        "/layers.5/Mul"
+      ],
+      "native": "/layers.5/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6661",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22593657733333333,
+      "ort_seconds": 0.22016133333333332
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.5/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.5/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6696",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22901727433333333,
+      "ort_seconds": 0.21937
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.5/feed_forward2/linear2/MatMul",
+        "/layers.5/Mul_1"
+      ],
+      "native": "/layers.5/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6697",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.226047272,
+      "ort_seconds": 0.22023566666666666
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.5/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.5/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6672",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.061928348,
+      "ort_seconds": 0.055044
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.5/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.5/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6690",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056930294666666666,
+      "ort_seconds": 0.05520166666666667
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.5/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.5/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6674",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.123256445,
+      "ort_seconds": 0.109593
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.5/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.5/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6662",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.062321573,
+      "ort_seconds": 0.05506966666666667
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.5/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.5/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6673",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.061057893,
+      "ort_seconds": 0.055061
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.6/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.6/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6698",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22815474266666666,
+      "ort_seconds": 0.21931433333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.6/feed_forward1/linear2/MatMul",
+        "/layers.6/Mul"
+      ],
+      "native": "/layers.6/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6699",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.226139295,
+      "ort_seconds": 0.22026566666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.6/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.6/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6734",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22897683666666666,
+      "ort_seconds": 0.21931533333333333
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.6/feed_forward2/linear2/MatMul",
+        "/layers.6/Mul_1"
+      ],
+      "native": "/layers.6/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6735",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22601979533333336,
+      "ort_seconds": 0.22021733333333332
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.6/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.6/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6710",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05694308033333333,
+      "ort_seconds": 0.05507833333333333
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.6/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.6/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6728",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056848684,
+      "ort_seconds": 0.05519533333333333
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.6/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.6/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6712",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.11862924033333333,
+      "ort_seconds": 0.10956333333333333
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.6/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.6/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6700",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05360997866666667,
+      "ort_seconds": 0.055047
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.6/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.6/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6711",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057030044333333335,
+      "ort_seconds": 0.055105
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.7/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.7/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6736",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.227831442,
+      "ort_seconds": 0.21929933333333335
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.7/feed_forward1/linear2/MatMul",
+        "/layers.7/Mul"
+      ],
+      "native": "/layers.7/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6737",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.225906276,
+      "ort_seconds": 0.220035
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.7/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.7/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6772",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.228983906,
+      "ort_seconds": 0.219332
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.7/feed_forward2/linear2/MatMul",
+        "/layers.7/Mul_1"
+      ],
+      "native": "/layers.7/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6773",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22719128833333332,
+      "ort_seconds": 0.220316
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.7/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.7/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6748",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053859546333333334,
+      "ort_seconds": 0.055106333333333334
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.7/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.7/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6766",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05366501033333333,
+      "ort_seconds": 0.055286666666666665
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.7/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.7/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6750",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.12285114266666666,
+      "ort_seconds": 0.10970333333333333
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.7/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.7/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6738",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056845944333333336,
+      "ort_seconds": 0.055111
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.7/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.7/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6749",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.056995759666666666,
+      "ort_seconds": 0.055193
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.8/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.8/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6774",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.227962336,
+      "ort_seconds": 0.219268
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.8/feed_forward1/linear2/MatMul",
+        "/layers.8/Mul"
+      ],
+      "native": "/layers.8/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6775",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22861669066666668,
+      "ort_seconds": 0.22007866666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.8/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.8/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6810",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.233115446,
+      "ort_seconds": 0.21926633333333334
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.8/feed_forward2/linear2/MatMul",
+        "/layers.8/Mul_1"
+      ],
+      "native": "/layers.8/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6811",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22877531066666665,
+      "ort_seconds": 0.22012966666666667
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.8/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.8/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6786",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057576507,
+      "ort_seconds": 0.055245333333333334
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.8/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.8/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6804",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.057567544666666665,
+      "ort_seconds": 0.05526
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.8/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.8/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6788",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.125533454,
+      "ort_seconds": 0.109602
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.8/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.8/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6776",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05775827966666667,
+      "ort_seconds": 0.055143333333333336
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.8/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.8/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6787",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.054948327666666665,
+      "ort_seconds": 0.05522866666666667
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.9/feed_forward1/linear1/MatMul"
+      ],
+      "native": "/layers.9/feed_forward1/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6812",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.22781174233333334,
+      "ort_seconds": 0.21922066666666667
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.9/feed_forward1/linear2/MatMul",
+        "/layers.9/Mul"
+      ],
+      "native": "/layers.9/feed_forward1/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6813",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.226851532,
+      "ort_seconds": 0.22012233333333334
+    },
+    {
+      "group": "Feed-forward expansion",
+      "managed_members": [
+        "/layers.9/feed_forward2/linear1/MatMul"
+      ],
+      "native": "/layers.9/feed_forward2/linear1/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6848",
+        "dims": [
+          1024,
+          4096
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.229647388,
+      "ort_seconds": 0.21931
+    },
+    {
+      "group": "Feed-forward contraction including scale",
+      "managed_members": [
+        "/layers.9/feed_forward2/linear2/MatMul",
+        "/layers.9/Mul_1"
+      ],
+      "native": "/layers.9/feed_forward2/linear2/MatMul/MatMulScaleFusion/",
+      "weight": {
+        "name": "onnx::MatMul_6849",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.226193372,
+      "ort_seconds": 0.22018066666666666
+    },
+    {
+      "group": "linear_k",
+      "managed_members": [
+        "/layers.9/self_attn/linear_k/MatMul"
+      ],
+      "native": "/layers.9/self_attn/linear_k/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6824",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05697947833333333,
+      "ort_seconds": 0.055285666666666664
+    },
+    {
+      "group": "linear_out",
+      "managed_members": [
+        "/layers.9/self_attn/linear_out/MatMul"
+      ],
+      "native": "/layers.9/self_attn/linear_out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6842",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05724642133333333,
+      "ort_seconds": 0.055364666666666666
+    },
+    {
+      "group": "linear_pos",
+      "managed_members": [
+        "/layers.9/self_attn/linear_pos/MatMul"
+      ],
+      "native": "/layers.9/self_attn/linear_pos/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6826",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        101,
+        121,
+        165,
+        175,
+        177,
+        203,
+        211,
+        223,
+        227,
+        239,
+        301,
+        311,
+        313,
+        315,
+        333,
+        337,
+        379,
+        443,
+        449
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.11639758433333333,
+      "ort_seconds": 0.109777
+    },
+    {
+      "group": "linear_q",
+      "managed_members": [
+        "/layers.9/self_attn/linear_q/MatMul"
+      ],
+      "native": "/layers.9/self_attn/linear_q/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6814",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.053651812,
+      "ort_seconds": 0.05526533333333333
+    },
+    {
+      "group": "linear_v",
+      "managed_members": [
+        "/layers.9/self_attn/linear_v/MatMul"
+      ],
+      "native": "/layers.9/self_attn/linear_v/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6825",
+        "dims": [
+          1024,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.05698479766666667,
+      "ort_seconds": 0.055181666666666664
+    },
+    {
+      "group": "Stem output projection",
+      "managed_members": [
+        "/pre_encode/out/MatMul"
+      ],
+      "native": "/pre_encode/out/MatMul",
+      "weight": {
+        "name": "onnx::MatMul_6382",
+        "dims": [
+          4096,
+          1024
+        ],
+        "type": "Float"
+      },
+      "rows": [
+        51,
+        61,
+        83,
+        88,
+        89,
+        102,
+        106,
+        112,
+        114,
+        120,
+        151,
+        156,
+        157,
+        158,
+        167,
+        169,
+        190,
+        222,
+        225
+      ],
+      "native_runtime_B_omitted": true,
+      "managed_seconds": 0.27010917933333334,
+      "ort_seconds": 0.220855
+    }
+  ]
+}
