@@ -1,5 +1,18 @@
 # Diagnose the remaining gap after transpose qualification
 
+Both fresh captures, their full audits and this publication are complete.
+Native recovery closes at59cc8dee/context9bfae715; managed attribution closes
+atc5b1ae18. The complete partition closes at5557ecce. Every worker and controller
+is terminal0. Do not repeat capture, collection, audit or publication.
+
+Read the [fresh attribution](diagnosis-20260928.md) and the
+[one next diagnostic](next-diagnostic-20260928.md). Transposes now cost less than
+ORT; the next question is whether the remaining sigmoid cost is arithmetic or
+allocation/zeroing/collection. The [activation breakdown](activation-breakdown-20260928.json)
+binds exact edges/shapes, fresh clocks, proved native SiLU execution on the same
+binary/workload and retained managed codegen for unchanged source. It makes no
+new kernel-selection, current JIT-tier or per-node sample claim.
+
 The publisher requires actual root/package admission and both fresh capture
 audits before creating results. They must bind the same qualified product and
 twenty-clip application. The independent application comparison already admits
@@ -19,11 +32,12 @@ exercise this adapter through its partition module: complete coverage, rejection
 of descriptor changes and exclusion of poisoned historical clocks. These tests
 read existing evidence and execute no inference.
 
-After actual release qualification and both fresh profile audits, from repository
-root prefix C:/Python313/python.exe -X utf8 -B and execute this directory's
-publish.py once. Until actual qualification, it rejects before creating output.
-Results are observations-20260928.json and diagnosis-20260928.md, with closure in
-artifacts/parakeet-transpose-axis-gap-20260928. Never overwrite or replay outputs.
+Publication has completed atf05f3df0. Results are observations-20260928.json and
+diagnosis-20260928.md, with closure in artifacts/parakeet-transpose-axis-gap-20260928.
+Exact projection and activation decompositions are also complete. Never overwrite
+or replay outputs. The original native attempt failed before inference because
+relocated input symlinks violated containment; its failure is preserved. Recovery
+restored regular inputs with identical bytes and kept the original verifier.
 
 Inspect the largest remaining measured excess and its applicable pinned ORT
 implementation before selecting one further causal intervention. Do not assume
