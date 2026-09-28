@@ -1,0 +1,5 @@
+"""Run the unchanged complete graph auditor against the corrected namespace."""
+import runpy
+from prepare import PARENT
+
+if __name__=='__main__':runpy.run_path(str(PARENT/'audit.py'),run_name='__main__')

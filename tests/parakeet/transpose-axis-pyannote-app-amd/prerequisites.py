@@ -1,0 +1,92 @@
+"""Bind closed collapsed-axis transpose qualification without changing public application gates."""
+import math
+from protocol import ROLES,pin,read
+from graph_prerequisite import verify_bundle
+
+
+def verify_comparisons(rows):
+    assert len(rows) == 784 and sum(r['values'] for r in rows) == 3090494
+    assert len({(r['case'], r['label'], r['output']) for r in rows}) == 784
+    for row in rows:
+        assert row['bit_identical'] and row['values'] > 0
+        assert len(row['sha256']) == 64 and all(c in '0123456789abcdef' for c in row['sha256'])
+
+
+def validate(reports,spec,compatible,qualified):
+    assert set(reports)=={'models','parakeet','shared','parakeet-app','baseline'}
+    assert all(r['passed'] for r in reports.values())
+    products=spec['identities'];selected,candidate=products['selected'],products['candidate']
+    assert selected['Lokad.Onnx.dll']['sha256']=='4e97e2ae97e534b99281a361790ac35865b3d8c6171293f36109b24a354eec57'
+    assert selected['Lokad.Onnx.Data.dll']['sha256']=='b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea'
+    assert candidate['Lokad.Onnx.dll']['sha256']=='c471f5d1ead5889b00b141ce34f2a7689cfe179fbf513da4ce5db84ed01ce277'
+    assert candidate['Lokad.Onnx.Data.dll']['sha256']=='b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea'
+    for name in ['models','parakeet','shared']:assert reports[name]['identities']==products
+    assert reports['baseline']['consumers']==spec['consumers']
+    assert reports['parakeet']['consumers']['AudioBenchmark']==spec['consumers']['AudioBenchmark']
+    assert spec['consumers']['AudioBenchmark']['sha256']=='7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1'
+    assert spec['consumers']['NaturalMeetings']['sha256']=='79e3e7990ba6aa29e42da788277aad41b774ff3b8c3966b18ab1101944d0c0f1'
+    application=reports['parakeet-app']
+    assert application['identities']==dict(current=selected,candidate=candidate)
+    assert application['performance']['admitted']
+    assert (application['timing_requests'],application['warmup'],application['measured'])==(480,120,360)
+    for key,count in [('controls',63),('gates',21)]:
+        assert len(application['performance'][key])==count and all(r['passed'] for r in application['performance'][key])
+    corpus,=[r for r in application['performance']['gates'] if r['name']=='corpus-at-least-one-percent-gain']
+    assert corpus['limit']==.99
+    assert reports['models']['identity_guards']['passed'] and reports['models']['identity_guards']['probes']==4
+    for role in ROLES:
+        pyannote=reports['models']['results'][role]
+        assert pyannote['passed'] and (pyannote['arrays'],pyannote['values'],pyannote['public_calls'])==(18,2917107,16)
+        if role=='candidate':
+            assert pyannote['complete_public_results_exact'] and pyannote['complete_public_semantics_exact']
+            production=[r for r in pyannote['comparisons'] if r['reference']=='production']
+            assert len(production)==18 and all(r['bit_identical'] for r in production)
+        for isa in ['512','256']:
+            native=reports['parakeet']['results'][role+'-native-'+isa]
+            public=reports['parakeet']['results'][role+'-public-'+isa]
+            assert native['passed'] and native['native']['numeric_gate_passed'] and native['native']['application_passed']
+            assert (native['native']['arrays'],native['native']['values'])==(784,3090494)
+            assert math.isfinite(native['native']['maximum']) and 0 <= native['native']['maximum'] <= 1e-4
+            assert not native['native']['failures'] and public['passed'] and public['public_requests']==20
+            if role=='candidate':
+                verify_comparisons(native['native']['exact_selected_comparisons'])
+                assert public['complete_selected_results_exact']
+        shared=[reports['shared']['results'][role+'-'+mode] for mode in ['shared','e5']]
+        assert all(r['passed'] for r in shared)
+        assert sum(r['arrays'] for r in shared)==166 and sum(r['values'] for r in shared)==5000814
+        if role=='candidate':assert all(r['exact_selected'] for result in shared for r in result['rows'])
+    assert compatible['passed'] and compatible['original_public_bindings_preserved']
+    assert compatible['all_original_method_flags_preserved'] and compatible['all_data_methods_exact']
+    assert compatible['underlying_methods_reconciled']==3985
+    core,data=compatible['compiled_scope']
+    assert core['assembly']=='Lokad.Onnx.dll' and core['unchanged']==3287
+    assert core['original']==3288 and len(core['changed'])==1
+    assert {tuple(name.split('::')[:2]) for name in core['changed']}=={
+        ('Lokad.Onnx.Tensor`1[T]','TransposeInto')}
+    assert data==dict(assembly='Lokad.Onnx.Data.dll',original=697,unchanged=697,changed=[])
+    assert compatible['no_consumer_or_product_build']
+    assert compatible['selected']==selected and compatible['candidate']==candidate
+    assert compatible['qualified_model_product']==qualified['identities']['candidate']
+    assert qualified['passed'] and qualified['performance']['admitted']
+    assert qualified['consumers']==spec['consumers']
+    assert compatible['focused_contracts']['sha256']=='c0c063bb3f73eed2d8d7372d17dd1da3ce4f6a962e190ef101b504fb245e4ecd'
+    assert compatible['inputs']['artifacts/parakeet-attention-owned-root-recovery-amd-20260928/closed.json']['sha256']=='ee4a38ff671cc3fd8cd608c0dc3008f5c1b99f61ba6c139f3deeaf0e9039305e'
+    return True
+
+
+def verify(base,spec):
+    graph=verify_bundle(base,spec);reports={}
+    for name,wanted in spec['prerequisites'].items():
+        folder=base/'evidence'/name
+        assert pin(folder/'closed.json')==wanted['closed']
+        proof=read(folder/'closed.json')
+        assert proof['passed'] and proof['analysis']==wanted['analysis']==pin(folder/'analysis.json')
+        if name=='parakeet-app':assert proof['admitted']
+        reports[name]=read(folder/'analysis.json')
+    qualified=base/'evidence/consumer-qualification'
+    closure=read(qualified/'closed.json')
+    assert pin(qualified/'closed.json')['sha256']=='d74cdd3d0aa6e15e9d24dba323eec0f30b38fd5ea7e1b011d2ec7cbad94922bf'
+    assert closure['passed'] and closure['admitted']
+    assert pin(qualified/'analysis.json')==closure['files']['analysis.json']
+    validate(reports,spec,read(base/'evidence/product-compatibility.json'),read(qualified/'analysis.json'))
+    return dict(passed=True,retained=spec['prerequisites'],graph_qualification=graph)
