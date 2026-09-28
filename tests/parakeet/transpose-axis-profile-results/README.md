@@ -43,3 +43,14 @@ complete requests. Reuse that evidence only after checking the actual binary
 and workload bindings. Its shared GEMM samples do not identify each individual
 node's dispatch or establish a current per-node cost. Any diagnostic build or
 instrumentation must stay separate from the original ORT scoring baseline.
+
+A read-only check on 2026-09-28 reconciled the pre-transpose native control
+closure `4c6668f5` with sample closure `546b3a58`. Their ORT library is identical
+(`ff54b93f`, 30,112,440 bytes), as are the consumer, adapter, Python runtime,
+numeric libraries, affinity, flags and native settings. All 80 request records
+agree after excluding only elapsed/start/end clocks, including input hashes,
+complete decisions and ownership. Collection/transfer receipts bind both source
+reports: control `31a1cdb9` and sampled `f859d60d`. Manifest hashes differ and
+remain distinct. This supports retaining the proved native function identity;
+it does not transfer old sample percentages to the new profile or join samples
+to individual operators. Check the future capture's bindings before reusing it.
