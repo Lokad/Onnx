@@ -31,8 +31,13 @@ def main():
     prelude = run.PRELUDE.replace(run.REMOTE, REMOTE)
     common = prelude + f'''
 sys.path.insert(0,str(base))
-from remote import live,pin,read,idle
-idle();assert psutil.boot_time()==1789634288.0
+from remote import live,pin,read
+assert psutil.boot_time()==1789634288.0
+me=psutil.Process();ancestors={{me.pid,*[p.pid for p in me.parents()]}}
+for process in psutil.process_iter(['pid','name','cmdline']):
+ if process.pid in ancestors:continue
+ assert process.info['name'] not in ['dotnet','perf'],process.info
+ assert not (process.info['name'].startswith('python') and '/dev/shm/lokad-' in ' '.join(process.info['cmdline'] or [])),process.info
 assert base.resolve()==base and base.parent==Path('/dev/shm')
 assert read(base/'state.json')['complete'] and read(base/'state.json')['code']==0
 assert all(not live(i) for i in {proof['terminal_owners']!r})
@@ -60,7 +65,8 @@ print(json.dumps(dict(passed=True,manifests=manifests,
     OUT.mkdir()
     save(OUT/'prepared.json', dict(**prospective, closure=pin(BASE/'closed.json'),
          files=files, source=pin(Path(__file__)), archive=pin(BASE/'results.tar.gz'),
-         policy='Only unreferenced terminal VM copies are removed; complete local traces and their archive remain immutable.'))
+         policy='Only unreferenced terminal VM copies are removed; complete local traces and their archive remain immutable.',
+         initial_read_only_refusal='The native helper has no idle function; the import failed before any mutation. The corrected probe uses the existing offload worker process-idle guard.'))
     result = run.ssh(common + f'''
 assert manifests=={prospective['manifests']!r}
 before=dict(available=psutil.virtual_memory().available,tmpfs=psutil.disk_usage(base).free)
