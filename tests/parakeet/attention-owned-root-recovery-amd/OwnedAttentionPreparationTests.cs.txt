@@ -1,0 +1,227 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+
+namespace Lokad.Onnx.Backend.Tests;
+
+[Collection("SequentialLogSink")]
+public class OwnedAttentionPreparationTests
+{
+    static float[] Values(int count)
+    {
+        var values = new float[count]; uint state = 0x6174746e;
+        for (int i = 0; i < count; i++)
+        { state = unchecked(state * 1664525 + 1013904223); values[i] = ((int)(state >> 8) % 2001 - 1000) / 997.0f; }
+        return values;
+    }
+
+    static void Exact(ReadOnlySpan<float> expected, ReadOnlySpan<float> actual) =>
+        Assert.True(MemoryMarshal.AsBytes(expected).SequenceEqual(MemoryMarshal.AsBytes(actual)), "Float bits differ.");
+
+    static ComputationalGraph Graph(string family, int m, long budget, int n, int k)
+    {
+        var graph = new ComputationalGraph(budget);
+        graph.Metadata["Name"] = "owned-attention-contract";
+        graph.Inputs["x"] = new DenseTensor<float>(Values(m * n), new[] { 1, m, n });
+        graph.Initializers["w"] = new DenseTensor<float>(Values(n * k), new[] { n, k }) { Name = "w" };
+        graph.Outputs["y"] = Tensor<float>.Zeros(new[] { 1, m, k });
+        graph.Nodes.Add(new Node { Name = "/layers.0/self_attn/linear_" + family + "/MatMul", Op = OpType.MatMul,
+            OpTypeName = "MatMul", Inputs = new[] { "x", "w" }, Outputs = new[] { "y" } });
+        return graph;
+    }
+
+    [SkippableTheory]
+    [InlineData("q")]
+    [InlineData("k")]
+    [InlineData("v")]
+    [InlineData("out")]
+    [InlineData("pos")]
+    public void ExactAttentionFamiliesOptInWithoutChangingCacheBudget(string family)
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var graph = Graph(family, 51, 0, 1024, 1024); var original = graph.Initializers["w"];
+        graph.Prepare(); Assert.Same(original, graph.Initializers["w"]);
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+        var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]);
+        Assert.Equal(1, graph.OwnedPackedWeightCount); Assert.Equal(4194304, graph.OwnedPackedWeightBytes);
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); Assert.Same(packed, graph.Initializers["w"]);
+        graph.InvalidatePreparation(); graph.Prepare(); Assert.Same(packed, graph.Initializers["w"]);
+        Assert.Empty(graph.PackedWeights); Assert.Equal(0, graph.MaximumPackedWeightBytes);
+        Assert.Equal(0, graph.RetainedPackedWeightBytes);
+    }
+
+    [SkippableTheory]
+    [InlineData("/layers.0/feed_forward1/linear1/MatMul", 1024, 1024)]
+    [InlineData("/pre_encode/out/MatMul", 1024, 1024)]
+    [InlineData("/layers.0/self_attn/linear_query/MatMul", 1024, 1024)]
+    [InlineData("/layers.0/self_attn/linear_q/MatMul/extra", 1024, 1024)]
+    [InlineData("/layers.0/self_attn/linear_q/Other", 1024, 1024)]
+    [InlineData("/layers.0/self_attn/linear_q/MatMul", 1024, 4096)]
+    [InlineData("/layers.0/self_attn/linear_pos/MatMul", 4096, 1024)]
+    [InlineData("/layers.0/self_attn/linear_out/MatMul", 1023, 1024)]
+    public void NameAndShapeEligibilityStayPaired(string name, int n, int k)
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var graph = Graph("q", 51, 0, n, k); var node = graph.Nodes[0]; node.Name = name; graph.Nodes[0] = node;
+        var original = graph.Initializers["w"];
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); Assert.Same(original, graph.Initializers["w"]);
+    }
+
+    [SkippableTheory]
+    [InlineData("input")]
+    [InlineData("output")]
+    [InlineData("second-consumer")]
+    [InlineData("initializer-alias")]
+    [InlineData("input-alias")]
+    [InlineData("attribute-alias")]
+    [InlineData("nested-capture")]
+    public void SharedOrVisibleAttentionWeightsRemainDense(string reason)
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var graph = Graph("q", 51, 0, 1024, 1024); var original = Assert.IsType<DenseTensor<float>>(graph.Initializers["w"]);
+        var alias = new DenseTensor<float>(original.Buffer, original.Dimensions);
+        if (reason == "input") graph.Inputs["w"] = original;
+        if (reason == "output") graph.Outputs["w"] = original;
+        if (reason == "initializer-alias") graph.Initializers["alias"] = alias;
+        if (reason == "input-alias") graph.Inputs["alias"] = alias;
+        if (reason == "second-consumer") graph.Nodes.Add(new Node { Name = "/layers.1/self_attn/linear_q/MatMul",
+            Op = OpType.MatMul, OpTypeName = "MatMul", Inputs = new[] { "x", "w" }, Outputs = new[] { "other" } });
+        if (reason is "attribute-alias" or "nested-capture")
+        {
+            var node = graph.Nodes[0]; node.Attributes ??= new Dictionary<string, object>();
+            node.Attributes["guard"] = reason == "attribute-alias" ? (object)alias : Graph("q", 51, 0, 1024, 1024); graph.Nodes[0] = node;
+        }
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); Assert.Same(original, graph.Initializers["w"]);
+    }
+
+    [SkippableFact]
+    public void ExistingAttentionCacheEntryRemainsTheSameObject()
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var graph = Graph("q", 51, 4194304, 1024, 1024); graph.Prepare();
+        var original = graph.Initializers["w"]; var entry = Assert.Single(graph.PackedWeights).Value;
+        float[] bytes = entry.Packed.ToArray();
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); graph.Prepare();
+        Assert.Same(original, graph.Initializers["w"]); Assert.Same(entry, Assert.Single(graph.PackedWeights).Value);
+        Exact(bytes, entry.Packed.Buffer.Span);
+        Assert.Equal(4194304, graph.MaximumPackedWeightBytes); Assert.Equal(4194304, graph.RetainedPackedWeightBytes);
+    }
+
+    [SkippableFact]
+    public void EveryCorpusGeometryPreservesValuesWithoutPerCallPacking()
+    {
+        Skip.If(!Fma.IsSupported, "Packed arithmetic requires FMA.");
+        int[] frames = { 51, 61, 83, 88, 89, 102, 106, 112, 114, 120, 151, 156, 157, 158, 167, 169, 190, 222, 225 };
+        int cases = 0;
+        foreach (int t in frames)
+        foreach (int m in new[] { t, 2 * t - 1 })
+        {
+            var graph = Graph("q", m, 0, 1024, 1024); var input = (Tensor<float>)graph.Inputs["x"]!;
+            var original = (Tensor<float>)graph.Initializers["w"];
+            float[] inputBefore = input.ToArray(), weightBefore = original.ToArray();
+            var expected = Tensor<float>.MatMul(input, original, TensorExecutionOptions.Intrinsics).ToArray();
+            Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+            var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]);
+            float[] packedBefore = (float[])packed.PackedArray.Clone();
+            foreach (var mode in new[] { OptimizationMode.Speed, OptimizationMode.Memory })
+            {
+                var options = new ExecutionOptions(mode, TensorExecutionOptions.Intrinsics with
+                    { CopyReporter = new CopyAccountant(), ScratchReporter = new ScratchAccountant() });
+                var context = graph.CreateExecution(options);
+                Assert.True(context.Execute(new Dictionary<string, ITensor> { ["x"] = input }, true), context.LastErrorMessage);
+                var held = Assert.IsAssignableFrom<Tensor<float>>(context.Outputs["y"]);
+                Exact(expected, held.ToArray()); Assert.Equal(0L, context.LastCopyBytes); Assert.Equal(0, context.LastScratchBytes);
+                context.Reset();
+                Assert.True(context.Execute(new Dictionary<string, ITensor> { ["x"] = input }, true), context.LastErrorMessage);
+                Exact(expected, held.ToArray()); Exact(expected, ((Tensor<float>)context.Outputs["y"]!).ToArray());
+                Assert.False(TensorAlias.SharesBackingMemory(held, (Tensor<float>)context.Outputs["y"]!));
+            }
+            Exact(inputBefore, input.ToArray()); Exact(weightBefore, original.ToArray()); Exact(packedBefore, packed.PackedArray);
+            cases++;
+        }
+        Assert.Equal(38, cases);
+    }
+
+    [SkippableTheory]
+    [InlineData("scalar")]
+    [InlineData("simd")]
+    [InlineData("parallel")]
+    [InlineData("intrinsics")]
+    public void UnsupportedOwnedExecutionOptionsUseTheLogicalFallback(string mode)
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var graph = Graph("q", 1, 0, 1024, 1024); var original = (Tensor<float>)graph.Initializers["w"];
+        var input = (Tensor<float>)graph.Inputs["x"]!;
+        var options = mode switch { "scalar" => TensorExecutionOptions.Scalar, "simd" => TensorExecutionOptions.Simd,
+            "parallel" => TensorExecutionOptions.Parallel(2), _ => TensorExecutionOptions.Intrinsics };
+        var expected = Tensor<float>.MatMul(input, original, options);
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+        var actual = Tensor<float>.MatMul(input, (Tensor<float>)graph.Initializers["w"], options);
+        Exact(expected.ToArray(), actual.ToArray());
+    }
+
+    [SkippableFact]
+    public void PackedAttentionDestinationAliasIsRejectedBeforeWrite()
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var graph = Graph("q", 51, 0, 1024, 1024); Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+        var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]);
+        float[] before = (float[])packed.PackedArray.Clone();
+        var alias = new DenseTensor<float>(packed.PackedArray.AsMemory(0, 51 * 1024), new[] { 1, 51, 1024 });
+        Assert.Throws<ArgumentException>(() => Tensor<float>.MatMul((Tensor<float>)graph.Inputs["x"]!, packed, alias, TensorExecutionOptions.Intrinsics));
+        Exact(before, packed.PackedArray);
+    }
+
+    [SkippableFact]
+    public void ReplacementPreservesAllLogicalBitsAndHeldOriginals()
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var graph = Graph("q", 51, 0, 1024, 1024); var original = Assert.IsType<DenseTensor<float>>(graph.Initializers["w"]);
+        int[] bits = { 0, unchecked((int)0x80000000), 0x7fc00001, unchecked((int)0xffc12345), 0x7f800000, 1 };
+        for (int i = 0; i < bits.Length; i++) original.SetValue(i, BitConverter.Int32BitsToSingle(bits[i]));
+        float[] before = original.ToArray(); Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+        var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]);
+        Exact(before, packed.ToDenseTensor().Buffer.Span); Exact(before, original.Buffer.Span);
+        packed.SetValue(0, 13); Exact(before, original.Buffer.Span);
+        var context = graph.CreateExecution(ExecutionOptions.Memory);
+        var method = typeof(ComputationalGraph).GetMethod("BuildStaticAliasRoots", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var roots = Assert.IsType<HashSet<Array>>(method.Invoke(context, null)); Assert.Contains(packed.PackedArray, roots);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static (ComputationalGraph Graph, WeakReference<float[]> Original) WithoutSourceRoot()
+    {
+        var graph = Graph("q", 51, 0, 1024, 1024); var original = Assert.IsType<DenseTensor<float>>(graph.Initializers["w"]);
+        Assert.True(MemoryMarshal.TryGetArray<float>(original.Buffer, out var segment));
+        var weak = new WeakReference<float[]>(segment.Array!);
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights()); return (graph, weak);
+    }
+
+    [SkippableFact]
+    public void PreparedAttentionDoesNotRetainTheReplacedArray()
+    {
+        Skip.If(!Fma.IsSupported, "Preparation requires FMA.");
+        var value = WithoutSourceRoot(); var context = value.Graph.CreateExecution(ExecutionOptions.Memory);
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true); GC.WaitForPendingFinalizers();
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+        Assert.False(value.Original.TryGetTarget(out _));
+        Assert.IsType<OwnedPackedTensor>(context.Initializers["w"]);
+        GC.KeepAlive(value.Graph); GC.KeepAlive(context);
+    }
+}
+
+public class OwnedAttentionUnavailableTests
+{
+    [SkippableFact]
+    public void DisabledHardwareLeavesSquareAttentionDense()
+    {
+        Skip.If(Fma.IsSupported, "This contract requires disabled FMA.");
+        var graph = new ComputationalGraph(0); var source = new DenseTensor<float>(new[] { 1024, 1024 });
+        graph.Initializers["w"] = source; graph.Inputs["x"] = new DenseTensor<float>(new[] { 1, 1, 1024 });
+        graph.Outputs["y"] = new DenseTensor<float>(new[] { 1, 1, 1024 });
+        graph.Nodes.Add(new Node { Name = "/layers.0/self_attn/linear_q/MatMul", Op = OpType.MatMul, OpTypeName = "MatMul",
+            Inputs = new[] { "x", "w" }, Outputs = new[] { "y" } });
+        Assert.Equal(0, graph.PrepareOwnedMatMulWeights()); Assert.Same(source, graph.Initializers["w"]);
+    }
+}
