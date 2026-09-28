@@ -1,0 +1,94 @@
+{
+  "passed": true,
+  "performance_measured": false,
+  "shared_closure": {
+    "bytes": 165143,
+    "sha256": "fa74521cbe415ead594903a2b76649bcd4ec2edc20d075f616ae67948e920f1b"
+  },
+  "full_analysis": {
+    "bytes": 88619,
+    "sha256": "c7da8039f85f46c8d4340e2df4816634b30bff58773d70efbe69ff8a07f4b488"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 830464,
+        "sha256": "4e97e2ae97e534b99281a361790ac35865b3d8c6171293f36109b24a354eec57"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 830976,
+        "sha256": "c471f5d1ead5889b00b141ce34f2a7689cfe179fbf513da4ce5db84ed01ce277"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea"
+      }
+    }
+  },
+  "consumer": {
+    "bytes": 33280,
+    "sha256": "a50d3e965cf480844559b1f5856e3de318b5c8a269742a9e6504afb9cee6c8c0"
+  },
+  "results": {
+    "selected-shared": {
+      "arrays": 106,
+      "values": 1286766,
+      "maximum": 1.9803643226623535e-05,
+      "exact_current_arrays": 0
+    },
+    "selected-e5": {
+      "arrays": 60,
+      "values": 3714048,
+      "maximum": 1.6391277313232422e-06,
+      "exact_current_arrays": 0
+    },
+    "candidate-shared": {
+      "arrays": 106,
+      "values": 1286766,
+      "maximum": 1.9803643226623535e-05,
+      "exact_current_arrays": 106
+    },
+    "candidate-e5": {
+      "arrays": 60,
+      "values": 3714048,
+      "maximum": 1.6391277313232422e-06,
+      "exact_current_arrays": 60
+    }
+  },
+  "resources": [
+    {
+      "name": "selected-shared",
+      "samples": 12,
+      "peak_rss": 2184429568,
+      "seconds": 3.106484373915009
+    },
+    {
+      "name": "selected-e5",
+      "samples": 64,
+      "peak_rss": 2580836352,
+      "seconds": 16.471153847989626
+    },
+    {
+      "name": "candidate-shared",
+      "samples": 12,
+      "peak_rss": 2187255808,
+      "seconds": 3.1287540229968727
+    },
+    {
+      "name": "candidate-e5",
+      "samples": 63,
+      "peak_rss": 2647158784,
+      "seconds": 16.308003231999464
+    }
+  ],
+  "source": {
+    "bytes": 1870,
+    "sha256": "7ffe274b37007ab8896a955a5a3c072aa401614c671e06f72df49a67e901914f"
+  }
+}
