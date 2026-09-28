@@ -1,7 +1,8 @@
 # Refresh native attribution after transpose release qualification
 
-Actual root/package admission is required before staging or inference. ROOT_DIGEST
-is deliberately unbound until that qualification succeeds. The measured candidate
+Actual root/package admission 175693d3 is bound to committed source 04584fc2.
+All 18 jobs, both full hardware modes and independent NuGet consumption pass.
+The measured candidate
 is Core c471f5d1 / Data b04aea50; Parakeet application 2e4741a6 admits a 2.420895%
 matched gain, 43.459338592 seconds versus ORT 39.202810428, ratio 1.108577118.
 The <=1.05 target remains open. Do not infer the remaining gap from old profiles.

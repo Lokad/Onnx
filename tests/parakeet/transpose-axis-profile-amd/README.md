@@ -1,14 +1,15 @@
 # Refresh managed attribution after transpose release qualification
 
 This adapter shares the native adapter's required actual root qualification.
-Graph, complete Pyannote application and root/package admission must pass before
-preparation or inference. Measured candidate is Core c471f5d1 / Data b04aea50,
+Graph 147df8e4, complete Pyannote application a25671c2 and root/package 175693d3
+are admitted; source 04584fc2 is committed. Measured candidate is Core c471f5d1 / Data b04aea50,
 source d311c9d1. Only TransposeInto changes; arithmetic and preparation are exact.
 
 The read-only transpose-axis-profile-review proves reuse of consumer 38ab5c7e
 and observed Data 51b6d2bb. All 697 Data methods/flags and both assemblies'
 public declarations/attributes remain identical. Actual root must also match
-all 3,288 Core and 697 Data methods. Load the actual built Core in every mode,
+all 3,288 Core and 697 Data methods; actual built Core is e98edee2 and Data
+7f4dd050. Load the actual built Core in every mode,
 built Data for control, retained observed Data for phase and wall. No rebuild
 of observer or consumer is required.
 
