@@ -1,0 +1,175 @@
+using System.Runtime.InteropServices;
+
+namespace Lokad.Onnx.Backend.Tests;
+
+[Collection("ProcessState")]
+public class TransposeAxisMovementTests
+{
+    static readonly int[] SpecialBits = { 0, int.MinValue, 0x7f800000, unchecked((int)0xff800000),
+        0x7fc12345, 0x7fa12345, unchecked((int)0xffc54321), 1, unchecked((int)0x80000001) };
+
+    static int Pattern(int i)
+    {
+        return i < SpecialBits.Length ? SpecialBits[i] : unchecked(i * 1664525 + 1013904223);
+    }
+
+    static int[] Coordinates(int index, int[] dimensions)
+    {
+        var result = new int[dimensions.Length];
+        for (int d = dimensions.Length - 1; d >= 0; d--)
+        {
+            result[d] = index % dimensions[d];
+            index /= dimensions[d];
+        }
+        return result;
+    }
+
+    static int[] Permutation(int rank) => rank == 3 ? new[] { 0, 2, 1 } : new[] { 0, 2, 3, 1 };
+
+    static void Check(Tensor<float> source)
+    {
+        int[] shape = source.Dimensions.ToArray(), perm = Permutation(source.Rank);
+        int[] destShape = perm.Select(d => shape[d]).ToArray();
+        int count = (int)source.Length;
+        var expected = new int[count];
+        // Independent reference: enumerate input coordinates and place their bits
+        // at permuted output coordinates, without flattening any matrix face.
+        for (int index = 0; index < count; index++)
+        {
+            int[] coords = Coordinates(index, shape);
+            source[coords] = BitConverter.Int32BitsToSingle(Pattern(index));
+            int outputIndex = 0;
+            for (int d = 0; d < perm.Length; d++) outputIndex = outputIndex * destShape[d] + coords[perm[d]];
+            expected[outputIndex] = Pattern(index);
+        }
+        const int guard = 11;
+        const int sentinel = unchecked((int)0xffcabcde);
+        var backing = Enumerable.Repeat(BitConverter.Int32BitsToSingle(sentinel), count + 2 * guard).ToArray();
+        var destination = new DenseTensor<float>(backing.AsMemory(guard, count), destShape);
+        var permBefore = (int[])perm.Clone();
+        Assert.Same(destination, Tensor<float>.Transpose(source, destination, perm));
+        Assert.Equal(expected, MemoryMarshal.Cast<float, int>(destination.Buffer.Span).ToArray());
+        Assert.All(backing.Take(guard).Concat(backing.Skip(guard + count)),
+            value => Assert.Equal(sentinel, BitConverter.SingleToInt32Bits(value)));
+        var allocated = Tensor<float>.Transpose(source, perm).ToDenseTensor();
+        Assert.Equal(destShape, allocated.Dimensions.ToArray());
+        Assert.Equal(expected, MemoryMarshal.Cast<float, int>(allocated.Buffer.Span).ToArray());
+        Assert.Equal(permBefore, perm);
+        for (int index = 0; index < count; index++)
+            Assert.Equal(Pattern(index), BitConverter.SingleToInt32Bits(source[Coordinates(index, shape)]));
+        if (count > 0)
+        {
+            source[new int[shape.Length]] = 123f;
+            Assert.Equal(expected, MemoryMarshal.Cast<float, int>(allocated.Buffer.Span).ToArray());
+            Assert.Equal(expected, MemoryMarshal.Cast<float, int>(destination.Buffer.Span).ToArray());
+            Tensor<float>.Transpose(source, perm).SetValue(0, 456f);
+            allocated.SetValue(0, 789f);
+            Assert.Equal(123f, source[new int[shape.Length]]);
+            Assert.Equal(expected[0], BitConverter.SingleToInt32Bits(destination.GetValue(0)));
+        }
+    }
+
+    [Fact]
+    public void AllObservedCorpusFacesPreserveBitsAndOwnership()
+    {
+        int[] frames = { 51, 61, 83, 88, 89, 102, 106, 112, 114, 120, 151, 156, 157, 158, 167, 169, 190, 222, 225 };
+        foreach (int t in frames)
+        {
+            Check(DenseTensor<float>.OfShape(1, 2 * t - 1, 8, 128));
+            Check(DenseTensor<float>.OfShape(1, t, 8, 128));
+            Check(DenseTensor<float>.OfShape(1, t, 1024));
+            Check(DenseTensor<float>.OfShape(1, 1024, t));
+        }
+    }
+
+    [Fact]
+    public void PartialTilesSmallFacesBatchesAndEmptyAxesPreserveBits()
+    {
+        int[][] shapes = {
+            new[] { 2, 9, 17 }, new[] { 3, 8, 8 }, new[] { 1, 7, 9 }, new[] { 1, 9, 7 },
+            new[] { 2, 9, 3, 7 }, new[] { 2, 8, 2, 4 }, new[] { 2, 7, 3, 9 }, new[] { 1, 8, 1, 7 },
+            new[] { 1, 1, 1 }, new[] { 1, 1, 1, 1 },
+            new[] { 0, 8, 8 }, new[] { 1, 0, 8 }, new[] { 1, 8, 0 },
+            new[] { 0, 8, 8, 8 }, new[] { 1, 0, 8, 8 }, new[] { 1, 8, 0, 8 }, new[] { 1, 8, 8, 0 },
+            new[] { 0, 1, 32768, 32767 }
+        };
+        foreach (int[] shape in shapes) Check(DenseTensor<float>.OfShape(shape));
+    }
+
+    [Fact]
+    public void WindowsReversedStorageAndSlicesUseLogicalCoordinates()
+    {
+        foreach (int[] shape in new[] { new[] { 2, 9, 17 }, new[] { 2, 9, 3, 7 } })
+        {
+            int count = shape.Aggregate(1, (a, b) => a * b);
+            foreach (bool reverse in new[] { false, true })
+            {
+                var storage = Enumerable.Repeat(99f, count + 22).ToArray();
+                Check(new DenseTensor<float>(storage.AsMemory(11, count), shape, reverse));
+                Assert.All(storage.Take(11).Concat(storage.Skip(11 + count)), value => Assert.Equal(99f, value));
+            }
+            int[] fullShape = (int[])shape.Clone(); fullShape[^1] += 2;
+            var full = DenseTensor<float>.OfShape(fullShape);
+            var slices = Enumerable.Repeat(SliceIndex.All, shape.Length).ToArray();
+            slices[^1] = new SliceIndex(1, shape[^1] + 1);
+            Check(full.Slice(slices));
+            for (int i = 0; i < full.Length; i++)
+            {
+                int[] coords = Coordinates(i, fullShape);
+                if (coords[^1] == 0 || coords[^1] == fullShape[^1] - 1) Assert.Equal(0f, full[coords]);
+            }
+        }
+    }
+
+    [Fact]
+    public void OverlappingDestinationsAndInvalidLayoutsAreRejectedBeforeWriting()
+    {
+        foreach (int[] shape in new[] { new[] { 2, 8, 8 }, new[] { 2, 8, 2, 4 } })
+        {
+            int count = shape.Aggregate(1, (a, b) => a * b);
+            int[] perm = Permutation(shape.Length), destShape = perm.Select(d => shape[d]).ToArray();
+            var storage = Enumerable.Range(0, count * 2).Select(i => (float)i).ToArray();
+            var source = new DenseTensor<float>(storage.AsMemory(0, count), shape);
+            var before = (float[])storage.Clone();
+            var overlap = new DenseTensor<float>(storage.AsMemory(8, count), destShape);
+            Assert.Throws<ArgumentException>(() => Tensor<float>.Transpose(source, overlap, perm));
+            Assert.Equal(before, storage);
+            var reversed = new DenseTensor<float>(destShape, true);
+            Assert.Throws<ArgumentException>(() => Tensor<float>.Transpose(source, reversed, perm));
+            var disjoint = new DenseTensor<float>(storage.AsMemory(count, count), destShape);
+            Tensor<float>.Transpose(source, disjoint, perm);
+            Assert.Equal(before.Take(count), storage.Take(count));
+            Assert.Equal(Tensor<float>.Transpose(source, perm).ToArray(), disjoint.ToArray());
+        }
+    }
+
+    [Fact]
+    public void OtherElementTypesKeepTheirCoordinateValues()
+    {
+        foreach (int[] shape in new[] { new[] { 2, 9, 17 }, new[] { 2, 9, 3, 7 } })
+        {
+            int count = shape.Aggregate(1, (a, b) => a * b);
+            int[] perm = Permutation(shape.Length);
+            var source = new DenseTensor<long>(Enumerable.Range(0, count).Select(i => long.MaxValue - i).ToArray(), shape);
+            var output = Tensor<long>.Transpose(source, perm);
+            for (int i = 0; i < count; i++)
+            {
+                int[] coords = Coordinates(i, shape);
+                Assert.Equal(source[coords], output[perm.Select(d => coords[d]).ToArray()]);
+            }
+        }
+    }
+
+    [Fact]
+    public void DisabledVectorFacesRetainTheSameBits()
+    {
+        bool saved = AblationSwitches.EnableVectorTransposeFaces;
+        try
+        {
+            AblationSwitches.EnableVectorTransposeFaces = false;
+            Check(DenseTensor<float>.OfShape(2, 17, 19));
+            Check(DenseTensor<float>.OfShape(2, 17, 3, 7));
+        }
+        finally { AblationSwitches.EnableVectorTransposeFaces = saved; }
+    }
+}
