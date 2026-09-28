@@ -1,0 +1,1225 @@
+{
+  "passed": true,
+  "inference_calls": 0,
+  "product_changed": false,
+  "conclusion": "Cause remains unresolved; no product candidate selected.",
+  "inputs": {
+    "artifacts/parakeet-sigmoid-residual-diagnostic-amd-20260928/closed.json": {
+      "bytes": 31274,
+      "sha256": "31b91fba1f513c219a7f1c4b9c44b637ff90389d676522856b64be83c5280a54"
+    },
+    "artifacts/parakeet-sigmoid-residual-diagnostic-amd-20260928/analysis.json": {
+      "bytes": 28942226,
+      "sha256": "6f7eea8d3896b6ec4b88307ab103aa558973093d15238a0578501fb3357a8184"
+    },
+    "artifacts/parakeet-sigmoid-residual-diagnostic-amd-20260928/audit-failed.json": {
+      "bytes": 618,
+      "sha256": "cd860973be5262b9135885bd4553d5f284a59fddbd140eee5fd3f97e0f79a06d"
+    },
+    "artifacts/parakeet-sigmoid-residual-diagnostic-amd-20260928/audit-reader-repair.json": {
+      "bytes": 733,
+      "sha256": "47d7cba16a29b770c26dceb81543ac8a9179be97b8e19879fb25ead1af4d48f9"
+    },
+    "artifacts/parakeet-sigmoid-residual-diagnostic-amd-20260928/review-initial-assertion.json": {
+      "bytes": 355,
+      "sha256": "05cf83183ba21ba71b6221d7b591a7766cfc3c1ab25c8ad76d97c48b200b9e58"
+    },
+    "tests/parakeet/transpose-axis-profile-results/activation-breakdown-20260928.json": {
+      "bytes": 676666,
+      "sha256": "106471408a869b15191116213cd8c5b7426200549eb89dc481ef42a14a92d858"
+    },
+    "tests/parakeet/sigmoid-residual-results/review.py": {
+      "bytes": 5891,
+      "sha256": "a5ce5a0370b2d5b880c78a89c2b0d20b873cc4746e82e0154dba904e41e4c4f0"
+    }
+  },
+  "timings": {
+    "control": {
+      "corpus_seconds": 44.62150757133333,
+      "process_cpu_seconds": 44.616585666666666,
+      "allocated_bytes_per_corpus": 10636036576.0,
+      "collections_per_corpus": [
+        35.333333333333336,
+        6.666666666666667,
+        3.6666666666666665
+      ]
+    },
+    "sampled": {
+      "corpus_seconds": 50.65628366533334,
+      "process_cpu_seconds": 48.331048333333335,
+      "allocated_bytes_per_corpus": 10647011840.0,
+      "collections_per_corpus": [
+        34.0,
+        9.333333333333334,
+        3.0
+      ]
+    }
+  },
+  "sampled_to_control": 1.1352436621365298,
+  "control_to_previous_uninstrumented": 1.0265352535332846,
+  "sampled_to_wall": 0.9997413194357395,
+  "events": 676767,
+  "lost": 0,
+  "request_markers": 120,
+  "requests": 160,
+  "sampled_sigmoid_seconds_per_corpus": {
+    "public_inclusive": 1.7379716776243255,
+    "rational_helper": 0.7383869368923346,
+    "public_self": 0.9995404070689762,
+    "other_children": 4.4333663014706204e-05,
+    "outside_helper": 0.9995847407319909,
+    "helper_fraction_of_public": 0.4248555637578934
+  },
+  "public_leaves": [
+    {
+      "marker": "corpus",
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Sigmoid(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "bucket": "CPU_TIME",
+      "seconds": 2.992471035398251,
+      "seconds_per_corpus": 0.9974903451327504
+    },
+    {
+      "marker": "corpus",
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Sigmoid(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "bucket": "UNMANAGED_CODE_TIME",
+      "seconds": 0.006150134912968497,
+      "seconds_per_corpus": 0.002050044970989499
+    },
+    {
+      "marker": "corpus",
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Sigmoid(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "bucket": "managed",
+      "seconds": 5.089570879590607e-08,
+      "seconds_per_corpus": 1.6965236265302024e-08
+    }
+  ],
+  "suspension_seconds_per_corpus_by_reason": {
+    "SuspendOther": 8.77601752199946,
+    "SuspendForGC": 0.1460543583333107,
+    "SuspendForGCPrep": 0.0014870993333358153
+  },
+  "paired_suspension_counts": {
+    "SuspendOther": 115766,
+    "SuspendForGC": 105,
+    "SuspendForGCPrep": 4
+  },
+  "unmatched_suspension_events": [
+    {
+      "index": 10633,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 2126.643515,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 10662,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 2129.920022,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 28310,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 5869.643552,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 28336,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 5874.995072,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 30015,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 6257.637167,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 30045,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 6258.598808,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 38438,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 8279.635606,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 38474,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 8281.236894,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 51598,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 11454.639924,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 51627,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 11457.851454,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 59626,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 13362.644846,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 59651,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 13363.332584,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 173258,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 38080.639395,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 173319,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 38083.985551,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 191442,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291313,
+      "pid": 1291110,
+      "ms": 42281.525211,
+      "payload": {
+        "Reason": "SuspendForGCPrep",
+        "Count": "80",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "BgAAAFAAAAAAAA=="
+    },
+    {
+      "index": 191459,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 42289.771572,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 215517,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 48089.641464,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 215539,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 48100.634083,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 236411,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 53125.635174,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 236500,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 53129.484897,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 267597,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 60647.640788,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 267625,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 60650.679276,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 295782,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 67430.64417,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 295808,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 67431.55159,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 340213,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 78172.632447,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 340437,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 78189.634218,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 341876,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 78533.636629,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 341904,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 78536.910626,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 376903,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 86995.637288,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 376928,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 86996.711329,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 395081,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 91218.637907,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 395111,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 91221.201218,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 453597,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 103765.644133,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 453713,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 103770.241966,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 470429,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291413,
+      "pid": 1291110,
+      "ms": 107390.056651,
+      "payload": {
+        "Reason": "SuspendForGCPrep",
+        "Count": "125",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "BgAAAH0AAAAAAA=="
+    },
+    {
+      "index": 470447,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 107401.632781,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 480711,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 109814.634851,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 480750,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 109835.317953,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 565118,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291503,
+      "pid": 1291110,
+      "ms": 129962.275573,
+      "payload": {
+        "Reason": "SuspendForGCPrep",
+        "Count": "141",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "BgAAAI0AAAAAAA=="
+    },
+    {
+      "index": 565249,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 129973.920127,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 594660,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 137146.704279,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 594668,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291503,
+      "pid": 1291110,
+      "ms": 137150.664461,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 596784,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 137681.637778,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 596810,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 137683.097603,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 603108,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 139160.629843,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 603136,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 139161.649873,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 614032,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 141759.640359,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 614060,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 141762.911159,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    },
+    {
+      "index": 644385,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/SuspendEEStart",
+      "id": 9,
+      "version": 1,
+      "thread": 1291209,
+      "pid": 1291110,
+      "ms": 148870.641742,
+      "payload": {
+        "Reason": "SuspendOther",
+        "Count": "-1",
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 10,
+      "keywords": 1,
+      "rawLength": 10,
+      "rawBase64": "AAAAAP////8AAA=="
+    },
+    {
+      "index": 644411,
+      "provider": "Microsoft-Windows-DotNETRuntime",
+      "providerGuid": "e13c0d23-ccbc-4e12-931b-d9cc2eee27e4",
+      "name": "GC/RestartEEStop",
+      "id": 3,
+      "version": 1,
+      "thread": 1291110,
+      "pid": 1291110,
+      "ms": 148871.951009,
+      "payload": {
+        "ClrInstanceID": "0"
+      },
+      "pointerSize": 8,
+      "opcode": 132,
+      "keywords": 1,
+      "rawLength": 2,
+      "rawBase64": "AAA="
+    }
+  ],
+  "current_helper_loops": [
+    {
+      "role": "control",
+      "tier": "Tier1",
+      "bits": 256,
+      "elements_per_iteration": 8,
+      "bytes": 316,
+      "instructions": 50,
+      "opcodes": {
+        "mov": 3,
+        "lea": 2,
+        "cmp": 3,
+        "ja": 2,
+        "shl": 1,
+        "vmovups": 2,
+        "vbroadcastss": 6,
+        "vrangeps": 2,
+        "vmovaps": 3,
+        "vfixupimmps": 5,
+        "vmulps": 2,
+        "vfmadd213ps": 9,
+        "vdivps": 1,
+        "vaddps": 1,
+        "vcmpeqps": 1,
+        "vxorps": 1,
+        "vmaxps": 1,
+        "vminps": 1,
+        "vblendvps": 1,
+        "add": 2,
+        "jge": 1
+      },
+      "calls_in_vector_body": 0
+    },
+    {
+      "role": "sampled",
+      "tier": "Tier1",
+      "bits": 256,
+      "elements_per_iteration": 8,
+      "bytes": 316,
+      "instructions": 50,
+      "opcodes": {
+        "mov": 3,
+        "lea": 2,
+        "cmp": 3,
+        "ja": 2,
+        "shl": 1,
+        "vmovups": 2,
+        "vbroadcastss": 6,
+        "vrangeps": 2,
+        "vmovaps": 3,
+        "vfixupimmps": 5,
+        "vmulps": 2,
+        "vfmadd213ps": 9,
+        "vdivps": 1,
+        "vaddps": 1,
+        "vcmpeqps": 1,
+        "vxorps": 1,
+        "vmaxps": 1,
+        "vminps": 1,
+        "vblendvps": 1,
+        "add": 2,
+        "jge": 1
+      },
+      "calls_in_vector_body": 0
+    }
+  ],
+  "current_listings": {
+    "control": {
+      "bytes": 163459,
+      "sha256": "121392e730479784498f184a78aedb3d21e88df2432f794c8b894fb6bc154819"
+    },
+    "sampled": {
+      "bytes": 163459,
+      "sha256": "a60191ce5ff979c187c2f3e99d5e06f00e609068c1d036a7785ee8e9345801c1"
+    }
+  },
+  "native_execution": {
+    "closure": {
+      "bytes": 1497,
+      "sha256": "41f851c4e473856383c6d51f7b5a0e86d5f0ff8c47947df1f4176b35e2301fc3"
+    },
+    "old_result": {
+      "bytes": 248040,
+      "sha256": "f859d60d3816a7a317314d0002c6234edeb63e3deb76aacf48610141b62b1d5c"
+    },
+    "new_result": {
+      "bytes": 248040,
+      "sha256": "4da4b83111d5c1d038e8b3bf0f22d7d5e824da8d23f22645eb62b8cd3567b270"
+    },
+    "binary": {
+      "bytes": 30112440,
+      "sha256": "ff54b93f257508c8e32a43f3528382b7eb791f0946730187e4767d7292a290ee"
+    },
+    "leaf": {
+      "name": "MlasSiluKernelAvx512F",
+      "start": "0xf6b550",
+      "end": "0xf6b9cd",
+      "bytes": 1149,
+      "sha256": "6d00d8dbaed97a36a014c16b2d295be657cbcedd3daeb5a5d9be56219bd27caf",
+      "instruction_count": 172,
+      "identification": "source, exact constants, instructions, caller and observed samples",
+      "source_rebuild_byte_match": false
+    },
+    "same_execution_settings": true,
+    "all_80_nonclock_records_equal": true,
+    "per_node_sample_join": false,
+    "historical_sample_timings_reused": false
+  },
+  "current_sigmoid_method_events": 0,
+  "limits": [
+    "Method stacks do not resolve instructions, active tier or native allocation work.",
+    "CPU_TIME is a stack-export label, not independent CPU measurement.",
+    "SuspendOther must not be relabeled as garbage collection; preserve unmatched events.",
+    "Do not subtract profiler overhead or combine independent node and stack clocks.",
+    "A width difference is proved; its recoverable application cost is not."
+  ],
+  "next": "Inspect retained raw stack-address and method/native mapping evidence before another inference. Resolve public Sigmoid self samples; no vector-width, fusion or allocation experiment yet."
+}
