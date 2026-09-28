@@ -29,3 +29,11 @@ closure evidence at `artifacts/parakeet-attention-owned-gap-20260928`. Existing
 outputs are never overwritten. Use the measured leading excess to choose the
 next bounded diagnosis and inspect its applicable pinned ORT implementation.
 Do not assume attention remains the leading cost or preselect another variant.
+
+After the fresh partition is published, `projection_review.py` can decompose its
+constant-projection group using the unchanged reviewed grouping: 217 matrices,
+265 managed nodes, exact weight dimensions, fused-scale edges and all observed
+row counts. It writes `projection-breakdown-20260928.json` once and runs no
+inference. All clocks come from the new captures. This separates projection
+families without selecting an optimization or assuming the preceding attention
+bottleneck remains dominant.
