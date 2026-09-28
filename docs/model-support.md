@@ -7,13 +7,14 @@ Release CLI and the assets described in each model's linked instructions.
 
 Audio orchestration APIs live in the repository's `Lokad.Onnx.Data` project;
 the core `Lokad.Onnx` NuGet package does not include that assembly. The
-[current package check](../tests/pyannote/winograd-product-results/root-20260923.md)
+[current inference implementation qualification](../tests/parakeet/transpose-axis-results/root-20260928.md)
 passes the complete suites and independent package consumer, including direct
 and Winograd convolution and output ownership. The normal root build preserves
-all 3,179 Core / 697 Data methods and public declarations of the measured
-product. Its matched AMD dialogue comparison is **10.453 seconds versus
-Microsoft ORT 9.040 seconds (1.156 ratio)**, 19.72% below its contemporary
-predecessor; see [BENCHMARK.md](../BENCHMARK.md). Both ten-minute
+all 3,288 Core / 697 Data methods and public declarations of the measured
+product. Its matched AMD dialogue comparison is **9.920 seconds versus
+Microsoft ORT 8.949 seconds (1.108 ratio)**. Complete Parakeet transcription
+takes **43.459 seconds versus ORT 39.203 seconds (1.109 ratio)** on the
+twenty-clip workload; see [BENCHMARK.md](../BENCHMARK.md). Both ten-minute
 meetings and recovery preserve native speaker timelines. These speed changes
 do not expand the model/accuracy coverage stated below.
 

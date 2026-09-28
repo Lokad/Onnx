@@ -1,6 +1,6 @@
-# CPU benchmarks for the upcoming release
+# CPU benchmarks for Lokad.Onnx 0.3.0
 
-Current repository product, measured on 2026-09-28 UTC. **Lower is better.** Times
+Released inference implementation, measured on 2026-09-28 UTC. **Lower is better.** Times
 are seconds; Lokad / ORT is the latency ratio, so 1.100 means 10.0% more time.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT | Status |
@@ -20,13 +20,19 @@ Each row is a matched comparison for that workload. Audio rows measure complete
 applications; embedding, vision and GPT-2 rows measure prepared graph calls.
 The workloads differ, so their absolute times should not be compared to each other.
 
-The selected product is source `04584fc2`, measured as Core `c471f5d1`
+The measured inference implementation is source `04584fc2`, measured as Core `c471f5d1`
 and Data `b04aea50`. Its [root and package qualification](tests/parakeet/transpose-axis-results/root-20260928.md)
 verifies that the normal build (Core `e98edee2`, Data `7f4dd050`) preserves all
 3,288 Core and 697 Data method bodies, implementation flags, public declarations
 and assembly attributes. Both full test suites pass in normal and AVX512-disabled
 modes, and independent NuGet consumption passes. Ordinary mode passes 3,603 backend
 and 394 tensor tests; the report records the exact hardware-dependent skips.
+The [0.3.0 release checks](docs/release-0.3.0.md) verify that the validation package
+preserves all of those Core and Data methods, implementation flags and public
+declarations. The published package uses the same Core sources, regenerated with
+the build commit recorded in its metadata; its Core is `6b794a47`. Package contents
+and independent consumption pass. Release preparation changes version metadata
+and test coverage, with no new performance claim.
 
 ## What is timed
 

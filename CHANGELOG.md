@@ -1,65 +1,66 @@
 # Changelog
 
-## Unreleased (0.2.1 in progress)
+## 0.3.0 — 2026-09-28
 
 ### Added
 
-- Direct `ReadOnlyMemory<byte>` model import: `OnnxImport.Parse` and `OnnxImport.Load`
-  overloads read caller-owned memory with no `ToArray()` copy (API01). Existing `byte[]`
-  and file overloads and the Parse-throws / Load-null-plus-diagnostics contracts are
-  unchanged.
+- `ReadOnlyMemory<byte>` overloads for `OnnxImport.Parse` and `OnnxImport.Load`,
+  without copying the caller's memory into a new array. Existing file and byte
+  overloads, parsing exceptions and load diagnostics remain available.
+- ONNX audio-model coverage: float32 LSTM, rank-three convolution and pooling,
+  versioned Clip, boolean and unary operators, constant Pad, InstanceNormalization
+  and the activation operators used by the supported audio exports.
+- Tensor-valued ONNX `If`, including lexical captures, nested branches and multiple
+  outputs. Branches execute in isolated contexts; sequence and optional outputs
+  remain unsupported. Child execution diagnostics are exposed separately.
+- Explicit released-buffer budgets for execution contexts, prepared constant
+  matrix/convolution/LSTM weights, and allocation/copy/retained-weight diagnostics.
+  Budgets cover the documented buffers, not total process memory.
+- Repository companion APIs and CLI commands for Parakeet TDT 0.6B V3 and Whisper
+  Large V3 Turbo transcription, bounded recording transcription, and Pyannote
+  Community-1 diarization (frontend, speaker embeddings, clustering and timelines).
+  **These APIs live in the non-packable `Lokad.Onnx.Data` project and are not
+  included in the `Lokad.Onnx` NuGet package.** Model files remain external assets.
 
 ### Improved
 
-- Enable retained prepared-MatMul, exact softmax/BiasGelu, transpose and released-storage
-  reuse paths by default, with per-process `0` diagnostic fallbacks. Dead reshape-view
-  release remains an explicit `ExecutionOptions.Memory` choice. Released storage is
-  bounded to 128 MiB and 256 arrays per graph or execution context; this is not a
-  total-process memory limit. See `docs/runtime-options.md`.
-- Fused bias-plus-exact-GELU regions run a pointer fast path (identical arithmetic):
-  roughly minus 25 percent on MLP activation tiles with tighter run-to-run stability.
-- Single-element broadcast operands (scales, biases, masks) take the SIMD scalar tier
-  instead of per-element stride math: GPT-2 decode at 512 past went from about 3.2x to
-  about 1.6x of the pinned reference.
-- The 4D last-two-axes-swap transpose runs a tiled face path (bit-identical): about
-  minus 38 percent profiled on GPT-2 key transposes.
-- Span softmax is now the default kernel with a callable legacy fallback (approved
-  numerical promotion): same softmax math in row-major span order; DINOv3
-  bit-hashes re-frozen after independent-reference and full-model validation,
-  E5/native lanes green.
-- Gemm-plus-GELU epilogue fusion removes the separate activation pass
-  (bit-identical, no math change): all 12 GPT-2 MLP regions convert with zero
-  standalone Gelu ops left.
-- Scale-then-MatMul regions fuse into a structural `ScaledMatMul` node
-  (composite kernel runs the legacy paths in order; 12 DINO plus 12 GPT-2
-  sites, E5 correctly declined): graph simplification with no arithmetic
-  change. Packed scaled fast kernels were prototyped and rejected by an
-  isolation bench, so no kernel speedup is claimed here.
-- Decode-only single-row projections with very wide weights (M = 1, K >= 8192,
-  the logits projection) take a K-blocked kernel that removes the output
-  read-modify-write pass (bitwise versus the one-row kernel on tails,
-  nonzero destinations and exceptional values): directional improvement only,
-  pending a quiet-box A/B for the exact split.
-- Graph optimization passes (constant folding with dead sweep and dedupe, self-shape
-  Reshape zero-copy, LayerNorm/exact-GELU/tanh-GELU/RoPE fusion, Conv/Add epilogue
-  fusion) plus the fused bias-GELU pointer path showed directionally better E5-8tok
-  (about 27 percent) and E5-30tok/DINOv3 (about 7 percent) versus 0.2.0 in
-  earlier 3-rep canonical runs; those runs used a now-superseded protocol
-  (different-date ORT ratios, nine samples, unverified warmup), so the numbers
-  are preliminary until the repaired L0/L1/ORT campaign confirms them.
-  ResNet50 and GPT-2 prefill are unchanged within noise; see `BENCHMARK.md` at
-  release time for frozen tables.
+- Prepared and owned matrix weights, packed row/tail sharing, grouped recurrent
+  projections, constant attention preparation and contiguous slice/mask paths
+  reduce repeated work in the qualified Parakeet application.
+- Direct, tiled, prepared spatial and Winograd convolution paths improve supported
+  Pyannote geometries, with hardware, shape and numerical fallback checks.
+- Qualified rational sigmoid arithmetic, contiguous last-axis padding and tiled
+  rank-three/rank-four axis movement improve the current audio inference paths.
+  The rejected experimental AVX-512 sigmoid replacement is not part of this release.
+- Prepared MatMul, exact softmax/BiasGelu scheduling, transpose and bounded reuse
+  of released storage are enabled by default where eligible. Dead reshape-view
+  release remains an explicit `ExecutionOptions.Memory` choice. Experimental
+  runtime switches retain their documented opt-in status; see
+  [runtime options](https://github.com/Lokad/Onnx/blob/master/docs/runtime-options.md).
+- Whisper execution reuses intermediate buffers and shares identical private
+  decoder weights while preserving input and returned-output ownership.
+- The current [benchmark table](https://github.com/Lokad/Onnx/blob/master/BENCHMARK.md)
+  compares complete applications and prepared graph calls against Microsoft ORT
+  on the same AMD VM. Parakeet takes 43.459 seconds versus ORT 39.203 seconds;
+  Pyannote takes 9.920 seconds versus 8.949 seconds. These are workload-specific
+  comparisons, not claims of universal parity or gains over the published 0.2.0.
 
-### Compatibility
+### Compatibility and known limits
 
-- Behavior changes: exactly one approved numerical promotion, the span-softmax default above (DINOv3 hashes re-frozen, legacy kernel retained for tests). Every other optimization above preserves exact output bits
-  (frozen bit-hash gates green), and all changes are additive with legacy fallbacks.
-  Public API additions only; no public signatures removed or altered since 0.2.0
-  (audited 0.2.0-revision diff: added surface is the two `ReadOnlyMemory<byte>`
-  import overloads, the fused `CPUExecutionProvider.ConvRelu`/`AddRelu`/`BiasGelu`/`GemmGelu`/
-  `ScaledMatMul` entry points, the `MathOps.mm_m1_kblocked` row kernel and the
-  `OpStage.CopyX`/`CopyY` attribution members, and the `RetainedPackedWeightBytes` diagnostic gauge; the retired
-  `GraphFusion` pattern fields/methods lived in an internal type).
+- The package remains .NET 10-only with one runtime dependency, Google.Protobuf
+  3.33.5. Data helpers, CLI, model assets and native inference engines are excluded.
+- Numerical implementations have changed in qualified paths, including softmax,
+  sigmoid and selected reductions/convolutions. Bitwise identity to 0.2.0 across
+  all models and execution modes is not promised. Native comparisons use the
+  documented tolerances and preserve the recorded model decisions and ownership
+  contracts on their qualified fixtures.
+- Parakeet and Pyannote remain about 10.9% and 10.8% slower than ORT on the listed
+  complete workloads. Further performance work is deferred beyond this release.
+- DINOv2 remains excluded from qualified timing because it exceeds the numerical
+  agreement gate. Whisper has no qualified current-release latency comparison;
+  its full encoder/logit numerical agreement and broader audio accuracy coverage
+  remain open. See [model support and qualification](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md)
+  for export, platform, recording and accuracy limits.
 
 ## 0.2.0 — 2026-09-13
 

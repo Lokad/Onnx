@@ -13,13 +13,13 @@
     <Description>100% managed-code ONNX inference for .NET: tensor types and kernels, file-order graph execution over a CPU provider, and transparent buffer pooling.</Description>
     <Company>Lokad</Company>
     <Authors>Lokad</Authors>
-    <AssemblyVersion>0.2.0</AssemblyVersion>
-    <FileVersion>0.2.0</FileVersion>
-    <Version>0.2.0</Version>
+    <AssemblyVersion>0.3.0</AssemblyVersion>
+    <FileVersion>0.3.0</FileVersion>
+    <Version>0.3.0</Version>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>0.2.0 is the breaking .NET 10-only release: net10.0 floor, integrated ONNX importer on Google.Protobuf, MatMul wrong-answer fixes, immutable execution options, pooled dense-float outputs, and the native e5 conformance gate. See CHANGELOG.md for the full record.</PackageReleaseNotes>
+    <PackageReleaseNotes>0.3.0 adds audio-model operator coverage, tensor-valued If branches, memory-based model import, bounded execution-buffer reuse, and qualified matrix, convolution, recurrent and activation improvements. The package targets .NET 10 and contains the managed inference core; audio orchestration APIs remain in the separate Lokad.Onnx.Data repository project. See CHANGELOG.md and BENCHMARK.md for qualification and limitations.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/Lokad/Onnx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Lokad/Onnx.git</RepositoryUrl>

@@ -65,6 +65,11 @@ See `tests\README.md` for the lane definitions.
 ## Packaging
 Run `pack.cmd` from the repo root to produce the `Lokad.Onnx` NuGet package (net10.0 only, no Satsuma, Interop, or Python content).
 The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Release history lives in `CHANGELOG.md`.
+It contains the inference core only. Audio orchestration (`ParakeetTranscriber`,
+`WhisperTranscriber`, `Community1Diarizer`), tokenizers and image helpers live in
+the separate, non-packable `Lokad.Onnx.Data` repository project; the CLI is also
+a separate project. These APIs are not installed by `PackageReference` to
+`Lokad.Onnx`.
 
 ## Implementation notes
 
