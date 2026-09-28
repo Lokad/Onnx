@@ -36,19 +36,41 @@ def configure():
         assert receipt['terminal'] and receipt['code'] == 0 and receipt.get('input_error') is None
         for name, wanted in receipt['files'].items():
             assert pin(folder/'collected'/name) == wanted, name
-        roots['/dev/shm/'+remote] = dict(collection=receipt_pin, local_proof=pin(proof_path))
+        roots['/dev/shm/'+remote] = dict(collections={'collection.json':dict(pin=receipt_pin,code=0)},
+                                        local_proof=pin(proof_path))
+    # Both focused builds are terminal. Preserve the failed first build's code,
+    # and bind both build and contract owners for the successful recovery.
+    for suffix, failed in [('', True), ('-recovery', False)]:
+        folder = ROOT/f'artifacts/parakeet-transpose-axis-build{suffix}-amd-20260928'
+        proof_path = folder/('failed.json' if failed else 'closed.json')
+        proof = json.loads(proof_path.read_text())
+        assert proof['passed'] == (not failed)
+        collections = {}
+        for kind in (['build'] if failed else ['build', 'capture']):
+            collected = folder/(kind+'-collected'); receipt_path = collected/(kind+'-collection.json')
+            receipt_pin = pin(receipt_path); receipt = json.loads(receipt_path.read_text())
+            code = 1 if failed else 0
+            assert receipt['terminal'] and receipt['code'] == code and receipt.get('input_error') is None
+            for name, wanted in receipt['files'].items():assert pin(collected/name) == wanted, name
+            collections[kind+'-collection.json'] = dict(pin=receipt_pin,code=code)
+        assert proof['collection'] == receipt_pin
+        if not failed:
+            assert pin(folder/'capture-collected/build-collection.json') == collections['build-collection.json']['pin']
+        roots[f'/dev/shm/lokad-transpose-axis-build{suffix}-20260928'] = dict(
+            collections=collections,local_proof=pin(proof_path))
     guard = '\nROOTS=' + repr(roots) + r'''
 for name, wanted in ROOTS.items():
  folder=Path(name)
  assert folder.parent==Path('/dev/shm') and folder.resolve()==folder
- path=folder/'collection.json';assert pin(path)==wanted['collection']
- receipt=json.loads(path.read_text())
- assert receipt['terminal'] and receipt['code']==0 and receipt.get('input_error') is None
- for identity in receipt['identities']:
-  try:
-   process=psutil.Process(identity['pid'])
-   assert process.create_time()!=identity['birth'] or process.status()==psutil.STATUS_ZOMBIE
-  except psutil.NoSuchProcess:pass
+ for relative,expected in wanted['collections'].items():
+  path=folder/relative;assert pin(path)==expected['pin']
+  receipt=json.loads(path.read_text())
+  assert receipt['terminal'] and receipt['code']==expected['code'] and receipt.get('input_error') is None
+  for identity in receipt['identities']:
+   try:
+    process=psutil.Process(identity['pid'])
+    assert process.create_time()!=identity['birth'] or process.status()==psutil.STATUS_ZOMBIE
+   except psutil.NoSuchProcess:pass
 '''
     original = engine.SCRIPT
     start = original.index('def eligible(p):'); end = original.index('\ndef resources():', start)
