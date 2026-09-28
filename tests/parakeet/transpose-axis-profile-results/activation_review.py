@@ -45,6 +45,28 @@ def retained_native_dispatch():
         historical_sample_timings_reused=False)
 
 
+def retained_managed_codegen():
+    base = ROOT/'artifacts/parakeet-rational-sigmoid-build-amd-20260927'
+    assert pin(base/'closed.json')['sha256']=='3301ae58b42e1fd51435f54191cf4bba42c6cbf8e2ad6bf4279af67ae5d3d89a'
+    proof=read(base/'closed.json'); assert proof['passed']
+    assert proof['analysis']==pin(base/'analysis.json')
+    files={}
+    for name in ['src/Lokad.Onnx/CPUExecutionProvider.Elementwise.cs','src/Lokad.Onnx/Zzz.SigmoidRational.cs']:
+        path=base/'bundle/source'/name
+        assert pin(path)==proof['files']['bundle/source/'+name]
+        assert path.read_bytes().replace(b'\r\n',b'\n')==(ROOT/name).read_bytes().replace(b'\r\n',b'\n')
+        files[name]=pin(path)
+    code=read(base/'analysis.json')['generated_code']['normal']
+    asm=base/'capture-collected/logs/sigmoid-normal.asm'
+    assert pin(asm)==proof['files']['capture-collected/logs/sigmoid-normal.asm']
+    assert pin(asm)['sha256']==code['raw_sha256']
+    loops=[{k:v for k,v in row.items() if k!='assembly'} for row in code['rational_loops']]
+    assert loops and all(r['vector_bits']==256 and r['fmas']==9 and not r['calls'] and not r['conversions'] for r in loops)
+    return dict(closure=pin(base/'closed.json'),source_files=files,source_equal_after_newline_normalization=True,
+        disassembly=pin(asm),loops=loops,current_release_jit_capture=False,
+        tier_to_current_clock_join=False,instruction_count_is_not_a_cycle_estimate=True)
+
+
 def main():
     proof = read(RESULT/'closed.json')
     assert proof['passed'] and proof['analysis'] == pin(RESULT/'analysis.json')
@@ -121,9 +143,10 @@ def main():
         managed_sources={n:pin(ROOT/n) for n in ['src/Lokad.Onnx/CPUExecutionProvider.Elementwise.cs','src/Lokad.Onnx/Zzz.SigmoidRational.cs']},
         groups=groups,records=records,source=pin(Path(__file__)),
         observed_fusion=True,retained_native_dispatch=retained_native_dispatch(),
+        retained_managed_codegen=retained_managed_codegen(),
         current_per_node_native_sampling=False,managed_jit_sampled=False,
         cause_not_yet_isolated='The measured aggregate includes arithmetic, two separate graph operations and intermediate storage. Fusion alone is not proven to explain the excess.',
-        source_route='QuickGelu alpha=1 calls MlasComputeSilu in 4096-element tasks. Retained runtime samples prove MlasSiluKernelAvx512F on the identical native binary/workload. Reuse its identity, not historical timing shares. Bind the current managed generated loop and separate arithmetic from intermediate storage before selecting an intervention.')
+        source_route='QuickGelu alpha=1 calls MlasComputeSilu in 4096-element tasks. Retained samples prove MlasSiluKernelAvx512F on the identical native binary/workload. The unchanged managed source previously emitted a 256-bit rational loop. Reuse these identities, not historical timing shares. Separate arithmetic from intermediate storage and confirm any necessary current JIT behavior before selecting an intervention.')
     with (TOOLS/'activation-breakdown-20260928.json').open('x',encoding='utf8') as stream:
         json.dump(value,stream,indent=2)
     print(json.dumps(dict(passed=True,groups=groups,retained_native_leaf_verified=True)))
