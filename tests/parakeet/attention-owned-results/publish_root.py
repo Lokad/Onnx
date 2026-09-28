@@ -6,8 +6,8 @@ from common import pin, read, application
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = Path(__file__).resolve().parent
-BASE = ROOT / 'artifacts/parakeet-attention-owned-root-amd-20260928'
-sys.path.insert(0, str(ROOT / 'tests/parakeet/attention-owned-root-amd'))
+BASE = ROOT / 'artifacts/parakeet-attention-owned-root-recovery-amd-20260928'
+sys.path.insert(0, str(ROOT / 'tests/parakeet/attention-owned-root-recovery-amd'))
 from source_scope import verify_source, root_files, verify_root
 from checks import inventory, suite, suite256, package
 from warning_census import compare
@@ -42,8 +42,9 @@ def main():
     assert not any(p.exists() for p in paths), 'Preserve an existing publication'
     prose = f'''# Owned attention weights: actual root and package qualification
 
-**All root and package checks pass.** The 446 build inputs match the measured
-attention preparation product and its already executed portable fixture.
+**All root and package checks pass.** The 446 build inputs preserve the measured
+attention preparation product. The portable fixture uses explicit arguments in
+place of identical defaults to comply with repository source policy.
 The single policy change prepares 92 additional constant square attention weights
 once, using the existing owned representation. Arithmetic leaves, reduction
 order and the 256 MiB clone-cache limit remain unchanged.
@@ -72,7 +73,13 @@ source-policy tests remain intact. Focused qualification passed all 212 cases;
 the exact-model census confirmed 179 owned weights and unchanged logical values,
 37 cache entries and the 256 MiB cap in both hardware modes. See the
 [focused contracts](contracts-20260928.md), [census](census-20260928.md) and
-[release protocol](../attention-owned-root-amd/README.md).
+[release protocol](../attention-owned-root-recovery-amd/README.md).
+
+The first root run failed the existing source-policy test because the new helper
+declared five optional parameters. That failed collection remains preserved at
+`9c757ee0`; no successful closure was assigned to it. This fresh qualification
+uses only the explicit-argument fixture repair. All product inputs and completed
+performance comparisons remain unchanged.
 
 The two existing CS8604 warning sites remain; every warning and summary matches
 the qualified parent after normalizing only the campaign directory. No new or

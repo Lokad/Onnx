@@ -1,8 +1,8 @@
 # Refresh managed attribution after attention release qualification
 
-This adapter is a local draft and shares the native adapter's unset ROOT_DIGEST.
-Preparation refuses until complete graph, Pyannote application and actual
-root/package admission are bound. The measured candidate is Core `ee5218db` /
+This adapter shares the native adapter's actual root qualification `ee4a38ff`.
+Complete graph and Pyannote application admission are bound; source `7e321ecc`
+is qualified after a test-only explicit-argument repair. The measured candidate is Core `ee5218db` /
 Data `1ba343fd`, source receipt `ee998786`. Only the preparation policy changes.
 
 The read-only attention-owned-profile-review proves reuse of consumer `38ab5c7e`

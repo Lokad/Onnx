@@ -1,7 +1,8 @@
 # Refresh native attribution after attention release qualification
 
-This adapter is a local draft. ROOT_DIGEST remains unset: review, staging and
-launch refuse until the actual root/package qualification is admitted and bound.
+Root/package recovery is admitted at `ee4a38ff` and source committed at
+`7e321ecc`. ROOT_DIGEST binds that actual qualification. The original source-policy
+failure remains preserved; recovery changed only explicit test-helper arguments.
 The single measured candidate is Core `ee5218db` / Data `1ba343fd`; application
 closure `600e9e67` admits a 1.128490% matched gain, 44.97562548 seconds versus
 ORT 39.2002844835. The <=1.05 parity target remains open.

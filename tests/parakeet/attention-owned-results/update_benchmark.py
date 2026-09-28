@@ -9,7 +9,7 @@ from common import application, pin, read
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = Path(__file__).resolve().parent
-sys.path.insert(0, str(ROOT/'tests/parakeet/attention-owned-root-amd'))
+sys.path.insert(0, str(ROOT/'tests/parakeet/attention-owned-root-recovery-amd'))
 from source_scope import CHANGED, verify_source, root_files, verify_root
 
 
@@ -31,7 +31,7 @@ def document():
     parakeet = application()
     graph_base, graph_proof, graphs = published('graphs', 'graphs-20260928.json')
     py_base, py_proof, pyannote = published('pyannote-app', 'pyannote-application-20260928.json')
-    root_base, _, root = published('root', 'root-observations-20260928.json')
+    root_base, _, root = published('root-recovery', 'root-observations-20260928.json')
     assert graph_proof['admitted'] and all(row['qualified'] for row in graphs['performance'])
     assert py_proof['admitted'] and pyannote['performance']['admitted']
     assert root['root_source_verified'] and root['package']['passed'] and root['consumer']['passed']
