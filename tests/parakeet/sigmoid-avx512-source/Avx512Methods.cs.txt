@@ -1,0 +1,43 @@
+
+    // Match the observed MLAS two-vector logistic loop. The public operator
+    // checks intrinsics, AVX-512 support and length before entering here.
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static void SigmoidRationalAvx512(ReadOnlySpan<float> input, Span<float> output)
+    {
+        ref float source = ref MemoryMarshal.GetReference(input);
+        ref float target = ref MemoryMarshal.GetReference(output);
+        int i = 0;
+        for (; i <= input.Length - 32; i += 32)
+        {
+            var first = Vector512.LoadUnsafe(ref source, (nuint)i);
+            var second = Vector512.LoadUnsafe(ref source, (nuint)(i + 16));
+            var firstResult = SigmoidRational512(first);
+            var secondResult = SigmoidRational512(second);
+            firstResult.StoreUnsafe(ref target, (nuint)i);
+            secondResult.StoreUnsafe(ref target, (nuint)(i + 16));
+        }
+        if (i < input.Length) SigmoidRationalVector(input.Slice(i), output.Slice(i));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static Vector512<float> SigmoidRational512(Vector512<float> value)
+    {
+        var x = Avx512F.Max(Avx512F.Min(value, Vector512.Create(18f)), Vector512.Create(-18f));
+        var squared = x * x;
+
+        var numerator = Avx512F.FusedMultiplyAdd(squared, Vector512.Create(4.37031012579801e-11f), Vector512.Create(1.15627324459942e-07f));
+        numerator = Avx512F.FusedMultiplyAdd(numerator, squared, Vector512.Create(6.08574864600143e-05f));
+        numerator = Avx512F.FusedMultiplyAdd(numerator, squared, Vector512.Create(8.51377133304701e-03f));
+        numerator = Avx512F.FusedMultiplyAdd(numerator, squared, Vector512.Create(2.48287947061529e-01f));
+        numerator *= x;
+
+        var denominator = Avx512F.FusedMultiplyAdd(squared, Vector512.Create(6.10247389755681e-13f), Vector512.Create(5.76102136993427e-09f));
+        denominator = Avx512F.FusedMultiplyAdd(denominator, squared, Vector512.Create(6.29106785017040e-06f));
+        denominator = Avx512F.FusedMultiplyAdd(denominator, squared, Vector512.Create(1.70198817374094e-03f));
+        denominator = Avx512F.FusedMultiplyAdd(denominator, squared, Vector512.Create(1.16817656904453e-01f));
+        denominator = Avx512F.FusedMultiplyAdd(denominator, squared, Vector512.Create(9.93151921023180e-01f));
+
+        var activated = numerator / denominator + Vector512.Create(0.5f);
+        activated = Avx512F.Min(Avx512F.Max(activated, Vector512<float>.Zero), Vector512.Create(1f));
+        return Vector512.ConditionalSelect(Vector512.Equals(value, value), activated, value);
+    }

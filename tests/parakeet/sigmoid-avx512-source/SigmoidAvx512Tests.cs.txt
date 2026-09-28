@@ -1,0 +1,71 @@
+namespace Lokad.Onnx.Backend.Tests;
+
+public class SigmoidAvx512Tests
+{
+    static float[] Run(Tensor<float> input, ExecutionOptions options)
+    {
+        var result = CPUExecutionProvider.Sigmoid(input, options);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var output = Assert.IsType<DenseTensor<float>>(Assert.Single(result.Outputs!));
+        Assert.Equal(input.Dimensions.ToArray(), output.Dimensions.ToArray());
+        return output.Buffer.ToArray();
+    }
+
+    static void EqualBits(float[] expected, float[] actual)
+    {
+        Assert.Equal(expected.Length, actual.Length);
+        for (int i = 0; i < actual.Length; i++)
+            Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(actual[i]));
+    }
+
+    static void ComparePortable(float[] values, int offset = 0)
+    {
+        var storage = Enumerable.Repeat(1234567f, values.Length + offset + 3).ToArray();
+        values.CopyTo(storage, offset);
+        var saved = storage.ToArray();
+        var input = new DenseTensor<float>(storage.AsMemory(offset, values.Length), new[] { values.Length });
+        EqualBits(Run(input, ExecutionOptions.Simd), Run(input, ExecutionOptions.Default));
+        EqualBits(saved, storage);
+    }
+
+    [Fact]
+    public void EveryTailAndOffsetAgreesWithPortableArithmetic()
+    {
+        for (int length = 0; length <= 129; length++)
+        {
+            var values = Enumerable.Range(0, length).Select(i => (i - length / 2f) * .731f).ToArray();
+            for (int offset = 0; offset < 16; offset++) ComparePortable(values, offset);
+        }
+    }
+
+    [Fact]
+    public void EveryLanePreservesSpecialValuesAndNanPayloads()
+    {
+        float[] special = [float.NegativeInfinity, float.PositiveInfinity, -float.MaxValue,
+            float.MaxValue, -0f, 0f, float.Epsilon, -float.Epsilon, -18f, 18f,
+            BitConverter.Int32BitsToSingle(0x7fc12345),
+            BitConverter.Int32BitsToSingle(unchecked((int)0xffc54321)),
+            BitConverter.Int32BitsToSingle(0x7f812345)];
+        for (int length = 32; length <= 95; length++)
+            for (int lane = 0; lane < 32; lane++)
+                ComparePortable(Enumerable.Range(0, length).Select(i => special[(i + lane) % special.Length]).ToArray());
+    }
+
+    [Fact]
+    public void FiniteAndBitPatternInputsAgreeWithPortableArithmetic()
+    {
+        var values = new float[65539];
+        for (int i = 0; i < values.Length; i++) values[i] = -19f + 38f * i / (values.Length - 1);
+        ComparePortable(values, 1);
+        uint state = 0xa124732b;
+        for (int batch = 0; batch < 16; batch++)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                state ^= state << 13; state ^= state >> 17; state ^= state << 5;
+                values[i] = BitConverter.Int32BitsToSingle(unchecked((int)state));
+            }
+            ComparePortable(values, batch);
+        }
+    }
+}
