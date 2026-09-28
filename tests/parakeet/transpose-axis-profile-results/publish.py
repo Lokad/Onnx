@@ -1,8 +1,10 @@
 """Publish complete attribution only after both fresh captures pass their audits."""
 import json
 from pathlib import Path
-from partition import ROOT, TOOLS, MAPPING, pin, read, references, partition
-from run import BASE, APP, PARENT, native, prepared, write
+from partition import ROOT, TOOLS, MAPPING, load, pin, read, references, partition
+from run import BASE, APP, PARENT, prepared, write
+
+native = load('recovered_native_profile_adapter', TOOLS.parent/'transpose-axis-ort-profile-recovery-amd/run.py')
 
 RESULT = ROOT/'artifacts/parakeet-transpose-axis-gap-20260928'
 
