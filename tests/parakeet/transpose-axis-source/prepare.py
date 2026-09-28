@@ -45,7 +45,7 @@ def change(raw):
         // existing contiguous-load tile when both axes contain a complete tile.
         if (rank == 3 && perm[0] == 0 && perm[1] == 2 && perm[2] == 1
             && typeof(T) == typeof(float) && AblationSwitches.EnableVectorTransposeFaces && Avx.IsSupported
-            && xd.Dimensions[1] >= 8 && xd.Dimensions[2] >= 8)
+            && xd.Dimensions[1] >= 8 && xd.Dimensions[2] >= 8 && HasStandardStrides(xd))
         {
             unsafe
             {

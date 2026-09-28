@@ -109,14 +109,17 @@ public class TransposeAxisMovementTests
                 Assert.All(storage.Take(11).Concat(storage.Skip(11 + count)), value => Assert.Equal(99f, value));
             }
             int[] fullShape = (int[])shape.Clone(); fullShape[^1] += 2;
-            var full = DenseTensor<float>.OfShape(fullShape);
-            var slices = Enumerable.Repeat(SliceIndex.All, shape.Length).ToArray();
-            slices[^1] = new SliceIndex(1, shape[^1] + 1);
-            Check(full.Slice(slices));
-            for (int i = 0; i < full.Length; i++)
+            foreach (bool reverse in new[] { false, true })
             {
-                int[] coords = Coordinates(i, fullShape);
-                if (coords[^1] == 0 || coords[^1] == fullShape[^1] - 1) Assert.Equal(0f, full[coords]);
+                var full = new DenseTensor<float>(fullShape, reverse);
+                var slices = Enumerable.Repeat(SliceIndex.All, shape.Length).ToArray();
+                slices[^1] = new SliceIndex(1, shape[^1] + 1);
+                Check(full.Slice(slices));
+                for (int i = 0; i < full.Length; i++)
+                {
+                    int[] coords = Coordinates(i, fullShape);
+                    if (coords[^1] == 0 || coords[^1] == fullShape[^1] - 1) Assert.Equal(0f, full[coords]);
+                }
             }
         }
     }
