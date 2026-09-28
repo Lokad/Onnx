@@ -1,0 +1,701 @@
+{
+  "purpose": "Exact closed experimental inputs exempted by the existing content-and-path archive rule; current product and test implementations remain scanned.",
+  "scanner_source": "tests/Lokad.Onnx.Tensors.Tests/NoOptionalParametersTests.cs",
+  "entries": [
+    {
+      "sha256": "4d8ca0bfb98511eec9709225479c35ba6ab8c81423325e9a12b82ca51baba9e0",
+      "path": "tests/whisper/weight-sharing/WhisperDecoderWeightsTests.cs",
+      "hits": [
+        "Weight(float[]? values = null)",
+        "Weight(int[]? shape = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-portable-suites-20260922/closed.json",
+        "closure_sha256": "65a315437da0f476ef091115b8d2831481df757b0ba118073ece8e17ac40154c",
+        "record": "artifacts/parakeet-portable-suites-20260922/closed.json",
+        "record_sha256": "65a315437da0f476ef091115b8d2831481df757b0ba118073ece8e17ac40154c",
+        "entry": "/files/artifacts/parakeet-portable-suites-20260922/source/tests/whisper/weight-sharing/WhisperDecoderWeightsTests.cs",
+        "source_pin": {
+          "bytes": 6375,
+          "sha256": "7f2714b0e94c1c9a8c01647b40b2f0dd8be97895bd4a0f4f46c2bbabfd60b875"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "f6ff64e5e669ba5534f29824e42c4fa9baea3c7dc73db263c0f7f3c1d7a8a4c7",
+      "path": "tests/pyannote/winograd-register-transform-prototype/Driver.cs",
+      "hits": [
+        "Candidate(bool expected = true)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-pad-graph-immutable-file-links-20260926/closed.json",
+        "closure_sha256": "02f4c776c6f401894282efc3fa0853c2ccd93347b839970936ba737efc57c954",
+        "record": "artifacts/parakeet-pad-graph-immutable-file-links-20260926/closed.json",
+        "record_sha256": "02f4c776c6f401894282efc3fa0853c2ccd93347b839970936ba737efc57c954",
+        "entry": "/files//dev/shm/lokad-pyannote-winograd-output-blocks-numerics-20260923/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 20624,
+          "sha256": "f6ff64e5e669ba5534f29824e42c4fa9baea3c7dc73db263c0f7f3c1d7a8a4c7"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "faca665f024df691bb7a7005478733400fbb683c764fd6676c1ee70ede648c7a",
+      "path": "tests/pyannote/winograd-range-prototype/Driver.cs",
+      "hits": [
+        "Candidate(bool expected = true)"
+      ],
+      "evidence": {
+        "closure": "artifacts/pyannote-winograd-output-blocks-numerics-amd-20260923/closed.json",
+        "closure_sha256": "47513c48326d17f7188a9dbf45bbd7232d4ee55122f82a3c4db23e8d12c8906b",
+        "source": "artifacts/pyannote-winograd-output-blocks-numerics-amd-20260923/collected/evidence/original-driver.cs",
+        "source_sha256": "faca665f024df691bb7a7005478733400fbb683c764fd6676c1ee70ede648c7a",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "a37063df913a519995046035a44ffd8556f7465c423bfc639875abb81f7a2b27",
+      "path": "tests/pyannote/winograd-prototype/Driver.cs",
+      "hits": [
+        "Candidate(bool expected = true)"
+      ],
+      "evidence": {
+        "closure": "artifacts/pyannote-winograd-codegen-amd-20260923/closed.json",
+        "closure_sha256": "28c8d94684024251f515d5902757056ae59aff9824a35df5886a589024446566",
+        "record": "artifacts/pyannote-winograd-codegen-amd-20260923/collected/evidence/payload.json",
+        "record_sha256": "1c130f0dde54ed1e8dc6b157053207fe77efa070cbe58fc87598e65753184261",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 16360,
+          "sha256": "a37063df913a519995046035a44ffd8556f7465c423bfc639875abb81f7a2b27"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "f6ff64e5e669ba5534f29824e42c4fa9baea3c7dc73db263c0f7f3c1d7a8a4c7",
+      "path": "tests/pyannote/winograd-output-blocks-prototype/Driver.cs",
+      "hits": [
+        "Candidate(bool expected = true)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-pad-graph-immutable-file-links-20260926/closed.json",
+        "closure_sha256": "02f4c776c6f401894282efc3fa0853c2ccd93347b839970936ba737efc57c954",
+        "record": "artifacts/parakeet-pad-graph-immutable-file-links-20260926/closed.json",
+        "record_sha256": "02f4c776c6f401894282efc3fa0853c2ccd93347b839970936ba737efc57c954",
+        "entry": "/files//dev/shm/lokad-pyannote-winograd-output-blocks-numerics-20260923/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 20624,
+          "sha256": "f6ff64e5e669ba5534f29824e42c4fa9baea3c7dc73db263c0f7f3c1d7a8a4c7"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "a37063df913a519995046035a44ffd8556f7465c423bfc639875abb81f7a2b27",
+      "path": "tests/pyannote/winograd-input-prototype/Driver.cs",
+      "hits": [
+        "Candidate(bool expected = true)"
+      ],
+      "evidence": {
+        "closure": "artifacts/pyannote-winograd-codegen-amd-20260923/closed.json",
+        "closure_sha256": "28c8d94684024251f515d5902757056ae59aff9824a35df5886a589024446566",
+        "record": "artifacts/pyannote-winograd-codegen-amd-20260923/collected/evidence/payload.json",
+        "record_sha256": "1c130f0dde54ed1e8dc6b157053207fe77efa070cbe58fc87598e65753184261",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 16360,
+          "sha256": "a37063df913a519995046035a44ffd8556f7465c423bfc639875abb81f7a2b27"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "9ae0abe8f16a4e12f7f07ef454bba4131685e9dcfba33f7903fc01ad1bd7e96f",
+      "path": "tests/pyannote/winograd-contiguous-prototype/Driver.cs",
+      "hits": [
+        "Candidate(bool expected = true)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-pad-graph-immutable-file-links-20260926/closed.json",
+        "closure_sha256": "02f4c776c6f401894282efc3fa0853c2ccd93347b839970936ba737efc57c954",
+        "record": "artifacts/parakeet-pad-graph-immutable-file-links-20260926/closed.json",
+        "record_sha256": "02f4c776c6f401894282efc3fa0853c2ccd93347b839970936ba737efc57c954",
+        "entry": "/files//dev/shm/lokad-pyannote-winograd-contiguous-numerics-20260923/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 16677,
+          "sha256": "9ae0abe8f16a4e12f7f07ef454bba4131685e9dcfba33f7903fc01ad1bd7e96f"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "8409181643c4e7f405ac4a8fb39a9255933aa9924d9c2aecae20926f2ac49583",
+      "path": "tests/pyannote/request-contexts/PipelineRequestTests.cs",
+      "hits": [
+        "Extract(CancellationToken token = default)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-portable-suites-20260922/closed.json",
+        "closure_sha256": "65a315437da0f476ef091115b8d2831481df757b0ba118073ece8e17ac40154c",
+        "record": "artifacts/parakeet-portable-suites-20260922/closed.json",
+        "record_sha256": "65a315437da0f476ef091115b8d2831481df757b0ba118073ece8e17ac40154c",
+        "entry": "/files/artifacts/parakeet-portable-suites-20260922/source/tests/pyannote/request-contexts/PipelineRequestTests.cs",
+        "source_pin": {
+          "bytes": 7725,
+          "sha256": "7b2c412355c01d8213edd8aaf6e6c65366c20c0d51bc6b3d4d9f1789a29767de"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "24960c1e5a293e9922f9a10e95be1fd6c9809fe8a62b159ccf3a9912d8be7031",
+      "path": "tests/parakeet/wide-projection-isolation-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-isolated-short-kernels-numerics-amd-20260923/closed.json",
+        "closure_sha256": "8af70936de4108aecc4b727397e687b1d06382b23f7f327690885896ed50d208",
+        "record": "artifacts/parakeet-isolated-short-kernels-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "7f72ca088372314028c10fe5976fd37bc8288e317eb17eef0e26b4b9e35d3705",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15254,
+          "sha256": "34025090b69667c11778e1c0dc4992e16295dce9e6a467249e59cd63ca4508dd"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "24960c1e5a293e9922f9a10e95be1fd6c9809fe8a62b159ccf3a9912d8be7031",
+      "path": "tests/parakeet/wide-projection-isolation-numerics-v2/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-isolated-short-kernels-numerics-amd-20260923/closed.json",
+        "closure_sha256": "8af70936de4108aecc4b727397e687b1d06382b23f7f327690885896ed50d208",
+        "record": "artifacts/parakeet-isolated-short-kernels-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "7f72ca088372314028c10fe5976fd37bc8288e317eb17eef0e26b4b9e35d3705",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15254,
+          "sha256": "34025090b69667c11778e1c0dc4992e16295dce9e6a467249e59cd63ca4508dd"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "b7c71c643325e628b6ff77c436615437b328844bd7fb148d234f497029bda046",
+      "path": "tests/parakeet/wide-per-call-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-wide-per-call-numerics-amd-20260923/closed.json",
+        "closure_sha256": "7900d3b9d841291cb5dd6b5f366a996570898897ffd7afd67a75f1f2455e5bc4",
+        "record": "artifacts/parakeet-wide-per-call-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "21e1fd87b6f32d5738eef9f7f483851c4933b0830be057bfcb7acdb24dab2d9a",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 14448,
+          "sha256": "b7c71c643325e628b6ff77c436615437b328844bd7fb148d234f497029bda046"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "3e787dc9bfb89ad956c0e2602d0a005171978659634f2ab679ae5c9a7e32e736",
+      "path": "tests/parakeet/wide-entry-first-use-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923/closed.json",
+        "closure_sha256": "ae1ef134bcca57dc098bb26d2e484dc7427a546e74b6d26598908bc790706a24",
+        "record": "artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923/prepared.json",
+        "record_sha256": "b692f70f2dfb9eafc4b4749537918d0ebf632f629d5a6560bfc328576b6f9646",
+        "entry": "/files/tests/parakeet/wide-entry-first-use-numerics/Driver.cs",
+        "source_pin": {
+          "bytes": 17676,
+          "sha256": "3e787dc9bfb89ad956c0e2602d0a005171978659634f2ab679ae5c9a7e32e736"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "4e48d142c0ca2126ce7f5ac22796f1df5e26bc531d297ff8ed06c4a65802fcbb",
+      "path": "tests/parakeet/short-wide-pack-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/closed.json",
+        "closure_sha256": "8d59a4d948ed0dc60be07e3427acd6b832199e2f3e598e18bde4c0abe90497ed",
+        "record": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "8bb065e24754f381ae2cba74dc5987ea729fded4064d8b5397f880a9e998c2b6",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15016,
+          "sha256": "f2991648a8db9b23aa665a2db3f7d687606b6f4d0484a348fc6d8fcdd9b87469"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "4e48d142c0ca2126ce7f5ac22796f1df5e26bc531d297ff8ed06c4a65802fcbb",
+      "path": "tests/parakeet/short-dispatch-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/closed.json",
+        "closure_sha256": "8d59a4d948ed0dc60be07e3427acd6b832199e2f3e598e18bde4c0abe90497ed",
+        "record": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "8bb065e24754f381ae2cba74dc5987ea729fded4064d8b5397f880a9e998c2b6",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15016,
+          "sha256": "f2991648a8db9b23aa665a2db3f7d687606b6f4d0484a348fc6d8fcdd9b87469"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "4e48d142c0ca2126ce7f5ac22796f1df5e26bc531d297ff8ed06c4a65802fcbb",
+      "path": "tests/parakeet/short-dispatch-numerics-v2/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/closed.json",
+        "closure_sha256": "8d59a4d948ed0dc60be07e3427acd6b832199e2f3e598e18bde4c0abe90497ed",
+        "record": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "8bb065e24754f381ae2cba74dc5987ea729fded4064d8b5397f880a9e998c2b6",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15016,
+          "sha256": "f2991648a8db9b23aa665a2db3f7d687606b6f4d0484a348fc6d8fcdd9b87469"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+      "path": "tests/parakeet/scalar-where-screen/QualifiedSetup.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/closed.json",
+        "closure_sha256": "ef63ec76aaf45d9df155de015b660b606e6e106446b5e6916c2cd3c048942457",
+        "source": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/bundle/source/consumer/QualifiedSetup.cs",
+        "source_sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "5f1761f188cc47c10b5f47c72b1dd859a3f66e6e1c0cf27df59959bf8ec3eb2c",
+      "path": "tests/parakeet/scalar-where-numerics/Driver.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-scalar-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "a5f2bfda923acea5673607935b5487878211148bef88579cb490c1409539d55a",
+        "source": "artifacts/parakeet-scalar-where-numerics-amd-20260924/bundle/source/consumer/Driver.cs",
+        "source_sha256": "5f1761f188cc47c10b5f47c72b1dd859a3f66e6e1c0cf27df59959bf8ec3eb2c",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "f1e4f11161e003c081eeb49ab5d91f125819c34c79cbc65135659304fee55329",
+      "path": "tests/parakeet/scalar-where-numerics-v3/Driver.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-scalar-where-numerics-amd-v3-20260924/closed.json",
+        "closure_sha256": "6493136351aa15a5b96b62e98a557d2fcc4f09191712bccf056e6a827e8705dc",
+        "source": "artifacts/parakeet-scalar-where-numerics-amd-v3-20260924/bundle/source/consumer/Driver.cs",
+        "source_sha256": "f1e4f11161e003c081eeb49ab5d91f125819c34c79cbc65135659304fee55329",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+      "path": "tests/parakeet/scalar-where-fallback-codegen/QualifiedSetup.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/closed.json",
+        "closure_sha256": "ef63ec76aaf45d9df155de015b660b606e6e106446b5e6916c2cd3c048942457",
+        "source": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/bundle/source/consumer/QualifiedSetup.cs",
+        "source_sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+      "path": "tests/parakeet/provider-where-screen/QualifiedSetup.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/closed.json",
+        "closure_sha256": "ef63ec76aaf45d9df155de015b660b606e6e106446b5e6916c2cd3c048942457",
+        "source": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/bundle/source/consumer/QualifiedSetup.cs",
+        "source_sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "ad76a71d3075567bf4a694bc050b41f41e8345bdd33b9bebd0715e8be1412628",
+      "path": "tests/parakeet/provider-where-numerics/Contracts.cs",
+      "hits": [
+        "CheckFailure(string? exactMessage = null)",
+        "Failure(ExecutionOptions? opts = null)",
+        "Failure(string? message = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-provider-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "9bc68920404a05fd330454a9dab65c092cb28f9e82875ea409900f1e0939b550",
+        "source": "artifacts/parakeet-provider-where-numerics-amd-20260924/bundle/source/consumer/Contracts.cs",
+        "source_sha256": "ad76a71d3075567bf4a694bc050b41f41e8345bdd33b9bebd0715e8be1412628",
+        "passed": false
+      }
+    },
+    {
+      "sha256": "aa2e2616a2309560d9be87478c59b16126623fb90ea8e0dc09ff3112e03489a3",
+      "path": "tests/parakeet/provider-where-numerics/Driver.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-provider-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "9bc68920404a05fd330454a9dab65c092cb28f9e82875ea409900f1e0939b550",
+        "record": "artifacts/parakeet-provider-where-numerics-amd-20260924/closed.json",
+        "record_sha256": "9bc68920404a05fd330454a9dab65c092cb28f9e82875ea409900f1e0939b550",
+        "entry": "/files/bundle/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 14799,
+          "sha256": "877c4c64a398519853b70cc294f7dfdc3cd1a28e3187b5e8c9bdc9d4c912ceed"
+        },
+        "passed": false
+      }
+    },
+    {
+      "sha256": "9f03a65e6bc82e825d0168c8b0e2ea92afdda2f3498da4f380883e56dd515cd9",
+      "path": "tests/parakeet/provider-where-numerics-v2/Contracts.cs",
+      "hits": [
+        "CheckFailure(string? exactMessage = null)",
+        "Failure(ExecutionOptions? opts = null)",
+        "Failure(string? message = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "edd4cf6e9bc9eccb1154df66f9e26419f0c28ebe789962d1d2618d85c1802832",
+        "source": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/bundle/source/consumer/Contracts.cs",
+        "source_sha256": "9f03a65e6bc82e825d0168c8b0e2ea92afdda2f3498da4f380883e56dd515cd9",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "e770efd3ea746508dc0fcd6281c81613db1702a52ae97343446e106598dacd11",
+      "path": "tests/parakeet/provider-where-numerics-v2/Driver.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-provider-where-numerics-amd-v2-20260924/closed.json",
+        "closure_sha256": "2396f95424f70cb34025fe0c0a067fd73c38c06f4e11b5191c7b9b68126c988f",
+        "record": "artifacts/parakeet-provider-where-numerics-amd-v2-20260924/closed.json",
+        "record_sha256": "2396f95424f70cb34025fe0c0a067fd73c38c06f4e11b5191c7b9b68126c988f",
+        "entry": "/files/bundle/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15338,
+          "sha256": "bbf47c60b389ca2866c31726c3823fa3f6ea8199a6b9b47aecb0100e22a967b8"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+      "path": "tests/parakeet/provider-where-fallback-codegen/QualifiedSetup.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/closed.json",
+        "closure_sha256": "ef63ec76aaf45d9df155de015b660b606e6e106446b5e6916c2cd3c048942457",
+        "source": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/bundle/source/consumer/QualifiedSetup.cs",
+        "source_sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "2013db1a60aed25615087076c958a8ab7b3a19ca585607e3b22651e2b319de58",
+      "path": "tests/parakeet/prepared-recurrence-source/PreparedLstmWeightsTests.cs",
+      "hits": [
+        "Graph(long budget = PairBytes)",
+        "Run(ExecutionOptions? options = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-prepared-recurrence-build-amd-20260924/closed.json",
+        "closure_sha256": "b2d46d3b37e0df3d2df3828ab186760574feaaeb221c53f2346f8272dd5fdd6f",
+        "source": "artifacts/parakeet-prepared-recurrence-build-amd-20260924/bundle/source/tests/Lokad.Onnx.Backend.Tests/PreparedLstmWeightsTests.cs",
+        "source_sha256": "2013db1a60aed25615087076c958a8ab7b3a19ca585607e3b22651e2b319de58",
+        "passed": false
+      }
+    },
+    {
+      "sha256": "bffbaa2802216b2d56b99761a0ce0a4cef464bf080e446dd9467bb013917effd",
+      "path": "tests/parakeet/prepared-recurrence-calls-amd/Calls.cs",
+      "hits": [
+        "Run(ExecutionOptions? options = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-prepared-recurrence-calls-amd-20260924/closed.json",
+        "closure_sha256": "bc2ce8017027b3c4f5f2ce9b413cd1b200b85cd258e39dba27f4350947e7c116",
+        "source": "artifacts/parakeet-prepared-recurrence-calls-amd-20260924/bundle/source/Calls.cs",
+        "source_sha256": "bffbaa2802216b2d56b99761a0ce0a4cef464bf080e446dd9467bb013917effd",
+        "passed": false
+      }
+    },
+    {
+      "sha256": "185fb438f37d6b007ad7c59b32c6e925f066051357a3171b18d73fe0e0cae69f",
+      "path": "tests/parakeet/prepared-recurrence-calls-amd-v2/Calls.cs",
+      "hits": [
+        "Run(ExecutionOptions? options = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-prepared-recurrence-calls-amd-v2-20260924/closed.json",
+        "closure_sha256": "20b3bc4b5a2d2ddb6e0834e40fb7e2bcb5220dd1f45c813a7a830466ddbc463d",
+        "source": "artifacts/parakeet-prepared-recurrence-calls-amd-v2-20260924/bundle/source/Calls.cs",
+        "source_sha256": "185fb438f37d6b007ad7c59b32c6e925f066051357a3171b18d73fe0e0cae69f",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "f2de068bf33a8dbb1f096f1fca3a81ad48cf6e7df8f2ab36f96cbb71457d241e",
+      "path": "tests/parakeet/pad-first-use-source/LastAxisPadTests.cs",
+      "hits": [
+        "Check(bool reversed = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-last-axis-pad-build-amd-20260923/closed.json",
+        "closure_sha256": "62043d100a96d418b02e25d09a65d8f89655ea21147c27d15a5efd861cce7e1c",
+        "source": "artifacts/parakeet-last-axis-pad-build-amd-20260923/bundle/source/tests/Lokad.Onnx.Backend.Tests/LastAxisPadTests.cs",
+        "source_sha256": "f2de068bf33a8dbb1f096f1fca3a81ad48cf6e7df8f2ab36f96cbb71457d241e",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "f2de068bf33a8dbb1f096f1fca3a81ad48cf6e7df8f2ab36f96cbb71457d241e",
+      "path": "tests/parakeet/pad-dispatch-source/LastAxisPadTests.cs",
+      "hits": [
+        "Check(bool reversed = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-last-axis-pad-build-amd-20260923/closed.json",
+        "closure_sha256": "62043d100a96d418b02e25d09a65d8f89655ea21147c27d15a5efd861cce7e1c",
+        "source": "artifacts/parakeet-last-axis-pad-build-amd-20260923/bundle/source/tests/Lokad.Onnx.Backend.Tests/LastAxisPadTests.cs",
+        "source_sha256": "f2de068bf33a8dbb1f096f1fca3a81ad48cf6e7df8f2ab36f96cbb71457d241e",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "f220918991347f4880333d4ef5202ac3943872d337e65dae73df2cef0e0134a4",
+      "path": "tests/parakeet/ordered-wide-blocks-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923/closed.json",
+        "closure_sha256": "ae1ef134bcca57dc098bb26d2e484dc7427a546e74b6d26598908bc790706a24",
+        "record": "artifacts/parakeet-ordered-wide-blocks-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "00e741c1a0898204bba770cccd2f4fdd778a4b04a502eea752ce3f66050d7c49",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 18856,
+          "sha256": "f220918991347f4880333d4ef5202ac3943872d337e65dae73df2cef0e0134a4"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "9f03a65e6bc82e825d0168c8b0e2ea92afdda2f3498da4f380883e56dd515cd9",
+      "path": "tests/parakeet/observed-dense-where-numerics-amd/Contracts.cs",
+      "hits": [
+        "CheckFailure(string? exactMessage = null)",
+        "Failure(ExecutionOptions? opts = null)",
+        "Failure(string? message = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "edd4cf6e9bc9eccb1154df66f9e26419f0c28ebe789962d1d2618d85c1802832",
+        "source": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/bundle/source/consumer/Contracts.cs",
+        "source_sha256": "9f03a65e6bc82e825d0168c8b0e2ea92afdda2f3498da4f380883e56dd515cd9",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "a2596635854142679b126845bf8cb779d5650aa66fdee8ad330f5c76844b5bfa",
+      "path": "tests/parakeet/observed-dense-where-numerics-amd/Driver.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "edd4cf6e9bc9eccb1154df66f9e26419f0c28ebe789962d1d2618d85c1802832",
+        "source": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/bundle/source/consumer/Driver.cs",
+        "source_sha256": "a2596635854142679b126845bf8cb779d5650aa66fdee8ad330f5c76844b5bfa",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "f2de068bf33a8dbb1f096f1fca3a81ad48cf6e7df8f2ab36f96cbb71457d241e",
+      "path": "tests/parakeet/last-axis-pad-source/LastAxisPadTests.cs",
+      "hits": [
+        "Check(bool reversed = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-last-axis-pad-build-amd-20260923/closed.json",
+        "closure_sha256": "62043d100a96d418b02e25d09a65d8f89655ea21147c27d15a5efd861cce7e1c",
+        "source": "artifacts/parakeet-last-axis-pad-build-amd-20260923/bundle/source/tests/Lokad.Onnx.Backend.Tests/LastAxisPadTests.cs",
+        "source_sha256": "f2de068bf33a8dbb1f096f1fca3a81ad48cf6e7df8f2ab36f96cbb71457d241e",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "24960c1e5a293e9922f9a10e95be1fd6c9809fe8a62b159ccf3a9912d8be7031",
+      "path": "tests/parakeet/isolated-short-kernels-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-isolated-short-kernels-numerics-amd-20260923/closed.json",
+        "closure_sha256": "8af70936de4108aecc4b727397e687b1d06382b23f7f327690885896ed50d208",
+        "record": "artifacts/parakeet-isolated-short-kernels-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "7f72ca088372314028c10fe5976fd37bc8288e317eb17eef0e26b4b9e35d3705",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15254,
+          "sha256": "34025090b69667c11778e1c0dc4992e16295dce9e6a467249e59cd63ca4508dd"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "4e48d142c0ca2126ce7f5ac22796f1df5e26bc531d297ff8ed06c4a65802fcbb",
+      "path": "tests/parakeet/first-use-kernels-numerics/Driver.cs",
+      "hits": [
+        "Reference(float[]? seed = null)",
+        "Coordinates(float[]? seed = null)",
+        "Exercise(bool scalar = false)",
+        "Exercise(bool nonfinite = false)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/closed.json",
+        "closure_sha256": "8d59a4d948ed0dc60be07e3427acd6b832199e2f3e598e18bde4c0abe90497ed",
+        "record": "artifacts/parakeet-first-use-kernels-numerics-amd-20260923/collected/payload.json",
+        "record_sha256": "8bb065e24754f381ae2cba74dc5987ea729fded4064d8b5397f880a9e998c2b6",
+        "entry": "/files/source/consumer/Driver.cs",
+        "source_pin": {
+          "bytes": 15016,
+          "sha256": "f2991648a8db9b23aa665a2db3f7d687606b6f4d0484a348fc6d8fcdd9b87469"
+        },
+        "passed": true
+      }
+    },
+    {
+      "sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+      "path": "tests/parakeet/dense-scalar-where-stability-amd/QualifiedSetup.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/closed.json",
+        "closure_sha256": "ef63ec76aaf45d9df155de015b660b606e6e106446b5e6916c2cd3c048942457",
+        "source": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/bundle/source/consumer/QualifiedSetup.cs",
+        "source_sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "9f03a65e6bc82e825d0168c8b0e2ea92afdda2f3498da4f380883e56dd515cd9",
+      "path": "tests/parakeet/dense-scalar-where-numerics-amd/Contracts.cs",
+      "hits": [
+        "CheckFailure(string? exactMessage = null)",
+        "Failure(ExecutionOptions? opts = null)",
+        "Failure(string? message = null)"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "edd4cf6e9bc9eccb1154df66f9e26419f0c28ebe789962d1d2618d85c1802832",
+        "source": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/bundle/source/consumer/Contracts.cs",
+        "source_sha256": "9f03a65e6bc82e825d0168c8b0e2ea92afdda2f3498da4f380883e56dd515cd9",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "a2596635854142679b126845bf8cb779d5650aa66fdee8ad330f5c76844b5bfa",
+      "path": "tests/parakeet/dense-scalar-where-numerics-amd/Driver.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/closed.json",
+        "closure_sha256": "edd4cf6e9bc9eccb1154df66f9e26419f0c28ebe789962d1d2618d85c1802832",
+        "source": "artifacts/parakeet-dense-scalar-where-numerics-amd-20260924/bundle/source/consumer/Driver.cs",
+        "source_sha256": "a2596635854142679b126845bf8cb779d5650aa66fdee8ad330f5c76844b5bfa",
+        "passed": true
+      }
+    },
+    {
+      "sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+      "path": "tests/parakeet/dense-scalar-where-balanced-codegen/QualifiedSetup.cs",
+      "hits": [
+        "Text(string fallback = \"\")"
+      ],
+      "evidence": {
+        "closure": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/closed.json",
+        "closure_sha256": "ef63ec76aaf45d9df155de015b660b606e6e106446b5e6916c2cd3c048942457",
+        "source": "artifacts/parakeet-dense-scalar-where-balanced-codegen-amd-20260924/bundle/source/consumer/QualifiedSetup.cs",
+        "source_sha256": "613636fa19b0a1409fd467e79737a1fb0fd56c7b6fb6c5b5a068b86f842047a1",
+        "passed": true
+      }
+    }
+  ]
+}

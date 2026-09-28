@@ -11,12 +11,14 @@ public class FusedTemporaryReleaseTests
 
     static int[] Bits(ITensor tensor) => ((Tensor<float>)tensor).ToArray().Select(BitConverter.SingleToInt32Bits).ToArray();
 
-    [Theory]
+    [SkippableTheory]
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(2)]
     public void BatchedProductIsReclaimedWithoutChangingArithmeticOrReturnedValues(int mode)
     {
+        Skip.If(mode == 2 && !System.Runtime.Intrinsics.X86.Fma.IsSupported,
+            "Explicit intrinsic mode requires FMA.");
         var options = mode == 0 ? ExecutionOptions.Scalar : mode == 1 ? ExecutionOptions.Simd : ExecutionOptions.Intrinsics;
         var a = Input(new[] { 1,2,3,4 }, 5);
         var b = Input(new[] { 1,2,4,5 }, 7);

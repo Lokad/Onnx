@@ -185,7 +185,8 @@ public class OwnedPackedWeightTests
     [InlineData("parallel")]
     public void LogicalFallbackRemainsBitExact(string mode)
     {
-        Skip.If(mode == "intrinsics" && !Fma.IsSupported, "Explicit intrinsic mode requires FMA.");
+        Skip.If((mode == "intrinsics" || mode == "parallel") && !Fma.IsSupported,
+            "Explicit intrinsic and parallel presets require FMA.");
         float[] values = Values(7 * 33); var packed = new OwnedPackedTensor(values, 7, 33);
         var input = new DenseTensor<float>(Values(3 * 7), new[] { 3, 7 });
         var options = mode switch { "scalar" => TensorExecutionOptions.Scalar, "simd" => TensorExecutionOptions.Simd,

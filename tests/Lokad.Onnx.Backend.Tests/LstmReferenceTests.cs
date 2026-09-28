@@ -52,7 +52,9 @@ public class LstmReferenceTests
         string[]? acts = attrs.TryGetProperty("activations", out var a) ? a.EnumerateArray().Select(x => x.GetString()!).ToArray() : null;
         float? clip = attrs.TryGetProperty("clip", out var c) ? c.GetSingle() : null;
         bool coupled = attrs.TryGetProperty("input_forget", out var f) && f.GetInt32() != 0;
-        var options = mode == 0 ? ExecutionOptions.Scalar : mode == 1 ? ExecutionOptions.Simd : ExecutionOptions.Intrinsics;
+        // Keep the reversed-storage native comparisons in the scalar CI lane.
+        var options = mode == 0 ? ExecutionOptions.Scalar : mode == 1 ? ExecutionOptions.Simd
+            : System.Runtime.Intrinsics.X86.Fma.IsSupported ? ExecutionOptions.Intrinsics : ExecutionOptions.Scalar;
         var pool = new TensorBufferPool();
         var retained = new List<(Tensor<float> Tensor, float[] Values)>();
         var expected = item.GetProperty("outputs").EnumerateArray().ToArray();

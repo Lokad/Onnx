@@ -59,7 +59,9 @@ public class EncoderFoundationEdgeTests
         var before = (long[])raw.Clone();
         var pads = DenseTensor<long>.OfValues(new long[] { 1, -1, 0, 2 });
         var fill = new DenseTensor<long>(new[] { -high }, Array.Empty<int>());
-        var opts = layout == 0 ? ExecutionOptions.Scalar : layout == 1 ? ExecutionOptions.Simd : ExecutionOptions.Intrinsics;
+        // Layout 2 must still exercise reversed storage when intrinsics are disabled.
+        var opts = layout == 0 ? ExecutionOptions.Scalar : layout == 1 ? ExecutionOptions.Simd
+            : System.Runtime.Intrinsics.X86.Fma.IsSupported ? ExecutionOptions.Intrinsics : ExecutionOptions.Scalar;
         var result = CPUExecutionProvider.Pad(data, pads, fill, "constant", null, null, opts);
         Assert.Equal(OpStatus.Success, result.Status);
         var output = (Tensor<long>)result.Outputs[0];
