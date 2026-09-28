@@ -14,6 +14,37 @@ from run import BASE, APP
 REVISION = '2e2543fbe9fae542f921d47a72d21d5a4ef0b710'
 
 
+def retained_native_dispatch():
+    base = ROOT/'artifacts/parakeet-ort-activation-review-20260926'
+    assert pin(base/'closed.json')['sha256'] == '41f851c4e473856383c6d51f7b5a0e86d5f0ff8c47947df1f4176b35e2301fc3'
+    proof = read(base/'closed.json'); assert proof['passed']
+    for name, wanted in proof['files'].items():
+        assert pin(base/name) == wanted, name
+    value = read(base/'analysis.json')
+    assert value['passed'] and value['source_revision']==REVISION
+    for name, wanted in value['raw_inputs'].items():
+        assert pin(ROOT/name) == wanted, name
+    old = ROOT/'artifacts/parakeet-ort-native-samples-20260924/collected/requests/result.json'
+    new = native.BASE/'collected/control/requests/result.json'
+    collection = native.BASE/'collected/collection.json'
+    assert pin(collection)==read(native.BASE/'closed.json')['collection']
+    assert pin(new)==read(collection)['files']['control/requests/result.json']
+    a,b = read(old),read(new)
+    ignored = {'records','manifest_sha256','setup_seconds'}
+    assert {k:v for k,v in a.items() if k not in ignored} == {k:v for k,v in b.items() if k not in ignored}
+    ignored = {'seconds','start_ticks','end_ticks'}
+    assert len(a['records'])==len(b['records'])==80
+    assert all({k:v for k,v in x.items() if k not in ignored}=={k:v for k,v in y.items() if k not in ignored}
+               for x,y in zip(a['records'],b['records']))
+    binary = b['native_binaries']['onnxruntime_pybind11_state.cpython-312-x86_64-linux-gnu.so']
+    assert {k:binary[k] for k in ['bytes','sha256']}==value['binary']
+    assert value['leaf']['name']=='MlasSiluKernelAvx512F' and not value['per_node_sample_join']
+    return dict(closure=pin(base/'closed.json'),old_result=pin(old),new_result=pin(new),
+        binary=value['binary'],leaf=value['leaf'],same_execution_settings=True,
+        all_80_nonclock_records_equal=True,per_node_sample_join=False,
+        historical_sample_timings_reused=False)
+
+
 def main():
     proof = read(RESULT/'closed.json')
     assert proof['passed'] and proof['analysis'] == pin(RESULT/'analysis.json')
@@ -89,12 +120,13 @@ def main():
         graph_review=pin(graph_review/'closed.json'),graph=pin(graph_file),sources=sources,
         managed_sources={n:pin(ROOT/n) for n in ['src/Lokad.Onnx/CPUExecutionProvider.Elementwise.cs','src/Lokad.Onnx/Zzz.SigmoidRational.cs']},
         groups=groups,records=records,source=pin(Path(__file__)),
-        observed_fusion=True,native_leaf_sampled=False,managed_jit_sampled=False,
+        observed_fusion=True,retained_native_dispatch=retained_native_dispatch(),
+        current_per_node_native_sampling=False,managed_jit_sampled=False,
         cause_not_yet_isolated='The measured aggregate includes arithmetic, two separate graph operations and intermediate storage. Fusion alone is not proven to explain the excess.',
-        source_route='QuickGelu alpha=1 calls MlasComputeSilu in 4096-element tasks; platform dispatch can select MlasSiluKernelAvx512F. Exact native leaf and managed generated loop require targeted runtime evidence before a kernel-dependent intervention.')
+        source_route='QuickGelu alpha=1 calls MlasComputeSilu in 4096-element tasks. Retained runtime samples prove MlasSiluKernelAvx512F on the identical native binary/workload. Reuse its identity, not historical timing shares. Bind the current managed generated loop and separate arithmetic from intermediate storage before selecting an intervention.')
     with (TOOLS/'activation-breakdown-20260928.json').open('x',encoding='utf8') as stream:
         json.dump(value,stream,indent=2)
-    print(json.dumps(dict(passed=True,groups=groups,native_leaf_sampled=False)))
+    print(json.dumps(dict(passed=True,groups=groups,retained_native_leaf_verified=True)))
 
 
 if __name__ == '__main__': main()
