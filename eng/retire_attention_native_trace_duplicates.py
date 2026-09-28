@@ -43,18 +43,30 @@ assert read(base/'state.json')['complete'] and read(base/'state.json')['code']==
 assert all(not live(i) for i in {proof['terminal_owners']!r})
 assert pin(base/'collection.json')=={proof['collection']!r}
 files={files!r}
-protected=set();manifests={{}}
+from functools import lru_cache
+target_ids={{((base/n).stat().st_dev,(base/n).stat().st_ino) for n in files}}
+assert len(target_ids)==3
+@lru_cache(maxsize=65536)
+def references_target(name):
+ try:
+  info=Path(name).stat()
+  return (info.st_dev,info.st_ino) in target_ids
+ except FileNotFoundError:return False
+assert all(references_target(str(base/n)) for n in files)
+assert not references_target(str(base/'remote.py'))
+protected=[];manifests={{}}
 for folder in Path('/dev/shm').glob('lokad-*'):
  for name in ['payload.json','stage.json','spec.json']:
   path=folder/name
   if not path.exists():continue
   value=read(path);manifests[str(path)]=pin(path)
-  protected.update(str((folder/n).resolve()) for n in value.get('files',{{}}))
-  protected.update(str(Path(n).resolve()) for n in value.get('external',{{}}))
+  for referenced in [*(str(folder/n) for n in value.get('files',{{}})),*value.get('external',{{}})]:
+   if references_target(referenced):protected.append(dict(manifest=str(path),input=referenced))
+assert not protected,protected
 for name,wanted in files.items():
  path=base/name
  assert path.resolve()==path and path.parent==base/'profile' and path.suffix=='.json'
- assert not path.is_symlink() and path.stat().st_nlink==1 and str(path) not in protected
+ assert not path.is_symlink() and path.stat().st_nlink==1
  assert pin(path)==wanted
 '''
     prospective = run.ssh(common + '''
@@ -66,7 +78,9 @@ print(json.dumps(dict(passed=True,manifests=manifests,
     save(OUT/'prepared.json', dict(**prospective, closure=pin(BASE/'closed.json'),
          files=files, source=pin(Path(__file__)), archive=pin(BASE/'results.tar.gz'),
          policy='Only unreferenced terminal VM copies are removed; complete local traces and their archive remain immutable.',
-         initial_read_only_refusal='The native helper has no idle function; the import failed before any mutation. The corrected probe uses the existing offload worker process-idle guard.'))
+         initial_read_only_refusals=[
+             'The native helper has no idle function; the import failed before any mutation. Use the existing offload worker process-idle guard.',
+             'Repeated path resolution exceeded the read-only SSH limit. Remote inspection confirmed no remaining recent worker and all three traces present. Compare cached resolved file identities instead, retaining every manifest and input check.']))
     result = run.ssh(common + f'''
 assert manifests=={prospective['manifests']!r}
 before=dict(available=psutil.virtual_memory().available,tmpfs=psutil.disk_usage(base).free)
