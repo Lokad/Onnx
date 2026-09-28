@@ -1,0 +1,428 @@
+{
+  "closure": {
+    "bytes": 285,
+    "sha256": "0aed685ea7e6db695d22f7e59e5659461cfb6ffb4148e09f5108ee8f253e37fd"
+  },
+  "passed": true,
+  "candidate": {
+    "Lokad.Onnx.dll": {
+      "bytes": 830976,
+      "sha256": "c471f5d1ead5889b00b141ce34f2a7689cfe179fbf513da4ce5db84ed01ce277"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea"
+    }
+  },
+  "previously_profiled_product": {
+    "Lokad.Onnx.dll": {
+      "bytes": 830464,
+      "sha256": "4e97e2ae97e534b99281a361790ac35865b3d8c6171293f36109b24a354eec57"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea"
+    }
+  },
+  "consumer": {
+    "bytes": 50176,
+    "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+  },
+  "observed_data": {
+    "bytes": 153600,
+    "sha256": "51b6d2bb72640a99d8ed4e97334525dde8be60ac1ecb3c25ea690956bfcab2a2"
+  },
+  "original_observer_review": {
+    "bytes": 2120,
+    "sha256": "1f6ff9bb6fe68525dad1a49fc1273406cff86a05d6e5f44a2256e040f0b9a04a"
+  },
+  "original_observer_inventory": {
+    "bytes": 4635915,
+    "sha256": "2622f98fa9503530fb0904a5d59183c53a413c6629a19334a00fc1517124747a"
+  },
+  "previous_compatibility": {
+    "bytes": 285,
+    "sha256": "53225d7c463285e3cf8fd2dd4135ca4ffa30fc66df0a78d68a1df223f8918ec1"
+  },
+  "preserved_observer_methods": [
+    {
+      "passed": true,
+      "methods": 164,
+      "unchanged": 164,
+      "byte_identical": true,
+      "flags_equal": true,
+      "public_surface_equal": true
+    },
+    {
+      "passed": true,
+      "original_methods": 697,
+      "unchanged": 696,
+      "changed": "Lokad.Onnx.ParakeetTranscriber::Execute::System.Collections.Generic.IReadOnlyDictionary`2[System.String,Lokad.Onnx.ITensor] Execute(Lokad.Onnx.GraphExecution, System.Collections.Generic.Dictionary`2[System.String,Lokad.Onnx.ITensor])",
+      "added_helpers": 50,
+      "original_body_recovered": true,
+      "observer_helpers_exact": true,
+      "constructor_unchanged": true,
+      "original_flags_equal": true,
+      "public_surface_equal": true
+    }
+  ],
+  "data_methods_exact": 697,
+  "data_method_flags_equal": true,
+  "public_surfaces_and_assembly_attributes_equal": true,
+  "observer_rebuilt": false,
+  "inference_calls": 0,
+  "fresh_profile_measured": false,
+  "original_failed_contracts_remain_failed": true,
+  "actual_root_qualification_required": true,
+  "selected_next_optimization": null,
+  "inputs": {
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-review.json": {
+      "bytes": 2120,
+      "sha256": "1f6ff9bb6fe68525dad1a49fc1273406cff86a05d6e5f44a2256e040f0b9a04a"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/build-collection.json": {
+      "bytes": 6009,
+      "sha256": "6c7beee933fec670993f77b0c4465128816f12b2919cbf6b4579b6516c22cafd"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/built.json": {
+      "bytes": 3258,
+      "sha256": "698edf2009c6c0fe28cb0d04cb9ecb1e7f0196bc4624e44014a89b6e91ebd8e9"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/FastBertTokenizer.dll": {
+      "bytes": 50688,
+      "sha256": "ebf3ee714d2da1dbfc73a64e5c11e31235078e547344e9ab9904f41900410aa9"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/Google.Protobuf.dll": {
+      "bytes": 497304,
+      "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/Lokad.Onnx.dll": {
+      "bytes": 822784,
+      "sha256": "49901366484570493b7a42028e5c5458f30fe2c1703a01335b68d9a5f9a1fea9"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/Lokad.Tokenizers.dll": {
+      "bytes": 125952,
+      "sha256": "e235ccf535cea98cf835084d55d8b7912eb928760d6e31614b00c900ce2fed30"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/SampledAudio.deps.json": {
+      "bytes": 2596,
+      "sha256": "536394d4a715dd904001254d4e502cc37c953f283218713017f3621df8279314"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/SampledAudio.dll": {
+      "bytes": 50176,
+      "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/SampledAudio.runtimeconfig.json": {
+      "bytes": 330,
+      "sha256": "9950d4583cfc9a106857c0d5b8a75b53e8774852b57b80bc3823a74d44a4d87f"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-control/SixLabors.ImageSharp.dll": {
+      "bytes": 2100736,
+      "sha256": "609a57965d0a7b5ccfb79d919ea7384e7ec86c03266b0390a19bd5f2104bc353"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/FastBertTokenizer.dll": {
+      "bytes": 50688,
+      "sha256": "ebf3ee714d2da1dbfc73a64e5c11e31235078e547344e9ab9904f41900410aa9"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/Google.Protobuf.dll": {
+      "bytes": 497304,
+      "sha256": "bf6545a2f705e45724257cee1abe554c2c5dbea5cc4252dfc414fe6d92953cd2"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/Lokad.Onnx.Data.dll": {
+      "bytes": 153600,
+      "sha256": "51b6d2bb72640a99d8ed4e97334525dde8be60ac1ecb3c25ea690956bfcab2a2"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/Lokad.Onnx.dll": {
+      "bytes": 822784,
+      "sha256": "49901366484570493b7a42028e5c5458f30fe2c1703a01335b68d9a5f9a1fea9"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/Lokad.Tokenizers.dll": {
+      "bytes": 125952,
+      "sha256": "e235ccf535cea98cf835084d55d8b7912eb928760d6e31614b00c900ce2fed30"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/SampledAudio.deps.json": {
+      "bytes": 2596,
+      "sha256": "536394d4a715dd904001254d4e502cc37c953f283218713017f3621df8279314"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/SampledAudio.dll": {
+      "bytes": 50176,
+      "sha256": "38ab5c7e65aa00ace50e8704348830286047e0c96ebc0a04b66c6e54d063899c"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/SampledAudio.runtimeconfig.json": {
+      "bytes": 330,
+      "sha256": "9950d4583cfc9a106857c0d5b8a75b53e8774852b57b80bc3823a74d44a4d87f"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/runtime-observed/SixLabors.ImageSharp.dll": {
+      "bytes": 2100736,
+      "sha256": "609a57965d0a7b5ccfb79d919ea7384e7ec86c03266b0390a19bd5f2104bc353"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/build-collected/inventory/instructions.json": {
+      "bytes": 4635915,
+      "sha256": "2622f98fa9503530fb0904a5d59183c53a413c6629a19334a00fc1517124747a"
+    },
+    "artifacts/parakeet-packed-final-row-profile-amd-20260925/bundle/evidence/original-observer-instructions.json": {
+      "bytes": 4760522,
+      "sha256": "6b0a9df024d2b016be7655b1b4ca20a426d0e3132ed7ae194a3fe197fc491e78"
+    },
+    "tests/parakeet/packed-final-row-profile-amd/compiled_scope.py": {
+      "bytes": 3490,
+      "sha256": "2b805b136c05b5ea207e63b5c4265751033bb5872fcc9270b4db4a956e46a61e"
+    },
+    "artifacts/parakeet-direct-depthwise-build-v2-amd-20260925/closed.json": {
+      "bytes": 317258,
+      "sha256": "26e4da0a66bf37aeda09dd5b0a5144817585ab7311cf87f85c4bb9ded894d171"
+    },
+    "artifacts/parakeet-direct-depthwise-build-v2-amd-20260925/build-review.json": {
+      "bytes": 7195,
+      "sha256": "e7bcf6e2c94c2f99651ba0b45b4f59b289856b3e6eac2d7732d5bae6270c6c06"
+    },
+    "artifacts/parakeet-direct-depthwise-build-v2-amd-20260925/build-collected/logs/instructions.json": {
+      "bytes": 29616780,
+      "sha256": "5b16fee11c08c504edd82172df0a89fc4b4ac36cb39ff87d502b121ad2e2b017"
+    },
+    "artifacts/parakeet-owned-batch-isolation-build-amd-20260925/closed.json": {
+      "bytes": 316950,
+      "sha256": "5dd53e90d4924a36bb6f43cc80fa939e9236492949542dcf659dc056d4ea3860"
+    },
+    "artifacts/parakeet-owned-batch-isolation-build-amd-20260925/build-review.json": {
+      "bytes": 4950,
+      "sha256": "c0e00a567ec1c16088695b5c66e765286d3ce578cb4c6174ecb67a79310e9a1f"
+    },
+    "artifacts/parakeet-owned-batch-isolation-build-amd-20260925/build-collected/logs/instructions.json": {
+      "bytes": 29644238,
+      "sha256": "c1cc76277a5142356e46e845ede71c77b47876ed575fa2e5ebfdd82e6a370bff"
+    },
+    "artifacts/parakeet-owned-batch-isolation-build-amd-20260925/build-collected/runtime/Lokad.Onnx.dll": {
+      "bytes": 825344,
+      "sha256": "e07a45189b348fe55ce76300415c6c35ba6a2bc0d224f1fc13b0b92c303bccba"
+    },
+    "artifacts/parakeet-owned-batch-isolation-build-amd-20260925/build-collected/runtime/Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "01e9e7842f5e9861de3d6dc737db947c8a38f1a07038b403d5482ec676e810f1"
+    },
+    "artifacts/parakeet-owned-batch-isolation-root-policy-amd-20260925/closed.json": {
+      "bytes": 216179,
+      "sha256": "c77ef606c76508144c5656bdbe48aeac8948ce28396c8bee645587d31609c475"
+    },
+    "artifacts/parakeet-owned-batch-isolation-root-policy-amd-20260925/analysis.json": {
+      "bytes": 7072,
+      "sha256": "061d227320963d5c5684a5d9e07cf4c459ce304325702c7eb931f08b5131935d"
+    },
+    "artifacts/parakeet-owned-batch-isolation-root-policy-amd-20260925/collected/inventory/instructions.json": {
+      "bytes": 29521848,
+      "sha256": "2b17eabae9521898ba0c2b5252235b3168fe392e40c72ea9839a495791311529"
+    },
+    "artifacts/parakeet-owned-batch-isolation-root-policy-amd-20260925/collected/runtime/Lokad.Onnx.dll": {
+      "bytes": 825344,
+      "sha256": "f3992f40d889a932cd0d15e0323564db801a308f4b24d1848731af30ba3c19f6"
+    },
+    "artifacts/parakeet-owned-batch-isolation-root-policy-amd-20260925/collected/runtime/Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "a8e0b583d6cd4f7e01315fd6cef146721cdf2b8ecb5a8d623a43602658bc42b5"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-models-amd-20260927/collected/runtimes/candidate/Lokad.Onnx.dll": {
+      "bytes": 827904,
+      "sha256": "ad97b4ad632b3306ea3a39d14549ed98540bc8c2e85953a68d89b453d3ed2fdc"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-models-amd-20260927/collected/runtimes/candidate/Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "29b3f633eec461b1113d23d2626952bddff1a628bdba87bb865ef52b6da6dc3d"
+    },
+    "tests/parakeet/decoder-lstm-layout-profile-review/review.py": {
+      "bytes": 5108,
+      "sha256": "ddee08fc4ac348dad861b33451e8ec9a7b203f20f9177896cdde77794d71053e"
+    },
+    "tests/parakeet/owned-batch-isolation-profile-amd/reuse.py": {
+      "bytes": 7469,
+      "sha256": "3fdd23d12b1d36e936bd4430e4e4e4857d9c2983db70a0dac0240edf40f8da56"
+    },
+    "tests/parakeet/owned-batch-isolation-profile-amd/run.py": {
+      "bytes": 1907,
+      "sha256": "65aab71c3fa4e6e4e6ff734643585e1c2b7d96fdad552a212f553ee76f4793c4"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-contracts-v3-amd-20260927/failed.json": {
+      "bytes": 463637,
+      "sha256": "59f6f738dcd71beec865e46c511a9bd151207a26d2901c259f015b387a27f63f"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-contracts-v3-amd-20260927/collected/inventory/instructions.json": {
+      "bytes": 29850974,
+      "sha256": "9502934c877b2aea24a7c26e9b8ea9901c7606bf2b7ca9e4f5c8713aadccb261"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-models-amd-20260927/closed.json": {
+      "bytes": 895237,
+      "sha256": "1acb1d884eb5293e0487e1b34d8c842b7240823040e63d6dc2a043ec89f7a111"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-models-amd-20260927/analysis.json": {
+      "bytes": 466701,
+      "sha256": "71596d3e12a762218dc634bf6dd3ca841fa77015eb52768da3ed552239489b53"
+    },
+    "artifacts/parakeet-pointwise-tail-models-amd-20260927/collected/runtimes/candidate/Lokad.Onnx.dll": {
+      "bytes": 830464,
+      "sha256": "7cac67880fa9a4d519ac18e5887f47f48f0f14903bdf74cc6561b45c851e4f27"
+    },
+    "artifacts/parakeet-pointwise-tail-models-amd-20260927/collected/runtimes/candidate/Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "dd56902f44c640b9226e2e7ee05d1d3e8dc025f59471afb2261194715ca5e311"
+    },
+    "tests/parakeet/pointwise-tail-profile-review/review.py": {
+      "bytes": 6941,
+      "sha256": "433e7d0467390830ed85e876a314b8232cbb810083b0876cc348ded680a84a4c"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-profile-review-20260927/closed.json": {
+      "bytes": 285,
+      "sha256": "7404ed13847add7a94c25c3bc1dc09a55f3c23b68149685697c9784ef4871922"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-profile-review-20260927/analysis.json": {
+      "bytes": 12284,
+      "sha256": "361f3cff0a127c4a1968a7c75e26d9d9bb0fc83bc06f191e2a0d4f800d98b372"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-root-amd-20260927/closed.json": {
+      "bytes": 226326,
+      "sha256": "efb99eea455647c64bbe0811c1b7d46387add59049ac81e48a926b250e7c42da"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-root-amd-20260927/analysis.json": {
+      "bytes": 7033,
+      "sha256": "45c90312ec2ded348ab24377c159c4c33e03598c53f3abd2bfdee9bb48f3eb4f"
+    },
+    "artifacts/parakeet-decoder-lstm-layout-root-amd-20260927/collected/inventory/instructions.json": {
+      "bytes": 29628857,
+      "sha256": "b85de41a288097b1ff82b34f50979f0445f93058d2c0e513f61b61dc288bbd0f"
+    },
+    "artifacts/parakeet-pointwise-tail-contracts-amd-20260927/closed.json": {
+      "bytes": 289825,
+      "sha256": "58cb40269af7cda8252007bc059f04ccd4e59697d258e3affbbe48329b8208d9"
+    },
+    "artifacts/parakeet-pointwise-tail-contracts-amd-20260927/build-review.json": {
+      "bytes": 4753,
+      "sha256": "51090680e6b172287122ef15c5f7e5a3ae2eaa41f083a76cdcb314f418ddc227"
+    },
+    "artifacts/parakeet-pointwise-tail-contracts-amd-20260927/build-collected/logs/instructions.json": {
+      "bytes": 29820597,
+      "sha256": "4e472fe4c5388d626ccb9cc6abb6db77a60e391b848ab4ae94967c7c98275614"
+    },
+    "artifacts/parakeet-pointwise-tail-models-amd-20260927/closed.json": {
+      "bytes": 971679,
+      "sha256": "f773277daa848121c199c58e67bce3777677c2ee2654fbe26250d02719155960"
+    },
+    "artifacts/parakeet-pointwise-tail-models-amd-20260927/analysis.json": {
+      "bytes": 466700,
+      "sha256": "93af3e7a1f24088b33b07364e8d1c31f79f9f52f7321ee32b34a2a834296b08d"
+    },
+    "artifacts/parakeet-attention-owned-models-amd-20260928/collected/runtimes/candidate/Lokad.Onnx.dll": {
+      "bytes": 830464,
+      "sha256": "ee5218dbab0a970b0f20f273fc2a839bb9b96e9d5438791529eb11c731d66859"
+    },
+    "artifacts/parakeet-attention-owned-models-amd-20260928/collected/runtimes/candidate/Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "1ba343fd8b00fd85bddb33c57aaebf4217431955c40bbe45576448467e59c99f"
+    },
+    "tests/parakeet/attention-owned-profile-review/review.py": {
+      "bytes": 7229,
+      "sha256": "229b24a4507a907e5a6461759ad2d4935f459bc44f96ccd30fd661f92ead504f"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-review-20260927/closed.json": {
+      "bytes": 285,
+      "sha256": "e234eec85d6041f804b64fcec58d1978c8eed4e64dd56420bc0a65d25d351f99"
+    },
+    "artifacts/parakeet-pointwise-tail-profile-review-20260927/analysis.json": {
+      "bytes": 15015,
+      "sha256": "a200ec16f71ab227913a1fa9032d2c21cc1a1313dabf8fe9aae59a0f9caedeac"
+    },
+    "artifacts/parakeet-pointwise-tail-root-amd-20260927/closed.json": {
+      "bytes": 229795,
+      "sha256": "fc11676361a50ef613f783fcb51e4ead488c9c2ee34a3edddcbb561f67037e47"
+    },
+    "artifacts/parakeet-pointwise-tail-root-amd-20260927/analysis.json": {
+      "bytes": 7032,
+      "sha256": "2dcccb33e65bf2dcd14e5f6142fcf07b6275d605a7d4dce4d15f76312cc939dd"
+    },
+    "artifacts/parakeet-pointwise-tail-root-amd-20260927/collected/inventory/instructions.json": {
+      "bytes": 29729937,
+      "sha256": "7b7f23d220878840616a081ce45c2f62592f1cdb8ae9da6853388e8b217a28e2"
+    },
+    "artifacts/parakeet-attention-owned-build-amd-20260928/closed.json": {
+      "bytes": 324767,
+      "sha256": "a293403a5dc3a7bdabb7fdc448470feea2b54dbf139d98b7b3f9ed0eef39854f"
+    },
+    "artifacts/parakeet-attention-owned-build-amd-20260928/build-review.json": {
+      "bytes": 4013,
+      "sha256": "2a1bf8e3c2defbf806dd4aef0f409d6675ff3ea816f79127fd928e09a2e1da64"
+    },
+    "artifacts/parakeet-attention-owned-build-amd-20260928/bundle/spec.json": {
+      "bytes": 85287,
+      "sha256": "d3bec8de8ff9068e5410c53501e5f5227ed31e685b224acb599acc3f78b67602"
+    },
+    "artifacts/parakeet-attention-owned-build-amd-20260928/build-collected/logs/instructions.json": {
+      "bytes": 29815902,
+      "sha256": "e9d0ccafe46310d5e11c8c042447d1246c88bf42ee462f88972ab0d0063e9a66"
+    },
+    "artifacts/parakeet-attention-owned-models-amd-20260928/closed.json": {
+      "bytes": 967838,
+      "sha256": "2d64fad91c26c00ffe7cd003aa128efc4bc92280da96a9bb805a8e2b93412177"
+    },
+    "artifacts/parakeet-attention-owned-models-amd-20260928/analysis.json": {
+      "bytes": 466699,
+      "sha256": "e1d39828723a3543d60d13ef5530eb895b32b42f350ded42ac7e5104f6c69d33"
+    },
+    "artifacts/parakeet-transpose-axis-models-amd-20260928/collected/runtimes/candidate/Lokad.Onnx.dll": {
+      "bytes": 830976,
+      "sha256": "c471f5d1ead5889b00b141ce34f2a7689cfe179fbf513da4ce5db84ed01ce277"
+    },
+    "artifacts/parakeet-transpose-axis-models-amd-20260928/collected/runtimes/candidate/Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea"
+    },
+    "tests/parakeet/transpose-axis-profile-review/review.py": {
+      "bytes": 7381,
+      "sha256": "fc05b5197a62ff1bb0cbc77445b9cf72c0bde6b7107cb3404eb647abd91b3af9"
+    },
+    "artifacts/parakeet-attention-owned-profile-review-20260928/closed.json": {
+      "bytes": 285,
+      "sha256": "53225d7c463285e3cf8fd2dd4135ca4ffa30fc66df0a78d68a1df223f8918ec1"
+    },
+    "artifacts/parakeet-attention-owned-profile-review-20260928/analysis.json": {
+      "bytes": 17775,
+      "sha256": "7e10b0b068519caed7a18da3efdeb5cdc0d8bbbc2e25c108f81c03b5501d18b0"
+    },
+    "artifacts/parakeet-attention-owned-root-recovery-amd-20260928/closed.json": {
+      "bytes": 234966,
+      "sha256": "ee4a38ff671cc3fd8cd608c0dc3008f5c1b99f61ba6c139f3deeaf0e9039305e"
+    },
+    "artifacts/parakeet-attention-owned-root-recovery-amd-20260928/analysis.json": {
+      "bytes": 7035,
+      "sha256": "65d2049fe9366c97686c447aeb4894626591cffc567fabd25834dfeb8ae55a7e"
+    },
+    "artifacts/parakeet-attention-owned-root-recovery-amd-20260928/collected/inventory/instructions.json": {
+      "bytes": 29736819,
+      "sha256": "79e8344f6e0a45217e8228ec4e507a272869e450bec7300c7215cfee0f8ac5e7"
+    },
+    "artifacts/parakeet-transpose-axis-build-recovery-amd-20260928/closed.json": {
+      "bytes": 332142,
+      "sha256": "c0c063bb3f73eed2d8d7372d17dd1da3ce4f6a962e190ef101b504fb245e4ecd"
+    },
+    "artifacts/parakeet-transpose-axis-build-recovery-amd-20260928/build-review.json": {
+      "bytes": 4378,
+      "sha256": "f41cc8c3658a43c8348150f88df123691d6fdcee806a2844949aa3994c790d45"
+    },
+    "artifacts/parakeet-transpose-axis-build-recovery-amd-20260928/bundle/spec.json": {
+      "bytes": 85735,
+      "sha256": "daab025c24afd84642ad7aa674f49b8b6add425e09026086efc17453950f214b"
+    },
+    "artifacts/parakeet-transpose-axis-build-recovery-amd-20260928/build-collected/logs/instructions.json": {
+      "bytes": 29830588,
+      "sha256": "646adce2d58cd97ee7daf5dbf40330e1423f3c3230898ec9cb72056ce3fd8e4c"
+    },
+    "artifacts/parakeet-transpose-axis-models-amd-20260928/closed.json": {
+      "bytes": 966540,
+      "sha256": "8568a2299a820273b7357eaaba9c151bc83121bfc781759afbe9142b8d7b5984"
+    },
+    "artifacts/parakeet-transpose-axis-models-amd-20260928/analysis.json": {
+      "bytes": 466700,
+      "sha256": "5d564e904876d8fbc64c2fa2f9834d47653b84bc84d5f89a923bf2b72212f514"
+    }
+  }
+}
