@@ -19,7 +19,7 @@ BASE=ROOT/'artifacts/parakeet-attention-owned-pyannote-app-amd-20260928'
 OLD=ROOT/'artifacts/parakeet-observed-dense-where-pyannote-app-amd-20260924'
 APP_PAYLOAD=OLD/'collected'
 GRAPHS=ROOT/'artifacts/parakeet-attention-owned-graphs-amd-20260928'
-GRAPH_DIGEST=None
+GRAPH_DIGEST='0878b709926c77a55eaf82e63194e6d1379e1c877cfd11b7c0ab997e142eb613'
 PRIOR=dict(models=ROOT/'artifacts/parakeet-attention-owned-pyannote-amd-20260928',
     parakeet=ROOT/'artifacts/parakeet-attention-owned-models-amd-20260928',
     shared=ROOT/'artifacts/parakeet-attention-owned-shared-amd-20260928',

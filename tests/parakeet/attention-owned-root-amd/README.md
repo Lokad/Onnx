@@ -1,9 +1,9 @@
 # Qualify the measured attention preparation change as the release package
 
 This adapter is a local draft. The original eight-case graph comparison is
-running; complete Pyannote application timing follows its admission. Both
-closure digests remain unset, so source application and preparation refuse to
-run. Only actual admitted results can satisfy these prerequisites.
+admitted at 0878b709, with all 24 controls and eight regression gates passing.
+That actual closure is bound. Complete Pyannote application admission remains
+unset, so source application and preparation still refuse to run.
 
 ORT prepares constant attention weights once. Scoped capture `5ff17ed5`
 measures 0.817785 seconds of repeated packing for 92 unprepared Lokad attention

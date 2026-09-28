@@ -1,9 +1,10 @@
 # Complete Pyannote release checks for owned attention weights
 
-Preparation requires the actual admitted graph comparison and completed
-Parakeet application/shared/Pyannote correctness chain. The new closure digests
-are deliberately unbound. Retain complete Parakeet models 2d64fad9 and the prior
-qualified Pyannote application 7e0b08fc. Core a6f7d9f9 versus ee5218db shares
+All actual prerequisites are bound. Graph closure 0878b709 admits all 24
+repeatability controls and eight regression gates; Parakeet application 600e9e67,
+shared/e5 0f5d4baa and Pyannote correctness ad6afcc3 pass. All preceding VM owners
+are terminal. Retain complete Parakeet models 2d64fad9 and the prior qualified
+Pyannote application 7e0b08fc. Core a6f7d9f9 versus ee5218db shares
 unchanged Data 1ba343fd and differs only in the preparation-policy method.
 
 Reuse the original AudioBenchmark 7eca033a and NaturalMeetings 79e3e799 consumers,
