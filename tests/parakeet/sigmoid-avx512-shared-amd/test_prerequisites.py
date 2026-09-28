@@ -40,5 +40,13 @@ class Prerequisites(unittest.TestCase):
         args = self.fixture(); args[0]['compiled_scope'][0]['changed'][0] = 'Unrelated::Op::Void Op()'
         with self.assertRaises(AssertionError): validate(*args)
 
+    def test_unrelated_added_method(self):
+        args = self.fixture(); args[0]['compiled_scope'][0]['added'][0] = 'Unrelated::Op::Void Op()'
+        with self.assertRaises(AssertionError): validate(*args)
+
+    def test_added_data_method(self):
+        args = self.fixture(); args[0]['compiled_scope'][1]['added'] = ['Unrelated::Op::Void Op()']
+        with self.assertRaises(AssertionError): validate(*args)
+
 
 if __name__ == '__main__': unittest.main()
