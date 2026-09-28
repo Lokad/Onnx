@@ -355,13 +355,15 @@ where T : unmanaged
 
     /// <summary>
     /// Shared transpose copy: contiguous trailing runs copy whole lines and the
-    /// 4D head-merge face tiles directly; all other shapes keep the odometer over
+    /// axis-1-to-last float faces use matrix tiles; other shapes keep the odometer over
     /// the destination with source stride math, so no iterator objects or
     /// per-element virtual dispatch remain. The source is densified once up front;
     /// the destination must be standard.
     /// </summary>
     static void TransposeInto(Tensor<T> data, DenseTensor<T> destination, int[] perm)
     {
+        // Empty tensors have no faces; do not flatten their potentially large axes.
+        if (destination.Length == 0) return;
         int rank = data.Rank;
         if (rank <= 1)
         {
@@ -406,8 +408,23 @@ where T : unmanaged
             }
             return;
         }
-        // Fast path: the 4D head-merge face (0,2,3,1) is one small 2D rotation
-        // per batch-and-token position, tiled directly instead of odometer-stepped.
+        // Moving axis 1 to the end is a matrix transpose per batch. Use the
+        // existing contiguous-load tile when both axes contain a complete tile.
+        if (rank == 3 && perm[0] == 0 && perm[1] == 2 && perm[2] == 1
+            && typeof(T) == typeof(float) && AblationSwitches.EnableVectorTransposeFaces && Avx.IsSupported
+            && xd.Dimensions[1] >= 8 && xd.Dimensions[2] >= 8 && HasStandardStrides(xd))
+        {
+            unsafe
+            {
+                using var source = xd.Buffer.Pin();
+                using var target = destination.Buffer.Pin();
+                transpose_unsafe_shuffle8x8_lastTwoAxes(xd.Dimensions[0], 1, xd.Dimensions[1], xd.Dimensions[2],
+                    (float*)source.Pointer, (float*)target.Pointer);
+            }
+            return;
+        }
+        // [B,H,S,D] -> [B,S,D,H] collapses to [B,H,S*D] -> [B,S*D,H].
+        // Nonempty dense storage ensures the flattened suffix fits in an int.
         if (rank == 4 && perm[0] == 0 && perm[1] == 2 && perm[2] == 3 && perm[3] == 1 && HasStandardStrides(xd))
         {
             int dimB = xd.Dimensions[0], dimH = xd.Dimensions[1], dimS = xd.Dimensions[2], dimD = xd.Dimensions[3];
@@ -417,7 +434,10 @@ where T : unmanaged
                 {
                     using var source = xd.Buffer.Pin();
                     using var target = destination.Buffer.Pin();
-                    transpose_unsafe_vector8_headMerge(dimB, dimS, dimH, dimD, (float*)source.Pointer, (float*)target.Pointer);
+                    if (dimH >= 8 && dimS * dimD >= 8)
+                        transpose_unsafe_shuffle8x8_lastTwoAxes(dimB, 1, dimH, dimS * dimD, (float*)source.Pointer, (float*)target.Pointer);
+                    else
+                        transpose_unsafe_vector8_headMerge(dimB, dimS, dimH, dimD, (float*)source.Pointer, (float*)target.Pointer);
                 }
                 return;
             }
