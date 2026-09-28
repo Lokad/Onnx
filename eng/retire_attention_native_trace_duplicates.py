@@ -1,0 +1,81 @@
+"""Retire three terminal VM trace duplicates, preserving local originals and archive."""
+import json
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT/'tests/parakeet/ort-diagnosis-amd'))
+import run
+
+BASE = ROOT/'artifacts/parakeet-attention-owned-ort-profile-amd-20260928'
+REMOTE = '/dev/shm/lokad-attention-owned-ort-profile-20260928'
+OUT = ROOT/'artifacts/parakeet-attention-native-trace-retention-20260928'
+pin, read, save = run.pin, run.read, run.write
+
+
+def main():
+    assert not OUT.exists()
+    proof = read(BASE/'closed.json')
+    assert proof['passed'] and pin(BASE/'closed.json')['sha256'] == '4c6668f50986b24517067b3ff88300e9d3a4096f84b9960223e10be7929048c0'
+    assert proof['collection'] == pin(BASE/'collected/collection.json')
+    receipt = read(BASE/'collected/collection.json')
+    assert receipt['terminal'] and receipt['code'] == 0
+    observation = read(BASE/'collected/profile/observation.json')
+    files = {'profile/'+p['file']: {k:p[k] for k in ['bytes','sha256']}
+             for p in observation['profiles'].values()}
+    assert len(files) == 3
+    for name, wanted in files.items():
+        assert pin(BASE/'collected'/name) == receipt['files'][name] == wanted
+    assert proof['transfer'] == pin(BASE/'transfer.json')
+    assert pin(BASE/'results.tar.gz') == read(BASE/'transfer.json')['archive']
+    prelude = run.PRELUDE.replace(run.REMOTE, REMOTE)
+    common = prelude + f'''
+sys.path.insert(0,str(base))
+from remote import live,pin,read,idle
+idle();assert psutil.boot_time()==1789634288.0
+assert base.resolve()==base and base.parent==Path('/dev/shm')
+assert read(base/'state.json')['complete'] and read(base/'state.json')['code']==0
+assert all(not live(i) for i in {proof['terminal_owners']!r})
+assert pin(base/'collection.json')=={proof['collection']!r}
+files={files!r}
+protected=set();manifests={{}}
+for folder in Path('/dev/shm').glob('lokad-*'):
+ for name in ['payload.json','stage.json','spec.json']:
+  path=folder/name
+  if not path.exists():continue
+  value=read(path);manifests[str(path)]=pin(path)
+  protected.update(str((folder/n).resolve()) for n in value.get('files',{{}}))
+  protected.update(str(Path(n).resolve()) for n in value.get('external',{{}}))
+for name,wanted in files.items():
+ path=base/name
+ assert path.resolve()==path and path.parent==base/'profile' and path.suffix=='.json'
+ assert not path.is_symlink() and path.stat().st_nlink==1 and str(path) not in protected
+ assert pin(path)==wanted
+'''
+    prospective = run.ssh(common + '''
+print(json.dumps(dict(passed=True,manifests=manifests,
+ allocated=sum((base/n).stat().st_blocks*512 for n in files),
+ available=psutil.virtual_memory().available,tmpfs=psutil.disk_usage(base).free)))
+''')
+    OUT.mkdir()
+    save(OUT/'prepared.json', dict(**prospective, closure=pin(BASE/'closed.json'),
+         files=files, source=pin(Path(__file__)), archive=pin(BASE/'results.tar.gz'),
+         policy='Only unreferenced terminal VM copies are removed; complete local traces and their archive remain immutable.'))
+    result = run.ssh(common + f'''
+assert manifests=={prospective['manifests']!r}
+before=dict(available=psutil.virtual_memory().available,tmpfs=psutil.disk_usage(base).free)
+physical=sum((base/n).stat().st_blocks*512 for n in files)
+assert physical=={prospective['allocated']!r}
+for name in files:(base/name).unlink()
+assert all(not (base/name).exists() for name in files)
+print(json.dumps(dict(passed=True,files=len(files),allocated_reclaimed=physical,before=before,
+ after=dict(available=psutil.virtual_memory().available,tmpfs=psutil.disk_usage(base).free))))
+''')
+    for name, wanted in files.items():assert pin(BASE/'collected'/name) == wanted
+    assert pin(BASE/'results.tar.gz') == read(BASE/'transfer.json')['archive']
+    save(OUT/'closed.json', dict(**result, preparation=pin(OUT/'prepared.json'),
+         all_local_originals_and_archive_retained=True))
+    print(json.dumps(result))
+
+
+if __name__ == '__main__': main()
