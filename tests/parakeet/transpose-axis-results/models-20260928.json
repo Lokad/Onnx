@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "model_closure": {
+    "bytes": 966540,
+    "sha256": "8568a2299a820273b7357eaaba9c151bc83121bfc781759afbe9142b8d7b5984"
+  },
+  "analysis": {
+    "bytes": 466700,
+    "sha256": "5d564e904876d8fbc64c2fa2f9834d47653b84bc84d5f89a923bf2b72212f514"
+  },
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 830464,
+        "sha256": "4e97e2ae97e534b99281a361790ac35865b3d8c6171293f36109b24a354eec57"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 830976,
+        "sha256": "c471f5d1ead5889b00b141ce34f2a7689cfe179fbf513da4ce5db84ed01ce277"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "b04aea50402006ccd67009f6d14efeeb1f4c265dc94a91ebd33d039a206e0fea"
+      }
+    }
+  },
+  "original_results": [
+    {
+      "role": "selected",
+      "mode": "512",
+      "arrays": 784,
+      "values": 3090494,
+      "public_requests": 20
+    },
+    {
+      "role": "selected",
+      "mode": "256",
+      "arrays": 784,
+      "values": 3090494,
+      "public_requests": 20
+    },
+    {
+      "role": "candidate",
+      "mode": "512",
+      "arrays": 784,
+      "values": 3090494,
+      "public_requests": 20
+    },
+    {
+      "role": "candidate",
+      "mode": "256",
+      "arrays": 784,
+      "values": 3090494,
+      "public_requests": 20
+    }
+  ],
+  "candidate_tensors_and_public_results_exact": true,
+  "application_scored": false,
+  "release_admitted": false,
+  "source": {
+    "bytes": 2329,
+    "sha256": "70d0eaf4966b5b68071832c29ed807d01f5c54826096dcaca2f11246d3376d7d"
+  }
+}
