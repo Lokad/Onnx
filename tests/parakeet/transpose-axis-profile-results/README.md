@@ -29,3 +29,17 @@ Inspect the largest remaining measured excess and its applicable pinned ORT
 implementation before selecting one further causal intervention. Do not assume
 that transpose or any preceding bottleneck remains dominant, or attribute the
 whole application's saving to the previously selected encoder nodes.
+
+For the selected cost, distinguish observed optimized nodes, shapes and clocks
+from source-derived dispatch. Follow the matching ORT implementation through
+any relevant fusion, layout, preparation and CPU-kernel selection. If the next
+intervention depends on an uncertain native branch, resolve it with a targeted
+stack sample or dispatch probe before changing Lokad. State one causal
+explanation and one predicted saving; do not enumerate kernel or flag variants.
+
+The retained ort-diagnosis-results/ort-kernels-20260924.md identifies the installed
+native GEMM routine by matching all 8,904 assembly bytes and joins samples to
+complete requests. Reuse that evidence only after checking the actual binary
+and workload bindings. Its shared GEMM samples do not identify each individual
+node's dispatch or establish a current per-node cost. Any diagnostic build or
+instrumentation must stay separate from the original ORT scoring baseline.

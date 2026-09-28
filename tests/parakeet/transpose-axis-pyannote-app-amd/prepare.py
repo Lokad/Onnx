@@ -19,7 +19,7 @@ BASE=ROOT/'artifacts/parakeet-transpose-axis-pyannote-app-amd-20260928'
 OLD=ROOT/'artifacts/parakeet-observed-dense-where-pyannote-app-amd-20260924'
 APP_PAYLOAD=OLD/'collected'
 GRAPHS=ROOT/'artifacts/parakeet-transpose-axis-graphs-amd-20260928'
-GRAPH_DIGEST=None
+GRAPH_DIGEST='147df8e4221d21fb80d2c9f69444b076c247a77e795b18e0d2973fab0bf941f5'
 PRIOR=dict(models=ROOT/'artifacts/parakeet-transpose-axis-pyannote-amd-20260928',
     parakeet=ROOT/'artifacts/parakeet-transpose-axis-models-amd-20260928',
     shared=ROOT/'artifacts/parakeet-transpose-axis-shared-amd-20260928',

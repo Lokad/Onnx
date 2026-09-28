@@ -1,8 +1,9 @@
 # Complete Pyannote release checks for the transpose candidate
 
-This adapter must bind the actual Pyannote numerical and graph admissions before
-preparation. Parakeet models 8568a229, application 2e4741a6 and shared/e5 fa74521c
-already pass. Preserve the preceding complete Pyannote application d74cdd3d.
+Actual Pyannote numerical closure 3188186f and graph closure 147df8e4 are bound.
+All eight graph cases, 24 controls and eight regression gates pass. Parakeet
+models 8568a229, application 2e4741a6 and shared/e5 fa74521c also pass.
+Preserve the preceding complete Pyannote application d74cdd3d.
 Selected Core 4e97e2ae and candidate c471f5d1 share Data b04aea50. Only
 TransposeInto differs; compatibility links actual root ee4a38ff to the previous
 measured product and preserves all 3,985 methods except that one dispatch change.
