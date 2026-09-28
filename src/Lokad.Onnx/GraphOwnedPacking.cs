@@ -22,7 +22,7 @@ public partial class ComputationalGraph
     /// <summary>Replaces eligible float matrix initializers with independently owned packed storage.</summary>
     /// <returns>The number of initializers replaced; zero when no eligible weight or hardware is available.</returns>
     /// <remarks>
-    /// Explicit opt-in for the supported Parakeet feed-forward matrix shapes and node names.
+    /// Explicit opt-in for the supported Parakeet feed-forward and square attention matrix shapes and node names.
     /// Call while holding exclusive access to a newly loaded graph, before creating execution contexts.
     /// Ordinary Prepare calls never opt in. Logical values and previously held source arrays are
     /// preserved; the graph replaces each eligible initializer and can release its old reference.
@@ -46,17 +46,25 @@ public partial class ComputationalGraph
                 if (node.Attributes is not null)
                     foreach (var value in node.Attributes.Values) if (value is ComputationalGraph) return 0;
             EnsurePreparedLocked();
-            var uses = new Dictionary<string, (int Count, bool MatMulB)>(StringComparer.Ordinal);
+            var uses = new Dictionary<string, (int Count, bool FeedForward, bool Attention)>(StringComparer.Ordinal);
             foreach (var node in Nodes)
             {
                 var inputs = GraphCaptures.NodeInputs(node);
                 for (int i = 0; i < inputs.Length; i++)
                 {
                     string name = inputs[i]; if (string.IsNullOrEmpty(name)) continue;
-                    bool eligible = node.Op == OpType.MatMul && Node.IsStandardDomain(node.Domain) && i == 1 && inputs.Length == 2
-                        && node.Name?.Contains("/feed_forward", StringComparison.Ordinal) == true;
+                    bool eligible = node.Op == OpType.MatMul && Node.IsStandardDomain(node.Domain) && i == 1 && inputs.Length == 2;
+                    bool attention = node.Name is string consumer &&
+                        (consumer.EndsWith("/self_attn/linear_q/MatMul", StringComparison.Ordinal)
+                        || consumer.EndsWith("/self_attn/linear_k/MatMul", StringComparison.Ordinal)
+                        || consumer.EndsWith("/self_attn/linear_v/MatMul", StringComparison.Ordinal)
+                        || consumer.EndsWith("/self_attn/linear_out/MatMul", StringComparison.Ordinal)
+                        || consumer.EndsWith("/self_attn/linear_pos/MatMul", StringComparison.Ordinal));
                     uses.TryGetValue(name, out var prior);
-                    uses[name] = (prior.Count + 1, eligible && prior.Count == 0);
+                    bool single = eligible && prior.Count == 0;
+                    uses[name] = (prior.Count + 1,
+                        single && node.Name?.Contains("/feed_forward", StringComparison.Ordinal) == true,
+                        single && attention);
                 }
             }
             var protectedRoots = new HashSet<Array>();
@@ -90,12 +98,13 @@ public partial class ComputationalGraph
             // Names only: a values snapshot would unnecessarily retain every original array.
             foreach (string name in Initializers.Keys.ToArray())
             {
-                if (!uses.TryGetValue(name, out var use) || use.Count != 1 || !use.MatMulB
+                if (!uses.TryGetValue(name, out var use) || use.Count != 1 || !(use.FeedForward || use.Attention)
                     || Inputs.ContainsKey(name) || Outputs.ContainsKey(name) || folded.Contains(name)
                     || Initializers[name] is not DenseTensor<float> source || source.Rank != 2
                     || !GraphConvPacking.Standard(source)) continue;
                 int n = source.Dimensions[0], k = source.Dimensions[1];
-                if (!((n == 1024 && k == 4096) || (n == 4096 && k == 1024))) continue;
+                if (!((use.FeedForward && ((n == 1024 && k == 4096) || (n == 4096 && k == 1024)))
+                    || (use.Attention && n == 1024 && k == 1024))) continue;
                 if (!MemoryMarshal.TryGetArray<float>(source.Buffer, out var window) || window.Array is null
                     || window.Offset != 0 || window.Count != window.Array.Length
                     || protectedRoots.Contains(window.Array) || bindings[window.Array] != 1) continue;
