@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <UseSharedCompilation>false</UseSharedCompilation>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>CampaignSdk</_Parameter1>
+      <_Parameter2>$(NETCoreSdkVersion)</_Parameter2>
+    </AssemblyAttribute>
+    <Reference Include="Lokad.Onnx" HintPath="$(CoreAssemblyPath)" Private="true" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.29.0" />
+    <PackageReference Include="Lokad.Tokenizers" Version="[0.2.0]" />
+    <Compile Include="../Lokad.Onnx.Bench/CampaignEvidence.cs" Link="CampaignEvidence.cs" />
+    <Compile Include="../Lokad.Onnx.Bench/SampleDiagnostics.cs" Link="SampleDiagnostics.cs" />
+    <Compile Include="../../src/Lokad.Onnx.Data/EmbeddingGemma2*.cs" Link="Data/%(Filename)%(Extension)" />
+  </ItemGroup>
+  <Target Name="RequirePinnedCoreReference" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(CoreAssemblyPath)')" Text="Set CoreAssemblyPath to a built Lokad.Onnx.dll. Stage this runner unchanged with each measured core." />
+  </Target>
+</Project>

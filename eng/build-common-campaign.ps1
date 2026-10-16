@@ -2,7 +2,8 @@
 # fetch, worktree deletion or modification of another experiment's outputs.
 param([Parameter(Mandatory)][string]$Output,
       [string]$L0Ref = "4495fc68b9505b0b6fab73146bd905424588218e",
-      [string]$L1Ref = "HEAD")
+      [string]$L1Ref = "HEAD",
+      [switch]$CoreOnly)
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $destination = [IO.Path]::GetFullPath($Output)
@@ -34,6 +35,10 @@ try {
             source_archive_sha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
         } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $leg "build.json") -Encoding utf8
         Write-Host "$role built $revision with SDK $sdk"
+    }
+    if ($CoreOnly) {
+        Write-Host "Prepared pinned core archives/binaries in $destination"
+        return
     }
     $baseline = Join-Path $destination "L0/core/Lokad.Onnx.dll"
     $runner = Join-Path $destination "runner"

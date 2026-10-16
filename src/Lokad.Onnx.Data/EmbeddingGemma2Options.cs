@@ -12,7 +12,7 @@ public sealed record EmbeddingGemma2Options
     /// <summary>Maximum batch size times padded sequence length per graph evaluation.</summary>
     public int MaximumPaddedTokens { get; init; } = 512;
     /// <summary>Bound on retained packed CPU weights; original model weights are loaded separately.</summary>
-    public long PreparedWeightBudgetBytes { get; init; } = 64L * 1024 * 1024;
+    public long PreparedWeightBudgetBytes { get; init; } = 576L * 1024 * 1024;
 
     internal void Validate()
     {

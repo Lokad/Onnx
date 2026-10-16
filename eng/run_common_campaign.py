@@ -48,12 +48,12 @@ def read_build(prepared, role):
     return dict(build, path=core)
 
 
-def stage(prepared, output, kind):
+def stage(prepared, output, kind, runner_name=RUNNER):
     baseline = read_build(prepared, "L0")
     candidate = read_build(prepared, "L1") if kind == "comparison" else baseline
     evidence.require(baseline["sdk"] == candidate["sdk"], "core build SDKs differ")
     runner = prepared / "runner"
-    evidence.require((runner / RUNNER).is_file(), "common runner missing")
+    evidence.require((runner / runner_name).is_file(), "common runner missing")
     evidence.require(not output.exists(), "output already exists; choose a fresh directory")
     evidence.require(not output.is_relative_to(prepared), "output must be outside the prepared tree")
     output.mkdir(parents=True)
@@ -62,7 +62,7 @@ def stage(prepared, output, kind):
         destination = output / "staged" / role
         shutil.copytree(runner, destination)
         shutil.copyfile(build["path"], destination / "Lokad.Onnx.dll")
-        result[role] = dict(build, runner=destination / RUNNER)
+        result[role] = dict(build, runner=destination / runner_name)
     return result
 
 

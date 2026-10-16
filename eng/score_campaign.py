@@ -71,10 +71,11 @@ def medians(campaign, name):
     return pairs
 
 
-def score(campaign, aa):
+def score(campaign, aa, primary=PRIMARY):
     evidence.require(campaign["kind"] == "comparison" and aa["kind"] == "aa", "expected comparison and A/A manifests")
     evidence.require((campaign["schema"], campaign["scope"]) == (aa["schema"], aa["scope"]), "A/A evidence schema/scope mismatch")
     cases = campaign["cases"]
+    evidence.require(primary and len(set(primary)) == len(primary) and set(primary) <= set(cases), "invalid primary case set")
     evidence.require(aa["end"] < campaign["start"], "A/A must finish before candidate measurements start")
     def qset(camp):
         out = set()
@@ -128,7 +129,7 @@ def score(campaign, aa):
             if drift > noise[name]["ort_limit"]:
                 unsteady.append("comparison %s rep%d ORT control drift %.4f exceeds %.4f" %
                                 (name, pair["rep"], drift, noise[name]["ort_limit"]))
-    missing_primary = [name for name in PRIMARY if name in quarantined]
+    missing_primary = [name for name in primary if name in quarantined]
     if missing_primary:
         unsteady.append("primary case quarantined, parity unprovable: " + ",".join(missing_primary))
     if unsteady:
@@ -149,9 +150,9 @@ def score(campaign, aa):
         if name in quarantined:
             table.append({"case": name, "quarantined": quarantined[name]})
     by_name = {row["case"]: row for row in table}
-    targets = {name: (name not in quarantined and by_name[name]["R1"] <= PARITY_TARGET) for name in PRIMARY}
+    targets = {name: (name not in quarantined and by_name[name]["R1"] <= PARITY_TARGET) for name in primary}
     result.update(table=table, targets=targets, regressions=regressions,
-                  e5_improvement=(None if missing_primary else 1 - math.prod(1 - by_name[name]["improvement"] for name in PRIMARY) ** 0.25),
+                  e5_improvement=(None if missing_primary else 1 - math.prod(1 - by_name[name]["improvement"] for name in primary) ** (1 / len(primary))),
                   verdict="REGRESSION" if regressions else ("PASS" if all(targets.values()) else "MISS"))
     return result, 0
 
