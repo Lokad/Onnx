@@ -88,6 +88,7 @@ public static class OperatorSchemas
         [OpType.Tanh] = Def(OpType.Tanh, 1, 1),
         [OpType.Split] = Def(OpType.Split, 1, 2, 1, Unbounded, 1, false),
         [OpType.Less] = Def(OpType.Less, 2, 2),
+        [OpType.LessOrEqual] = Def(OpType.LessOrEqual, 2, 2, 1, 1, 12, false),
         [OpType.ConstantOfShape] = Def(OpType.ConstantOfShape, 1, 1),
         [OpType.GlobalAveragePool] = Def(OpType.GlobalAveragePool, 1, 1),
         [OpType.Identity] = Def(OpType.Identity, 1, 1),

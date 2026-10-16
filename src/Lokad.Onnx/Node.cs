@@ -353,6 +353,7 @@ public partial struct Node
         OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.Less => CPU.Less(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.LessOrEqual => CPU.LessOrEqual(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.Where => CPU.Where(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt),
 

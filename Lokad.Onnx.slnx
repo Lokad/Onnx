@@ -8,6 +8,7 @@
     <Project Path="tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj" />
     <Project Path="tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj" />
     <Project Path="tests/Lokad.Onnx.E5Runner/Lokad.Onnx.E5Runner.csproj" />
+    <Project Path="tests/Lokad.Onnx.EmbeddingGemma2Runner/Lokad.Onnx.EmbeddingGemma2Runner.csproj" />
     <Project Path="tests/Lokad.Onnx.OpDump/Lokad.Onnx.OpDump.csproj" />
     <Project Path="tests/Lokad.Onnx.Tensors.Tests/Lokad.Onnx.Tensors.Tests.csproj" />
   </Folder>

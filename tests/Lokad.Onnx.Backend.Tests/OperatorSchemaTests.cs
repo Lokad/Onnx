@@ -379,20 +379,18 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void LessOrEqualHonestlyUnsupported_FailsCleanly()
+    public void LessOrEqualSupportMatchesExecution()
     {
-        // C11: no LessOrEqual schema, provider, kernel, or dispatch arm
-        // exists anywhere in src; same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LessOrEqual));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.LessOrEqual));
         var node = Nod(OpType.LessOrEqual, "", 13,
             new[] { "x", "y" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
         Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 2f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("LessOrEqual", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new[] { true }, ((Tensor<bool>)r.Outputs[0]).ToArray());
     }
 
     [Fact]

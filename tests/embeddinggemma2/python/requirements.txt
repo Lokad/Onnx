@@ -1,0 +1,6 @@
+numpy==2.2.4
+onnx==1.22.0
+onnxruntime==1.29.0
+tokenizers==0.23.2
+huggingface-hub==1.31.0
+pytest==9.1.1

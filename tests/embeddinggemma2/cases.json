@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    { "id": "query", "role": "query", "text": "Which planet is known as the Red Planet?" },
+    { "id": "related", "role": "document", "title": "Mars", "text": "Mars is known as the Red Planet because iron minerals in its soil oxidize." },
+    { "id": "unrelated", "role": "document", "title": "Ocean currents", "text": "Ocean currents transport heat and nutrients through the world's seas." },
+    { "id": "french", "role": "document", "title": "Astronomie", "text": "Mars est surnommée la planète rouge à cause des oxydes de fer présents dans son sol." },
+    { "id": "japanese", "role": "document", "text": "火星は地表の酸化鉄によって赤く見えるため、赤い惑星と呼ばれています。" },
+    { "id": "spaces", "role": "raw", "text": "Hello  world\twith\u00a0spaces\nnext line\r\nlast line " },
+    { "id": "composed", "role": "raw", "text": "café" },
+    { "id": "decomposed", "role": "raw", "text": "café" },
+    { "id": "emoji", "role": "raw", "text": "Approved 👍🏽 — 東京, résumé, Δ, 🚀" },
+    { "id": "identifiers", "role": "raw", "text": "build-v2.7 / INV-2026-1042 / https://example.org/a?b=1&c=two" },
+    { "id": "empty", "role": "raw", "text": "" },
+    { "id": "special-literals", "role": "raw", "text": "<bos> example <eos> <unk>" },
+    { "id": "long", "role": "document", "title": "Repeated observations", "text": "The telescope records the position of the planet. ", "repeat": 40 }
+  ]
+}

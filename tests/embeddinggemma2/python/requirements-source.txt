@@ -1,0 +1,6 @@
+-r requirements.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.0+cpu
+transformers==5.19.0
+sentence-transformers==6.1.0
+sentencepiece==0.2.2
