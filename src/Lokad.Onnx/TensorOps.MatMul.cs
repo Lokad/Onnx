@@ -190,6 +190,12 @@ where T : unmanaged
         const long TiledPackMaxSmallElements = 65536;
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
+            // Reuse the existing wide consumer for small dynamic attention
+            // panels. This local choice leaves the experimental switch and
+            // owned/convolution routing unchanged. Full-panel and hardware
+            // refusal remain in TryPackedAvx512Rows; short reductions stay AVX2.
+            bool wideDynamic = AblationSwitches.EnablePackedAvx512Dynamic ||
+                (Avx512F.IsSupported && n <= 512 && k <= 512);
             int blocked = m - (m % 2);
             if ((m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {
@@ -202,7 +208,7 @@ where T : unmanaged
                         PackPanelsB(n, k, y, pp);
                         // Short reductions did not benefit in the packing-inclusive
                         // attention probe. Keep their existing consumer.
-                        if (!AblationSwitches.EnablePackedAvx512Dynamic || n < 64
+                        if (!wideDynamic || n < 64
                             || !TryPackedAvx512Rows(m, n, k, x, pp, output))
                             mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
                     }
@@ -220,7 +226,7 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        if (!AblationSwitches.EnablePackedAvx512Dynamic || n < 64
+                        if (!wideDynamic || n < 64
                             || !TryPackedAvx512Rows(blocked, n, k, x, pp, output))
                             mm_unsafe_vectorized_intrinsics_2x4packed_bump(blocked, n, k, x, pp, output);
                     }

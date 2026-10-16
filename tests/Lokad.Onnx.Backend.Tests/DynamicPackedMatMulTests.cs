@@ -45,6 +45,13 @@ public class DynamicPackedMatMulTests
     [InlineData(128, 32, 128)]
     [InlineData(512, 32, 512)]
     [InlineData(64, 65, 33)]
+    [InlineData(128, 256, 128)]
+    [InlineData(128, 128, 256)]
+    [InlineData(512, 256, 512)]
+    [InlineData(512, 512, 256)]
+    [InlineData(64, 512, 512)]
+    [InlineData(64, 513, 512)]
+    [InlineData(64, 512, 544)]
     public void DynamicProductsMatchPreservedKernelsAndRepackMutatedInputs(int m, int n, int k)
     {
         Skip.IfNot(Fma.IsSupported, "The independent AVX2 reference requires FMA.");
