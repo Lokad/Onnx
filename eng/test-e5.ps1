@@ -41,6 +41,8 @@ try {
     $probeEc = $LASTEXITCODE
 } finally { $ErrorActionPreference = $prevEAP }
 if ($probeEc -ne 0) { Fail "python is missing test dependencies (see tests/e5/python/requirements.txt)" }
+Invoke-GateNative { & ./eng/restore-tokenizers.ps1 }
+if ($LASTEXITCODE -ne 0) { Fail "qualified tokenizer package restore failed" }
 Invoke-GateNative { & dotnet build tests/Lokad.Onnx.E5Runner --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false }
 if ($LASTEXITCODE -ne 0) { Fail "E5Runner build failed" }
 $runner = "tests/Lokad.Onnx.E5Runner/bin/Release/net10.0/Lokad.Onnx.E5Runner.dll"
