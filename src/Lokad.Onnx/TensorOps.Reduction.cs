@@ -263,7 +263,32 @@ where T : unmanaged
         StartOpStage(OpStage.Math);
         var xs = pdata.Buffer.Span;
         var os = output.Buffer.Span;
-        for (int i = 0; i < os.Length; ++i)
+        int i = 0;
+        if (options.UseSimd && r >= 32)
+        {
+            // Independent rows hide addition latency without reassociating any
+            // row's reduction. Keep scalar/short reductions on their old path.
+            for (; i <= os.Length - 4; i += 4)
+            {
+                var row0 = xs.Slice(i * r, r);
+                var row1 = xs.Slice((i + 1) * r, r);
+                var row2 = xs.Slice((i + 2) * r, r);
+                var row3 = xs.Slice((i + 3) * r, r);
+                float sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0;
+                for (int j = 0; j < r; j++)
+                {
+                    sum0 += row0[j];
+                    sum1 += row1[j];
+                    sum2 += row2[j];
+                    sum3 += row3[j];
+                }
+                os[i] = sum0 / r;
+                os[i + 1] = sum1 / r;
+                os[i + 2] = sum2 / r;
+                os[i + 3] = sum3 / r;
+            }
+        }
+        for (; i < os.Length; ++i)
         {
             int offset = i * r;
             // Empty reductions yield zero instead of NaN (ORT 1.29).
