@@ -68,7 +68,8 @@ internal static partial class GraphFusion
             last.OpTypeName = last.Op.ToString();
             last.IsFused = true;
             last.Domain = "";
-            last.OpsetVersion = StandardOpset(graph);
+            int version = StandardOpset(graph);
+            if (version >= 0) last.OpsetVersion = version;
             last.Inputs = new[] { x, mean.Inputs[1], add.Inputs[1], inverse.Inputs[1], last.Inputs[1] };
             last.Attributes = new Dictionary<string, object> { ["keepdims"] = keep, ["noop_with_empty_axes"] = noop };
             graph.Nodes[index] = last;

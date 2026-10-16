@@ -66,6 +66,23 @@ public class GraphFusionRmsTests
     }
 
     [Fact]
+    public void MissingGraphImportPreservesExplicitNodeOpset()
+    {
+        var graph = Model.Load(ModelDefinition(5, 33, ""), runOptimizer: false)!;
+        var reference = Model.Load(ModelDefinition(5, 33, "square"))!;
+        Assert.All(graph.Nodes, node => Assert.Equal(18, node.OpsetVersion));
+        graph.Opset.Clear();
+        Optimization.GraphOptimizer.EnsureStandardPasses();
+        Optimization.GraphOptimizer.Run(graph);
+        var fused = Assert.Single(graph.Nodes);
+        Assert.Equal(OpType.FusedRmsNormalization, fused.Op);
+        Assert.Equal(18, fused.OpsetVersion);
+        Assert.True(CPUExecutionProvider.SupportsNode(fused));
+        Assert.Equal(Run(reference, Input(5, 33), ExecutionOptions.Memory),
+            Run(graph, Input(5, 33), ExecutionOptions.Memory));
+    }
+
+    [Fact]
     public void MutatedInitializersFallBackWithoutBakingValuesOrShapes()
     {
         var graph = Model.Load(ModelDefinition(5, 33, ""))!;
