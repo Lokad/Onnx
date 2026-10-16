@@ -4,7 +4,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import sys
+import sysconfig
 
 from common import sha256
 
@@ -19,7 +19,7 @@ def main():
     kind = "source" if args.source else "quantized" if args.quantized else "onnx"
     entry = manifest[kind]
     destination = args.root / entry["directory"]
-    cli = Path(sys.executable).parent / ("hf.exe" if os.name == "nt" else "hf")
+    cli = Path(sysconfig.get_path("scripts")) / ("hf.exe" if os.name == "nt" else "hf")
     command = [str(cli), "download", entry["repository"], *entry["files"], *entry.get("metadata", []),
                "--revision", entry["revision"], "--local-dir", str(destination), "--quiet"]
     subprocess.run(command, check=True)

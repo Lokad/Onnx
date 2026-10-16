@@ -4,7 +4,7 @@ set ERROR_CODE=0
 
 echo Building Lokad Onnx projects..
 
-dotnet restore --tl:off -v minimal Lokad.Onnx.slnx
+pwsh -NoProfile -File eng\restore-tokenizers.ps1
 if not %ERRORLEVEL%==0 (
     echo Error restoring NuGet packages for Lokad.Onnx.slnx.
     set ERROR_CODE=1

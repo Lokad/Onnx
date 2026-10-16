@@ -9,11 +9,14 @@ It runs transformer and vision models end to end on CPU, with numeric parity aga
 * Run `build.cmd` from the repo root directory.
 * Run `lonnx.cmd --help` to show the available CLI commands.
 
+The build restores the qualified Lokad.Tokenizers 0.2.0 package from pinned source through `eng/restore-tokenizers.ps1`. It uses a matching sibling Tokenizers checkout when present, otherwise fetches the pinned revision. On Linux, run that PowerShell script before the usual `dotnet build` or `dotnet test` commands.
+
 ## CLI
 `lonnx.cmd` wraps the Release `Lokad.Onnx.CLI` build. Basic syntax:
   `lonnx.cmd run (modelpath) (input) --<options>`
 
 - `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
+- `lonnx embed <prepared-directory> --query "Which planet is known as the Red Planet?" --dimensions 768`: offline FP32 EmbeddingGemma 2 text embeddings. Use `--documents input.jsonl` (or `-` for UTF-8 stdin) for records with `id`, `text`, and optional `title`. See [asset preparation and numerical qualification](https://github.com/Lokad/Onnx/blob/master/tests/embeddinggemma2/README.md).
 - `lonnx run <model.onnx> <inputs...>`: image and text inputs, `--softmax`, `--print-input`, profiling, and SIMD toggles.
 - `lonnx transcribe <model-directory> <audio.wav> --language en`: managed Whisper Large V3 Turbo transcription of mono/stereo WAV files up to 30 seconds, with conversion to 16 kHz. See [audio usage and qualification](https://github.com/Lokad/Onnx/blob/master/tests/whisper/README.md).
 - Add `--recording --json` for Whisper segment timestamps and boundary recovery on recordings up to ten minutes. See the [recording policy and current qualification](https://github.com/Lokad/Onnx/blob/master/tests/whisper/recording/README.md).

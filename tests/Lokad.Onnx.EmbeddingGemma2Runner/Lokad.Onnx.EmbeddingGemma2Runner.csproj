@@ -9,5 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Lokad.Onnx/Lokad.Onnx.csproj" />
+    <ProjectReference Include="../../src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
   </ItemGroup>
 </Project>

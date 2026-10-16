@@ -55,6 +55,17 @@ public class DiarizeOptions : Options
     public bool Json { get; set; }
 }
 
+public class EmbedOptions : Options
+{
+    public string ModelDirectory { get; set; } = "";
+    public string? Query { get; set; }
+    public string? Documents { get; set; }
+    public int Dimensions { get; set; } = 768;
+    public int MaximumTokens { get; set; } = 512;
+    public int BatchSize { get; set; } = 1;
+    public int PaddedTokenBudget { get; set; } = 512;
+}
+
 #endregion
 
 #region Bounded parser
@@ -119,7 +130,7 @@ public static class ArgsParser
             result.Exit = ExitResult.INVALID_OPTIONS;
             return result;
         }
-        if (verb != "info" && verb != "run" && verb != "transcribe" && verb != "diarize")
+        if (verb != "info" && verb != "run" && verb != "transcribe" && verb != "diarize" && verb != "embed")
         {
             result.Outcome = ParseOutcome.Error;
             result.Message = "Unknown command: " + verb + ".";
@@ -133,7 +144,8 @@ public static class ArgsParser
             return result;
         }
         result.Verb = verb;
-        var parsed = verb == "info" ? ParseInfo(rest) : verb == "run" ? ParseRun(rest) : verb == "diarize" ? ParseDiarize(rest) : ParseTranscribe(rest);
+        var parsed = verb == "info" ? ParseInfo(rest) : verb == "run" ? ParseRun(rest) : verb == "diarize" ? ParseDiarize(rest)
+            : verb == "embed" ? ParseEmbed(rest) : ParseTranscribe(rest);
         parsed.Verb = verb;
         if (parsed.Outcome == ParseOutcome.Ok && parsed.Value is not null) parsed.Value.Debug = debug;
         return parsed;
@@ -306,6 +318,54 @@ public static class ArgsParser
         options.File = positionals[0];
         options.Inputs = positionals.GetRange(1, positionals.Count - 1);
         return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "run", Value = options };
+    }
+
+    static ParseResult ParseEmbed(List<string> rest)
+    {
+        var options = new EmbedOptions();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var positionals = new List<string>();
+        for (int i = 0; i < rest.Count; i++)
+        {
+            string token = rest[i];
+            if (IsFlag(token))
+            {
+                SplitFlag(token, out string name, out string? inline);
+                if (!seen.Add(name)) return Fail("Duplicate option: --" + name + ".");
+                if (name is "query" or "documents")
+                {
+                    if (!TakeString("embed", name, rest, ref i, inline, out string value, out string? error)) return Fail(error);
+                    if (name == "query") options.Query = value;
+                    else if (value.Length == 0) return Fail("--documents requires a JSONL path or - for stdin.");
+                    else options.Documents = value;
+                }
+                else if (name is "dimensions" or "max-tokens" or "batch-size" or "padded-token-budget")
+                {
+                    if (!TakeInt("embed", name, rest, ref i, inline, out int value, out string? error)) return Fail(error);
+                    if (name == "dimensions") options.Dimensions = value;
+                    else if (name == "max-tokens") options.MaximumTokens = value;
+                    else if (name == "batch-size") options.BatchSize = value;
+                    else options.PaddedTokenBudget = value;
+                }
+                else return Fail("Unknown option: " + token + ".");
+            }
+            else if (token.StartsWith("-", StringComparison.Ordinal)) return Fail("Unknown option: " + token + ".");
+            else positionals.Add(token);
+        }
+        if (positionals.Count != 1 || seen.Contains("query") == seen.Contains("documents"))
+            return Fail("Embed requires a prepared model directory and exactly one of --query or --documents.");
+        if (options.Dimensions is not (128 or 256 or 512 or 768)) return Fail("--dimensions must be 128, 256, 512, or 768.");
+        if (options.MaximumTokens < 2 || options.MaximumTokens > 8192) return Fail("--max-tokens must be 2..8192, including the prompt and special tokens.");
+        if (options.BatchSize < 1) return Fail("--batch-size must be positive.");
+        if (!seen.Contains("padded-token-budget"))
+        {
+            long budget = (long)options.MaximumTokens * options.BatchSize;
+            if (budget > int.MaxValue) return Fail("Batch token budget exceeds the supported array size.");
+            options.PaddedTokenBudget = (int)budget;
+        }
+        if (options.PaddedTokenBudget < options.MaximumTokens) return Fail("--padded-token-budget must accommodate one maximum-length input.");
+        options.ModelDirectory = positionals[0];
+        return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "embed", Value = options };
     }
 
     static ParseResult ParseDiarize(List<string> rest)

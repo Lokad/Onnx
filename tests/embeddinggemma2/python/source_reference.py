@@ -9,7 +9,7 @@ import torch
 import transformers
 from transformers import AutoConfig, AutoModel, AutoTokenizer
 
-from common import formatted_text, numerical_check, save_array, verify_assets
+from common import formatted_text, numerical_check, save_array, sha256, verify_assets
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
     parser.add_argument("--cases", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    verify_assets(args.source_dir, "source")
+    assets = verify_assets(args.source_dir, "source")
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     config = AutoConfig.from_pretrained(args.source_dir, local_files_only=True)
@@ -32,7 +32,11 @@ def main():
     native = json.loads((args.reference / "manifest.json").read_text(encoding="utf-8"))
     args.output.mkdir(parents=True, exist_ok=True)
     result = {"schemaVersion": 1, "python": platform.python_version(), "torch": torch.__version__,
-              "transformers": transformers.__version__, "cases": [], "failures": []}
+              "transformers": transformers.__version__, "sourceRevision": assets["revision"],
+              "sourceModelSha256": assets["files"]["model.safetensors"],
+              "tokenizerSha256": assets["files"]["tokenizer.json"], "casesSha256": sha256(args.cases),
+              "referenceSha256": sha256(args.reference / "manifest.json"), "producerSha256": sha256(Path(__file__)),
+              "precision": "fp32", "intraOpThreads": 1, "cases": [], "failures": []}
     by_id = {case["id"]: case for case in cases}
     for record in native["cases"]:
         name = record["id"]
@@ -59,6 +63,15 @@ def main():
             reference = np.load(origin / record[key]["file"], allow_pickle=False)
             try:
                 item[key + "Check"] = numerical_check(actual, reference, components=strict)
+            except AssertionError as error:
+                result["failures"].append({"id": name, "tensor": key, "error": str(error)})
+        for dimension in (128, 256, 512, 768):
+            actual = torch.nn.functional.normalize(mean[:, :dimension], p=2, dim=-1).numpy().copy()
+            key = f"embedding_{dimension}"
+            item[key] = save_array(destination, key, actual)
+            expected = np.load(origin / record[key]["file"], allow_pickle=False)
+            try:
+                item[key + "Check"] = numerical_check(actual, expected, components=True)
             except AssertionError as error:
                 result["failures"].append({"id": name, "tensor": key, "error": str(error)})
         result["cases"].append(item)

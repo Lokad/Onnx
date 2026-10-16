@@ -13,6 +13,7 @@
     { "id": "identifiers", "role": "raw", "text": "build-v2.7 / INV-2026-1042 / https://example.org/a?b=1&c=two" },
     { "id": "empty", "role": "raw", "text": "" },
     { "id": "special-literals", "role": "raw", "text": "<bos> example <eos> <unk>" },
-    { "id": "long", "role": "document", "title": "Repeated observations", "text": "The telescope records the position of the planet. ", "repeat": 40 }
+    { "id": "long", "role": "document", "title": "Repeated observations", "text": "The telescope records the position of the planet. ", "repeat": 40 },
+    { "id": "limit-512", "role": "document", "title": "Token boundary", "text": "x ", "repeat": 502, "expectedTokens": 512 }
   ]
 }

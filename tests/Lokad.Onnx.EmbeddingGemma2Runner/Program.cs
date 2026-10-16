@@ -16,6 +16,7 @@ static class Program
 
     static void Run(string[] args)
     {
+        if (args.Length > 0 && args[0] == "api") { ApiRunner.Run(args.Skip(1).ToArray()); return; }
         var arguments = new Dictionary<string, string>(StringComparer.Ordinal);
         if (args.Length % 2 != 0) throw new ArgumentException("Expected --model, --reference, --output, and optional --mode/--case pairs.");
         for (int i = 0; i < args.Length; i += 2)
@@ -135,7 +136,7 @@ static class Program
         return new DenseTensor<T>(values, shape);
     }
 
-    static void WriteNpy<T>(string path, T[] values, int[] shape, string descriptor) where T : unmanaged
+    internal static void WriteNpy<T>(string path, T[] values, int[] shape, string descriptor) where T : unmanaged
     {
         string header = "{'descr': '" + descriptor + "', 'fortran_order': False, 'shape': (" + string.Join(", ", shape) + (shape.Length == 1 ? "," : "") + "), }";
         int padding = (16 - (10 + header.Length + 1) % 16) % 16;

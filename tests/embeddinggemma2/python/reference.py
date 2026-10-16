@@ -41,6 +41,8 @@ def main():
         encoded = tok.encode(formatted_text(case), add_special_tokens=True)
         ids = np.array([encoded.ids], dtype=np.int64)
         mask = np.ones_like(ids)
+        if "expectedTokens" in case and ids.shape[1] != case["expectedTokens"]:
+            raise ValueError(f"Case {case['id']} has {ids.shape[1]} tokens; expected {case['expectedTokens']}")
         if ids.shape[1] > 512:
             raise ValueError(f"Case {case['id']} exceeds 512 tokens: {ids.shape[1]}")
         entries.append((case["id"], ids, mask))

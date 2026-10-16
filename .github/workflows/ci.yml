@@ -29,6 +29,7 @@ jobs:
       - name: Test Release
         shell: pwsh
         run: |
+          ./eng/restore-tokenizers.ps1
           try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { exit 1 }
           if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: Publish test log
@@ -56,6 +57,7 @@ jobs:
       - name: Test Release without hardware intrinsics
         shell: pwsh
         run: |
+          ./eng/restore-tokenizers.ps1
           try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-scalar.log } catch { exit 1 }
           if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: Publish test log

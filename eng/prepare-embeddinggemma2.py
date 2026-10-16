@@ -166,7 +166,7 @@ def main():
     args = parser.parse_args()
     if args.output.resolve() in (args.source.resolve(), (args.source / "onnx").resolve()):
         raise ValueError("Prepared output must be separate from original asset directories")
-    verify_assets(args.source)
+    assets = verify_assets(args.source)
     original_path = args.source / "onnx/model.onnx"
     model = onnx.load(original_path, load_external_data=False)
     output_info = next(v for v in model.graph.output if v.name == "last_hidden_state")
@@ -196,7 +196,13 @@ def main():
     onnx.save_model(model, path)
     onnx.checker.check_model(str(path))
     operators = collections.Counter(n.op_type for n in model.graph.node)
+    tokenizer_path = args.output / "tokenizer.json"
+    if tokenizer_path.exists() and sha256(tokenizer_path) != assets["files"]["tokenizer.json"]:
+        raise ValueError("Mismatched prepared tokenizer")
+    if not tokenizer_path.exists():
+        shutil.copyfile(args.source / "tokenizer.json", tokenizer_path)
     receipt = {"schemaVersion": 1, "sourceGraphSha256": sha256(original_path), "graphSha256": sha256(path),
+               "tokenizerSha256": sha256(tokenizer_path), "weightsSha256": assets["files"]["onnx/model.onnx_data"],
                "preparerSha256": sha256(Path(__file__)), "rewrites": changes, "operators": dict(operators),
                "inputs": [v.name for v in model.graph.input], "output": "last_hidden_state", "precision": "fp32"}
     if args.verify:

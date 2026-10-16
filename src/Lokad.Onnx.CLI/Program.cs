@@ -41,7 +41,7 @@ class Program
     {
         bool debug = (args.Contains("--debug") || args.Contains("-d"));
         var parsed = ArgsParser.Parse(args);
-        UseConsoleLogging(debug, parsed.Verb is "transcribe" or "diarize");
+        UseConsoleLogging(debug, parsed.Verb is "transcribe" or "diarize" or "embed");
         switch (parsed.Outcome)
         {
             case ParseOutcome.Version:
@@ -55,7 +55,7 @@ class Program
                 return;
             case ParseOutcome.Error:
                 Error(parsed.Message);
-                if (parsed.Verb is not ("transcribe" or "diarize")) PrintGlobalHelp();
+                if (parsed.Verb is not ("transcribe" or "diarize" or "embed")) PrintGlobalHelp();
                 Exit(parsed.Exit);
                 return;
             default:
@@ -75,6 +75,9 @@ class Program
             case "diarize":
                 if (parsed.Value is DiarizeOptions diarize) Exit(Diarize(diarize));
                 break;
+            case "embed":
+                if (parsed.Value is EmbedOptions embed) Exit(Embed(embed));
+                break;
         }
     }
     #endregion
@@ -88,6 +91,7 @@ class Program
         Console.WriteLine("  run <file> <inputs...> [options]                    Run an ONNX model or node.");
         Console.WriteLine("  transcribe <model-directory> <audio.wav> [options]   Transcribe with Whisper Large V3 Turbo or Parakeet.");
         Console.WriteLine("  diarize <audio.wav> [model options]                 Produce Community-1 speaker timelines.");
+        Console.WriteLine("  embed <prepared-directory> [options]                Produce EmbeddingGemma 2 text vectors.");
         Console.WriteLine("Common options:");
         Console.WriteLine("  --debug, -d   Enable debug mode.");
         Console.WriteLine("  --help        Show this help and exit.");
@@ -121,6 +125,17 @@ class Program
             Console.WriteLine("  --optimize-memory   Allow earlier release of dead intermediate views.");
             Console.WriteLine("  --threads <n>       Worker threads for batch-parallel kernels (default 1, sequential).");
         }
+        else if (verb == "embed")
+        {
+            Console.WriteLine("Usage: lonnx embed <prepared-directory> (--query <text> | --documents <file.jsonl|->) [options]");
+            Console.WriteLine("Uses local prepared FP32 EmbeddingGemma 2 assets. Documents have id, text, and optional title.");
+            Console.WriteLine("  --dimensions <n>           128, 256, 512, or 768 (default 768); truncate and renormalize.");
+            Console.WriteLine("  --max-tokens <n>           Token limit including the task prefix and BOS/EOS (default 512); overflow fails.");
+            Console.WriteLine("  --batch-size <n>           Maximum documents per evaluation (default 1).");
+            Console.WriteLine("  --padded-token-budget <n>  Maximum rows times padded length (default max-tokens * batch-size).");
+            Console.WriteLine("Writes JSONL vectors, dimensions, token counts, and space identities to stdout; diagnostics go to stderr.");
+            Console.WriteLine("Limits above 512, up to 8192, require separate sequence-length and memory qualification.");
+        }
         else if (verb == "diarize")
         {
             Console.WriteLine("Usage: lonnx diarize <audio.wav> --segmentation <model.onnx> --embedding <encoder.onnx> --projection <projection.onnx> --plda <plda.json> [--json]");
@@ -145,9 +160,77 @@ class Program
         }
     }
 
+    static ExitResult Embed(EmbedOptions options)
+    {
+        CancelableInference = true;
+        try
+        {
+            if (!Directory.Exists(options.ModelDirectory)) throw new DirectoryNotFoundException("Prepared model directory not found: " + options.ModelDirectory);
+            if (options.Documents is not null && options.Documents != "-" && !File.Exists(options.Documents))
+                throw new FileNotFoundException("JSONL documents not found: " + options.Documents);
+            Cts.Token.ThrowIfCancellationRequested();
+            var model = new EmbeddingGemma2Embedder(options.ModelDirectory, new EmbeddingGemma2Options {
+                MaximumTokens = options.MaximumTokens, MaximumBatchSize = options.BatchSize, MaximumPaddedTokens = options.PaddedTokenBudget });
+            if (options.Query is not null)
+            {
+                WriteEmbedding(null, model.EmbedQuery(options.Query, options.Dimensions, Cts.Token));
+                return ExitResult.SUCCESS;
+            }
+            string documentPath = options.Documents ?? throw new ArgumentException("Supply --query or --documents.");
+            if (documentPath == "-") Console.InputEncoding = Encoding.UTF8;
+            using var file = documentPath == "-" ? null : File.OpenText(documentPath);
+            TextReader reader = file ?? Console.In;
+            var documents = new List<EmbeddingGemma2Document>();
+            var ids = new List<JsonElement>();
+            int lineNumber = 0;
+            void Flush()
+            {
+                if (documents.Count == 0) return;
+                var vectors = model.EmbedDocuments(documents, options.Dimensions, Cts.Token);
+                for (int i = 0; i < vectors.Length; i++) WriteEmbedding(ids[i], vectors[i]);
+                documents.Clear(); ids.Clear();
+            }
+            string? line;
+            while ((line = reader.ReadLine()) is not null)
+            {
+                lineNumber++;
+                Cts.Token.ThrowIfCancellationRequested();
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                using var json = JsonDocument.Parse(line);
+                var record = json.RootElement;
+                if (record.ValueKind != JsonValueKind.Object || !record.TryGetProperty("id", out var id) ||
+                    id.ValueKind is not (JsonValueKind.String or JsonValueKind.Number) ||
+                    !record.TryGetProperty("text", out var text) || text.ValueKind != JsonValueKind.String)
+                    throw new InvalidDataException("JSONL line " + lineNumber + " requires a string/number id and string text.");
+                string? title = null;
+                if (record.TryGetProperty("title", out var titleValue))
+                {
+                    if (titleValue.ValueKind is not (JsonValueKind.String or JsonValueKind.Null))
+                        throw new InvalidDataException("JSONL line " + lineNumber + " title must be a string or null.");
+                    title = titleValue.GetString();
+                }
+                ids.Add(id.Clone());
+                documents.Add(new EmbeddingGemma2Document(text.GetString() ?? throw new InvalidDataException("Document text cannot be null."), title));
+                if (documents.Count == options.BatchSize) Flush();
+            }
+            Flush();
+            return ExitResult.SUCCESS;
+        }
+        catch (OperationCanceledException) { Console.Error.WriteLine("Embedding canceled."); return ExitResult.CANCELED; }
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException) { Error(ex.Message); return ExitResult.NOT_FOUND; }
+        catch (Exception ex) when (ex is InvalidDataException or IOException or ArgumentException or NotSupportedException or JsonException or UnauthorizedAccessException
+                                    or KeyNotFoundException or InvalidOperationException)
+        { Error(ex.Message); return ExitResult.INVALID_INPUT; }
+        finally { CancelableInference = false; }
+    }
+
+    static void WriteEmbedding(JsonElement? id, EmbeddingGemma2Embedding result) => Console.WriteLine(JsonSerializer.Serialize(new {
+        id, model = "embeddinggemma-2", precision = "fp32", dimensions = result.Values.Length,
+        tokenCount = result.TokenCount, spaceId = result.SpaceId, embedding = result.Values }));
+
     static ExitResult Transcribe(TranscribeOptions options)
     {
-        AudioInference = true;
+        CancelableInference = true;
         try
         {
             if (options.ModelDirectory.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
@@ -234,12 +317,12 @@ class Program
             Error(ex.Message);
             return ExitResult.INVALID_INPUT;
         }
-        finally { AudioInference = false; }
+        finally { CancelableInference = false; }
     }
 
     static ExitResult Diarize(DiarizeOptions options)
     {
-        AudioInference = true;
+        CancelableInference = true;
         try
         {
             foreach (string path in new[] { options.AudioFile, options.Segmentation, options.Embedding, options.Projection, options.Plda })
@@ -270,7 +353,7 @@ class Program
         catch (Exception ex) when (ex is InvalidDataException or IOException or ArgumentException or NotSupportedException or JsonException or UnauthorizedAccessException
                                     or KeyNotFoundException or InvalidOperationException)
         { Error(ex.Message); return ExitResult.INVALID_INPUT; }
-        finally { AudioInference = false; }
+        finally { CancelableInference = false; }
     }
 
     static void ShowInfo(InfoOptions io)
@@ -690,7 +773,7 @@ class Program
 
     private static void Console_CancelKeyPress(object? sender, ConsoleCancelEventArgs e)
     {
-        if (AudioInference)
+        if (CancelableInference)
         {
             e.Cancel = true;
             Cts.Cancel();
@@ -704,6 +787,6 @@ class Program
     
     #region Fields
     static readonly CancellationTokenSource Cts = new CancellationTokenSource();
-    static volatile bool AudioInference;
+    static volatile bool CancelableInference;
     #endregion
 }
