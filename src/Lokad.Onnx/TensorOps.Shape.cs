@@ -650,6 +650,9 @@ where T : unmanaged
         return output;
     }
     public static Tensor<T> Concat(Tensor<T>[] inputs, int axis)
+        => Concat(inputs, axis, null);
+
+    internal static int[] ConcatShape(Tensor<T>[] inputs, ref int axis)
     {
         StartOpStage(OpStage.ValidateArguments);
         // A single input is the identity (ORT 1.29); only the empty list is rejected.
@@ -657,14 +660,23 @@ where T : unmanaged
         if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException(nameof(inputs), $"Each input tensor in a concat operation must be of the same rank.");
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(inputs[0].Rank, axis);
         if (axis < 0 || axis >= inputs[0].Rank) throw new ArgumentException(nameof(axis), "The concat axis is out of range.");
-        if (!inputs.All(i => i.dimensions.Select((d, n) => n == axis ? 0 : d - inputs[0].dimensions[n]).All(s => s == 0)))
+        int normalizedAxis = axis;
+        if (!inputs.All(i => i.dimensions.Select((d, n) => n == normalizedAxis ? 0 : d - inputs[0].dimensions[n]).All(s => s == 0)))
             throw new ArgumentException(nameof(inputs), "The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.");
         var shape = inputs[0].dimensions.Copy();
         shape[axis] = 0;
         foreach (var input in inputs) shape[axis] += input.dimensions[axis];
+        return shape;
+    }
+
+    internal static Tensor<T> Concat(Tensor<T>[] inputs, int axis, DenseTensor<T>? destination)
+    {
+        var shape = ConcatShape(inputs, ref axis);
+        if (destination is not null && (!destination.Dimensions.SequenceEqual(shape) || !HasStandardStrides(destination)))
+            throw new ArgumentException(nameof(destination), "Destination must be contiguous and match the concatenated shape.");
 
         StartOpStage(OpStage.Copy);
-        var output = DenseTensor<T>.OfShape(shape);
+        var output = destination ?? DenseTensor<T>.OfShape(shape);
         int inner = 1;
         for (int trailing = axis + 1; trailing < output.Rank; trailing++) inner *= shape[trailing];
         int outer = 1;

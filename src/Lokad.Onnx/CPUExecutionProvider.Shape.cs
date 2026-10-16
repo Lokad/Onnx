@@ -148,6 +148,9 @@ public partial class CPUExecutionProvider
         }
     }
     public static OpResult Concat(ITensor[]? inputs, int? _axis, ExecutionOptions? options)
+        => Concat(inputs, _axis, options, null);
+
+    internal static OpResult Concat(ITensor[]? inputs, int? _axis, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.Concat;
         if (inputs is null || inputs.Length == 0) return MissingInput(op, nameof(inputs));
@@ -165,7 +168,15 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Concat(inputs.CastA<Tensor<uint>>(), axis));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Concat(inputs.CastA<Tensor<long>>(), axis));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Concat(inputs.CastA<Tensor<ulong>>(), axis));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Concat(inputs.CastA<Tensor<float>>(), axis));
+            case TensorElementType.Float:
+            {
+                var tensors = inputs.CastA<Tensor<float>>();
+                if (pool is null) return Success(op, Tensor<float>.Concat(tensors, axis));
+                var shape = Tensor<float>.ConcatShape(tensors, ref axis);
+                int count = checked((int)shape.Aggregate(1L, (length, dim) => checked(length * dim)));
+                var destination = new DenseTensor<float>(pool.Rent<float>(count).AsMemory(), shape);
+                return Success(op, Tensor<float>.Concat(tensors, axis, destination));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Concat(inputs.CastA<Tensor<double>>(), axis));
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Concat(inputs.CastA<Tensor<Half>>(), axis));
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Concat(inputs.CastA<Tensor<BFloat16>>(), axis));

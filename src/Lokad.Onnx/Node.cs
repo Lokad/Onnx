@@ -332,7 +332,7 @@ public partial struct Node
 
         OpType.Cast => CastChecked(InputTensor(graph, 0), RequiredInt("to"), GetInt("saturate", null), opt),
 
-        OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis"), opt),
+        OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis"), opt, graph.ActivePool),
 
         OpType.Shape => CPU.Shape(InputTensor(graph, 0), Int("start", null), Int("end", null), opt),
 

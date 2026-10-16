@@ -16,7 +16,7 @@ all hidden states and 128/256/512/768-dimensional vectors. It also compares
 repeated managed outputs byte for byte. Missing assets or missing cases fail.
 The scalar mode is intentionally slow. This correctness lane fixes JIT tiering;
 it supplies no performance claims. Performance qualification uses the existing
-isolated-process benchmark protocol under ordinary runtime settings.
+isolated-process benchmark protocol with separately recorded and calibrated runtime settings.
 
 The source-model reference uses a separate environment installed from
 `python/requirements-source.txt`, with CPU PyTorch. In that environment run:
