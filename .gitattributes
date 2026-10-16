@@ -2,6 +2,7 @@
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
 * text=auto
+tests/embeddinggemma2/cases.json text eol=lf
 
 ###############################################################################
 # Set default behavior for command prompt diff.
