@@ -142,3 +142,10 @@ at 128 dimensions. All 60 comparisons differ beyond the FP32 equivalence gate.
 The weight sidecar is 313,724,928 bytes. These synthetic cases establish neither
 retrieval-quality acceptance nor a speed advantage; runtime memory and performance
 need a separate measurement before choosing compressed execution.
+
+The optimized ORT 1.29.0 graph retains all 146 matrix nodes with
+`accuracy_level=0`: input activations stay FP32. Requesting level 4 permits
+activation quantization and is a further precision choice. See Microsoft's
+[operator contract](https://github.com/microsoft/onnxruntime/blob/v1.29.0/docs/ContribOperators.md#com.microsoft.MatMulNBits)
+and [CPU compute selection](https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/contrib_ops/cpu/quantization/matmul_nbits.cc).
+Compressed weight storage alone does not establish integer acceleration.
