@@ -68,7 +68,7 @@ def measured(record, smoke):
     evidence.integer(value["post_execute_ticks"], "post execute ticks", 1)
     require(value["warmup_stop"] == ("fixed-smoke" if smoke else "steady"), "warmup stop differs")
     if not smoke:
-        require(sum(warm) / frequency >= 1 and len(warm) >= 9 and len(warm) <= 1000, "insufficient warmup")
+        require(sum(warm) / frequency >= 1 and len(warm) >= 32 and len(warm) <= 1000, "insufficient warmup")
         require(warm_wall <= 60 * frequency, "warmup exceeded wall cap")
         require((max(warm[-9:]) - min(warm[-9:])) / statistics.median(warm[-9:]) <= .10, "warmup not steady")
     require(len(value["blocks"]) == (1 if smoke else 3), "block count differs")

@@ -266,7 +266,7 @@ internal static class Program
         {
             engine.Reset(); long start = Stopwatch.GetTimestamp(); engine.Execute(); long ticks = Stopwatch.GetTimestamp() - start;
             engine.Reset(); warm.Add(ticks); warmMs.Add(ticks * 1000.0 / Stopwatch.Frequency); total += warmMs[^1];
-            steady = config.Smoke || total >= 1000 && CampaignEvidence.SteadyWindow(warmMs);
+            steady = config.Smoke || warm.Count >= 32 && total >= 1000 && CampaignEvidence.SteadyWindow(warmMs);
         } while (!steady && warm.Count < 1000 && warmWall.Elapsed.TotalSeconds < 60);
         warmWall.Stop();
         Require(steady && warmWall.Elapsed.TotalSeconds <= 60, "Warmup did not converge within 1000 calls/60 seconds");

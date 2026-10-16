@@ -128,6 +128,19 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(value["cases"], lane.CASES)
         with self.assertRaises(evidence.EvidenceError): lane.calibration(value)
 
+    def test_short_warmup_cannot_qualify_normal_measurements(self):
+        entry = self.manifest["visits"][0]["workers"][0]
+        record = isolated.read_json(isolated.bound(self.root, entry["process"]))
+        value = record["measured"]
+        block = value["blocks"][0]
+        block["execute_ticks"] = [100] * 11
+        block["block_ticks"] = 1101
+        value["blocks"] = [dict(block, index=i) for i in range(3)]
+        value.update(warmup_ticks=[100] * 32, warmup_wall_ticks=3201, warmup_stop="steady")
+        self.assertEqual(len(lane.measured(record, False)), 33)
+        value.update(warmup_ticks=[100] * 31, warmup_wall_ticks=3101)
+        with self.assertRaises(evidence.EvidenceError): lane.measured(record, False)
+
     def test_missing_case_is_rejected(self):
         self.manifest["visits"][0]["workers"].pop()
         save(self.root / "evidence.json", self.manifest)
