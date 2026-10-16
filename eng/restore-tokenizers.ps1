@@ -30,7 +30,18 @@ $project = Join-Path $SourceDirectory 'src/Lokad.Tokenizers.csproj'
 $feed = Join-Path $root 'artifacts/dependencies/nuget'
 Invoke-Checked { dotnet restore $project --locked-mode --tl:off -v minimal }
 Invoke-Checked { dotnet pack $project -c Release --no-restore --tl:off --nologo -v minimal -o $feed }
-Invoke-Checked { dotnet restore Lokad.Onnx.slnx --source $feed --source 'https://api.nuget.org/v3/index.json' --tl:off -v minimal }
+$configuration = Join-Path $root 'artifacts/dependencies/nuget.config'
+$escapedFeed = [Security.SecurityElement]::Escape($feed)
+@"
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="qualified-tokenizers" value="$escapedFeed" />
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  </packageSources>
+</configuration>
+"@ | Set-Content -LiteralPath $configuration -Encoding utf8
+Invoke-Checked { dotnet restore Lokad.Onnx.slnx --configfile $configuration --tl:off -v minimal }
 $package = Join-Path $feed 'Lokad.Tokenizers.0.2.0.nupkg'
 @{ revision = $revision; version = '0.2.0'; packageSha256 = (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant() } |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $feed 'tokenizers-receipt.json') -Encoding utf8
