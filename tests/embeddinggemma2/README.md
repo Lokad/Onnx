@@ -149,3 +149,22 @@ activation quantization and is a further precision choice. See Microsoft's
 [operator contract](https://github.com/microsoft/onnxruntime/blob/v1.29.0/docs/ContribOperators.md#com.microsoft.MatMulNBits)
 and [CPU compute selection](https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/contrib_ops/cpu/quantization/matmul_nbits.cc).
 Compressed weight storage alone does not establish integer acceleration.
+
+For a separate native memory/latency diagnostic on Linux, run one fresh process
+per precision (`fp32` or `weight8`) and fixture case, pinned before Python starts:
+
+    taskset -c 2 python tests/embeddinggemma2/python/assess_native_cost.py --model-dir models/embeddinggemma-2 --fixtures artifacts/embeddinggemma2/benchmark-fixtures/fixtures.json --precision weight8 --case gemma2-512tok --cpu 2 --output artifacts/embeddinggemma2/native-cost/512-weight8.json
+
+The script verifies the pinned assets/inputs, warms up, retains 33 raw calls,
+checks same-engine byte repeatability, and records native owned-vector latency,
+peak process RSS, and FP32 cosine agreement at 768 dimensions. Use a new output
+filename each time. This is an unscored diagnostic for the precision decision;
+use the isolated campaigns above for a calibrated Lokad-versus-ORT claim.
+
+On the dedicated AMD EPYC 9V45 VM, the first fresh-process cost diagnostic with
+ORT 1.29.0 observed FP32 versus 8-bit medians of 51/154 ms at 32 tokens,
+166/276 ms at 128 tokens, and 743/870 ms at 512 tokens. Corresponding peak
+process RSS was approximately 614/266, 657/303, and 829/474 MiB. These are
+unscored single-process observations, not a calibrated speed claim. Under the
+observed default FP32-activation contract, the 8-bit export trades lower memory
+for slower execution on these cases; retain FP32 as the implementation baseline.
