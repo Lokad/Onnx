@@ -344,7 +344,7 @@ public partial struct Node
             _ => CPU.Slice(InputTensor(graph, 0), RequiredInts("starts").ToTensor<int>(), RequiredInts("ends").ToTensor<int>(), Ints("axes")?.ToTensor<int>(), null, opt),
         },
 
-        OpType.Split => CPU.Split(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Ints("split"), Int("num_outputs", null), opt, Outputs.Length),
+        OpType.Split => CPU.Split(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Ints("split"), Int("num_outputs", null), opt, Outputs.Length, graph.ActivePool),
 
         OpType.Pad => ResolvedOpsetVersion(graph) >= 11
             ? CPU.Pad(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Attr<string>("mode", null), null, null, opt)

@@ -286,6 +286,9 @@ public partial class CPUExecutionProvider
     }
 
     public static OpResult Split(ITensor? data, ITensor? split, int? _axis, int[]? _split, int? _numOutputs, ExecutionOptions? options, int? _outputCount)
+        => Split(data, split, _axis, _split, _numOutputs, options, _outputCount, null);
+
+    internal static OpResult Split(ITensor? data, ITensor? split, int? _axis, int[]? _split, int? _numOutputs, ExecutionOptions? options, int? _outputCount, TensorBufferPool? pool)
     {
         var op = OpType.Split;
         if (data is null) return MissingInput(op, nameof(data));
@@ -328,9 +331,11 @@ public partial class CPUExecutionProvider
         for (int i = axis + 1; i < data.Rank; i++) inner *= inDims[i];
         int outer = 1;
         for (int i = 0; i < axis; i++) outer *= inDims[i];
-            static DenseTensor<T> SplitPart<T>(System.ReadOnlySpan<T> src, int[] partDims, int outer, int inner, int dim, int start, int size) where T : unmanaged
+            static DenseTensor<T> SplitPart<T>(System.ReadOnlySpan<T> src, int[] partDims, int outer, int inner, int dim, int start, int size, TensorBufferPool? buffers) where T : unmanaged
             {
-                var dst = DenseTensor<T>.OfShape(partDims);
+                // Split assigns the complete payload; reused arrays may be dirty.
+                var dst = buffers is null ? DenseTensor<T>.OfShape(partDims) :
+                    new DenseTensor<T>(new Memory<T>(buffers.Rent<T>(checked((int)((long)outer * inner * size)))), partDims);
                 ArrayUtilities.CopyAxisChunks(src, dim, dst.Buffer.Span, size, outer, inner, start, 0, size);
                 return dst;
             }
@@ -346,7 +351,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], pool);
                     start += sizes[p];
                 }
                 break;
@@ -360,7 +365,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -374,7 +379,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -388,7 +393,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -402,7 +407,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -416,7 +421,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -430,7 +435,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -444,7 +449,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -458,7 +463,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -472,7 +477,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -486,7 +491,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -500,7 +505,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
@@ -514,7 +519,7 @@ public partial class CPUExecutionProvider
                 {
                     var partDims = (int[])inDims.Clone();
                     partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
                     start += sizes[p];
                 }
                 break;
