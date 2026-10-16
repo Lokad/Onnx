@@ -436,7 +436,7 @@ public partial struct Node
 
         OpType.Not => CPU.Not(InputTensor(graph, 0), opt),
 
-        OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt),
+        OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt, graph.ActivePool),
 
         OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate", null), opt, graph.ActivePool),
 

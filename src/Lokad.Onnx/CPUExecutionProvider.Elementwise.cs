@@ -760,6 +760,9 @@ public partial class CPUExecutionProvider
     }
 
     public static OpResult Neg(ITensor? X, ExecutionOptions? options)
+        => Neg(X, options, null);
+
+    internal static OpResult Neg(ITensor? X, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.Neg;
         if (X is null) return MissingInput(op, nameof(X));
@@ -769,7 +772,19 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Negate((Tensor<sbyte>)X, opts.Tensor));
             case TensorElementType.Int16: return Success(op, Tensor<short>.Negate((Tensor<short>)X, opts.Tensor));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Negate((Tensor<float>)X, opts.Tensor));
+            case TensorElementType.Float:
+            {
+                var fx = (Tensor<float>)X;
+                // The existing flat-index kernel preserves the source layout.
+                // Only a standard dense source can use a row-major pool output.
+                if (pool is null || fx is not DenseTensor<float> dense || dense.IsReversedStride
+                    || dense.Buffer.Length != dense.Length
+                    || !dense.strides.SequenceEqual(ArrayUtilities.GetStrides(dense.dimensions)))
+                    return Success(op, Tensor<float>.Negate(fx, opts.Tensor));
+                var destination = new DenseTensor<float>(pool.Rent<float>(checked((int)fx.Length)).AsMemory(), fx.Dimensions.ToArray());
+                fx.VectorizedApply(Vector.Negate, value => -value, destination, opts.Tensor);
+                return Success(op, destination);
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Negate((Tensor<double>)X, opts.Tensor));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Negate((Tensor<int>)X, opts.Tensor));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Negate((Tensor<long>)X, opts.Tensor));
