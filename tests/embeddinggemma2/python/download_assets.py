@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import sysconfig
 
 from common import sha256
@@ -20,8 +21,9 @@ def main():
     entry = manifest[kind]
     destination = args.root / entry["directory"]
     cli = Path(sysconfig.get_path("scripts")) / ("hf.exe" if os.name == "nt" else "hf")
-    command = [str(cli), "download", entry["repository"], *entry["files"], *entry.get("metadata", []),
-               "--revision", entry["revision"], "--local-dir", str(destination), "--quiet"]
+    launcher = [str(cli)] if cli.is_file() else [sys.executable, "-m", "huggingface_hub.cli.hf"]
+    command = [*launcher, "download", entry["repository"], *entry["files"], *entry.get("metadata", []),
+               "--revision", entry["revision"], "--local-dir", str(destination), "--format", "quiet"]
     subprocess.run(command, check=True)
     receipt = {"repository": entry["repository"], "revision": entry["revision"], "files": {}}
     for name in [*entry["files"], *entry.get("metadata", [])]:
