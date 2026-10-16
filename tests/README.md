@@ -21,6 +21,12 @@ Or use `eng/test.ps1`, which runs the same steps and collects Cobertura coverage
 
 Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md`).
 
+EmbeddingGemma 2 conformance: `eng/test-embeddinggemma2.ps1` checks exact tokenization,
+frozen tensor execution, owned vectors, Data API, CLI, and repeatability against
+Python/native references at 128/256/512/768 dimensions. It requires explicitly
+staged local assets; see [the model lane](embeddinggemma2/README.md), including its
+separate source-model reference and calibrated CPU benchmark instructions.
+
 ## Local setup
 
 - .NET 10 SDK (verified with 10.0.300-preview.0.26177.108), PowerShell 7, and
