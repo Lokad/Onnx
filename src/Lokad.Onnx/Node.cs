@@ -324,6 +324,10 @@ public partial struct Node
             ? CPU.ScaledMatMulTrailing(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool)
             : CPU.ScaledMatMul(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool),
 
+        OpType.FusedRmsNormalization => CPU.FusedRmsNormalization(InputTensor(graph, 0), InputTensor(graph, 1),
+            InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4),
+            Int("keepdims", null), Int("noop_with_empty_axes", null), opt, graph.ActivePool),
+
         OpType.Transpose => TransposePrepared(graph, opt),
 
         OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings"), opt),

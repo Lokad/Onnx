@@ -159,7 +159,8 @@ internal sealed class GraphFacts
                 if (!third.HasValue || third.Value != madd.Value) return null;
                 return madd;
             }
-            if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu) return null;
+            if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu
+                && pn.Op != OpType.FusedRmsNormalization) return null;
             if (pn.Inputs is null || pn.Inputs.Length < 1) return null;
             return ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
         }

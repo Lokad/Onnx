@@ -82,6 +82,7 @@ internal static class GraphOptimizer
     public static void EnsureStandardPasses()
     {
         GraphFusion.RegisterLayerNormPass();
+        GraphFusion.RegisterRmsNormPass();
         GraphFusion.RegisterRopePass();
         GraphFusion.RegisterGeluPass();
         GraphFusion.RegisterGeluTanhPass();

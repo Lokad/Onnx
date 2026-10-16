@@ -38,6 +38,8 @@ static class Program
         var graph = OnnxImport.Load(modelPath, 64L * 1024 * 1024)
             ?? throw new InvalidOperationException(OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
         var execution = graph.CreateExecution(options);
+        int fusedRmsCount = graph.Nodes.Count(node => node.Op == OpType.FusedRmsNormalization);
+        Console.WriteLine($"Prepared graph: {graph.Nodes.Count} nodes; {fusedRmsCount} RMS fusions");
         using var reference = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(referencePath, "manifest.json")));
         var results = new List<object>();
         foreach (var item in reference.RootElement.GetProperty("cases").EnumerateArray())
@@ -75,6 +77,7 @@ static class Program
         File.WriteAllText(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new
         {
             schemaVersion = 1, modelSha256 = Hash(modelPath), mode, cases = results,
+            graphNodeCount = graph.Nodes.Count, fusedRmsCount,
             coreSha256 = Hash(typeof(OnnxImport).Assembly.Location),
             runnerSha256 = Hash(typeof(Program).Assembly.Location),
             referenceSha256 = Hash(Path.Combine(referencePath, "manifest.json")),

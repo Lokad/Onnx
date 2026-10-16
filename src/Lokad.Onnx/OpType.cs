@@ -204,5 +204,6 @@ public enum OpType
     ScaledMatMul,
     MaskedSoftmax,
     Unknown,
+    FusedRmsNormalization,
 }
 

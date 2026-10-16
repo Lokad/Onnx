@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Lokad.Onnx
 {
-    internal static class GraphFusion
+    internal static partial class GraphFusion
     {
         static bool IsFusableParticipant(Node node)
         {
