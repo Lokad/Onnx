@@ -110,10 +110,11 @@ unscored. Changing runtime settings, the common runner, assets, or fixtures requ
 fresh matching A/A evidence. The default packed-weight budget is 576 MiB and is
 recorded explicitly; model storage and execution memory are additional.
 
-Compute warmup requires at least 32 complete calls and one second of execution,
+Compute warmup requires at least 32 complete calls and ten seconds of execution,
 then a stable last-nine-call window, within the existing 1,000-call/60-second cap.
 The minimum call count keeps a long model from ending warmup after only nine
-calls. The unchanged raw-sample and repetition gates still decide qualification;
+calls. The time floor also prevents a fast case from ending its warmup after
+only a few seconds. The unchanged raw-sample and repetition gates still decide qualification;
 a passing warmup window alone does not establish stable measurements.
 
 The worker also accepts `profile`, `lok-text`, and `ort-text` with a generated

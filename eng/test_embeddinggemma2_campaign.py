@@ -136,9 +136,11 @@ class ProtocolTests(unittest.TestCase):
         block["execute_ticks"] = [100] * 11
         block["block_ticks"] = 1101
         value["blocks"] = [dict(block, index=i) for i in range(3)]
-        value.update(warmup_ticks=[100] * 32, warmup_wall_ticks=3201, warmup_stop="steady")
+        value.update(warmup_ticks=[400] * 32, warmup_wall_ticks=12801, warmup_stop="steady")
         self.assertEqual(len(lane.measured(record, False)), 33)
-        value.update(warmup_ticks=[100] * 31, warmup_wall_ticks=3101)
+        value.update(warmup_ticks=[400] * 31, warmup_wall_ticks=12401)
+        with self.assertRaises(evidence.EvidenceError): lane.measured(record, False)
+        value.update(warmup_ticks=[100] * 32, warmup_wall_ticks=3201)
         with self.assertRaises(evidence.EvidenceError): lane.measured(record, False)
 
     def test_missing_case_is_rejected(self):
