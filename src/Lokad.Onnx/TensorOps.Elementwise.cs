@@ -908,6 +908,46 @@ where T : unmanaged
     /// </summary>
     internal static void GeluTanhSpanFloat(ReadOnlySpan<float> xs, Span<float> ys)
     {
+        if (Vector512.IsHardwareAccelerated && Fma.IsSupported && xs.Length >= Vector512<float>.Count)
+            GeluTanhSpanFloatWide(xs, ys);
+        else
+            GeluTanhSpanFloatReference(xs, ys);
+    }
+
+    // Preserve the original vector/scalar boundary and every per-lane operation.
+    internal static void GeluTanhSpanFloatWide(ReadOnlySpan<float> xs, Span<float> ys)
+    {
+        int count = xs.Length / Vector512<float>.Count * Vector512<float>.Count;
+        var xvec = MemoryMarshal.Cast<float, Vector512<float>>(xs[..count]);
+        var yvec = MemoryMarshal.Cast<float, Vector512<float>>(ys[..count]);
+        var half = Vector512.Create(0.5f);
+        var one = Vector512<float>.One;
+        var two = Vector512.Create(2f);
+        var c3 = Vector512.Create(0.044715f);
+        var c5 = Vector512.Create(0.7978846f);
+        var maxFinite = Vector512.Create(float.MaxValue);
+        for (int i = 0; i < yvec.Length; i++)
+        {
+            var v = xvec[i];
+            // Preserve the original NaN payload/operand selection as well as finite bits.
+            if (!Vector512.LessThanOrEqualAll(Vector512.Abs(v), maxFinite))
+            {
+                int offset = i * Vector512<float>.Count;
+                GeluTanhSpanFloatReference(xs.Slice(offset, Vector512<float>.Count), ys.Slice(offset, Vector512<float>.Count));
+                continue;
+            }
+            var t1 = half * v;
+            var t3 = c3 * v * v * v;
+            var t5 = c5 * (v + t3);
+            var e = MathOps.ExpVectorHorner512(t5 + t5);
+            var t = one - two / (e + one);
+            yvec[i] = t1 * (t + one);
+        }
+        GeluTanhSpanFloatReference(xs[count..], ys[count..]);
+    }
+
+    internal static void GeluTanhSpanFloatReference(ReadOnlySpan<float> xs, Span<float> ys)
+    {
         var xvec = MemoryMarshal.Cast<float, Vector<float>>(xs);
         var yvec = MemoryMarshal.Cast<float, Vector<float>>(ys);
         var half = new Vector<float>(0.5f);
