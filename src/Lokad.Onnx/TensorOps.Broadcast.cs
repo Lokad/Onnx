@@ -322,11 +322,18 @@ where T : unmanaged
             if (xDim != 1) sx *= xDim;
             if (yDim != 1) sy *= yDim;
         }
+        // Row normalization broadcasts one value across the contiguous final
+        // axis. Compute outer coordinates once per row and broadcast that value
+        // in SIMD registers instead of doing coordinate divisions per element.
+        // Keep overlapping buffers on the existing path.
+        bool rowScalar = sop is null && options.UseSimd && rank > 0 && shape[rank - 1] >= Vector<T>.Count &&
+            ((xSteps[rank - 1] == 0 && ySteps[rank - 1] == 1) || (xSteps[rank - 1] == 1 && ySteps[rank - 1] == 0)) &&
+            !xs.Overlaps(ds) && !ys.Overlaps(ds);
         // Longest trailing span where both sides advance one element per step,
         // so the inner loop pairs positions directly (and vectorizes).
-        int inner = 1;
-        int od = rank - 1;
-        for (; od >= 0; od--)
+        int inner = rowScalar ? shape[rank - 1] : 1;
+        int od = rowScalar ? rank - 2 : rank - 1;
+        for (; !rowScalar && od >= 0; od--)
         {
             if (shape[od] <= 1) continue;
             if (xSteps[od] != inner || ySteps[od] != inner) break;
@@ -347,7 +354,14 @@ where T : unmanaged
                 oy += c * ySteps[d];
             }
             int dstBase = b * inner;
-            if (vectorize)
+            if (rowScalar)
+            {
+                if (xSteps[rank - 1] == 0)
+                    ApplyBroadcastScalarRow<TOp>(ys.Slice(oy, inner), xs[ox], ds.Slice(dstBase, inner), true);
+                else
+                    ApplyBroadcastScalarRow<TOp>(xs.Slice(ox, inner), ys[oy], ds.Slice(dstBase, inner), false);
+            }
+            else if (vectorize)
             {
                 var xv = MemoryMarshal.Cast<T, Vector<T>>(xs.Slice(ox, inner));
                 var yv = MemoryMarshal.Cast<T, Vector<T>>(ys.Slice(oy, inner));
@@ -366,6 +380,25 @@ where T : unmanaged
             {
                 for (int i = 0; i < inner; i++) ds[dstBase + i] = sop(xs[ox + i], ys[oy + i]);
             }
+        }
+    }
+
+    static void ApplyBroadcastScalarRow<TOp>(ReadOnlySpan<T> row, T scalar, Span<T> destination, bool scalarOnLeft)
+        where TOp : struct, IBroadcastOperator<T>
+    {
+        var rv = MemoryMarshal.Cast<T, Vector<T>>(row);
+        var dv = MemoryMarshal.Cast<T, Vector<T>>(destination);
+        var sv = new Vector<T>(scalar);
+        int done = rv.Length * Vector<T>.Count;
+        if (scalarOnLeft)
+        {
+            for (int i = 0; i < rv.Length; i++) dv[i] = TOp.Vector(sv, rv[i]);
+            for (int i = done; i < row.Length; i++) destination[i] = TOp.Scalar(scalar, row[i]);
+        }
+        else
+        {
+            for (int i = 0; i < rv.Length; i++) dv[i] = TOp.Vector(rv[i], sv);
+            for (int i = done; i < row.Length; i++) destination[i] = TOp.Scalar(row[i], scalar);
         }
     }
 
