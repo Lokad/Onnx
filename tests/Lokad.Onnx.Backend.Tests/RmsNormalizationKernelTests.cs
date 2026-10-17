@@ -35,8 +35,8 @@ public class RmsNormalizationKernelTests
         var random = new Random(6413);
         float[] magnitudes = { 1e10f, 1f, -1e10f, .125f, -.25f, 1e-20f, -0f, float.Epsilon, MathF.BitIncrement(1f) };
         float[] extremes = { float.MaxValue, float.MinValue, float.Epsilon, -float.Epsilon, 0f, -0f };
-        foreach (int rows in new[] { 1, 3, 4, 5, 8, 9 })
-        foreach (int width in new[] { 1, 7, 8, 15, 16, 31, 32, 33, 128, 256, 512, 513 })
+        foreach (int rows in new[] { 1, 3, 4, 5, 8, 9, 16, 17, 19, 20 })
+        foreach (int width in new[] { 1, 7, 8, 15, 16, 31, 32, 33, 34, 35, 128, 256, 512, 513 })
         foreach (float epsilon in new[] { 1e-6f, float.Epsilon, 1f })
         foreach (bool simd in new[] { false, true })
         {
