@@ -125,6 +125,12 @@ Protocol refusal tests do not need models:
 
     python -m unittest discover -s eng -p test_embeddinggemma2_campaign.py
 
+The [2026-10-17 practical FP32 comparison](benchmarks-20261017.md) reports
+128-token latency of 175.8 ms for Lokad versus 167.9 ms for ORT, plus the other
+token lengths and all raw samples. It uses a separately identified balanced
+repeat protocol that reports small variations without requiring the historical
+3% A/A gate. The frozen full-campaign commands above retain their original policy.
+
 ## Separate 8-bit assessment
 
 The pinned quantized export uses 146 `com.microsoft::MatMulNBits` nodes and one

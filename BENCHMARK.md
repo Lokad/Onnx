@@ -1,26 +1,30 @@
-# CPU benchmarks for Lokad.Onnx 0.3.0
+# CPU benchmarks for Lokad.Onnx
 
-Released inference implementation, measured on 2026-09-28 UTC. **Lower is better.** Times
-are seconds; Lokad / ORT is the latency ratio, so 1.100 means 10.0% more time.
+The September rows measure the 0.3.0 inference implementation on 2026-09-28 UTC.
+The EmbeddingGemma 2 row measures optimized source `0132a460` on 2026-10-17 UTC.
+**Lower is better.** Times are seconds; Lokad / ORT is the latency ratio, so
+1.100 means 10.0% more time.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT | Status |
 |---|---|---:|---:|---:|---|
 | Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 43.459339 | 39.202810 | **1.109** | Qualified |
 | Pyannote Community-1 | Complete diarization of a 30-second dialogue | 9.920118 | 8.949371 | **1.108** | Qualified |
 | multilingual-e5-small | One 30-token forward pass | 0.015878 | 0.015335 | **1.035** | Qualified |
+| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.175837 | 0.167888 | **1.047** | Repeated comparison |
 | DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.109552 | 0.101699 | **1.077** | Qualified |
 | ResNet50 | One 224x224 image, feature export | 0.092810 | 0.072859 | **1.274** | Qualified |
 | GPT-2 | Four-token prefill, empty past state | 0.033982 | 0.020112 | **1.690** | Qualified |
 | DINOv2-small | 224x224 image | — | — | — | Excluded: numerical agreement gate |
 | Whisper Large V3 Turbo | Speech transcription | — | — | — | Supported; current-release comparison deferred |
 
-Every numerical timing row uses the same AMD EPYC 9V74 VM, one logical CPU
-(CPU 2), .NET 10.0.8 and **Microsoft ONNX Runtime 1.29.0 CPUExecutionProvider**.
+The September timing rows use the same AMD EPYC 9V74 VM. EmbeddingGemma 2 uses
+the AMD EPYC 9V45 `onnx-bench` VM. All rows use one logical CPU (CPU 2),
+.NET 10.0.8 and **Microsoft ONNX Runtime 1.29.0 CPUExecutionProvider**.
 Each row is a matched comparison for that workload. Audio rows measure complete
 applications; embedding, vision and GPT-2 rows measure prepared graph calls.
 The workloads differ, so their absolute times should not be compared to each other.
 
-The measured inference implementation is source `04584fc2`, measured as Core `c471f5d1`
+The September inference implementation is source `04584fc2`, measured as Core `c471f5d1`
 and Data `b04aea50`. Its [root and package qualification](tests/parakeet/transpose-axis-results/root-20260928.md)
 verifies that the normal build (Core `e98edee2`, Data `7f4dd050`) preserves all
 3,288 Core and 697 Data method bodies, implementation flags, public declarations
@@ -43,14 +47,22 @@ transcription results. Its total sums the twenty clip means. ORT uses matching
 application policies around native inference. Each audio engine has two fresh
 timed processes with one warmup and three measured passes per fixture.
 
-Graph timings include a complete forward call returning all owned float arrays:
+September graph timings include a complete forward call returning all owned float arrays:
 `Reset`, `Execute` and output materialization for Lokad.Onnx, and `session.run`
 for ORT. Inputs are already tensors and batch size is one. Each process uses
 1,200 fixed warmups for 30-token e5, 6,000 for 8-token e5 and 600 for the other
 cases, followed by 180 measurements. Separate numerical workers run first.
 Each comparison includes the previous release: six fresh processes run release,
 candidate, ORT, ORT, candidate, release. The table reports the qualified candidate,
-which is the current repository product.
+which is the 0.3.0 implementation covered by those September rows.
+
+EmbeddingGemma 2 times an owned FP32 final embedding, including masked mean
+pooling, truncation, normalization and copying. Tokenization, loading and context
+reset are outside this timer. Its row is the median of two fresh-process medians
+per engine, each retaining 33 calls after at least 30 seconds of compute warmup.
+Lokad repeats span 0.175653–0.176022 seconds; ORT repeats span
+0.167623–0.168154 seconds. See its [comparison and raw samples](tests/embeddinggemma2/benchmarks-20261017.md)
+for the separate protocol, measured source, numerical checks and other token lengths.
 
 Model loading/preparation, file IO, fixture creation, validation and reporting
 are outside these timers. ORT uses one intra/inter-op thread, sequential execution
@@ -59,6 +71,10 @@ disabled. Every clock is retained and no measurements are trimmed.
 
 ## Evidence and coverage
 
+- [EmbeddingGemma 2 FP32 comparison and raw samples](tests/embeddinggemma2/benchmarks-20261017.md):
+  two fresh processes per engine/revision, balanced baseline/candidate/candidate/baseline
+  ordering, exact inputs and checked final vectors. Small repeat variations are reported;
+  this measurement does not claim acceptance by the historical 3% A/A scorer.
 - [Parakeet comparison, all twenty clips and complete clocks](tests/parakeet/transpose-axis-results/application-20260928.md):
   six measured calls per engine per clip. All 63 repeatability controls, numerical,
   complete public-result, ownership and resource checks pass.
