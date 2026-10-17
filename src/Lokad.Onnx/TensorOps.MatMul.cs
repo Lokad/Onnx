@@ -674,7 +674,8 @@ where T : unmanaged
         {
             if (AblationSwitches.EnablePackedAvx512Panels && TryPackedAvx512Panels(m, n, k, x, packed, dest)) return;
             if (AblationSwitches.EnablePackedAvx512Narrow && TryPackedAvx512NarrowRows(m, n, k, x, packed, dest)) return;
-            if (m == 128 && TryPackedAvx512Fixed512Rows(m, n, k, x, packed, dest)) return;
+            if (m == 128 && (TryPackedAvx512Fixed512Rows(m, n, k, x, packed, dest)
+                || TryPackedAvx512FixedWideRows(m, n, k, x, packed, dest))) return;
             if (m >= 256 && TryPackedAvx512SixRows(m, n, k, x, packed, dest)) return;
             if (TryPackedAvx512Rows(m, n, k, x, packed, dest)) return;
         }

@@ -19,14 +19,25 @@ public unsafe class PackedFixed512Tests
     public void PreservesPackedAccumulationAndUnalignedGuards(int columns)
     {
         Skip.IfNot(Avx512F.IsSupported && Fma.IsSupported, "Requires AVX-512/FMA");
-        Check(columns, exceptional: false);
+        Check(columns, exceptional: false, reduction: 512);
     }
 
     [SkippableFact]
     public void PreservesExceptionalValueBits()
     {
         Skip.IfNot(Avx512F.IsSupported && Fma.IsSupported, "Requires AVX-512/FMA");
-        Check(512, exceptional: true);
+        Check(512, exceptional: true, reduction: 512);
+    }
+
+    [SkippableTheory]
+    [InlineData(1024, false)]
+    [InlineData(1024, true)]
+    [InlineData(2048, false)]
+    [InlineData(2048, true)]
+    public void FixedWideReductionPreservesBits(int reduction, bool exceptional)
+    {
+        Skip.IfNot(Avx512F.IsSupported && Fma.IsSupported, "Requires AVX-512/FMA");
+        Check(512, exceptional, reduction);
     }
 
     [Theory]
@@ -35,19 +46,25 @@ public unsafe class PackedFixed512Tests
     [InlineData(128, 512, 768)]
     [InlineData(128, 512, 256)]
     [InlineData(256, 512, 512)]
+    [InlineData(128, 1024, 768)]
+    [InlineData(128, 2048, 1024)]
+    [InlineData(128, 768, 512)]
     public void DeclinesUnsupportedShapesWithoutWriting(int rows, int reduction, int columns)
     {
         var input = new float[rows * reduction];
         var packed = new float[reduction * columns];
         var output = Enumerable.Repeat(-12345.5f, rows * columns + 10).ToArray();
         fixed (float* a = input, b = packed, c = output)
+        {
             Assert.False(Resolve("TryPackedAvx512Fixed512Rows")(rows, reduction, columns, a, b, c + 5));
+            Assert.False(Resolve("TryPackedAvx512FixedWideRows")(rows, reduction, columns, a, b, c + 5));
+        }
         Assert.All(output, value => Assert.Equal(-12345.5f, value));
     }
 
-    static void Check(int columns, bool exceptional)
+    static void Check(int columns, bool exceptional, int reduction)
     {
-        const int rows = 128, reduction = 512, offset = 5;
+        const int rows = 128, offset = 5;
         const float guard = -12345.5f;
         var random = new Random(6713);
         float[] special = { 0f, -0f, 1f, -1f, float.PositiveInfinity, float.NegativeInfinity,
@@ -69,7 +86,7 @@ public unsafe class PackedFixed512Tests
             MathOps.PackPanelsB(reduction, columns, b, p + offset);
             var packedBefore = packed.ToArray();
             Assert.True(Resolve("TryPackedAvx512Rows")(rows, reduction, columns, a + offset, p + offset, e + offset));
-            Assert.True(Resolve("TryPackedAvx512Fixed512Rows")(rows, reduction, columns, a + offset, p + offset, c + offset));
+            Assert.True(Resolve(reduction == 512 ? "TryPackedAvx512Fixed512Rows" : "TryPackedAvx512FixedWideRows")(rows, reduction, columns, a + offset, p + offset, c + offset));
             EqualBits(packedBefore, packed);
         }
         EqualBits(expected, actual);
