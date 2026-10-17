@@ -3797,6 +3797,31 @@ public partial class MathOps
         return Vector512.ConditionalSelect(isFinite, y, Vector512.Create(float.NaN));
     }
 
+    // GELU-only contract: every lane is finite and in [-20,20]. Keep exactly
+    // the general Horner operations; its range/NaN guards cannot affect these
+    // inputs and its integer exponent is already inside [-126,127].
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Vector512<float> ExpVectorHorner512Gelu(Vector512<float> x)
+    {
+        var scaled = x * Vector512.Create(1.44269504088896341f);
+        var shifted = Vector512.ConditionalSelect(Vector512.GreaterThanOrEqual(scaled, Vector512<float>.Zero),
+            scaled + Vector512.Create(0.5f), scaled - Vector512.Create(0.5f));
+        var n = Vector512.ConvertToInt32(shifted);
+        var nf = Vector512.ConvertToSingle(n);
+        var r = Vector512.FusedMultiplyAdd(nf, Vector512.Create(-0.693359375f), x);
+        r = Vector512.FusedMultiplyAdd(nf, Vector512.Create(2.12194440e-4f), r);
+        var p = Vector512.Create(1f / 5040f);
+        p = Vector512.FusedMultiplyAdd(p, r, Vector512.Create(1f / 720f));
+        p = Vector512.FusedMultiplyAdd(p, r, Vector512.Create(1f / 120f));
+        p = Vector512.FusedMultiplyAdd(p, r, Vector512.Create(1f / 24f));
+        p = Vector512.FusedMultiplyAdd(p, r, Vector512.Create(1f / 6f));
+        p = Vector512.FusedMultiplyAdd(p, r, Vector512.Create(0.5f));
+        p = Vector512.FusedMultiplyAdd(p, r, Vector512<float>.One);
+        p = Vector512.FusedMultiplyAdd(p, r, Vector512<float>.One);
+        var scale = Vector512.AsSingle(Vector512.ShiftLeft(n + Vector512.Create(127), 23));
+        return p * scale;
+    }
+
     /// <summary>Softmax-scoped vectorized base-e exponential (E66): same Cody-Waite
     /// reduction, clamps, reconstruction and guards as ExpVector, but the degree-7
     /// Taylor core in Estrin form (parallel sub-chains) instead of serial Horner.

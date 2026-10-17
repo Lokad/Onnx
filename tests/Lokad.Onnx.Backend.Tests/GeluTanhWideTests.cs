@@ -77,6 +77,29 @@ public class GeluTanhWideTests
     }
 
     [Fact]
+    public void BoundedHornerPreservesGeneralExponentialWithinItsContract()
+    {
+        var input = new float[16384];
+        for (int i = 0; i < input.Length; i++) input[i] = (i % 4097 - 2048) * (20f / 2048f);
+        input[0] = -20f;
+        input[1] = MathF.BitIncrement(-20f);
+        input[2] = -0f;
+        input[3] = MathF.BitDecrement(20f);
+        input[4] = 20f;
+        var expected = new float[input.Length];
+        var actual = new float[input.Length];
+        var values = MemoryMarshal.Cast<float, Vector512<float>>(input);
+        var oldOutput = MemoryMarshal.Cast<float, Vector512<float>>(expected.AsSpan());
+        var newOutput = MemoryMarshal.Cast<float, Vector512<float>>(actual.AsSpan());
+        for (int i = 0; i < values.Length; i++)
+        {
+            oldOutput[i] = MathOps.ExpVectorHorner512(values[i]);
+            newOutput[i] = MathOps.ExpVectorHorner512Gelu(values[i]);
+        }
+        EqualBits(expected, actual);
+    }
+
+    [Fact]
     public void SaturationBoundaryPreservesReferenceBits()
     {
         static float Argument(float value)

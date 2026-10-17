@@ -945,7 +945,7 @@ where T : unmanaged
             // already round tanh to -1 or +1. Avoid subnormal intermediates in
             // the exponential/division while preserving the final result bits.
             var argument = Vector512.Min(Vector512.Max(t5 + t5, minimumArgument), maximumArgument);
-            var e = MathOps.ExpVectorHorner512(argument);
+            var e = MathOps.ExpVectorHorner512Gelu(argument);
             var t = one - two / (e + one);
             yvec[i] = t1 * (t + one);
         }
