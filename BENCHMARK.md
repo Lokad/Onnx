@@ -1,7 +1,7 @@
 # CPU benchmarks for Lokad.Onnx
 
 The September rows measure the 0.3.0 inference implementation on 2026-09-28 UTC.
-The EmbeddingGemma 2 row measures optimized source `0132a460` on 2026-10-17 UTC.
+The EmbeddingGemma 2 row measures optimized source `98b9234c` on 2026-10-17 UTC.
 **Lower is better.** Times are seconds; Lokad / ORT is the latency ratio, so
 1.100 means 10.0% more time.
 
@@ -10,7 +10,7 @@ The EmbeddingGemma 2 row measures optimized source `0132a460` on 2026-10-17 UTC.
 | Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 43.459339 | 39.202810 | **1.109** | Qualified |
 | Pyannote Community-1 | Complete diarization of a 30-second dialogue | 9.920118 | 8.949371 | **1.108** | Qualified |
 | multilingual-e5-small | One 30-token forward pass | 0.015878 | 0.015335 | **1.035** | Qualified |
-| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.175837 | 0.167888 | **1.047** | Repeated comparison |
+| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.165331 | 0.168010 | **0.984** | Repeated comparison |
 | DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.109552 | 0.101699 | **1.077** | Qualified |
 | ResNet50 | One 224x224 image, feature export | 0.092810 | 0.072859 | **1.274** | Qualified |
 | GPT-2 | Four-token prefill, empty past state | 0.033982 | 0.020112 | **1.690** | Qualified |
@@ -60,8 +60,9 @@ EmbeddingGemma 2 times an owned FP32 final embedding, including masked mean
 pooling, truncation, normalization and copying. Tokenization, loading and context
 reset are outside this timer. Its row is the median of two fresh-process medians
 per engine, each retaining 33 calls after at least 30 seconds of compute warmup.
-Lokad repeats span 0.175653–0.176022 seconds; ORT repeats span
-0.167623–0.168154 seconds. See its [comparison and raw samples](tests/embeddinggemma2/benchmarks-20261017.md)
+Lokad repeats span 0.165033–0.165630 seconds; ORT repeats span
+0.167971–0.168049 seconds. A separate 128-token comparison uses the same candidate binary.
+See its [comparison and raw samples](tests/embeddinggemma2/benchmarks-20261017-fixedwidth.md)
 for the separate protocol, measured source, numerical checks and other token lengths.
 
 Model loading/preparation, file IO, fixture creation, validation and reporting
@@ -71,7 +72,7 @@ disabled. Every clock is retained and no measurements are trimmed.
 
 ## Evidence and coverage
 
-- [EmbeddingGemma 2 FP32 comparison and raw samples](tests/embeddinggemma2/benchmarks-20261017.md):
+- [EmbeddingGemma 2 FP32 comparison and raw samples](tests/embeddinggemma2/benchmarks-20261017-fixedwidth.md):
   two fresh processes per engine/revision, balanced baseline/candidate/candidate/baseline
   ordering, exact inputs and checked final vectors. Small repeat variations are reported;
   this measurement does not claim acceptance by the historical 3% A/A scorer.
