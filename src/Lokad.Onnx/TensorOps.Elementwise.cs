@@ -926,6 +926,8 @@ where T : unmanaged
         var c3 = Vector512.Create(0.044715f);
         var c5 = Vector512.Create(0.7978846f);
         var maxFinite = Vector512.Create(float.MaxValue);
+        var minimumArgument = Vector512.Create(-20f);
+        var maximumArgument = Vector512.Create(20f);
         for (int i = 0; i < yvec.Length; i++)
         {
             var v = xvec[i];
@@ -939,7 +941,11 @@ where T : unmanaged
             var t1 = half * v;
             var t3 = c3 * v * v * v;
             var t5 = c5 * (v + t3);
-            var e = MathOps.ExpVectorHorner512(t5 + t5);
+            // Beyond these conservative bounds the subsequent float operations
+            // already round tanh to -1 or +1. Avoid subnormal intermediates in
+            // the exponential/division while preserving the final result bits.
+            var argument = Vector512.Min(Vector512.Max(t5 + t5, minimumArgument), maximumArgument);
+            var e = MathOps.ExpVectorHorner512(argument);
             var t = one - two / (e + one);
             yvec[i] = t1 * (t + one);
         }

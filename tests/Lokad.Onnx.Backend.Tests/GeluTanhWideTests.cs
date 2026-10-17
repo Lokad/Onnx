@@ -77,6 +77,51 @@ public class GeluTanhWideTests
     }
 
     [Fact]
+    public void SaturationBoundaryPreservesReferenceBits()
+    {
+        static float Argument(float value)
+        {
+            float cubic = .044715f * value * value * value;
+            float t = .7978846f * (value + cubic);
+            return t + t;
+        }
+        int low = BitConverter.SingleToInt32Bits(4f), high = BitConverter.SingleToInt32Bits(8f);
+        while (low < high)
+        {
+            int middle = low + (high - low) / 2;
+            if (Argument(BitConverter.Int32BitsToSingle(middle)) < 20f) low = middle + 1;
+            else high = middle;
+        }
+        var values = new float[16384];
+        for (int i = 0; i < 8192; i++)
+        {
+            values[i] = BitConverter.Int32BitsToSingle(low + i - 4096);
+            values[8192 + i] = -values[i];
+        }
+        var expected = new float[values.Length];
+        var actual = new float[values.Length];
+        Tensor<float>.GeluTanhSpanFloatReference(values, expected);
+        Tensor<float>.GeluTanhSpanFloatWide(values, actual);
+        EqualBits(expected, actual);
+    }
+
+    [Fact]
+    public void EveryFiniteExponentBandPreservesReferenceBits()
+    {
+        var values = new float[255 * 64 * 2];
+        int index = 0;
+        for (uint exponent = 0; exponent < 255; exponent++)
+        for (uint mantissa = 0; mantissa < 64; mantissa++)
+        foreach (uint sign in new[] { 0u, 0x80000000u })
+            values[index++] = BitConverter.Int32BitsToSingle(unchecked((int)(sign | exponent << 23 | mantissa << 17)));
+        var expected = new float[values.Length];
+        var actual = new float[values.Length];
+        Tensor<float>.GeluTanhSpanFloatReference(values, expected);
+        Tensor<float>.GeluTanhSpanFloatWide(values, actual);
+        EqualBits(expected, actual);
+    }
+
+    [Fact]
     public void DispatchedKernelMatchesReferenceAndOwnsOutputs()
     {
         var values = Inputs(4097);
