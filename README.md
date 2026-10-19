@@ -1,99 +1,91 @@
 # Lokad.Onnx
 
-## About
-Lokad.Onnx is a 100% managed-code [ONNX backend](https://onnx.ai/onnx/repo-docs/ImplementingAnOnnxBackend.html) implementation for .NET 10.
-It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small, DINOv3 ViT-S/16 (full weights), ResNet50, and GPT-2.
+Lokad.Onnx is a CPU inference engine for ONNX models, written in C# for .NET 10.
+It provides tensors, an ONNX importer and graph execution, with SIMD and hardware
+intrinsics where available. Inference runs entirely in managed code.
 
-## Getting started
-* Clone the repo: `git clone https://github.com/Lokad/Onnx.git`
-* Run `build.cmd` from the repo root directory.
-* Run `lonnx.cmd --help` to show the available CLI commands.
+The **NuGet package contains the core engine**. Text, image and audio helpers
+live in the separate `Lokad.Onnx.Data` project; the `lonnx` CLI is another
+repository project. Build these from source to use their higher-level APIs.
 
-The build restores the qualified Lokad.Tokenizers 0.2.0 package from pinned source through `eng/restore-tokenizers.ps1`. It uses a matching sibling Tokenizers checkout when present, otherwise fetches the pinned revision. On Linux, run that PowerShell script before the usual `dotnet build` or `dotnet test` commands.
+## Use the library
 
-## CLI
-`lonnx.cmd` wraps the Release `Lokad.Onnx.CLI` build. Basic syntax:
-  `lonnx.cmd run (modelpath) (input) --<options>`
+```sh
+dotnet add package Lokad.Onnx
+```
 
-- `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
-- `lonnx embed <prepared-directory> --query "Which planet is known as the Red Planet?" --dimensions 768`: offline FP32 EmbeddingGemma 2 text embeddings. Use `--documents input.jsonl` (or `-` for UTF-8 stdin) for records with `id`, `text`, and optional `title`. See [asset preparation and numerical qualification](https://github.com/Lokad/Onnx/blob/master/tests/embeddinggemma2/README.md).
-- `lonnx run <model.onnx> <inputs...>`: image and text inputs, `--softmax`, `--print-input`, profiling, and SIMD toggles.
-- `lonnx transcribe <model-directory> <audio.wav> --language en`: managed Whisper Large V3 Turbo transcription of mono/stereo WAV files up to 30 seconds, with conversion to 16 kHz. See [audio usage and qualification](https://github.com/Lokad/Onnx/blob/master/tests/whisper/README.md).
-- Add `--recording --json` for Whisper segment timestamps and boundary recovery on recordings up to ten minutes. See the [recording policy and current qualification](https://github.com/Lokad/Onnx/blob/master/tests/whisper/recording/README.md).
-- `lonnx transcribe <model-directory> <audio.wav> --model-type parakeet`: managed Parakeet TDT 0.6B V3 transcription with automatic multilingual recognition and the same WAV input limits. See [Parakeet usage and current numerical limits](https://github.com/Lokad/Onnx/blob/master/tests/parakeet/transcribe/README.md).
-- Microbenchmarks live in `tests/Lokad.Onnx.Bench` (`Bench micro <matmul2d|matmul|indexing|ops|oneop>`, with BenchmarkDotNet flags); the `oneop` lane runs five frozen one-op models through both a Lokad graph and a single-CPU ORT session with agreement before timing; model comparisons run through the Bench model harness (`dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 dinov3 gpt2`, see BENCHMARK.md), while `bench.ps1` remains the startup-inclusive CLI benchmark.
+With the [bundled MNIST model](https://github.com/Lokad/Onnx/blob/master/tests/Lokad.Onnx.Backend.Tests/models/mnist-8.onnx)
+saved as `mnist-8.onnx`, this example runs a constant 28×28 input and prints ten
+output scores:
 
-### Mini-tutorial: MNIST (image)
-* Use the bundled MNIST model and sample image:
-  `lonnx.cmd run .\tests\Lokad.Onnx.Backend.Tests\models\mnist-8.onnx .\tests\Lokad.Onnx.Backend.Tests\images\mnist4.png::mnist --softmax`
+```csharp
+using Lokad.Onnx;
 
-### Mini-tutorial: multilingual-e5-small (text)
-* Place the model and SentencePiece file under `models\multilingual-e5-small\` (both are git-ignored; see Models below).
-* Run with a short text:
-  `lonnx.cmd run .\models\multilingual-e5-small\model.onnx --text "me5s" "Hello world this is some text" --print-input`
+var graph = OnnxImport.Load("mnist-8.onnx")
+    ?? throw new InvalidOperationException("Could not load the model.");
 
-### Mini-tutorial: DINOv2-small (image)
-* Place the model under `models\dinov2-small-onnx\` (git-ignored; see Models below).
-* Run with an image (224x224 resize, RGB channels in [0,1] range; no mean/std normalization yet):
-  `lonnx.cmd run .\models\dinov2-small-onnx\model.onnx .\path\to\image.jpg::dinov2`
+var input = DenseTensor<float>.OfShape(1, 1, 28, 28);
+input.Fill(0.5f);
 
-### Mini-tutorial: DINOv3 ViT-S/16 (image)
-* Place the model under `models\dinov3-vits16\onnx\` (git-ignored; see Models below).
-* Run with an image (224x224 Triangle resize approximating the HF bilinear resample, rescale plus ImageNet mean/std normalization per the local preprocessor config):
-  `lonnx.cmd run .\models\dinov3-vits16\onnx\model.onnx .\path\to\image.jpg::dinov3`
+if (!graph.Execute(new ITensor[] { input }, useInitializers: true))
+    throw new InvalidOperationException("Inference failed.");
 
-## Models
-Large model assets live under the git-ignored `models\` directory and are never fetched by library or test code. Expected layout:
+var scores = (Tensor<float>)graph.Outputs.Values.Single();
+Console.WriteLine(string.Join(", ", scores.ToArray()));
+```
 
-- `models\multilingual-e5-small\model.onnx` plus `sentencepiece.bpe.model` (intfloat multilingual-e5-small ONNX export with matching SentencePiece file).
-- `models\embeddinggemma-2\prepared-fp32\` contains the prepared text graph, external weights, tokenizer JSON, and preparation receipt for `lonnx embed`; see [the pinned preparation and conformance lane](https://github.com/Lokad/Onnx/blob/master/tests/embeddinggemma2/README.md).
-- `models\dinov2-small-onnx\model.onnx` (single-file DINOv2-small ONNX export).
-- `models\dinov3-vits16\onnx\model.onnx` plus `model.onnx_data` (full-weight DINOv3 ViT-S/16 export, see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json).
-- `models\resnet50-onnx\model.onnx` (Conv-heavy ResNet50 feature export; covered by a model oracle, no dedicated CLI input format).
-- `models\gpt2-onnx\onnx\model.onnx` (fp32 GPT-2 with past-key-value inputs and fixed token ids, so no tokenizer asset is needed; covered by a model oracle, no dedicated CLI input format).
-- MNIST assets are bundled with the backend tests and need no download.
+Use your model's input shapes and element types for other exports. See the
+[core API guide](https://github.com/Lokad/Onnx/blob/master/src/Lokad.Onnx/README.md)
+for tensor operations, execution options and output lifetime.
 
-Model tests follow the local-model convention: they run when the asset is present, report an explicit skip otherwise, and fail when `LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1` requests an asset that is absent.
+## Build and try the CLI
 
-## Testing
-Correctness lanes, from small fixtures to native model references:
+Requires the .NET 10 SDK and PowerShell 7. From the repository root:
 
-- Offline unit tests: `dotnet test --tl:off --nologo -v minimal Lokad.Onnx.slnx`.
-- Integration tests using committed assets such as MNIST (same command, no extra setup).
-- Local-model conformance (DINOv3, ResNet50, GPT-2, and the compact DINOv2 oracle): same command with assets present; frozen oracles pin numeric parity with native ONNX Runtime.
-- Single-op differential lane: `.\eng\test-opfuzz.ps1` replays the frozen corpus against native ONNX Runtime references in scalar, SIMD, and intrinsics modes. Needs Python with the packages in `tests\opfuzz\python\requirements.txt`.
-- Native e5 gate: `.\eng\test-e5.ps1 -RequireIntrinsics` verifies asset hashes, exact tokenizer inputs, full hidden states, normalized embeddings, determinism across scalar, SIMD, and intrinsic modes, and the semantic ranking margin. Needs Python with the packages in `tests\e5\python\requirements.txt`.
-- Native EmbeddingGemma 2 gate: `.\eng\test-embeddinggemma2.ps1` checks exact tokenization, prepared graph execution, all four vector sizes, repeatability, and the Data API/CLI against Python. Assets, source-model comparison, and the separate CPU benchmark protocol are described in [the model lane](https://github.com/Lokad/Onnx/blob/master/tests/embeddinggemma2/README.md).
+```powershell
+pwsh -NoProfile -File eng/restore-tokenizers.ps1
+dotnet build Lokad.Onnx.slnx -c Release --tl:off --nologo -v minimal
 
-See `tests\README.md` for the lane definitions.
+$cli = 'src/Lokad.Onnx.CLI/bin/Release/net10.0/Lokad.Onnx.CLI.dll'
+dotnet $cli --help
+dotnet $cli run tests/Lokad.Onnx.Backend.Tests/models/mnist-8.onnx tests/Lokad.Onnx.Backend.Tests/images/mnist4.png::mnist --softmax
+```
 
-## Packaging
-Run `pack.cmd` from the repo root to produce the `Lokad.Onnx` NuGet package (net10.0 only, no Satsuma, Interop, or Python content).
-The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Release history lives in `CHANGELOG.md`.
-It contains the inference core only. Audio orchestration (`ParakeetTranscriber`,
-`WhisperTranscriber`, `Community1Diarizer`), tokenizers and image helpers live in
-the separate, non-packable `Lokad.Onnx.Data` repository project; the CLI is also
-a separate project. These APIs are not installed by `PackageReference` to
-`Lokad.Onnx`.
+The MNIST model and image are included. Larger models require separately staged
+assets; follow the linked model guides below. The restore script builds the
+pinned Lokad.Tokenizers dependency from a matching sibling checkout or fetches
+its pinned source revision. On Windows, `build.cmd` and `lonnx.cmd` provide
+shortcuts for building and running the CLI.
 
-## Implementation notes
+## Models and workflows
 
-See the [model support and qualification matrix](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md) for current audio capabilities and remaining limits.
+| Task | Models and guides |
+|---|---|
+| Text embeddings | [EmbeddingGemma 2 (FP32)](https://github.com/Lokad/Onnx/blob/master/tests/embeddinggemma2/README.md), [multilingual-e5-small](https://github.com/Lokad/Onnx/blob/master/tests/e5/README.md) |
+| Image inference | MNIST, DINOv2, DINOv3, ResNet50 |
+| Speech transcription | [Whisper Large V3 Turbo](https://github.com/Lokad/Onnx/blob/master/tests/whisper/README.md), [Parakeet TDT 0.6B V3](https://github.com/Lokad/Onnx/blob/master/tests/parakeet/transcribe/README.md) |
+| Speaker diarization | [pyannote Community-1](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/diarization/README.md) |
+| Transformer graph execution | GPT-2 |
 
-See [runtime defaults and intermediate lifetime](https://github.com/Lokad/Onnx/blob/master/docs/runtime-options.md) for
-storage reuse limits, explicit `ExecutionOptions.Memory` usage and diagnostic
-controls.
+Support depends on the export's operators, opsets, element types and shapes.
+The [support matrix](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md)
+records tested exports and remaining limitations.
+[Benchmarks](https://github.com/Lokad/Onnx/blob/master/BENCHMARK.md) compare
+specific workloads with Microsoft ONNX Runtime.
 
-`Lokad.Onnx.Data` includes `WeSpeakerAudio.LogMelFilterbank` for pyannote
-Community-1 embedding inputs. See its [input contract and numerical qualification](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/frontend/README.md).
-`WeSpeakerEmbedder` connects local PCM, optional speaker masks and the split model
-to owned 256-value vectors; see [embedding usage and limits](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/speaker/README.md).
-`Community1Clusterer` groups those vectors with the selected pyannote learned
-transform and VBx algorithm; see [clustering usage and qualification](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/clustering/README.md).
-`Community1Diarizer` and `lonnx diarize` connect local WAV/PCM to ordinary and
-exclusive speaker timelines; see [diarization policies and qualification](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/diarization/README.md).
+## Development
 
-ONNX `If` imports graph attributes and executes the selected branch in an isolated context. Branches can capture enclosing values, nest other `If` nodes, and return multiple tensor outputs; different branch shapes are supported from opset 11. The condition must contain exactly one boolean element. Sequence and optional outputs remain unsupported. `LastSubgraphExecutions` exposes child diagnostics separately: parent wall time and GC allocation include child work, while pool, scratch, copy and live-payload counters describe each scope independently.
+After building the solution:
 
-* The tensors library is pure managed C# implemented from the layout contracts. It was originally ported from [the ORT C# tensors](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors) and has since been reimplemented from those contracts piece by piece (see CHANGELOG.md); no third-party notices ship.
-* The shipped `Lokad.Onnx` assembly carries one runtime dependency, `Google.Protobuf` (pinned 3.33.5), for the integrated ONNX importer under `src/Lokad.Onnx/Import/` (schema code generated from pinned upstream `onnx.proto`); text and image helpers live in `Lokad.Onnx.Data`; the console lives in `Lokad.Onnx.CLI`.
+```powershell
+dotnet test Lokad.Onnx.slnx -c Release --no-build --tl:off --nologo -v minimal
+```
+
+Tests use bundled fixtures and explicitly staged local models. Missing large
+assets produce explicit skips. Python is needed for the separate native-reference
+checks, described in the [testing guide](https://github.com/Lokad/Onnx/blob/master/tests/README.md).
+
+Run `pack.cmd` to build the core NuGet package. See the
+[changelog](https://github.com/Lokad/Onnx/blob/master/CHANGELOG.md) for release
+history and [runtime options](https://github.com/Lokad/Onnx/blob/master/docs/runtime-options.md)
+for memory policies and diagnostics.
