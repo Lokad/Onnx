@@ -24,14 +24,14 @@ public class Text
     static readonly Dictionary<string, SharedBertTokenizer> BertCache = new Dictionary<string, SharedBertTokenizer>();
     static readonly object BertCacheGate = new object();
 
-    /// <summary>Loaded file-backed BERT tokenizer plus its encode gate and observed file identity.</summary>
-    sealed class SharedBertFileTokenizer
+    /// <summary>Loaded file-backed tokenizer plus its encode gate and observed file identity.</summary>
+    sealed class SharedFileTokenizer<TTokenizer>
     {
-        public BertTokenizer Tokenizer;
+        public TTokenizer Tokenizer;
         public readonly object Sync = new object();
         public readonly long FileLength;
         public readonly DateTime FileModifiedUtc;
-        public SharedBertFileTokenizer(BertTokenizer tokenizer, long fileLength, DateTime fileModifiedUtc)
+        public SharedFileTokenizer(TTokenizer tokenizer, long fileLength, DateTime fileModifiedUtc)
         {
             Tokenizer = tokenizer;
             FileLength = fileLength;
@@ -52,7 +52,7 @@ public class Text
     /// held during encoding, and encodes serialize on the per-instance
     /// gate through the Text methods.
     /// </remarks>
-    static readonly Dictionary<string, SharedBertFileTokenizer> BertFileCache = new Dictionary<string, SharedBertFileTokenizer>();
+    static readonly Dictionary<string, SharedFileTokenizer<BertTokenizer>> BertFileCache = new Dictionary<string, SharedFileTokenizer<BertTokenizer>>();
     static readonly object BertFileCacheGate = new object();
 
     /// <summary>Loads (downloading when absent) and caches the named BERT tokenizer.</summary>
@@ -123,28 +123,9 @@ public class Text
     /// <remarks>A cached entry whose file identity disagrees reloads here, and a
     /// deleted file evicts its entry and throws. The gate is never held
     /// during encoding.</remarks>
-    static SharedBertFileTokenizer GetOrLoadBertFileTokenizerLocked(string vocabPath)
+    static SharedFileTokenizer<BertTokenizer> GetOrLoadBertFileTokenizerLocked(string vocabPath)
     {
-        lock (BertFileCacheGate)
-        {
-            var identity = TokenizerFileIdentity(vocabPath);
-            if (identity is null)
-            {
-                BertFileCache.Remove(vocabPath);
-                throw new FileNotFoundException($"Tokenizer vocab file does not exist: {vocabPath}.", vocabPath);
-            }
-            if (!BertFileCache.TryGetValue(vocabPath, out var cached)
-                || cached.FileLength != identity.Value.Length
-                || cached.FileModifiedUtc != identity.Value.ModifiedUtc)
-            {
-                cached = new SharedBertFileTokenizer(
-                    LoadBertTokenizerFromFile(vocabPath),
-                    identity.Value.Length,
-                    identity.Value.ModifiedUtc);
-                BertFileCache[vocabPath] = cached;
-            }
-            return cached;
-        }
+        return GetOrLoadFileTokenizerLocked(vocabPath, BertFileCache, BertFileCacheGate, LoadBertTokenizerFromFile, "vocab");
     }
 
     /// <summary>Returns the shared cached file-backed BERT tokenizer for a vocab path.</summary>
@@ -260,21 +241,6 @@ public class Text
         };
     }
 
-    /// <summary>Loaded Roberta tokenizer plus its encode gate and observed file identity.</summary>
-    sealed class SharedRobertaTokenizer
-    {
-        public XLMRobertaTokenizer Tokenizer;
-        public readonly object Sync = new object();
-        public readonly long FileLength;
-        public readonly DateTime FileModifiedUtc;
-        public SharedRobertaTokenizer(XLMRobertaTokenizer tokenizer, long fileLength, DateTime fileModifiedUtc)
-        {
-            Tokenizer = tokenizer;
-            FileLength = fileLength;
-            FileModifiedUtc = fileModifiedUtc;
-        }
-    }
-
     /// <summary>Process-wide Roberta tokenizer cache keyed by model path.</summary>
     /// <remarks>
     /// Lifetime: an entry lives until the file identity (length plus
@@ -289,7 +255,7 @@ public class Text
     /// synchronized; calling Encode on a returned instance directly from
     /// several threads is not.
     /// </remarks>
-    static readonly Dictionary<string, SharedRobertaTokenizer> RobertaCache = new Dictionary<string, SharedRobertaTokenizer>();
+    static readonly Dictionary<string, SharedFileTokenizer<XLMRobertaTokenizer>> RobertaCache = new Dictionary<string, SharedFileTokenizer<XLMRobertaTokenizer>>();
     static readonly object RobertaCacheGate = new object();
 
     const string Me5sTokenizerFileName = "me5s-sentencepiece.bpe.model";
@@ -376,23 +342,11 @@ public class Text
     /// wanted. Encodes serialize on the shared instance gate.</remarks>
     public static ITensor[]? RobertaTokenize(string text1, string tokenizer)
     {
-        switch (tokenizer)
+        var shared = GetNamedRobertaTokenizer(tokenizer);
+        if (shared is null) return null;
+        lock (shared.Sync)
         {
-            case "me5s":
-                var tokenizerPath = Me5sTokenizerPath();
-                if (!File.Exists(tokenizerPath))
-                {
-                    Error("Tokenizer asset {f} is missing; call EnsureMe5sTokenizer to acquire it.", tokenizerPath);
-                    return null;
-                }
-                var shared = GetOrLoadRobertaTokenizerLocked(tokenizerPath);
-                lock (shared.Sync)
-                {
-                    return EncodeSingleRoberta(shared.Tokenizer, text1, "multilingual-e5-small");
-                }
-            default:
-                Error("Unknown Roberta tokenizer: {t}.", tokenizer);
-                return null;
+            return EncodeSingleRoberta(shared.Tokenizer, text1, "multilingual-e5-small");
         }
     }
 
@@ -401,6 +355,16 @@ public class Text
     /// downloading; call EnsureMe5sTokenizer first when acquisition is
     /// wanted. Encodes serialize on the shared instance gate.</remarks>
     public static ITensor[]? RobertaTokenize(string[] text, string tokenizer)
+    {
+        var shared = GetNamedRobertaTokenizer(tokenizer);
+        if (shared is null) return null;
+        lock (shared.Sync)
+        {
+            return EncodeBatchRoberta(shared.Tokenizer, text, "multilingual-e5-small");
+        }
+    }
+
+    static SharedFileTokenizer<XLMRobertaTokenizer>? GetNamedRobertaTokenizer(string tokenizer)
     {
         switch (tokenizer)
         {
@@ -411,11 +375,7 @@ public class Text
                     Error("Tokenizer asset {f} is missing; call EnsureMe5sTokenizer to acquire it.", tokenizerPath);
                     return null;
                 }
-                var shared = GetOrLoadRobertaTokenizerLocked(tokenizerPath);
-                lock (shared.Sync)
-                {
-                    return EncodeBatchRoberta(shared.Tokenizer, text, "multilingual-e5-small");
-                }
+                return GetOrLoadRobertaTokenizerLocked(tokenizerPath);
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
                 return null;
@@ -428,25 +388,35 @@ public class Text
     /// A cached entry whose file identity disagrees reloads here, and a
     /// deleted file evicts its entry and throws. The gate is never held
     /// during encoding.</remarks>
-    static SharedRobertaTokenizer GetOrLoadRobertaTokenizerLocked(string tokenizerModelPath)
+    static SharedFileTokenizer<XLMRobertaTokenizer> GetOrLoadRobertaTokenizerLocked(string tokenizerModelPath)
     {
-        lock (RobertaCacheGate)
+        return GetOrLoadFileTokenizerLocked(tokenizerModelPath, RobertaCache, RobertaCacheGate, LoadRobertaTokenizerFromFile, "model");
+    }
+
+    static SharedFileTokenizer<TTokenizer> GetOrLoadFileTokenizerLocked<TTokenizer>(
+        string path,
+        Dictionary<string, SharedFileTokenizer<TTokenizer>> cache,
+        object cacheGate,
+        Func<string, TTokenizer> load,
+        string assetKind)
+    {
+        lock (cacheGate)
         {
-            var identity = TokenizerFileIdentity(tokenizerModelPath);
+            var identity = TokenizerFileIdentity(path);
             if (identity is null)
             {
-                RobertaCache.Remove(tokenizerModelPath);
-                throw new FileNotFoundException($"Tokenizer model file does not exist: {tokenizerModelPath}.", tokenizerModelPath);
+                cache.Remove(path);
+                throw new FileNotFoundException($"Tokenizer {assetKind} file does not exist: {path}.", path);
             }
-            if (!RobertaCache.TryGetValue(tokenizerModelPath, out var cached)
+            if (!cache.TryGetValue(path, out var cached)
                 || cached.FileLength != identity.Value.Length
                 || cached.FileModifiedUtc != identity.Value.ModifiedUtc)
             {
-                cached = new SharedRobertaTokenizer(
-                    LoadRobertaTokenizerFromFile(tokenizerModelPath),
+                cached = new SharedFileTokenizer<TTokenizer>(
+                    load(path),
                     identity.Value.Length,
                     identity.Value.ModifiedUtc);
-                RobertaCache[tokenizerModelPath] = cached;
+                cache[path] = cached;
             }
             return cached;
         }
