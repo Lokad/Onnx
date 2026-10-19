@@ -211,7 +211,9 @@ where T : unmanaged
     }
 
     /// <summary>Specialized scalar, contiguous-run and stride-based broadcast tiers.</summary>
-    void BroadcastApplyInto<TOp>(Tensor<T> other, DenseTensor<T> destination, TensorExecutionOptions options, int[] shape) where TOp : struct, IBroadcastOperator<T>
+    /// <remarks>Internal callers must validate options and broadcast compatibility,
+    /// and supply a standard row-major destination matching the prepared shape.</remarks>
+    internal void BroadcastApplyInto<TOp>(Tensor<T> other, DenseTensor<T> destination, TensorExecutionOptions options, int[] shape) where TOp : struct, IBroadcastOperator<T>
     {
         if (other.Rank == 0)
         {

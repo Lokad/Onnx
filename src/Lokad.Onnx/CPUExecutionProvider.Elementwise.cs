@@ -64,133 +64,26 @@ public partial class CPUExecutionProvider
 
     public static OpResult Add(ITensor? A, ITensor? B, ExecutionOptions? options, TensorBufferPool? pool)
     {
-        var op = OpType.Add;
-        if (A is null) return MissingInput(op, nameof(A));
-        if (B is null) return MissingInput(op, nameof(B));
-        if (A.ElementType != B.ElementType)
-        {
-            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
-        }
-
-        Profiler.StartOpStage(OpStage.Broadcast);
-        // Shapes are dtype-independent: one pure shape check keeps the
-        // CannotBroadcast diagnostic while kernels read the originals directly.
-        if (!Tensor<int>.BroadcastShape(A.Dims, B.Dims, out _))
-        {
-            return CannotBroadcast(op, A, B);
-        }
-
-        var opts = (options ?? ExecutionOptions.Default).Validated();
-        Profiler.StartOpStage(OpStage.Math);
-        switch (A.ElementType)
-        {
-            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<AddBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
-            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<AddBroadcast<short>>((Tensor<short>)B, opts.Tensor));
-            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<AddBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
-            case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<AddBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
-            case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<AddBroadcast<int>>((Tensor<int>)B, opts.Tensor));
-            case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<AddBroadcast<long>>((Tensor<long>)B, opts.Tensor));
-            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<AddBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
-            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<AddBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
-            case TensorElementType.Float:
-            {
-                var fa = (Tensor<float>)A;
-                var fb = (Tensor<float>)B;
-                if (!Tensor<float>.BroadcastShape(fa.Dimensions, fb.Dimensions, out var shape)) return CannotBroadcast(op, A, B);
-                if (pool is null) return Success(op, fa.BroadcastApply<AddBroadcast<float>>(fb, opts.Tensor));
-                int flat = 1;
-                foreach (var d in shape) flat *= d;
-                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>(flat)), shape);
-                return Success(op, fa.BroadcastApply<AddBroadcast<float>>(fb, rented, opts.Tensor));
-            }
-            case TensorElementType.Double: return Success(op, ((Tensor<double>)A).BroadcastApply<AddBroadcast<double>>((Tensor<double>)B, opts.Tensor));
-            default: return InputTypeNotSupported(op, nameof(A), A);
-        }
+        return BinaryArithmetic(OpType.Add, A, B, options, pool);
     }
 
     public static OpResult Sub(ITensor? A, ITensor? B, ExecutionOptions? options)
     {
-        var op = OpType.Sub;
-        if (A is null) return MissingInput(op, nameof(A));
-        if (B is null) return MissingInput(op, nameof(B));
-        if (A.ElementType != B.ElementType)
-        {
-            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
-        }
-        Profiler.StartOpStage(OpStage.Broadcast);
-        // Shapes are dtype-independent: one pure shape check keeps the
-        // CannotBroadcast diagnostic while kernels read the originals directly.
-        if (!Tensor<int>.BroadcastShape(A.Dims, B.Dims, out _))
-        {
-            return CannotBroadcast(op, A, B);
-        }
-
-        var opts = (options ?? ExecutionOptions.Default).Validated();
-        Profiler.StartOpStage(OpStage.Math);
-        switch (A.ElementType)
-        {
-            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<SubtractBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
-            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<SubtractBroadcast<short>>((Tensor<short>)B, opts.Tensor));
-            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<SubtractBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
-            case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<SubtractBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
-            case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<SubtractBroadcast<int>>((Tensor<int>)B, opts.Tensor));
-            case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<SubtractBroadcast<long>>((Tensor<long>)B, opts.Tensor));
-            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<SubtractBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
-            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<SubtractBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
-            case TensorElementType.Float: return Success(op, ((Tensor<float>)A).BroadcastApply<SubtractBroadcast<float>>((Tensor<float>)B, opts.Tensor));
-            case TensorElementType.Double: return Success(op, ((Tensor<double>)A).BroadcastApply<SubtractBroadcast<double>>((Tensor<double>)B, opts.Tensor));
-            default: return InputTypeNotSupported(op, nameof(A), A);
-        }
+        return BinaryArithmetic(OpType.Sub, A, B, options, null);
     }
 
     public static OpResult Mul(ITensor? A, ITensor? B, ExecutionOptions? options, TensorBufferPool? pool)
     {
-        var op = OpType.Mul;
-        if (A is null) return MissingInput(op, nameof(A));
-        if (B is null) return MissingInput(op, nameof(B));
-        if (A.ElementType != B.ElementType)
-        {
-            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
-        }
-        Profiler.StartOpStage(OpStage.Broadcast);
-        // Shapes are dtype-independent: one pure shape check keeps the
-        // CannotBroadcast diagnostic while kernels read the originals directly.
-        if (!Tensor<int>.BroadcastShape(A.Dims, B.Dims, out _))
-        {
-            return CannotBroadcast(op, A, B);
-        }
-
-        var opts = (options ?? ExecutionOptions.Default).Validated();
-        Profiler.StartOpStage(OpStage.Math);
-        switch (A.ElementType)
-        {
-            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<MultiplyBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
-            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<MultiplyBroadcast<short>>((Tensor<short>)B, opts.Tensor));
-            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<MultiplyBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
-            case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<MultiplyBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
-            case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<MultiplyBroadcast<int>>((Tensor<int>)B, opts.Tensor));
-            case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<MultiplyBroadcast<long>>((Tensor<long>)B, opts.Tensor));
-            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<MultiplyBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
-            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<MultiplyBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
-            case TensorElementType.Float:
-            {
-                var fa = (Tensor<float>)A;
-                var fb = (Tensor<float>)B;
-                if (!Tensor<float>.BroadcastShape(fa.Dimensions, fb.Dimensions, out var shape)) return CannotBroadcast(op, A, B);
-                if (pool is null) return Success(op, fa.BroadcastApply<MultiplyBroadcast<float>>(fb, opts.Tensor));
-                int flat = 1;
-                foreach (var d in shape) flat *= d;
-                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>(flat)), shape);
-                return Success(op, fa.BroadcastApply<MultiplyBroadcast<float>>(fb, rented, opts.Tensor));
-            }
-            case TensorElementType.Double: return Success(op, ((Tensor<double>)A).BroadcastApply<MultiplyBroadcast<double>>((Tensor<double>)B, opts.Tensor));
-            default: return InputTypeNotSupported(op, nameof(A), A);
-        }
+        return BinaryArithmetic(OpType.Mul, A, B, options, pool);
     }
 
     public static OpResult Div(ITensor? A, ITensor? B, ExecutionOptions? options, TensorBufferPool? pool)
     {
-        var op = OpType.Div;
+        return BinaryArithmetic(OpType.Div, A, B, options, pool);
+    }
+
+    static OpResult BinaryArithmetic(OpType op, ITensor? A, ITensor? B, ExecutionOptions? options, TensorBufferPool? pool)
+    {
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
         if (A.ElementType != B.ElementType)
@@ -198,39 +91,55 @@ public partial class CPUExecutionProvider
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
         }
         Profiler.StartOpStage(OpStage.Broadcast);
-        // Shapes are dtype-independent: one pure shape check keeps the
-        // CannotBroadcast diagnostic while kernels read the originals directly.
-        if (!Tensor<int>.BroadcastShape(A.Dims, B.Dims, out _))
+        // Validate once before options, dtype dispatch or any pooled rent.
+        // The destination and kernel below reuse this exact broadcast shape.
+        if (!Tensor<int>.BroadcastShape(A.Dims, B.Dims, out var shape))
         {
             return CannotBroadcast(op, A, B);
         }
-
         var opts = (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
-            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<DivideBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
-            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<DivideBroadcast<short>>((Tensor<short>)B, opts.Tensor));
-            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<DivideBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
-            case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<DivideBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
-            case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<DivideBroadcast<int>>((Tensor<int>)B, opts.Tensor));
-            case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<DivideBroadcast<long>>((Tensor<long>)B, opts.Tensor));
-            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<DivideBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
-            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<DivideBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
-            case TensorElementType.Float:
-            {
-                var fa = (Tensor<float>)A;
-                var fb = (Tensor<float>)B;
-                if (!Tensor<float>.BroadcastShape(fa.Dimensions, fb.Dimensions, out var shape)) return CannotBroadcast(op, A, B);
-                if (pool is null) return Success(op, fa.BroadcastApply<DivideBroadcast<float>>(fb, opts.Tensor));
-                int flat = 1;
-                foreach (var d in shape) flat *= d;
-                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>(flat)), shape);
-                return Success(op, fa.BroadcastApply<DivideBroadcast<float>>(fb, rented, opts.Tensor));
-            }
-            case TensorElementType.Double: return Success(op, ((Tensor<double>)A).BroadcastApply<DivideBroadcast<double>>((Tensor<double>)B, opts.Tensor));
+            case TensorElementType.Int8: return ApplyBinaryArithmetic(op, (Tensor<sbyte>)A, (Tensor<sbyte>)B, shape, opts.Tensor, null);
+            case TensorElementType.Int16: return ApplyBinaryArithmetic(op, (Tensor<short>)A, (Tensor<short>)B, shape, opts.Tensor, null);
+            case TensorElementType.UInt16: return ApplyBinaryArithmetic(op, (Tensor<ushort>)A, (Tensor<ushort>)B, shape, opts.Tensor, null);
+            case TensorElementType.UInt8: return ApplyBinaryArithmetic(op, (Tensor<byte>)A, (Tensor<byte>)B, shape, opts.Tensor, null);
+            case TensorElementType.Int32: return ApplyBinaryArithmetic(op, (Tensor<int>)A, (Tensor<int>)B, shape, opts.Tensor, null);
+            case TensorElementType.Int64: return ApplyBinaryArithmetic(op, (Tensor<long>)A, (Tensor<long>)B, shape, opts.Tensor, null);
+            case TensorElementType.UInt32: return ApplyBinaryArithmetic(op, (Tensor<uint>)A, (Tensor<uint>)B, shape, opts.Tensor, null);
+            case TensorElementType.UInt64: return ApplyBinaryArithmetic(op, (Tensor<ulong>)A, (Tensor<ulong>)B, shape, opts.Tensor, null);
+            case TensorElementType.Float: return ApplyBinaryArithmetic(op, (Tensor<float>)A, (Tensor<float>)B, shape, opts.Tensor, pool);
+            case TensorElementType.Double: return ApplyBinaryArithmetic(op, (Tensor<double>)A, (Tensor<double>)B, shape, opts.Tensor, null);
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
+    }
+
+    static OpResult ApplyBinaryArithmetic<TElement>(OpType op, Tensor<TElement> A, Tensor<TElement> B, int[] shape, TensorExecutionOptions options, TensorBufferPool? pool)
+        where TElement : unmanaged, INumber<TElement>
+    {
+        DenseTensor<TElement> destination;
+        if (pool is null)
+        {
+            destination = DenseTensor<TElement>.OfShape(shape);
+        }
+        else
+        {
+            int flat = 1;
+            foreach (var d in shape) flat *= d;
+            destination = new DenseTensor<TElement>(new Memory<TElement>(pool.Rent<TElement>(flat)), shape);
+        }
+        // Select the typed operator once. The shared kernel retains direct
+        // scalar/vector calls and never receives the pool or a delegate.
+        switch (op)
+        {
+            case OpType.Add: A.BroadcastApplyInto<AddBroadcast<TElement>>(B, destination, options, shape); break;
+            case OpType.Sub: A.BroadcastApplyInto<SubtractBroadcast<TElement>>(B, destination, options, shape); break;
+            case OpType.Mul: A.BroadcastApplyInto<MultiplyBroadcast<TElement>>(B, destination, options, shape); break;
+            case OpType.Div: A.BroadcastApplyInto<DivideBroadcast<TElement>>(B, destination, options, shape); break;
+            default: throw new InvalidOperationException("Unsupported binary arithmetic operation.");
+        }
+        return Success(op, destination);
     }
 
     /// <summary>
