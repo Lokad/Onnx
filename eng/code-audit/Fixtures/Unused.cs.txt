@@ -1,0 +1,26 @@
+using System;
+using System.Reflection;
+
+namespace AuditFixtures;
+
+internal static class Program
+{
+    public static void Main()
+    {
+        typeof(Program).GetMethod("Reflected", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null);
+        _ = new Indexed();
+    }
+
+    static void Reflected() { }
+    static int UnusedHelper() => 42;
+}
+
+internal sealed class Indexed
+{
+    public int this[int index] => index;
+}
+
+public static class ExternalApi
+{
+    public static int CalledOutsideThisRepository() => 7;
+}

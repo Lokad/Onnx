@@ -1,0 +1,10 @@
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("AuditTests")]
+
+namespace AuditFixtures;
+
+internal static class Diagnostic
+{
+    public static void Main() { }
+    internal static int Read() => 42;
+}

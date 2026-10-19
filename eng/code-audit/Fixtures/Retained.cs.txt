@@ -1,0 +1,40 @@
+using System;
+using System.Reflection;
+
+namespace AuditFixtures;
+
+internal interface IWork { int Execute(); }
+internal interface IPolicy<T> { static abstract T Convert(float value); }
+
+internal readonly struct Policy : IPolicy<int>
+{
+    public static int Convert(float value) => (int)value;
+}
+
+internal sealed class Worker : IWork, IDisposable
+{
+    internal Worker() { }
+    public int Execute() => 1;
+    public void Dispose() { }
+}
+
+internal sealed class Indexed
+{
+    public int this[int index] => index;
+}
+
+internal static class Program
+{
+    public static void Main()
+    {
+        using var worker = new Worker();
+        IWork work = worker;
+        Console.WriteLine(work.Execute());
+        Console.WriteLine(Apply<Policy>(1));
+        Console.WriteLine(new Indexed()[0]);
+        typeof(Program).GetMethod("Reflected", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null);
+    }
+
+    static int Apply<T>(float value) where T : struct, IPolicy<int> => T.Convert(value);
+    static void Reflected() { }
+}

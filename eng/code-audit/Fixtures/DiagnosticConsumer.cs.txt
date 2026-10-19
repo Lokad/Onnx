@@ -1,0 +1,4 @@
+internal static class Consumer
+{
+    internal static int Read() => AuditFixtures.Diagnostic.Read();
+}

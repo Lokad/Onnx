@@ -7,7 +7,7 @@ using Lokad.Onnx.Tests.Support;
 /// The filter below names the accepted ones with their reason; anything else
 /// fails naming the offender. Resolving a triaged TODO never breaks this test.
 /// </summary>
-public class DeadCodeGuardTests
+public class TodoTriageTests
 {
     internal static List<string> FindTodos(string root)
     {

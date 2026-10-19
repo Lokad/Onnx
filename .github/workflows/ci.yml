@@ -32,6 +32,16 @@ jobs:
           ./eng/restore-tokenizers.ps1
           try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { exit 1 }
           if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Check source maintenance
+        if: matrix.os == 'ubuntu-latest'
+        shell: pwsh
+        run: |
+          dotnet build eng/code-audit/CodeAudit.csproj -c Release --tl:off --nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          dotnet eng/code-audit/bin/Release/net10.0/CodeAudit.dll --self-test
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          dotnet eng/code-audit/bin/Release/net10.0/CodeAudit.dll --repo . --check --output artifacts/code-audit
+          if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: Publish test log
         if: always()
         uses: actions/upload-artifact@v4
