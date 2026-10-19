@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using Lokad.Onnx.Tests.Support;
 
 /// <summary>
 /// E73 region race: row-pair softmax twins against the dispatched single-row
 /// span kernels at E5 attention shapes. Measurement-only Bench verb; prints
-/// parseable median lines plus agreement. The span kernels are internal to
-/// the core, so this verb binds them once via reflection (loud refusal if a
-/// name is missing) and times direct delegates.
+/// parseable median lines plus agreement. Reference/experimental kernels live
+/// in shared test support; production kernels bind once via reflection
+/// (loud refusal if a name is missing). Both use direct delegates when timed.
 /// </summary>
 internal static class SoftmaxRace
 {
@@ -36,16 +37,16 @@ internal static class SoftmaxRace
         }
         if (!System.Runtime.Intrinsics.X86.Fma.IsSupported) { Console.WriteLine("softmaxrace: x86 FMA not available; refusing."); return 1; }
         global::Bench.EnforceSingleCpuAffinity(cpu);
-        var mRef = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan");
-        var m4 = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan4x");
+        MaskedKernel mRef = ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan;
+        MaskedKernel m4 = ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan4x;
         var mP = Bind<MaskedKernel>("SoftmaxMaskedFloatSpanPtr");
-        var mM = Bind<MaskedKernel>("SoftmaxMaskedFloatSpanPtrMax");
-        var m2 = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan2x");
-        var pRef = Bind<PlainKernel>("SoftmaxContiguousFloatSpan");
-        var p4 = Bind<PlainKernel>("SoftmaxContiguousFloatSpan4x");
+        MaskedKernel mM = ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpanPtrMax;
+        MaskedKernel m2 = ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan2x;
+        PlainKernel pRef = ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan;
+        PlainKernel p4 = ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan4x;
         var pP = Bind<PlainKernel>("SoftmaxContiguousFloatSpanPtr");
-        var pM = Bind<PlainKernel>("SoftmaxContiguousFloatSpanPtrMax");
-        var p2 = Bind<PlainKernel>("SoftmaxContiguousFloatSpan2x");
+        PlainKernel pM = ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpanPtrMax;
+        PlainKernel p2 = ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan2x;
         var shapes = new (int Outer, int Block)[]
         {
             (96, 8), (360, 30), (1536, 128),

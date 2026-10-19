@@ -1,3 +1,4 @@
+using Lokad.Onnx.Tests.Support;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
@@ -27,8 +28,8 @@ public class BiasGeluPtrAgreementTests
         }
         var legacy = new float[x.Length];
         var ptr = new float[x.Length];
-        Tensor<float>.BiasGeluSpanFloat(x, b, legacy);
-        Tensor<float>.BiasGeluSpanFloatPtr(x, b, ptr);
+        ReferenceBiasGeluKernels.BiasGeluSpanFloat(x, b, legacy);
+        ReferenceBiasGeluKernels.BiasGeluSpanFloatPtr(x, b, ptr);
         Assert.True(legacy.SequenceEqual(ptr), $"ptr diverges on {rows}x{width} exceptional={exceptional}.");
     }
 
@@ -65,8 +66,8 @@ public class BiasGeluPtrAgreementTests
         for (int i = 0; i < b.Length; i++) b[i] = (float)rnd.NextDouble();
         var a = new float[x.Length];
         var c = new float[x.Length];
-        Tensor<float>.BiasGeluSpanFloatPtr(x, b, a);
-        Tensor<float>.BiasGeluSpanFloatPtr(x, b, c);
+        ReferenceBiasGeluKernels.BiasGeluSpanFloatPtr(x, b, a);
+        ReferenceBiasGeluKernels.BiasGeluSpanFloatPtr(x, b, c);
         Assert.True(a.SequenceEqual(c), "ptr repeats must be bit-identical.");
     }
 }

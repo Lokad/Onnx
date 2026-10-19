@@ -1,3 +1,4 @@
+using Lokad.Onnx.Tests.Support;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
@@ -25,8 +26,8 @@ public class BiasGeluUnrollTests
         var y2 = new float[x.Length];
         var y4 = new float[x.Length];
         for (int i = 0; i < yRef.Length; i++) { yRef[i] = float.NaN; y2[i] = float.NaN; y4[i] = float.NaN; }
-        Tensor<float>.BiasGeluSpanFloatPtr(x, bias, yRef);
-        Tensor<float>.BiasGeluSpanFloatPtr2x(x, bias, y2);
+        ReferenceBiasGeluKernels.BiasGeluSpanFloatPtr(x, bias, yRef);
+        ReferenceBiasGeluKernels.BiasGeluSpanFloatPtr2x(x, bias, y2);
         Tensor<float>.BiasGeluSpanFloatPtr4x(x, bias, y4);
         BitsEqual(y2, yRef, "2x twin");
         BitsEqual(y4, yRef, "4x twin");

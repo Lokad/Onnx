@@ -1,3 +1,4 @@
+using Lokad.Onnx.Tests.Support;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
@@ -30,8 +31,8 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var y2 = new float[x.Length];
-        Tensor<float>.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
-        Tensor<float>.SoftmaxMaskedFloatSpan2x(x, mask, y2, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan2x(x, mask, y2, outer, block, useSimd);
         BitsEqual(y2, yRef, "masked 2x twin");
     }
 
@@ -39,8 +40,8 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var y2 = new float[x.Length];
-        Tensor<float>.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
-        Tensor<float>.SoftmaxContiguousFloatSpan2x(x, y2, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan2x(x, y2, outer, block, useSimd);
         BitsEqual(y2, yRef, "plain 2x twin");
     }
 
@@ -48,8 +49,8 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var y4 = new float[x.Length];
-        Tensor<float>.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
-        Tensor<float>.SoftmaxMaskedFloatSpan4x(x, mask, y4, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan4x(x, mask, y4, outer, block, useSimd);
         BitsEqual(y4, yRef, "masked 4x twin");
     }
 
@@ -57,8 +58,8 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var y4 = new float[x.Length];
-        Tensor<float>.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
-        Tensor<float>.SoftmaxContiguousFloatSpan4x(x, y4, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan4x(x, y4, outer, block, useSimd);
         BitsEqual(y4, yRef, "plain 4x twin");
     }
 
@@ -66,7 +67,7 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var yP = new float[x.Length];
-        Tensor<float>.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
         Tensor<float>.SoftmaxMaskedFloatSpanPtr(x, mask, yP, outer, block, useSimd);
         BitsEqual(yP, yRef, "masked ptr twin");
     }
@@ -75,7 +76,7 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var yP = new float[x.Length];
-        Tensor<float>.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
         Tensor<float>.SoftmaxContiguousFloatSpanPtr(x, yP, outer, block, useSimd);
         BitsEqual(yP, yRef, "plain ptr twin");
     }
@@ -84,8 +85,8 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var yM = new float[x.Length];
-        Tensor<float>.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
-        Tensor<float>.SoftmaxMaskedFloatSpanPtrMax(x, mask, yM, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpanPtrMax(x, mask, yM, outer, block, useSimd);
         BitsEqual(yM, yRef, "masked ptrmax twin");
     }
 
@@ -93,8 +94,8 @@ public class SoftmaxRowUnrollTests
     {
         var yRef = new float[x.Length];
         var yM = new float[x.Length];
-        Tensor<float>.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
-        Tensor<float>.SoftmaxContiguousFloatSpanPtrMax(x, yM, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpanPtrMax(x, yM, outer, block, useSimd);
         BitsEqual(yM, yRef, "plain ptrmax twin");
     }
 

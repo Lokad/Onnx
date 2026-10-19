@@ -1,3 +1,4 @@
+using Lokad.Onnx.Tests.Support;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
@@ -20,9 +21,9 @@ public class SoftmaxMaskedTests
         // flags are process-wide and a concurrent legacy routing would break bitwise
         // comparison through summation grouping; the fused kernel replaces the span path).
         var expected = new float[added.Length];
-        Tensor<float>.SoftmaxContiguousFloatSpan(added, expected, rows, block, simd);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan(added, expected, rows, block, simd);
         var actual = new float[scores.Length];
-        Tensor<float>.SoftmaxMaskedFloatSpan(scores, mask, actual, rows, block, simd);
+        ReferenceSoftmaxKernels.SoftmaxMaskedFloatSpan(scores, mask, actual, rows, block, simd);
         Assert.True(expected.AsSpan().SequenceEqual(actual),
             $"masked diverges bitwise on {rows}x{block} simd={simd}.");
     }

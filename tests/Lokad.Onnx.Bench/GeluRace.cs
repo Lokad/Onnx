@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using Lokad.Onnx.Tests.Support;
 
 /// <summary>
 /// E72 region race: two-way and four-way unrolled BiasGelu pointer twins
 /// against the dispatched single-vector pointer kernel at E5 BiasGelu shapes.
 /// Measurement-only Bench verb; prints parseable median lines plus agreement.
-/// The span kernels are internal to the core, so this verb binds them once via
-/// reflection (loud refusal if a name is missing) and times direct delegates.
+/// Reference/experimental kernels live in shared test support; the production
+/// kernel binds once via reflection (loud refusal if a name is missing).
+/// Both use direct delegates when timed.
 /// </summary>
 internal static class GeluRace
 {
@@ -37,8 +39,8 @@ internal static class GeluRace
         }
         if (!System.Runtime.Intrinsics.X86.Fma.IsSupported) { Console.WriteLine("gelurace: x86 FMA not available; refusing."); return 1; }
         global::Bench.EnforceSingleCpuAffinity(cpu);
-        var refK = Bind("BiasGeluSpanFloatPtr");
-        var k2 = Bind("BiasGeluSpanFloatPtr2x");
+        SpanKernel refK = ReferenceBiasGeluKernels.BiasGeluSpanFloatPtr;
+        SpanKernel k2 = ReferenceBiasGeluKernels.BiasGeluSpanFloatPtr2x;
         var k4 = Bind("BiasGeluSpanFloatPtr4x");
         var shapes = new (int Rows, int M)[]
         {

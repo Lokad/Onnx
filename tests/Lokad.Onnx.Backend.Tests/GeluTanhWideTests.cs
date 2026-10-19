@@ -1,3 +1,4 @@
+using Lokad.Onnx.Tests.Support;
 namespace Lokad.Onnx.Backend.Tests;
 
 using System.Numerics;
@@ -41,7 +42,7 @@ public class GeluTanhWideTests
         for (int i = 0; i < source.Length; i++) narrow[i] = MathOps.ExpVector(source[i]);
         var wideSource = MemoryMarshal.Cast<float, Vector512<float>>(inputs);
         var wide = MemoryMarshal.Cast<float, Vector512<float>>(actual.AsSpan());
-        for (int i = 0; i < wideSource.Length; i++) wide[i] = MathOps.ExpVectorHorner512(wideSource[i]);
+        for (int i = 0; i < wideSource.Length; i++) wide[i] = ReferenceExpKernels.ExpVectorHorner512(wideSource[i]);
         EqualBits(expected, actual);
     }
 
@@ -93,7 +94,7 @@ public class GeluTanhWideTests
         var newOutput = MemoryMarshal.Cast<float, Vector512<float>>(actual.AsSpan());
         for (int i = 0; i < values.Length; i++)
         {
-            oldOutput[i] = MathOps.ExpVectorHorner512(values[i]);
+            oldOutput[i] = ReferenceExpKernels.ExpVectorHorner512(values[i]);
             newOutput[i] = MathOps.ExpVectorHorner512Gelu(values[i]);
         }
         EqualBits(expected, actual);

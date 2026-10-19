@@ -1,3 +1,4 @@
+using Lokad.Onnx.Tests.Support;
 using Xunit;
 
 namespace Lokad.Onnx.Backend.Tests;
@@ -22,7 +23,7 @@ public class Exp512Tests
         var x = new float[n];
         for (int i = 0; i < n; i++) x[i] = lo + i * step;
         var y = new float[n];
-        MathOps.ExpSpan512(x, y);
+        ReferenceExpKernels.ExpSpan512(x, y);
         double worst = 0;
         for (int i = 0; i < n; i++)
         {
@@ -58,7 +59,7 @@ public class Exp512Tests
         var x = new float[n];
         for (int i = 0; i < n; i++) x[i] = (float)(rnd.NextDouble() * 176.0 - 88.0);
         var y512 = new float[n];
-        MathOps.ExpSpan512(x, y512);
+        ReferenceExpKernels.ExpSpan512(x, y512);
         double worst = 0;
         int w = System.Numerics.Vector<float>.Count;
         for (int i = 0; i < n; i += w)
@@ -84,7 +85,7 @@ public class Exp512Tests
         Skip.IfNot(ProbeAvailable(), "Requires AVX-512 plus FMA.");
         float[] x = new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, -0f, 0f, 1e30f, -1e30f, 88.722839f, -88.722839f, 89f, -89f };
         var y = new float[x.Length];
-        MathOps.ExpSpan512(x, y);
+        ReferenceExpKernels.ExpSpan512(x, y);
         Assert.True(float.IsNaN(y[0]), "NaN in must give NaN out.");
         Assert.True(float.IsPositiveInfinity(y[1]), "+Inf in must overflow.");
         Assert.True(y[2] == 0f, "-Inf in must underflow to zero.");
@@ -107,7 +108,7 @@ public class Exp512Tests
         var x = new float[n];
         for (int i = 0; i < n; i++) x[i] = (float)(rnd.NextDouble() * 12.0 - 6.0);
         var y = new float[n];
-        MathOps.ExpSpan512(x, y);
+        ReferenceExpKernels.ExpSpan512(x, y);
         for (int i = 0; i < n; i++)
         {
             float want = MathF.Exp(x[i]);

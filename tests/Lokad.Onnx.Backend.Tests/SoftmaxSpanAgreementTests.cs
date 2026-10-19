@@ -1,3 +1,4 @@
+using Lokad.Onnx.Tests.Support;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
@@ -195,8 +196,8 @@ public class SoftmaxSpanAgreementTests
         for (int i = 0; i < x.Length; i++) x[i] = (float)(rnd.NextDouble() * 8 - 4);
         var a = new float[x.Length];
         var b = new float[x.Length];
-        Tensor<float>.SoftmaxContiguousFloatSpan(x, a, 360, 30, true);
-        Tensor<float>.SoftmaxContiguousFloatSpan(x, b, 360, 30, true);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan(x, a, 360, 30, true);
+        ReferenceSoftmaxKernels.SoftmaxContiguousFloatSpan(x, b, 360, 30, true);
         Assert.True(a.SequenceEqual(b), "span repeats must be bit-identical.");
     }
 }
