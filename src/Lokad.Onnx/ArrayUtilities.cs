@@ -198,16 +198,9 @@ namespace Lokad.Onnx
         /// </summary>
         public static void GetIndices(ReadOnlySpan<int> strides, bool reverseStride, int index, int[] indices, int startFromDimension)
         {
-            Debug.Assert(reverseStride ? IsAscending(strides) : IsDescending(strides), "Index decomposition requires ordered strides");
-            Debug.Assert(strides.Length == indices.Length);
-            if (indices.Length == 0) return;
-            int remainder = index;
-            for (int i = startFromDimension; i < strides.Length; i++)
-            {
-                int axis = reverseStride ? strides.Length - 1 - i : i;
-                indices[axis] = remainder / strides[axis];
-                remainder %= strides[axis];
-            }
+            // Reading Length preserves the null-array exception; AsSpan() alone
+            // would silently turn null into an empty destination.
+            GetIndices(strides, reverseStride, index, indices.AsSpan(0, indices.Length), startFromDimension);
         }
 
         /// <summary>

@@ -908,6 +908,18 @@ namespace Lokad.Onnx
             }
         }
 
+        static void RemoveDroppedNodes(ComputationalGraph graph, HashSet<int> drop)
+        {
+            if (drop.Count == 0) return;
+            var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+            }
+            graph.Nodes.Clear();
+            graph.Nodes.AddRange(kept);
+        }
+
         public static int FuseBiasGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
             var drop = new HashSet<int>();
@@ -925,16 +937,7 @@ namespace Lokad.Onnx
                 }
             }
 
-            if (drop.Count > 0)
-            {
-                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
-                for (int i = 0; i < graph.Nodes.Count; i++)
-                {
-                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
-                }
-                graph.Nodes.Clear();
-                graph.Nodes.AddRange(kept);
-            }
+            RemoveDroppedNodes(graph, drop);
             return fused;
         }
 
@@ -1075,16 +1078,7 @@ namespace Lokad.Onnx
                 }
             }
 
-            if (drop.Count > 0)
-            {
-                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
-                for (int i = 0; i < graph.Nodes.Count; i++)
-                {
-                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
-                }
-                graph.Nodes.Clear();
-                graph.Nodes.AddRange(kept);
-            }
+            RemoveDroppedNodes(graph, drop);
             return fused;
         }
 
@@ -1376,16 +1370,7 @@ namespace Lokad.Onnx
                 }
             }
 
-            if (drop.Count > 0)
-            {
-                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
-                for (int i = 0; i < graph.Nodes.Count; i++)
-                {
-                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
-                }
-                graph.Nodes.Clear();
-                graph.Nodes.AddRange(kept);
-            }
+            RemoveDroppedNodes(graph, drop);
             return fused;
         }
 
