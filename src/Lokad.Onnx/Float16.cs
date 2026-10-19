@@ -33,7 +33,6 @@ namespace Lokad.Onnx
         private const ushort PositiveInfinityBits = 0x7F80;
         private const ushort NegativeInfinityBits = 0xFF80;
 
-        private const ushort PositiveQNaNBits = 0x7FC1;
         private const ushort NegativeQNaNBits = 0xFFC1;
 
         private const ushort MinValueBits = 0xFF7F; // 1b0_11111110_1111111
@@ -42,9 +41,6 @@ namespace Lokad.Onnx
         private const ushort EpsilonBits = 0x0080; // the smallest positive normal value
 
         private const ushort PiBits = 0x4049; // 0b0_10000000_1001001
-
-        // Used for rounding subnormal values
-        private const uint RoundingBase = 0x7FFF;
 
         // Well-defined and commonly used values
 

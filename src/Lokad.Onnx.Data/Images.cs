@@ -234,20 +234,6 @@ namespace Lokad.Onnx
             return pixels;
         }
 
-        /*
-        public static float[][] ImageToArrayF(Image<Rgba32> image)
-        {
-            var pixels = new float[image.Height][image.Width];
-            for (int i = 0; i < image.Width; i++)
-            {
-                for (int j = 0; j < image.Height; j++)
-                {
-                    pixels[j][i] = ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0f) / 255.0f;
-                }
-            }
-            return pixels;
-        }
-        */
         public static double[,,,] ImageToArrayD(Image<Rgba32> image)
         {
             var pixels = new double[1, 1, image.Height, image.Width];

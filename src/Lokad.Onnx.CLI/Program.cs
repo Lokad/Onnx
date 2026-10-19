@@ -748,8 +748,6 @@ class Program
 
     public static void ExitWithSuccess() => Exit(ExitResult.SUCCESS);
 
-    public static void UseConsoleLogging(bool debug) => UseConsoleLogging(debug, false);
-
     static void UseConsoleLogging(bool debug, bool standardError)
     {
         Log.MinLevel = debug ? Lokad.Onnx.LogLevel.Debug : standardError ? Lokad.Onnx.LogLevel.Warn : Lokad.Onnx.LogLevel.Info;

@@ -56,9 +56,6 @@ public partial class CPUExecutionProvider
                 target[d * length + k * outputs + o] = source[d * length + o * inputs + k];
         }
 
-        internal void Input(int direction, ReadOnlySpan<float> x, Span<float> y) =>
-            LstmProjectOrdered(x, storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), y);
-
         internal void InputBlock(int direction, ReadOnlySpan<float> input, int start, int stride, int rows, Span<float> output) =>
             LstmProjectOrderedRows(input, start, stride, inputSize,
                 storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), output, rows);

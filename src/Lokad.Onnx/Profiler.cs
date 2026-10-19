@@ -64,12 +64,6 @@ namespace Lokad.Onnx
             }
         }
 
-        void AddTimeIfTimerRunning()
-        {
-            if (!Enabled) return;
-            lock (sync) { AddTimeLocked(); }
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void StartNodeProfile(long id, OpType op) => StartNodeProfile(id, op, null);
 
@@ -135,7 +129,6 @@ namespace Lokad.Onnx
 
         NodeProfile CurrentNodeProfile => Profile.Peek();
 
-        internal bool Running => timer.IsRunning;
     }
 
     public class Profiler
