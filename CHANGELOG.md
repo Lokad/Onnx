@@ -15,6 +15,9 @@
   checks, plus integrated API and CLI coverage.
 - Isolated single-thread CPU comparisons with frozen inputs, balanced process
   ordering, complete raw samples and recorded memory and allocation costs.
+- Conservative source-maintenance audit with independent fixtures, explicit
+  diagnostic/reflection retentions and one bounded CI check. See
+  [maintenance rules](docs/code-maintenance.md).
 
 ### Changed
 
@@ -28,6 +31,15 @@
 - The companion Data project uses qualified Lokad.Tokenizers 0.2.0 for Gemma
   tokenization; build tooling restores the pinned tokenizer source package.
 - Package icon resized to 128×128 pixels.
+- Reference and experimental softmax, GELU and exponential kernels now compile
+  only into test/benchmark support; unused helpers and obsolete commented code
+  have been removed from production sources.
+- Binary arithmetic shares validation, dtype dispatch and prepared broadcast
+  shapes, reducing repeated metadata allocations while preserving pooling and
+  arithmetic. Integer Resize shares traversal with explicit per-type conversions.
+- Shared index decomposition, fusion node compaction and file-tokenizer cache
+  preparation retain existing public APIs, diagnostics and ownership behavior.
+  See [cleanup qualification](docs/cleanup-20261019.md).
 
 ### Fixed
 
@@ -46,6 +58,10 @@
   output sizes. Smaller outputs reduce vector size without reducing transformer
   computation. The separately assessed 8-bit weight-only export requires
   compressed kernels that Lokad.Onnx does not implement.
+- Integer int32 linear Resize retains two pre-existing differences from ORT:
+  identity resizing rounds through float32, and extreme align-corners cases
+  differ at some rounding boundaries. Both engines' exact results are pinned
+  independently in the [Resize conformance cases](tests/opfuzz/python/test_integer_resize_conformance.py).
 - On the measured AMD CPU, the 128-token case takes 165.33 ms versus ORT's
   168.01 ms (ratio 0.984); an independent repeat with identical candidate bytes
   gives ratio 0.982. The 512-token case remains slower at 781.72/737.86 ms
