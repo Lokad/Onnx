@@ -1,5 +1,63 @@
 # Changelog
 
+## 0.4.0 — Unreleased
+
+### Added
+
+- Prepared FP32 text-graph execution for Google's EmbeddingGemma 2, including
+  ONNX `LessOrEqual` with broadcasting and a bounded retained packed-weight cache.
+- Repository companion `EmbeddingGemma2Embedder` API and `lonnx embed` command
+  for retrieval queries and documents, with 128/256/512/768-dimensional normalized
+  outputs, bounded padded batches, cancellation and caller-owned vectors.
+  See [asset preparation and usage](tests/embeddinggemma2/README.md).
+- Independent Python source-model, original-ONNX and prepared-ONNX references,
+  exact tokenizer-input checks, scalar/SIMD/default conformance and byte-repeat
+  checks, plus integrated API and CLI coverage.
+- Isolated single-thread CPU comparisons with frozen inputs, balanced process
+  ordering, complete raw samples and recorded memory and allocation costs.
+
+### Changed
+
+- Exact RMS normalization fusion, including runtime control inputs, with
+  operator schema, output-use and arithmetic-order checks.
+- Packed FP32 matrix kernels and AVX-512 tanh GELU, including specialized
+  128-row projections. Other shapes retain their existing dispatch paths.
+- Execution-buffer reuse for eligible float `Split`, `Concat` and `Neg` outputs,
+  vectorized contiguous row-scalar arithmetic, and interleaved mean reductions
+  that preserve each output's arithmetic order.
+- The companion Data project uses qualified Lokad.Tokenizers 0.2.0 for Gemma
+  tokenization; build tooling restores the pinned tokenizer source package.
+- Package icon resized to 128×128 pixels.
+
+### Fixed
+
+- Cold Windows tokenizer dependency restoration and standalone e5 conformance
+  setup; packaged README links resolve outside a repository checkout.
+- Cross-platform embedding fixture hashes and explicit node opset preservation
+  in RMS normalization fusion.
+
+### Qualification and limitations
+
+- The NuGet package contains the managed .NET 10 inference core, with
+  Google.Protobuf 3.33.5 as its only runtime dependency. The embedding API lives
+  in the nonpackable `Lokad.Onnx.Data` project; the CLI and model assets are
+  separate. See the [model support matrix](docs/model-support.md).
+- EmbeddingGemma 2 is qualified in FP32 through 512 input tokens at all four
+  output sizes. Smaller outputs reduce vector size without reducing transformer
+  computation. The separately assessed 8-bit weight-only export requires
+  compressed kernels that Lokad.Onnx does not implement.
+- On the measured AMD CPU, the 128-token case takes 165.33 ms versus ORT's
+  168.01 ms (ratio 0.984); an independent repeat with identical candidate bytes
+  gives ratio 0.982. The 512-token case remains slower at 781.72/737.86 ms
+  (ratio 1.059). These are workload-specific single-thread observations, with
+  tokenization and model loading outside the compute timer. See the
+  [complete comparison and repeated measurements](tests/embeddinggemma2/benchmarks-20261017-fixedwidth.md)
+  and [benchmark table](BENCHMARK.md).
+- Cross-engine FP32 agreement uses the documented numerical tolerances;
+  same-engine repeats and the accepted arithmetic-preserving optimizations
+  retain byte identity. The previously reproduced Windows ResNet frozen-hash
+  baseline failure remains recorded in the comparison report.
+
 ## 0.3.0 — 2026-09-28
 
 ### Added
@@ -36,10 +94,10 @@
   of released storage are enabled by default where eligible. Dead reshape-view
   release remains an explicit `ExecutionOptions.Memory` choice. Experimental
   runtime switches retain their documented opt-in status; see
-  [runtime options](https://github.com/Lokad/Onnx/blob/master/docs/runtime-options.md).
+  [runtime options](docs/runtime-options.md).
 - Whisper execution reuses intermediate buffers and shares identical private
   decoder weights while preserving input and returned-output ownership.
-- The current [benchmark table](https://github.com/Lokad/Onnx/blob/master/BENCHMARK.md)
+- The current [benchmark table](BENCHMARK.md)
   compares complete applications and prepared graph calls against Microsoft ORT
   on the same AMD VM. Parakeet takes 43.459 seconds versus ORT 39.203 seconds;
   Pyannote takes 9.920 seconds versus 8.949 seconds. These are workload-specific
@@ -59,7 +117,7 @@
 - DINOv2 remains excluded from qualified timing because it exceeds the numerical
   agreement gate. Whisper has no qualified current-release latency comparison;
   its full encoder/logit numerical agreement and broader audio accuracy coverage
-  remain open. See [model support and qualification](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md)
+  remain open. See [model support and qualification](docs/model-support.md)
   for export, platform, recording and accuracy limits.
 
 ## 0.2.0 — 2026-09-13
