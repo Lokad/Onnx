@@ -37,29 +37,6 @@ internal static class ConstFold
         OpType.Reshape, OpType.Transpose, OpType.Slice,
     };
 
-    static readonly object FoldLock = new object();
-    static bool registered;
-
-    public static void RegisterConstFoldPass()
-    {
-        lock (FoldLock)
-        {
-            if (registered) return;
-            GraphOptimizer.AddPass(new GraphOptimizer.Pass(
-                "constfold",
-                (graph, facts) =>
-                {
-                    var rewritten = new List<int>();
-                    int n = FoldConstants(graph, facts, rewritten);
-                    var result = new GraphOptimizer.PassResult(n > 0, n);
-                    result.Nodes.AddRange(rewritten);
-                    if (n > 0) result.Notes.Add("folded " + n + " constant subgraphs");
-                    return result;
-                }));
-            registered = true;
-        }
-    }
-
     internal static int FoldConstants(ComputationalGraph graph, GraphFacts facts, List<int> rewritten)
     {
         var known = new Dictionary<string, ITensor>(StringComparer.Ordinal);

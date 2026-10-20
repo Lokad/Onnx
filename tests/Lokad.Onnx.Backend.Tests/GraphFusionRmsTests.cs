@@ -72,7 +72,6 @@ public class GraphFusionRmsTests
         var reference = Model.Load(ModelDefinition(5, 33, "square"))!;
         Assert.All(graph.Nodes, node => Assert.Equal(18, node.OpsetVersion));
         graph.Opset.Clear();
-        Optimization.GraphOptimizer.EnsureStandardPasses();
         Optimization.GraphOptimizer.Run(graph);
         var fused = Assert.Single(graph.Nodes);
         Assert.Equal(OpType.FusedRmsNormalization, fused.Op);

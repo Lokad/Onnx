@@ -2,27 +2,8 @@ namespace Lokad.Onnx;
 
 internal static partial class GraphFusion
 {
-    static bool rmsNormRegistered;
 
-    internal static void RegisterRmsNormPass()
-    {
-        lock (PassLock)
-        {
-            if (rmsNormRegistered) return;
-            Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass("rmsnorm", (graph, facts) =>
-            {
-                var rewritten = new List<int>();
-                int count = FuseRmsNorm(graph, facts, rewritten);
-                var result = new Optimization.GraphOptimizer.PassResult(count > 0, count);
-                result.Nodes.AddRange(rewritten);
-                if (count > 0) result.Notes.Add("fused " + count + " RMS normalization patterns");
-                return result;
-            }));
-            rmsNormRegistered = true;
-        }
-    }
-
-    static int FuseRmsNorm(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+    internal static int FuseRmsNorm(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
     {
         var removed = new HashSet<int>();
         int count = 0;

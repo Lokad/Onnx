@@ -17,37 +17,9 @@ namespace Lokad.Onnx
 
     public static class CollectionUtils
     {
-        public static string JoinWith(this IEnumerable<string> s, string j)
-        {
-            if (s.Count() == 0)
-            {
-                return "";
-            }
-            else if (s.Count() == 1)
-            {
-                return s.First();
-            }
-            else
-            {
-                return s.Aggregate((a, b) => a + j + b);
-            }
-        }
+        public static string JoinWith(this IEnumerable<string> s, string j) => string.Join(j, s);
 
-        public static string JoinWithSpaces(this IEnumerable<string> s)
-        {
-            if (s.Count() == 0)
-            {
-                return "";
-            }
-            else if (s.Count() == 1)
-            {
-                return s.First();
-            }
-            else
-            {
-                return s.Aggregate((a, b) => a + " " + b);
-            }
-        }
+        public static string JoinWithSpaces(this IEnumerable<string> s) => string.Join(" ", s);
 
         public static T FailIfKeyNotPresent<T>(this Dictionary<string, object> d, string k)
             => d.ContainsKey(k) ? (T)d[k] : throw new KeyNotFoundException($"The required key {k} is not present.");

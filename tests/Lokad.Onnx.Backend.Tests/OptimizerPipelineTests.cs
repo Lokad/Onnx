@@ -55,8 +55,7 @@ public class OptimizerPipelineTests
     [Fact]
     public void StandardPassSet_IsComplete()
     {
-        Optimization.GraphOptimizer.EnsureStandardPasses();
-        foreach (var name in new[] { "layernorm", "rope", "gelu", "gelu-tanh", "convrelu", "addrelu", "biasgelu", "gemmgelu", "scalematmul", "constfold", "reshape-zerocopy" })
-            Assert.Contains(Optimization.GraphOptimizer.Passes, p => p.Name == name);
+        Assert.Equal(new[] { "layernorm", "rmsnorm", "rope", "gelu", "gelu-tanh", "convrelu", "addrelu", "biasgelu", "gemmgelu", "scalematmul", "maskedsoftmax", "constfold", "reshape-zerocopy" },
+            Optimization.GraphOptimizer.Passes.Select(p => p.Name));
     }
 }

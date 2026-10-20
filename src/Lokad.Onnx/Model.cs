@@ -25,7 +25,7 @@ public class Model
     /// <summary>Assembles a graph with optional load-time optimization.</summary>
     /// <remarks>Diagnostic entry for pass tests: skipping the optimizer leaves the pre-pass
     /// graph (preparation still runs). Every fusion is a pipeline pass; the flag gates
-    /// running them, not registering the canonical set.</remarks>
+    /// running the fixed canonical pass set.</remarks>
     internal static ComputationalGraph Load(OnnxModel mp, bool runOptimizer) =>
         Load(mp, runOptimizer, new HashSet<OnnxSubgraph>(ReferenceEqualityComparer.Instance), long.MaxValue);
 
@@ -61,7 +61,6 @@ public class Model
             graph.Nodes.Add(ToNode(np, graph, runOptimizer, visiting));
         }
         op.Complete();
-        Optimization.GraphOptimizer.EnsureStandardPasses();
         int fused = 0;
         int rope = 0;
         int gelu = 0;

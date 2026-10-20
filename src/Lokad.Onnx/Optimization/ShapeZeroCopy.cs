@@ -18,30 +18,8 @@ namespace Lokad.Onnx.Optimization;
 /// </summary>
 internal static class ShapeZeroCopy
 {
-    static readonly object PassLock = new object();
-    static bool registered;
 
-    public static void RegisterShapeZeroCopyPass()
-    {
-        lock (PassLock)
-        {
-            if (registered) return;
-            GraphOptimizer.AddPass(new GraphOptimizer.Pass(
-                "reshape-zerocopy",
-                (graph, facts) =>
-                {
-                    var rewritten = new List<int>();
-                    int n = RewriteSelfShapes(graph, facts, rewritten, out int rewired, out int swept);
-                    var result = new GraphOptimizer.PassResult(n > 0, n);
-                    result.Nodes.AddRange(rewritten);
-                    if (n > 0) result.Notes.Add("rewrote " + rewired + " reshape shape inputs; swept " + swept + " dead nodes");
-                    return result;
-                }));
-            registered = true;
-        }
-    }
-
-    static int RewriteSelfShapes(ComputationalGraph graph, GraphFacts facts, List<int> rewritten, out int rewired, out int swept)
+    internal static int RewriteSelfShapes(ComputationalGraph graph, GraphFacts facts, List<int> rewritten, out int rewired, out int swept)
     {
         var nodes = graph.Nodes;
         var shared = new Dictionary<string, string>(StringComparer.Ordinal);

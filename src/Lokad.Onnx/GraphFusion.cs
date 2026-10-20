@@ -39,28 +39,6 @@ namespace Lokad.Onnx
             return (int)t.Length;
         }
 
-        static readonly object PassLock = new object();
-        static bool layerNormRegistered;
-
-        public static void RegisterLayerNormPass()
-        {
-            lock (PassLock)
-            {
-                if (layerNormRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "layernorm",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseLayerNormPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " LayerNorm patterns");
-                        return result;
-                    }));
-                layerNormRegistered = true;
-            }
-        }
         public static int FuseLayerNormPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
             var drop = new HashSet<int>();
@@ -297,28 +275,6 @@ namespace Lokad.Onnx
         /// application against the fused reference; the native kernel matches
         /// ORT bit-identically.
         /// </summary>
-        static readonly object GeluPassLock = new object();
-        static bool geluRegistered;
-
-        public static void RegisterGeluPass()
-        {
-            lock (GeluPassLock)
-            {
-                if (geluRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "gelu",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseGeluPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " exact-GELU patterns");
-                        return result;
-                    }));
-                geluRegistered = true;
-            }
-        }
 
         public static int FuseGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
@@ -666,28 +622,7 @@ namespace Lokad.Onnx
 
         /// Fuses tanh-approximate GELU chains (x times one half; cube; times 0.044715; plus x; times sqrt(2/pi); Tanh; plus one; times) into native Gelu nodes carrying approximate=tanh.
         /// </summary>
-        static readonly object GeluTanhPassLock = new object();
-        static bool geluTanhRegistered;
 
-        public static void RegisterGeluTanhPass()
-        {
-            lock (GeluTanhPassLock)
-            {
-                if (geluTanhRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "gelu-tanh",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseGeluTanhPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " tanh-GELU patterns");
-                        return result;
-                    }));
-                geluTanhRegistered = true;
-            }
-        }
         public static int FuseGeluTanhPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
             var drop = new HashSet<int>();
@@ -726,29 +661,6 @@ namespace Lokad.Onnx
             return fused;
         }
 
-        static readonly object ConvReluPassLock = new object();
-        static bool convReluRegistered;
-
-        public static void RegisterConvReluPass()
-        {
-            lock (ConvReluPassLock)
-            {
-                if (convReluRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "convrelu",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseConvReluPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " Conv+Relu epilogues");
-                        return result;
-                    }));
-                convReluRegistered = true;
-            }
-        }
-
         public static int FuseConvReluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
             var drop = new HashSet<int>();
@@ -778,29 +690,6 @@ namespace Lokad.Onnx
                 graph.Nodes.AddRange(kept);
             }
             return fused;
-        }
-
-        static readonly object AddReluPassLock = new object();
-        static bool addReluRegistered;
-
-        public static void RegisterAddReluPass()
-        {
-            lock (AddReluPassLock)
-            {
-                if (addReluRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "addrelu",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseAddReluPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " Add+Relu epilogues");
-                        return result;
-                    }));
-                addReluRegistered = true;
-            }
         }
 
         public static int FuseAddReluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
@@ -884,28 +773,6 @@ namespace Lokad.Onnx
             graph.Nodes[pi] = fused;
             producerIndex = pi;
             return true;
-        }
-        static readonly object BiasGeluPassLock = new object();
-        static bool biasGeluRegistered;
-
-        public static void RegisterBiasGeluPass()
-        {
-            lock (BiasGeluPassLock)
-            {
-                if (biasGeluRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "biasgelu",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseBiasGeluPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " bias+GELU regions");
-                        return result;
-                    }));
-                biasGeluRegistered = true;
-            }
         }
 
         static void RemoveDroppedNodes(ComputationalGraph graph, HashSet<int> drop)
@@ -1015,52 +882,6 @@ namespace Lokad.Onnx
             return true;
         }
 
-        static readonly object GemmGeluPassLock = new object();
-        static bool gemmGeluRegistered;
-
-        public static void RegisterGemmGeluPass()
-        {
-            lock (GemmGeluPassLock)
-            {
-                if (gemmGeluRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "gemmgelu",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseGemmGeluPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " Gemm+GELU regions");
-                        return result;
-                    }));
-                gemmGeluRegistered = true;
-            }
-        }
-
-        static readonly object ScaledMatMulPassLock = new object();
-        static bool scaledMatMulRegistered;
-
-        public static void RegisterScaledMatMulPass()
-        {
-            lock (ScaledMatMulPassLock)
-            {
-                if (scaledMatMulRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "scalematmul",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseScaledMatMulPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " scale+MatMul regions");
-                        return result;
-                    }));
-                scaledMatMulRegistered = true;
-            }
-        }
-
         public static int FuseMaskedSoftmaxPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
             var drop = new HashSet<int>();
@@ -1132,28 +953,6 @@ namespace Lokad.Onnx
             graph.Nodes[pi] = fused;
             producerIndex = pi;
             return true;
-        }
-        static readonly object MaskedSoftmaxPassLock = new object();
-        static bool maskedSoftmaxRegistered;
-
-        public static void RegisterMaskedSoftmaxPass()
-        {
-            lock (MaskedSoftmaxPassLock)
-            {
-                if (maskedSoftmaxRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "maskedsoftmax",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseMaskedSoftmaxPass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " mask+softmax regions");
-                        return result;
-                    }));
-                maskedSoftmaxRegistered = true;
-            }
         }
 
         /// <summary>
@@ -1472,30 +1271,6 @@ namespace Lokad.Onnx
             }
             producerIndex = gemmIndex;
             return true;
-        }
-
-
-        static readonly object RopePassLock = new object();
-        static bool ropeRegistered;
-
-        public static void RegisterRopePass()
-        {
-            lock (RopePassLock)
-            {
-                if (ropeRegistered) return;
-                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
-                    "rope",
-                    (graph, facts) =>
-                    {
-                        var rewritten = new List<int>();
-                        int n = FuseRopePass(graph, facts, rewritten);
-                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
-                        result.Nodes.AddRange(rewritten);
-                        if (n > 0) result.Notes.Add("fused " + n + " rotary-embedding patterns");
-                        return result;
-                    }));
-                ropeRegistered = true;
-            }
         }
 
         public static int FuseRopePass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)

@@ -6,8 +6,8 @@ namespace Lokad.Onnx.Optimization;
 /// <summary>
 /// Deterministic load-time rewrite runner. Passes are applied in declaration order;
 /// facts are rebuilt only when a pass reports a change; a small fixed round cap stops
-/// a buggy pass from looping forever. With zero registered passes this is a no-op by
-/// construction. Disable switches let a diagnosis isolate one rewrite by name.
+/// a buggy pass from looping forever. The fixed pass set is immutable.
+/// Disable switches let a diagnosis isolate one rewrite by name.
 /// </summary>
 internal static class GraphOptimizer
 {
@@ -57,44 +57,43 @@ internal static class GraphOptimizer
         public TimeSpan Elapsed { get; }
     }
 
-    public static readonly List<Pass> Passes = new List<Pass>();
-
-    /// <summary>Guards pass registration and snapshots: model loads run concurrently across tests.</summary>
-    internal static readonly object PassLock = new object();
-
-    public static void AddPass(Pass pass)
+    internal static IReadOnlyList<Pass> Passes { get; } = Array.AsReadOnly(new Pass[]
     {
-        lock (PassLock)
+        Rewrite("layernorm", GraphFusion.FuseLayerNormPass, "fused {0} LayerNorm patterns"),
+        Rewrite("rmsnorm", GraphFusion.FuseRmsNorm, "fused {0} RMS normalization patterns"),
+        Rewrite("rope", GraphFusion.FuseRopePass, "fused {0} rotary-embedding patterns"),
+        Rewrite("gelu", GraphFusion.FuseGeluPass, "fused {0} exact-GELU patterns"),
+        Rewrite("gelu-tanh", GraphFusion.FuseGeluTanhPass, "fused {0} tanh-GELU patterns"),
+        Rewrite("convrelu", GraphFusion.FuseConvReluPass, "fused {0} Conv+Relu epilogues"),
+        Rewrite("addrelu", GraphFusion.FuseAddReluPass, "fused {0} Add+Relu epilogues"),
+        Rewrite("biasgelu", GraphFusion.FuseBiasGeluPass, "fused {0} bias+GELU regions"),
+        Rewrite("gemmgelu", GraphFusion.FuseGemmGeluPass, "fused {0} Gemm+GELU regions"),
+        Rewrite("scalematmul", GraphFusion.FuseScaledMatMulPass, "fused {0} scale+MatMul regions"),
+        Rewrite("maskedsoftmax", GraphFusion.FuseMaskedSoftmaxPass, "fused {0} mask+softmax regions"),
+        Rewrite("constfold", ConstFold.FoldConstants, "folded {0} constant subgraphs"),
+        new Pass("reshape-zerocopy", (graph, facts) =>
         {
-            foreach (var p in Passes) if (p.Name == pass.Name) return;
-            Passes.Add(pass);
-        }
-    }
+            var rewritten = new List<int>();
+            int count = ShapeZeroCopy.RewriteSelfShapes(graph, facts, rewritten, out int rewired, out int swept);
+            var result = new PassResult(count > 0, count);
+            result.Nodes.AddRange(rewritten);
+            if (count > 0) result.Notes.Add("rewrote " + rewired + " reshape shape inputs; swept " + swept + " dead nodes");
+            return result;
+        }),
+    });
 
-    public static readonly HashSet<string> Disabled = new HashSet<string>(StringComparer.Ordinal);
+    static Pass Rewrite(string name, Func<ComputationalGraph, GraphFacts, List<int>, int> apply, string note) =>
+        new Pass(name, (graph, facts) =>
+        {
+            var rewritten = new List<int>();
+            int count = apply(graph, facts, rewritten);
+            var result = new PassResult(count > 0, count);
+            result.Nodes.AddRange(rewritten);
+            if (count > 0) result.Notes.Add(string.Format(note, count));
+            return result;
+        });
 
     public const int MaxRounds = 8;
-
-    /// <summary>Registers the canonical ordered pass set once (idempotent by
-    /// pass name): fusion passes in matcher order, then constant folding and
-    /// self-shape lowering. Later passes observe earlier passes within the
-    /// same fixed-point run, so callers run one pipeline, not staged runs.</summary>
-    public static void EnsureStandardPasses()
-    {
-        GraphFusion.RegisterLayerNormPass();
-        GraphFusion.RegisterRmsNormPass();
-        GraphFusion.RegisterRopePass();
-        GraphFusion.RegisterGeluPass();
-        GraphFusion.RegisterGeluTanhPass();
-        GraphFusion.RegisterConvReluPass();
-        GraphFusion.RegisterAddReluPass();
-        GraphFusion.RegisterBiasGeluPass();
-        GraphFusion.RegisterGemmGeluPass();
-        GraphFusion.RegisterScaledMatMulPass();
-        GraphFusion.RegisterMaskedSoftmaxPass();
-        ConstFold.RegisterConstFoldPass();
-        ShapeZeroCopy.RegisterShapeZeroCopyPass();
-    }
 
     public static List<PassChange> Run(ComputationalGraph graph)
     {
@@ -104,26 +103,16 @@ internal static class GraphOptimizer
     public static List<PassChange> Run(ComputationalGraph graph, IEnumerable<string> disabled)
     {
         var report = new List<PassChange>();
-        Pass[] active;
-        HashSet<string> off;
-        lock (PassLock)
-        {
-            active = Passes.ToArray();
-            off = new HashSet<string>(Disabled, StringComparer.Ordinal);
-            foreach (var d in disabled) off.Add(d);
-            // Ablation hatch for measurement lanes (profile --disable-pass):
-            // env names are unioned into the disabled set for this run only.
-            // Unset in normal runs, so optimization behavior is unchanged.
-            var env = Environment.GetEnvironmentVariable("LOKAD_ONNX_DISABLE_PASSES");
-            if (!string.IsNullOrWhiteSpace(env))
-                foreach (var d in env.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)) off.Add(d.Trim());
-        }
+        var off = new HashSet<string>(disabled, StringComparer.Ordinal);
+        var env = Environment.GetEnvironmentVariable("LOKAD_ONNX_DISABLE_PASSES");
+        if (!string.IsNullOrWhiteSpace(env))
+            foreach (var name in env.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)) off.Add(name.Trim());
         bool exhausted = false;
         for (int round = 0; round < MaxRounds; round++)
         {
             var facts = GraphFacts.Build(graph);
             bool changed = false;
-            foreach (var pass in active)
+            foreach (var pass in Passes)
             {
                 if (off.Contains(pass.Name)) continue;
                 var sw = Stopwatch.StartNew();
