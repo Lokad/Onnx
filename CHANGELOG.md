@@ -54,6 +54,9 @@
 - Execution contexts share prepared-weight caches directly, avoiding discarded
   cache/lock allocations while retaining public graph mutation behavior.
   Parakeet owned-weight eligibility is isolated from generic storage/alias checks.
+- Routine and strict benchmarks share staging and model-worker implementations;
+  existing evidence layouts remain readable with their recorded source provenance.
+  See [follow-up qualification](docs/simplification-20261020.md#maintenance-follow-up).
 
 ### Fixed
 

@@ -4,6 +4,9 @@ This work starts from `f11777fb91eeff930db8d5a545ffe3481e9f517f` and retains the
 qualified normal runtime paths and complete public API. The implementation is
 `46f44e04d6c9440f8b4311391f472ae9140f07ec`.
 
+The [maintenance follow-up](#maintenance-follow-up) qualifies the subsequent
+test-policy, preparation-cache, model-policy and benchmark-worker simplifications.
+
 Closed experiment producers and retired code are indexed in
 [the Git-history archive](../archives/README.md). All 5,995 original paths were
 extracted and compared to their original Git blob hashes. All forty formerly
@@ -114,3 +117,53 @@ are local under ignored `artifacts/simplification-20261020`. The original
 cleanup remains independently documented in [its report](cleanup-20261019.md).
 The practical evidence archive contains 239 files, SHA-256
 `62baeefa8bdee9a233c8ee241d709d6a1fa37c3bf8c20319bfeee20a207f8066`.
+
+## Maintenance follow-up
+
+Commits `86fded6f` and `7156290f` start from published `bb02e3ee`. Ordinary testing
+no longer collects discarded coverage; `eng/test.ps1 -Coverage` still produces
+Cobertura reports. The remaining null-suppression/documentation syntax scanners
+and their unused discovery helpers are removed. A compiled metadata check keeps
+Core's sole friend assembly, Backend.Tests, and checks that Data grants none.
+
+Graph and execution contexts share their preparation dictionaries and locks through
+one internal cache. A warmed context-creation probe consistently allocates 1,936
+bytes instead of 2,344 bytes, saving 408 bytes per context across five repetitions.
+Public mutation semantics, structural fingerprint checks, inherited APIs and
+per-instance diagnostics remain compatible. The Parakeet name/shape selector is
+isolated from generic storage/alias handling, preserving its qualified eligible
+set. A full graph rewrite or name-independent packing would need separate design
+and qualification; neither is necessary for these improvements.
+
+Routine and strict benchmarking share fourteen staging/launch/validation
+functions, whose syntax trees are unchanged. Routine imports no campaign frontend
+or scorer. Historical schema-3/4 inventory fixtures and the actual retained
+schema-5 Gemma archive load successfully. New inventories include extracted
+dependencies and cannot omit those sources by claiming the historical layout.
+
+Qualification preserves all 2,830 public/protected declarations and common
+implementation flags. Normal tests pass 403 tensor and 3,598 Backend cases, with
+only the identical pre-existing local ResNet hash failure described above.
+Scalar tests pass 395 tensor and 3,401 Backend cases. Native differential checks
+pass 309 cases; e5 conformance passes nine; Python tooling passes 198. Package
+contents and the independent consumer pass. All 225 complete Gemma arrays match
+bb02e3ee byte-for-byte across scalar/SIMD/default, and all six control/candidate
+runs pass frozen native references, including mixed batches and 512 tokens.
+The [exact source-commit CI](https://github.com/Lokad/Onnx/actions/runs/39440946416)
+passes all nine jobs without retries.
+
+Two balanced process pairs on the same AMD VM retain all 792 timed calls:
+
+| Case | Candidate | ORT | Paired candidate/control |
+|---|---:|---:|---:|
+| Gemma FP32, 128 tokens | 164.86 ms | 167.79 ms | 0.9925 |
+| Gemma FP32, 512 tokens | 785.31 ms | 735.02 ms | 0.9987 |
+| e5, 30 tokens | 10.08 ms | 7.83 ms | 0.9846 |
+
+No material regression is observed. These short engineering comparisons do not
+establish a speedup: e5's individual paired ratios range from 0.9617 to 1.0076.
+Gemma uses ORT 1.29.0; e5 uses the existing runner's ORT 1.23.2. All worker/file
+bindings, staged cores, prepared runner/native binaries, numerical evidence,
+affinity and raw samples pass independent reload. Published benchmark headline
+figures remain unchanged. Evidence is under ignored
+`artifacts/maintenance-20261020`; the existing VM's measurement workers are terminal.
