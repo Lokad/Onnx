@@ -33,7 +33,7 @@ where T : unmanaged
         int sh, int sw, PadInfo pad, int oh, int ow, TensorExecutionOptions options)
     {
         if (!options.UseIntrinsics || !options.UseSimd || options.UseSegmentedConvolution
-            || AblationSwitches.EnableSegmentedConvolution || n != 1 || group != 1
+            || n != 1 || group != 1
             || kh != 3 || kw != 3 || dh != 1 || dw != 1 || sh != sw || sh is not (1 or 2)
             || pad.top != 1 || pad.bottom != 1 || pad.left != 1 || pad.right != 1
             || h < 1 || w < 1 || c < 16 || c % 16 != 0 || m < 32 || m % 16 != 0

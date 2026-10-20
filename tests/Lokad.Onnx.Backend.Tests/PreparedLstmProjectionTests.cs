@@ -9,7 +9,18 @@ public class PreparedLstmProjectionTests
 {
     const int H = 640, Outputs = 4 * H;
     static string Hash(ReadOnlySpan<float> values) => Convert.ToHexStringLower(SHA256.HashData(MemoryMarshal.AsBytes(values)));
-    static void Equal(ReadOnlySpan<float> a, ReadOnlySpan<float> b) => Assert.True(MemoryMarshal.AsBytes(a).SequenceEqual(MemoryMarshal.AsBytes(b)), "Exact float bytes");
+    static void Equal(ReadOnlySpan<float> a, ReadOnlySpan<float> b)
+    {
+        Assert.Equal(a.Length, b.Length);
+        for (int i = 0; i < a.Length; i++)
+        {
+            // NaN payload/sign selection is not a floating-point arithmetic
+            // contract: the JIT can commute operands of multiplication/addition.
+            // Every other result, including signed zero and infinity, stays exact.
+            if (float.IsNaN(a[i])) Assert.True(float.IsNaN(b[i]), $"Expected NaN at {i}");
+            else Assert.Equal(BitConverter.SingleToInt32Bits(a[i]), BitConverter.SingleToInt32Bits(b[i]));
+        }
+    }
     static float[] Values(int count) => Enumerable.Range(0, count).Select(i => (i % 113 - 56) * .015625f).ToArray();
     static float[] Pack(ReadOnlySpan<float> flat, int n, int columns)
     {
@@ -48,7 +59,7 @@ public class PreparedLstmProjectionTests
     }
 
     [Fact]
-    public void ExceptionalValuesRetainPayloadsAndOperandOrder()
+    public void ExceptionalValuesRetainClassificationAndFiniteBits()
     {
         float[] values = [float.NegativeInfinity, float.PositiveInfinity, float.MaxValue, -float.MaxValue,
             float.Epsilon, -float.Epsilon, -0f, 0f, BitConverter.Int32BitsToSingle(0x7fc12345),
@@ -56,6 +67,17 @@ public class PreparedLstmProjectionTests
         for (int shift = 0; shift < values.Length; shift++)
             Raw(Enumerable.Range(0, 3).Select(i => values[(i + shift) % values.Length]).ToArray(),
                 Enumerable.Range(0, 3 * 71).Select(i => values[(i + shift + 4) % values.Length]).ToArray(), 71);
+    }
+
+    [Fact]
+    public void ComparisonChecksZeroInfinityAndNaNClassification()
+    {
+        Equal([BitConverter.Int32BitsToSingle(0x7fc12345)], [BitConverter.Int32BitsToSingle(unchecked((int)0xffc54321))]);
+        Assert.ThrowsAny<Xunit.Sdk.XunitException>(() => Equal([float.NaN], [0f]));
+        Assert.ThrowsAny<Xunit.Sdk.XunitException>(() => Equal([0f], [float.NaN]));
+        Assert.ThrowsAny<Xunit.Sdk.XunitException>(() => Equal([0f], [-0f]));
+        Assert.ThrowsAny<Xunit.Sdk.XunitException>(() => Equal([float.PositiveInfinity], [float.NegativeInfinity]));
+        Assert.ThrowsAny<Xunit.Sdk.XunitException>(() => Equal([1f], [MathF.BitIncrement(1f)]));
     }
 
 }

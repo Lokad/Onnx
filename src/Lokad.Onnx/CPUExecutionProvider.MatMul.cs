@@ -70,23 +70,8 @@ public partial class CPUExecutionProvider
         if (mm.Status != OpStatus.Success || mm.Outputs is null || mm.Outputs.Length != 1 || mm.Outputs[0] is null)
             return mm;
         var product = mm.Outputs[0];
-        bool productEscapes = false;
         try
         {
-            // The composite owns this fresh product exclusively. For large
-            // scalar divisions, keep its storage as the public result instead
-            // of writing a second array. Use the established division primitive
-            // so rounding, exceptional values and scalar/SIMD modes are intact.
-            if (AblationSwitches.EnableScaledMatMulInplace
-                && product is DenseTensor<float> privateProduct && privateProduct.Length >= 65536
-                && Divisor is Tensor<float> scalar && scalar.Length == 1
-                && Tensor<float>.BroadcastShape(privateProduct.Dimensions, scalar.Dimensions, out var shape)
-                && privateProduct.Dimensions.SequenceEqual(shape))
-            {
-                var divided = privateProduct.BroadcastApply<DivideBroadcast<float>>(scalar, privateProduct, opts.Tensor);
-                productEscapes = true;
-                return Success(op, divided);
-            }
             var dv = Div(product, Divisor, options, pool);
             if (dv.Status != OpStatus.Success || dv.Outputs is null)
                 return dv;
@@ -94,10 +79,8 @@ public partial class CPUExecutionProvider
         }
         finally
         {
-            // Only the distinct-output composite leaves an unexposed private
-            // product to release. The in-place result escapes to the caller
-            // and must remain checked out, like any other graph output.
-            if (!productEscapes && pool is { ReleaseFusedTemporaries: true }
+            // The private composite product never escapes to the caller.
+            if (pool is { ReleaseFusedTemporaries: true }
                 && product is Tensor<float> tensor
                 && tensor.OwnedBufferArray() is { } array && pool.IsOwned(array))
                 pool.Return(array);

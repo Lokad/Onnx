@@ -67,7 +67,7 @@ public class ScaledMatMulInplaceTests
     [Theory]
     [InlineData(65535)]
     [InlineData(65536)]
-    public void LargeProductEliminatesTheSecondPoolRentOnlyWhenEnabled(int columns)
+    public void CompositeProductUsesDistinctOutputStorage(int columns)
     {
         var a = Input(new[] { 1, 1, 3 }, 71);
         var b = Input(new[] { 1, 3, columns }, 72);
@@ -75,10 +75,9 @@ public class ScaledMatMulInplaceTests
         var pool = new TensorBufferPool { ReleaseFusedTemporaries = true };
         var actual = Output(CPUExecutionProvider.ScaledMatMulTrailing(a, b, divisor, ExecutionOptions.Simd, pool));
         Assert.Equal(Bits(Legacy(a, b, divisor, ExecutionOptions.Simd)), Bits(actual));
-        bool inplace = AblationSwitches.EnableScaledMatMulInplace && columns == 65536;
-        Assert.Equal(inplace ? 1 : 2, pool.AllocatedNew);
-        Assert.Equal(inplace ? 0 : 1, pool.Returned);
-        Assert.Equal((inplace ? 1L : 2L) * columns * sizeof(float), pool.PeakOutstandingBytes);
+        Assert.Equal(2, pool.AllocatedNew);
+        Assert.Equal(1, pool.Returned);
+        Assert.Equal(2L * columns * sizeof(float), pool.PeakOutstandingBytes);
     }
 
     [Theory]
@@ -100,7 +99,7 @@ public class ScaledMatMulInplaceTests
         Assert.Equal(expected.Dimensions.ToArray(), actual.Dimensions.ToArray());
         Assert.Equal(Bits(expected), Bits(actual));
         Assert.Equal(before, Bits(divisor));
-        Assert.Equal(AblationSwitches.EnableScaledMatMulInplace && kind == 0 ? 0 : 1, pool.Returned);
+        Assert.Equal(1, pool.Returned);
     }
 
     [Theory]

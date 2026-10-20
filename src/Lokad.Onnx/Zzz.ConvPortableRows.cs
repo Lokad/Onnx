@@ -10,7 +10,6 @@ public abstract partial class Tensor<T> where T : unmanaged
     // precedence. These are the same packing size limits as the generic route.
     internal static bool CanUseConvPortableRows(int rows, int reduction, int columns, TensorExecutionOptions options) =>
         options.UseSimd && options.UseIntrinsics && Fma.IsSupported
-        && !AblationSwitches.EnablePackedAvx512Dynamic
         && rows >= 32 && (rows & 1) == 0 && rows % 3 != 0
         && reduction >= 64 && columns > 0
         && (long)reduction * columns <= 67108864

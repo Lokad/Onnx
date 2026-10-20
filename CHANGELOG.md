@@ -15,9 +15,9 @@
   checks, plus integrated API and CLI coverage.
 - Isolated single-thread CPU comparisons with frozen inputs, balanced process
   ordering, complete raw samples and recorded memory and allocation costs.
-- Conservative source-maintenance audit with independent fixtures, explicit
-  diagnostic/reflection retentions and one bounded CI check. See
-  [maintenance rules](docs/code-maintenance.md).
+- Shared routine CPU comparison command with balanced core ordering, retained
+  samples and numerical checks, without mandatory calibration or cooldown.
+  See [routine benchmarks](eng/bench.md).
 
 ### Changed
 
@@ -40,6 +40,14 @@
 - Shared index decomposition, fusion node compaction and file-tokenizer cache
   preparation retain existing public APIs, diagnostics and ownership behavior.
   See [cleanup qualification](docs/cleanup-20261019.md).
+- Retired fourteen default-off runtime controls and exclusive internal
+  experiments; qualified normal paths and public numerical/options APIs remain.
+- Closed experiment producers and obsolete maintenance tooling are recoverable
+  from an indexed [Git-history archive](archives/README.md); historical reports
+  and active reference/replay tools remain available.
+- Removed custom optional-parameter/TODO gates and the SDK-internal source audit.
+  Markdown changes avoid the full CI matrix; packaged documentation still gets
+  package smoke checks. See [maintenance guidance](docs/code-maintenance.md).
 
 ### Fixed
 
@@ -47,6 +55,9 @@
   setup; packaged README links resolve outside a repository checkout.
 - Cross-platform embedding fixture hashes and explicit node opset preservation
   in RMS normalization fusion.
+- LSTM projection exceptional-value tests preserve NaN classification while
+  checking all finite values, signed zeros and infinities bit-for-bit, avoiding
+  an unspecified NaN-payload comparison across compiled reductions.
 
 ### Qualification and limitations
 

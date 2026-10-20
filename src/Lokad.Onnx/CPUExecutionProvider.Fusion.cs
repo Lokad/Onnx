@@ -65,9 +65,7 @@ public partial class CPUExecutionProvider
                     Tensor<float>.BiasGeluTanhSpanFloat(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 else if (AblationSwitches.EnableBiasGeluInline)
                 {
-                    if (!AblationSwitches.EnableBiasGeluInterleaved
-                        || !Tensor<float>.TryBiasGeluSpanFloatInterleaved(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span))
-                        Tensor<float>.BiasGeluSpanFloatInline(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
+                    Tensor<float>.BiasGeluSpanFloatInline(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 }
                 else
                     Tensor<float>.BiasGeluSpanFloatPtr4x(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);

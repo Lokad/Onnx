@@ -114,7 +114,6 @@ public partial class ComputationalGraph
                 converted++;
                 // Keep an executable graph even if a later allocation throws.
                 _prepared = false;
-                FingerprintStrings = null;
             }
             if (converted != 0) ReleasedBuffers?.Clear();
             return converted;

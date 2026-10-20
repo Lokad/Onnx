@@ -12,7 +12,30 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  changes:
+    name: change scope
+    runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.scope.outputs.tests }}
+      package: ${{ steps.scope.outputs.package }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Classify changed files
+        id: scope
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python3 -m unittest discover -s eng -p test_ci_scope.py
+          python3 -m unittest discover -s eng -p test_bench.py
+          python3 -m unittest discover -s eng -p test_restore_experiments.py
+          if [[ -n "$BASE" && ! "$BASE" =~ ^0+$ ]]; then
+            git fetch --no-tags --depth=1 origin "$BASE" "$HEAD"
+          fi
+          python3 eng/ci_scope.py --base "$BASE" --head "$HEAD" --output "$GITHUB_OUTPUT"
   offline-tests:
+    needs: changes
+    if: needs.changes.outputs.tests == 'true'
     name: tests (${{ matrix.os }})
     strategy:
       fail-fast: false
@@ -32,16 +55,6 @@ jobs:
           ./eng/restore-tokenizers.ps1
           try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { exit 1 }
           if ($LASTEXITCODE -ne 0) { exit 1 }
-      - name: Check source maintenance
-        if: matrix.os == 'ubuntu-latest'
-        shell: pwsh
-        run: |
-          dotnet build eng/code-audit/CodeAudit.csproj -c Release --tl:off --nologo -v minimal
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-          dotnet eng/code-audit/bin/Release/net10.0/CodeAudit.dll --self-test
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-          dotnet eng/code-audit/bin/Release/net10.0/CodeAudit.dll --repo . --check --output artifacts/code-audit
-          if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: Publish test log
         if: always()
         uses: actions/upload-artifact@v4
@@ -49,6 +62,8 @@ jobs:
           name: test-log-${{ matrix.os }}
           path: test-vector.log
   fallback-tests:
+    needs: changes
+    if: needs.changes.outputs.tests == 'true'
     name: tests scalar (${{ matrix.os }})
     strategy:
       fail-fast: false
@@ -77,6 +92,8 @@ jobs:
           name: test-log-scalar-${{ matrix.os }}
           path: test-scalar.log
   opfuzz:
+    needs: changes
+    if: needs.changes.outputs.tests == 'true'
     name: opfuzz (${{ matrix.os }})
     strategy:
       fail-fast: false
@@ -104,6 +121,8 @@ jobs:
         shell: pwsh
         run: pwsh -NoProfile -File eng/test-opfuzz.ps1
   smoke-pack:
+    needs: changes
+    if: needs.changes.outputs.package == 'true'
     name: pack (${{ matrix.os }})
     strategy:
       fail-fast: false

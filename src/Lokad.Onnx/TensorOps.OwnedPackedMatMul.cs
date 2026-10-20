@@ -8,7 +8,7 @@ public abstract partial class Tensor<T> where T : unmanaged
     static OwnedPackedTensor? ResolveOwnedKernel(Tensor<float> y, int m, int n, int k, TensorExecutionOptions options)
     {
         if (!options.UseSimd || !options.UseIntrinsics || !Fma.IsSupported || options.MaxDegreeOfParallelism != 1
-            || AblationSwitches.EnablePackedAvx512Dynamic || m < 48 || n < 1024 || k < 1024
+            || m < 48 || n < 1024 || k < 1024
             || (long)n * k > 67108864) return null;
         var packed = OwnedPackedTensor.Resolve(y);
         return packed is not null && packed.Reduction == n && packed.Columns == k ? packed : null;

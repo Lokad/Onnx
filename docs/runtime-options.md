@@ -60,49 +60,20 @@ enables it. Absent or other values retain the enabled default.
 These controls are for diagnosis and comparison, not a requirement for normal
 use. They do not change the arithmetic precision or select native inference.
 
-Other experiments, including narrow/panel/dynamic packed MatMul, interleaved
-BiasGelu, wider or reciprocal softmax and segmented convolution, remain off
-unless explicitly enabled with `1`. `LOKAD_ONNX_RELEASE_RESHAPE_VIEWS=1` remains
-an experimental override of the lifetime policy; prefer the public
-`ExecutionOptions.Memory` option for application code.
+Default-off diagnostic controls were retired during 0.4.0 preparation:
 
-`LOKAD_ONNX_LAYERNORM_WIDE_OUTPUT=1` enables an experimental AVX-512 output
-transform for float LayerNormalization. It remains off by default. Both
-statistics passes keep their existing double-precision arithmetic and reduction
-order; only the independent final transform processes sixteen floats at once.
-It requires hardware-accelerated `Vector512`, AVX-512F and an eight-float
-`Vector<float>` width. Other hosts and the remaining vector/scalar elements use
-the existing path. The allocating and destination overloads share this kernel.
-The [complete-bank component screen](../tests/e5/layernorm-minimum/results-20260920.md)
-passes. The [archived product qualification](../tests/e5/layernorm-product/results-20260920.md)
-also passes full Windows/AMD suites and complete e5/shared-model checks, with
-exact off/on output bytes and actual AMD code inspection. Complete-model
-performance qualification is still pending.
+| Retired controls (LOKAD_ONNX_ prefix) | Decision |
+|---|---|
+| PACKED_AVX512_DYNAMIC, PACKED_AVX512_PANELS, PACKED_AVX512_NARROW | Remove unqualified alternative dispatches; preserve qualified prepared and small dynamic-attention kernels. |
+| SCALED_MATMUL_INPLACE | Remove the experimental distinct-storage shortcut; preserve normal exact division and temporary release. |
+| FINGERPRINT_STRINGS, LAYERNORM_WIDE_OUTPUT | Remove caches/transforms without complete-model performance admission. |
+| SOFTMAX_ZERO_BLOCKS, SOFTMAX_WIDE_EXP, SOFTMAX_RECIPROCAL, BIAS_GELU_INTERLEAVED | Remove alternative internal kernels; zero-block softmax missed its acceptance threshold. |
+| RELEASE_RESHAPE_VIEWS, SEGMENTED_CONV | Remove environment overrides; retain the public Memory policy and TensorExecutionOptions segmented-convolution option. |
+| SOFTMAX_LEGACY, TRANSPOSE_LEGACY | Remove mutable measurement routing and latches; keep direct reference tests and supported shape fallbacks. |
 
-`LOKAD_ONNX_FINGERPRINT_STRINGS=1` enables an experimental cache of exact
-graph-name hash transitions. It remains off by default. Every structural field
-is still read; a cached transition requires the same incoming hash and ordinal
-string value, otherwise the original hash loop runs. Prepared snapshots contain
-immutable strings and hash states, and execution contexts may share them.
-Explicit preparation invalidation releases the owner's snapshot. This cache
-does not share tensor storage or skip mutable-graph validation. The
-[component experiment](../tests/e5/fingerprint-cache/results-20260920.md) nominates
-the mechanism. The [archived product qualification](../tests/e5/fingerprint-product/results-20260920.md)
-passes full AMD suites and complete e5/shared-model output checks with exact
-on/off output bytes; complete-model performance qualification is still pending.
-
-`LOKAD_ONNX_SOFTMAX_ZERO_BLOCKS=1` is a separate experimental masked-softmax
-route, also off by default. It skips the exponential polynomial only when all
-eight computed arguments in a vector fall below the existing zero cutoff.
-It requires nonpositive exponentiation, enabled SIMD and an eight-float vector
-width; wider exponentiation selects the original fallback, and the reciprocal
-experiment takes precedence. Mask inspection selects a possible route but never
-substitutes for checking the actual score-plus-mask-minus-maximum values.
-See the [product qualification protocol](../tests/e5/softmax-zero-product/README.md)
-for correctness coverage. The [complete-model comparison](../tests/e5/softmax-zero-product/results-20260919.md)
-retains a 0.93% padded128 Execute improvement, below its prospective 1%
-requirement, with failed identical-control stability elsewhere. This does not
-qualify a production default change.
+These environment names no longer alter runtime behavior. Original source and
+qualification reports are recoverable through [the experiment archive](../archives/README.md).
+Public numerical entrypoints and options remain available.
 
 Historical benchmark reports identify their source and exact settings. Their
 experimental Speed configurations must not be relabeled as measurements of the

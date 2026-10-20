@@ -1,93 +1,69 @@
-# Source and supporting-tool maintenance
+# Code maintenance
 
-The core library is packaged; Data, CLI, tests and maintenance tools are not.
-Public library APIs can have external callers. A lack of repository references
-does not authorize deleting them.
+The core library is packaged; Data, CLI and development tools are not. Preserve
+public APIs, supported numerical behavior and tensor ownership when simplifying
+code. A source search cannot establish whether an external application uses a
+public member or whether a diagnostic invokes an internal method by reflection.
 
-## Source audit and TODO triage
+## Maintained entrypoints
 
-Run from the repository root after restoring the qualified tokenizer dependency:
+Use `eng/test.ps1` for normal tests, `eng/test-opfuzz.ps1` for native differential
+contracts, and `eng/smoke-pack.ps1` for a real package consumer. The e5 and Gemma
+lanes are `eng/test-e5.ps1` and `eng/test-embeddinggemma2.ps1`. Audio replay lanes
+remain `eng/test-whisper.ps1`, `eng/test-parakeet.ps1`, and the frontend,
+transcription, embedding, diarization and accuracy examples under `tests`.
 
-```powershell
-dotnet build eng/code-audit/CodeAudit.csproj -c Release --tl:off --nologo -v minimal
-dotnet eng/code-audit/bin/Release/net10.0/CodeAudit.dll --self-test
-dotnet eng/code-audit/bin/Release/net10.0/CodeAudit.dll --repo . --check --output artifacts/code-audit
-```
+For CPU optimization, use the [routine comparison command](../eng/bench.md).
+It reuses the current Campaign/Gemma workers and their supervision/correctness
+checks. Strict scoring protocols remain available when a release claim needs
+stronger qualification. Run one measurement lane at a time and clean up verified
+owned leftovers before timing.
 
-The nonpackaged tool uses the selected SDK's Roslyn compiler analysis assemblies.
-It loads every project in `Lokad.Onnx.slnx` and rejects incomplete loads or C#
-compilation errors. Generated declarations are excluded; generated callers still
-count. Its report distinguishes public APIs, production uses, test/benchmark
-uses, language/framework contracts and registered reflection consumers. It
-examines source references, rather than proving complete runtime reachability.
+## Review and numerical contracts
 
-Review a new private/internal finding before removing it. Intentional test
-diagnostics and reflection consumers have individually justified entries in
-[retained-members.json](../eng/code-audit/retained-members.json), keyed by assembly
-name plus compiler documentation member ID. Missing members, unnecessary
-exceptions and lost registered consumers fail the check. Reflection strings in
-standalone tools require explicit registration; the diarization detail tool's
-`WeSpeakerEmbedder.ExtractPipeline` call is one example. No exception list is
-generated or accepted automatically.
+Prefer explicit arguments and small changes. TODO comments should explain the
+missing work. Review those conventions with the code rather than maintaining a
+custom C# parser or a CI allowlist of comments. The previous Roslyn source audit
+and style scanners are [archived](../archives/README.md); normal maintenance does
+not depend on SDK-internal analysis assemblies or a member-retention registry.
 
-The fixtures exercise unused helpers, external APIs, entrypoints, constructors,
-disposal, ordinary and static-abstract interface implementations, test-only
-references, reflection registrations, stale entries and failed compilations.
-CI runs this bounded check once in the ordinary Ubuntu test job. It does not
-scan historical Python scripts or add compiler dependencies to the package.
+Keep independent numerical expectations in `tests/Shared/ReferenceKernels`.
+Calling the optimized implementation from its reference would invalidate the
+comparison. The prepared LSTM projection contract compares every finite value,
+signed zero and infinity bit-for-bit; exceptional arithmetic must preserve NaN
+classification. NaN payload/sign selection across independently compiled
+arithmetic is unspecified and is not part of that contract. Input immutability,
+output guards and zero-allocation assertions remain enforced.
 
-[TodoTriageTests](../tests/Lokad.Onnx.Tensors.Tests/TodoTriageTests.cs) separately
-checks TODO comments. Its existing Span.IndexOf and MOVBE triage remains in
-place; it is not an unused-code detector.
+Some production methods intentionally have equal source arithmetic but different
+JIT compilation attributes or instruction widths. Examples are `MathOps.ErfVector`
+and `ErfVectorInline`, and `ExpVectorEstrinPruned` and its inline twin. Packed
+matrix and convolution kernels likewise require numerical and affected-model
+checks before consolidation. Keep their separate compiled entrypoints when
+qualification shows a benefit.
 
-## Active entrypoints outside the main solution
+## Runtime experiments and archives
 
-| Entrypoint | Role and constraint |
-|---|---|
-| [Lokad.Onnx.Campaign](../tests/Lokad.Onnx.Campaign/Lokad.Onnx.Campaign.csproj) | Shared graph campaign runner compiled against an explicit core DLL. Its historical dependency pins are part of that protocol. |
-| [Lokad.Onnx.EmbeddingGemma2Bench](../tests/Lokad.Onnx.EmbeddingGemma2Bench/Lokad.Onnx.EmbeddingGemma2Bench.csproj) | Owned-vector FP32 benchmark with ORT 1.29.0; one unchanged runner is staged with each measured core. |
-| [Diarization detail trace](../tests/pyannote/diarization/Detail.cs) | Intermediate speaker-pipeline comparisons, including registered reflection calls. |
-| [Common campaign builder](../eng/build-common-campaign.ps1) and [Gemma builder](../eng/build-embeddinggemma2-benchmark.ps1) | Build pinned sources from git archives into fresh directories without extra worktrees. |
-| [Common supervisor](../eng/run_common_campaign.py) and [Gemma supervisor](../eng/run_embeddinggemma2.py) | Process ownership, accounting, source/input identities and preserved timing samples. Inspect protocol requirements before reuse. |
+The nine qualified comparison controls are listed in
+[runtime options](runtime-options.md). Default-off internal experiments and
+mutable legacy-routing hooks have been retired. Public options and entrypoints
+remain compatible. New experiments should have a concrete workload, acceptance
+criterion and promotion/retirement decision before becoming permanent runtime
+branches.
 
-Correctness lanes remain `eng/test-opfuzz.ps1`, `eng/test-e5.ps1` and
-`eng/test-embeddinggemma2.ps1`. Shared reference kernels under
-`tests/Shared/ReferenceKernels/` compile only into tests and benchmark tools;
-they retain independent arithmetic and must not be replaced with calls to the
-optimized implementation they verify.
+Closed producers and obsolete recovery/retention tools are indexed against their
+original Git commit in [archives](../archives/README.md). Reports and result data
+stay browsable at their historical paths. Original source paths/bytes, including
+the forty previously hash-locked C# inputs, can be restored into an isolated
+directory. Active examples, replay tools, reference generators and their shared
+dependencies remain maintained. Keep future experiments on the shared runner
+instead of cloning launch/observe scripts.
 
-## Intentional numerical specializations
+## CI scope
 
-Production references retain these methods without unused-member exceptions.
-Their stable identities and reasons matter when interpreting clone reports:
-
-| Member identities within assembly `Lokad.Onnx` | Reason for separate compiled entrypoints |
-|---|---|
-| `M:Lokad.Onnx.MathOps.ErfVector(System.Numerics.Vector{System.Single})` and `M:Lokad.Onnx.MathOps.ErfVectorInline(System.Numerics.Vector{System.Single})` | Equal arithmetic with deliberately different inlining behavior. |
-| `M:Lokad.Onnx.MathOps.ExpVectorEstrinPruned(System.Numerics.Vector{System.Single})` and `M:Lokad.Onnx.MathOps.ExpVectorEstrinPrunedInline(System.Numerics.Vector{System.Single})` | The inline route preserves vectors across polynomial evaluation. |
-| `M:Lokad.Onnx.MathOps.ShortWideMultiply3Rows(System.Int32,System.Int32,System.Int32,System.Single*,System.Single*,System.Single*)` and the shared three-row kernel in `MathOps.cs` | Shape-specific dispatch and compilation attributes were qualified together; equal bodies do not establish equal generated code. |
-
-The packing/remainder helpers in `Zzz.IsolatedShortMatMul.cs` and AVX2/AVX-512
-convolution and Winograd kernels have the same need for separate qualification.
-Changing these families requires output/exceptional-value checks and affected
-model timings. Source generation, if ever useful, must preserve distinct
-compiled methods and their attributes.
-
-## Frozen and unclassified experiments
-
-The forty C# paths in
-[closed-experiment-sources-20260928.json](../tests/Shared/closed-experiment-sources-20260928.json)
-have enforced path/content identities. Do not edit, move or deduplicate those
-inputs. Other closed experiment producers and their receipts follow the
-[artifact retention policy](artifact-retention.md). Being outside the solution
-alone does not classify a tool as dead or frozen: identify its runner, consumers
-and evidence before changing it.
-
-One bounded follow-up is to provide a shared launch/observe helper for the next
-e5 diagnostic runner, using the repeated orchestration in
-`tests/benchmarks/e5-direct-code-diagnostic-amd/run.py` and
-`tests/benchmarks/e5-direct-tier-diagnostic-amd/run.py` as reference inputs.
-Pass their module-global dependencies explicitly into the shared process helper
-and qualify command/environment/timeout handling with fixtures. Leave the old
-producer files and evidence unchanged; this does not authorize a historical
-script migration.
+Every push/PR gets a lightweight change-classification job. Markdown-only edits
+skip the numerical matrix; README and CHANGELOG also run package smoke because
+they ship in the package. Code, workflow, fixtures, build files and unknown paths
+conservatively run the full Windows/Linux normal/scalar, differential and package
+jobs. Deletions and renames count. Check a published commit's CI status minutes
+apart, and investigate failures rather than adding automatic retries.

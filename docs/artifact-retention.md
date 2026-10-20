@@ -1,5 +1,10 @@
 # Local artifact retention
 
+This is the historical storage/qualification journal. Its running-process notes
+describe their recorded dates. Closed producer sources now use the
+[Git-history archive](../archives/README.md); retained raw evidence and models
+are unaffected by that source archival.
+
 The 2026-09-23 cleanup removed **119.94 GB across 210,772 obsolete artifact
 files**. The repository then contained **37.15 GB**, including 23.74 GB in
 `artifacts` and 10.79 GB in canonical `models`. Counting the worktree's junction

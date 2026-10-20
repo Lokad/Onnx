@@ -38,14 +38,10 @@ public abstract partial class Tensor<T> where T : unmanaged
             fixed (float* pp = packed)
             {
                 ShortWidePackPanelsB(n, k, y, pp);
-                if (!AblationSwitches.EnablePackedAvx512Dynamic
-                    || !TryPackedAvx512Rows(rows, n, k, x, pp, output))
-                {
-                    if (threeRows)
-                        ShortWideMultiply3Rows(rows, n, k, x, pp, output);
-                    else
-                        ShortWideMultiply2Rows(rows, n, k, x, pp, output);
-                }
+                if (threeRows)
+                    ShortWideMultiply3Rows(rows, n, k, x, pp, output);
+                else
+                    ShortWideMultiply2Rows(rows, n, k, x, pp, output);
             }
         }
         finally

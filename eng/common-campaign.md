@@ -1,5 +1,10 @@
 # One runner for released and candidate cores
 
+For routine optimization use [bench.py](bench.md), which shares these workers
+without calibration or forced cooldown. The strict protocols and experimental
+settings below describe their historical qualification contracts. Current
+production controls are documented in [runtime options](../docs/runtime-options.md).
+
 `tests/Lokad.Onnx.Campaign` compiles the canonical Bench model workloads once
 against the released public API. It links the same input construction,
 validation, timing loops and tokenizer source for both arms. Each measured

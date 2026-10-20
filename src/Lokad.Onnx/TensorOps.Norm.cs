@@ -64,8 +64,6 @@ where T : unmanaged
             // ((x - mean) * inv) * scale + bias, so only the reduction order
             // of the two sums can move results, within float tolerance.
             int wf = Vector<float>.Count;
-            bool wideOutput = AblationSwitches.EnableLayerNormWideOutput
-                && Vector512.IsHardwareAccelerated && Avx512F.IsSupported && wf == 8;
             var vzero = Vector<double>.Zero;
             for (int o = 0; o < outer; o++)
             {
@@ -97,25 +95,6 @@ where T : unmanaged
                 double inv = 1.0 / Math.Sqrt(variance + epsilon);
                 var vinv = new Vector<double>(inv);
                 i = 0;
-                if (wideOutput)
-                {
-                    // Widen only the independent output transform. Keep the
-                    // statistics, operation association and narrowing unchanged.
-                    var wideMean = Vector512.Create(mean);
-                    var wideInv = Vector512.Create(inv);
-                    for (; i <= block - 16; i += 16)
-                    {
-                        var (x0, x1) = Vector512.Widen(Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(xs), (nuint)(off + i)));
-                        var (s0, s1) = Vector512.Widen(Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(ss), (nuint)i));
-                        var b0 = Vector512<double>.Zero;
-                        var b1 = Vector512<double>.Zero;
-                        if (bd is not null)
-                            (b0, b1) = Vector512.Widen(Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(bs), (nuint)i));
-                        var r0 = (x0 - wideMean) * wideInv * s0 + b0;
-                        var r1 = (x1 - wideMean) * wideInv * s1 + b1;
-                        Vector512.Narrow(r0, r1).CopyTo(os.Slice(off + i));
-                    }
-                }
                 for (; i < vlen; i += wf)
                 {
                     Vector.Widen(new Vector<float>(xs.Slice(off + i)), out Vector<double> x0, out Vector<double> x1);

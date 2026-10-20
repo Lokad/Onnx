@@ -191,11 +191,10 @@ where T : unmanaged
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             // Reuse the existing wide consumer for small dynamic attention
-            // panels. This local choice leaves the experimental switch and
-            // owned/convolution routing unchanged. Full-panel and hardware
+            // panels. This local choice preserves owned/convolution routing.
+            // Full-panel and hardware
             // refusal remain in TryPackedAvx512Rows; short reductions stay AVX2.
-            bool wideDynamic = AblationSwitches.EnablePackedAvx512Dynamic ||
-                (Avx512F.IsSupported && n <= 512 && k <= 512);
+            bool wideDynamic = Avx512F.IsSupported && n <= 512 && k <= 512;
             int blocked = m - (m % 2);
             if ((m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {
@@ -672,8 +671,6 @@ where T : unmanaged
         }
         if (AblationSwitches.EnablePackedAvx512Rows)
         {
-            if (AblationSwitches.EnablePackedAvx512Panels && TryPackedAvx512Panels(m, n, k, x, packed, dest)) return;
-            if (AblationSwitches.EnablePackedAvx512Narrow && TryPackedAvx512NarrowRows(m, n, k, x, packed, dest)) return;
             if (m == 128 && (TryPackedAvx512Fixed512Rows(m, n, k, x, packed, dest)
                 || TryPackedAvx512FixedWideRows(m, n, k, x, packed, dest))) return;
             if (m >= 256 && TryPackedAvx512SixRows(m, n, k, x, packed, dest)) return;

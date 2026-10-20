@@ -1,5 +1,9 @@
 # CPU engine review and selective voice-branch integration
 
+This records historical integration decisions and their original measurements.
+Closed producer sources are available through the [archive](../archives/README.md).
+Use the [routine benchmark command](../eng/bench.md) for new comparisons.
+
 Parakeet is now the first performance priority. The
 [current AMD profile](../tests/parakeet/current-profile-results/results-20260923.md)
 puts about 44% of sampled execution in the two packed AVX2 matrix consumers.

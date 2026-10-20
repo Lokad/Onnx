@@ -30,8 +30,6 @@ public sealed class GraphExecution : ComputationalGraph
         }
         _prepared = preparedFlag;
         _preparedFingerprint = preparedFingerprint;
-        CacheFingerprintStrings = prepared.CacheFingerprintStrings;
-        FingerprintStrings = prepared.FingerprintStrings;
         _preparationError = preparationError;
         Nodes = prepared.Nodes;
         Initializers = prepared.Initializers;
