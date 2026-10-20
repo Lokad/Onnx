@@ -21,6 +21,10 @@
 
 ### Changed
 
+- Ordinary test builds include the CLI and test projects; ancillary benchmark
+  and runner projects compile once in the normal CI matrix instead of four times.
+- Immutable execution-option presets are reused, and ordinary/wall-only graph
+  execution avoids constructing detailed profiling callbacks for every node.
 - Exact RMS normalization fusion, including runtime control inputs, with
   operator schema, output-use and arithmetic-order checks.
 - Packed FP32 matrix kernels and AVX-512 tanh GELU, including specialized

@@ -6,6 +6,37 @@ namespace Lokad.Onnx.Backend.Tests;
 public class ExecutionOptionsTests
 {
     [Fact]
+    public void CustomizingPreset_DoesNotShareReportersOrPoolPolicy()
+    {
+        var presets = new[] { ExecutionOptions.Default, ExecutionOptions.Memory,
+            ExecutionOptions.Scalar, ExecutionOptions.Simd, ExecutionOptions.Intrinsics };
+        foreach (var preset in presets)
+        {
+            var scratch = new ScratchAccountant();
+            var copy = new CopyAccountant();
+            var customized = preset with
+            {
+                Tensor = preset.Tensor with
+                {
+                    ScratchReporter = scratch, CopyReporter = copy, DisableBufferPool = true
+                }
+            };
+            customized.Tensor.ScratchReporter!.AddScratchBytes(16);
+            customized.Tensor.CopyReporter!.AddCopyBytes(32);
+            Assert.Equal(16, scratch.TotalScratchBytes);
+            Assert.Equal(32, copy.TotalCopyBytes);
+            Assert.True(customized.Tensor.DisableBufferPool);
+        }
+        foreach (var preset in new[] { ExecutionOptions.Default, ExecutionOptions.Memory,
+            ExecutionOptions.Scalar, ExecutionOptions.Simd, ExecutionOptions.Intrinsics })
+        {
+            Assert.Null(preset.Tensor.ScratchReporter);
+            Assert.Null(preset.Tensor.CopyReporter);
+            Assert.False(preset.Tensor.DisableBufferPool);
+        }
+    }
+
+    [Fact]
     public void TensorPresets_CarryFlags()
     {
         Assert.False(TensorExecutionOptions.Scalar.UseSimd);

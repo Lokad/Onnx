@@ -839,8 +839,15 @@ public partial class ComputationalGraph
 
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this, Options.Tensor.DisableBufferPool);
-        var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
-        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights, PackedConvWeights = PackedConvWeights, PackedLstmWeights = PackedLstmWeights } };
+        var nodeOptions = Options with
+        {
+            Tensor = Options.Tensor with
+            {
+                ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy,
+                PackedMatMulWeights = PackedWeights, PackedConvWeights = PackedConvWeights,
+                PackedLstmWeights = PackedLstmWeights
+            }
+        };
         livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)
@@ -863,14 +870,18 @@ public partial class ComputationalGraph
             OpResult r;
             try
             {
-                Profiler.StartNodeProfile(node.ID, node.Op, () => string.Join(",", GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc())));
+                if (profilerScope.Enabled)
+                {
+                    if (profilerScope.WallOnly) profilerScope.StartNodeProfile(node.ID, node.Op);
+                    else StartDetailedNodeProfile(profilerScope, node);
+                }
                 try
                 {
                     r = node.Execute(this, provider, nodeOptions);
                 }
                 finally
                 {
-                    Profiler.StopNodeProfile();
+                    if (profilerScope.Enabled) profilerScope.StopNodeProfile();
                 }
             }
             catch (Exception ex)
@@ -953,6 +964,10 @@ public partial class ComputationalGraph
         op.Complete();
         return true;
     }
+
+    void StartDetailedNodeProfile(ProfilerContext profiler, Node node) =>
+        profiler.StartNodeProfile(node.ID, node.Op,
+            () => string.Join(",", GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc())));
 
     /// <summary>
     /// Re-seeds the output bindings from the immutable output declarations so
