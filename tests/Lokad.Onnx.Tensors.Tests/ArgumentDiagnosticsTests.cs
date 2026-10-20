@@ -54,6 +54,7 @@ public class ArgumentDiagnosticsTests
         var error = new TensorInputShapeException("data", shape, input);
         Assert.Equal("data", error.ParamName);
         Assert.Contains("has shape", error.Message);
+        Assert.Contains("required to be [3, 2].", error.Message);
         Assert.Equal("data", error.Name);
         Assert.Same(shape, error.Shape);
         Assert.Same(input, error.Input);

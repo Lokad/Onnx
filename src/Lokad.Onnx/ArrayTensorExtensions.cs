@@ -24,7 +24,7 @@ namespace Lokad.Onnx
         public static DenseTensor<T> ToTensor<T>(this Array array, bool reverseStride) where T : unmanaged
             => new DenseTensor<T>(array, reverseStride);
 
-        public static string Print<T>(this IEnumerable<T> a) => "[" + a.Select(v => a.ToString()).Aggregate((p, n) => p + ", " + n) + "]";
+        public static string Print<T>(this IEnumerable<T> a) => "[" + string.Join(", ", a) + "]";
 
         public static T[] Copy<T>(this T[] a)
         {
@@ -46,7 +46,7 @@ namespace Lokad.Onnx
         }
 
         public static bool AlmostEqual(this IEnumerable<double> expected, IEnumerable<double> actual, int precision) =>
-            expected.Zip(actual).All(fs => fs.First.AlmostEqual(fs.Second, precision));
+            AlmostEqual(expected, actual, precision, static (x, y, p) => x.AlmostEqual(y, p));
 
         public static bool AlmostEqual(this float expected, float actual, int precision)
         {
@@ -56,6 +56,21 @@ namespace Lokad.Onnx
         }
 
         public static bool AlmostEqual(this IEnumerable<float> expected, IEnumerable<float> actual, int precision) =>
-            expected.Zip(actual).All(fs => fs.First.AlmostEqual(fs.Second, precision));
+            AlmostEqual(expected, actual, precision, static (x, y, p) => x.AlmostEqual(y, p));
+
+        static bool AlmostEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, int precision, Func<T, T, int, bool> compare)
+        {
+            ArgumentNullException.ThrowIfNull(expected);
+            ArgumentNullException.ThrowIfNull(actual);
+            using var left = expected.GetEnumerator();
+            using var right = actual.GetEnumerator();
+            while (true)
+            {
+                bool hasLeft = left.MoveNext(), hasRight = right.MoveNext();
+                if (hasLeft != hasRight) return false;
+                if (!hasLeft) return true;
+                if (!compare(left.Current, right.Current, precision)) return false;
+            }
+        }
     }
 }
