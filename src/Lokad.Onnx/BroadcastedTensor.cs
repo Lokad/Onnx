@@ -48,7 +48,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     /// Index decomposition without per-element coordinate arrays: this view is
     /// always standard row-major, so digits come straight from the flat index.
     /// </summary>
-    int ToSourceOffset(int index)
+    internal int ToSourceOffset(int index)
     {
         int rem = index;
         int offset = 0;

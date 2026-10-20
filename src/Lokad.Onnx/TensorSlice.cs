@@ -35,7 +35,7 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
     /// re-inserted as zeros, and every write is capacity-checked.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    int ParentOffset(int index)
+    internal int ParentOffset(int index)
     {
         if (strides.Length > parent.Rank) throw new ArgumentOutOfRangeException(nameof(index), "Too many stride dimensions for the parent rank.");
         Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
@@ -46,8 +46,9 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
         int counter = index;
 
         int stride;
-        for (int i = 0; i < strides.Length; i++)
+        for (int axis = 0; axis < strides.Length; axis++)
         {
+            int i = IsReversedStride ? strides.Length - 1 - axis : axis;
             unchecked
             {
                 stride = strides[i];

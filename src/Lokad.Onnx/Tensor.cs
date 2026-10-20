@@ -1737,10 +1737,18 @@ namespace Lokad.Onnx
         public int GetStorageIndex(int[] indices) => this switch
         {
             DenseTensor<T> dt => ArrayUtilities.GetIndex(dt.strides, indices),
-            BroadcastedTensor<T> bt => ArrayUtilities.GetIndex(bt.effectiveStrides, indices),
-            TensorSlice<T> ts => ts.GetOffset(indices),
+            BroadcastedTensor<T> bt => bt.source.RootStorageIndex(ArrayUtilities.GetIndex(bt.effectiveStrides, indices)),
+            TensorSlice<T> ts => ts.parent.RootStorageIndex(ts.GetOffset(indices)),
             _ => throw new NotSupportedException("GetStorageIndex method not implemented for this tensor type.")
 
+        };
+
+        int RootStorageIndex(int index) => this switch
+        {
+            DenseTensor<T> => index,
+            BroadcastedTensor<T> bt => bt.source.RootStorageIndex(bt.ToSourceOffset(index)),
+            TensorSlice<T> ts => ts.parent.RootStorageIndex(ts.ParentOffset(index)),
+            _ => throw new NotSupportedException("Root storage cannot be resolved for this tensor type.")
         };
         #endregion
 

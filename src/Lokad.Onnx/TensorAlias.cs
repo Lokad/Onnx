@@ -6,10 +6,9 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// Backing-memory overlap probes backing the destination alias rules.
 /// Each tensor resolves to its root storage array plus its exact touched
-/// range by sampling the mapping over the shape corners (offsets are linear
-/// in coordinates, so extrema sit at corners). Ranges are conservative only
-/// when storage is unresolvable or rank exceeds the corner budget, in which
-/// case callers keep their previous behavior.
+/// range by sampling the shape corners after composing every parent mapping.
+/// Unresolvable nonempty storage conservatively reports possible overlap;
+/// high-rank layouts use their complete backing-storage range.
 /// </summary>
 internal static class TensorAlias
 {
@@ -18,9 +17,10 @@ internal static class TensorAlias
     public static bool SharesBackingMemory<T>(Tensor<T>? a, Tensor<T>? b) where T : unmanaged
     {
         if (a is null || b is null) return false;
+        if (a.Length == 0 || b.Length == 0) return false;
         if (ReferenceEquals(a, b)) return true;
-        if (!TryGetTouchedRange(a, out var arrA, out var startA, out var lenA)) return false;
-        if (!TryGetTouchedRange(b, out var arrB, out var startB, out var lenB)) return false;
+        if (!TryGetTouchedRange(a, out var arrA, out var startA, out var lenA)) return true;
+        if (!TryGetTouchedRange(b, out var arrB, out var startB, out var lenB)) return true;
         if (!ReferenceEquals(arrA, arrB)) return false;
         if (lenA <= 0 || lenB <= 0) return false;
         return startA < startB + lenB && startB < startA + lenA;
@@ -42,7 +42,7 @@ internal static class TensorAlias
         {
             storage = t.Storage;
         }
-        catch (Exception)
+        catch (Exception ex) when (!Runtime.IsFatal(ex))
         {
             return false;
         }
