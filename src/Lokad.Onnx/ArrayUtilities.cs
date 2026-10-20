@@ -11,6 +11,25 @@ namespace Lokad.Onnx
     {
         public const int StackallocMax = 16;
 
+        internal static int[] UnsqueezedShape(ReadOnlySpan<int> dimensions, int[] axes)
+        {
+            ArgumentNullException.ThrowIfNull(axes);
+            var shape = new int[checked(dimensions.Length + axes.Length)];
+            foreach (int rawAxis in axes)
+            {
+                int axis = rawAxis < 0 ? rawAxis + shape.Length : rawAxis;
+                if (axis < 0 || axis >= shape.Length)
+                    throw new ArgumentException("Each specified axis must be a dimension of the output tensor.", nameof(axes));
+                if (shape[axis] == 1)
+                    throw new ArgumentException("axes contains a repeated dimension.", nameof(axes));
+                shape[axis] = 1;
+            }
+            int source = 0;
+            for (int i = 0; i < shape.Length; i++)
+                if (shape[i] == 0) shape[i] = dimensions[source++];
+            return shape;
+        }
+
         /// <summary>
         /// Copies runs of elements along one axis for every outer block.
         /// Block o reads length*inner elements at ((o * srcAxisLength) + srcStart) * inner

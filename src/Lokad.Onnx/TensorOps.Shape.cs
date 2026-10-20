@@ -769,28 +769,8 @@ where T : unmanaged
     public static Tensor<T> Unsqueeze(Tensor<T> data, int[] axes)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
-        
+        var shape = ArrayUtilities.UnsqueezedShape(data.Dimensions, axes);
         StartOpStage(OpStage.CalculateIndices);
-        for (int i = 0; i < axes.Length; i++)
-        {
-            axes[i] = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, axes[i]);
-        }
-        if (!Array.TrueForAll(axes, (a => a <= (data.Rank + axes.Length) - 1))) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > data.Rank - 1)}");
-        var newshape = new int[axes.Length + data.Rank];
-        for (int i = 0; i < axes.Length; i++)
-        {
-            newshape[axes[i]] = 1;
-        }
-        var e = data.Dimensions.GetEnumerator();
-        for (int i = 0; i < newshape.Length; i++)
-        {
-            if (newshape[i] == 0)
-            {
-                if (!e.MoveNext()) throw new InvalidOperationException("Out of dimensions.");
-                newshape[i] = e.Current;
-            }
-        }
-        return data.Reshape(newshape);
+        return data.Reshape(shape);
     }
 }

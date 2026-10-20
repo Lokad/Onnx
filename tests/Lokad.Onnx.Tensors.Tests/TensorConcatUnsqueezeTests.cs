@@ -2,6 +2,53 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class TensorConcatUnsqueezeTests
 {
+    public static IEnumerable<object[]> UnsqueezeShapes()
+    {
+        yield return new object[] { new[] { 2, 3 }, new[] { -1 }, new[] { 2, 3, 1 } };
+        yield return new object[] { new[] { 2, 3 }, new[] { -3 }, new[] { 1, 2, 3 } };
+        yield return new object[] { new[] { 2, 3 }, new[] { -1, 0 }, new[] { 1, 2, 3, 1 } };
+        yield return new object[] { new[] { 2, 3 }, new[] { 2, 0 }, new[] { 1, 2, 1, 3 } };
+        yield return new object[] { new[] { 2, 3 }, Array.Empty<int>(), new[] { 2, 3 } };
+        yield return new object[] { Array.Empty<int>(), new[] { -1 }, new[] { 1 } };
+        yield return new object[] { new[] { 0, 3 }, new[] { -1, 0 }, new[] { 1, 0, 3, 1 } };
+    }
+
+    [Theory]
+    [MemberData(nameof(UnsqueezeShapes))]
+    public void UnsqueezeEntryPoints_PreserveAxesAndExpectedShape(int[] dimensions, int[] axes, int[] expected)
+    {
+        var input = new DenseTensor<int>(dimensions);
+        for (int i = 0; i < input.Length; i++) input.SetValue(i, i + 1);
+        foreach (bool direct in new[] { true, false })
+        {
+            var suppliedAxes = (int[])axes.Clone();
+            var output = direct ? Tensor<int>.Unsqueeze(input, suppliedAxes)
+                : (Tensor<int>)((INumericTensor)input).Unsqueeze(suppliedAxes);
+            Assert.Equal(expected, output.Dimensions.ToArray());
+            Assert.Equal(input.ToArray(), output.ToArray());
+            Assert.Equal(axes, suppliedAxes);
+        }
+    }
+
+    [Theory]
+    [InlineData(new[] { -4 })]
+    [InlineData(new[] { 3 })]
+    [InlineData(new[] { int.MinValue })]
+    [InlineData(new[] { int.MaxValue })]
+    [InlineData(new[] { 2, -2 })]
+    [InlineData(new[] { 0, 0 })]
+    public void UnsqueezeEntryPoints_RejectInvalidAxesWithoutChangingThem(int[] axes)
+    {
+        var input = DenseTensor<int>.OfShape(2, 3);
+        foreach (bool direct in new[] { true, false })
+        {
+            var suppliedAxes = (int[])axes.Clone();
+            Assert.Throws<ArgumentException>(() => direct ? Tensor<int>.Unsqueeze(input, suppliedAxes)
+                : (Tensor<int>)((INumericTensor)input).Unsqueeze(suppliedAxes));
+            Assert.Equal(axes, suppliedAxes);
+        }
+    }
+
     [Fact]
     public void CanConcat()
     {

@@ -193,27 +193,10 @@ namespace Lokad.Onnx
         /// </summary>
         INumericTensor Unsqueeze(int[] axes)
         {
-            Profiler.StartOpStage(OpStage.ValidateArguments);    
-            
+            Profiler.StartOpStage(OpStage.ValidateArguments);
+            var shape = ArrayUtilities.UnsqueezedShape(Dims, axes);
             Profiler.StartOpStage(OpStage.CalculateIndices);
-            axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(Rank + axes.Length, a)).ToArray();
-            if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
-            if (axes.Any(a => a < 0 || a > (Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), "Each specified axis must be a dimension of the output tensor.");
-            var newshape = new int[axes.Length + Rank];
-            for (int i = 0; i < axes.Length; i++)
-            {
-                newshape[axes[i]] = 1;
-            }
-            var e = Dims.GetEnumerator();
-            for (int i = 0; i < newshape.Length; i++)
-            {
-                if (newshape[i] == 0)
-                {
-                    if (!e.MoveNext()) throw new InvalidOperationException("Out of dimensions.");
-                    newshape[i] = (int)e.Current;
-                }
-            }
-            return Reshape(newshape.ToArray());
+            return Reshape(shape);
         }
     }
 }
