@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <UseSharedCompilation>false</UseSharedCompilation>
+    <GemmaDataSourcePath Condition="'$(GemmaDataSourcePath)' == ''">../../src/Lokad.Onnx.Data</GemmaDataSourcePath>
   </PropertyGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
@@ -18,7 +19,7 @@
     <PackageReference Include="Lokad.Tokenizers" Version="[0.2.0]" />
     <Compile Include="../Lokad.Onnx.Bench/CampaignEvidence.cs" Link="CampaignEvidence.cs" />
     <Compile Include="../Lokad.Onnx.Bench/SampleDiagnostics.cs" Link="SampleDiagnostics.cs" />
-    <Compile Include="../../src/Lokad.Onnx.Data/EmbeddingGemma2*.cs" Link="Data/%(Filename)%(Extension)" />
+    <Compile Include="$(GemmaDataSourcePath)/EmbeddingGemma2*.cs" Link="Data/%(Filename)%(Extension)" />
   </ItemGroup>
   <Target Name="RequirePinnedCoreReference" BeforeTargets="ResolveReferences">
     <Error Condition="!Exists('$(CoreAssemblyPath)')" Text="Set CoreAssemblyPath to a built Lokad.Onnx.dll. Stage this runner unchanged with each measured core." />
