@@ -13,12 +13,15 @@
 
 Ordinary gate (from repo root):
 
-    dotnet restore --tl:off -v minimal Lokad.Onnx.slnx
-    dotnet build --tl:off --nologo -v minimal -c Release Lokad.Onnx.slnx
-    dotnet test --tl:off --nologo -v minimal -c Release --no-build Lokad.Onnx.slnx
+    dotnet restore --tl:off -v minimal eng/Tests.slnx
+    dotnet build --tl:off --nologo -v minimal -c Release eng/Tests.slnx
+    dotnet test --tl:off --nologo -v minimal -c Release --no-build eng/Tests.slnx
 
-Or use `eng/test.ps1`, which runs the same steps. Add `-Coverage` to collect
-Cobertura reports under ignored `artifacts/coverage`; ordinary CI does not collect them.
+Or use `eng/test.ps1`, which runs the same steps, including the CLI needed by
+integration tests. Add `-BuildTools` to also compile benchmarks and standalone
+runners through the full root solution; CI does this once in its Linux ordinary
+job. Add `-Coverage` to collect Cobertura reports under ignored
+`artifacts/coverage`; ordinary CI does not collect them.
 
 Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md`).
 

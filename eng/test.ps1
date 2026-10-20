@@ -1,6 +1,7 @@
 param(
     [string]$Configuration = "Release",
-    [switch]$Coverage
+    [switch]$Coverage,
+    [switch]$BuildTools
 )
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
@@ -14,9 +15,10 @@ function Invoke-Dotnet([string[]]$Arguments) {
     } finally { $ErrorActionPreference = $prev }
     if ($LASTEXITCODE -ne 0) { throw "dotnet failed ($LASTEXITCODE): $($Arguments -join ' ')" }
 }
-Invoke-Dotnet @('restore', '--tl:off', '-v', 'minimal', 'Lokad.Onnx.slnx')
-Invoke-Dotnet @('build', '--tl:off', '--nologo', '-v', 'minimal', '-c', $Configuration, 'Lokad.Onnx.slnx', '--no-restore')
-$testArguments = @('test', '--tl:off', '--nologo', '-v', 'minimal', '-c', $Configuration, '--no-build', 'Lokad.Onnx.slnx')
+$buildSolution = if ($BuildTools) { 'Lokad.Onnx.slnx' } else { 'eng/Tests.slnx' }
+Invoke-Dotnet @('restore', '--tl:off', '-v', 'minimal', $buildSolution)
+Invoke-Dotnet @('build', '--tl:off', '--nologo', '-v', 'minimal', '-c', $Configuration, $buildSolution, '--no-restore')
+$testArguments = @('test', '--tl:off', '--nologo', '-v', 'minimal', '-c', $Configuration, '--no-build', 'eng/Tests.slnx')
 if ($Coverage) { $testArguments += @('--collect:XPlat Code Coverage', '--results-directory', 'artifacts/coverage') }
 Invoke-Dotnet $testArguments
 Write-Host "PASS ordinary gate ($Configuration)"

@@ -53,7 +53,7 @@ jobs:
         shell: pwsh
         run: |
           ./eng/restore-tokenizers.ps1
-          try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { exit 1 }
+          try { ./eng/test.ps1 -Configuration Release -BuildTools:($env:RUNNER_OS -eq 'Linux') 2>&1 | Tee-Object -FilePath test-vector.log } catch { exit 1 }
           if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: Publish test log
         if: always()

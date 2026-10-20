@@ -7,7 +7,8 @@ public member or whether a diagnostic invokes an internal method by reflection.
 
 ## Maintained entrypoints
 
-Use `eng/test.ps1` for normal tests (`-Coverage` opts into local coverage),
+Use `eng/test.ps1` for normal tests (`-Coverage` opts into local coverage and
+`-BuildTools` also compiles the full developer solution),
 `eng/test-opfuzz.ps1` for native differential contracts, and `eng/smoke-pack.ps1`
 for a real package consumer. The e5 and Gemma
 lanes are `eng/test-e5.ps1` and `eng/test-embeddinggemma2.ps1`. Audio replay lanes
@@ -83,3 +84,8 @@ they ship in the package. Code, workflow, fixtures, build files and unknown path
 conservatively run the full Windows/Linux normal/scalar, differential and package
 jobs. Deletions and renames count. Check a published commit's CI status minutes
 apart, and investigate failures rather than adding automatic retries.
+
+Ordinary and scalar tests build the CLI and both test projects through
+`eng/Tests.slnx`. The Linux ordinary job also compiles the full root solution,
+so benchmarks and standalone runners are built once in that matrix. CLI
+integration tests remain enabled on both operating systems and in scalar mode.
