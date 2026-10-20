@@ -45,8 +45,7 @@ public sealed class ParakeetTranscriber
     }
 
     static ComputationalGraph Load(string directory, string name, long packedWeightBytes) =>
-        OnnxImport.Load(Path.Combine(directory, name), packedWeightBytes)
-        ?? throw new InvalidDataException("Could not load " + name + ": " + OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
+        OnnxImport.LoadOrThrow(Path.Combine(directory, name), packedWeightBytes);
 
     static void RequireNames(ComputationalGraph graph, string[] inputs, string[] outputs)
     {

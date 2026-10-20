@@ -38,8 +38,7 @@ public sealed class Community1Diarizer
     public Community1Diarizer(string segmentationPath, string embeddingEncoderPath, string projectionPath, string pldaPath)
     {
         ArgumentException.ThrowIfNullOrEmpty(segmentationPath);
-        segmentation = OnnxImport.Load(segmentationPath, 32L * 1024 * 1024)
-            ?? throw new InvalidDataException("Could not load Community-1 segmentation: " + OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
+        segmentation = OnnxImport.LoadOrThrow(segmentationPath, 32L * 1024 * 1024);
         if (segmentation.Inputs.Count != 1 || !segmentation.Inputs.ContainsKey("waveform")
             || segmentation.Outputs.Count != 1 || !segmentation.Outputs.ContainsKey("scores"))
             throw new NotSupportedException("Expected the Community-1 segmentation export with waveform input and scores output.");

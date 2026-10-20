@@ -57,8 +57,7 @@ public sealed class WhisperTranscriber
         pastExecution = pastDecoder.CreateExecution(ExecutionOptions.Memory, 128L * 1024 * 1024);
     }
 
-    static ComputationalGraph Load(string directory, string name, long packedWeightBytes) => OnnxImport.Load(Path.Combine(directory, "onnx", name), packedWeightBytes)
-        ?? throw new InvalidDataException("Could not load " + name + ": " + OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
+    static ComputationalGraph Load(string directory, string name, long packedWeightBytes) => OnnxImport.LoadOrThrow(Path.Combine(directory, "onnx", name), packedWeightBytes);
 
     static void RequireInputs(ComputationalGraph graph, IEnumerable<string> names)
     {

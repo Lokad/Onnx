@@ -116,8 +116,7 @@ public sealed class WeSpeakerEmbedder
         }
     }
 
-    static ComputationalGraph Load(string path, long budget) => OnnxImport.Load(path, budget)
-        ?? throw new InvalidDataException("Could not load WeSpeaker model: " + OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
+    static ComputationalGraph Load(string path, long budget) => OnnxImport.LoadOrThrow(path, budget);
 
     static void RequireNames(ComputationalGraph graph, string input, string output)
     {

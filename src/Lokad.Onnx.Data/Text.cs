@@ -21,8 +21,35 @@ public class Text
         public SharedBertTokenizer(BertTokenizer tokenizer) { Tokenizer = tokenizer; }
     }
 
-    static readonly Dictionary<string, SharedBertTokenizer> BertCache = new Dictionary<string, SharedBertTokenizer>();
+    static readonly Dictionary<string, Lazy<SharedBertTokenizer>> BertCache = new Dictionary<string, Lazy<SharedBertTokenizer>>();
     static readonly object BertCacheGate = new object();
+
+    static SharedBertTokenizer GetSharedBertTokenizer(string name, Func<string, BertTokenizer> load)
+    {
+        Lazy<SharedBertTokenizer> entry;
+        lock (BertCacheGate)
+        {
+            if (!BertCache.TryGetValue(name, out entry!))
+            {
+                entry = new Lazy<SharedBertTokenizer>(() => new SharedBertTokenizer(load(name)));
+                BertCache.Add(name, entry);
+            }
+        }
+        try { return entry.Value; }
+        catch
+        {
+            lock (BertCacheGate)
+                if (BertCache.TryGetValue(name, out var current) && ReferenceEquals(current, entry)) BertCache.Remove(name);
+            throw;
+        }
+    }
+
+    static BertTokenizer LoadNamedBertTokenizer(string name)
+    {
+        var tokenizer = new BertTokenizer();
+        Task.Run(() => tokenizer.LoadFromHuggingFaceAsync(name)).GetAwaiter().GetResult();
+        return tokenizer;
+    }
 
     /// <summary>Loaded file-backed tokenizer plus its encode gate and observed file identity.</summary>
     sealed class SharedFileTokenizer<TTokenizer>
@@ -59,18 +86,10 @@ public class Text
     /// <remarks>Shared process-wide like the Roberta cache. The async load runs
     /// on a worker thread so waiting for it cannot deadlock a captured
     /// synchronization context. BERT stays outside the offline guarantee:
-    /// this entry performs network acquisition.</remarks>
-    public static BertTokenizer GetOrLoadBertTokenizer(string tokenizer)
-    {
-        lock (BertCacheGate)
-        {
-            if (BertCache.TryGetValue(tokenizer, out var cached)) return cached.Tokenizer;
-            var tok = new BertTokenizer();
-            System.Threading.Tasks.Task.Run(() => tok.LoadFromHuggingFaceAsync(tokenizer)).GetAwaiter().GetResult();
-            BertCache[tokenizer] = new SharedBertTokenizer(tok);
-            return tok;
-        }
-    }
+    /// this entry performs network acquisition. Loading is shared per key and
+    /// occurs outside the global cache gate; failed loads can be retried.</remarks>
+    public static BertTokenizer GetOrLoadBertTokenizer(string tokenizer) =>
+        GetSharedBertTokenizer(tokenizer, LoadNamedBertTokenizer).Tokenizer;
 
     /// <summary>Tokenizes one text with a BERT tokenizer.</summary>
     /// <remarks>Uses the shared cached instance for the id; encodes serialize
@@ -78,18 +97,7 @@ public class Text
     public static ITensor[]? BertTokenize(string text, string tokenizer)
     {
         var op = Begin("Tokenizing {len} characters using BERT tokenizer {tok}", text.Length, tokenizer);
-        SharedBertTokenizer shared;
-        lock (BertCacheGate)
-        {
-            if (!BertCache.TryGetValue(tokenizer, out var cached))
-            {
-                var tok = new BertTokenizer();
-                System.Threading.Tasks.Task.Run(() => tok.LoadFromHuggingFaceAsync(tokenizer)).GetAwaiter().GetResult();
-                cached = new SharedBertTokenizer(tok);
-                BertCache[tokenizer] = cached;
-            }
-            shared = cached;
-        }
+        var shared = GetSharedBertTokenizer(tokenizer, LoadNamedBertTokenizer);
         ITensor[] result;
         lock (shared.Sync)
         {

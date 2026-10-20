@@ -56,8 +56,7 @@ public sealed class EmbeddingGemma2Embedder
             throw new InvalidDataException("The prepared bundle is not the pinned FP32 EmbeddingGemma 2 export.");
         tokenizer = new GemmaTokenizer(Path.Combine(preparedDirectory, "tokenizer.json"));
         if (tokenizer.TokenizerSha256 != Tokenizer) throw new InvalidDataException("Tokenizer identity differs from the prepared bundle.");
-        var graph = OnnxImport.Load(modelPath, options.PreparedWeightBudgetBytes)
-            ?? throw new InvalidDataException(OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
+        var graph = OnnxImport.LoadOrThrow(modelPath, options.PreparedWeightBudgetBytes);
         if (graph.Inputs.Count != 2 || !graph.Inputs.ContainsKey("input_ids") || !graph.Inputs.ContainsKey("attention_mask") ||
             graph.Outputs.Count != 1 || !graph.Outputs.ContainsKey("last_hidden_state"))
             throw new InvalidDataException("Expected the prepared text-only graph with projected hidden-state output.");

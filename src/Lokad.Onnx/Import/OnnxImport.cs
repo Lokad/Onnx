@@ -84,6 +84,17 @@ public static class OnnxImport
     public static ComputationalGraph? Load(string onnxInputFilePath, long maximumPackedWeightBytes) =>
         LoadCore(() => Parse(onnxInputFilePath), "Could not parse {f} as ONNX model file.", "Could not load {f} as ONNX model.", onnxInputFilePath, maximumPackedWeightBytes);
 
+    /// <summary>Loads a local model or throws a call-specific error with the original cause.</summary>
+    /// <remarks>Unlike the nullable Load overloads, this method does not read or update
+    /// the process-wide LastError properties. Nonfatal failures throw InvalidDataException;
+    /// fatal runtime failures propagate unchanged.</remarks>
+    public static ComputationalGraph LoadOrThrow(string onnxInputFilePath) => LoadOrThrow(onnxInputFilePath, long.MaxValue);
+
+    /// <summary>Loads a local model with a per-graph packed-weight limit or throws a call-specific error.</summary>
+    public static ComputationalGraph LoadOrThrow(string onnxInputFilePath, long maximumPackedWeightBytes) =>
+        LoadStages(() => Parse(onnxInputFilePath), "Could not parse {f} as ONNX model file.",
+            "Could not load {f} as ONNX model.", onnxInputFilePath, maximumPackedWeightBytes);
+
     public static ComputationalGraph? Load(byte[] buffer) =>
         LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null, long.MaxValue);
 
@@ -99,6 +110,21 @@ public static class OnnxImport
     {
         LastErrorMessage = null;
         LastErrorCause = null;
+        try
+        {
+            return LoadStages(parse, parseTemplate, loadTemplate, path, maximumPackedWeightBytes);
+        }
+        catch (InvalidDataException ex)
+        {
+            LastErrorMessage = ex.Message;
+            LastErrorCause = ex.InnerException;
+            Runtime.Error(ex.InnerException ?? ex, ex.Message);
+            return null;
+        }
+    }
+
+    static ComputationalGraph LoadStages(Func<OnnxModel> parse, string parseTemplate, string loadTemplate, string? path, long maximumPackedWeightBytes)
+    {
         OnnxModel mp;
         try
         {
@@ -107,7 +133,7 @@ public static class OnnxImport
         }
         catch (Exception ex) when (!Runtime.IsFatal(ex))
         {
-            return FailImport(ex, parseTemplate, path);
+            throw ImportFailure(ex, parseTemplate, path);
         }
         try
         {
@@ -117,30 +143,15 @@ public static class OnnxImport
         }
         catch (Exception ex) when (!Runtime.IsFatal(ex))
         {
-            return FailImport(ex, loadTemplate, path);
+            throw ImportFailure(ex, loadTemplate, path);
         }
     }
 
     /// <summary>
-    /// Records a nonfatal import failure: snapshots the rendered message and
-    /// the original cause for readers without a log sink, keeps the log line,
-    /// and returns null like every other load rejection.
+    /// Creates an operation-local failure without consulting shared diagnostics.
     /// </summary>
-    static ComputationalGraph? FailImport(Exception ex, string messageTemplate, string? path)
-    {
-        LastErrorCause = ex;
-        if (path is null)
-        {
-            LastErrorMessage = Log.Render(messageTemplate, Array.Empty<object?>());
-            Runtime.Error(ex, messageTemplate);
-        }
-        else
-        {
-            LastErrorMessage = Log.Render(messageTemplate, new object?[] { path });
-            Runtime.Error(ex, messageTemplate, path);
-        }
-        return null;
-    }
+    static InvalidDataException ImportFailure(Exception ex, string messageTemplate, string? path) =>
+        new InvalidDataException(Log.Render(messageTemplate, path is null ? Array.Empty<object?>() : new object?[] { path }), ex);
 
     static OnnxModel ToModelDto(this ModelProto mp, string? baseDirectory, bool materializeInitializers)
     {
