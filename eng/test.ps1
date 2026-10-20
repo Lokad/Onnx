@@ -1,19 +1,22 @@
 param(
-    [string]$Configuration = "Release"
+    [string]$Configuration = "Release",
+    [switch]$Coverage
 )
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
-function Invoke-Step($cmd) {
-    Write-Host ">> $cmd"
+function Invoke-Dotnet([string[]]$Arguments) {
+    Write-Host ">> dotnet $($Arguments -join ' ')"
     $prev = $ErrorActionPreference
     try {
         $ErrorActionPreference = "Continue"
-        Invoke-Expression $cmd
+        & dotnet @Arguments
     } finally { $ErrorActionPreference = $prev }
-    if ($LASTEXITCODE -ne 0) { throw "Step failed ($LASTEXITCODE): $cmd" }
+    if ($LASTEXITCODE -ne 0) { throw "dotnet failed ($LASTEXITCODE): $($Arguments -join ' ')" }
 }
-Invoke-Step "dotnet restore --tl:off -v minimal Lokad.Onnx.slnx"
-Invoke-Step "dotnet build --tl:off --nologo -v minimal -c $Configuration Lokad.Onnx.slnx --no-restore"
-Invoke-Step "dotnet test --tl:off --nologo -v minimal -c $Configuration --no-build Lokad.Onnx.slnx --collect:`"XPlat Code Coverage`" --results-directory artifacts/coverage"
+Invoke-Dotnet @('restore', '--tl:off', '-v', 'minimal', 'Lokad.Onnx.slnx')
+Invoke-Dotnet @('build', '--tl:off', '--nologo', '-v', 'minimal', '-c', $Configuration, 'Lokad.Onnx.slnx', '--no-restore')
+$testArguments = @('test', '--tl:off', '--nologo', '-v', 'minimal', '-c', $Configuration, '--no-build', 'Lokad.Onnx.slnx')
+if ($Coverage) { $testArguments += @('--collect:XPlat Code Coverage', '--results-directory', 'artifacts/coverage') }
+Invoke-Dotnet $testArguments
 Write-Host "PASS ordinary gate ($Configuration)"

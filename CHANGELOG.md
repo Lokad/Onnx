@@ -48,6 +48,12 @@
 - Removed custom optional-parameter/TODO gates and the SDK-internal source audit.
   Markdown changes avoid the full CI matrix; packaged documentation still gets
   package smoke checks. See [maintenance guidance](docs/code-maintenance.md).
+- Retired the remaining null-suppression/documentation syntax scanners while
+  retaining a compiled assembly-boundary check. Test coverage collection is
+  explicitly enabled with `eng/test.ps1 -Coverage` instead of running in every CI job.
+- Execution contexts share prepared-weight caches directly, avoiding discarded
+  cache/lock allocations while retaining public graph mutation behavior.
+  Parakeet owned-weight eligibility is isolated from generic storage/alias checks.
 
 ### Fixed
 

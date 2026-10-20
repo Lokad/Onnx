@@ -46,7 +46,7 @@ public partial class ComputationalGraph
                 if (node.Attributes is not null)
                     foreach (var value in node.Attributes.Values) if (value is ComputationalGraph) return 0;
             EnsurePreparedLocked();
-            var uses = new Dictionary<string, (int Count, bool FeedForward, bool Attention)>(StringComparer.Ordinal);
+            var uses = new Dictionary<string, (int Count, string? ConsumerName)>(StringComparer.Ordinal);
             foreach (var node in Nodes)
             {
                 var inputs = GraphCaptures.NodeInputs(node);
@@ -54,17 +54,8 @@ public partial class ComputationalGraph
                 {
                     string name = inputs[i]; if (string.IsNullOrEmpty(name)) continue;
                     bool eligible = node.Op == OpType.MatMul && Node.IsStandardDomain(node.Domain) && i == 1 && inputs.Length == 2;
-                    bool attention = node.Name is string consumer &&
-                        (consumer.EndsWith("/self_attn/linear_q/MatMul", StringComparison.Ordinal)
-                        || consumer.EndsWith("/self_attn/linear_k/MatMul", StringComparison.Ordinal)
-                        || consumer.EndsWith("/self_attn/linear_v/MatMul", StringComparison.Ordinal)
-                        || consumer.EndsWith("/self_attn/linear_out/MatMul", StringComparison.Ordinal)
-                        || consumer.EndsWith("/self_attn/linear_pos/MatMul", StringComparison.Ordinal));
                     uses.TryGetValue(name, out var prior);
-                    bool single = eligible && prior.Count == 0;
-                    uses[name] = (prior.Count + 1,
-                        single && node.Name?.Contains("/feed_forward", StringComparison.Ordinal) == true,
-                        single && attention);
+                    uses[name] = (prior.Count + 1, eligible && prior.Count == 0 ? node.Name : null);
                 }
             }
             var protectedRoots = new HashSet<Array>();
@@ -98,13 +89,12 @@ public partial class ComputationalGraph
             // Names only: a values snapshot would unnecessarily retain every original array.
             foreach (string name in Initializers.Keys.ToArray())
             {
-                if (!uses.TryGetValue(name, out var use) || use.Count != 1 || !(use.FeedForward || use.Attention)
+                if (!uses.TryGetValue(name, out var use) || use.Count != 1 || use.ConsumerName is null
                     || Inputs.ContainsKey(name) || Outputs.ContainsKey(name) || folded.Contains(name)
                     || Initializers[name] is not DenseTensor<float> source || source.Rank != 2
                     || !GraphConvPacking.Standard(source)) continue;
                 int n = source.Dimensions[0], k = source.Dimensions[1];
-                if (!((use.FeedForward && ((n == 1024 && k == 4096) || (n == 4096 && k == 1024)))
-                    || (use.Attention && n == 1024 && k == 1024))) continue;
+                if (!ParakeetOwnedWeightPolicy.IsEligible(use.ConsumerName, n, k)) continue;
                 if (!MemoryMarshal.TryGetArray<float>(source.Buffer, out var window) || window.Array is null
                     || window.Offset != 0 || window.Count != window.Array.Length
                     || protectedRoots.Contains(window.Array) || bindings[window.Array] != 1) continue;

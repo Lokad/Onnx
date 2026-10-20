@@ -20,6 +20,14 @@ public partial class ComputationalGraph
     {
         ArgumentOutOfRangeException.ThrowIfNegative(maximumPackedWeightBytes);
         MaximumPackedWeightBytes = maximumPackedWeightBytes;
+        preparation = new GraphPreparationCache();
+    }
+
+    // Contexts share preparation directly instead of allocating caches to discard.
+    internal ComputationalGraph(ComputationalGraph prepared)
+    {
+        MaximumPackedWeightBytes = prepared.MaximumPackedWeightBytes;
+        preparation = prepared.preparation;
     }
 
     /// <summary>Maximum total bytes of prepared packed weight clones in this graph.</summary>
@@ -44,15 +52,17 @@ public partial class ComputationalGraph
     /// </summary>
     internal sealed record FoldedTranspose(string SourceName, ITensor SourceRef, long SourceLength, string PreparedName);
 
-    internal Dictionary<string, FoldedTranspose> FoldedTransposes = new Dictionary<string, FoldedTranspose>(StringComparer.Ordinal);
+    readonly GraphPreparationCache preparation;
+
+    internal Dictionary<string, FoldedTranspose> FoldedTransposes => preparation.FoldedTransposes;
     /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
-    internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
-    internal Dictionary<float[], PackedConvWeight> PackedConvWeights = new Dictionary<float[], PackedConvWeight>();
-    internal Dictionary<float[], PackedLstmWeight> PackedLstmWeights = new Dictionary<float[], PackedLstmWeight>();
+    internal Dictionary<float[], PackedMatMulWeight> PackedWeights => preparation.PackedWeights;
+    internal Dictionary<float[], PackedConvWeight> PackedConvWeights => preparation.PackedConvWeights;
+    internal Dictionary<float[], PackedLstmWeight> PackedLstmWeights => preparation.PackedLstmWeights;
 
-    internal object FoldLock = new object();
+    internal object FoldLock => preparation.FoldLock;
 
-    internal object PrepareLock = new object();
+    internal object PrepareLock => preparation.PrepareLock;
 
     /// <summary>
     /// Retained input descriptions (with symbolic dimension names) for

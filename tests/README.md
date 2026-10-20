@@ -17,7 +17,8 @@ Ordinary gate (from repo root):
     dotnet build --tl:off --nologo -v minimal -c Release Lokad.Onnx.slnx
     dotnet test --tl:off --nologo -v minimal -c Release --no-build Lokad.Onnx.slnx
 
-Or use `eng/test.ps1`, which runs the same steps and collects Cobertura coverage under ignored `artifacts/coverage`.
+Or use `eng/test.ps1`, which runs the same steps. Add `-Coverage` to collect
+Cobertura reports under ignored `artifacts/coverage`; ordinary CI does not collect them.
 
 Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md`).
 

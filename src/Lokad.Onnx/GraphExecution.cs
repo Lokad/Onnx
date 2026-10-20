@@ -19,7 +19,7 @@ using static Lokad.Onnx.Runtime;
 public sealed class GraphExecution : ComputationalGraph
 {
     internal GraphExecution(ComputationalGraph prepared, ExecutionOptions? options, bool preparedFlag, long preparedFingerprint, string? preparationError, bool borrowReleasedBuffers)
-        : base(prepared.MaximumPackedWeightBytes)
+        : base(prepared)
     {
         ReuseReleasedBuffers = prepared.ReuseReleasedBuffers;
         ReleaseReshapeViews = prepared.ReleaseReshapeViews;
@@ -33,13 +33,7 @@ public sealed class GraphExecution : ComputationalGraph
         _preparationError = preparationError;
         Nodes = prepared.Nodes;
         Initializers = prepared.Initializers;
-        FoldedTransposes = prepared.FoldedTransposes;
-        PackedWeights = prepared.PackedWeights;
-        PackedConvWeights = prepared.PackedConvWeights;
-        PackedLstmWeights = prepared.PackedLstmWeights;
         RetainedPackedWeightBytes = prepared.RetainedPackedWeightBytes;
-        FoldLock = prepared.FoldLock;
-        PrepareLock = prepared.PrepareLock;
         InputDescs = prepared.InputDescs;
         OutputDescs = prepared.OutputDescs;
         Opset = prepared.Opset;
