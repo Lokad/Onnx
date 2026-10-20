@@ -38,7 +38,7 @@ public class SoftmaxSpanAgreementTests
             x[i] = v;
         }
         var legacy = new float[x.Length];
-        Tensor<float>.SoftmaxContiguousFloat((float[])x.Clone(), legacy, outer, block, true);
+        Lokad.Onnx.Tests.Support.ReferenceSoftmaxKernels.SoftmaxContiguousFloat((float[])x.Clone(), legacy, outer, block, true);
         var input = new DenseTensor<float>((float[])x.Clone(), new[] { outer, block });
         var span = Tensor<float>.Softmax(input, 1, TensorExecutionOptions.Intrinsics, 13).ToDenseTensor().Buffer.Span.ToArray();
         double worst = 0;
@@ -116,7 +116,7 @@ public class SoftmaxSpanAgreementTests
             int outer = n / shape[shape.Length - 1];
             int block = shape[shape.Length - 1];
             var legacy = new float[n];
-            Tensor<float>.SoftmaxContiguousFloat((float[])x.Clone(), legacy, outer, block, false);
+            Lokad.Onnx.Tests.Support.ReferenceSoftmaxKernels.SoftmaxContiguousFloat((float[])x.Clone(), legacy, outer, block, false);
             var input = new DenseTensor<float>((float[])x.Clone(), shape);
             var span = Tensor<float>.Softmax(input, shape.Length - 1, TensorExecutionOptions.Scalar, 13).ToDenseTensor().Buffer.Span.ToArray();
             AssertBitsEqual(legacy, span, "scalar " + string.Join("x", shape));
@@ -138,7 +138,7 @@ public class SoftmaxSpanAgreementTests
                 x[o * block + b] = v;
             }
         var legacy = new float[x.Length];
-        Tensor<float>.SoftmaxContiguousFloat((float[])x.Clone(), legacy, outer, block, true);
+        Lokad.Onnx.Tests.Support.ReferenceSoftmaxKernels.SoftmaxContiguousFloat((float[])x.Clone(), legacy, outer, block, true);
         var span = RunDefault(x, new[] { outer, block }, 1);
         double worst = 0;
         for (int i = 0; i < x.Length; i++)

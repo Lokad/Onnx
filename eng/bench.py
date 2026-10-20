@@ -45,6 +45,13 @@ def summarize(workers):
     return result
 
 
+def check_native(record, signatures):
+    if record['mode'] == 'ort':
+        digest = record['native_module']['sha256']
+        evidence.require(signatures.setdefault('native_sha256', digest) == digest,
+                         'loaded native ORT changed between workers')
+
+
 def run(args):
     output, prepared = args.output.resolve(), args.prepared.resolve()
     common.ROOT = args.root.resolve()
@@ -92,6 +99,7 @@ def run(args):
                         samples = record['raw']
                         signature = {key: record[key] for key in ('environment', 'runner_sha256', 'model_sha256', 'input_sha256', 'fixture_sha256', 'oracle_native_sha256')}
                     evidence.require(signatures.setdefault(name, signature) == signature, 'worker workload/environment identity changed')
+                    check_native(record, signatures)
                     records.append(dict(case=name, pair=pair, role=role, engine=engine, samples_ms=samples,
                         source_sha=record['source_sha'], core_sha256=record['core_sha256'], files=entry))
                     # Keep every completed worker even when a later one fails.

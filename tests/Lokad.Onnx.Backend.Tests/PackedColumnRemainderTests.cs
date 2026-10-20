@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx.Backend.Tests;
@@ -41,6 +42,16 @@ public class PackedColumnRemainderTests
         }
     }
 
+    // Keep test-loop tier promotion/OSR and assertion machinery outside the
+    // measured interval. The production kernel retains its normal JIT policy.
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.AggressiveOptimization)]
+    static unsafe long AllocatedByKernel(int rows, int reduction, int columns, float* a, float* packed, float* output)
+    {
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(rows, reduction, columns, a, packed, output);
+        return GC.GetAllocatedBytesForCurrentThread() - before;
+    }
+
     static unsafe void Check(int rows, int reduction, int columns)
     {
         var a = Guarded(rows * reduction);
@@ -69,10 +80,8 @@ public class PackedColumnRemainderTests
             var beforePacked = packed.ToArray();
             for (int repeat = 0; repeat < 3; repeat++)
             {
-                long before = GC.GetAllocatedBytesForCurrentThread();
-                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(
+                long allocated = AllocatedByKernel(
                     rows, reduction, columns, ap + Offset, pp + Offset, cp + Offset);
-                long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
                 // The first call also checks correctness; later calls check steady allocation.
                 if (repeat > 0) Assert.Equal(0L, allocated);
                 for (int index = 0; index < sums.Length; index++)

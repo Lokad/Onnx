@@ -35,6 +35,14 @@ class BenchTests(unittest.TestCase):
         with self.assertRaises(Exception):
             bench.summarize(self.workers() * 2)
 
+    def test_native_identity_binds_actual_loaded_library_between_workers(self):
+        signatures = {}
+        bench.check_native(dict(mode='lok', native_module=None), signatures)
+        bench.check_native(dict(mode='ort', native_module=dict(sha256='first')), signatures)
+        bench.check_native(dict(mode='ort', native_module=dict(sha256='first')), signatures)
+        with self.assertRaises(Exception):
+            bench.check_native(dict(mode='ort', native_module=dict(sha256='changed')), signatures)
+
 
 if __name__ == '__main__':
     unittest.main()

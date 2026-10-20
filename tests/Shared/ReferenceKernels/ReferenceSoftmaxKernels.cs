@@ -12,6 +12,36 @@ namespace Lokad.Onnx.Tests.Support;
 internal static class ReferenceSoftmaxKernels
 {
 
+    /// <summary>Legacy scalar summation with vectorized exp, independent of the optimized span softmax.</summary>
+    internal static void SoftmaxContiguousFloat(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
+    {
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+        {
+            float max = SoftmaxContiguousMax(inputSpan, outerIndex * block, block, useSimd);
+            float sum = 0f;
+            int expIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax = new Vector<float>(max);
+                for (; expIndex <= block - width; expIndex += width)
+                {
+                    int baseIndex = outerIndex * block + expIndex;
+                    var activated = MathOps.ExpVector(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
+                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
+                    for (int j = 0; j < width; j++) sum += outputSpan[baseIndex + j];
+                }
+            }
+            for (; expIndex < block; expIndex++)
+            {
+                float activated = MathF.Exp(inputSpan[outerIndex * block + expIndex] - max);
+                outputSpan[outerIndex * block + expIndex] = activated;
+                sum += activated;
+            }
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] /= sum;
+        }
+    }
+
     /// <summary>
     /// Row maximum for the span softmax (E62): vector reduction with an
     /// explicit any-NaN rule reproducing the scalar break-on-first-NaN loop.

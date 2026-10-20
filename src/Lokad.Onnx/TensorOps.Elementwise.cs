@@ -1341,38 +1341,6 @@ where T : unmanaged
             }
         }
     }
-    /// Legacy float softmax over contiguous rows, preserved as the tested reference
-    /// for the default span kernel. Scalar summation order; vectorized exp only.
-    /// </summary>
-    internal static void SoftmaxContiguousFloat(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
-    {
-        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
-        {
-            float max = SoftmaxContiguousMax(inputSpan, outerIndex * block, block, useSimd);
-            float sum = 0f;
-            int expIndex = 0;
-            if (useSimd && Vector.IsHardwareAccelerated)
-            {
-                int width = Vector<float>.Count;
-                var vmax = new Vector<float>(max);
-                for (; expIndex <= block - width; expIndex += width)
-                {
-                    int baseIndex = outerIndex * block + expIndex;
-                    var activated = MathOps.ExpVector(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
-                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
-                    for (int j = 0; j < width; j++) sum += outputSpan[baseIndex + j];
-                }
-            }
-            for (; expIndex < block; expIndex++)
-            {
-                float activated = MathF.Exp(inputSpan[outerIndex * block + expIndex] - max);
-                outputSpan[outerIndex * block + expIndex] = activated;
-                sum += activated;
-            }
-            for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] /= sum;
-        }
-    }
-
     /// <summary>Writes the float softmax into an existing dense destination.</summary>
     public static Tensor<float> Softmax(Tensor<float> x, DenseTensor<float> destination, int axis, TensorExecutionOptions? options, int opsetVersion)
     {
