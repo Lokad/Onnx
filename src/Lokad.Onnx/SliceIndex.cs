@@ -9,6 +9,8 @@ namespace Lokad.Onnx
     /// start, an optional exclusive stop, and a step, plus markers for single
     /// index, ellipsis, and new-axis selections.
     /// </summary>
+    /// <remarks>Equality includes bounds, step and selection markers. Instances are mutable;
+    /// do not modify them while they are keys in a dictionary or members of a hash set.</remarks>
     public class SliceIndex
     {
         public static readonly SliceIndex All = new SliceIndex(null, null);
@@ -174,19 +176,15 @@ namespace Lokad.Onnx
         {
             if (ReferenceEquals(a, b)) return true;
             if (a is null || b is null) return false;
-            return a.Start == b.Start && a.Stop == b.Stop && a.Step == b.Step;
+            return a.Start == b.Start && a.Stop == b.Stop && a.Step == b.Step
+                && a.IsIndex == b.IsIndex && a.IsEllipsis == b.IsEllipsis && a.IsNewAxis == b.IsNewAxis;
         }
 
         public static bool operator !=(SliceIndex a, SliceIndex b) => !(a == b);
 
-        public override bool Equals(object? obj)
-        {
-            if (obj is null || obj.GetType() != typeof(SliceIndex)) return false;
-            var other = (SliceIndex)obj;
-            return Start == other.Start && Stop == other.Stop && Step == other.Step;
-        }
+        public override bool Equals(object? obj) => obj is SliceIndex other && this == other;
 
-        public override int GetHashCode() => ToString().GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Start, Stop, Step, IsIndex, IsEllipsis, IsNewAxis);
 
         public override string ToString()
         {
@@ -211,7 +209,7 @@ namespace Lokad.Onnx
                 int index = Start ?? 0;
                 if (index < 0)
                 {
-                    if (Math.Abs(index) > dim)
+                    if (Math.Abs((long)index) > dim)
                         throw new ArgumentException($"Index {index} is out of bounds for the axis with size {dim}");
                     return new SliceDef(dim + index);
                 }
@@ -230,9 +228,9 @@ namespace Lokad.Onnx
                 int start = Start ?? 0;
                 int stop = Stop ?? dim;
                 if (start >= dim) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-                if (start < 0) start = Math.Abs(start) <= dim ? dim + start : 0;
+                if (start < 0) start = Math.Abs((long)start) <= dim ? dim + start : 0;
                 if (stop > dim) stop = dim;
-                if (stop < 0) stop = Math.Abs(stop) <= dim ? dim + stop : 0;
+                if (stop < 0) stop = Math.Abs((long)stop) <= dim ? dim + stop : 0;
                 if (start >= stop) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
                 return new SliceDef() { Start = start, Step = Step, Count = (int)(((long)Math.Abs(start - stop) + magnitude - 1) / magnitude) };
             }
@@ -240,9 +238,9 @@ namespace Lokad.Onnx
             // rather than yielding empty; kept deliberately for parity.
             int downStart = Start ?? (dim - 1);
             int downStop = Stop ?? -1;
-            if (downStart < 0) downStart = Math.Abs(downStart) <= dim ? dim + downStart : 0;
+            if (downStart < 0) downStart = Math.Abs((long)downStart) <= dim ? dim + downStart : 0;
             if (downStart >= dim) downStart = dim - 1;
-            if (Stop < 0) downStop = Math.Abs(downStop) <= dim ? dim + downStop : -1;
+            if (Stop < 0) downStop = Math.Abs((long)downStop) <= dim ? dim + downStop : -1;
             if (downStart <= downStop) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
             return new SliceDef() { Start = downStart, Step = Step, Count = (int)(((long)Math.Abs(downStart - downStop) + magnitude - 1) / magnitude) };
         }
