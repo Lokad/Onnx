@@ -4,6 +4,7 @@ Workers remain separate processes in the evidence. Only after verifying every
 binding do we assemble the logical role visits consumed by the existing scorer.
 No worker timings are averaged, filtered, corrected or synthesized.
 """
+import ast
 import hashlib
 import json
 import math
@@ -26,14 +27,33 @@ TOKENS = dict(zip(CASES, (8, 30, 128, 128, 512)))
 REAL = dict(zip(CASES, (8, 30, 30, 128, 512)))
 EXECUTION = dict(managed="auto", threads=1, ort_provider="cpu-only", ort_optimizations="ORT_ENABLE_ALL",
                  intraop=1, interop=1, spinning=False, sequential=True)
-SCRIPTS = ("run_isolated_e5.py", "isolated_evidence.py", "campaign_evidence.py", "campaign_processes.py",
+LEGACY_SCRIPTS = ("run_isolated_e5.py", "isolated_evidence.py", "campaign_evidence.py", "campaign_processes.py",
            "run_common_campaign.py", "score_campaign.py", "parse_baseline.py")
+SCRIPTS = (*LEGACY_SCRIPTS, "benchmark_worker.py", "e5_worker.py")
 require = base.require
 
 
 def read_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8-sig"), object_pairs_hook=base._unique_json,
                       parse_constant=base._bad_constant)
+
+
+def producer_files(directory, bindings, scripts, legacy_scripts):
+    require(set(bindings) in (set(scripts), set(legacy_scripts)), "supervisor/scorer source provenance missing")
+    missing = {Path(name).stem for name in scripts if name not in bindings}
+    result = {}
+    for name, value in bindings.items():
+        script = bound(directory, value)
+        require(script.name == name, "producer filename differs")
+        result[name] = value["sha256"]
+        if missing:
+            # Old evidence is valid only when its archived producers do not
+            # import the newly extracted workers. Removing their bindings from
+            # a new record must not downgrade it to the historical layout.
+            for node in ast.walk(ast.parse(script.read_text(encoding="utf-8-sig"))):
+                imports = [alias.name for alias in node.names] if isinstance(node, ast.Import) else [node.module] if isinstance(node, ast.ImportFrom) else []
+                require(not missing.intersection(imports), "shared worker source provenance missing")
+    return result
 
 
 def binding(path, directory):
@@ -256,12 +276,7 @@ def load(path, manifest, allow_smoke=False):
     smoke = manifest["kind"] == "smoke"
     require(manifest["kind"] in ("aa", "comparison") or (smoke and allow_smoke), "smoke cannot score")
     require(type(manifest["cooldown_seconds"]) is int and manifest["cooldown_seconds"] == (0 if smoke else 300), "pair cooldown contract differs")
-    require(set(manifest["producer_files"]) == set(SCRIPTS), "supervisor/scorer source provenance missing")
-    producer_files = {}
-    for name, value in manifest["producer_files"].items():
-        script = bound(directory, value)
-        require(script.name == name, "producer filename differs")
-        producer_files[name] = value["sha256"]
+    producers = producer_files(directory, manifest["producer_files"], SCRIPTS, LEGACY_SCRIPTS)
     require(set(manifest["builds"]) == {"L0", "L1"}, "build provenance missing")
     for build in manifest["builds"].values():
         require(set(build) == {"source_sha", "core_sha256", "source_archive_sha256", "sdk"}, "build provenance fields differ")
@@ -328,7 +343,7 @@ def load(path, manifest, allow_smoke=False):
     require(all((row["source_sha"], row["core_sha256"]) == identities["L0"] for row in oracles.values()), "oracles must use baseline runner/core stage")
     if manifest["kind"] == "aa":
         require(identities["L0"] == identities["L1"], "A/A cores differ")
-    signature = dict(signatures[0], schema=schema, scope="e5", cases=case_ids, producer_files=producer_files)
+    signature = dict(signatures[0], schema=schema, scope="e5", cases=case_ids, producer_files=producers)
     return dict(manifest=str(path), manifest_sha256=base.sha256(path), kind=manifest["kind"], schema=schema, scope="e5", cases=CASES,
                 runs=visits, signature=signature, identities=identities, start=campaign_start, end=previous_exit)
 

@@ -1,9 +1,35 @@
 import unittest
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
 
 import bench
+import campaign_evidence as evidence
+import isolated_evidence as isolated
 
 
 class BenchTests(unittest.TestCase):
+    def test_routine_import_does_not_load_campaign_frontends_or_scorer(self):
+        code = "import sys; import bench; assert not {'run_common_campaign', 'run_isolated_e5', 'run_embeddinggemma2', 'score_campaign'}.intersection(sys.modules)"
+        subprocess.run([sys.executable, '-c', code], cwd=Path(__file__).parent, check=True)
+
+    def test_historical_producer_inventory_is_readable_but_cannot_hide_new_imports(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bindings = {}
+            for name in isolated.LEGACY_SCRIPTS:
+                path = root / name
+                path.write_text('# historical producer\n', encoding='utf-8')
+                bindings[name] = isolated.binding(path, root)
+            self.assertEqual(set(bindings), set(isolated.producer_files(root, bindings, isolated.SCRIPTS, isolated.LEGACY_SCRIPTS)))
+            path = root / 'run_isolated_e5.py'
+            for source in ('import e5_worker\n', 'from benchmark_worker import stage\n'):
+                path.write_text(source, encoding='utf-8')
+                bindings[path.name] = isolated.binding(path, root)
+                with self.assertRaisesRegex(evidence.EvidenceError, 'shared worker source provenance missing'):
+                    isolated.producer_files(root, bindings, isolated.SCRIPTS, isolated.LEGACY_SCRIPTS)
+
     def test_visits_balance_order(self):
         self.assertEqual([('L0', 'L1'), ('L1', 'L0')], bench.visits(2))
         self.assertEqual(2, bench.visits(4).count(('L0', 'L1')))

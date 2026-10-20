@@ -31,6 +31,12 @@ Output directories must be new. An exit failure means missing/failed worker
 validation; performance differences and ordinary variation are reported rather
 than turned into a calibration refusal.
 
+Routine and strict commands share `benchmark_worker.py` for staging/processes,
+`e5_worker.py` for e5 launch/validation, and `gemma_worker.py` for Gemma fixtures
+and workers. The routine command does not import strict campaign frontends or
+their scorer. Strict evidence inventories include the extracted worker sources;
+historical inventories remain readable with their original archived producers.
+
 These are engineering observations. Small changes within the reported variation
 are inconclusive. Keep the existing strict
 [isolated protocol](isolated-evidence.md) and [Gemma protocol](../tests/embeddinggemma2/README.md)

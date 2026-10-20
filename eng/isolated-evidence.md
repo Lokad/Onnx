@@ -10,8 +10,12 @@ API. Only the core DLL changes between L0 and L1. `isolate oracle|lok|ort config
 is its new producer entry point. Configuration, process JSON, stdout/stderr,
 supervision and before/after process snapshots are bound to SHA-256. Models are
 local; no downloads, symlinks or mutable shared output directories are used.
-The seven Python producer/validator sources are copied into each evidence tree,
+The Python producer/validator sources, including shared worker dependencies,
+are copied into each evidence tree,
 hashed, rechecked after collection and included in A/A/comparison identity.
+Historical seven-source inventories remain readable. A new producer importing
+the extracted workers must include their source bindings; it cannot use the
+historical inventory to omit dependencies.
 
 The five cases, in order, are e5-8tok, e5-30tok, e5-30pad128, e5-128tok and
 e5-512tok. The first four are primary. Inputs come from the existing canonical

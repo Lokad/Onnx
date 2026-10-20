@@ -8,9 +8,9 @@ import statistics
 
 import campaign_evidence as evidence
 import isolated_evidence as isolated
-import run_common_campaign as common
-import run_embeddinggemma2 as gemma
-import run_isolated_e5 as e5
+import benchmark_worker as common
+import gemma_worker as gemma
+import e5_worker as e5
 
 
 def visits(pairs):
