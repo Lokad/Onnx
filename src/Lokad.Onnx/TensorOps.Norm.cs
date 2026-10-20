@@ -135,8 +135,8 @@ where T : unmanaged
         var sd = scale.ToDenseTensor();
         var bd = bias?.ToDenseTensor();
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
-        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
-        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         LayerNormFloatInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon);
         return destination;
     }
@@ -164,8 +164,8 @@ where T : unmanaged
         var sd = scale.ToDenseTensor();
         var bd = bias?.ToDenseTensor();
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
-        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
-        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         LayerNormDoubleInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon);
         return destination;
     }
@@ -212,18 +212,18 @@ where T : unmanaged
         var xd = x.ToDenseTensor();
         var cd = cos.ToDenseTensor();
         var sd = sin.ToDenseTensor();
-        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
-        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
-        if (half <= 0) throw new ArgumentException(nameof(half), "Half size must be positive.");
+        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+        if (half <= 0) throw new ArgumentException("Half size must be positive.", nameof(half));
         int rank = xd.Rank;
         int a = axis < 0 ? axis + rank : axis;
-        if (a < 0 || a >= rank) throw new ArgumentException(nameof(axis), "Axis is out of range for the input rank.");
+        if (a < 0 || a >= rank) throw new ArgumentException("Axis is out of range for the input rank.", nameof(axis));
         int ca = concatAxis < 0 ? concatAxis + rank : concatAxis;
-        if (ca != a) throw new ArgumentException(nameof(concatAxis), "Slice and concat axes disagree after rank normalization.");
-        if (!cd.Dimensions.SequenceEqual(sd.Dimensions.ToArray())) throw new ArgumentException(nameof(sin), "Cos and sin must have identical shapes.");
-        if (cd.Rank > rank) throw new ArgumentException(nameof(cos), "Cos rank must not exceed input rank.");
+        if (ca != a) throw new ArgumentException("Slice and concat axes disagree after rank normalization.", nameof(concatAxis));
+        if (!cd.Dimensions.SequenceEqual(sd.Dimensions.ToArray())) throw new ArgumentException("Cos and sin must have identical shapes.", nameof(sin));
+        if (cd.Rank > rank) throw new ArgumentException("Cos rank must not exceed input rank.", nameof(cos));
         int inner = xd.Dimensions[a];
-        if (inner < half) throw new ArgumentException(nameof(half), "Half size must not exceed the axis dimension.");
+        if (inner < half) throw new ArgumentException("Half size must not exceed the axis dimension.", nameof(half));
         int span = inner - half;
         var dims = xd.Dimensions.ToArray();
         var xstrides = new int[rank];
@@ -234,7 +234,7 @@ where T : unmanaged
         {
             xstrides[d] = stride;
             int cd2 = d < rank - cd.Rank ? 1 : cd.Dimensions[d - (rank - cd.Rank)];
-            if (cd2 != 1 && cd2 != dims[d]) throw new ArgumentException(nameof(cos), "Cos shape must broadcast against the input shape.");
+            if (cd2 != 1 && cd2 != dims[d]) throw new ArgumentException("Cos shape must broadcast against the input shape.", nameof(cos));
             cshape[d] = cd2;
             cstrides[d] = cd2 == 1 ? 0 : stride;
             stride *= dims[d];

@@ -241,15 +241,15 @@ where T : unmanaged
         StartOpStage(OpStage.ValidateArguments);
         if (shape.Rank != 1)
         {
-            throw new ArgumentException(nameof(shape), "Shape tensors must be of rank 1.");
+            throw new ArgumentException("Shape tensors must be of rank 1.", nameof(shape));
         }
         if (shape.Any(v => v < -1))
         {
-            throw new ArgumentException(nameof(shape), $"A shape dimension cannot be < -1, got {shape.First(v => v < -1)}.");
+            throw new ArgumentException($"A shape dimension cannot be < -1, got {shape.First(v => v < -1)}.", nameof(shape));
         }
         if (shape.Count(v => v == -1) > 1)
         {
-            throw new ArgumentException(nameof(shape), $"At most 1 shape dimension can be -1.");
+            throw new ArgumentException($"At most 1 shape dimension can be -1.", nameof(shape));
         }
 
         StartOpStage(OpStage.CalculateIndices);
@@ -288,7 +288,7 @@ where T : unmanaged
                 // extents on both sides for empty inputs and rejects otherwise.
                 if (input.Length != 0)
                 {
-                    throw new ArgumentException(nameof(shape), $"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}");
+                    throw new ArgumentException($"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}", nameof(shape));
                 }
                 newShapeDims[unknownDim] = NonZeroVolume(input.Dimensions.ToArray()) / NonZeroVolume(newShapeDims);
             }
@@ -308,7 +308,7 @@ where T : unmanaged
 
         if (newSize != input.Length)
         {
-            throw new ArgumentException(nameof(shape), $"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}");
+            throw new ArgumentException($"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}", nameof(shape));
         }
 
         return input.Reshape(newShapeDims.ToArray());
@@ -326,19 +326,19 @@ where T : unmanaged
         {
             if (perm.Length != rank)
             {
-                throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {rank}.");
+                throw new ArgumentException($"The size of the permutation array must be the rank of the tensor: {rank}.", nameof(perm));
             }
             if (!perm.All(q => q < rank))
             {
-                throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.");
+                throw new ArgumentException($"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.", nameof(perm));
             }
             if (perm.Any(q => q < 0))
             {
-                throw new ArgumentException(nameof(perm), "The permutation axes must be non-negative.");
+                throw new ArgumentException("The permutation axes must be non-negative.", nameof(perm));
             }
             if (!ArrayUtilities.CheckNoRepeatedDims(perm))
             {
-                throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
+                throw new ArgumentException("The permutation array has a repeated dimension.", nameof(perm));
             }
             p = (int[])perm.Clone();
             for (int i = 0; i < p.Length; i++)
@@ -513,10 +513,10 @@ where T : unmanaged
         int[] p;
         if (perm is not null)
         {
-            if (perm.Length != rank) throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {rank}.");
-            if (!perm.All(q => q < rank)) throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.");
-            if (perm.Any(q => q < 0)) throw new ArgumentException(nameof(perm), "The permutation axes must be non-negative.");
-            if (!ArrayUtilities.CheckNoRepeatedDims(perm)) throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
+            if (perm.Length != rank) throw new ArgumentException($"The size of the permutation array must be the rank of the tensor: {rank}.", nameof(perm));
+            if (!perm.All(q => q < rank)) throw new ArgumentException($"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.", nameof(perm));
+            if (perm.Any(q => q < 0)) throw new ArgumentException("The permutation axes must be non-negative.", nameof(perm));
+            if (!ArrayUtilities.CheckNoRepeatedDims(perm)) throw new ArgumentException("The permutation array has a repeated dimension.", nameof(perm));
             p = (int[])perm.Clone();
             for (int i = 0; i < p.Length; i++) p[i] = ArrayUtilities.HandleNegativeAxisOrIndex(rank, p[i]);
         }
@@ -532,9 +532,9 @@ where T : unmanaged
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         StartOpStage(OpStage.ValidateArguments);
         var p = NormalizeTransposePerm(data.Rank, perm);
-        if (!destination.Dimensions.SequenceEqual(TransposedShape(data.Dimensions, p))) throw new ArgumentException(nameof(destination), "Destination shape must match the transposed shape.");
-        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
-        if (ReferenceEquals(destination, data) || TensorAlias.SharesBackingMemory(destination, data)) throw new ArgumentException(nameof(destination), "Destination must not alias the input tensor: permutation is not an in-place operation.");
+        if (!destination.Dimensions.SequenceEqual(TransposedShape(data.Dimensions, p))) throw new ArgumentException("Destination shape must match the transposed shape.", nameof(destination));
+        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+        if (ReferenceEquals(destination, data) || TensorAlias.SharesBackingMemory(destination, data)) throw new ArgumentException("Destination must not alias the input tensor: permutation is not an in-place operation.", nameof(destination));
         StartOpStage(OpStage.Copy);
         TransposeInto(data, destination, p);
         return destination;
@@ -544,13 +544,13 @@ where T : unmanaged
     public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (data.Rank == 0) throw new ArgumentException(nameof (data), "Cannot gather from a tensor of rank 0.");
+        if (data.Rank == 0) throw new ArgumentException("Cannot gather from a tensor of rank 0.", nameof (data));
 
         StartOpStage(OpStage.CalculateIndices);
         var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _axis.Value) : 0;    
         if (axis > data.Rank - 1)
         {
-            throw new ArgumentException(nameof(axis), $"The specified axis {_axis} exceeds the number of dimensions in the tensor.");
+            throw new ArgumentException($"The specified axis {_axis} exceeds the number of dimensions in the tensor.", nameof(_axis));
         }
         var outputShape = new int[data.Rank - 1 + indices.Rank];
         int n = 0;
@@ -606,15 +606,15 @@ where T : unmanaged
     public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (x.Rank != y.Rank) throw new ArgumentException(nameof(y), "The rank of each tensor in a concat operation must be the same.");
+        if (x.Rank != y.Rank) throw new ArgumentException("The rank of each tensor in a concat operation must be the same.", nameof(y));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
-        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The concat axis is out of range.");
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException("The concat axis is out of range.", nameof(axis));
         for (int i = 0; i < x.Rank; i++)
         {
             if (i == axis) continue;
             if (x.dimensions[i] != y.dimensions[i])
             {
-                throw new ArgumentException(nameof(y), "The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.");
+                throw new ArgumentException("The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.", nameof(y));
             }
         }
         var shape = x.dimensions.Copy();
@@ -655,13 +655,13 @@ where T : unmanaged
     {
         StartOpStage(OpStage.ValidateArguments);
         // A single input is the identity (ORT 1.29); only the empty list is rejected.
-        if (inputs.Length < 1) throw new ArgumentException(nameof(inputs), "At least one tensor must be specified for the concat operation.");
-        if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException(nameof(inputs), $"Each input tensor in a concat operation must be of the same rank.");
+        if (inputs.Length < 1) throw new ArgumentException("At least one tensor must be specified for the concat operation.", nameof(inputs));
+        if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException($"Each input tensor in a concat operation must be of the same rank.", nameof(inputs));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(inputs[0].Rank, axis);
-        if (axis < 0 || axis >= inputs[0].Rank) throw new ArgumentException(nameof(axis), "The concat axis is out of range.");
+        if (axis < 0 || axis >= inputs[0].Rank) throw new ArgumentException("The concat axis is out of range.", nameof(axis));
         int normalizedAxis = axis;
         if (!inputs.All(i => i.dimensions.Select((d, n) => n == normalizedAxis ? 0 : d - inputs[0].dimensions[n]).All(s => s == 0)))
-            throw new ArgumentException(nameof(inputs), "The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.");
+            throw new ArgumentException("The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.", nameof(inputs));
         var shape = inputs[0].dimensions.Copy();
         shape[axis] = 0;
         foreach (var input in inputs) shape[axis] += input.dimensions[axis];
@@ -672,7 +672,7 @@ where T : unmanaged
     {
         var shape = ConcatShape(inputs, ref axis);
         if (destination is not null && (!destination.Dimensions.SequenceEqual(shape) || !HasStandardStrides(destination)))
-            throw new ArgumentException(nameof(destination), "Destination must be contiguous and match the concatenated shape.");
+            throw new ArgumentException("Destination must be contiguous and match the concatenated shape.", nameof(destination));
 
         StartOpStage(OpStage.Copy);
         var output = destination ?? DenseTensor<T>.OfShape(shape);
@@ -718,14 +718,14 @@ where T : unmanaged
     public static Tensor<T> Slice(Tensor<T> data, Tensor<int> start, Tensor<int> ends, Tensor<int>? axes, Tensor<int>? steps)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (data.Rank == 0) throw new ArgumentException(nameof(data), "Cannot slice a tensor of rank 0.");
-        if (start.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the start tensor must be 1.");
-        if (start.Length > data.Rank) throw new ArgumentException(nameof(start), "The length of the start tensor must be less-than or equal to the rank of the data tensor.");
-        if (ends.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the end tensor must be 1");
-        if (start.Length != ends.Length) throw new ArgumentException(nameof(ends), "The end tensor must be the same length as the start tensor.");
-        if (axes is not null && (axes.Rank != 1 || axes.Length != start.Length)) throw new ArgumentException(nameof(axes), "The axes tensor must be a rank 1 tensor with the same length as the start tensor.");
-        if (steps is not null && (steps.Rank != 1 || steps.Length != start.Length)) throw new ArgumentException(nameof(steps), "The steps tensor must be a rank 1 tensor with the same length as the start tensor.");
-        if (steps is not null && steps.Any(s => s == 0)) throw new ArgumentException(nameof(steps), "Slice steps must be non-zero.");
+        if (data.Rank == 0) throw new ArgumentException("Cannot slice a tensor of rank 0.", nameof(data));
+        if (start.Rank != 1) throw new ArgumentException("The rank of the start tensor must be 1.", nameof(start));
+        if (start.Length > data.Rank) throw new ArgumentException("The length of the start tensor must be less-than or equal to the rank of the data tensor.", nameof(start));
+        if (ends.Rank != 1) throw new ArgumentException("The rank of the end tensor must be 1", nameof(ends));
+        if (start.Length != ends.Length) throw new ArgumentException("The end tensor must be the same length as the start tensor.", nameof(ends));
+        if (axes is not null && (axes.Rank != 1 || axes.Length != start.Length)) throw new ArgumentException("The axes tensor must be a rank 1 tensor with the same length as the start tensor.", nameof(axes));
+        if (steps is not null && (steps.Rank != 1 || steps.Length != start.Length)) throw new ArgumentException("The steps tensor must be a rank 1 tensor with the same length as the start tensor.", nameof(steps));
+        if (steps is not null && steps.Any(s => s == 0)) throw new ArgumentException("Slice steps must be non-zero.", nameof(steps));
         
         StartOpStage(OpStage.CalculateIndices);
         int length = Convert.ToInt32(start.Length);
@@ -737,8 +737,8 @@ where T : unmanaged
         {
             axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray().ToTensor<int>();
         }
-        if (!ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "Slice axes must be distinct.");
-        if (axes.Any(a => a < 0 || a >= data.Rank)) throw new ArgumentException(nameof(axes), "Slice axes must index dimensions of the data tensor.");
+        if (!ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException("Slice axes must be distinct.", nameof(axes));
+        if (axes.Any(a => a < 0 || a >= data.Rank)) throw new ArgumentException("Slice axes must index dimensions of the data tensor.", nameof(axes));
         if (steps is null)
         {
             steps = Tensor<int>.Ones(length);

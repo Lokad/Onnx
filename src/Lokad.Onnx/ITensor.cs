@@ -207,7 +207,7 @@ public class TensorInputShapeException : ArgumentException
     public int[] Shape { get; set; }
 
     public string Name { get; set; }
-    public TensorInputShapeException(string paramName, int[] shape, ITensor input) : base(paramName, $"The input parameter {paramName} has shape {input.PrintShape()} but is required to be {shape.Print()}.")
+    public TensorInputShapeException(string paramName, int[] shape, ITensor input) : base($"The input parameter {paramName} has shape {input.PrintShape()} but is required to be {shape.Print()}.", paramName)
     {
         Name = paramName;
         Shape = shape;

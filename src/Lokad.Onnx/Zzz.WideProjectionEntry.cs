@@ -25,12 +25,12 @@ public abstract partial class Tensor<T> where T : unmanaged
     {
         options.Validate();
         StartOpStage(OpStage.ValidateArguments);
-        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
-        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
+        if (x.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(x));
+        if (y.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(y));
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException($"The number of columns in the first matrix ({x.Dimensions[1]}) is not equal to the number of rows in the second matrix ({y.Dimensions[0]}).");
-        if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != x.Dimensions[0] || destination.Dimensions[1] != y.Dimensions[1]) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
-        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
-        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrices.");
+        if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != x.Dimensions[0] || destination.Dimensions[1] != y.Dimensions[1]) throw new ArgumentException("Destination shape must match the matrix product shape.", nameof(destination));
+        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException("Destination must not alias the input matrices.", nameof(destination));
         if (clearDestination) destination.Buffer.Span.Clear();
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];

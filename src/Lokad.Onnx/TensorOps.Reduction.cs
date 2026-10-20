@@ -589,7 +589,7 @@ internal readonly struct ReductionPlan
         {
             int a = raw[i] < 0 ? raw[i] + rank : raw[i];
             if (a < 0 || a >= rank)
-                throw new System.ArgumentException(nameof(axes), $"Axis {raw[i]} is out of range for tensor rank {rank}.");
+                throw new System.ArgumentException($"Axis {raw[i]} is out of range for tensor rank {rank}.", nameof(axes));
             normalized[i] = a;
         }
         return new ReductionPlan(false, normalized.Distinct().ToArray(), keepDims);

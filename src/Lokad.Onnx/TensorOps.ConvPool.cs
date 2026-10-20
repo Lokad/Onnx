@@ -105,11 +105,11 @@ where T : unmanaged
         }
         if (pads is null || pads.Length != 4)
         {
-            throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
+            throw new ArgumentException("Explicit pads must have four values [begin_h, begin_w, end_h, end_w].", nameof(pads));
         }
         if (pads.Any(p => p < 0))
         {
-            throw new ArgumentException(nameof(pads), "Explicit pads must be non-negative.");
+            throw new ArgumentException("Explicit pads must be non-negative.", nameof(pads));
         }
         if (strides == null)
         {
@@ -590,11 +590,11 @@ where T : unmanaged
         }
         if (pads is null || pads.Length != 4)
         {
-            throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
+            throw new ArgumentException("Explicit pads must have four values [begin_h, begin_w, end_h, end_w].", nameof(pads));
         }
         if (pads.Any(p => p < 0))
         {
-            throw new ArgumentException(nameof(pads), "Explicit pads must be non-negative.");
+            throw new ArgumentException("Explicit pads must be non-negative.", nameof(pads));
         }
         if (strides == null)
         {

@@ -174,8 +174,8 @@ where T : unmanaged
         if (other is null) throw new ArgumentNullException(nameof(other));
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         if (!BroadcastShape(Dimensions, other.Dimensions, out var shape)) throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-        if (!destination.Dimensions.SequenceEqual(shape)) throw new ArgumentException(nameof(destination), "Destination shape must match the broadcast shape.");
-        if (destination is not DenseTensor<T> dense || !HasStandardStrides(dense)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (!destination.Dimensions.SequenceEqual(shape)) throw new ArgumentException("Destination shape must match the broadcast shape.", nameof(destination));
+        if (destination is not DenseTensor<T> dense || !HasStandardStrides(dense)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         BroadcastApplyInto<TOp>(other, dense, options, shape);
         return dense;
     }
@@ -204,8 +204,8 @@ where T : unmanaged
         if (op is null) throw new ArgumentNullException(nameof(op));
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         if (!BroadcastShape(Dimensions, other.Dimensions, out var shape)) throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-        if (!destination.Dimensions.SequenceEqual(shape)) throw new ArgumentException(nameof(destination), "Destination shape must match the broadcast shape.");
-        if (destination is not DenseTensor<T> dense || !HasStandardStrides(dense)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (!destination.Dimensions.SequenceEqual(shape)) throw new ArgumentException("Destination shape must match the broadcast shape.", nameof(destination));
+        if (destination is not DenseTensor<T> dense || !HasStandardStrides(dense)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         BroadcastApplyFuncInto(other, op, dense, shape);
         return dense;
     }
@@ -437,7 +437,7 @@ where T : unmanaged
         var targetRank = targetShape.Length;
         if (input.Rank > targetRank)
         {
-            throw new ArgumentException(nameof(targetShape), "Target shape has fewer dimensions than the input tensor.");
+            throw new ArgumentException("Target shape has fewer dimensions than the input tensor.", nameof(targetShape));
         }
 
         var paddedInputDims = new int[targetRank];
@@ -460,7 +460,7 @@ where T : unmanaged
             // mismatches still throw below in the per-dimension loop.
             if (dim < 0 || (dim == 0 && paddedInputDims[i] != 0 && paddedInputDims[i] != 1))
             {
-                throw new ArgumentException(nameof(targetShape), "Target shape dimensions must be positive or -1.");
+                throw new ArgumentException("Target shape dimensions must be positive or -1.", nameof(targetShape));
             }
             normalizedShape[i] = dim;
         }
@@ -484,7 +484,7 @@ where T : unmanaged
                 result = result.BroadcastDim(i, targetDim);
                 continue;
             }
-            throw new ArgumentException(nameof(targetShape), $"Cannot broadcast dimension {dim} to {targetDim}.");
+            throw new ArgumentException($"Cannot broadcast dimension {dim} to {targetDim}.", nameof(targetShape));
         }
         return result;
     }
@@ -526,7 +526,7 @@ where T : unmanaged
             var targetDim = targetShape[i];
             // Negative dims fail like the native engine (ORT 1.29); -1 is not
             // a keep marker here, unlike Reshape.
-            if (targetDim < 0) throw new ArgumentException(nameof(targetShape), "Expand shape dimensions must be non-negative.");
+            if (targetDim < 0) throw new ArgumentException("Expand shape dimensions must be non-negative.", nameof(targetShape));
             if (targetDim == 1 && inputDim > 1)
             {
                 // Keep-dim on target 1: variable-size models (verified on the DINOv2 position-embedding interpolation path at 224 and 518 pixels) emit shape masks that collapse to 1 for dimensions that must be preserved, so 1 means keep here rather than broadcast.
@@ -542,7 +542,7 @@ where T : unmanaged
                 result = result.BroadcastDim(i, targetDim);
                 continue;
             }
-            throw new ArgumentException(nameof(targetShape), $"Cannot broadcast dimension {inputDim} to {targetDim}.");
+            throw new ArgumentException($"Cannot broadcast dimension {inputDim} to {targetDim}.", nameof(targetShape));
         }
 
         return result;

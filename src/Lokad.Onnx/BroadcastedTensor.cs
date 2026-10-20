@@ -13,11 +13,11 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     {
         if (broadcastedDims.Length == 0)
         {
-            throw new ArgumentException(nameof(broadcastedDims), "The number of broadcasted dimensions cannot be 0.");
+            throw new ArgumentException("The number of broadcasted dimensions cannot be 0.", nameof(broadcastedDims));
         }
         if (broadcastedDims.Length > dimensions.Length) 
         { 
-            throw new ArgumentException(nameof(broadcastedDims), "The number of broadcasted dimensions cannot be more than the number of source dimensions.");
+            throw new ArgumentException("The number of broadcasted dimensions cannot be more than the number of source dimensions.", nameof(broadcastedDims));
         }
         this.source = source;
         this.broadcastedDims = broadcastedDims;
@@ -167,7 +167,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     public override Tensor<T> RemoveDim(int dim)
     {
         if (dim >= Rank) throw new ArgumentException(nameof(dim));
-        if (dimensions[dim] != 1) throw new ArgumentException(nameof(dim), $"Can only remove a dimension of size 1. Dimension {dim} has size {dimensions[dim]}.");
+        if (dimensions[dim] != 1) throw new ArgumentException($"Can only remove a dimension of size 1. Dimension {dim} has size {dimensions[dim]}.", nameof(dim));
         var dims = dimensions.ToList();
         dims.RemoveAt(dim);
         var bdims = broadcastedDims.Copy();

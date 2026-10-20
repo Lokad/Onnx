@@ -732,7 +732,7 @@ where T : unmanaged
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         (options ?? TensorExecutionOptions.Auto).Validate();
         var dx = x.ToDenseTensor();
-        if (!destination.Dimensions.SequenceEqual(dx.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
+        if (!destination.Dimensions.SequenceEqual(dx.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
         GeluTanhSpanFloat(dx.Buffer.Span, destination.Buffer.Span);
         return destination;
     }
@@ -922,9 +922,9 @@ where T : unmanaged
     public static Tensor<float> Softmax(Tensor<float> x, int axis, TensorExecutionOptions? options, int opsetVersion)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (x.Rank < 1) throw new ArgumentException(nameof(x), "Softmax requires a tensor of rank 1 or more.");
+        if (x.Rank < 1) throw new ArgumentException("Softmax requires a tensor of rank 1 or more.", nameof(x));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
-        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException("The specified axis must be a dimension of the tensor.", nameof(axis));
         var denseInput = x.ToDenseTensor();
         var output = new DenseTensor<float>(denseInput.Dimensions);
         StartOpStage(OpStage.Math);
@@ -1075,7 +1075,7 @@ where T : unmanaged
     /// </summary>
     internal static unsafe void SoftmaxMaskedFloatSpanPtr(System.Span<float> inputSpan, System.Span<float> maskSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
     {
-        if (maskSpan.Length < block) throw new ArgumentException(nameof(maskSpan), "Mask row must cover a full block.");
+        if (maskSpan.Length < block) throw new ArgumentException("Mask row must cover a full block.", nameof(maskSpan));
         fixed (float* px = inputSpan, pm = maskSpan, py = outputSpan)
         {
             int w = Vector<float>.Count;
@@ -1346,12 +1346,12 @@ where T : unmanaged
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         StartOpStage(OpStage.ValidateArguments);
-        if (x.Rank < 1) throw new ArgumentException(nameof(x), "Softmax requires a tensor of rank 1 or more.");
+        if (x.Rank < 1) throw new ArgumentException("Softmax requires a tensor of rank 1 or more.", nameof(x));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
-        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException("The specified axis must be a dimension of the tensor.", nameof(axis));
         var denseInput = x.ToDenseTensor();
-        if (!destination.Dimensions.SequenceEqual(denseInput.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
-        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (!destination.Dimensions.SequenceEqual(denseInput.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         StartOpStage(OpStage.Math);
         SoftmaxFloatInto(denseInput, destination, axis, options ?? TensorExecutionOptions.Auto, opsetVersion);
         return destination;
@@ -1360,9 +1360,9 @@ where T : unmanaged
     public static Tensor<double> Softmax(Tensor<double> x, int axis, TensorExecutionOptions? options, int opsetVersion)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (x.Rank < 1) throw new ArgumentException(nameof(x), "Softmax requires a tensor of rank 1 or more.");
+        if (x.Rank < 1) throw new ArgumentException("Softmax requires a tensor of rank 1 or more.", nameof(x));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
-        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException("The specified axis must be a dimension of the tensor.", nameof(axis));
         var denseInput = x.ToDenseTensor();
         var output = new DenseTensor<double>(denseInput.Dimensions);
         StartOpStage(OpStage.Math);
