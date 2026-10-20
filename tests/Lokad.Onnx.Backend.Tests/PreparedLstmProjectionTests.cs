@@ -5,6 +5,7 @@ namespace Lokad.Onnx.Backend.Tests;
 
 // Same helpers and fact bodies as the validated LSTM layout contracts.
 // Captured-model and exact-VM identity checks stay in their original campaign.
+[Collection("NonParallelAllocation")]
 public class PreparedLstmProjectionTests
 {
     const int H = 640, Outputs = 4 * H;

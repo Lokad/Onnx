@@ -6,6 +6,7 @@ namespace Lokad.Onnx.Backend.Tests;
 
 // Portable regression coverage extracted from the closed prepared-row contracts.
 // The real Parakeet fixture and runtime/product guards remain in that campaign.
+[Collection("NonParallelAllocation")]
 public unsafe class PreparedSingleRowTests
 {
     delegate void PackedKernel(int n, int k, float* a, float* packed, float* output);

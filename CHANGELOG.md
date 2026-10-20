@@ -58,8 +58,8 @@
 - LSTM projection exceptional-value tests preserve NaN classification while
   checking all finite values, signed zeros and infinities bit-for-bit, avoiding
   an unspecified NaN-payload comparison across compiled reductions.
-- Packed-column kernel allocation checks isolate the test measurement interval
-  from the test loop's JIT transitions while retaining the zero-allocation gate.
+- Exact-zero kernel allocation checks use the existing nonparallel collection
+  to avoid interference from concurrent tests; numerical/allocation gates remain.
 
 ### Qualification and limitations
 

@@ -62,10 +62,19 @@ without retries; guards, immutability and allocation assertions stay enforced.
 
 The initial CI run passed eight jobs and failed the Ubuntu vector allocation
 check in `PackedColumnRemainderTests`: it observed 1,136 bytes instead of zero.
-The measurement interval now lives in a separate non-inlined, optimized test
-helper, keeping test-loop tier promotion and assertions outside its counters.
-The production kernel and zero-allocation requirement remain unchanged. Local
-focused checks pass; no failed CI job was retried.
+An isolated measurement helper passed that job but did not address the wider
+problem: the next Windows vector run observed 3,512 bytes in the LSTM allocation
+check. The helper was removed. Packed-column, prepared-LSTM and prepared-row
+exact-zero checks now join the existing `NonParallelAllocation` collection, so
+other test classes cannot allocate concurrently. Production arithmetic/JIT
+policy and zero-allocation assertions remain unchanged. No failed job was retried.
+The complete local coverage-enabled suite then passes all allocation checks;
+its only failure is the identical pre-existing Windows ResNet hash above.
+
+The first local Gemma reference predates the explicit 512-token boundary case.
+That case was checked separately from the retained current native reference in
+all three modes, including against the final runtime. Together the checks cover
+all fourteen current text cases plus mixed-batch, with 75 arrays per mode.
 
 Removing legacy-routing hooks left one reference softmax with only test callers.
 That method now lives in shared test support, with unchanged arithmetic. All ten
@@ -84,15 +93,24 @@ vector; tokenization/model loading are outside its timer.
 |---|---:|---:|---:|---:|
 | Gemma FP32, 128 tokens | 165.51 ms | 167.58 ms | 0.9983 | 0.6% |
 | Gemma FP32, 512 tokens | 785.90 ms | 739.08 ms | 1.0013 | 0.1% |
+| e5, 30 tokens | 10.09 ms | 7.67 ms | 1.0012 | 0.3% |
 
-Both observations are consistent with no material change. They are descriptive
+All observations are consistent with no material change. They are descriptive
 engineering comparisons, with no calibrated sub-percent improvement claim.
 The later follow-up changes reference-code placement and benchmark/test guards;
 the measured model arithmetic stays the same. Published benchmark headline
 figures remain unchanged.
+
+The existing Gemma worker pins ORT 1.29.0; the existing common e5 worker pins
+ORT 1.23.2. Each comparison uses the same native binary for both cores. All 792
+calls, numerical checks, affinity and bound evidence files pass independent
+reload; maximum unrelated guest CPU fraction is 0.121%. No benchmark setting or
+service CPU policy was changed, and measurement workers are terminal.
 
 ## Retained evidence
 
 Build, archive recovery, numerical, package/API and practical timing receipts
 are local under ignored `artifacts/simplification-20261020`. The original
 cleanup remains independently documented in [its report](cleanup-20261019.md).
+The practical evidence archive contains 239 files, SHA-256
+`62baeefa8bdee9a233c8ee241d709d6a1fa37c3bf8c20319bfeee20a207f8066`.
