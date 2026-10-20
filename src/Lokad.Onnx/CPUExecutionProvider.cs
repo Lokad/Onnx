@@ -21,7 +21,7 @@ public enum OptimizationMode
 
 public partial class CPUExecutionProvider
 {
-    public static IReadOnlyList<OpType> SupportedOps { get; } = OperatorSchemas.All.Keys.ToList();
+    public static IReadOnlyList<OpType> SupportedOps { get; } = Array.AsReadOnly(OperatorSchemas.All.Keys.ToArray());
 
     public static bool SupportsOp(OpType op) => OperatorSchemas.All.ContainsKey(op);
 

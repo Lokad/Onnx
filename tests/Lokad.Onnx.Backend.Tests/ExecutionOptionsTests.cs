@@ -83,8 +83,17 @@ public class ExecutionOptionsTests
     [Fact]
     public void SupportedOps_IsReadOnly()
     {
-        Assert.IsAssignableFrom<System.Collections.Generic.IReadOnlyList<OpType>>(CPUExecutionProvider.SupportedOps);
+        var before = CPUExecutionProvider.SupportedOps.ToArray();
+        var mutable = Assert.IsAssignableFrom<IList<OpType>>(CPUExecutionProvider.SupportedOps);
+        Assert.True(mutable.IsReadOnly);
+        Assert.Throws<NotSupportedException>(() => mutable[0] = OpType.MatMul);
+        Assert.Throws<NotSupportedException>(() => mutable.Add(OpType.MatMul));
+        Assert.Throws<NotSupportedException>(() => mutable.Remove(OpType.MatMul));
+        Assert.Throws<NotSupportedException>(() => mutable.Clear());
+        Assert.Equal(before, CPUExecutionProvider.SupportedOps);
+        Assert.Equal(OperatorSchemas.All.Keys, CPUExecutionProvider.SupportedOps);
         Assert.Contains(OpType.MatMul, CPUExecutionProvider.SupportedOps);
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.MatMul));
     }
 
     [SkippableFact]

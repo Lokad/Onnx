@@ -8,6 +8,23 @@ namespace Lokad.Onnx.Backend.Tests;
 // arity and versions resolve once, and every rejection names its reason.
 public class OperatorSchemaTests
 {
+    [Fact]
+    public void Schemas_RejectConsumerMutationWithoutChangingBackendSupport()
+    {
+        var before = OperatorSchemas.All.ToArray();
+        var mutable = Assert.IsAssignableFrom<IDictionary<OpType, OperatorSchema>>(OperatorSchemas.All);
+        Assert.True(mutable.IsReadOnly);
+        var matmul = mutable[OpType.MatMul];
+        Assert.Throws<NotSupportedException>(() => mutable[OpType.MatMul] = new OperatorSchema());
+        Assert.Throws<NotSupportedException>(() => mutable.Add(OpType.MatMul, matmul));
+        Assert.Throws<NotSupportedException>(() => mutable.Remove(OpType.MatMul));
+        Assert.Throws<NotSupportedException>(() => mutable.Clear());
+        Assert.Equal(before, OperatorSchemas.All.ToArray());
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.MatMul));
+        Assert.True(CPUExecutionProvider.SupportsNode(Nod(OpType.MatMul, "", 13,
+            new[] { "a", "b" }, new[] { "c" }, false)));
+    }
+
     static ComputationalGraph Graph(int opset)
     {
         return new ComputationalGraph

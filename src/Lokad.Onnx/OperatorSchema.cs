@@ -2,6 +2,7 @@ namespace Lokad.Onnx;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 /// <summary>
@@ -33,7 +34,7 @@ public static class OperatorSchemas
     static OperatorSchema Def(OpType op, int minInputs, int maxInputs) =>
         Def(op, minInputs, maxInputs, 1, 1, 1, false);
 
-    public static IReadOnlyDictionary<OpType, OperatorSchema> All { get; } = new Dictionary<OpType, OperatorSchema>
+    public static IReadOnlyDictionary<OpType, OperatorSchema> All { get; } = new ReadOnlyDictionary<OpType, OperatorSchema>(new Dictionary<OpType, OperatorSchema>
     {
         [OpType.Reshape] = Def(OpType.Reshape, 2, 2),
         [OpType.Add] = Def(OpType.Add, 2, 2),
@@ -104,7 +105,7 @@ public static class OperatorSchemas
         [OpType.InstanceNormalization] = Def(OpType.InstanceNormalization, 3, 3, 1, 1, 6, false),
         [OpType.LeakyRelu] = Def(OpType.LeakyRelu, 1, 1, 1, 1, 6, false),
         [OpType.LogSoftmax] = Def(OpType.LogSoftmax, 1, 1),
-    };
+    });
 
     public static bool IsStandardDomain(string? domain) =>
         string.IsNullOrEmpty(domain) || domain == "ai.onnx";
