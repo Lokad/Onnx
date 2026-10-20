@@ -31,6 +31,12 @@ The null-suppression and documentation syntax scanners have also been retired;
 compiled assembly metadata still checks the approved friend boundary. Normal
 maintenance does not depend on SDK-internal analysis assemblies or a member-retention registry.
 
+Use `OnnxImport.LoadOrThrow` when an import failure must belong to its caller.
+The nullable `Load` overloads retain process-wide, last-write-wins diagnostics
+for compatibility. Optimizer passes have one immutable canonical order, with
+per-run/environment disable controls. The [correctness follow-up](engineering-fixes-20261020.md)
+records the view-index fixes, import/cache ownership and full ResNet reference.
+
 Keep independent numerical expectations in `tests/Shared/ReferenceKernels`.
 Calling the optimized implementation from its reference would invalidate the
 comparison. The prepared LSTM projection contract compares every finite value,
