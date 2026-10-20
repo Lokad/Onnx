@@ -52,29 +52,37 @@ public class GraphExecutionResNetTests
         Assert.True(maxDiff > 0.1, "Ramp input barely moved the ResNet output (max diff " + maxDiff + ").");
     }
 
-    [SkippableFact]
-    public void ResNetOutput_MatchesFrozenBitHash()
+    [SkippableTheory]
+    [InlineData("constant", "default")]
+    [InlineData("constant", "scalar")]
+    [InlineData("constant", "simd")]
+    [InlineData("ramp", "default")]
+    [InlineData("ramp", "scalar")]
+    [InlineData("ramp", "simd")]
+    public void ResNetOutput_MatchesCompleteNativeReference(string sample, string mode)
     {
-        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "Bit-exact hash requires x86 FMA.");
         var graph = ModelFixture.LoadRequiredModel("ResNet50", "models", "resnet50-onnx", "model.onnx");
         var input = DenseTensor<float>.OfShape(1, 3, 224, 224);
-        input.Fill(0.5f);
-        ModelFixture.AssertExecuted(graph, graph.Execute(new ITensor[] { input }, true));
-        // The mean binds this run to the ORT 1.29 reference above; the hash
-        // then freezes every output bit, so a defect in any unsampled element fails.
+        for (int i = 0; i < input.Buffer.Length; i++)
+            input.Buffer.Span[i] = sample == "constant" ? .5f : (i % 256) / 256f;
+        var inputSnapshot = input.ToArray();
+        var options = mode == "scalar" ? ExecutionOptions.Scalar : mode == "simd" ? ExecutionOptions.Simd : ExecutionOptions.Default;
+        ModelFixture.AssertExecuted(graph, graph.Execute(new ITensor[] { input }, true, ExecutionProvider.CPU, options));
         var values = ModelFixture.CheckedOutput(graph, "output");
-        ModelFixture.AssertMean(values, 0.0070858793, 1e-6, "resnet50");
-        Assert.Equal(15780008002253672869UL, HashBits(values));
-    }
-
-    static ulong HashBits(float[] values)
-    {
-        ulong h = 1469598103934665603UL;
-        foreach (var v in values)
+        using var fixture = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "fixtures", "resnet-ort.json")));
+        var expected = fixture.RootElement.GetProperty("cases").GetProperty(sample).GetProperty("values").EnumerateArray().Select(v => v.GetSingle()).ToArray();
+        Assert.Equal(2048, expected.Length);
+        Assert.Equal(expected.Length, values.Length);
+        for (int i = 0; i < values.Length; i++)
         {
-            h ^= (ulong)(uint)System.BitConverter.SingleToInt32Bits(v);
-            h *= 1099511628211UL;
+            double error = Math.Abs((double)values[i] - expected[i]);
+            double bound = 1e-5 * Math.Max(1, Math.Abs(expected[i]));
+            Assert.True(float.IsFinite(values[i]) && error <= bound, $"{sample}/{mode}[{i}]: {values[i]:R} versus {expected[i]:R}, error {error:R}, bound {bound:R}");
         }
-        return h;
+        var held = (Tensor<float>)graph.Outputs["output"]!;
+        ModelFixture.AssertExecuted(graph, graph.Execute(new ITensor[] { input }, true, ExecutionProvider.CPU, options));
+        Assert.Equal(values.Select(BitConverter.SingleToInt32Bits), ModelFixture.CheckedOutput(graph, "output").Select(BitConverter.SingleToInt32Bits));
+        Assert.Equal(values, held.ToArray());
+        Assert.Equal(inputSnapshot, input.ToArray());
     }
 }

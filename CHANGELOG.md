@@ -21,6 +21,14 @@
 
 ### Changed
 
+- Destination alias checks resolve nested views to root storage and reject
+  unresolved overlap before writing. Concurrent companion model loads use
+  call-specific exceptions through `OnnxImport.LoadOrThrow`.
+- The optimizer uses one immutable ordered pass set. Named BERT loads share
+  per-key work outside the global cache gate; string joins enumerate once.
+- ResNet conformance compares complete independent ORT vectors in all execution
+  modes and checks exact managed repeats, replacing a historical implementation
+  hash. See [the reference contract](tests/resnet/README.md).
 - Ordinary test builds include the CLI and test projects; ancillary benchmark
   and runner projects compile once in the normal CI matrix instead of four times.
 - Immutable execution-option presets are reused, and ordinary/wall-only graph

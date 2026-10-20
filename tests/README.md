@@ -25,6 +25,9 @@ job. Add `-Coverage` to collect Cobertura reports under ignored
 
 Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md`).
 
+Local ResNet conformance checks complete native-reference vectors and exact
+managed repeats; see [reference generation and bounds](resnet/README.md).
+
 EmbeddingGemma 2 conformance: `eng/test-embeddinggemma2.ps1` checks exact tokenization,
 frozen tensor execution, owned vectors, Data API, CLI, and repeatability against
 Python/native references at 128/256/512/768 dimensions. It requires explicitly
