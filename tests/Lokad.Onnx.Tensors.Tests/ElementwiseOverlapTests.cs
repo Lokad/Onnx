@@ -86,6 +86,32 @@ public class ElementwiseOverlapTests
         }
     }
 
+    sealed class CustomApply : DenseTensor<float>
+    {
+        public int Calls;
+        public CustomApply() : base(4) { }
+        public override void Apply(Func<float, float> operation, Tensor<float> destination)
+        {
+            Calls++;
+            base.Apply(operation, destination);
+        }
+        public override void Apply(Func<float, float, float> operation, Tensor<float> other, Tensor<float> destination)
+        {
+            Calls++;
+            base.Apply(operation, other, destination);
+        }
+    }
+
+    [Fact]
+    public void VectorFallback_RetainsVirtualApplyDispatch()
+    {
+        var source = new CustomApply();
+        var destination = DenseTensor<float>.OfShape(4);
+        source.VectorizedApply(static x => x + x, static x => x * 2, destination, TensorExecutionOptions.Simd);
+        source.VectorizedApply(static (x, y) => x + y, static (x, y) => x + y, destination, destination, TensorExecutionOptions.Simd);
+        Assert.Equal(2, source.Calls);
+    }
+
     [Fact]
     public void ExactInPlaceAndDisjointDenseWindows_AvoidPayloadSnapshots()
     {

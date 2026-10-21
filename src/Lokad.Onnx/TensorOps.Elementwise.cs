@@ -104,6 +104,11 @@ where T : unmanaged
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, Tensor<T> destination, TensorExecutionOptions options)
     {
         CheckDestination(destination);
+        if (!IsDirectSpanCompatible(this))
+        {
+            Apply(sop, destination);
+            return;
+        }
         var source = PreserveElementwiseSource(this, destination);
         if (options.UseSimd && source is DenseTensor<T> input && destination is DenseTensor<T> output
             && IsDirectSpanCompatible(source) && IsDirectSpanCompatible(destination) && SameElementOrder(source, destination))
@@ -116,7 +121,7 @@ where T : unmanaged
         }
         else
         {
-            for (int i = 0; i < Length; i++) destination.SetLogicalValue(i, sop(source.GetLogicalValue(i)));
+            source.Apply(sop, destination);
         }
     }
 
@@ -178,6 +183,11 @@ where T : unmanaged
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, Tensor<T> destination, TensorExecutionOptions options)
     {
         CheckBinaryDestination(tensor2, destination);
+        if (!IsDirectSpanCompatible(this))
+        {
+            Apply(sop, tensor2, destination);
+            return;
+        }
         var left = PreserveElementwiseSource(this, destination);
         var right = ReferenceEquals(this, tensor2) ? left : PreserveElementwiseSource(tensor2, destination);
         if (options.UseSimd && left is DenseTensor<T> first && right is DenseTensor<T> second && destination is DenseTensor<T> output
@@ -193,7 +203,7 @@ where T : unmanaged
         }
         else
         {
-            for (int i = 0; i < Length; i++) destination.SetLogicalValue(i, sop(left.GetLogicalValue(i), right.GetLogicalValue(i)));
+            left.Apply(sop, right, destination);
         }
     }
 
