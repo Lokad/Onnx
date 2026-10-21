@@ -206,7 +206,7 @@ public class GraphBufferReuseTests
         for (int i = 0; i < data.Length; i++) data[i] = -6f + 12f * i / (data.Length - 1);
         var x = DenseTensor<float>.OfValues(data);
         var expected = x.Apply((float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f)));
-        foreach (var options in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd, TensorExecutionOptions.Intrinsics })
+        foreach (var options in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd, TensorExecutionOptions.Auto })
         {
             var actual = Tensor<float>.Gelu(x, options);
             float worst = 0f;

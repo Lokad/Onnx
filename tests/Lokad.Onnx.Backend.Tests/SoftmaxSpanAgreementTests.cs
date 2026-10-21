@@ -40,7 +40,7 @@ public class SoftmaxSpanAgreementTests
         var legacy = new float[x.Length];
         Lokad.Onnx.Tests.Support.ReferenceSoftmaxKernels.SoftmaxContiguousFloat((float[])x.Clone(), legacy, outer, block, true);
         var input = new DenseTensor<float>((float[])x.Clone(), new[] { outer, block });
-        var span = Tensor<float>.Softmax(input, 1, TensorExecutionOptions.Intrinsics, 13).ToDenseTensor().Buffer.Span.ToArray();
+        var span = Tensor<float>.Softmax(input, 1, TensorExecutionOptions.Auto, 13).ToDenseTensor().Buffer.Span.ToArray();
         double worst = 0;
         for (int i = 0; i < x.Length; i++)
         {
@@ -100,7 +100,7 @@ public class SoftmaxSpanAgreementTests
     static float[] RunDefault(float[] x, int[] dims, int axis)
     {
         var input = new DenseTensor<float>((float[])x.Clone(), dims);
-        return Tensor<float>.Softmax(input, axis, TensorExecutionOptions.Intrinsics, 13).ToDenseTensor().Buffer.Span.ToArray();
+        return Tensor<float>.Softmax(input, axis, TensorExecutionOptions.Auto, 13).ToDenseTensor().Buffer.Span.ToArray();
     }
 
     [Fact]
