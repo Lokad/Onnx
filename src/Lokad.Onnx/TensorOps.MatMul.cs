@@ -48,6 +48,9 @@ where T : unmanaged
         {
             throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
         }
+        // Normalize original operands before adding repeated batch dimensions.
+        px = RequireBatchOperand(px, nameof(px), copy);
+        py = RequireBatchOperand(py, nameof(py), copy);
         var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
         if (!Tensor<TElement>.Broadcast(px, bdx, out var bx))
         {
@@ -59,13 +62,13 @@ where T : unmanaged
             throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
         }
         var z = DenseTensor<TElement>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-        var cbx = RequireContiguous(bx, nameof(bx), copy);
-        var cby = RequireContiguous(by, nameof(by), copy);
+        var cbx = RequireBatchOperand(bx, nameof(bx), copy);
+        var cby = RequireBatchOperand(by, nameof(by), copy);
         bx = cbx;
         by = cby;
         var batchDims = bx.Dimensions[0..^2].ToArray();
-        var xSteps = BatchSteps(batchDims, bx.Dimensions, bx.strides);
-        var ySteps = BatchSteps(batchDims, by.Dimensions, by.strides);
+        var xSteps = BatchSteps(batchDims, bx.Dimensions, BatchStrides(bx));
+        var ySteps = BatchSteps(batchDims, by.Dimensions, BatchStrides(by));
         var zSteps = BatchSteps(batchDims, z.Dimensions, z.strides);
         int batchCount = BatchCount(batchDims);
         return (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, bx.Dimensions[^2], bx.Dimensions[^1], by.Dimensions[^1]);
@@ -559,8 +562,8 @@ where T : unmanaged
         }
     }
 
-    static int[] BatchStrides(Tensor<float> t) =>
-        t is BroadcastedTensor<float> b && b.effectiveStrides is not null ? b.effectiveStrides : t.strides;
+    static int[] BatchStrides<TElement>(Tensor<TElement> t) where TElement : unmanaged =>
+        t is BroadcastedTensor<TElement> b && b.effectiveStrides is not null ? b.effectiveStrides : t.strides;
 
     /// <summary>
     /// Batch-operand preparation: dense tensors pass through as before, and
@@ -568,29 +571,20 @@ where T : unmanaged
     /// zero batch strides instead of being materialized per batch entry.
     /// Every other layout takes the exact previous copy path.
     /// </summary>
-    static Tensor<float> RequireBatchOperand(Tensor<float> t, string name, ICopyAccountant? copy)
+    static Tensor<TElement> RequireBatchOperand<TElement>(Tensor<TElement> t, string name, ICopyAccountant? copy) where TElement : unmanaged
     {
-        if (t is BroadcastedTensor<float> b && HasDenseMatrixCore(b)) return t;
+        if (t is BroadcastedTensor<TElement> b && HasDenseMatrixCore(b)) return t;
         return RequireContiguous(t, name, copy);
     }
 
-    static bool HasDenseMatrixCore(BroadcastedTensor<float> b)
+    static bool HasDenseMatrixCore<TElement>(BroadcastedTensor<TElement> b) where TElement : unmanaged
     {
-        int r = b.Rank;
-        if (r < 2) return false;
-        var dims = b.Dimensions;
-        var eff = b.effectiveStrides;
-        if (eff is null || eff.Length != r) return false;
-        if (eff[r - 1] != 1 || eff[r - 2] != dims[r - 1]) return false;
-        try
-        {
-            var unused = b.Storage;
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        int rank = b.Rank;
+        if (rank < 2 || b.source.GetType() != typeof(DenseTensor<TElement>)
+            || b.source is not DenseTensor<TElement> source || !HasStandardStrides(source)) return false;
+        var effective = b.effectiveStrides;
+        return effective is not null && effective.Length == rank
+            && effective[rank - 1] == 1 && effective[rank - 2] == b.Dimensions[rank - 1];
     }
 
     static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options)

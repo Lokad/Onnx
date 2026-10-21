@@ -25,7 +25,7 @@ public class TensorParallelMatMulTests
         var b = Seq(new[] { 4, 8, 8 }, 100);
         var expected = Tensor<float>.MatMul(a, b);
         foreach (int dop in new[] { 1, 2, 4, 16 })
-            AssertTensorsBitwiseEqual(expected, Tensor<float>.MatMul(a, b, TensorExecutionOptions.Parallel(dop)));
+            AssertTensorsBitwiseEqual(expected, Tensor<float>.MatMul(a, b, TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = dop }));
     }
 
     [SkippableFact]
