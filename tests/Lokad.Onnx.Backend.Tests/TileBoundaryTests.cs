@@ -198,8 +198,8 @@ public class TileBoundaryTests
     [Fact]
     public void FloatRepeats_RejectedCleanly()
     {
-        // ORT refuses non-int repeats at load; the provider threw a bare
-        // ArgumentException from ToIntArray instead of a Failure.
+        // ORT refuses non-int repeats at load; the provider must return
+        // a Failure before reading or converting the repeat values.
         var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
         var f = DenseTensor<float>.OfValues(new float[] { 2f });
         Assert.Equal(OpStatus.Failure, CPU.Tile(x, f, null).Status);

@@ -625,7 +625,7 @@ public partial class CPUExecutionProvider
                 // Saturate before narrowing: unchecked conversion turned 2^40 into 0.
                 axes = ToInt32Saturating(axes);
             }
-            ax = ToIntArray(axes, nameof(axes)).Select(a => a < 0 ? a + data.Rank : a).ToArray();
+            ax = ((Tensor<int>)axes).ToArray().Select(a => a < 0 ? a + data.Rank : a).ToArray();
         }
         if (ax is null || ax.Length == 0)
         {
@@ -842,7 +842,7 @@ public partial class CPUExecutionProvider
                 reps[i] = dd[i] == 0 ? 0 : (int)rl[i];
             }
         }
-        else reps = ToIntArray(repeats, nameof(repeats));
+        else reps = ((Tensor<int>)repeats).ToArray();
         switch (data.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Tile((Tensor<float>)data, reps));

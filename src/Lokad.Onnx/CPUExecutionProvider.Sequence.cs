@@ -51,7 +51,7 @@ public partial class CPUExecutionProvider
                 // checks below then fail descriptively.
                 split = ToInt32Saturating(split);
             }
-            sizes = ToIntArray(split, nameof(split));
+            sizes = ((Tensor<int>)split).ToArray();
             if (sizes.Any(z => z < 0)) return WrongInputShape(op, nameof(split), input, "Split sizes must be non-negative.");
             if (sizes.Select(z => (long)z).Sum() != dim) return WrongInputShape(op, nameof(split), input, "Split sizes must sum to the split dimension.");
         }

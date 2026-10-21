@@ -393,10 +393,7 @@ namespace Lokad.Onnx
         public static void UnsafeCopy<T>(T[] arr1, ref T[] arr2) where T : unmanaged
         {
             if (arr1.Length != arr2.Length) throw new ArgumentException("The arrays must be of the same length.");
-            unsafe
-            {
-                Buffer.BlockCopy(arr1, 0, arr2, 0, arr1.Length * sizeof(T));
-            }
+            arr1.AsSpan().CopyTo(arr2.AsSpan());
         }
     }
 }

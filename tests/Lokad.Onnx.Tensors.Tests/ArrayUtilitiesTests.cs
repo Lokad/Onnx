@@ -32,4 +32,57 @@ public class ArrayUtilitiesTests
         Assert.Throws<NullReferenceException>(() =>
             ArrayUtilities.GetIndices(ReadOnlySpan<int>.Empty, false, 0, (int[])null!, 0));
     }
+
+    [Fact]
+    public void UnsafeCopy_SupportsHalfValues()
+    {
+        AssertCopied(new[] { (Half)1.5f, (Half)(-2), Half.PositiveInfinity });
+    }
+
+    [Fact]
+    public void UnsafeCopy_SupportsBFloat16BitPatterns()
+    {
+        var source = new[] { new BFloat16(0x3FC0), new BFloat16(0x8000), new BFloat16(0x7FC1) };
+        var destination = new BFloat16[source.Length];
+        ArrayUtilities.UnsafeCopy(source, ref destination);
+        Assert.Equal(source.Select(v => v.value), destination.Select(v => v.value));
+    }
+
+    readonly record struct CopyPair(long First, double Second);
+
+    [Fact]
+    public void UnsafeCopy_SupportsUnmanagedStructures()
+    {
+        AssertCopied(new[] { new CopyPair(long.MaxValue, 1.5), new CopyPair(-1, double.NegativeInfinity) });
+    }
+
+    [Fact]
+    public void UnsafeCopy_PreservesPrimitiveEmptyAndSelfCopies()
+    {
+        AssertCopied(new[] { int.MinValue, 0, int.MaxValue });
+        AssertCopied(new[] { true, false, true });
+        AssertCopied(Array.Empty<Half>());
+        var source = new[] { 1, 2, 3 };
+        var destination = source;
+        ArrayUtilities.UnsafeCopy(source, ref destination);
+        Assert.Same(source, destination);
+        Assert.Equal(new[] { 1, 2, 3 }, destination);
+    }
+
+    [Fact]
+    public void UnsafeCopy_RejectsLengthMismatchBeforeWriting()
+    {
+        var destination = new[] { 10 };
+        Assert.Throws<ArgumentException>(() => ArrayUtilities.UnsafeCopy(new[] { 1, 2 }, ref destination));
+        Assert.Equal(new[] { 10 }, destination);
+    }
+
+    static void AssertCopied<T>(T[] source) where T : unmanaged
+    {
+        var destination = new T[source.Length];
+        var originalDestination = destination;
+        ArrayUtilities.UnsafeCopy(source, ref destination);
+        Assert.Same(originalDestination, destination);
+        Assert.Equal(source, destination);
+    }
 }

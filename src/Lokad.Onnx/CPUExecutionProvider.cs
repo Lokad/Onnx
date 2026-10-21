@@ -52,13 +52,6 @@ public partial class CPUExecutionProvider
         throw new ArgumentException("Expected int32/int64 tensor.");
     }
 
-    static int[] ToIntArray(ITensor data, string name)
-    {
-        if (data is Tensor<long> l) return l.ToArray().Select(v => (int)v).ToArray();
-        if (data is Tensor<int> i) return i.ToArray();
-        throw new ArgumentException($"Expected int32/int64 tensor for {name}.");
-    }
-
     static long ToInt64Scalar(ITensor data, string name)
     {
         if (data is Tensor<long> l)

@@ -151,8 +151,8 @@ public class SequenceValueTests
     public void SplitToSequence_FloatSplit_FailsCleanly()
     {
         // ORT refuses scalar and vector float splits at load; the
-        // provider must fail descriptively instead of throwing from
-        // ToInt64Scalar/ToIntArray.
+        // provider must fail descriptively before reading or converting
+        // the split values.
         var x = DenseTensor<float>.OfShape(1, 4);
         var scalar = new DenseTensor<float>(new float[] { 2f }, Array.Empty<int>());
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.SplitToSequence(x, scalar, 1, null, null).Status);
