@@ -23,7 +23,7 @@ where T : unmanaged
     /// Validates LayerNormalization arguments and derives the normalization block geometry.
     /// The axis indexes the input tensor; negative values count from the back.
     /// </summary>
-    static (int Block, int Outer) LayerNormalizationPlan(int rank, int axis, int[] dimensions, long inputLength, long scaleLength, long? biasLength)
+    static (int Block, int Outer) LayerNormalizationPlan(int rank, int axis, ReadOnlySpan<int> dimensions, long inputLength, long scaleLength, long? biasLength)
     {
         int normalizedAxis = axis < 0 ? axis + rank : axis;
         if (normalizedAxis < 0 || normalizedAxis >= rank) throw new ArgumentException(nameof(axis));
@@ -36,25 +36,25 @@ where T : unmanaged
     }
 
     static DenseTensor<TElement> SnapshotOverlappingSource<TElement>(DenseTensor<TElement> source, DenseTensor<TElement> destination) where TElement : unmanaged
-        => TensorAlias.SharesBackingMemory(source, destination) ? Tensor<TElement>.Snapshot(source) : source;
+        => source.Buffer.Span.Overlaps(destination.Buffer.Span) ? Tensor<TElement>.Snapshot(source) : source;
+
+    static (DenseTensor<float>? Mean, DenseTensor<float>? InvStdDev) LayerNormalizationStatistics(ReadOnlySpan<int> dimensions, int axis, int outputCount)
+    {
+        if (outputCount == 1) return (null, null);
+        var shape = dimensions.ToArray();
+        shape.AsSpan(axis < 0 ? axis + shape.Length : axis).Fill(1);
+        return (new DenseTensor<float>(shape), outputCount == 3 ? new DenseTensor<float>(shape) : null);
+    }
 
     /// <summary>
     /// Normalizes over the input dimensions from axis to the last one using scale, optional bias, and epsilon.
     /// Statistics accumulate in double precision; the axis indexes the input tensor.
     /// </summary>
     public static Tensor<float> LayerNormalization(Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, int axis, float epsilon)
-    {
-        var xd = x.ToRowMajor();
-        var sd = scale.ToRowMajor();
-        var bd = bias?.ToRowMajor();
-        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
-        var output = new DenseTensor<float>(xd.Dimensions);
-        LayerNormFloatInto(xd, sd, bd, output, plan.Block, plan.Outer, epsilon);
-        return output;
-    }
+        => LayerNormalizationCore(x, scale, bias, null, axis, epsilon, 1).Output;
 
     /// <summary>Shared float layer-normalization kernel used by both entries.</summary>
-    static void LayerNormFloatInto(DenseTensor<float> xd, DenseTensor<float> sd, DenseTensor<float>? bd, DenseTensor<float> destination, int block, int outer, float epsilon)
+    static void LayerNormFloatInto(DenseTensor<float> xd, DenseTensor<float> sd, DenseTensor<float>? bd, DenseTensor<float> destination, int block, int outer, float epsilon, Span<float> means, Span<float> inverseStdDevs)
     {
         var xs = xd.Buffer.Span;
         var ss = sd.Buffer.Span;
@@ -96,6 +96,8 @@ where T : unmanaged
                 for (; i < block; i++) { double d = xs[off + i] - mean; variance += d * d; }
                 variance /= block;
                 double inv = 1.0 / Math.Sqrt(variance + epsilon);
+                if (!means.IsEmpty) means[o] = (float)mean;
+                if (!inverseStdDevs.IsEmpty) inverseStdDevs[o] = (float)inv;
                 var vinv = new Vector<double>(inv);
                 i = 0;
                 for (; i < vlen; i += wf)
@@ -126,6 +128,8 @@ where T : unmanaged
             for (int i = 0; i < block; i++) { double d = xs[o * block + i] - mean; variance += d * d; }
             variance /= block;
             double inv = 1.0 / Math.Sqrt(variance + epsilon);
+            if (!means.IsEmpty) means[o] = (float)mean;
+            if (!inverseStdDevs.IsEmpty) inverseStdDevs[o] = (float)inv;
             for (int i = 0; i < block; i++) os[o * block + i] = (float)((xs[o * block + i] - mean) * inv * ss[i] + (bd is null ? 0f : bs[i]));
         }
     }
@@ -134,17 +138,29 @@ where T : unmanaged
     public static Tensor<float> LayerNormalization(Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, DenseTensor<float> destination, int axis, float epsilon)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
+        return LayerNormalizationCore(x, scale, bias, destination, axis, epsilon, 1).Output;
+    }
+
+    internal static (Tensor<float> Output, DenseTensor<float>? Mean, DenseTensor<float>? InvStdDev) LayerNormalizationCore(
+        Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, DenseTensor<float>? destination, int axis, float epsilon, int outputCount)
+    {
         var xd = x.ToRowMajor();
         var sd = scale.ToRowMajor();
         var bd = bias?.ToRowMajor();
-        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
-        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
-        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
-        xd = (DenseTensor<float>)Tensor<float>.PreserveElementwiseSource(xd, destination);
-        sd = SnapshotOverlappingSource(sd, destination);
-        if (bd is not null) bd = SnapshotOverlappingSource(bd, destination);
-        LayerNormFloatInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon);
-        return destination;
+        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions, xd.Length, sd.Length, bd?.Length);
+        if (destination is null) destination = new DenseTensor<float>(xd.Dimensions);
+        else
+        {
+            if (!destination.Dimensions.SequenceEqual(xd.Dimensions)) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+            if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+            xd = (DenseTensor<float>)Tensor<float>.PreserveElementwiseSource(xd, destination);
+            sd = SnapshotOverlappingSource(sd, destination);
+            if (bd is not null) bd = SnapshotOverlappingSource(bd, destination);
+        }
+        var stats = LayerNormalizationStatistics(xd.Dimensions, axis, outputCount);
+        LayerNormFloatInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon,
+            stats.Mean is null ? default : stats.Mean.Buffer.Span, stats.InvStdDev is null ? default : stats.InvStdDev.Buffer.Span);
+        return (destination, stats.Mean, stats.InvStdDev);
     }
 
     /// <summary>
@@ -152,35 +168,39 @@ where T : unmanaged
     /// Statistics accumulate in double precision; the axis indexes the input tensor.
     /// </summary>
     public static Tensor<double> LayerNormalization(Tensor<double> x, Tensor<double> scale, Tensor<double>? bias, int axis, double epsilon)
-    {
-        var xd = x.ToRowMajor();
-        var sd = scale.ToRowMajor();
-        var bd = bias?.ToRowMajor();
-        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
-        var output = new DenseTensor<double>(xd.Dimensions);
-        LayerNormDoubleInto(xd, sd, bd, output, plan.Block, plan.Outer, epsilon);
-        return output;
-    }
+        => LayerNormalizationCore(x, scale, bias, null, axis, epsilon, 1).Output;
 
     /// <summary>Writes double layer normalization into an existing dense destination.</summary>
     public static Tensor<double> LayerNormalization(Tensor<double> x, Tensor<double> scale, Tensor<double>? bias, DenseTensor<double> destination, int axis, double epsilon)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
+        return LayerNormalizationCore(x, scale, bias, destination, axis, epsilon, 1).Output;
+    }
+
+    internal static (Tensor<double> Output, DenseTensor<float>? Mean, DenseTensor<float>? InvStdDev) LayerNormalizationCore(
+        Tensor<double> x, Tensor<double> scale, Tensor<double>? bias, DenseTensor<double>? destination, int axis, double epsilon, int outputCount)
+    {
         var xd = x.ToRowMajor();
         var sd = scale.ToRowMajor();
         var bd = bias?.ToRowMajor();
-        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
-        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
-        if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
-        xd = (DenseTensor<double>)Tensor<double>.PreserveElementwiseSource(xd, destination);
-        sd = SnapshotOverlappingSource(sd, destination);
-        if (bd is not null) bd = SnapshotOverlappingSource(bd, destination);
-        LayerNormDoubleInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon);
-        return destination;
+        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions, xd.Length, sd.Length, bd?.Length);
+        if (destination is null) destination = new DenseTensor<double>(xd.Dimensions);
+        else
+        {
+            if (!destination.Dimensions.SequenceEqual(xd.Dimensions)) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+            if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+            xd = (DenseTensor<double>)Tensor<double>.PreserveElementwiseSource(xd, destination);
+            sd = SnapshotOverlappingSource(sd, destination);
+            if (bd is not null) bd = SnapshotOverlappingSource(bd, destination);
+        }
+        var stats = LayerNormalizationStatistics(xd.Dimensions, axis, outputCount);
+        LayerNormDoubleInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon,
+            stats.Mean is null ? default : stats.Mean.Buffer.Span, stats.InvStdDev is null ? default : stats.InvStdDev.Buffer.Span);
+        return (destination, stats.Mean, stats.InvStdDev);
     }
 
     /// <summary>Shared double layer-normalization kernel used by both entries.</summary>
-    static void LayerNormDoubleInto(DenseTensor<double> xd, DenseTensor<double> sd, DenseTensor<double>? bd, DenseTensor<double> destination, int block, int outer, double epsilon)
+    static void LayerNormDoubleInto(DenseTensor<double> xd, DenseTensor<double> sd, DenseTensor<double>? bd, DenseTensor<double> destination, int block, int outer, double epsilon, Span<float> means, Span<float> inverseStdDevs)
     {
         var xs = xd.Buffer.Span;
         var ss = sd.Buffer.Span;
@@ -195,6 +215,8 @@ where T : unmanaged
             for (int i = 0; i < block; i++) { double d = xs[o * block + i] - mean; variance += d * d; }
             variance /= block;
             double inv = 1.0 / Math.Sqrt(variance + epsilon);
+            if (!means.IsEmpty) means[o] = (float)mean;
+            if (!inverseStdDevs.IsEmpty) inverseStdDevs[o] = (float)inv;
             for (int i = 0; i < block; i++) os[o * block + i] = (xs[o * block + i] - mean) * inv * ss[i] + (bd is null ? 0.0 : bs[i]);
         }
     }
