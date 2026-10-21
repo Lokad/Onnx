@@ -41,9 +41,9 @@ where T : unmanaged
     /// </summary>
     public static Tensor<float> LayerNormalization(Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, int axis, float epsilon)
     {
-        var xd = x.ToDenseTensor();
-        var sd = scale.ToDenseTensor();
-        var bd = bias?.ToDenseTensor();
+        var xd = x.ToRowMajor();
+        var sd = scale.ToRowMajor();
+        var bd = bias?.ToRowMajor();
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
         var output = new DenseTensor<float>(xd.Dimensions);
         LayerNormFloatInto(xd, sd, bd, output, plan.Block, plan.Outer, epsilon);
@@ -131,9 +131,9 @@ where T : unmanaged
     public static Tensor<float> LayerNormalization(Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, DenseTensor<float> destination, int axis, float epsilon)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
-        var xd = x.ToDenseTensor();
-        var sd = scale.ToDenseTensor();
-        var bd = bias?.ToDenseTensor();
+        var xd = x.ToRowMajor();
+        var sd = scale.ToRowMajor();
+        var bd = bias?.ToRowMajor();
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
         if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
@@ -147,9 +147,9 @@ where T : unmanaged
     /// </summary>
     public static Tensor<double> LayerNormalization(Tensor<double> x, Tensor<double> scale, Tensor<double>? bias, int axis, double epsilon)
     {
-        var xd = x.ToDenseTensor();
-        var sd = scale.ToDenseTensor();
-        var bd = bias?.ToDenseTensor();
+        var xd = x.ToRowMajor();
+        var sd = scale.ToRowMajor();
+        var bd = bias?.ToRowMajor();
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
         var output = new DenseTensor<double>(xd.Dimensions);
         LayerNormDoubleInto(xd, sd, bd, output, plan.Block, plan.Outer, epsilon);
@@ -160,9 +160,9 @@ where T : unmanaged
     public static Tensor<double> LayerNormalization(Tensor<double> x, Tensor<double> scale, Tensor<double>? bias, DenseTensor<double> destination, int axis, double epsilon)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
-        var xd = x.ToDenseTensor();
-        var sd = scale.ToDenseTensor();
-        var bd = bias?.ToDenseTensor();
+        var xd = x.ToRowMajor();
+        var sd = scale.ToRowMajor();
+        var bd = bias?.ToRowMajor();
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
         if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
@@ -209,9 +209,9 @@ where T : unmanaged
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         StartOpStage(OpStage.ValidateArguments);
-        var xd = x.ToDenseTensor();
-        var cd = cos.ToDenseTensor();
-        var sd = sin.ToDenseTensor();
+        var xd = x.ToRowMajor();
+        var cd = cos.ToRowMajor();
+        var sd = sin.ToRowMajor();
         if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         if (half <= 0) throw new ArgumentException("Half size must be positive.", nameof(half));

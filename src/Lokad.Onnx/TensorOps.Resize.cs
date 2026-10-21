@@ -47,7 +47,7 @@ where T : unmanaged
         var (nOut, cOut, hOut, wOut, nIn, cIn, hIn, wIn) = ResizeGeometry(input.Rank, sizes, input.Dimensions);
 
         var output = DenseTensor<float>.OfShape(sizes);
-        var xd = input.ToDenseTensor();
+        var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
         // Coordinates use the true scales when the caller derived sizes from
@@ -210,7 +210,7 @@ where T : unmanaged
         var (nOut, cOut, hOut, wOut, nIn, cIn, hIn, wIn) = ResizeGeometry(input.Rank, sizes, input.Dimensions);
 
         var output = DenseTensor<double>.OfShape(sizes);
-        var xd = input.ToDenseTensor();
+        var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
         var scaleH = scales is null ? (double)hOut / hIn : scales[2];
@@ -412,7 +412,7 @@ where T : unmanaged
         var (nOut, cOut, hOut, wOut, nIn, cIn, hIn, wIn) = ResizeGeometry(input.Rank, sizes, input.Dimensions);
 
         var output = DenseTensor<TElement>.OfShape(sizes);
-        var xd = input.ToDenseTensor();
+        var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
         // Coordinates use the true scales when the caller derived sizes from

@@ -1409,6 +1409,16 @@ namespace Lokad.Onnx
             return denseTensor;
         }
 
+        // Flat-buffer kernels require row-major values. Public view conversion
+        // deliberately retains its layout; normalize explicitly at the kernel
+        // boundary, copying reversed sources just once through logical indexing.
+        internal DenseTensor<T> ToRowMajor()
+        {
+            if (IsReversedStride) return Snapshot(this);
+            var dense = ToDenseTensor();
+            return dense.IsReversedStride ? Snapshot(dense) : dense;
+        }
+
         #endregion
 
         #region Display and Description

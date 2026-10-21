@@ -85,8 +85,8 @@ where T : unmanaged
 
         var dx = x as DenseTensor<int>;
         var dy = y as DenseTensor<int>;
-        var _x = dx is not null && !dx.IsReversedStride ? dx : CountedCopy(x.ToDenseTensor(), options.CopyReporter);
-        var _y = dy is not null && !dy.IsReversedStride ? dy : CountedCopy(y.ToDenseTensor(), options.CopyReporter);
+        var _x = dx is not null && !dx.IsReversedStride ? dx : CountedCopy(x.ToRowMajor(), options.CopyReporter);
+        var _y = dy is not null && !dy.IsReversedStride ? dy : CountedCopy(y.ToRowMajor(), options.CopyReporter);
         var output = DenseTensor<int>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
 
         var xh = _x.Buffer.Pin();
@@ -128,7 +128,7 @@ where T : unmanaged
     static DenseTensor<float> DensifyOne(Tensor<float> t, ICopyAccountant? copy, OpStage stage)
     {
         StartOpStage(stage);
-        return CountedCopy(t.ToDenseTensor(), copy);
+        return CountedCopy(t.ToRowMajor(), copy);
     }
 
     /// <summary>
@@ -427,8 +427,8 @@ where T : unmanaged
 
         var dx = x as DenseTensor<double>;
         var dy = y as DenseTensor<double>;
-        var _x = dx is not null && !dx.IsReversedStride ? dx : CountedCopy(x.ToDenseTensor(), options.CopyReporter);
-        var _y = dy is not null && !dy.IsReversedStride ? dy : CountedCopy(y.ToDenseTensor(), options.CopyReporter);
+        var _x = dx is not null && !dx.IsReversedStride ? dx : CountedCopy(x.ToRowMajor(), options.CopyReporter);
+        var _y = dy is not null && !dy.IsReversedStride ? dy : CountedCopy(y.ToRowMajor(), options.CopyReporter);
         var output = destination;
 
         var xh = _x.Buffer.Pin();
@@ -922,7 +922,7 @@ where T : unmanaged
             if (d.Buffer.Length != (int)d.Length) throw new ArgumentException(name + " backing length does not match shape.");
             return d;
         }
-        return CountedCopy(t.ToDenseTensor(), copy);
+        return CountedCopy(t.ToRowMajor(), copy);
     }
 
     internal static DenseTensor<TElement> CountedCopy<TElement>(DenseTensor<TElement> dense, ICopyAccountant? copy) where TElement : unmanaged

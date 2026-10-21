@@ -58,7 +58,7 @@ where T : unmanaged
         if (pdata is DenseTensor<TElement> d && !d.IsReversedStride && HasStandardStrides(d) && d.Buffer.Length == (int)d.Length)
             dense = d;
         else
-            dense = pdata.ToDenseTensor();
+            dense = pdata.ToRowMajor();
         return (dense, oshape, r);
     }
 
