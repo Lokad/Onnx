@@ -327,9 +327,20 @@ namespace Lokad.Onnx
             get => Count == -1;
         }
 
+        /// <summary>
+        /// Reverses the selected coordinates, preserving empty, index and singleton selections.
+        /// Throws when the reversed start or step cannot be represented by Int32.
+        /// </summary>
         public SliceDef Invert()
         {
-            return new SliceDef() { Count = Count, Start = Start + Step * Count, Step = -Step };
+            if (Count < -1) throw new ArgumentException("Slice count must be non-negative or -1 for an index.", nameof(Count));
+            if (Count <= 0) return this;
+            if (Step == 0) throw new ArgumentException("A nonempty slice must have a nonzero step.", nameof(Step));
+            if (Count == 1) return this;
+            long start = Start + (long)Step * (Count - 1);
+            if (start < int.MinValue || start > int.MaxValue || Step == int.MinValue)
+                throw new ArgumentException("The reversed slice start and step must fit Int32.");
+            return new SliceDef((int)start, -Step, Count);
         }
 
         public override string ToString()
@@ -355,19 +366,35 @@ namespace Lokad.Onnx
             return coords;
         }
 
+        /// <summary>
+        /// Maps a selected parent point into view coordinates, omitting fixed axes.
+        /// Returns an empty array when the point is outside the selection; a scalar
+        /// selection also has no coordinates. Each parent axis needs one slice definition.
+        /// </summary>
         public static int[] ReplaySlicingOnCoords(int[] parentCoords, SliceDef[] slices)
         {
-            var coords = new List<int>();
+            ArgumentNullException.ThrowIfNull(parentCoords);
+            ArgumentNullException.ThrowIfNull(slices);
+            if (parentCoords.Length != slices.Length)
+                throw new ArgumentException("Each parent coordinate needs one slice definition.", nameof(slices));
+            var coords = new List<int>(parentCoords.Length);
             for (int i = 0; i < parentCoords.Length; i++)
             {
                 var slice = slices[i];
                 var coord = parentCoords[i];
-                if (slice.Count == -1) continue;
+                if (slice.IsIndex)
+                {
+                    if (coord != slice.Start) return Array.Empty<int>();
+                    continue;
+                }
+                if (slice.Count < 0) throw new ArgumentException("Slice count must be non-negative or -1 for an index.", nameof(slices));
                 if (slice.Count == 0) return Array.Empty<int>();
-                bool ahead = slice.Step > 0 ? slice.Start > coord : slice.Start < coord;
-                if (ahead) return Array.Empty<int>();
-                if (coord % Math.Abs(slice.Step) != 0) return Array.Empty<int>();
-                coords.Add((coord - slice.Start) / slice.Step);
+                if (slice.Step == 0) throw new ArgumentException("A nonempty slice must have a nonzero step.", nameof(slices));
+                long relative = (long)coord - slice.Start;
+                if (relative % slice.Step != 0) return Array.Empty<int>();
+                long index = relative / slice.Step;
+                if (index < 0 || index >= slice.Count) return Array.Empty<int>();
+                coords.Add((int)index);
             }
             return coords.ToArray();
         }
