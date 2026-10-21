@@ -200,11 +200,6 @@ public partial class CPUExecutionProvider
         var op = OpType.Relu;
         if (X is null) return MissingInput(op, nameof(X));
         var opts = (options ?? ExecutionOptions.Default).Validated();
-        if (opts.Optimization == OptimizationMode.Speed)
-        {
-            Profiler.StartOpStage(OpStage.Copy);
-            X = ((INumericTensor)X).ToDenseTensor();
-        }
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {

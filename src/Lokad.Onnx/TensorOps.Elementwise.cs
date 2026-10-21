@@ -876,9 +876,11 @@ where T : unmanaged
     /// <summary>Float Relu honoring execution options: dense standard inputs run the span fast path on AVX hardware, everything else keeps the scalar contract.</summary>
     public static Tensor<float> Relu(Tensor<float> x, TensorExecutionOptions? options)
     {
-        var dx = x.ToDenseTensor();
-        if ((options?.UseSimd ?? true) && Avx.IsSupported
-            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        var resolved = options ?? TensorExecutionOptions.Auto;
+        resolved.Validate();
+        if (!resolved.UseSimd || !Avx.IsSupported) return Relu(x);
+        var dx = x.ToRowMajor();
+        if (dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
         {
             var output = DenseTensor<float>.OfShape(own.Dimensions.ToArray());
             ReluSpanFloat(own.Buffer.Span, output.Buffer.Span);
@@ -911,9 +913,11 @@ where T : unmanaged
     /// <summary>Double Relu honoring execution options, mirroring the float fast path.</summary>
     public static Tensor<double> Relu(Tensor<double> x, TensorExecutionOptions? options)
     {
-        var dx = x.ToDenseTensor();
-        if ((options?.UseSimd ?? true) && Avx.IsSupported
-            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        var resolved = options ?? TensorExecutionOptions.Auto;
+        resolved.Validate();
+        if (!resolved.UseSimd || !Avx.IsSupported) return Relu(x);
+        var dx = x.ToRowMajor();
+        if (dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
         {
             var output = DenseTensor<double>.OfShape(own.Dimensions.ToArray());
             ReluSpanDouble(own.Buffer.Span, output.Buffer.Span);
