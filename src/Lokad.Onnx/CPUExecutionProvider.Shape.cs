@@ -337,207 +337,45 @@ public partial class CPUExecutionProvider
         else if (_outputCount.HasValue && _outputCount.Value > 0 && dim % _outputCount.Value == 0) sizes = Enumerable.Repeat(dim / _outputCount.Value, _outputCount.Value).ToArray();
         else return MissingAttribute(op, "split", "Split needs the split input, the split attribute, num_outputs, or an evenly divisible node output count.");
         if (sizes.Any(z => z < 0) || sizes.Sum() != dim) return WrongInputShape(op, "split", data, "Split sizes must be non-negative and sum to the axis dimension.");
-        var inDims = data.Dims.ToArray();
-        int inner = 1;
-        for (int i = axis + 1; i < data.Rank; i++) inner *= inDims[i];
-        int outer = 1;
-        for (int i = 0; i < axis; i++) outer *= inDims[i];
-            static DenseTensor<T> SplitPart<T>(System.ReadOnlySpan<T> src, int[] partDims, int outer, int inner, int dim, int start, int size, TensorBufferPool? buffers) where T : unmanaged
-            {
-                // Split assigns the complete payload; reused arrays may be dirty.
-                var dst = buffers is null ? DenseTensor<T>.OfShape(partDims) :
-                    new DenseTensor<T>(new Memory<T>(buffers.Rent<T>(checked((int)((long)outer * inner * size)))), partDims);
-                ArrayUtilities.CopyAxisChunks(src, dim, dst.Buffer.Span, size, outer, inner, start, 0, size);
-                return dst;
-            }
-        var outputs = new ITensor[sizes.Length];
-        switch (data.ElementType)
+        return data.ElementType switch
         {
-            case TensorElementType.Float:
-            {
-                var dd = ((Tensor<float>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], pool);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.Double:
-            {
-                var dd = ((Tensor<double>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.Int32:
-            {
-                var dd = ((Tensor<int>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.Int64:
-            {
-                var dd = ((Tensor<long>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.UInt32:
-            {
-                var dd = ((Tensor<uint>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.Int8:
-            {
-                var dd = ((Tensor<sbyte>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.UInt8:
-            {
-                var dd = ((Tensor<byte>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.Int16:
-            {
-                var dd = ((Tensor<short>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.UInt16:
-            {
-                var dd = ((Tensor<ushort>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.UInt64:
-            {
-                var dd = ((Tensor<ulong>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.Bool:
-            {
-                var dd = ((Tensor<bool>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.Float16:
-            {
-                var dd = ((Tensor<Half>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            case TensorElementType.BFloat16:
-            {
-                var dd = ((Tensor<BFloat16>)data).ToDenseTensor();
-                var span = dd.Buffer.Span;
-                int start = 0;
-                for (int p = 0; p < sizes.Length; p++)
-                {
-                    var partDims = (int[])inDims.Clone();
-                    partDims[axis] = sizes[p];
-                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p], null);
-                    start += sizes[p];
-                }
-                break;
-            }
-            default: return InputTypeNotSupported(op, nameof(data), data);
+            TensorElementType.Float => Success(op, SplitTyped((Tensor<float>)data, axis, sizes, pool)),
+            TensorElementType.Double => Success(op, SplitTyped((Tensor<double>)data, axis, sizes)),
+            TensorElementType.Int32 => Success(op, SplitTyped((Tensor<int>)data, axis, sizes)),
+            TensorElementType.Int64 => Success(op, SplitTyped((Tensor<long>)data, axis, sizes)),
+            TensorElementType.UInt32 => Success(op, SplitTyped((Tensor<uint>)data, axis, sizes)),
+            TensorElementType.Int8 => Success(op, SplitTyped((Tensor<sbyte>)data, axis, sizes)),
+            TensorElementType.UInt8 => Success(op, SplitTyped((Tensor<byte>)data, axis, sizes)),
+            TensorElementType.Int16 => Success(op, SplitTyped((Tensor<short>)data, axis, sizes)),
+            TensorElementType.UInt16 => Success(op, SplitTyped((Tensor<ushort>)data, axis, sizes)),
+            TensorElementType.UInt64 => Success(op, SplitTyped((Tensor<ulong>)data, axis, sizes)),
+            TensorElementType.Bool => Success(op, SplitTyped((Tensor<bool>)data, axis, sizes)),
+            TensorElementType.Float16 => Success(op, SplitTyped((Tensor<Half>)data, axis, sizes)),
+            TensorElementType.BFloat16 => Success(op, SplitTyped((Tensor<BFloat16>)data, axis, sizes)),
+            _ => InputTypeNotSupported(op, nameof(data), data)
+        };
+    }
+
+    static ITensor[] SplitTyped<T>(Tensor<T> data, int axis, int[] sizes, TensorBufferPool? pool = null) where T : unmanaged
+    {
+        var dimensions = data.Dimensions.ToArray();
+        var source = data.ToRowMajor().Buffer.Span;
+        int inner = 1, outer = 1;
+        for (int i = axis + 1; i < dimensions.Length; i++) inner *= dimensions[i];
+        for (int i = 0; i < axis; i++) outer *= dimensions[i];
+        var outputs = new ITensor[sizes.Length];
+        int start = 0;
+        for (int part = 0; part < sizes.Length; part++)
+        {
+            var shape = (int[])dimensions.Clone();
+            shape[axis] = sizes[part];
+            var output = pool is null ? DenseTensor<T>.OfShape(shape) :
+                new DenseTensor<T>(pool.Rent<T>(checked((int)((long)outer * inner * sizes[part]))).AsMemory(), shape);
+            ArrayUtilities.CopyAxisChunks(source, dimensions[axis], output.Buffer.Span, sizes[part], outer, inner, start, 0, sizes[part]);
+            outputs[part] = output;
+            start += sizes[part];
         }
-        return Success(op, outputs);
+        return outputs;
     }
 
     public static OpResult Expand(ITensor? data, ITensor? shape, ExecutionOptions? options)

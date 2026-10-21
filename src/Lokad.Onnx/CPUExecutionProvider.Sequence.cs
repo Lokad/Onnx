@@ -60,13 +60,13 @@ public partial class CPUExecutionProvider
         // instead of copying a non-dense source per piece.
         ITensor? dense = input.ElementType switch
         {
-            TensorElementType.Float => ((Tensor<float>)input).ToDenseTensor(),
-            TensorElementType.Double => ((Tensor<double>)input).ToDenseTensor(),
-            TensorElementType.Int32 => ((Tensor<int>)input).ToDenseTensor(),
-            TensorElementType.Int64 => ((Tensor<long>)input).ToDenseTensor(),
-            TensorElementType.UInt32 => ((Tensor<uint>)input).ToDenseTensor(),
-            TensorElementType.UInt64 => ((Tensor<ulong>)input).ToDenseTensor(),
-            TensorElementType.Bool => ((Tensor<bool>)input).ToDenseTensor(),
+            TensorElementType.Float => ((Tensor<float>)input).ToRowMajor(),
+            TensorElementType.Double => ((Tensor<double>)input).ToRowMajor(),
+            TensorElementType.Int32 => ((Tensor<int>)input).ToRowMajor(),
+            TensorElementType.Int64 => ((Tensor<long>)input).ToRowMajor(),
+            TensorElementType.UInt32 => ((Tensor<uint>)input).ToRowMajor(),
+            TensorElementType.UInt64 => ((Tensor<ulong>)input).ToRowMajor(),
+            TensorElementType.Bool => ((Tensor<bool>)input).ToRowMajor(),
             _ => null,
         };
         if (dense is null) return InputTypeNotSupported(op, nameof(input), input);
