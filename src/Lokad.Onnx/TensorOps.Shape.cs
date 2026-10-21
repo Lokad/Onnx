@@ -114,14 +114,16 @@ where T : unmanaged
     static DenseTensor<U> TileCore<U>(Tensor<U> x, int[] repeats) where U : unmanaged
     {
         if (repeats.Length != x.Rank) throw new ArgumentException("Repeats rank must match input rank.", nameof(repeats));
-        var xd = x.ToDenseTensor();
         var outDims = new int[x.Rank];
         for (int i = 0; i < x.Rank; i++)
         {
             if (repeats[i] < 0) throw new ArgumentException("Repeats must be non-negative.", nameof(repeats));
-            outDims[i] = xd.Dimensions[i] * repeats[i];
+            long dimension = (long)x.Dimensions[i] * repeats[i];
+            if (dimension > int.MaxValue) throw new ArgumentException("Repeats exceeds the maximum tensor dimension.", nameof(repeats));
+            outDims[i] = (int)dimension;
         }
         var output = new DenseTensor<U>((ReadOnlySpan<int>)outDims);
+        var xd = x.ToDenseTensor();
         var src = new int[x.Rank];
         foreach (var index in output.GetDimensionsIterator())
         {

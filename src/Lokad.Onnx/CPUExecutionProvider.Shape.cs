@@ -986,20 +986,24 @@ public partial class CPUExecutionProvider
         (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         if (repeats.ElementType != TensorElementType.Int32 && repeats.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(repeats), "The repeats tensor must be int32 or int64.", repeats);
+        int[] reps;
         if (repeats.ElementType == TensorElementType.Int64)
         {
-            // Beyond int32 range, repeats must fail like ORT instead of
-            // wrapping ToIntArray narrowing (2^32+1 became 1); zero-size
-            // dimensions still tile to empty.
             var rl = ((Tensor<long>)repeats).ToArray();
-            var dd = data.Dims.ToArray();
-            for (int i = 0; i < rl.Length && i < dd.Length; i++)
+            var dd = data.Dims;
+            if (rl.Length != dd.Length) throw new ArgumentException("Repeats rank must match input rank.", nameof(repeats));
+            reps = new int[rl.Length];
+            for (int i = 0; i < rl.Length; i++)
             {
                 if (rl[i] < 0L) throw new ArgumentException("Repeats must be non-negative.", nameof(repeats));
-                if ((long)dd[i] * rl[i] > int.MaxValue) throw new ArgumentException("Repeats exceeds the maximum tensor dimension.", nameof(repeats));
+                // Divide before multiplying or narrowing: a positive long repeat
+                // can overflow even an int64 product. Empty axes stay empty.
+                if (dd[i] != 0 && rl[i] > int.MaxValue / dd[i])
+                    throw new ArgumentException("Repeats exceeds the maximum tensor dimension.", nameof(repeats));
+                reps[i] = dd[i] == 0 ? 0 : (int)rl[i];
             }
         }
-        var reps = ToIntArray(repeats, nameof(repeats));
+        else reps = ToIntArray(repeats, nameof(repeats));
         switch (data.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Tile((Tensor<float>)data, reps));
