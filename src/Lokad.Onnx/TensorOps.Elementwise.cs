@@ -103,6 +103,7 @@ where T : unmanaged
     /// </summary>
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, Tensor<T> destination, TensorExecutionOptions options)
     {
+        options.Validate();
         CheckDestination(destination);
         if (!IsDirectSpanCompatible(this))
         {
@@ -134,6 +135,7 @@ where T : unmanaged
 
     public Tensor<T> VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, TensorExecutionOptions options)
     {
+        options.Validate();
         var output = CloneEmpty();
         VectorizedApply(op, sop, output, options);
         return output;
@@ -182,6 +184,7 @@ where T : unmanaged
     /// </summary>
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, Tensor<T> destination, TensorExecutionOptions options)
     {
+        options.Validate();
         CheckBinaryDestination(tensor2, destination);
         if (!IsDirectSpanCompatible(this))
         {
@@ -237,6 +240,7 @@ where T : unmanaged
     /// <exception cref="ArgumentNullException"><paramref name="tensor2"/> is null.</exception>
     public virtual Tensor<T> VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, TensorExecutionOptions options)
     {
+        options.Validate();
         var output = CloneEmpty();
         VectorizedApply(op, sop, tensor2, output, options);
         return output;

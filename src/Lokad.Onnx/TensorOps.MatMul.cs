@@ -292,6 +292,7 @@ where T : unmanaged
 
     public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options)
     {
+        options.Validate();
         if (x.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(x));
         if (y.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(y));
         return DispatchWideProjectionMatMul2DCore(x, y, DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] }), options, clearDestination: false);
@@ -380,6 +381,7 @@ where T : unmanaged
     /// <summary>Computes the 2D float matrix product, renting the output from the pool when provided.</summary>
     public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options, TensorBufferPool? pool)
     {
+        options.Validate();
         if (pool is null) return MatMul2D(x, y, options);
         if (x.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(x));
         if (y.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(y));
@@ -394,6 +396,7 @@ where T : unmanaged
 
     public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y, TensorExecutionOptions options)
     {
+        options.Validate();
         if (x.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(x));
         if (y.Rank != 2) throw new ArgumentException("The rank of this tensor is not 2.", nameof(y));
         return MatMul2DCoreDouble(x, y, DenseTensor<double>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] }), options, clearDestination: false);
@@ -466,6 +469,7 @@ where T : unmanaged
     public static Tensor<int> MatMul(Tensor<int> x, Tensor<int> y, TensorExecutionOptions options)
     
     {
+        options.Validate();
         var (plan, px, py) = PlanMatMul(x, y);
         Tensor<int> core;
         if (px.Rank == 2 && py.Rank == 2)
@@ -740,6 +744,7 @@ where T : unmanaged
 
     static Tensor<float> MatMulInto(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)
     {
+        options.Validate();
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException("Destination must not alias the input tensors.", nameof(destination));
         var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
@@ -792,6 +797,7 @@ where T : unmanaged
     /// <summary>Computes the float matrix product, renting the output from the pool when provided.</summary>
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options, TensorBufferPool? pool)
     {
+        options.Validate();
         if (pool is null) return MatMul(x, y, options);
         var dims = MatMulOutputShape(x.Dimensions, y.Dimensions);
         long length = 1;
@@ -809,6 +815,7 @@ where T : unmanaged
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options)
     
     {
+        options.Validate();
         var (plan, px, py) = PlanMatMul(x, y);
         Tensor<float> core;
         if (px.Rank == 2 && py.Rank == 2)
@@ -858,6 +865,7 @@ where T : unmanaged
     public static Tensor<double> MatMul(Tensor<double> x, Tensor<double> y, TensorExecutionOptions options)
     
     {
+        options.Validate();
         var (plan, px, py) = PlanMatMul(x, y);
         Tensor<double> core;
         if (px.Rank == 2 && py.Rank == 2)
