@@ -200,8 +200,8 @@ where T : unmanaged
     /// </summary>
     public static Tensor<float> RotaryEmbedding(Tensor<float> x, Tensor<float> cos, Tensor<float> sin, int half, int axis, int concatAxis)
     {
-        var output = new DenseTensor<float>(x.ToDenseTensor().Dimensions);
-        return RotaryEmbedding(x, cos, sin, output, half, axis, -1);
+        var output = new DenseTensor<float>(x.Dimensions);
+        return RotaryEmbedding(x, cos, sin, output, half, axis, concatAxis);
     }
 
     /// <summary>Writes the rotary position embedding into an existing dense destination.</summary>
@@ -230,14 +230,16 @@ where T : unmanaged
         var cstrides = new int[rank];
         var cshape = new int[rank];
         int stride = 1;
+        int cosineStride = 1;
         for (int d = rank - 1; d >= 0; d--)
         {
             xstrides[d] = stride;
             int cd2 = d < rank - cd.Rank ? 1 : cd.Dimensions[d - (rank - cd.Rank)];
             if (cd2 != 1 && cd2 != dims[d]) throw new ArgumentException("Cos shape must broadcast against the input shape.", nameof(cos));
             cshape[d] = cd2;
-            cstrides[d] = cd2 == 1 ? 0 : stride;
+            cstrides[d] = cd2 == 1 ? 0 : cosineStride;
             stride *= dims[d];
+            cosineStride *= cd2;
         }
         var xs = xd.Buffer.Span;
         var cs = cd.Buffer.Span;

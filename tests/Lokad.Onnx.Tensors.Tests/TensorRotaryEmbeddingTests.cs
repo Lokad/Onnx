@@ -65,7 +65,7 @@ public class TensorRotaryEmbeddingTests
         var cos = new DenseTensor<float>((float[])cd.Clone(), (int[])cosDims.Clone());
         var sin = new DenseTensor<float>((float[])sd.Clone(), (int[])cosDims.Clone());
         var expected = Oracle(xd, dims, cd, cosDims, sd, half, axis);
-        var actual = Tensor<float>.RotaryEmbedding(x, cos, sin, half, axis, -1).ToArray();
+        var actual = Tensor<float>.RotaryEmbedding(x, cos, sin, half, axis, axis).ToArray();
         Assert.Equal(expected.Length, actual.Length);
         for (int i = 0; i < expected.Length; i++) Assert.Equal(expected[i], actual[i], 5);
     }
@@ -86,6 +86,66 @@ public class TensorRotaryEmbeddingTests
     public void MatchesOracle_OddDim()
     {
         AssertParity(new[] { 2, 5 }, new[] { 5 }, 2, -1, 13);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    public void MatchesOracle_BroadcastParameters(int layout)
+    {
+        int[][] shapes = { new[] { 2, 1, 1 }, new[] { 2, 1, 4 }, new[] { 1, 3, 1 }, new[] { 3, 1 }, new[] { 4 }, Array.Empty<int>() };
+        AssertParity(new[] { 2, 3, 4 }, shapes[layout], 2, -1, 30 + layout);
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(-2, 0)]
+    [InlineData(1, -1)]
+    public void AxisAndConcatAxis_AgreeAcrossOverloadsAndPooling(int axis, int concatAxis)
+    {
+        var x = new DenseTensor<float>(Enumerable.Range(1, 16).Select(i => (float)i).ToArray(), new[] { 4, 4 });
+        var cos = DenseTensor<float>.Ones(4, 4);
+        var sin = DenseTensor<float>.Zeros(4, 4);
+        var destination = DenseTensor<float>.OfShape(4, 4);
+        var expected = x.ToArray();
+        Assert.Equal(expected, Tensor<float>.RotaryEmbedding(x, cos, sin, 2, axis, concatAxis).ToArray());
+        Assert.Equal(expected, Tensor<float>.RotaryEmbedding(x, cos, sin, destination, 2, axis, concatAxis).ToArray());
+        foreach (var pool in new TensorBufferPool?[] { null, new() })
+        {
+            var result = CPUExecutionProvider.RotaryEmbedding(x, cos, sin, 2, axis, concatAxis, null, pool);
+            Assert.Equal(OpStatus.Success, result.Status);
+            Assert.Equal(expected, ((Tensor<float>)result.Outputs[0]).ToArray());
+        }
+    }
+
+    [Fact]
+    public void AllocatingOverload_ValidatesSuppliedConcatAxis()
+    {
+        var x = DenseTensor<float>.Ones(4, 4);
+        var destination = DenseTensor<float>.Ones(4, 4).ToDenseTensor();
+        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, x, x, 2, 1, 0));
+        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, x, x, destination, 2, 1, 0));
+        Assert.Equal(Enumerable.Repeat(1f, 16), destination.ToArray());
+    }
+
+    [Fact]
+    public void AllocatingOverload_MaterializesCroppedInputOnce()
+    {
+        var input = new CountingSlice(DenseTensor<float>.Ones(2, 5));
+        var result = Tensor<float>.RotaryEmbedding(input, DenseTensor<float>.Ones(4), DenseTensor<float>.Zeros(4), 2, 1, 1);
+        Assert.Equal(Enumerable.Repeat(1f, 8), result.ToArray());
+        Assert.Equal(1, input.Materializations);
+    }
+
+    sealed class CountingSlice : TensorSlice<float>
+    {
+        public int Materializations;
+        public CountingSlice(Tensor<float> parent) : base(parent, new[] { SliceIndex.All, new SliceIndex(0, 4) }) { }
+        public override DenseTensor<float> ToDenseTensor() { Materializations++; return base.ToDenseTensor(); }
     }
 
     [Fact]
