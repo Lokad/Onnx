@@ -262,7 +262,7 @@ where T : unmanaged
             var fy = (Tensor<float>)(object)by;
             for (int i = 0; i < output.Length; i++)
             {
-                output.SetValue(i, fx.GetValue(i) == fy.GetValue(i));
+                output.SetLogicalValue(i, fx.GetLogicalValue(i) == fy.GetLogicalValue(i));
             }
             return output;
         }
@@ -272,13 +272,13 @@ where T : unmanaged
             var dy = (Tensor<double>)(object)by;
             for (int i = 0; i < output.Length; i++)
             {
-                output.SetValue(i, dx.GetValue(i) == dy.GetValue(i));
+                output.SetLogicalValue(i, dx.GetLogicalValue(i) == dy.GetLogicalValue(i));
             }
             return output;
         }
         for (int i = 0; i < output.Length; i++)
         {
-            output.SetValue(i, EqualityComparer<T>.Default.Equals(bx.GetValue(i), by.GetValue(i)));
+            output.SetLogicalValue(i, EqualityComparer<T>.Default.Equals(bx.GetLogicalValue(i), by.GetLogicalValue(i)));
         }
         return output;
     }
@@ -300,7 +300,7 @@ where T : unmanaged
             var fy = (Tensor<float>)(object)by;
             for (int i = 0; i < output.Length; i++)
             {
-                output.SetValue(i, fx.GetValue(i) < fy.GetValue(i));
+                output.SetLogicalValue(i, fx.GetLogicalValue(i) < fy.GetLogicalValue(i));
             }
             return output;
         }
@@ -310,13 +310,13 @@ where T : unmanaged
             var dy = (Tensor<double>)(object)by;
             for (int i = 0; i < output.Length; i++)
             {
-                output.SetValue(i, dx.GetValue(i) < dy.GetValue(i));
+                output.SetLogicalValue(i, dx.GetLogicalValue(i) < dy.GetLogicalValue(i));
             }
             return output;
         }
         for (int i = 0; i < output.Length; i++)
         {
-            output.SetValue(i, Comparer<T>.Default.Compare(bx.GetValue(i), by.GetValue(i)) < 0);
+            output.SetLogicalValue(i, Comparer<T>.Default.Compare(bx.GetLogicalValue(i), by.GetLogicalValue(i)) < 0);
         }
         return output;
     }
@@ -343,7 +343,7 @@ where T : unmanaged
         var output = fx.CloneEmpty();
         for (int i = 0; i < output.Length; i++)
         {
-            output.SetValue(i, bcond.GetValue(i) ? fx.GetValue(i) : fy.GetValue(i));
+            output.SetLogicalValue(i, bcond.GetLogicalValue(i) ? fx.GetLogicalValue(i) : fy.GetLogicalValue(i));
         }
         return output;
     }

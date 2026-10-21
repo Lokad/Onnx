@@ -42,7 +42,7 @@ public partial class CPUExecutionProvider
             throw new ArgumentException("Inputs are not broadcastable.");
         var result = DenseTensor<bool>.OfShape(left.Dimensions.ToArray());
         for (int i = 0; i < result.Length; i++)
-            result.SetValue(i, compare(left.GetValue(i), right.GetValue(i)));
+            result.SetValue(i, compare(left.GetLogicalValue(i), right.GetLogicalValue(i)));
         return result;
     }
 }

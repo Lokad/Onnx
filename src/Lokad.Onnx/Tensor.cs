@@ -1167,6 +1167,12 @@ namespace Lokad.Onnx
             return offset;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal T GetLogicalValue(int index) => GetValue(LogicalOffset(index));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void SetLogicalValue(int index, T value) => SetValue(LogicalOffset(index), value);
+
         int IList<T>.IndexOf(T item)
         {
             return IndexOf(item);

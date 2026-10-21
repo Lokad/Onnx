@@ -137,7 +137,7 @@ where T : unmanaged
         if (other.Rank == 0)
         {
             var scalar = other.GetValue(0);
-            if (options.UseSimd && this is DenseTensor<T> xd0 && IsDirectSpanCompatible(xd0) && IsDirectSpanCompatible(destination))
+            if (options.UseSimd && this is DenseTensor<T> xd0 && !xd0.IsReversedStride && IsDirectSpanCompatible(xd0) && IsDirectSpanCompatible(destination))
             {
                 var sv = new Vector<T>(scalar);
                 var xv = MemoryMarshal.Cast<T, Vector<T>>(xd0.Buffer.Span);
@@ -151,7 +151,7 @@ where T : unmanaged
                 for (int i = done; i < (int)Length; i++) ds[i] = TOp.Scalar(xs[i], scalar);
                 return;
             }
-            for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetValue(i), scalar));
+            for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetLogicalValue(i), scalar));
             return;
         }
         if (other.Length == 1)
@@ -160,7 +160,7 @@ where T : unmanaged
             // run engine below would otherwise degenerate to per-element scalar
             // calls with stride math on every element. Same per-element arithmetic.
             var scalar = other.GetValue(0);
-            if (options.UseSimd && this is DenseTensor<T> xd1 && IsDirectSpanCompatible(xd1) && IsDirectSpanCompatible(destination))
+            if (options.UseSimd && this is DenseTensor<T> xd1 && !xd1.IsReversedStride && IsDirectSpanCompatible(xd1) && IsDirectSpanCompatible(destination))
             {
                 var sv = new Vector<T>(scalar);
                 var xv = MemoryMarshal.Cast<T, Vector<T>>(xd1.Buffer.Span);
@@ -174,13 +174,13 @@ where T : unmanaged
                 for (int i = done; i < (int)Length; i++) ds[i] = TOp.Scalar(xs[i], scalar);
                 return;
             }
-            for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetValue(i), scalar));
+            for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetLogicalValue(i), scalar));
             return;
         }
         if (Rank == 0)
         {
             var scalar = GetValue(0);
-            if (options.UseSimd && other is DenseTensor<T> yd0 && IsDirectSpanCompatible(yd0) && IsDirectSpanCompatible(destination))
+            if (options.UseSimd && other is DenseTensor<T> yd0 && !yd0.IsReversedStride && IsDirectSpanCompatible(yd0) && IsDirectSpanCompatible(destination))
             {
                 var sv = new Vector<T>(scalar);
                 var yv = MemoryMarshal.Cast<T, Vector<T>>(yd0.Buffer.Span);
@@ -194,14 +194,14 @@ where T : unmanaged
                 for (int i = done; i < (int)other.Length; i++) ds[i] = TOp.Scalar(scalar, ys[i]);
                 return;
             }
-            for (int i = 0; i < other.Length; i++) destination.SetValue(i, TOp.Scalar(scalar, other.GetValue(i)));
+            for (int i = 0; i < other.Length; i++) destination.SetValue(i, TOp.Scalar(scalar, other.GetLogicalValue(i)));
             return;
         }
         if (Length == 1)
         {
             // Mirror image of the single-element right-operand tier above.
             var scalar = GetValue(0);
-            if (options.UseSimd && other is DenseTensor<T> yd1 && IsDirectSpanCompatible(yd1) && IsDirectSpanCompatible(destination))
+            if (options.UseSimd && other is DenseTensor<T> yd1 && !yd1.IsReversedStride && IsDirectSpanCompatible(yd1) && IsDirectSpanCompatible(destination))
             {
                 var sv = new Vector<T>(scalar);
                 var yv = MemoryMarshal.Cast<T, Vector<T>>(yd1.Buffer.Span);
@@ -215,7 +215,7 @@ where T : unmanaged
                 for (int i = done; i < (int)other.Length; i++) ds[i] = TOp.Scalar(scalar, ys[i]);
                 return;
             }
-            for (int i = 0; i < other.Length; i++) destination.SetValue(i, TOp.Scalar(scalar, other.GetValue(i)));
+            for (int i = 0; i < other.Length; i++) destination.SetValue(i, TOp.Scalar(scalar, other.GetLogicalValue(i)));
             return;
         }
         BroadcastApplyRuns<TOp>(this, other, destination, options, shape, null);
@@ -233,15 +233,12 @@ where T : unmanaged
         // Right-aligned span steps; 0 marks a reused (broadcast or missing) dim.
         var xSteps = new int[rank];
         var ySteps = new int[rank];
-        int sx = 1, sy = 1;
         for (int d = rank - 1; d >= 0; d--)
         {
             int xDim = d < rank - xd.Rank ? 1 : xd.Dimensions[d - (rank - xd.Rank)];
             int yDim = d < rank - yd.Rank ? 1 : yd.Dimensions[d - (rank - yd.Rank)];
-            xSteps[d] = xDim == 1 ? 0 : sx;
-            ySteps[d] = yDim == 1 ? 0 : sy;
-            if (xDim != 1) sx *= xDim;
-            if (yDim != 1) sy *= yDim;
+            xSteps[d] = xDim == 1 ? 0 : xd.strides[d - (rank - xd.Rank)];
+            ySteps[d] = yDim == 1 ? 0 : yd.strides[d - (rank - yd.Rank)];
         }
         // Row normalization broadcasts one value across the contiguous final
         // axis. Compute outer coordinates once per row and broadcast that value
@@ -328,13 +325,14 @@ where T : unmanaged
     {
         if (other.Rank == 0)
         {
-            Apply(v => op(v, other.GetValue(0)), destination);
+            var scalar = other.GetValue(0);
+            for (int i = 0; i < Length; i++) destination.SetValue(i, op(GetLogicalValue(i), scalar));
             return;
         }
         if (Rank == 0)
         {
             var scalar = GetValue(0);
-            other.Apply(v => op(scalar, v), destination);
+            for (int i = 0; i < other.Length; i++) destination.SetValue(i, op(scalar, other.GetLogicalValue(i)));
             return;
         }
         BroadcastApplyRuns<NoBroadcastOperator<T>>(this, other, destination, TensorExecutionOptions.Scalar, shape, op);
