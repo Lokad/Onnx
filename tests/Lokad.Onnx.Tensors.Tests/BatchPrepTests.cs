@@ -23,7 +23,7 @@ public class BatchPrepTests
         var rnd = new System.Random(11);
         foreach (var (xd, yd) in new[] { (new[] { 3, 4, 5 }, new[] { 5, 2 }), (new[] { 4, 2, 3 }, new[] { 3, 2 }) })
         {
-            var opts = new TensorExecutionOptions(true, true, dop);
+            var opts = TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = dop };
             var a = RandFloat(rnd, xd);
             var b = RandFloat(rnd, yd);
             var seq = Tensor<float>.MatMul(a, b, TensorExecutionOptions.Scalar);
@@ -34,12 +34,12 @@ public class BatchPrepTests
         var xi = Tensor<int>.Ones(3, 4, 5);
         var yi = Tensor<int>.Ones(3, 5, 2);
         var ise = Tensor<int>.MatMul(xi, yi, TensorExecutionOptions.Scalar);
-        var ipa = Tensor<int>.MatMul(xi, yi, new TensorExecutionOptions(true, true, dop));
+        var ipa = Tensor<int>.MatMul(xi, yi, TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = dop });
         Assert.Equal(ise.ToArray(), ipa.ToArray());
         var xd2 = Tensor<double>.Ones(3, 4, 5);
         var yd2 = Tensor<double>.Ones(3, 5, 2);
         var dse = Tensor<double>.MatMul(xd2, yd2, TensorExecutionOptions.Scalar);
-        var dpa = Tensor<double>.MatMul(xd2, yd2, new TensorExecutionOptions(true, true, dop));
+        var dpa = Tensor<double>.MatMul(xd2, yd2, TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = dop });
         Assert.Equal(dse.ToArray(), dpa.ToArray());
     }
 
@@ -51,7 +51,7 @@ public class BatchPrepTests
         var rnd = new System.Random(13);
         var x = RandFloat(rnd, 2000, 1, 4);
         var y = RandFloat(rnd, 2000, 4, 1);
-        var opts = new TensorExecutionOptions(true, true, dop);
+        var opts = TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = dop };
         for (int i = 0; i < 3; i++) Tensor<float>.MatMul(x, y, opts);
         long before = GC.GetAllocatedBytesForCurrentThread();
         for (int i = 0; i < 50; i++) Tensor<float>.MatMul(x, y, opts);
