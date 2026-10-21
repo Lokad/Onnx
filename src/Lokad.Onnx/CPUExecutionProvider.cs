@@ -33,14 +33,20 @@ public partial class CPUExecutionProvider
 
     public static string DescribeNode(Node node) => OperatorSchemas.Describe(node);
 
-    static Tensor<int> ToInt32Saturating(ITensor data)
+    static Tensor<int> ToInt32Saturating(ITensor data, bool allowSliceMarkers = false)
     {
         if (data is Tensor<int> i) return i;
         if (data is Tensor<long> l)
         {
             var values = l.ToArray();
             var clamped = new int[values.Length];
-            for (int k = 0; k < values.Length; k++) clamped[k] = values[k] > int.MaxValue ? int.MaxValue : values[k] < int.MinValue ? int.MinValue : (int)values[k];
+            for (int k = 0; k < values.Length; k++)
+            {
+                long value = values[k];
+                if (!(allowSliceMarkers && (value == long.MinValue || value == long.MaxValue)))
+                    TensorLimits.ValidateGeometry(value, nameof(data));
+                clamped[k] = value > int.MaxValue ? int.MaxValue : value < int.MinValue ? int.MinValue : (int)value;
+            }
             return DenseTensor<int>.OfValues(clamped);
         }
         throw new ArgumentException("Expected int32/int64 tensor.");
@@ -55,7 +61,12 @@ public partial class CPUExecutionProvider
 
     static long ToInt64Scalar(ITensor data, string name)
     {
-        if (data is Tensor<long> l) return l.ToArray()[0];
+        if (data is Tensor<long> l)
+        {
+            long value = l.ToArray()[0];
+            TensorLimits.ValidateGeometry(value, name);
+            return value;
+        }
         if (data is Tensor<int> i) return i.ToArray()[0];
         throw new ArgumentException($"Expected int32/int64 scalar tensor for {name}.");
     }

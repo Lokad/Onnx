@@ -4,6 +4,9 @@ Lokad.Onnx enables prepared AVX-512 row sharing, exact softmax/BiasGelu scheduli
 vector transpose copies and reuse of eligible released storage by default.
 Existing hardware and shape checks select compatible fallback kernels.
 
+Shape/index/range parameters follow the [tensor geometry limits](tensor-limits.md):
+an inclusive 2^48 magnitude bound, with existing tighter Int32 allocation limits.
+
 `ExecutionOptions.Default` keeps the existing Speed policy. To allow earlier
 release of eligible dead reshape views, select `ExecutionOptions.Memory`:
 

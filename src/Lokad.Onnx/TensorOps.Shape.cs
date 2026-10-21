@@ -20,11 +20,13 @@ where T : unmanaged
 {
     /// <summary>
     /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws,
-    /// as do ranges with no finite count (NaN anywhere, infinite start/limit, or a count
-    /// beyond the maximum tensor length); an infinite delta yields an empty range.
+    /// as do nonfinite arguments, magnitudes beyond 2^48, or an unrepresentable output count.
     /// </summary>
     public static Tensor<float> Range(float start, float limit, float delta)
     {
+        TensorLimits.ValidateGeometry(start, nameof(start));
+        TensorLimits.ValidateGeometry(limit, nameof(limit));
+        TensorLimits.ValidateGeometry(delta, nameof(delta));
         if (delta == 0f) throw new ArgumentException(nameof(delta));
         double quotient = ((double)limit - start) / delta;
         if (double.IsNaN(quotient)) throw new ArgumentException("Range start, limit and delta must be finite or yield a finite count.", nameof(limit));
@@ -43,11 +45,13 @@ where T : unmanaged
 
     /// <summary>
     /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws,
-    /// as do ranges with no finite count (NaN anywhere, infinite start/limit, or a count
-    /// beyond the maximum tensor length); an infinite delta yields an empty range.
+    /// as do nonfinite arguments, magnitudes beyond 2^48, or an unrepresentable output count.
     /// </summary>
     public static Tensor<double> Range(double start, double limit, double delta)
     {
+        TensorLimits.ValidateGeometry(start, nameof(start));
+        TensorLimits.ValidateGeometry(limit, nameof(limit));
+        TensorLimits.ValidateGeometry(delta, nameof(delta));
         if (delta == 0.0) throw new ArgumentException(nameof(delta));
         double quotient = (limit - start) / delta;
         if (double.IsNaN(quotient)) throw new ArgumentException("Range start, limit and delta must be finite or yield a finite count.", nameof(limit));
@@ -66,14 +70,7 @@ where T : unmanaged
     /// </summary>
     public static Tensor<long> Range(long start, long limit, long delta)
     {
-        if (delta == 0L) throw new ArgumentException(nameof(delta));
-        // Counts beyond int.MaxValue are unrepresentable in int32 dims: fail
-        // here instead of overflowing the narrowing cast below (which throws
-        // OutOfMemoryException on huge allocates, a fatal error the node
-        // boundary cannot convert).
-        double longQuotient = ((double)limit - start) / delta;
-        if (longQuotient > int.MaxValue) throw new ArgumentException("Range count exceeds the maximum tensor length.", nameof(limit));
-        int count = Math.Max((int)Math.Ceiling(longQuotient), 0);
+        int count = TensorLimits.IntegerRangeCount(start, limit, delta);
         var output = new DenseTensor<long>(count);
         var span = output.Buffer.Span;
         for (int i = 0; i < count; i++) span[i] = start + i * delta;
@@ -85,14 +82,10 @@ where T : unmanaged
     /// </summary>
     public static Tensor<int> Range(int start, int limit, int delta)
     {
-        if (delta == 0) throw new ArgumentException(nameof(delta));
-        // Same unrepresentable-count guard as the long kernel above.
-        double intQuotient = ((double)limit - start) / delta;
-        if (intQuotient > int.MaxValue) throw new ArgumentException("Range count exceeds the maximum tensor length.", nameof(limit));
-        int count = Math.Max((int)Math.Ceiling(intQuotient), 0);
+        int count = TensorLimits.IntegerRangeCount(start, limit, delta);
         var output = new DenseTensor<int>(count);
         var span = output.Buffer.Span;
-        for (int i = 0; i < count; i++) span[i] = start + i * delta;
+        for (int i = 0; i < count; i++) span[i] = (int)(start + (long)i * delta);
         return output;
     }
 
@@ -103,8 +96,7 @@ where T : unmanaged
     /// </summary>
     public static Tensor<short> Range(short start, short limit, short delta)
     {
-        if (delta == 0) throw new ArgumentException(nameof(delta));
-        int count = Math.Max((int)Math.Ceiling(((double)limit - start) / delta), 0);
+        int count = TensorLimits.IntegerRangeCount(start, limit, delta);
         var output = new DenseTensor<short>(count);
         var span = output.Buffer.Span;
         for (int i = 0; i < count; i++) span[i] = unchecked((short)(start + i * delta));
@@ -257,7 +249,7 @@ where T : unmanaged
         StartOpStage(OpStage.CalculateIndices);
         int unknownDim = -1;
         List<int> newShapeDims = new List<int>();
-        int newSize = 1;
+        long newSize = 1;
         for (int i = 0; i < shape.Length; i++)
         {
             if (shape[i] == -1)
@@ -268,7 +260,7 @@ where T : unmanaged
             else if (shape[i] == 0 && !allowZero)
             {
                 newShapeDims.Add(input.Dimensions[i]);
-                newSize *= input.Dimensions[i];
+                newSize = TensorLimits.MultiplyDimensions(newSize, input.Dimensions[i], nameof(shape));
             }
             else if (shape[i] == 0 && allowZero)
             {
@@ -278,7 +270,7 @@ where T : unmanaged
             else
             {
                 newShapeDims.Add(Convert.ToInt32(shape[i]));
-                newSize *= Convert.ToInt32(shape[i]);
+                newSize = TensorLimits.MultiplyDimensions(newSize, Convert.ToInt32(shape[i]), nameof(shape));
             }
         }
         if (unknownDim != -1)
@@ -292,19 +284,19 @@ where T : unmanaged
                 {
                     throw new ArgumentException($"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}", nameof(shape));
                 }
-                newShapeDims[unknownDim] = NonZeroVolume(input.Dimensions.ToArray()) / NonZeroVolume(newShapeDims);
+                newShapeDims[unknownDim] = Convert.ToInt32(NonZeroVolume(input.Dimensions.ToArray()) / NonZeroVolume(newShapeDims));
             }
             else
             {
                 newShapeDims[unknownDim] = Convert.ToInt32(input.Length / newSize);
             }
-            newSize *= newShapeDims[unknownDim];
+            newSize = TensorLimits.MultiplyDimensions(newSize, newShapeDims[unknownDim], nameof(shape));
         }
 
-        static int NonZeroVolume(System.Collections.Generic.IEnumerable<int> dims)
+        static long NonZeroVolume(System.Collections.Generic.IEnumerable<int> dims)
         {
-            int volume = 1;
-            foreach (var d in dims) if (d != 0 && d != -1) volume *= d;
+            long volume = 1;
+            foreach (var d in dims) if (d != 0 && d != -1) volume = TensorLimits.MultiplyDimensions(volume, d, nameof(shape));
             return volume;
         }
 
@@ -625,6 +617,8 @@ where T : unmanaged
             }
         }
         var shape = x.dimensions.Copy();
+        if (shape[axis] > int.MaxValue - y.dimensions[axis])
+            throw new ArgumentException("Concatenated dimension exceeds the Int32 storage limit.", nameof(y));
         shape[axis] += y.dimensions[axis];
 
         StartOpStage(OpStage.Copy);
@@ -671,7 +665,12 @@ where T : unmanaged
             throw new ArgumentException("The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.", nameof(inputs));
         var shape = inputs[0].dimensions.Copy();
         shape[axis] = 0;
-        foreach (var input in inputs) shape[axis] += input.dimensions[axis];
+        foreach (var input in inputs)
+        {
+            if (shape[axis] > int.MaxValue - input.dimensions[axis])
+                throw new ArgumentException("Concatenated dimension exceeds the Int32 storage limit.", nameof(inputs));
+            shape[axis] += input.dimensions[axis];
+        }
         return shape;
     }
 

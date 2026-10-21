@@ -478,7 +478,7 @@ namespace Lokad.Onnx
                         throw new ArgumentOutOfRangeException(nameof(dimensions), "Dimensions must be non-negative");
                     }
                     this.dimensions[i] = dimensions[i];
-                    size *= dimensions[i];
+                    size = TensorLimits.MultiplyDimensions(size, dimensions[i], nameof(dimensions));
                 }
 
                 this.strides = ArrayUtilities.GetStrides(dimensions, reverseStride);

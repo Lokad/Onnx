@@ -89,8 +89,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Multiplies dimensions[startIndex..] with overflow checking into a long.
-        /// Unlike the int version, an overflowing product escapes as OverflowException.
+        /// Multiplies dimensions[startIndex..] into a long, rejecting products beyond 2^48.
         /// </summary>
         public static long ComputeOffsetForReductionLong(ReadOnlySpan<int> dimensions, int startIndex)
         {
@@ -101,7 +100,7 @@ namespace Lokad.Onnx
                 for (int i = startIndex; i < dimensions.Length; i++)
                 {
                     if (dimensions[i] < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
-                    product *= dimensions[i];
+                    product = TensorLimits.MultiplyDimensions(product, dimensions[i], nameof(dimensions));
                 }
                 return product;
             }

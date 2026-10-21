@@ -31,6 +31,7 @@ public class Model
 
     static ComputationalGraph Load(OnnxModel mp, bool runOptimizer, HashSet<OnnxSubgraph> visiting, long maximumPackedWeightBytes)
     {
+        foreach (var description in mp.Inputs.Concat(mp.Outputs)) TensorLimits.ValidateDescriptor(description);
         if (Log.IsEnabled(LogLevel.Info)) Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Name, mp.Domain, mp.Opset.Select(o => o.Key + ":" + o.Value).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.DocString);
         var cop = Begin("Creating computational graph from ONNX model");
         var graph = new ComputationalGraph(maximumPackedWeightBytes);

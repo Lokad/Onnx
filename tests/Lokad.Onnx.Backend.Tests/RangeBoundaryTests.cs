@@ -191,15 +191,11 @@ public class RangeBoundaryTests
     }
 
     [Fact]
-    public void NonFiniteRange_BehavesLikeOrt()
+    public void NonFiniteRange_RejectsUnsupportedGeometry()
     {
-        // ORT 1.29 fails ranges with no finite count (NaN anywhere, an
-        // infinite start/limit); an infinite delta yields an empty range.
-        // The provider surfaces the failures as descriptive throws, like
-        // zero delta at tensor level and graph Failure through dispatch.
-        var empty = CPU.Range(ScalarF(0f), ScalarF(1f), ScalarF(float.PositiveInfinity), null);
-        Assert.Equal(OpStatus.Success, empty.Status);
-        Assert.Empty(((Tensor<float>)empty.Outputs![0]).ToArray());
+        // The bounded-geometry contract intentionally rejects all nonfinite
+        // parameters, including the infinite step ORT treats as an empty range.
+        Assert.Throws<System.ArgumentException>(() => CPU.Range(ScalarF(0f), ScalarF(1f), ScalarF(float.PositiveInfinity), null));
         Assert.Throws<System.ArgumentException>(() => CPU.Range(ScalarF(0f), ScalarF(1f), ScalarF(float.NaN), null));
         Assert.Throws<System.ArgumentException>(() => CPU.Range(ScalarF(0f), ScalarF(float.PositiveInfinity), ScalarF(1f), null));
         Assert.Throws<System.ArgumentException>(() => CPU.Range(ScalarD(0.0), ScalarD(1.0), ScalarD(double.NaN), null));

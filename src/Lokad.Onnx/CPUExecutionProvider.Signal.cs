@@ -47,6 +47,7 @@ public partial class CPUExecutionProvider
             return WrongInputType(op, nameof(frameStep), "Frame step must be int32 or int64.", frameStep);
         if (frameStep.Length != 1) return WrongInputShape(op, nameof(frameStep), frameStep, "Frame step must contain one value.");
         long step = frameStep is Tensor<long> longStep ? longStep.GetValue(0) : ((Tensor<int>)frameStep).GetValue(0);
+        TensorLimits.ValidateGeometry(step, nameof(frameStep));
         if (step <= 0) return WrongInputShape(op, nameof(frameStep), frameStep, "Frame step must be positive.");
         if (window is not null)
         {

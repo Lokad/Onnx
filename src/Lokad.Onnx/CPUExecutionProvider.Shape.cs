@@ -254,13 +254,13 @@ public partial class CPUExecutionProvider
         
         if (starts.ElementType == TensorElementType.Int64)
         {
-            starts = ToInt32Saturating(starts);
+            starts = ToInt32Saturating(starts, allowSliceMarkers: true);
         }
         if (starts.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(starts), "The starts tensor must be int32 or int64.", starts);
 
         if (ends.ElementType == TensorElementType.Int64)
         {
-            ends = ToInt32Saturating(ends);
+            ends = ToInt32Saturating(ends, allowSliceMarkers: true);
         }
         if (ends.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(ends), "The ends tensor must be int32 or int64.", ends);
 

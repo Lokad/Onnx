@@ -1447,6 +1447,12 @@ public partial class ComputationalGraph
 
     string? ValidatePreparation()
     {
+        try
+        {
+            foreach (var description in InputDescs.Concat(OutputDescs))
+                if (description is not null) TensorLimits.ValidateDescriptor(description);
+        }
+        catch (ArgumentException error) { return "Invalid declared tensor geometry: " + error.Message; }
         var producer = new Dictionary<string, int>(StringComparer.Ordinal);
         for (int i = 0; i < Nodes.Count; i++)
         {

@@ -9,37 +9,30 @@ public static class ProtoConversions
 {
     public static object GetTensorData(this TensorProto tp)
     {
+        long? expected = GeometryElementCount(tp);
         var elementType = (TensorElementType)tp.DataType;
         int size = TensorBase.ElementByteSize(elementType);
         if (tp.RawData.Length > 0 && size > 0 && tp.RawData.Length % size != 0)
             throw new InvalidOperationException($"Tensor {tp.Name} holds {tp.RawData.Length} raw bytes, not a multiple of {size} for {elementType}.");
         var data = (Array)DecodeTensorData(tp, elementType);
-        RequireElementCount(tp, data);
+        if (expected.HasValue && data.Length != expected.Value)
+            throw new InvalidOperationException($"Tensor {tp.Name} declares {expected.Value} elements but its payload holds {data.Length}.");
         return data;
     }
 
-    static void RequireElementCount(TensorProto tp, Array data)
+    static long? GeometryElementCount(TensorProto tp)
     {
-        long expected;
-        try
+        bool known = true;
+        foreach (long dimension in tp.Dims)
         {
-            checked
-            {
-                expected = 1;
-                foreach (var d in tp.Dims)
-                {
-                    if (d < 0) return; // Underivable (symbolic) extents skip the check, matching
-                        // the external-data byte-count policy for such shapes.
-                    expected *= d;
-                }
-            }
+            TensorLimits.ValidateGeometry(dimension, nameof(tp.Dims));
+            known &= dimension >= 0;
         }
-        catch (OverflowException)
-        {
-            throw new InvalidOperationException($"Tensor {tp.Name} declares a shape whose element count overflows.");
-        }
-        if (data.Length != expected)
-            throw new InvalidOperationException($"Tensor {tp.Name} declares {expected} elements but its payload holds {data.Length}.");
+        if (!known) return null;
+        long count = 1;
+        foreach (long dimension in tp.Dims)
+            count = TensorLimits.MultiplyDimensions(count, dimension, nameof(tp.Dims));
+        return count;
     }
 
     static object DecodeTensorData(TensorProto tp, TensorElementType elementType)
@@ -121,32 +114,17 @@ public static class ProtoConversions
 
     static ExternalSegment GetExternalSegment(TensorProto tp, string baseDirectory)
     {
+        long? elementCount = GeometryElementCount(tp);
         /// <summary>
         /// Expected external byte count from dims and element type, or null when the
         /// shape has symbolic (non-positive) dims or the type has no fixed size.
-        /// Returns null rather than throwing: callers skip the check in that case.
+        /// Invalid geometry has already been rejected before external IO.
         /// </summary>
         ulong? ExpectedByteCount(TensorProto tp)
         {
             int size = TensorBase.ElementByteSize((TensorElementType)tp.DataType);
-            if (size < 0) return null;
-            try
-            {
-                checked
-                {
-                    ulong count = 1;
-                    foreach (var d in tp.Dims)
-                    {
-                        if (d <= 0) return null;
-                        count *= (ulong)d;
-                    }
-                    return count * (ulong)size;
-                }
-            }
-            catch (OverflowException)
-            {
-                return null;
-            }
+            if (size < 0 || !elementCount.HasValue || tp.Dims.Any(d => d <= 0)) return null;
+            return (ulong)elementCount.Value * (ulong)size;
         }
 
         string? location = null;
@@ -227,27 +205,9 @@ public static class ProtoConversions
         var segment = GetExternalSegment(tp, baseDirectory);
         var elementType = (TensorElementType)tp.DataType;
         int size = TensorBase.ElementByteSize(elementType);
-        ulong count = 0;
-        bool direct = size > 0;
-        if (direct)
-        {
-            try
-            {
-                checked
-                {
-                    count = 1;
-                    foreach (var d in tp.Dims)
-                    {
-                        if (d <= 0) { direct = false; break; }
-                        count *= (ulong)d;
-                    }
-                }
-            }
-            catch (OverflowException)
-            {
-                direct = false;
-            }
-        }
+        long? elementCount = GeometryElementCount(tp);
+        ulong count = (ulong)(elementCount ?? 0);
+        bool direct = size > 0 && elementCount.HasValue && tp.Dims.All(d => d > 0);
         if (!direct)
         {
             tp.ResolveExternalData(baseDirectory);
@@ -289,6 +249,7 @@ public static class ProtoConversions
     /// </summary>
     public static OnnxTensor ToTensorDto(this TensorProto tp, string? baseDirectory, bool materialize)
     {
+        GeometryElementCount(tp);
         Array data;
         if (tp.DataLocation == TensorProto.Types.DataLocation.External)
         {
@@ -346,7 +307,7 @@ public static class ProtoConversions
         {
             throw new ArgumentException($"The value info {vp.Name} declares a tensor type without shape metadata; shaped graph inputs and outputs are required.");
         }
-        return new OnnxValueInfo
+        var description = new OnnxValueInfo
         {
             Name = vp.Name,
             ElementType = (TensorElementType)vp.Type.TensorType.ElemType,
@@ -359,6 +320,8 @@ public static class ProtoConversions
             }).ToArray(),
             DimParams = vp.Type.TensorType.Shape.Dim.Select(d => string.IsNullOrEmpty(d.DimParam) ? null : d.DimParam).ToArray(),
         };
+        TensorLimits.ValidateDescriptor(description);
+        return description;
     }
 
     public static string TensorNameDesc(this ValueInfoProto vp) => vp.ToValueDto().Describe();
