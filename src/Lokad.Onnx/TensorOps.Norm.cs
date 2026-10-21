@@ -35,6 +35,9 @@ where T : unmanaged
         return (block, (int)(inputLength / block));
     }
 
+    static DenseTensor<TElement> SnapshotOverlappingSource<TElement>(DenseTensor<TElement> source, DenseTensor<TElement> destination) where TElement : unmanaged
+        => TensorAlias.SharesBackingMemory(source, destination) ? Tensor<TElement>.Snapshot(source) : source;
+
     /// <summary>
     /// Normalizes over the input dimensions from axis to the last one using scale, optional bias, and epsilon.
     /// Statistics accumulate in double precision; the axis indexes the input tensor.
@@ -137,6 +140,9 @@ where T : unmanaged
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
         if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+        xd = (DenseTensor<float>)Tensor<float>.PreserveElementwiseSource(xd, destination);
+        sd = SnapshotOverlappingSource(sd, destination);
+        if (bd is not null) bd = SnapshotOverlappingSource(bd, destination);
         LayerNormFloatInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon);
         return destination;
     }
@@ -166,6 +172,9 @@ where T : unmanaged
         var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
         if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+        xd = (DenseTensor<double>)Tensor<double>.PreserveElementwiseSource(xd, destination);
+        sd = SnapshotOverlappingSource(sd, destination);
+        if (bd is not null) bd = SnapshotOverlappingSource(bd, destination);
         LayerNormDoubleInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon);
         return destination;
     }
@@ -241,6 +250,11 @@ where T : unmanaged
             stride *= dims[d];
             cosineStride *= cd2;
         }
+        // Rotation reads other input positions, so even exact in-place input
+        // needs preservation. Broadcast parameters can be reused after writes.
+        xd = SnapshotOverlappingSource(xd, destination);
+        cd = SnapshotOverlappingSource(cd, destination);
+        sd = SnapshotOverlappingSource(sd, destination);
         var xs = xd.Buffer.Span;
         var cs = cd.Buffer.Span;
         var ss = sd.Buffer.Span;
