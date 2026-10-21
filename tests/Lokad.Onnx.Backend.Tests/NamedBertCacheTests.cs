@@ -9,6 +9,9 @@ public class NamedBertCacheTests
         typeof(Text).GetMethod("GetSharedBertTokenizer", BindingFlags.Static | BindingFlags.NonPublic)!
             .Invoke(null, new object[] { name, loader })!;
 
+    static Task<T> OnDedicatedThread<T>(Func<T> operation) =>
+        Task.Factory.StartNew(operation, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
     [Fact]
     public async Task BlockedColdKey_DoesNotBlockCachedOrOtherKeys()
     {
@@ -17,20 +20,30 @@ public class NamedBertCacheTests
         Load(prefix + "-cached", _ => ready);
         using var entered = new ManualResetEventSlim();
         using var release = new ManualResetEventSlim();
-        var slow = Task.Run(() => Load(prefix + "-slow", _ =>
+        // Test cache contention independently of the runner's shared thread pool.
+        var slow = OnDedicatedThread(() => Load(prefix + "-slow", _ =>
         {
             entered.Set();
-            if (!release.Wait(TimeSpan.FromSeconds(15))) throw new TimeoutException();
+            release.Wait(); // Released by finally, after the probes have completed or timed out.
             return new BertTokenizer();
         }));
+        var workers = new List<Task> { slow };
         try
         {
             Assert.True(entered.Wait(TimeSpan.FromSeconds(10)));
-            Assert.Same(ready, await Task.Run(() => Text.GetOrLoadBertTokenizer(prefix + "-cached")).WaitAsync(TimeSpan.FromSeconds(10)));
-            await Task.Run(() => Load(prefix + "-other", _ => new BertTokenizer())).WaitAsync(TimeSpan.FromSeconds(10));
+            var cached = OnDedicatedThread(() => Text.GetOrLoadBertTokenizer(prefix + "-cached"));
+            var other = OnDedicatedThread(() => Load(prefix + "-other", _ => new BertTokenizer()));
+            workers.Add(cached);
+            workers.Add(other);
+            await Task.WhenAll(cached, other).WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.False(slow.IsCompleted);
+            Assert.Same(ready, await cached);
         }
-        finally { release.Set(); }
-        await slow;
+        finally
+        {
+            release.Set();
+            await Task.WhenAll(workers);
+        }
     }
 
     [Fact]
