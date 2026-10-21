@@ -1714,23 +1714,13 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public int[] GetCoordinates(int offset)
         {
-            var coords = new int[strides.Length];
+            if (offset < 0 || offset >= Length) throw new ArgumentOutOfRangeException(nameof(offset));
+            var coords = new int[dimensions.Length];
             int rest = offset;
-            for (int i = 0; i < strides.Length; i++)
+            for (int i = dimensions.Length - 1; i >= 0; i--)
             {
-                unchecked
-                {
-                    int step = strides[i];
-                    if (step == 0)
-                    {
-                        coords[i] = 0;
-                    }
-                    else
-                    {
-                        coords[i] = rest / step;
-                        rest -= coords[i] * step;
-                    }
-                }
+                coords[i] = rest % dimensions[i];
+                rest /= dimensions[i];
             }
 
             return coords;
