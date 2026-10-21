@@ -548,7 +548,7 @@ where T : unmanaged
 
         StartOpStage(OpStage.CalculateIndices);
         var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _axis.Value) : 0;    
-        if (axis > data.Rank - 1)
+        if (axis < 0 || axis >= data.Rank)
         {
             throw new ArgumentException($"The specified axis {_axis} exceeds the number of dimensions in the tensor.", nameof(_axis));
         }
@@ -570,8 +570,10 @@ where T : unmanaged
             n++;
         }
         var output = DenseTensor<T>.OfShape(outputShape);
+        if (output.Length == 0) return output;
         StartOpStage(OpStage.Copy);
-        if (data is DenseTensor<T> denseData && HasStandardStrides(denseData) && indices is DenseTensor<int> denseIndices)
+        if (data is DenseTensor<T> denseData && HasStandardStrides(denseData)
+            && indices is DenseTensor<int> denseIndices && HasStandardStrides(denseIndices))
         {
             int outer = 1;
             for (int d = 0; d < axis; d++) outer *= data.dimensions[d];
@@ -582,7 +584,7 @@ where T : unmanaged
             var srcSpan = denseData.Buffer.Span;
             var dstSpan = output.Buffer.Span;
             var rows = new int[indexSpan.Length];
-            for (int j = 0; j < rows.Length; j++) rows[j] = ArrayUtilities.HandleNegativeAxisOrIndex(axisDim, indexSpan[j]);
+            for (int j = 0; j < rows.Length; j++) rows[j] = NormalizeGatherIndex(indexSpan[j], axisDim, nameof(indices));
             for (int o = 0; o < outer; o++)
             {
                 for (int j = 0; j < rows.Length; j++)
@@ -592,15 +594,27 @@ where T : unmanaged
             }
             return output;
         }
+        var sourceCoordinates = new int[data.Rank];
+        var indexCoordinates = new int[indices.Rank];
+        int position = 0;
         foreach (var di in output.GetDimensionsIterator())
         {
-            var a = di[0..axis];
-            var k = ArrayUtilities.HandleNegativeAxisOrIndex(data.dimensions[axis], indices[di[axis..(axis + indices.Rank)]]);
-            var b = di[(axis + (indices.Rank == 0 ? 1 : indices.Rank))..];
-            var oloc = a.Append(k).Concat(b).ToArray();
-            output[di] = data[oloc];
+            di.AsSpan(0, axis).CopyTo(sourceCoordinates);
+            di.AsSpan(axis, indices.Rank).CopyTo(indexCoordinates);
+            sourceCoordinates[axis] = NormalizeGatherIndex(indices[indexCoordinates], data.dimensions[axis], nameof(indices));
+            di.AsSpan(axis + indices.Rank, data.Rank - axis - 1).CopyTo(sourceCoordinates.AsSpan(axis + 1));
+            output.SetValue(position++, data[sourceCoordinates]);
         }
         return output;  
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static int NormalizeGatherIndex(int index, int dimension, string parameterName)
+    {
+        int normalized = ArrayUtilities.HandleNegativeAxisOrIndex(dimension, index);
+        if (normalized < 0 || normalized >= dimension)
+            throw new ArgumentOutOfRangeException(parameterName, index, "Gather index is outside the selected axis.");
+        return normalized;
     }
 
     public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)
