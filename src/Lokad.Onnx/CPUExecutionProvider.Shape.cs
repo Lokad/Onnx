@@ -833,6 +833,7 @@ public partial class CPUExecutionProvider
             reps = new int[rl.Length];
             for (int i = 0; i < rl.Length; i++)
             {
+                TensorLimits.ValidateGeometry(rl[i], nameof(repeats));
                 if (rl[i] < 0L) throw new ArgumentException("Repeats must be non-negative.", nameof(repeats));
                 // Divide before multiplying or narrowing: a positive long repeat
                 // can overflow even an int64 product. Empty axes stay empty.

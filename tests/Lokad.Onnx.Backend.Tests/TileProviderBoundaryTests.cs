@@ -21,11 +21,15 @@ public class TileProviderBoundaryTests
             DenseTensor<long>.OfValues(new[] { repeat }), null));
     }
 
-    [Fact]
-    public void Int64HugeRepeatOfEmptyAxis_RemainsEmpty()
+    [Theory]
+    [InlineData(0L)]
+    [InlineData(1L)]
+    [InlineData((1L << 48) - 1)]
+    [InlineData(1L << 48)]
+    public void Int64RepeatWithinGeometryBound_OfEmptyAxisRemainsEmpty(long repeat)
     {
         var result = CPUExecutionProvider.Tile(DenseTensor<int>.OfShape(0, 3),
-            DenseTensor<long>.OfValues(new[] { long.MaxValue, 1L }), null);
+            DenseTensor<long>.OfValues(new[] { repeat, 1L }), null);
         Assert.Equal(OpStatus.Success, result.Status);
         Assert.Equal(new[] { 0, 3 }, result.Outputs[0].Dims);
         Assert.Empty(((Tensor<int>)result.Outputs[0]).ToArray());
@@ -33,5 +37,16 @@ public class TileProviderBoundaryTests
             DenseTensor<long>.OfValues(new[] { -1L }), null));
         Assert.Throws<ArgumentException>(() => CPUExecutionProvider.Tile(DenseTensor<int>.OfShape(1),
             DenseTensor<long>.OfValues(new[] { 1L, 1L }), null));
+    }
+
+    [Theory]
+    [InlineData((1L << 48) + 1)]
+    [InlineData(long.MaxValue)]
+    public void Int64RepeatBeyondGeometryBound_RejectsEvenOnEmptyAxes(long repeat)
+    {
+        Assert.Throws<ArgumentException>(() => CPUExecutionProvider.Tile(DenseTensor<int>.OfShape(0, 3),
+            DenseTensor<long>.OfValues(new[] { repeat, 1L }), null));
+        Assert.Throws<ArgumentException>(() => CPUExecutionProvider.Tile(DenseTensor<int>.OfShape(3, 0),
+            DenseTensor<long>.OfValues(new[] { 1L, repeat }), null));
     }
 }
