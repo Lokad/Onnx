@@ -141,111 +141,106 @@ where T : unmanaged
 
     void BroadcastApplyIntoCore<TOp>(Tensor<T> other, DenseTensor<T> destination, TensorExecutionOptions options, int[] shape) where TOp : struct, IBroadcastOperator<T>
     {
-        if (other.Rank == 0)
-        {
-            var scalar = other.GetValue(0);
-            if (options.UseSimd && this is DenseTensor<T> xd0 && !xd0.IsReversedStride && IsDirectSpanCompatible(xd0) && IsDirectSpanCompatible(destination))
-            {
-                var sv = new Vector<T>(scalar);
-                var xv = MemoryMarshal.Cast<T, Vector<T>>(xd0.Buffer.Span);
-                var dv = MemoryMarshal.Cast<T, Vector<T>>(destination.Buffer.Span);
-                int k = 0;
-                int kend = Math.Min(xv.Length, dv.Length);
-                for (; k < kend; k++) dv[k] = TOp.Vector(xv[k], sv);
-                int done = k * Vector<T>.Count;
-                var xs = xd0.Buffer.Span;
-                var ds = destination.Buffer.Span;
-                for (int i = done; i < (int)Length; i++) ds[i] = TOp.Scalar(xs[i], scalar);
-                return;
-            }
-            for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetLogicalValue(i), scalar));
-            return;
-        }
+        if (destination.Length == 0) return;
         if (other.Length == 1)
         {
-            // Single-element (but non-rank-0) operands take the scalar tier: the
-            // run engine below would otherwise degenerate to per-element scalar
-            // calls with stride math on every element. Same per-element arithmetic.
-            var scalar = other.GetValue(0);
-            if (options.UseSimd && this is DenseTensor<T> xd1 && !xd1.IsReversedStride && IsDirectSpanCompatible(xd1) && IsDirectSpanCompatible(destination))
-            {
-                var sv = new Vector<T>(scalar);
-                var xv = MemoryMarshal.Cast<T, Vector<T>>(xd1.Buffer.Span);
-                var dv = MemoryMarshal.Cast<T, Vector<T>>(destination.Buffer.Span);
-                int k = 0;
-                int kend = Math.Min(xv.Length, dv.Length);
-                for (; k < kend; k++) dv[k] = TOp.Vector(xv[k], sv);
-                int done = k * Vector<T>.Count;
-                var xs = xd1.Buffer.Span;
-                var ds = destination.Buffer.Span;
-                for (int i = done; i < (int)Length; i++) ds[i] = TOp.Scalar(xs[i], scalar);
-                return;
-            }
-            for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetLogicalValue(i), scalar));
-            return;
-        }
-        if (Rank == 0)
-        {
-            var scalar = GetValue(0);
-            if (options.UseSimd && other is DenseTensor<T> yd0 && !yd0.IsReversedStride && IsDirectSpanCompatible(yd0) && IsDirectSpanCompatible(destination))
-            {
-                var sv = new Vector<T>(scalar);
-                var yv = MemoryMarshal.Cast<T, Vector<T>>(yd0.Buffer.Span);
-                var dv = MemoryMarshal.Cast<T, Vector<T>>(destination.Buffer.Span);
-                int k = 0;
-                int kend = Math.Min(yv.Length, dv.Length);
-                for (; k < kend; k++) dv[k] = TOp.Vector(sv, yv[k]);
-                int done = k * Vector<T>.Count;
-                var ys = yd0.Buffer.Span;
-                var ds = destination.Buffer.Span;
-                for (int i = done; i < (int)other.Length; i++) ds[i] = TOp.Scalar(scalar, ys[i]);
-                return;
-            }
-            for (int i = 0; i < other.Length; i++) destination.SetValue(i, TOp.Scalar(scalar, other.GetLogicalValue(i)));
+            BroadcastScalarInto<TOp>(this, other.GetValue(0), destination, options, false);
             return;
         }
         if (Length == 1)
         {
-            // Mirror image of the single-element right-operand tier above.
-            var scalar = GetValue(0);
-            if (options.UseSimd && other is DenseTensor<T> yd1 && !yd1.IsReversedStride && IsDirectSpanCompatible(yd1) && IsDirectSpanCompatible(destination))
-            {
-                var sv = new Vector<T>(scalar);
-                var yv = MemoryMarshal.Cast<T, Vector<T>>(yd1.Buffer.Span);
-                var dv = MemoryMarshal.Cast<T, Vector<T>>(destination.Buffer.Span);
-                int k = 0;
-                int kend = Math.Min(yv.Length, dv.Length);
-                for (; k < kend; k++) dv[k] = TOp.Vector(sv, yv[k]);
-                int done = k * Vector<T>.Count;
-                var ys = yd1.Buffer.Span;
-                var ds = destination.Buffer.Span;
-                for (int i = done; i < (int)other.Length; i++) ds[i] = TOp.Scalar(scalar, ys[i]);
-                return;
-            }
-            for (int i = 0; i < other.Length; i++) destination.SetValue(i, TOp.Scalar(scalar, other.GetLogicalValue(i)));
+            BroadcastScalarInto<TOp>(other, GetValue(0), destination, options, true);
             return;
         }
         BroadcastApplyRuns<TOp>(this, other, destination, options, shape, null);
     }
 
+    static void BroadcastScalarInto<TOp>(Tensor<T> input, T scalar, DenseTensor<T> destination,
+        TensorExecutionOptions options, bool scalarOnLeft) where TOp : struct, IBroadcastOperator<T>
+    {
+        if (options.UseSimd && !input.IsReversedStride && IsDirectSpanCompatible(input))
+        {
+            ApplyBroadcastScalarRow<TOp>(((DenseTensor<T>)input).Buffer.Span, scalar, destination.Buffer.Span, scalarOnLeft);
+            return;
+        }
+        for (int i = 0; i < destination.Length; i++)
+        {
+            T value = input.GetLogicalValue(i);
+            destination.SetValue(i, scalarOnLeft ? TOp.Scalar(scalar, value) : TOp.Scalar(value, scalar));
+        }
+    }
+
+    // Only built-in view chains promise an affine mapping into the root buffer.
+    static bool TryElementwiseLayout(Tensor<T> input, out Memory<T> storage, out int origin, out int[] steps)
+    {
+        storage = default;
+        origin = 0;
+        steps = Array.Empty<int>();
+        if (input.GetType() == typeof(DenseTensor<T>))
+        {
+            storage = ((DenseTensor<T>)input).Buffer;
+            steps = input.strides;
+            return true;
+        }
+        var owner = input;
+        while (owner.GetType() != typeof(DenseTensor<T>))
+        {
+            if (owner.GetType() == typeof(TensorSlice<T>)) owner = ((TensorSlice<T>)owner).parent;
+            else if (owner.GetType() == typeof(BroadcastedTensor<T>)) owner = ((BroadcastedTensor<T>)owner).source;
+            else return false;
+        }
+        storage = ((DenseTensor<T>)owner).Buffer;
+        var coordinates = new int[input.Rank];
+        steps = new int[input.Rank];
+        origin = input.GetStorageIndex(coordinates);
+        for (int axis = 0; axis < input.Rank; axis++)
+        {
+            if (input.dimensions[axis] <= 1) continue;
+            coordinates[axis] = 1;
+            steps[axis] = input.GetStorageIndex(coordinates) - origin;
+            coordinates[axis] = 0;
+        }
+        return true;
+    }
+
+    static void BroadcastApplyIndexed<TOp>(Tensor<T> left, Tensor<T> right, DenseTensor<T> destination,
+        int[] shape, Func<T, T, T>? operation) where TOp : struct, IBroadcastOperator<T>
+    {
+        var leftCoordinates = new int[left.Rank];
+        var rightCoordinates = new int[right.Rank];
+        int position = 0;
+        foreach (var coordinate in new TensorDimensionsIterator(shape))
+        {
+            for (int axis = 0; axis < left.Rank; axis++)
+                leftCoordinates[axis] = left.dimensions[axis] == 1 ? 0 : coordinate[shape.Length - left.Rank + axis];
+            for (int axis = 0; axis < right.Rank; axis++)
+                rightCoordinates[axis] = right.dimensions[axis] == 1 ? 0 : coordinate[shape.Length - right.Rank + axis];
+            T x = left[leftCoordinates], y = right[rightCoordinates];
+            destination.SetValue(position++, operation is null ? TOp.Scalar(x, y) : operation(x, y));
+        }
+    }
+
     /// <summary>Shared run-tier engine used by the specialized and fallback paths.</summary>
     void BroadcastApplyRuns<TOp>(Tensor<T> left, Tensor<T> right, DenseTensor<T> destination, TensorExecutionOptions options, int[] shape, Func<T, T, T>? sop) where TOp : struct, IBroadcastOperator<T>
     {
-        var xd = left as DenseTensor<T> is { IsReversedStride: false } ownX ? ownX : left.ToDenseTensor();
-        var yd = right as DenseTensor<T> is { IsReversedStride: false } ownY ? ownY : right.ToDenseTensor();
+        if (destination.Length == 0) return;
+        if (!TryElementwiseLayout(left, out var xStorage, out int xOrigin, out var xStrides)
+            || !TryElementwiseLayout(right, out var yStorage, out int yOrigin, out var yStrides))
+        {
+            BroadcastApplyIndexed<TOp>(left, right, destination, shape, sop);
+            return;
+        }
         int rank = shape.Length;
-        var xs = xd.Buffer.Span;
-        var ys = yd.Buffer.Span;
+        var xs = xStorage.Span;
+        var ys = yStorage.Span;
         var ds = destination.Buffer.Span;
-        // Right-aligned span steps; 0 marks a reused (broadcast or missing) dim.
         var xSteps = new int[rank];
         var ySteps = new int[rank];
         for (int d = rank - 1; d >= 0; d--)
         {
-            int xDim = d < rank - xd.Rank ? 1 : xd.Dimensions[d - (rank - xd.Rank)];
-            int yDim = d < rank - yd.Rank ? 1 : yd.Dimensions[d - (rank - yd.Rank)];
-            xSteps[d] = xDim == 1 ? 0 : xd.strides[d - (rank - xd.Rank)];
-            ySteps[d] = yDim == 1 ? 0 : yd.strides[d - (rank - yd.Rank)];
+            int xAxis = d - (rank - left.Rank), yAxis = d - (rank - right.Rank);
+            xSteps[d] = xAxis < 0 || left.dimensions[xAxis] == 1 ? 0 : xStrides[xAxis];
+            ySteps[d] = yAxis < 0 || right.dimensions[yAxis] == 1 ? 0 : yStrides[yAxis];
         }
         // Row normalization broadcasts one value across the contiguous final
         // axis. Compute outer coordinates once per row and broadcast that value
@@ -269,7 +264,7 @@ where T : unmanaged
         int blocks = total == 0 ? 0 : total / inner;
         for (int b = 0; b < blocks; b++)
         {
-            int rem = b, ox = 0, oy = 0;
+            int rem = b, ox = xOrigin, oy = yOrigin;
             for (int d = od; d >= 0; d--)
             {
                 int q = shape[d];
