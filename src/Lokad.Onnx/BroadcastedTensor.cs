@@ -154,7 +154,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     /// </summary>
     public override Tensor<T> InsertDim(int dim)
     {
-        if (dim >= Rank) throw new ArgumentException(nameof(dim));
+        if ((uint)dim > (uint)Rank) throw new ArgumentException(nameof(dim));
         var dims = this.dimensions.ToList();
         dims.Insert(dim, 1);
         var bdims = broadcastedDims.Copy();

@@ -16,6 +16,13 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
         this.parent = parent;
         this.slices = expanded.Select((i, n) => i.ToSliceDef(parent.dimensions[n])).ToArray();
     }
+
+    TensorSlice(Tensor<T> parent, int[] dimensions, SliceDef[] slices)
+        : base((ReadOnlySpan<int>)dimensions, parent.IsReversedStride)
+    {
+        this.parent = parent;
+        this.slices = slices;
+    }
     static int[] SliceDims(Tensor<T> parent, SliceIndex[] indices, out SliceIndex[] expanded)
     {
         expanded = parent.ExpandEllipsis(indices);
@@ -162,9 +169,45 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
 
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions, this.IsReversedStride);
     
-    public override Tensor<T> InsertDim(int dim) => Clone().InsertDim(dim);
+    public override Tensor<T> InsertDim(int dim)
+    {
+        if ((uint)dim > (uint)Rank) throw new IndexOutOfRangeException(nameof(dim));
+        if (GetType() != typeof(TensorSlice<T>)) return Clone().InsertDim(dim);
+        int axis = ParentAxis(dim);
+        var shape = dimensions.ToList();
+        shape.Insert(dim, 1);
+        var definitions = new SliceDef[parent.Rank + 1];
+        for (int i = 0; i < definitions.Length; i++)
+            definitions[i] = i == axis ? new SliceDef { Start = 0, Count = 1, Step = 1 }
+                : ParentSlice(i < axis ? i : i - 1);
+        return new TensorSlice<T>(parent.InsertDim(axis), shape.ToArray(), definitions);
+    }
 
-    public override Tensor<T> RemoveDim(int dim) => Clone().RemoveDim(dim);
+    public override Tensor<T> RemoveDim(int dim)
+    {
+        if ((uint)dim >= (uint)Rank) throw new IndexOutOfRangeException(nameof(dim));
+        if (dimensions[dim] != 1) throw new ArgumentException("Only a size-1 dimension can be removed.", nameof(dim));
+        if (GetType() != typeof(TensorSlice<T>)) return Clone().RemoveDim(dim);
+        int axis = ParentAxis(dim);
+        var shape = dimensions.ToList();
+        shape.RemoveAt(dim);
+        var definitions = new SliceDef[parent.Rank];
+        for (int i = 0; i < definitions.Length; i++)
+            definitions[i] = i == axis ? new SliceDef(ParentSlice(i).Start) : ParentSlice(i);
+        return new TensorSlice<T>(parent, shape.ToArray(), definitions);
+    }
+
+    // Omitted selectors retain the full parent axis.
+    SliceDef ParentSlice(int axis) => axis < slices.Length ? slices[axis]
+        : new SliceDef { Start = 0, Step = 1, Count = parent.dimensions[axis] };
+
+    int ParentAxis(int dim)
+    {
+        int kept = 0;
+        for (int axis = 0; axis < parent.Rank; axis++)
+            if (!ParentSlice(axis).IsIndex && kept++ == dim) return axis;
+        return parent.Rank;
+    }
 
     public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions)
     {
@@ -219,7 +262,8 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
         return true;
     }
 
-    public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => Clone().BroadcastDim(dim, size);
+    public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => GetType() == typeof(TensorSlice<T>)
+        ? base.BroadcastDim(dim, size) : Clone().BroadcastDim(dim, size);
     #endregion
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
