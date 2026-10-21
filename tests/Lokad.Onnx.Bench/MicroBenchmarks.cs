@@ -216,6 +216,9 @@ public class TensorMatMulBenchmarks
         t_196_256_b = Tensor<float>.Rand(256, 1024);
         t_49_512_a = Tensor<float>.Rand(49, 512);
         t_49_512_b = Tensor<float>.Rand(512, 2048);
+        var wideRandom = new Random(64321);
+        t_64_1024_a = FillRand(new[] { 64, 1024 }, wideRandom);
+        t_1024_1024_b = FillRand(new[] { 1024, 1024 }, wideRandom);
         // Agreement precedes every timing: a breach fails the run before numbers exist.
         VerifyAgreementNow();
     }
@@ -340,6 +343,10 @@ public class TensorMatMulBenchmarks
     [BenchmarkCategory("49x512")]
     public void MatMul10_simd_intrinsics() => Tensor<float>.MatMul(t_49_512_a, t_49_512_b, TensorExecutionOptions.Intrinsics);
 
+    [Benchmark]
+    [BenchmarkCategory("64x1024")]
+    public void WideProjection() => Tensor<float>.MatMul2D(t_64_1024_a, t_1024_1024_b, TensorExecutionOptions.Intrinsics);
+
     static void VerifyAgreementNow()
     {
         // Every shape and mode recomputed on fresh seeded inputs outside the
@@ -355,6 +362,7 @@ public class TensorMatMulBenchmarks
         CheckShape("512x384", new[] { 512, 384 }, new[] { 384, 384 }, rnd);
         CheckShape("196x256", new[] { 196, 256 }, new[] { 256, 1024 }, rnd);
         CheckShape("49x512", new[] { 49, 512 }, new[] { 512, 2048 }, rnd);
+        CheckShape("64x1024", new[] { 64, 1024 }, new[] { 1024, 1024 }, rnd);
         Console.WriteLine("TensorMatMul agreement: all shapes and modes match element-wise.");
     }
 
@@ -401,6 +409,8 @@ public class TensorMatMulBenchmarks
     Tensor<float> t_196_256_b = Tensor<float>.Zeros(0);
     Tensor<float> t_49_512_a = Tensor<float>.Zeros(0);
     Tensor<float> t_49_512_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_64_1024_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_1024_1024_b = Tensor<float>.Zeros(0);
     #endregion
 }
 
