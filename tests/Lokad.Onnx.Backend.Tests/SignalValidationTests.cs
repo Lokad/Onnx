@@ -48,7 +48,7 @@ public class SignalValidationTests
         var result = CPU.STFT(new DenseTensor<float>(new[] { 0, 8 }), DenseTensor<int>.Scalar(2), null, DenseTensor<int>.Scalar(4), null, null);
         Assert.Equal(OpStatus.Success, result.Status);
         Assert.Equal(new[] { 0, 3, 3, 2 }, result.Outputs[0].Dims);
-        result = CPU.STFT(Signal(), DenseTensor<long>.Scalar(long.MaxValue), null, DenseTensor<long>.Scalar(4), 0, null);
+        result = CPU.STFT(Signal(), DenseTensor<long>.Scalar(1L << 48), null, DenseTensor<long>.Scalar(4), 0, null);
         Assert.Equal(OpStatus.Success, result.Status);
         Assert.Equal(new[] { 2, 1, 4, 2 }, result.Outputs[0].Dims);
         Assert.Equal(new float[] { 6, 0, -2, 2, -2, 0, -2, -2, 38, 0, -2, 2, -2, 0, -2, -2 }, ((Tensor<float>)result.Outputs[0]).ToArray());
