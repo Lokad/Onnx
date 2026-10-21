@@ -1797,85 +1797,13 @@ namespace Lokad.Onnx
 
         public static Tensor<int> Arange(int start, int stop) => Arange(start, stop, 1);
 
-        public static Tensor<int> Arange(int start, int stop, int step)
-        {
-            if (step == 0)
-                throw new ArgumentException("step can't be 0", nameof(step));
-
-            // Negative steps walk the same span downwards, so normalize to an
-            // ascending span first and mirror the fill below.
-            int lo = start;
-            int hi = stop;
-            int stride = step;
-            bool descending = false;
-            if (stride < 0)
-            {
-                descending = true;
-                stride = Math.Abs(stride);
-                lo = stop;
-                hi = start;
-            }
-
-            if (lo > hi)
-                throw new Exception("parameters invalid, start is greater than stop.");
-
-            int length = (int)Math.Ceiling((hi - lo + 0.0d) / stride);
-            var sequence = new DenseTensor<int>((ReadOnlySpan<int>)new int[] { length });
-
-            if (descending)
-            {
-                for (int add = length - 1, i = 0; add >= 0; add--, i++)
-                    sequence[i] = 1 + lo + add * stride;
-            }
-            else
-            {
-                for (int i = 0; i < length; i++)
-                    sequence[i] = lo + i * stride;
-            }
-
-            return sequence;
-        }
+        /// <summary>Alias of Range with the same start, exclusive stop and nonzero step.</summary>
+        public static Tensor<int> Arange(int start, int stop, int step) => Range(start, stop, step);
 
         public static Tensor<float> Arange(float start, float stop) => Arange(start, stop, 1.0f);
 
-        public static Tensor<float> Arange(float start, float stop, float step)
-        {
-            if (step == 0.0f)
-                throw new ArgumentException("step can't be 0", nameof(step));
-
-            // Negative steps walk the same span downwards, so normalize to an
-            // ascending span first and mirror the fill below.
-            float lo = start;
-            float hi = stop;
-            float stride = step;
-            bool descending = false;
-            if (stride < 0.0f)
-            {
-                descending = true;
-                stride = Math.Abs(stride);
-                lo = stop;
-                hi = start;
-            }
-
-            if (lo > hi)
-                throw new Exception("parameters invalid, start is greater than stop.");
-
-            int length = (int)Math.Ceiling((hi - lo + 0.0d) / stride);
-            var sequence = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { length });
-
-            if (descending)
-            {
-                for (int add = length - 1, i = 0; add >= 0; add--, i++)
-                    sequence[i] = 1.0f + lo + add * stride;
-            }
-            else
-            {
-                for (int i = 0; i < length; i++)
-                    sequence[i] = lo + i * stride;
-            }
-
-            return sequence;
-        }
+        /// <summary>Alias of Range, including its bounded geometry and repeated-addition fill.</summary>
+        public static Tensor<float> Arange(float start, float stop, float step) => Range(start, stop, step);
         public static Tensor<T> Zeros(params int[] dims)
         {
             var t = new DenseTensor<T>((ReadOnlySpan<int>)dims);
