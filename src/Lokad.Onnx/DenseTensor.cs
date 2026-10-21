@@ -271,24 +271,6 @@ namespace Lokad.Onnx
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride) { IsReshapeView = true };
         }
 
-        protected override void CopyFrom(Tensor<T> from)
-        {
-            // A source sharing this backing store is snapshotted first so the
-            // copy observes the original values rather than partially written ones.
-            if (SharesStorage(this, from)) from = Snapshot(from);
-            if (from is DenseTensor<T> dense)
-            {
-                dense.memory.Span.CopyTo(memory.Span);
-            }
-            else
-            {
-                foreach (var index in from.GetDimensionsIterator())
-                {
-                    this[index] = from[index];
-                }
-            }
-        }
-
         public override DenseTensor<T> ToDenseTensor()
         {
             // Row-major values already sit in flat order, so the tensor itself qualifies.
