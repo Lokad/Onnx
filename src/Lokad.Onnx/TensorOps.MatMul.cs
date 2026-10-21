@@ -313,7 +313,7 @@ where T : unmanaged
         return DispatchWideProjectionMatMul2DCore(x, y, destination, options, clearDestination: true);
     }
 
-    static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)
+    static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination, bool allowOwnedPacking = false)
     {
         options.Validate();
         StartOpStage(OpStage.ValidateArguments);
@@ -327,6 +327,8 @@ where T : unmanaged
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
+
+        if (allowOwnedPacking && TryRunOwnedPacked2D(x, y, destination, options)) return destination;
 
         if (ResolvePackedKernel(options, y, m) is { } packedB)
         {
