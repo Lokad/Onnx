@@ -10,7 +10,8 @@ using System.Runtime.CompilerServices;
 /// owning execution releases at recorded last uses, while parallel kernel workers merely write disjoint
 /// spans. Kernels stay destination-based and never see the pool. Misses allocate; returns beyond a small
 /// per-shape cap are dropped. Never static: one pool per graph execution.
-/// Ownership: every array ever handed out by Rent on this pool instance is remembered. Release logic
+/// Ownership: every array handed out by Rent is recognized while it remains alive, without rooting
+/// discarded arrays solely to remember their identity. Release logic
 /// must only return arrays for which IsOwned reports true, so caller inputs, model constants,
 /// attribute tensors and unrelated fresh buffers are never adopted. See C01.
 /// Metrics: AllocatedNew/AllocatedNewBytes count fresh rents (GC allocation); Reused/ReusedBytes count
@@ -30,7 +31,6 @@ public sealed class TensorBufferPool
     internal const int MaxBufferedPerShape = 32;
 
     readonly ReleasedBufferCache? releasedCache;
-    readonly Dictionary<Array, long>? reusableSizes;
 
     // Per-pool override lets tests compare both routes without global mutation.
     internal bool ReleaseFusedTemporaries { get; set; } = AblationSwitches.EnableFusedTempRelease;
@@ -40,12 +40,16 @@ public sealed class TensorBufferPool
     internal TensorBufferPool(ReleasedBufferCache releasedCache)
     {
         this.releasedCache = releasedCache;
-        reusableSizes = new Dictionary<Array, long>();
     }
 
     readonly Dictionary<(Type, int), Stack<Array>> free = new();
 
-    readonly HashSet<Array> owned = new();
+    sealed class Ownership(long bytes)
+    {
+        internal readonly long Bytes = bytes;
+    }
+
+    readonly ConditionalWeakTable<Array, Ownership> owned = new();
 
     readonly HashSet<Array> buffered = new();
 
@@ -86,7 +90,6 @@ public sealed class TensorBufferPool
             ReusedBytes += bytes;
             var reused = (T[])stack.Pop();
             buffered.Remove(reused);
-            owned.Add(reused);
             TrackRent(reused, bytes);
             return reused;
         }
@@ -95,14 +98,12 @@ public sealed class TensorBufferPool
         {
             Reused++;
             ReusedBytes += bytes;
-            owned.Add(retained);
             TrackRent(retained, bytes);
             return retained;
         }
         AllocatedNew++;
         AllocatedNewBytes += bytes;
         var fresh = new T[length];
-        owned.Add(fresh);
         TrackRent(fresh, bytes);
         return fresh;
     }
@@ -119,16 +120,16 @@ public sealed class TensorBufferPool
     }
 
     /// <summary>Reports whether the array was rented from this pool instance.</summary>
-    public bool IsOwned(Array array) => array is not null && owned.Contains(array);
+    public bool IsOwned(Array array) => array is not null && owned.TryGetValue(array, out _);
 
     public void Return(Array array)
     {
         if (array is null) throw new ArgumentNullException(nameof(array));
-        if (array.Rank != 1) throw new ArgumentException("Only single-dimensional arrays can be pooled.", nameof(array));
+        if (!array.GetType().IsSZArray) throw new ArgumentException("Only zero-based SZ arrays can be pooled.", nameof(array));
         var element = array.GetType().GetElementType();
         if (element is null) throw new ArgumentException("Only single-dimensional arrays can be pooled.", nameof(array));
         if (buffered.Contains(array)) throw new ArgumentException("Array was already returned to the pool.", nameof(array));
-        if (owned.Contains(array)) TrackReturn(array);
+        if (IsOwned(array)) TrackReturn(array);
         var key = (element, array.Length);
         if (!free.TryGetValue(key, out var stack))
         {
@@ -149,7 +150,7 @@ public sealed class TensorBufferPool
 
     void TrackRent(Array array, long bytes)
     {
-        if (reusableSizes is not null) reusableSizes[array] = bytes;
+        if (!owned.TryGetValue(array, out _)) owned.Add(array, new Ownership(bytes));
         outstanding[array] = bytes;
         outstandingBytes += bytes;
         if (outstandingBytes > PeakOutstandingBytes) PeakOutstandingBytes = outstandingBytes;
@@ -163,10 +164,10 @@ public sealed class TensorBufferPool
     /// <summary>End-of-execution transfer of already-free, rent-owned arrays only.</summary>
     internal void RetainReleasedBuffers()
     {
-        if (releasedCache is null || reusableSizes is null) return;
+        if (releasedCache is null) return;
         foreach (var entry in free)
             foreach (var array in entry.Value)
-                if (reusableSizes.TryGetValue(array, out long bytes)) releasedCache.Store(entry.Key, array, bytes);
+                if (owned.TryGetValue(array, out var ownership)) releasedCache.Store(entry.Key, array, ownership.Bytes);
         free.Clear();
         buffered.Clear();
     }
