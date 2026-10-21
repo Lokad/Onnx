@@ -281,8 +281,8 @@ public partial class CPUExecutionProvider
     /// <summary>
     /// Gemm with GELU epilogue: runs the identical Gemm computation, then applies
     /// GeluSpanFloat over the owned exact-fit float output in place, which is bitwise
-    /// identical to separate Gemm and Gelu nodes by construction. Honors the opt-in
-    /// tanh trial switch with the vector tanh epilogue. Non-float or unexpected
+    /// identical to separate Gemm and Gelu nodes by construction. Honors the explicit
+    /// approximation attribute and execution options. Non-float or unexpected
     /// layouts take the legacy two-step with identical values.
     /// </summary>
     public static OpResult GemmGelu(ITensor? A, ITensor? B, ITensor? C, float alpha, float beta, ExecutionOptions? options, int transA, int transB, string? approximate)
@@ -296,7 +296,7 @@ public partial class CPUExecutionProvider
             return r;
         if (r.Outputs[0] is DenseTensor<float> df && df.Buffer.Length == (int)df.Length)
         {
-            if (approximate == "tanh" || UseGeluTanhTrial())
+            if (approximate == "tanh")
                 Tensor<float>.GeluTanhSpanFloat(df.Buffer.Span, df.Buffer.Span, opts.Tensor);
             else if (opts.Tensor.UseSimd)
                 Tensor<float>.GeluSpanFloat(df.Buffer.Span, df.Buffer.Span);

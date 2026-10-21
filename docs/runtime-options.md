@@ -68,8 +68,11 @@ Default-off diagnostic controls were retired during 0.4.0 preparation:
 | SCALED_MATMUL_INPLACE | Remove the experimental distinct-storage shortcut; preserve normal exact division and temporary release. |
 | FINGERPRINT_STRINGS, LAYERNORM_WIDE_OUTPUT | Remove caches/transforms without complete-model performance admission. |
 | SOFTMAX_ZERO_BLOCKS, SOFTMAX_WIDE_EXP, SOFTMAX_RECIPROCAL, BIAS_GELU_INTERLEAVED | Remove alternative internal kernels; zero-block softmax missed its acceptance threshold. |
-| RELEASE_RESHAPE_VIEWS, SEGMENTED_CONV | Remove environment overrides; retain the public Memory policy and TensorExecutionOptions segmented-convolution option. |
+| RELEASE_RESHAPE_VIEWS, SEGMENTED_CONV | Remove environment overrides; retain the public Memory policy. The internal test-only segmented selector and implementation are also retired. |
 | SOFTMAX_LEGACY, TRANSPOSE_LEGACY | Remove mutable measurement routing and latches; keep direct reference tests and supported shape fallbacks. |
+
+The orphan `LOKAD_ONNX_GELU_TANH` trial is also retired. GELU now always obeys
+its explicit `approximate` attribute (`none` or `tanh`) and execution options.
 
 These environment names no longer alter runtime behavior. Original source and
 qualification reports are recoverable through [the experiment archive](../archives/README.md).

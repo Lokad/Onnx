@@ -32,7 +32,7 @@ where T : unmanaged
         int group, int n, int c, int h, int w, int m, int kh, int kw, int dh, int dw,
         int sh, int sw, PadInfo pad, int oh, int ow, TensorExecutionOptions options)
     {
-        if (!options.UseIntrinsics || !options.UseSimd || options.UseSegmentedConvolution
+        if (!options.UseIntrinsics || !options.UseSimd
             || n != 1 || group != 1
             || kh != 3 || kw != 3 || dh != 1 || dw != 1 || sh != sw || sh is not (1 or 2)
             || pad.top != 1 || pad.bottom != 1 || pad.left != 1 || pad.right != 1

@@ -179,8 +179,7 @@ public class DirectDepthwiseTests
     {
         var x = Data(new[] { 1, 3, 1, 41 }, 8171); var w = Data(new[] { 3, 1, 1, 9 }, 8171);
         foreach (var options in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd,
-            TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 2 },
-            TensorExecutionOptions.Auto with { UseSegmentedConvolution = true } })
+            TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 2 } })
             Check(x, w, null, 3, new int[4], new[] { 1, 1 }, null, options, false);
         Check(x, w, null, 3, new int[4], new[] { 1, 2 }, null, null, false);
         Check(x, w, null, 3, new int[4], new[] { 1, 1 }, new[] { 1, 2 }, null, false);

@@ -18,8 +18,9 @@ source-policy gate.
 
 The runtime retires fourteen default-off environment controls and their
 exclusive internal implementations. Nine qualified comparison controls remain.
-Public methods and options stay compatible, including segmented convolution and
-Memory mode. The handwritten optional-parameter scanner, TODO gate and
+Public methods and options stay compatible, including Memory mode. The internal
+segmented-convolution test selector and its exclusive implementation were
+subsequently retired; it was not a public option. The handwritten optional-parameter scanner, TODO gate and
 SDK-internal Roslyn tool are archived. Maintained guidance is in
 [code maintenance](code-maintenance.md) and
 [runtime options](runtime-options.md).

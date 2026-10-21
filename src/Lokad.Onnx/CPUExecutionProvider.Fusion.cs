@@ -61,9 +61,7 @@ public partial class CPUExecutionProvider
                 DenseTensor<float> output = pool is null
                     ? DenseTensor<float>.OfShape(xd.Dimensions.ToArray())
                     : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)xd.Length)), xd.Dimensions.ToArray());
-                if (UseGeluTanhTrial())
-                    Tensor<float>.BiasGeluTanhSpanFloat(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
-                else if (!opts.Tensor.UseSimd)
+                if (!opts.Tensor.UseSimd)
                     Tensor<float>.BiasGeluSpanFloatScalar(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 else if (AblationSwitches.EnableBiasGeluInline)
                 {

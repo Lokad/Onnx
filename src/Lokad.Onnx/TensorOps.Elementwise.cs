@@ -660,56 +660,6 @@ where T : unmanaged
         }
     }
 
-    /// <summary>
-    /// Bias-add fused with tanh-approximate GELU over spans: y[i] = tanhgelu(x[i] + b[i % M]).
-    /// Vector fast path mirrors BiasGeluSpanFloat with the GeluTanhSpanFloat formula per lane;
-    /// scalar tail uses GeluTanhScalar. Cyclic bias offsets match BiasGeluSpanFloat exactly.
-    /// </summary>
-    internal static void BiasGeluTanhSpanFloat(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
-    {
-        int w = Vector<float>.Count;
-        var half = new Vector<float>(0.5f);
-        var one = Vector<float>.One;
-        var two = new Vector<float>(2f);
-        var c3 = new Vector<float>(0.044715f);
-        var c5 = new Vector<float>(0.7978846f);
-        int M = bias.Length;
-        if (M > 1 && M % w == 0 && xs.Length == ys.Length)
-        {
-            var xvec = MemoryMarshal.Cast<float, Vector<float>>(xs);
-            var yvec = MemoryMarshal.Cast<float, Vector<float>>(ys);
-            int boff = 0;
-            for (int i = 0; i < yvec.Length; i++)
-            {
-                var bv = MemoryMarshal.Cast<float, Vector<float>>(bias.Slice(boff, w))[0];
-                var tv = xvec[i] + bv;
-                var t3 = c3 * tv * tv * tv;
-                var t5 = c5 * (tv + t3);
-                var e = ExpVector(t5 + t5);
-                var t = one - two / (e + one);
-                yvec[i] = half * tv * (t + one);
-                boff += w;
-                if (boff >= M) boff -= M;
-            }
-            int tail = yvec.Length * w;
-            int toff = tail % M;
-            for (int i = tail; i < xs.Length; i++)
-            {
-                ys[i] = GeluTanhScalar(xs[i] + bias[toff]);
-                toff++;
-                if (toff >= M) toff = 0;
-            }
-            return;
-        }
-        int soff = 0;
-        for (int i = 0; i < xs.Length; i++)
-        {
-            ys[i] = GeluTanhScalar(xs[i] + bias[soff]);
-            soff++;
-            if (soff >= M) soff = 0;
-        }
-    }
-
     public static Tensor<float> Gelu(Tensor<float> x, Tensor<float> destination, TensorExecutionOptions options)
     {
         options.Validate();

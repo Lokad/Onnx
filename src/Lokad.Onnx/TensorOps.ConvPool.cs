@@ -186,12 +186,6 @@ where T : unmanaged
             RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options);
             return output;
         }
-        if (options.UseSegmentedConvolution)
-        {
-            RunSegmentedConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M,
-                kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, dop, options);
-            return output;
-        }
         if (TryConvDirectDepthwise(xd, wd, bd, output, N, group, C, H, W, M,
             kH, kW, dH, dW, sH, sW, pad, outH, outW, options)) return output;
         var spatial = PlanConvSpatialScratch(C, kH, kW, M, outH, outW);
