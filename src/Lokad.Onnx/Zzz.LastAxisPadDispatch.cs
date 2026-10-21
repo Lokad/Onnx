@@ -17,7 +17,7 @@ public partial class CPUExecutionProvider
         // Materialize once, as PadCore does. Its constant-padding mapping uses
         // the flat buffer and the original data dimensions; row copies retain
         // exactly that mapping for this last-axis-only case.
-        var source = data.ToDenseTensor();
+        var source = data.ToRowMajor();
         var destination = DenseTensor<T>.OfShape(outDims);
         var output = destination.Buffer.Span;
         output.Fill(fill);

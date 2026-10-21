@@ -357,10 +357,6 @@ public partial class CPUExecutionProvider
         var axis = _axis.HasValue ? _axis.Value : (opsetVersion < 13 ? 1 : -1);
         var opts = (options ?? ExecutionOptions.Default).Validated();
         var tensorOptions = opts.Tensor;
-        if (opts.Optimization == OptimizationMode.Speed)
-        {
-            input = ((INumericTensor)input).ToDenseTensor();
-        }
         switch (input.ElementType)
         {
             case TensorElementType.Float:
@@ -398,8 +394,8 @@ public partial class CPUExecutionProvider
                 int ax = ArrayUtilities.HandleNegativeAxisOrIndex(rank, axis);
                 if (ax == rank - 1)
                 {
-                    var ds = fs.ToDenseTensor();
-                    var dm = fm.ToDenseTensor();
+                    var ds = fs.ToRowMajor();
+                    var dm = fm.ToRowMajor();
                     int block = ds.Dimensions[rank - 1];
                     if (block >= 1 && dm.Length == block)
                     {
@@ -487,7 +483,7 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Float:
             {
-                var x = ((Tensor<float>)X).ToDenseTensor();
+                var x = ((Tensor<float>)X).ToRowMajor();
                 var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
@@ -496,7 +492,7 @@ public partial class CPUExecutionProvider
             }
             case TensorElementType.Double:
             {
-                var x = ((Tensor<double>)X).ToDenseTensor();
+                var x = ((Tensor<double>)X).ToRowMajor();
                 var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
@@ -517,7 +513,7 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Float:
             {
-                var x = ((Tensor<float>)X).ToDenseTensor();
+                var x = ((Tensor<float>)X).ToRowMajor();
                 var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
@@ -532,7 +528,7 @@ public partial class CPUExecutionProvider
             }
             case TensorElementType.Double:
             {
-                var x = ((Tensor<double>)X).ToDenseTensor();
+                var x = ((Tensor<double>)X).ToRowMajor();
                 var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
@@ -584,7 +580,7 @@ public partial class CPUExecutionProvider
     {
         T lo = min is Tensor<T> lower ? lower.GetValue(0) : defaultMin;
         T hi = max is Tensor<T> upper ? upper.GetValue(0) : defaultMax;
-        var x = input.ToDenseTensor();
+        var x = input.ToRowMajor();
         var y = DenseTensor<T>.OfShape(x.Dimensions.ToArray());
         var source = x.Buffer.Span;
         var destination = y.Buffer.Span;
@@ -611,7 +607,7 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Float:
             {
-                var x = ((Tensor<float>)X).ToDenseTensor();
+                var x = ((Tensor<float>)X).ToRowMajor();
                 var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
@@ -620,7 +616,7 @@ public partial class CPUExecutionProvider
             }
             case TensorElementType.Double:
             {
-                var x = ((Tensor<double>)X).ToDenseTensor();
+                var x = ((Tensor<double>)X).ToRowMajor();
                 var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
@@ -642,8 +638,8 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         // Flat reads below require canonical row-major storage even when
         // equally-shaped operands would otherwise pass through Broadcast.
-        var a = ((Tensor<bool>)A).ToDenseTensor();
-        var b = ((Tensor<bool>)B).ToDenseTensor();
+        var a = ((Tensor<bool>)A).ToRowMajor();
+        var b = ((Tensor<bool>)B).ToRowMajor();
         if (!Tensor<bool>.Broadcast(a, b, out var ba, out var bb)) return CannotBroadcast(op, A, B);
         var y = DenseTensor<bool>.OfShape(ba.Dimensions.ToArray());
         for (int i = 0; i < y.Length; i++) y.SetValue(i, ba.GetValue(i) && bb.GetValue(i));
@@ -657,7 +653,7 @@ public partial class CPUExecutionProvider
         (options ?? ExecutionOptions.Default).Validated();
         if (X.ElementType != TensorElementType.Bool) return WrongInputType(op, nameof(X), TensorElementType.Bool, X);
         Profiler.StartOpStage(OpStage.Math);
-        var x = ((Tensor<bool>)X).ToDenseTensor();
+        var x = ((Tensor<bool>)X).ToRowMajor();
         var y = DenseTensor<bool>.OfShape(x.Dimensions.ToArray());
         for (int i = 0; i < y.Length; i++) y.SetValue(i, !x.GetValue(i));
         return Success(op, y);

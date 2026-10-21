@@ -167,9 +167,9 @@ where T : unmanaged
             ? new DenseTensor<float>((ReadOnlySpan<int>)dimensions)
             : new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>(checked(N * M * outH * outW))), dimensions);
         if (output.Length == 0) return output;
-        var xd = input.ToDenseTensor();
-        var wd = weight.ToDenseTensor();
-        var bd = bias?.ToDenseTensor();
+        var xd = input.ToRowMajor();
+        var wd = weight.ToRowMajor();
+        var bd = bias?.ToRowMajor();
         int inBatch = C * H * W;
         int outBatch = M * outH * outW;
         int dop = options.MaxDegreeOfParallelism < 2 || N < 2 ? 1 : Math.Min(options.MaxDegreeOfParallelism, N);
@@ -424,9 +424,9 @@ where T : unmanaged
     {
         options.Validate();
         var output = new DenseTensor<double>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
-        var xd = input.ToDenseTensor();
-        var wd = weight.ToDenseTensor();
-        var bd = bias?.ToDenseTensor();
+        var xd = input.ToRowMajor();
+        var wd = weight.ToRowMajor();
+        var bd = bias?.ToRowMajor();
         int inBatch = C * H * W;
         int outBatch = M * outH * outW;
         int patchSize = C * kH * kW * outH * outW;

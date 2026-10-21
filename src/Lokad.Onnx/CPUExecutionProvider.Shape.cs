@@ -893,7 +893,7 @@ public partial class CPUExecutionProvider
     {
         var dd = data.Dimensions.ToArray();
         int rank = dd.Length;
-        var src = data.ToDenseTensor();
+        var src = data.ToRowMajor();
         var sVals = src.Buffer.Span;
         var dst = DenseTensor<T>.OfShape(outDims);
         var dVals = dst.Buffer.Span;
