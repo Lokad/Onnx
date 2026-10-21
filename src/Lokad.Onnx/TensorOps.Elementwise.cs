@@ -575,7 +575,8 @@ where T : unmanaged
 
     public static Tensor<float> Gelu(Tensor<float> x, TensorExecutionOptions options)
     {
-        if (options.UseSimd && x is DenseTensor<float> xd && xd.Buffer.Length == xd.Length)
+        options.Validate();
+        if (options.UseSimd && x is DenseTensor<float> xd && Tensor<float>.IsDirectSpanCompatible(xd) && !xd.IsReversedStride)
         {
             var output = DenseTensor<float>.OfShape(xd.Dimensions.ToArray());
             GeluSpanFloat(xd.Buffer.Span, output.Buffer.Span);
@@ -707,14 +708,17 @@ where T : unmanaged
 
     public static Tensor<float> Gelu(Tensor<float> x, Tensor<float> destination, TensorExecutionOptions options)
     {
-        if (destination is null) throw new ArgumentNullException(nameof(destination));
-        if (options.UseSimd && x is DenseTensor<float> xd && destination is DenseTensor<float> dd
-            && xd.Buffer.Length == xd.Length && dd.Buffer.Length == dd.Length && xd.Buffer.Length == dd.Buffer.Length)
+        options.Validate();
+        x.CheckDestination(destination);
+        var source = Tensor<float>.PreserveElementwiseSource(x, destination);
+        if (options.UseSimd && source is DenseTensor<float> xd && destination is DenseTensor<float> dd
+            && Tensor<float>.IsDirectSpanCompatible(xd) && Tensor<float>.IsDirectSpanCompatible(dd)
+            && Tensor<float>.SameElementOrder(xd, dd))
         {
             GeluSpanFloat(xd.Buffer.Span, dd.Buffer.Span);
             return destination;
         }
-        x.VectorizedApply(GeluVecOp, ScalarGelu, destination, options);
+        source.VectorizedApply(GeluVecOp, ScalarGelu, destination, options);
         return destination;
     }
 
@@ -745,8 +749,14 @@ where T : unmanaged
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         (options ?? TensorExecutionOptions.Auto).Validate();
+        if (!destination.Dimensions.SequenceEqual(x.Dimensions)) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+        if (!Tensor<float>.IsDirectSpanCompatible(destination) || destination.IsReversedStride)
+        {
+            x.Apply(GeluTanhScalar, destination);
+            return destination;
+        }
         var dx = x.ToRowMajor();
-        if (!destination.Dimensions.SequenceEqual(dx.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
+        dx = (DenseTensor<float>)Tensor<float>.PreserveElementwiseSource(dx, destination);
         GeluTanhSpanFloat(dx.Buffer.Span, destination.Buffer.Span);
         return destination;
     }
@@ -936,6 +946,7 @@ where T : unmanaged
     public static Tensor<float> Softmax(Tensor<float> x, int axis, TensorExecutionOptions? options, int opsetVersion)
     {
         StartOpStage(OpStage.ValidateArguments);
+        (options ?? TensorExecutionOptions.Auto).Validate();
         if (x.Rank < 1) throw new ArgumentException("Softmax requires a tensor of rank 1 or more.", nameof(x));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis < 0 || axis >= x.Rank) throw new ArgumentException("The specified axis must be a dimension of the tensor.", nameof(axis));
@@ -1360,12 +1371,14 @@ where T : unmanaged
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         StartOpStage(OpStage.ValidateArguments);
+        (options ?? TensorExecutionOptions.Auto).Validate();
         if (x.Rank < 1) throw new ArgumentException("Softmax requires a tensor of rank 1 or more.", nameof(x));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis < 0 || axis >= x.Rank) throw new ArgumentException("The specified axis must be a dimension of the tensor.", nameof(axis));
         var denseInput = x.ToRowMajor();
         if (!destination.Dimensions.SequenceEqual(denseInput.Dimensions.ToArray())) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
+        denseInput = (DenseTensor<float>)Tensor<float>.PreserveElementwiseSource(denseInput, destination);
         StartOpStage(OpStage.Math);
         SoftmaxFloatInto(denseInput, destination, axis, options ?? TensorExecutionOptions.Auto, opsetVersion);
         return destination;
@@ -1374,6 +1387,7 @@ where T : unmanaged
     public static Tensor<double> Softmax(Tensor<double> x, int axis, TensorExecutionOptions? options, int opsetVersion)
     {
         StartOpStage(OpStage.ValidateArguments);
+        (options ?? TensorExecutionOptions.Auto).Validate();
         if (x.Rank < 1) throw new ArgumentException("Softmax requires a tensor of rank 1 or more.", nameof(x));
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis < 0 || axis >= x.Rank) throw new ArgumentException("The specified axis must be a dimension of the tensor.", nameof(axis));
