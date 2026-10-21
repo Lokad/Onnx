@@ -190,7 +190,7 @@ public class GraphBufferReuseTests
         for (int i = 0; i < data.Length; i++) data[i] = -6f + 12f * i / (data.Length - 1);
         var x = DenseTensor<float>.OfValues(data);
         var expected = x.Apply(MathOps.Erf);
-        foreach (var options in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd, TensorExecutionOptions.Intrinsics })
+        foreach (var options in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd, TensorExecutionOptions.Auto })
         {
             var actual = Tensor<float>.Erf(x, options);
             float worst = 0f;

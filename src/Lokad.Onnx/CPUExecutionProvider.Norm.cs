@@ -32,7 +32,7 @@ public partial class CPUExecutionProvider
         int stash = stashType ?? 1;
         if (stash != 1) return AttributeNotSupported(op, "stash_type", stash.ToString(), "Only stash_type 1 (32-bit float stage-one compute) is supported.");
         if (outputCount < 1 || outputCount > 3) return Failure(op, "LayerNormalization declares " + outputCount + " outputs; 1 (Y) to 3 (Y, Mean, InvStdDev) are supported.");
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         int ax = axis ?? -1;
         float eps = epsilon ?? 1e-5f;
@@ -44,7 +44,7 @@ public partial class CPUExecutionProvider
                 if (bias is not null && bias.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(bias), TensorElementType.Float, bias);
                 var fx = (Tensor<float>)x;
                 var destination = pool is null ? null : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions);
-                var result = Tensor<float>.LayerNormalizationCore(fx, (Tensor<float>)scale, (Tensor<float>?)bias, destination, ax, eps, outputCount);
+                var result = Tensor<float>.LayerNormalizationCore(fx, (Tensor<float>)scale, (Tensor<float>?)bias, destination, ax, eps, outputCount, opts.Tensor);
                 return outputCount switch
                 {
                     1 => Success(op, result.Output),

@@ -288,19 +288,24 @@ public partial class CPUExecutionProvider
     public static OpResult GemmGelu(ITensor? A, ITensor? B, ITensor? C, float alpha, float beta, ExecutionOptions? options, int transA, int transB, string? approximate)
     {
         var op = OpType.GemmGelu;
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        if (approximate is not null && approximate != "none" && approximate != "tanh")
+            return AttributeNotSupported(op, nameof(approximate), approximate, null);
         var r = Gemm(A, B, C, alpha, beta, options, transA, transB);
         if (r.Status != OpStatus.Success || r.Outputs is null || r.Outputs.Length != 1)
             return r;
         if (r.Outputs[0] is DenseTensor<float> df && df.Buffer.Length == (int)df.Length)
         {
             if (approximate == "tanh" || UseGeluTanhTrial())
-                Tensor<float>.GeluTanhSpanFloat(df.Buffer.Span, df.Buffer.Span);
-            else
+                Tensor<float>.GeluTanhSpanFloat(df.Buffer.Span, df.Buffer.Span, opts.Tensor);
+            else if (opts.Tensor.UseSimd)
                 Tensor<float>.GeluSpanFloat(df.Buffer.Span, df.Buffer.Span);
+            else
+                Tensor<float>.Gelu(df, df, opts.Tensor);
             r.Op = op;
             return r;
         }
-        var g = Gelu(r.Outputs[0], null, options, null);
+        var g = Gelu(r.Outputs[0], approximate, options, null);
         if (g.Status != OpStatus.Success || g.Outputs is null || g.Outputs.Length != 1)
             return g;
         var o = g.Outputs[0];

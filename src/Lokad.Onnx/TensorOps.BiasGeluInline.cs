@@ -6,6 +6,16 @@ namespace Lokad.Onnx;
 
 public abstract partial class Tensor<T>
 {
+    internal static void BiasGeluSpanFloatScalar(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
+    {
+        int offset = 0;
+        for (int i = 0; i < xs.Length; i++)
+        {
+            ys[i] = ScalarGelu(xs[i] + bias[offset]);
+            if (++offset == bias.Length) offset = 0;
+        }
+    }
+
     // One vector per iteration keeps the existing cyclic-bias and tail rules.
     // Inlining erf removes vector arguments/results spilled across method calls.
     // This numeric loop should start optimized, including in short-lived requests.

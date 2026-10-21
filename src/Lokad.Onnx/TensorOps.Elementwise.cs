@@ -742,26 +742,28 @@ where T : unmanaged
     /// <remarks>Matches the Mul/Pow/Mul/Add/Mul/Tanh/Add/Mul chain element order (cube via multiplies), so outputs agree with the unfused chain within 1e-6.</remarks>
     public static Tensor<float> GeluTanh(Tensor<float> x, TensorExecutionOptions? options)
     {
-        (options ?? TensorExecutionOptions.Auto).Validate();
-        var dx = x.ToRowMajor();
-        var output = DenseTensor<float>.OfShape(dx.Dimensions.ToArray());
-        GeluTanhSpanFloat(dx.Buffer.Span, output.Buffer.Span);
+        var resolved = options ?? TensorExecutionOptions.Auto;
+        resolved.Validate();
+        var output = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
+        if (!resolved.UseSimd) x.Apply(GeluTanhScalar, output);
+        else GeluTanhSpanFloat(x.ToRowMajor().Buffer.Span, output.Buffer.Span, resolved);
         return output;
     }
 
     public static Tensor<float> GeluTanh(Tensor<float> x, DenseTensor<float> destination, TensorExecutionOptions? options)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
-        (options ?? TensorExecutionOptions.Auto).Validate();
+        var resolved = options ?? TensorExecutionOptions.Auto;
+        resolved.Validate();
         if (!destination.Dimensions.SequenceEqual(x.Dimensions)) throw new ArgumentException("Destination shape must match the input shape.", nameof(destination));
-        if (!Tensor<float>.IsDirectSpanCompatible(destination) || destination.IsReversedStride)
+        if (!resolved.UseSimd || !Tensor<float>.IsDirectSpanCompatible(destination) || destination.IsReversedStride)
         {
             x.Apply(GeluTanhScalar, destination);
             return destination;
         }
         var dx = x.ToRowMajor();
         dx = (DenseTensor<float>)Tensor<float>.PreserveElementwiseSource(dx, destination);
-        GeluTanhSpanFloat(dx.Buffer.Span, destination.Buffer.Span);
+        GeluTanhSpanFloat(dx.Buffer.Span, destination.Buffer.Span, resolved);
         return destination;
     }
 
@@ -780,9 +782,16 @@ where T : unmanaged
     /// GeluTanhScalar for remainders. Safe in place: each output
     /// depends only on its own input element.
     /// </summary>
-    internal static void GeluTanhSpanFloat(ReadOnlySpan<float> xs, Span<float> ys)
+    internal static void GeluTanhSpanFloat(ReadOnlySpan<float> xs, Span<float> ys) =>
+        GeluTanhSpanFloat(xs, ys, TensorExecutionOptions.Auto);
+
+    internal static void GeluTanhSpanFloat(ReadOnlySpan<float> xs, Span<float> ys, TensorExecutionOptions options)
     {
-        if (Vector512.IsHardwareAccelerated && Fma.IsSupported && xs.Length >= Vector512<float>.Count)
+        if (!options.UseSimd)
+        {
+            for (int i = 0; i < xs.Length; i++) ys[i] = GeluTanhScalar(xs[i]);
+        }
+        else if (options.UseIntrinsics && Vector512.IsHardwareAccelerated && Fma.IsSupported && xs.Length >= Vector512<float>.Count)
             GeluTanhSpanFloatWide(xs, ys);
         else
             GeluTanhSpanFloatReference(xs, ys);
@@ -894,7 +903,7 @@ where T : unmanaged
     }
 
     /// <summary>Vectorized float Relu with exact edge semantics: keep where positive, keep signed zero, keep NaN, zero the rest.</summary>
-    internal static unsafe void ReluSpanFloat(System.Span<float> xs, System.Span<float> ys)
+    internal static unsafe void ReluSpanFloat(System.Span<float> xs, System.Span<float> ys, bool useSimd = true)
     {
         int n = xs.Length;
         int w = Vector256<float>.Count;
@@ -902,7 +911,7 @@ where T : unmanaged
         fixed (float* s = xs, d = ys)
         {
             int i = 0;
-            for (; i <= n - w; i += w)
+            for (; i <= (useSimd ? n - w : -1); i += w)
             {
                 var v = *(Vector256<float>*)(s + i);
                 var keep = Vector256.GreaterThan(v, zero) | Vector256.Equals(v, zero) | ~Vector256.Equals(v, v);
@@ -931,7 +940,7 @@ where T : unmanaged
     }
 
     /// <summary>Vectorized double Relu with exact edge semantics.</summary>
-    internal static unsafe void ReluSpanDouble(System.Span<double> xs, System.Span<double> ys)
+    internal static unsafe void ReluSpanDouble(System.Span<double> xs, System.Span<double> ys, bool useSimd = true)
     {
         int n = xs.Length;
         int w = Vector256<double>.Count;
@@ -939,7 +948,7 @@ where T : unmanaged
         fixed (double* s = xs, d = ys)
         {
             int i = 0;
-            for (; i <= n - w; i += w)
+            for (; i <= (useSimd ? n - w : -1); i += w)
             {
                 var v = *(Vector256<double>*)(s + i);
                 var keep = Vector256.GreaterThan(v, zero) | Vector256.Equals(v, zero) | ~Vector256.Equals(v, v);

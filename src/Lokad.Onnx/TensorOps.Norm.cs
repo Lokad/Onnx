@@ -54,13 +54,13 @@ where T : unmanaged
         => LayerNormalizationCore(x, scale, bias, null, axis, epsilon, 1).Output;
 
     /// <summary>Shared float layer-normalization kernel used by both entries.</summary>
-    static void LayerNormFloatInto(DenseTensor<float> xd, DenseTensor<float> sd, DenseTensor<float>? bd, DenseTensor<float> destination, int block, int outer, float epsilon, Span<float> means, Span<float> inverseStdDevs)
+    static void LayerNormFloatInto(DenseTensor<float> xd, DenseTensor<float> sd, DenseTensor<float>? bd, DenseTensor<float> destination, int block, int outer, float epsilon, Span<float> means, Span<float> inverseStdDevs, bool useSimd)
     {
         var xs = xd.Buffer.Span;
         var ss = sd.Buffer.Span;
         var bs = bd is null ? new Span<float>() : bd.Buffer.Span;
         var os = destination.Buffer.Span;
-        if (Vector.IsHardwareAccelerated)
+        if (useSimd && Vector.IsHardwareAccelerated)
         {
             // Vectorized twin of the scalar body below: statistics stay in
             // double vectors and every element keeps the scalar association
@@ -142,8 +142,10 @@ where T : unmanaged
     }
 
     internal static (Tensor<float> Output, DenseTensor<float>? Mean, DenseTensor<float>? InvStdDev) LayerNormalizationCore(
-        Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, DenseTensor<float>? destination, int axis, float epsilon, int outputCount)
+        Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, DenseTensor<float>? destination, int axis, float epsilon, int outputCount, TensorExecutionOptions? options = null)
     {
+        var resolved = options ?? TensorExecutionOptions.Auto;
+        resolved.Validate();
         var xd = x.ToRowMajor();
         var sd = scale.ToRowMajor();
         var bd = bias?.ToRowMajor();
@@ -159,7 +161,7 @@ where T : unmanaged
         }
         var stats = LayerNormalizationStatistics(xd.Dimensions, axis, outputCount);
         LayerNormFloatInto(xd, sd, bd, destination, plan.Block, plan.Outer, epsilon,
-            stats.Mean is null ? default : stats.Mean.Buffer.Span, stats.InvStdDev is null ? default : stats.InvStdDev.Buffer.Span);
+            stats.Mean is null ? default : stats.Mean.Buffer.Span, stats.InvStdDev is null ? default : stats.InvStdDev.Buffer.Span, resolved.UseSimd);
         return (destination, stats.Mean, stats.InvStdDev);
     }
 

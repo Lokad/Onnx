@@ -63,6 +63,8 @@ public partial class CPUExecutionProvider
                     : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)xd.Length)), xd.Dimensions.ToArray());
                 if (UseGeluTanhTrial())
                     Tensor<float>.BiasGeluTanhSpanFloat(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
+                else if (!opts.Tensor.UseSimd)
+                    Tensor<float>.BiasGeluSpanFloatScalar(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 else if (AblationSwitches.EnableBiasGeluInline)
                 {
                     Tensor<float>.BiasGeluSpanFloatInline(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
@@ -83,18 +85,19 @@ public partial class CPUExecutionProvider
 
     static OpResult FinishRelu(OpType op, ITensor output, ExecutionOptions? options)
     {
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         if (output is DenseTensor<float> df && !df.IsReversedStride
             && df.strides.SequenceEqual(ArrayUtilities.GetStrides(df.dimensions))
             && df.Buffer.Length == (int)df.Length)
         {
-            Tensor<float>.ReluSpanFloat(df.Buffer.Span, df.Buffer.Span);
+            Tensor<float>.ReluSpanFloat(df.Buffer.Span, df.Buffer.Span, opts.Tensor.UseSimd);
             return Success(op, output);
         }
         if (output is DenseTensor<double> dd && !dd.IsReversedStride
             && dd.strides.SequenceEqual(ArrayUtilities.GetStrides(dd.dimensions))
             && dd.Buffer.Length == (int)dd.Length)
         {
-            Tensor<double>.ReluSpanDouble(dd.Buffer.Span, dd.Buffer.Span);
+            Tensor<double>.ReluSpanDouble(dd.Buffer.Span, dd.Buffer.Span, opts.Tensor.UseSimd);
             return Success(op, output);
         }
         var relu = Relu(output, options);
