@@ -37,6 +37,10 @@ namespace Lokad.Onnx
         }
 
        
+        /// <summary>Invokes the callback once when an advancing call reaches the end of a traversal.</summary>
+        /// <remarks>Fresh enumerators and appended configurations retain the callback. Reset enables a
+        /// new completion; early reset or disposal does not notify. The callback receives the exhausted
+        /// cursor by reference and may reset or replace it; the current call still returns false/null.</remarks>
         public TensorDimensionsIterator(int[] dims, EndCallbackHandler endCallback) : this(dims)
         {
             this.endCallback = endCallback;
@@ -51,8 +55,11 @@ namespace Lokad.Onnx
         public TensorDimensionsIterator GetEnumerator()
         {
             if (dimensions is null) return default;
-            return new TensorDimensionsIterator(dimensions);
+            return CreateCursor(dimensions);
         }
+
+        TensorDimensionsIterator CreateCursor(int[] dims) => endCallback is null
+            ? new TensorDimensionsIterator(dims) : new TensorDimensionsIterator(dims, endCallback);
 
         IEnumerator<int[]> IEnumerable<int[]>.GetEnumerator() => GetEnumerator();
 
@@ -62,7 +69,8 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
-            if (Index is null || empty) return false;
+            if (Index is null) return false;
+            if (empty) { Next(); return false; }
             if (!moveStart)
             {
                 moveStart = true;
@@ -81,6 +89,7 @@ namespace Lokad.Onnx
         void IDisposable.Dispose() => Reset();
         public void Reset()
         {
+            if (Index is null) return;
             Array.Clear(Index, 0, Index.Length);
             subcursor = resetto;
             moveStart = false;
@@ -97,8 +106,15 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public int[]? Next()
         {
-            if (Index is null || empty || subcursor <= -1)
+            if (Index is null || subcursor <= -1)
                 return null;
+
+            if (empty)
+            {
+                subcursor = -1;
+                endCallback?.Invoke(ref this);
+                return null;
+            }
 
             if (++Index[subcursor] >= dimensions[subcursor])
             {
@@ -109,6 +125,7 @@ namespace Lokad.Onnx
                 {
                     if (--subcursor <= -1)
                     {
+                        endCallback?.Invoke(ref this);
                         return null;
                     }
                 } while (dimensions[subcursor] <= 1);
@@ -123,7 +140,7 @@ namespace Lokad.Onnx
             return Index;
         }
 
-        public TensorDimensionsIterator Append(params int[] dims) => new TensorDimensionsIterator(dimensions.Concat(dims).ToArray());
+        public TensorDimensionsIterator Append(params int[] dims) => CreateCursor(dimensions.Concat(dims).ToArray());
 
         public TensorDimensionsIterator this [params int[] indices] => Append(indices);
 
