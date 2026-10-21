@@ -66,8 +66,8 @@ where T : unmanaged
     /// tensor. Scalar operands are read directly, dense operands stream through
     /// contiguous runs, and any other layout uses a stride-based general path;
     /// no expanded operand is ever materialized. The options are validated. The
-    /// destination is overwritten; aliasing it with either source is allowed
-    /// because every element is read before it is written.
+    /// destination is overwritten; hazardous source overlap is snapshotted
+    /// before writes, while identical dense element mappings run in place.
     /// </summary>
     public Tensor<T> BroadcastApply<TOp>(Tensor<T> other, TensorExecutionOptions options) where TOp : struct, IBroadcastOperator<T>
     {
@@ -133,6 +133,13 @@ where T : unmanaged
     /// <remarks>Internal callers must validate options and broadcast compatibility,
     /// and supply a standard row-major destination matching the prepared shape.</remarks>
     internal void BroadcastApplyInto<TOp>(Tensor<T> other, DenseTensor<T> destination, TensorExecutionOptions options, int[] shape) where TOp : struct, IBroadcastOperator<T>
+    {
+        var left = PreserveElementwiseSource(this, destination);
+        var right = ReferenceEquals(this, other) ? left : PreserveElementwiseSource(other, destination);
+        left.BroadcastApplyIntoCore<TOp>(right, destination, options, shape);
+    }
+
+    void BroadcastApplyIntoCore<TOp>(Tensor<T> other, DenseTensor<T> destination, TensorExecutionOptions options, int[] shape) where TOp : struct, IBroadcastOperator<T>
     {
         if (other.Rank == 0)
         {
@@ -323,19 +330,21 @@ where T : unmanaged
     /// <summary>Delegate-based run engine for operators without a vector form.</summary>
     void BroadcastApplyFuncInto(Tensor<T> other, Func<T, T, T> op, DenseTensor<T> destination, int[] shape)
     {
-        if (other.Rank == 0)
+        var left = PreserveElementwiseSource(this, destination);
+        var right = ReferenceEquals(this, other) ? left : PreserveElementwiseSource(other, destination);
+        if (right.Rank == 0)
         {
-            var scalar = other.GetValue(0);
-            for (int i = 0; i < Length; i++) destination.SetValue(i, op(GetLogicalValue(i), scalar));
+            var scalar = right.GetValue(0);
+            for (int i = 0; i < left.Length; i++) destination.SetValue(i, op(left.GetLogicalValue(i), scalar));
             return;
         }
-        if (Rank == 0)
+        if (left.Rank == 0)
         {
-            var scalar = GetValue(0);
-            for (int i = 0; i < other.Length; i++) destination.SetValue(i, op(scalar, other.GetLogicalValue(i)));
+            var scalar = left.GetValue(0);
+            for (int i = 0; i < right.Length; i++) destination.SetValue(i, op(scalar, right.GetLogicalValue(i)));
             return;
         }
-        BroadcastApplyRuns<NoBroadcastOperator<T>>(this, other, destination, TensorExecutionOptions.Scalar, shape, op);
+        BroadcastApplyRuns<NoBroadcastOperator<T>>(left, right, destination, TensorExecutionOptions.Scalar, shape, op);
     }
 
     /// <summary>Placeholder operator selecting the delegate path of the run engine.</summary>

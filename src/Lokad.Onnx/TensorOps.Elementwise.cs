@@ -22,7 +22,7 @@ where T : unmanaged
     /// <summary>
     /// Checks an elementwise destination: it must exist and hold exactly one
     /// slot per source element. The destination is fully overwritten; it may
-    /// alias the sources because every write pairs flat index to flat index.
+    /// alias the sources; hazardous overlap is snapshotted before any writes.
     /// </summary>
     void CheckDestination(Tensor<T> destination)
     {
@@ -43,20 +43,35 @@ where T : unmanaged
     /// the logical length by construction; anything else uses the index path.
     /// </summary>
     static bool IsDirectSpanCompatible(Tensor<T> tensor) =>
-        tensor is DenseTensor<T> dense && dense.Buffer.Length == dense.Length;
+        tensor.GetType() == typeof(DenseTensor<T>) && tensor is DenseTensor<T> dense && dense.Buffer.Length == dense.Length;
+
+    static bool SameElementOrder(Tensor<T> left, Tensor<T> right) =>
+        !left.IsReversedStride && !right.IsReversedStride ||
+        left.IsReversedStride == right.IsReversedStride && left.Dimensions.SequenceEqual(right.Dimensions);
+
+    static Tensor<T> PreserveElementwiseSource(Tensor<T> source, Tensor<T> destination)
+    {
+        if (IsDirectSpanCompatible(source) && IsDirectSpanCompatible(destination))
+        {
+            var input = ((DenseTensor<T>)source).Buffer.Span;
+            var output = ((DenseTensor<T>)destination).Buffer.Span;
+            if (!input.Overlaps(output, out int offset)) return source;
+            if (offset == 0 && source.Length == destination.Length && SameElementOrder(source, destination)) return source;
+        }
+        else if (!TensorAlias.SharesBackingMemory(source, destination)) return source;
+        return Snapshot(source);
+    }
 
     /// <summary>
     /// Writes op(element) for every element, overwriting the destination.
-    /// The destination may alias this tensor; pairing is by flat index.
+    /// The destination may alias this tensor; logical positions are paired and hazardous overlap is snapshotted.
     /// </summary>
     public virtual void Apply(Func<T, T> op, Tensor<T> destination)
     {
         CheckDestination(destination);
-  
-        for (int index = 0; index < Length; index++)
-        {
-            destination.SetValue(index, op(GetValue(index)));
-        }        
+        var source = PreserveElementwiseSource(this, destination);
+        for (int i = 0; i < Length; i++)
+            destination.SetLogicalValue(i, op(source.GetLogicalValue(i)));
     }
 
     public Tensor<T> Apply(Func<T, T> op)
@@ -69,7 +84,7 @@ where T : unmanaged
     /// <summary>
     /// Writes op(element) for every element, overwriting the destination, with automatic
     /// execution options. The destination starts uninitialized and is fully overwritten; it
-    /// may alias this tensor because pairing is by flat index. The vector path runs only
+    /// may alias this tensor; hazardous overlap is snapshotted. The vector path runs only
     /// on directly spannable storage, otherwise the scalar path runs. An empty tensor
     /// writes nothing but the destination must still match its length.
     /// </summary>
@@ -83,31 +98,25 @@ where T : unmanaged
 
     /// <summary>
     /// Writes op(element) for every element, overwriting the destination.
-    /// The destination may alias this tensor; pairing is by flat index.
+    /// The destination may alias this tensor; logical positions are paired and hazardous overlap is snapshotted.
     /// The vector path runs only on directly spannable storage.
     /// </summary>
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, Tensor<T> destination, TensorExecutionOptions options)
     {
         CheckDestination(destination);
-
-        if (options.UseSimd && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2
-            && IsDirectSpanCompatible(this) && IsDirectSpanCompatible(destination))
+        var source = PreserveElementwiseSource(this, destination);
+        if (options.UseSimd && source is DenseTensor<T> input && destination is DenseTensor<T> output
+            && IsDirectSpanCompatible(source) && IsDirectSpanCompatible(destination) && SameElementOrder(source, destination))
         {
-            var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
-            var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
-            var ceiling = (Convert.ToInt32(this.length) / Vector<T>.Count) * Vector<T>.Count;
-            for (int i = 0; i < vspan1.Length; i++)
-            {
-                vspan2[i] = op(vspan1[i]);
-            }
-            for (int i = ceiling; i < this.length; i++)
-            {
-                destination.SetValue(i, sop(GetValue(i)));
-            }
+            var inputVectors = MemoryMarshal.Cast<T, Vector<T>>(input.Buffer.Span);
+            var outputVectors = MemoryMarshal.Cast<T, Vector<T>>(output.Buffer.Span);
+            for (int i = 0; i < inputVectors.Length; i++) outputVectors[i] = op(inputVectors[i]);
+            int done = inputVectors.Length * Vector<T>.Count;
+            for (int i = done; i < Length; i++) destination.SetValue(i, sop(source.GetValue(i)));
         }
         else
         {
-            Apply(sop, destination);
+            for (int i = 0; i < Length; i++) destination.SetLogicalValue(i, sop(source.GetLogicalValue(i)));
         }
     }
 
@@ -127,16 +136,15 @@ where T : unmanaged
 
     /// <summary>
     /// Writes op(left, right) for every element pair, overwriting the destination.
-    /// The destination may alias either source; pairing is by flat index.
+    /// The destination may alias either source; hazardous overlap is snapshotted before writes.
     /// </summary>
     public virtual void Apply(Func<T, T, T> op, Tensor<T> tensor2, Tensor<T> destination)
     {
         CheckBinaryDestination(tensor2, destination);
-
-        for (int index = 0; index < this.Length; index++)
-        {
-            destination.SetValue(index, op(GetValue(index), tensor2.GetValue(index)));
-        }        
+        var left = PreserveElementwiseSource(this, destination);
+        var right = ReferenceEquals(this, tensor2) ? left : PreserveElementwiseSource(tensor2, destination);
+        for (int i = 0; i < Length; i++)
+            destination.SetLogicalValue(i, op(left.GetLogicalValue(i), right.GetLogicalValue(i)));
     }
 
     public Tensor<T> Apply(Func<T, T, T> op, Tensor<T> tensor2)
@@ -149,7 +157,7 @@ where T : unmanaged
     /// <summary>
     /// Writes op(left, right) for every element pair, overwriting the destination, with
     /// automatic execution options. The destination starts uninitialized and is fully
-    /// overwritten; it may alias either source because pairing is by flat index. The vector
+    /// overwritten; it may alias either source; hazardous overlap is snapshotted. The vector
     /// path runs only when all three tensors are directly spannable, otherwise the scalar
     /// path runs. Empty tensors write nothing but lengths must still match.
     /// </summary>
@@ -164,32 +172,28 @@ where T : unmanaged
 
     /// <summary>
     /// Writes op(left, right) for every element pair, overwriting the destination.
-    /// The destination may alias either source; pairing is by flat index.
+    /// The destination may alias either source; hazardous overlap is snapshotted before writes.
     /// The vector path runs only on directly spannable storage.
     /// </summary>
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, Tensor<T> destination, TensorExecutionOptions options)
     {
         CheckBinaryDestination(tensor2, destination);
-
-        if (options.UseSimd && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3
-            && IsDirectSpanCompatible(this) && IsDirectSpanCompatible(tensor2) && IsDirectSpanCompatible(destination))
+        var left = PreserveElementwiseSource(this, destination);
+        var right = ReferenceEquals(this, tensor2) ? left : PreserveElementwiseSource(tensor2, destination);
+        if (options.UseSimd && left is DenseTensor<T> first && right is DenseTensor<T> second && destination is DenseTensor<T> output
+            && IsDirectSpanCompatible(left) && IsDirectSpanCompatible(right) && IsDirectSpanCompatible(destination)
+            && SameElementOrder(left, destination) && SameElementOrder(right, destination))
         {
-            var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
-            var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
-            var vspan3 = MemoryMarshal.Cast<T, Vector<T>>(d3.Buffer.Span);
-            var ceiling = (Convert.ToInt32(this.length) / Vector<T>.Count) * Vector<T>.Count;
-            for (int i = 0; i < vspan1.Length; i++)
-            {
-                vspan3[i] = op(vspan1[i], vspan2[i]);
-            }
-            for (int i = ceiling; i < this.length; i++)
-            {
-                destination.SetValue(i, sop(GetValue(i), tensor2.GetValue(i)));
-            }
+            var firstVectors = MemoryMarshal.Cast<T, Vector<T>>(first.Buffer.Span);
+            var secondVectors = MemoryMarshal.Cast<T, Vector<T>>(second.Buffer.Span);
+            var outputVectors = MemoryMarshal.Cast<T, Vector<T>>(output.Buffer.Span);
+            for (int i = 0; i < firstVectors.Length; i++) outputVectors[i] = op(firstVectors[i], secondVectors[i]);
+            int done = firstVectors.Length * Vector<T>.Count;
+            for (int i = done; i < Length; i++) destination.SetValue(i, sop(left.GetValue(i), right.GetValue(i)));
         }
         else
         {
-            Apply(sop, tensor2, destination);
+            for (int i = 0; i < Length; i++) destination.SetLogicalValue(i, sop(left.GetLogicalValue(i), right.GetLogicalValue(i)));
         }
     }
 
