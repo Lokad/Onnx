@@ -503,28 +503,19 @@ where T : unmanaged
         }
 
         StartOpStage(OpStage.Copy);
-        var r = DenseTensor<T>.OfShape(TransposedShape(data.Dimensions, p));
+        var r = DenseTensor<T>.OfShape(TransposedShapeCore(data.Dimensions, p));
         TransposeInto(data, r, p);
         return r;
     }
 
     /// <summary>Computes the transposed shape without moving elements.</summary>
-    public static int[] TransposedShape(ReadOnlySpan<int> dimensions, int[]? perm)
+    public static int[] TransposedShape(ReadOnlySpan<int> dimensions, int[]? perm) =>
+        TransposedShapeCore(dimensions, NormalizeTransposePerm(dimensions.Length, perm));
+
+    static int[] TransposedShapeCore(ReadOnlySpan<int> dimensions, int[] perm)
     {
-        int rank = dimensions.Length;
-        int[] p;
-        if (perm is not null)
-        {
-            if (perm.Length != rank) throw new ArgumentException($"The size of the permutation array must be the rank of the tensor: {rank}.", nameof(perm));
-            if (!perm.All(q => q < rank)) throw new ArgumentException($"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.", nameof(perm));
-            if (perm.Any(q => q < 0)) throw new ArgumentException("The permutation axes must be non-negative.", nameof(perm));
-            if (!ArrayUtilities.CheckNoRepeatedDims(perm)) throw new ArgumentException("The permutation array has a repeated dimension.", nameof(perm));
-            p = (int[])perm.Clone();
-            for (int i = 0; i < p.Length; i++) p[i] = ArrayUtilities.HandleNegativeAxisOrIndex(rank, p[i]);
-        }
-        else p = Enumerable.Range(0, rank).Reverse().ToArray();
-        var shape = new int[rank];
-        for (int i = 0; i < p.Length; i++) shape[i] = dimensions[p[i]];
+        var shape = new int[dimensions.Length];
+        for (int i = 0; i < perm.Length; i++) shape[i] = dimensions[perm[i]];
         return shape;
     }
 
@@ -534,7 +525,7 @@ where T : unmanaged
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         StartOpStage(OpStage.ValidateArguments);
         var p = NormalizeTransposePerm(data.Rank, perm);
-        if (!destination.Dimensions.SequenceEqual(TransposedShape(data.Dimensions, p))) throw new ArgumentException("Destination shape must match the transposed shape.", nameof(destination));
+        if (!destination.Dimensions.SequenceEqual(TransposedShapeCore(data.Dimensions, p))) throw new ArgumentException("Destination shape must match the transposed shape.", nameof(destination));
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         if (ReferenceEquals(destination, data) || TensorAlias.SharesBackingMemory(destination, data)) throw new ArgumentException("Destination must not alias the input tensor: permutation is not an in-place operation.", nameof(destination));
         StartOpStage(OpStage.Copy);

@@ -47,76 +47,39 @@ namespace Lokad.Onnx
         
         static ITensor[] Broadcast(INumericTensor inA, INumericTensor inB)
         {
-            if (inA.Rank == 0 && inB.Rank != 0)
-            {
-                var _A = inB.CloneEmpty();
-                for (int i = 0; i < _A.Length; i++)
-                {
-                    _A.SetValue(i, inA.GetValue(0));
-                }
-                return new ITensor[2] { _A, inB };
-            }
-            else if (inB.Rank == 0 && inA.Rank != 0)
-            {
-                var _B = inA.CloneEmpty();
-                for (int i = 0; i < _B.Length; i++)
-                {
-                    _B.SetValue(i, inB.GetValue(0));
-                }
-                return new ITensor[2] { inA, _B };
-            }
-
-            var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-            var outA = inA;
-            var outB = inB;
-            for (var i = 0; i < broadcastRank; i++)
-            {
-                var idxA = i - broadcastRank + inA.Rank;
-                var idxB = i - broadcastRank + inB.Rank;
-                if (i < broadcastRank - inA.Rank)
-                {
-                    outA = outA.InsertDim(i);
-                    outA = outA.BroadcastDim(i, inB.Dims[idxB]);
-                }
-                else if (i < broadcastRank - inB.Rank)
-                {
-                    outB = outB.InsertDim(i);
-                    outB = outB.BroadcastDim(i, inA.Dims[idxA]);
-                }
-                else if (inA.Dims[idxA] == inB.Dims[idxB])
-                {
-                }
-                else if (inA.Dims[idxA] == 1)
-                {
-                    outA = outA.BroadcastDim(i, inB.Dims[idxB]);
-                }
-                else if (inB.Dims[idxB] == 1)
-                {
-                    outB = outB.BroadcastDim(i, inA.Dims[idxA]);
-                }
-                else
-                {
-                    return Array.Empty<ITensor>();
-                }
-            }
-            return new[] { outA, outB };
+            return Broadcast(inA, inB, out var left, out var right)
+                ? new[] { left, right } : Array.Empty<ITensor>();
         }
 
         static bool Broadcast(INumericTensor x, INumericTensor y, out ITensor bx, out ITensor by)
         {
-            var b = Broadcast(x, y);
-            if (b.Length == 0)
-            {
-                bx = x;
-                by = y;
-                return false;
-            }
-            else
-            {
-                bx = b[0];
-                by = b[1];  
-                return true;
-            }
+            bool compatible = TryBroadcast(x, x.Dims, y, y.Dims, out var left, out var right);
+            bx = left;
+            by = right;
+            return compatible;
+        }
+
+        internal static bool TryBroadcast(INumericTensor x, ReadOnlySpan<int> xShape,
+            INumericTensor y, ReadOnlySpan<int> yShape, out INumericTensor bx, out INumericTensor by)
+        {
+            bx = x;
+            by = y;
+            if (xShape.SequenceEqual(yShape)) return true;
+            if (!ArrayUtilities.TryBroadcastShape(xShape, yShape, out var shape)) return false;
+            bx = BroadcastView(x, xShape, shape);
+            by = BroadcastView(y, yShape, shape);
+            return true;
+        }
+
+        internal static INumericTensor BroadcastView(INumericTensor input, ReadOnlySpan<int> dimensions, int[] shape)
+        {
+            int offset = shape.Length - dimensions.Length;
+            var result = input;
+            for (int i = 0; i < offset; i++) result = result.InsertDim(0);
+            for (int i = 0; i < shape.Length; i++)
+                if ((i < offset ? 1 : dimensions[i - offset]) != shape[i])
+                    result = result.BroadcastDim(i, shape[i]);
+            return result;
         }
 
         ITensor Softmax()

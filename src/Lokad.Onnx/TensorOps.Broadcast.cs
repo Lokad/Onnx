@@ -20,81 +20,20 @@ where T : unmanaged
 {
     public static Tensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
     {
-        if (inA.dimensions.SequenceEqual(inB.dimensions))
-        {
-            return [inA, inB];
-        }
-        else if (inA.Rank == 0 && inB.Rank != 0)
-        {
-            var _A = inB.CloneEmpty();
-            for (int i = 0; i < _A.Length; i++)
-            {
-                _A.SetValue(i, inA.GetValue(0));
-            }
-            return [_A, inB ];
-        }
-        else if (inB.Rank == 0 && inA.Rank != 0)
-        {
-            var _B = inA.CloneEmpty();
-            for (int i = 0; i < _B.Length; i++)
-            {
-                _B.SetValue(i, inB.GetValue(0));
-            }
-            return [inA, _B ];
-        }
-
-        var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-        var outA = inA;
-        var outB = inB;
-        for (var i = 0; i < broadcastRank; i++)
-        {
-            var idxA = i - broadcastRank + inA.Rank;
-            var idxB = i - broadcastRank + inB.Rank;
-            if (i < broadcastRank - inA.Rank)
-            {
-                outA = outA.InsertDim(i);
-                outA = outA.BroadcastDim(i, inB.Dimensions[idxB]);
-            }
-            else if (i < broadcastRank - inB.Rank)
-            {
-                outB = outB.InsertDim(i);
-                outB = outB.BroadcastDim(i, inA.Dimensions[idxA]);
-            }
-            else if (inA.Dimensions[idxA] == inB.Dimensions[idxB])
-            {
-                continue;
-            }
-            else if (inA.Dimensions[idxA] == 1)
-            {
-                outA = outA.BroadcastDim(i, inB.Dimensions[idxB]);
-            }
-            else if (inB.Dimensions[idxB] == 1)
-            {
-                outB = outB.BroadcastDim(i, inA.Dimensions[idxA]);
-            }
-            else
-            {
-                return Array.Empty<Tensor<T>>();
-            }
-        }
-        return [outA, outB ];
+        return Broadcast(inA, inB, out var left, out var right)
+            ? new[] { left, right } : Array.Empty<Tensor<T>>();
     }
 
     public static bool Broadcast(Tensor<T> x, Tensor<T> y, [NotNullWhen(true)] out Tensor<T>? outx, [NotNullWhen(true)] out Tensor<T>? outy)
     {
-        var b = Broadcast(x, y);
-        if (b.Length == 0)
+        if (ITensor.TryBroadcast(x, x.Dimensions, y, y.Dimensions, out var left, out var right))
         {
-            outx = null;
-            outy = null;
-            return false;
-        }
-        else
-        {
-            outx = b[0];
-            outy = b[1];
+            outx = (Tensor<T>)left;
+            outy = (Tensor<T>)right;
             return true;
         }
+        outx = outy = null;
+        return false;
     }
 
     /// <summary>
@@ -117,28 +56,8 @@ where T : unmanaged
     /// Computes right-aligned broadcast compatibility over dimension spans only.
     /// Allocates in proportion to rank, never element count.
     /// </summary>
-    public static bool BroadcastShape(ReadOnlySpan<int> x, ReadOnlySpan<int> y, [NotNullWhen(true)] out int[]? b)
-    {
-        int rank = Math.Max(x.Length, y.Length);
-        var dims = new int[rank];
-        int ox = rank - x.Length;
-        int oy = rank - y.Length;
-        for (int i = 0; i < rank; i++)
-        {
-            int dx = i < ox ? 1 : x[i - ox];
-            int dy = i < oy ? 1 : y[i - oy];
-            if (dx == dy) dims[i] = dx;
-            else if (dx == 1) dims[i] = dy;
-            else if (dy == 1) dims[i] = dx;
-            else
-            {
-                b = null;
-                return false;
-            }
-        }
-        b = dims;
-        return true;
-    }
+    public static bool BroadcastShape(ReadOnlySpan<int> x, ReadOnlySpan<int> y, [NotNullWhen(true)] out int[]? b) =>
+        ArrayUtilities.TryBroadcastShape(x, y, out b);
 
     public static bool BroadcastShape(Tensor<T> x, Tensor<T> y, [NotNullWhen(true)] out int[]? b) => BroadcastShape(x.Dimensions, y.Dimensions, out b);
 
@@ -466,27 +385,10 @@ where T : unmanaged
         }
 
         StartOpStage(OpStage.CalculateIndices);
-        var result = input;
-        for (int i = 0; i < offset; i++)
-        {
-            result = result.InsertDim(0);
-        }
         for (int i = 0; i < targetRank; i++)
-        {
-            var dim = result.Dimensions[i];
-            var targetDim = normalizedShape[i];
-            if (dim == targetDim)
-            {
-                continue;
-            }
-            if (dim == 1)
-            {
-                result = result.BroadcastDim(i, targetDim);
-                continue;
-            }
-            throw new ArgumentException($"Cannot broadcast dimension {dim} to {targetDim}.", nameof(targetShape));
-        }
-        return result;
+            if (paddedInputDims[i] != normalizedShape[i] && paddedInputDims[i] != 1)
+                throw new ArgumentException($"Cannot broadcast dimension {paddedInputDims[i]} to {normalizedShape[i]}.", nameof(targetShape));
+        return (Tensor<T>)ITensor.BroadcastView(input, input.Dimensions, normalizedShape);
     }
 
     /// <summary>

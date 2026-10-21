@@ -11,6 +11,25 @@ namespace Lokad.Onnx
     {
         public const int StackallocMax = 16;
 
+        internal static bool TryBroadcastShape(ReadOnlySpan<int> x, ReadOnlySpan<int> y,
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out int[]? shape)
+        {
+            int rank = Math.Max(x.Length, y.Length);
+            var dimensions = new int[rank];
+            int offsetX = rank - x.Length, offsetY = rank - y.Length;
+            for (int i = 0; i < rank; i++)
+            {
+                int left = i < offsetX ? 1 : x[i - offsetX];
+                int right = i < offsetY ? 1 : y[i - offsetY];
+                if (left == right) dimensions[i] = left;
+                else if (left == 1) dimensions[i] = right;
+                else if (right == 1) dimensions[i] = left;
+                else { shape = null; return false; }
+            }
+            shape = dimensions;
+            return true;
+        }
+
         internal static int[] UnsqueezedShape(ReadOnlySpan<int> dimensions, int[] axes)
         {
             ArgumentNullException.ThrowIfNull(axes);
