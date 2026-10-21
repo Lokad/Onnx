@@ -155,9 +155,19 @@ namespace Lokad.Onnx
             if (this.ElementType != TensorElementType.Int64) throw new ArgumentException();
             Tensor<long> input = (Tensor<long>) this;
             DenseTensor<int> output = DenseTensor<int>.OfShape(Dims);
-            for (int i = 0; i < Length; i++)
+            if (input is DenseTensor<long> dense && !dense.IsReversedStride)
             {
-                output.SetValue(i, (Convert.ToInt32(input.GetValue(i))));
+                var source = dense.Buffer.Span;
+                var destination = output.Buffer.Span;
+                for (int i = 0; i < source.Length; i++)
+                    destination[i] = Convert.ToInt32(source[i]);
+            }
+            else
+            {
+                // Flatten logical coordinates, not a view's or reversed tensor's storage.
+                int position = 0;
+                foreach (var coordinate in input.GetDimensionsIterator())
+                    output.SetValue(position++, Convert.ToInt32(input[coordinate]));
             }
             return output;
         }
