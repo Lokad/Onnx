@@ -38,10 +38,18 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     public override T this[ReadOnlySpan<int> indices]
     {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => this.source.GetValue(ArrayUtilities.GetIndex(effectiveStrides, indices));
+        get
+        {
+            ValidateCoordinates(indices);
+            return this.source.GetValue(ArrayUtilities.GetIndex(effectiveStrides, indices));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        set => this.source.SetValue(ArrayUtilities.GetIndex(effectiveStrides, indices), value);
+        set
+        {
+            ValidateCoordinates(indices);
+            this.source.SetValue(ArrayUtilities.GetIndex(effectiveStrides, indices), value);
+        }
     }
 
     /// <summary>

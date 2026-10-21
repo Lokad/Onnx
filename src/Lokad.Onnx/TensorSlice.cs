@@ -225,19 +225,13 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public int GetOffset(params int[] indices)
     {
-        if (indices.Length > parent.Dimensions.Length)
-            throw new ArgumentOutOfRangeException(nameof(indices), $"select has too many coordinates for this shape");
-        Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
-        indices.CopyTo(coords);
-        return GetOffsetCore(coords, indices.Length);
+        return GetOffset((ReadOnlySpan<int>)indices);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public int GetOffset(ReadOnlySpan<int> indices)
     {
-        // Bounded buffer instead of a pointer list: more indices than this view
-        // holds are rejected before anything is written.
-        if (indices.Length > this.Rank) throw new ArgumentOutOfRangeException(nameof(indices), $"Too many coordinates for tensor rank {this.Rank}.");
+        ValidateCoordinates(indices);
         Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
         indices.CopyTo(coords);
         return GetOffsetCore(coords, indices.Length);

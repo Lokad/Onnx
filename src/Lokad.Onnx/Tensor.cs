@@ -656,10 +656,30 @@ namespace Lokad.Onnx
         public virtual T this[ReadOnlySpan<int> indices]
         {
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            get => GetValue(ArrayUtilities.GetIndex(strides, indices));
+            get
+            {
+                ValidateCoordinates(indices);
+                return GetValue(ArrayUtilities.GetIndex(strides, indices));
+            }
             
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            set => SetValue(ArrayUtilities.GetIndex(strides, indices), value);
+            set
+            {
+                ValidateCoordinates(indices);
+                SetValue(ArrayUtilities.GetIndex(strides, indices), value);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ValidateCoordinates(ReadOnlySpan<int> indices)
+        {
+            // Scalar iterators expose [0]; an empty coordinate is also canonical.
+            if (Rank == 0 && (indices.Length == 0 || (indices.Length == 1 && indices[0] == 0))) return;
+            if (indices.Length != Rank)
+                throw new ArgumentOutOfRangeException(nameof(indices), "Coordinate count must match tensor rank.");
+            for (int axis = 0; axis < indices.Length; axis++)
+                if ((uint)indices[axis] >= (uint)dimensions[axis])
+                    throw new ArgumentOutOfRangeException(nameof(indices), "Coordinate is outside the tensor dimensions.");
         }
 
         public T this[params Index[] indices]
@@ -1734,14 +1754,17 @@ namespace Lokad.Onnx
         /// layouts, which is all kernels ever pass after densification.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetStorageIndex(int[] indices) => this switch
+        public int GetStorageIndex(int[] indices)
         {
-            DenseTensor<T> dt => ArrayUtilities.GetIndex(dt.strides, indices),
-            BroadcastedTensor<T> bt => bt.source.RootStorageIndex(ArrayUtilities.GetIndex(bt.effectiveStrides, indices)),
-            TensorSlice<T> ts => ts.parent.RootStorageIndex(ts.GetOffset(indices)),
-            _ => throw new NotSupportedException("GetStorageIndex method not implemented for this tensor type.")
-
-        };
+            ValidateCoordinates(indices);
+            return this switch
+            {
+                DenseTensor<T> dt => ArrayUtilities.GetIndex(dt.strides, indices),
+                BroadcastedTensor<T> bt => bt.source.RootStorageIndex(ArrayUtilities.GetIndex(bt.effectiveStrides, indices)),
+                TensorSlice<T> ts => ts.parent.RootStorageIndex(ts.GetOffset(indices)),
+                _ => throw new NotSupportedException("GetStorageIndex method not implemented for this tensor type.")
+            };
+        }
 
         int RootStorageIndex(int index) => this switch
         {
