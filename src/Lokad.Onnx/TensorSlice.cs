@@ -233,8 +233,9 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
     {
         ValidateCoordinates(indices);
         Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
-        indices.CopyTo(coords);
-        return GetOffsetCore(coords, indices.Length);
+        coords.Clear();
+        indices.Slice(0, Math.Min(indices.Length, Rank)).CopyTo(coords);
+        return GetOffsetCore(coords, Rank);
     }
     #endregion
 

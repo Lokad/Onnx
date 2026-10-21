@@ -211,6 +211,7 @@ namespace Lokad.Onnx
         /// <returns>The index of item if found in the tensor; otherwise, -1</returns>
         protected override int IndexOf(T item)
         {
+            if (IsReversedStride) return base.IndexOf(item);
             // TODO: use Span.IndexOf when/if it removes the IEquatable type constraint
             if (MemoryMarshal.TryGetArray<T>(Buffer, out var arraySegment))
             {

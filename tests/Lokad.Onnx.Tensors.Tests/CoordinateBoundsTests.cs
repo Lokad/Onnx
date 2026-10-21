@@ -22,7 +22,7 @@ public class CoordinateBoundsTests
         var tensor = Layout(layout);
         var original = tensor.ToArray();
         foreach (var coordinate in new[] { new[] { 0, 3 }, new[] { 1, -1 }, new[] { -1, 1 },
-            new[] { 2, 0 }, new[] { 0 }, new[] { 0, 0, 0 } })
+            new[] { 2, 0 }, new[] { 0, 0, 0 } })
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => tensor[coordinate]);
             Assert.Throws<ArgumentOutOfRangeException>(() => tensor[coordinate] = 99);
@@ -30,6 +30,7 @@ public class CoordinateBoundsTests
             Assert.Equal(original, tensor.ToArray());
         }
         int last = tensor[1, 2];
+        Assert.Equal(tensor[1, 0], tensor[new[] { 1 }]);
         tensor[1, 2] = last + 10;
         Assert.Equal(last + 10, tensor[1, 2]);
     }
@@ -56,6 +57,7 @@ public class CoordinateBoundsTests
     {
         var empty = new DenseTensor<int>(new[] { 0, 3 });
         Assert.Throws<ArgumentOutOfRangeException>(() => empty[0, 0]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => new DenseTensor<int>(new[] { 3, 0 })[0]);
         var parent = new DenseTensor<int>(new[] { 2, 3 });
         var view = parent.Slice(SliceIndex.Index(1), SliceIndex.All);
         foreach (var coordinate in new[] { new[] { 3 }, new[] { -1 }, new[] { 0, 0 } })

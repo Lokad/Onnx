@@ -675,10 +675,10 @@ namespace Lokad.Onnx
         {
             // Scalar iterators expose [0]; an empty coordinate is also canonical.
             if (Rank == 0 && (indices.Length == 0 || (indices.Length == 1 && indices[0] == 0))) return;
-            if (indices.Length != Rank)
-                throw new ArgumentOutOfRangeException(nameof(indices), "Coordinate count must match tensor rank.");
-            for (int axis = 0; axis < indices.Length; axis++)
-                if ((uint)indices[axis] >= (uint)dimensions[axis])
+            if (indices.Length > Rank)
+                throw new ArgumentOutOfRangeException(nameof(indices), "Too many coordinates for tensor rank.");
+            for (int axis = 0; axis < Rank; axis++)
+                if ((uint)(axis < indices.Length ? indices[axis] : 0) >= (uint)dimensions[axis])
                     throw new ArgumentOutOfRangeException(nameof(indices), "Coordinate is outside the tensor dimensions.");
         }
 
@@ -923,7 +923,7 @@ namespace Lokad.Onnx
 
                 for (int i = 0; i < length; i++)
                 {
-                    array.SetValue(GetValue(i), index + i);
+                    array.SetValue(GetValue(LogicalOffset(i)), index + i);
                 }
             }
         }
@@ -934,13 +934,13 @@ namespace Lokad.Onnx
         {
             get
             {
-                return GetValue(index);
+                return GetValue(CollectionOffset(index));
             }
             set
             {
                 try
                 {
-                    SetValue(index, value is null ? default(T) : (T)value);
+                    SetValue(CollectionOffset(index), value is null ? default(T) : (T)value);
                 }
                 catch (InvalidCastException)
                 {
@@ -1010,7 +1010,7 @@ namespace Lokad.Onnx
         {
             for (int i = 0; i < Length; i++)
             {
-                yield return GetValue(i);
+                yield return GetValue(LogicalOffset(i));
             }
         }
         #endregion
@@ -1074,7 +1074,7 @@ namespace Lokad.Onnx
 
             for (int i = 0; i < length; i++)
             {
-                array[arrayIndex + i] = GetValue(i);
+                array[arrayIndex + i] = GetValue(LogicalOffset(i));
             }
         }
 
@@ -1143,8 +1143,28 @@ namespace Lokad.Onnx
         #region IList<T> members
         T IList<T>.this[int index]
         {
-            get { return GetValue(index); }
-            set { SetValue(index, value); }
+            get { return GetValue(CollectionOffset(index)); }
+            set { SetValue(CollectionOffset(index), value); }
+        }
+
+        int CollectionOffset(int index)
+        {
+            if ((uint)index >= Length) throw new ArgumentOutOfRangeException(nameof(index));
+            return LogicalOffset(index);
+        }
+
+        // Collection positions always run row by row; kernel GetValue offsets remain physical.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        int LogicalOffset(int index)
+        {
+            if (!IsReversedStride) return index;
+            int offset = 0;
+            for (int axis = Rank - 1; axis >= 0; axis--)
+            {
+                offset += (index % dimensions[axis]) * strides[axis];
+                index /= dimensions[axis];
+            }
+            return offset;
         }
 
         int IList<T>.IndexOf(T item)
@@ -1161,7 +1181,7 @@ namespace Lokad.Onnx
         {
             for (int i = 0; i < Length; i++)
             {
-                if (GetValue(i).Equals(item))
+                if (GetValue(LogicalOffset(i)).Equals(item))
                 {
                     return i;
                 }
@@ -1183,7 +1203,7 @@ namespace Lokad.Onnx
 
         #region IReadOnlyList<T> members
 
-        T IReadOnlyList<T>.this[int index] => GetValue(index);
+        T IReadOnlyList<T>.this[int index] => GetValue(CollectionOffset(index));
 
         #endregion
 
@@ -1227,28 +1247,12 @@ namespace Lokad.Onnx
 
             int result = 0;
 
-            if (IsReversedStride == other.IsReversedStride)
+            for (int i = 0; i < Length; i++)
             {
-                for (int i = 0; i < Length; i++)
+                result = comparer.Compare(GetValue(LogicalOffset(i)), other.GetValue(other.LogicalOffset(i)));
+                if (result != 0)
                 {
-                    result = comparer.Compare(GetValue(i), other.GetValue(i));
-                    if (result != 0)
-                    {
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                var indices = Rank < ArrayUtilities.StackallocMax ? stackalloc int[Rank] : new int[Rank];
-                for (int i = 0; i < Length; i++)
-                {
-                    ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
-                    result = comparer.Compare(this[indices], other[indices]);
-                    if (result != 0)
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
 
@@ -1273,11 +1277,12 @@ namespace Lokad.Onnx
 
             int result = 0;
             var indices = new int[Rank];
+            var logicalStrides = ArrayUtilities.GetStrides(dimensions);
             for (int i = 0; i < Length; i++)
             {
-                ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
+                ArrayUtilities.GetIndices(logicalStrides, false, i, indices, 0);
 
-                result = comparer.Compare(GetValue(i), other.GetValue(indices));
+                result = comparer.Compare(GetValue(LogicalOffset(i)), other.GetValue(indices));
 
                 if (result != 0)
                 {
@@ -1327,27 +1332,11 @@ namespace Lokad.Onnx
                 }
             }
 
-            if (IsReversedStride == other.IsReversedStride)
+            for (int i = 0; i < Length; i++)
             {
-                for (int i = 0; i < Length; i++)
+                if (!comparer.Equals(GetValue(LogicalOffset(i)), other.GetValue(other.LogicalOffset(i))))
                 {
-                    if (!comparer.Equals(GetValue(i), other.GetValue(i)))
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                var indices = Rank < ArrayUtilities.StackallocMax ? stackalloc int[Rank] : new int[Rank];
-                for (int i = 0; i < Length; i++)
-                {
-                    ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
-
-                    if (!comparer.Equals(this[indices], other[indices]))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
@@ -1371,11 +1360,12 @@ namespace Lokad.Onnx
             }
 
             var indices = new int[Rank];
+            var logicalStrides = ArrayUtilities.GetStrides(dimensions);
             for (int i = 0; i < Length; i++)
             {
-                ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
+                ArrayUtilities.GetIndices(logicalStrides, false, i, indices, 0);
 
-                if (!comparer.Equals(GetValue(i), other.GetValue(indices)))
+                if (!comparer.Equals(GetValue(LogicalOffset(i)), other.GetValue(indices)))
                 {
                     return false;
                 }
