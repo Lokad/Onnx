@@ -94,11 +94,7 @@ internal static class CastOps
         if (v >= 18446744073709551616.0 || v <= -9223372036854775808.0) return 9223372036854775808UL;
         double t = Math.Truncate(v);
         if (t < 9223372036854775808.0) return unchecked((ulong)unchecked((long)t));
-        if (t < 18446744073709551616.0) return unchecked((ulong)unchecked((long)(t - 9223372036854775808.0))) + 9223372036854775808UL;
-        double m = t % 18446744073709551616.0;
-        if (m < 0.0) m += 18446744073709551616.0;
-        if (!(m < 18446744073709551616.0)) return 0UL;
-        return (ulong)m;
+        return unchecked((ulong)unchecked((long)(t - 9223372036854775808.0))) + 9223372036854775808UL;
     }
 
     // The bound is 2^31, not (float)int.MaxValue which rounds up to 2^31: exactly 2^31
