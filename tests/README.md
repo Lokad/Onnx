@@ -5,7 +5,7 @@
 - Fast offline unit tests: the default `dotnet test` run. No network, no ignored large assets, no source-tree writes. Must be deterministic: repeated runs give identical pass/skip counts.
 - Integration tests with committed assets: MNIST model and images under `tests/Lokad.Onnx.Backend.Tests/models` and `images`. Always run, offline.
 - Local-model conformance: ignored large assets under `models/` (e5, DINOv3, ResNet50, GPT-2, DINOv2). These tests run whenever their asset files exist and skip with a reason when absent; setting `LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1` turns a missing requested asset into a failure instead of a skip. DINOv2 is excluded only from the benchmark full-output gate (see BENCHMARK.md); its compact C# oracle (`GraphExecutionDinoV2Tests`) runs like the other model tests.
-- Benchmarks: never correctness tests. See `Bench micro` and `bench.ps1`.
+- Benchmarks: see the [isolated comparison protocol](../eng/bench.md) and the [Gemma benchmark lane](embeddinggemma2/README.md#cpu-benchmarks). Their numerical guards complement the conformance lanes; timing results do not replace correctness evidence.
 - Single-op differential conformance: frozen seeded corpus under `tests/opfuzz/corpus` compared in scalar, SIMD, and intrinsics modes against frozen ONNX Runtime references. Selected explicitly via `eng/test-opfuzz.ps1`, never part of the default run. See `tests/opfuzz/README.md`.
 - Fallback without hardware intrinsics: the same unit gate with `DOTNET_EnableHWIntrinsic=0`; tests that require x86 FMA skip by design with a reason, everything else must pass. The `fallback-tests` CI job runs exactly this.
 
@@ -120,32 +120,45 @@ with a dirty-buffer parity test when it accumulates.
 
 ## Reference versions
 
-Two different ONNX Runtime versions answer two different questions; never
-mix their evidence:
+Timing comparators and correctness references have separate pins. Record the
+actual engine version with each result:
 
-- Timing comparator only: `Microsoft.ML.OnnxRuntime` 1.23.2 (C#, exact pin
-  in `tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj`, printed in every
-  benchmark row). It measures the native side of speed comparisons and is
-  never an oracle.
-- Frozen oracles: Python `onnxruntime==1.29.0` with `onnx==1.22.0` and
-  `numpy==2.2.4` (exact pins in `tests/e5/python/requirements.txt` and
-  `tests/opfuzz/generate/requirements-generator.txt`). These generate the
-  e5 expectations at lane time and the frozen `tests/opfuzz/corpus` references
-  (each `meta.json` records its generating environment), plus the
-  `ModelManifest.json` oracles (`ortOracle 1.29` with per-model generators).
+- General/e5 benchmarks use C# `Microsoft.ML.OnnxRuntime` 1.23.2, pinned in
+  [Lokad.Onnx.Bench](Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj) and
+  [Lokad.Onnx.Campaign](Lokad.Onnx.Campaign/Lokad.Onnx.Campaign.csproj).
+- Gemma benchmarks use C# `Microsoft.ML.OnnxRuntime` 1.29.0, pinned in
+  [Lokad.Onnx.EmbeddingGemma2Bench](Lokad.Onnx.EmbeddingGemma2Bench/Lokad.Onnx.EmbeddingGemma2Bench.csproj).
+- Native Python references use `onnxruntime==1.29.0` and `numpy==2.2.4`.
+  Model generation also pins `onnx==1.22.0`. See the
+  [e5 requirements](e5/python/requirements.txt),
+  [opfuzz generator requirements](opfuzz/generate/requirements-generator.txt)
+  and [Gemma requirements](embeddinggemma2/python/requirements.txt).
+  Corpus `meta.json` files and
+  [ModelManifest.json](Lokad.Onnx.Backend.Tests/ModelManifest.json) record
+  per-reference provenance. The Gemma source-model comparison uses its
+  separate CPU PyTorch environment, described in the model guide.
 
-Policy: a difference between the 1.23.2 and 1.29.0 references is a version
-difference, never kernel evidence. Upgrading any oracle is its own commit
-with regenerated references and hashes, never bundled with a performance
-implementation commit.
+Reproduce a discrepancy with matching engine versions before attributing it
+to a kernel. Upgrading an oracle is its own commit with regenerated references
+and hashes, separate from performance implementation changes.
 
-Replay: `eng/test-e5.ps1` (add `-RequireIntrinsics` where supported) and
-`eng/test-opfuzz.ps1` from the repo root; both verify asset hashes first.
+Replay native e5 with `eng/test-e5.ps1` (add `-RequireIntrinsics` where
+supported) and frozen single-op cases with `eng/test-opfuzz.ps1`; both verify
+asset hashes first. The ResNet and Gemma guides above describe their full-output
+checks and reference generation.
 
 ## Model-oracle bisection procedure
 
-All model-level tests share one compact-oracle pattern: exact shape, no NaN/Infinity, mean within 1e-6 plus strided spot values within 1e-4/1e-3 of a frozen native ONNX Runtime reference (MNIST instead asserts exact logits to 4 decimals plus argmax behavior). Reference values are generated with native ORT 1.29 (see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json for per-model provenance), never checked in as tensors. When an oracle drifts:
+Checks vary by model. Some tests use compact mean/spot references; MNIST
+checks logits to four decimals and argmax behavior. ResNet retains mean/spot
+checks and compares every output component against the committed
+[full-vector fixture](Lokad.Onnx.Backend.Tests/fixtures/resnet-ort.json), with
+exact managed repeats and input/output ownership checks. The e5 and Gemma
+lanes compare full tensors and pooled vectors; Gemma also checks integrated
+tokenization, API and CLI results. Parakeet compares complete outputs and
+carried state; see [its conformance guide](parakeet/README.md).
+Use each lane's recorded inputs, provenance and bounds when an oracle drifts:
 
-- Reproduce with a fixed input (0.5-filled tensor of the model input shape; e5 uses the frozen tests/e5/cases.json).
+- Reproduce the failing case's exact input and execution options. Constant-filled images, ramp images, frozen text cases and audio/state cases have different references.
 - Bisect with node-prefix cuts: run the graph truncated at successive nodes (a cut stack, e.g. the DINOv3 RoPE cut stack) in both Lokad.Onnx and native ONNX Runtime through a dtype-generic probe, comparing intermediate tensors to find the first diverging node. Durable equivalents: the tests/opfuzz corpus plus the e5 lane.
 - Root-cause at op level and keep a direct op-level regression test alongside the refreshed oracle.
