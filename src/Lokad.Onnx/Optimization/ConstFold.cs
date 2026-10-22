@@ -1,6 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Lokad.Onnx.Optimization;
 
@@ -281,23 +282,30 @@ internal static class ConstFold
         if (a.ElementType != b.ElementType) return false;
         var da = a.ToArray();
         var db = b.ToArray();
-        if (da.Length != db.Length) return false;
-        switch (a.ElementType)
+        return TryGetBits(da, out var left) && TryGetBits(db, out var right) && left.SequenceEqual(right);
+    }
+
+    // ToArray supplies logical order. Use actual unmanaged storage widths:
+    // Complex64 deliberately uses the wider CLR Complex representation here.
+    static bool TryGetBits(Array data, out ReadOnlySpan<byte> bits)
+    {
+        switch (data)
         {
-            case TensorElementType.Float:
-                var fa = (float[])da;
-                var fb = (float[])db;
-                for (int i = 0; i < fa.Length; i++)
-                    if (BitConverter.SingleToInt32Bits(fa[i]) != BitConverter.SingleToInt32Bits(fb[i])) return false;
-                return true;
-            case TensorElementType.Double:
-                var xa = (double[])da;
-                var xb = (double[])db;
-                for (int i = 0; i < xa.Length; i++)
-                    if (BitConverter.DoubleToInt64Bits(xa[i]) != BitConverter.DoubleToInt64Bits(xb[i])) return false;
-                return true;
-            default:
-                return StructuralComparisons.StructuralEqualityComparer.Equals(da, db);
+            case bool[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case sbyte[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case byte[] v: bits = v; return true;
+            case short[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case ushort[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case int[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case uint[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case long[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case ulong[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case Half[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case BFloat16[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case float[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case double[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            case Complex[] v: bits = MemoryMarshal.AsBytes(v.AsSpan()); return true;
+            default: bits = default; return false;
         }
     }
 }
