@@ -42,28 +42,6 @@ internal static class GraphPacking
     internal static bool FitsPackBudget(int n, int k) =>
         n >= 1 && k >= 1 && n < MaxPackedAxis && (long)n * k <= MaxPackedBytes / 4;
 
-    /// <summary>Resolves a MatMul edge name to a folded-transpose prepared tensor (P34).</summary>
-    /// <remarks>Folded outputs materialize under a generated name, so the consuming edge name never hits Initializers directly; the prepared bytes are stable and guarded exactly like initializer sources downstream.</remarks>
-    static bool TryResolveFoldedSource(ComputationalGraph graph, string edgeName, out ITensor? init)
-    {
-        init = null;
-        foreach (var node in graph.Nodes)
-        {
-            if (node.Op != OpType.Transpose || node.Outputs is null) continue;
-            bool produces = false;
-            foreach (var o in node.Outputs) if (o == edgeName) { produces = true; break; }
-            if (!produces) continue;
-            if (graph.FoldedTransposes.TryGetValue(node.Name, out var fold)
-                && graph.Initializers.TryGetValue(fold.PreparedName, out var prepared)
-                && prepared is DenseTensor<float>)
-            {
-                init = prepared;
-                return true;
-            }
-            return false;
-        }
-        return false;
-    }
     /// <summary>
     /// Packs eligible MatMul B-side weight initializers of the graph.
     /// Eligible means float32, rank 2, reduction axis below MaxPackedAxis with total bytes below MaxPackedBytes, plain layout (Gemm transB must be 0),
@@ -74,8 +52,15 @@ internal static class GraphPacking
     internal static int PackMatMulWeights(ComputationalGraph graph)
     {
         var consumers = new Dictionary<string, bool>(StringComparer.Ordinal);
+        var transposes = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var node in graph.Nodes)
         {
+            // Folded payloads have generated initializer names. Index their
+            // producing edges once, preserving the first transpose on malformed
+            // duplicate outputs even when that first transpose has no fold.
+            if (node.Op == OpType.Transpose && node.Outputs is not null)
+                foreach (var output in node.Outputs)
+                    if (!string.IsNullOrEmpty(output)) transposes.TryAdd(output, node.Name);
             var inputs = GraphCaptures.NodeInputs(node);
             for (int i = 0; i < inputs.Length; i++)
             {
@@ -91,7 +76,10 @@ internal static class GraphPacking
         {
             if (!kv.Value) continue;
             if (graph.Inputs.ContainsKey(kv.Key) || graph.Outputs.ContainsKey(kv.Key)) continue;
-            if (!graph.Initializers.TryGetValue(kv.Key, out var init) && !TryResolveFoldedSource(graph, kv.Key, out init)) continue;
+            if (!graph.Initializers.TryGetValue(kv.Key, out var init)
+                && (!transposes.TryGetValue(kv.Key, out var transpose)
+                    || !graph.FoldedTransposes.TryGetValue(transpose, out var fold)
+                    || !graph.Initializers.TryGetValue(fold.PreparedName, out init))) continue;
             if (init is not DenseTensor<float> dense || init.ElementType != TensorElementType.Float) continue;
             if (init.Rank != 2 || dense.IsReversedStride) continue;
             if (!dense.strides.SequenceEqual(ArrayUtilities.GetStrides(dense.dimensions))) continue;
@@ -134,14 +122,9 @@ internal static class GraphPacking
         }
         foreach (var kv in current)
         {
-            bool already = false;
-            foreach (var rec in graph.PackedWeights.Values)
-            {
-                if (rec.SourceName == kv.Key && ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
-            }
             // Aliases of a source array share its one mapping. Replacing that mapping
             // would leave an unaccounted packed initializer behind.
-            if (already || graph.PackedWeights.ContainsKey(kv.Value.array)) continue;
+            if (graph.PackedWeights.ContainsKey(kv.Value.array)) continue;
             string packedName = PackedPrefix + kv.Key;
             if (graph.Initializers.ContainsKey(packedName) || graph.Inputs.ContainsKey(packedName)) continue;
             int n = kv.Value.tensor.Dims[0], k = kv.Value.tensor.Dims[1];
