@@ -36,7 +36,7 @@ separate source-model reference and calibrated CPU benchmark instructions.
 
 ## Local setup
 
-- .NET 10 SDK (verified with 10.0.300-preview.0.26177.108), PowerShell 7, and
+- The .NET 10 SDK selected by [global.json](../global.json), PowerShell 7, and
   Python 3.13 for the native lanes. All NuGet references use exact versions
   in the project files; nothing is vendored.
 - Python lane environments (test-only oracles, never loaded by .NET):
@@ -61,7 +61,13 @@ separate source-model reference and calibrated CPU benchmark instructions.
 
 ## Supported ops
 
-`CPUExecutionProvider.SupportedOps` is the supported surface (46 entries at last count; the code list is authoritative). It starts: Reshape, Add, Div, Sub, Mul, Pow, Conv, Relu, MaxPool, MatMul, Sqrt, Erf, Transpose, Constant, Cast, Concat, Shape, Gather, Slice, Equal, Where, Expand, Resize, Unsqueeze, ReduceSum, ReduceMean, ReduceMax, Softmax. Every listed op needs at least one assertion-complete C# happy path plus non-happy paths across the operator families.
+`CPUExecutionProvider.SupportedOps` and `OperatorSchemas.All` define the supported
+surface, including internal fused operators. Consult the registry in
+[OperatorSchema.cs](../src/Lokad.Onnx/OperatorSchema.cs) for the current list and
+arity/opset rules. Every listed op needs at least one assertion-complete C# happy
+path plus non-happy paths across the operator families. Float reduction fixtures
+also cover cancellation, exceptional values and different reduction geometries
+against native ORT expectations.
 
 ## Memory measurement (buffer-reuse track)
 

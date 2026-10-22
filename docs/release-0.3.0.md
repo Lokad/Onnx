@@ -72,7 +72,8 @@ commit added to the metadata, so its assembly and package digests differ.
 Evidence is retained in `artifacts/release-readiness-20260928/v030`, including
 complete TRX files, resource logs, package bytes, compiled-method inventories,
 input hashes, collection receipt and `analysis.json` / `closed.json`.
-The audit is [eng/review-release-0.3.0.py](../eng/review-release-0.3.0.py).
+The audit was `eng/review-release-0.3.0.py`; recover its exact historical source
+using the [experiment archive instructions](../archives/README.md).
 The initial offline restore lacked benchmark packages; the preserved recovery
 used the existing VM NuGet cache. No model download or Windows build was needed.
 The initial TRX reader rejected duplicated truncated display names; the corrected
