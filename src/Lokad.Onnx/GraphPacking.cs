@@ -178,6 +178,8 @@ internal static class GraphPacking
         if (core is DenseTensor<float> dense && DenseArray(dense) is float[] arr
             && map.TryGetValue(arr, out var rec)
             && ReferenceEquals(rec.SourceArray, arr)
+            && dense.Length == rec.SourceLength
+            && TrailingDimsMatch(dense, rec.Packed)
             && TrailingDimsMatch(y, rec.Packed))
         {
             return rec.Packed;
@@ -196,7 +198,10 @@ internal static class GraphPacking
 
     static float[]? DenseArray(DenseTensor<float> dense)
     {
-        if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
+        // An array can back multiple matrix interpretations. Only the complete
+        // row-major source window has the layout used to build the panels.
+        if (dense.IsReversedStride || dense.Buffer.Length != dense.Length
+            || !System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
             || window.Array is null || window.Offset != 0) return null;
         return window.Array;
     }
@@ -208,7 +213,7 @@ internal static class GraphPacking
     {
         int r = y.Rank;
         if (r < 2) return false;
-        int[] pd = packed.Dimensions.ToArray();
+        var pd = packed.Dimensions;
         if (pd.Length != 2) return false;
         return y.Dimensions[r - 2] == pd[0] && y.Dimensions[r - 1] == pd[1];
     }
