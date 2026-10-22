@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
@@ -9,7 +10,6 @@ namespace Lokad.Onnx.Backend.Tests;
 [Collection("NonParallelAllocation")]
 public unsafe class PreparedSingleRowTests
 {
-    delegate void PackedKernel(int n, int k, float* a, float* packed, float* output);
     const int Guard = 16;
     static readonly float Sentinel = BitConverter.Int32BitsToSingle(0x4a654321);
     static void Require(bool condition, string message) { if (!condition) throw new InvalidDataException(message); }
@@ -29,7 +29,12 @@ public unsafe class PreparedSingleRowTests
     {
         Require(expected.Length == actual.Length, label + " length");
         for (int i = 0; i < expected.Length; i++)
-            Require(BitConverter.SingleToInt32Bits(expected[i]) == BitConverter.SingleToInt32Bits(actual[i]), label + " bits at " + i);
+        {
+            // The JIT can commute NaN operands, selecting a different payload/sign.
+            // Preserve all other bits, including signed zero and infinity.
+            if (float.IsNaN(expected[i])) Require(float.IsNaN(actual[i]), label + " NaN at " + i);
+            else Require(BitConverter.SingleToInt32Bits(expected[i]) == BitConverter.SingleToInt32Bits(actual[i]), label + " bits at " + i);
+        }
     }
     static float[] Pack(float[] b, int n, int k)
     {
@@ -44,7 +49,16 @@ public unsafe class PreparedSingleRowTests
         packed.Name = "packed:w";
         return new() { [array] = new PackedMatMulWeight("w", weight, array.Length, array, "packed:w", packed) };
     }
-    static void Raw(string name, int n, int k, float[] aValues, float[] bValues, float[] initial, PackedKernel kernel)
+    // Keep hashing, assertion diagnostics and delegate dispatch outside the counter region.
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static long MeasureRawAllocations(int n, int k, float* a, float* packed, float* output)
+    {
+        long start = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 8; i++) PreparedSingleRowKernel.Multiply(n, k, a, packed, output);
+        return GC.GetAllocatedBytesForCurrentThread() - start;
+    }
+
+    static void Raw(string name, int n, int k, float[] aValues, float[] bValues, float[] initial)
     {
         var a = Guarded(aValues); var b = Guarded(bValues);
         var packed = Guarded(new float[n * k]);
@@ -55,7 +69,7 @@ public unsafe class PreparedSingleRowTests
             MathOps.PackPanelsB(n, k, bp + Guard, pp + Guard);
             packedBefore = Hash(packed);
             MathOps.mm_m1_kblocked(1, n, k, ap + Guard, bp + Guard, ep + Guard);
-            kernel(n, k, ap + Guard, pp + Guard, cp + Guard);
+            PreparedSingleRowKernel.Multiply(n, k, ap + Guard, pp + Guard, cp + Guard);
         }
         Equal(expected, actual, name); Guards(a); Guards(b); Guards(packed); Guards(actual);
         Require(Hash(a) == aBefore && Hash(b) == bBefore, name + " immutable raw inputs");
@@ -63,13 +77,12 @@ public unsafe class PreparedSingleRowTests
         long allocated;
         fixed (float* ap = a, pp = packed, cp = actual)
         {
-            // Warm the delegate itself before checking the kernel's allocation contract.
-            kernel(n, k, ap + Guard, pp + Guard, cp + Guard);
-            long start = GC.GetAllocatedBytesForCurrentThread();
-            for (int i = 0; i < 8; i++) kernel(n, k, ap + Guard, pp + Guard, cp + Guard);
-            allocated = GC.GetAllocatedBytesForCurrentThread() - start;
+            PreparedSingleRowKernel.Multiply(n, k, ap + Guard, pp + Guard, cp + Guard);
+            allocated = MeasureRawAllocations(n, k, ap + Guard, pp + Guard, cp + Guard);
         }
-        Require(allocated == 0 && Hash(packed) == packedBefore && Hash(a) == aBefore, name + " raw allocation/ownership");
+        Require(allocated == 0, $"{name} raw allocation: {allocated} bytes");
+        Require(Hash(packed) == packedBefore, name + " immutable repeated packed input");
+        Require(Hash(a) == aBefore, name + " immutable repeated raw input");
         Guards(actual);
     }
     static void Public(string name, DenseTensor<float> x, DenseTensor<float> b,
@@ -140,17 +153,15 @@ public unsafe class PreparedSingleRowTests
     public void RawBoundariesRetainArithmeticGuardsAndZeroAllocation()
     {
         Skip.If(!Fma.IsSupported, "FMA required");
-        PackedKernel kernel = PreparedSingleRowKernel.Multiply;
         foreach (int n in new[] { 0, 1, 3, 17 })
         foreach (int k in new[] { 0, 1, 7, 8, 15, 16, 23, 24, 31, 32, 33, 63, 64, 65, 8192, 8198, 8223 })
-            Raw($"boundary-{n}-{k}", n, k, Values(n, 31), Values(n * k, 43), Values(k, 61), kernel);
+            Raw($"boundary-{n}-{k}", n, k, Values(n, 31), Values(n * k, 43), Values(k, 61));
     }
 
     [SkippableFact]
-    public void RawExceptionalValuesRetainNanPayloadsAndOwnedInputs()
+    public void RawExceptionalValuesRetainClassificationAndOwnedInputs()
     {
         Skip.If(!Fma.IsSupported, "FMA required");
-        PackedKernel kernel = PreparedSingleRowKernel.Multiply;
         float[] special = [float.NegativeInfinity, float.PositiveInfinity, float.MaxValue, -float.MaxValue,
             float.Epsilon, -float.Epsilon, -0f, 0f, BitConverter.Int32BitsToSingle(0x7fc12345),
             BitConverter.Int32BitsToSingle(unchecked((int)0xffc54321)), 1f, -1f];
@@ -158,6 +169,18 @@ public unsafe class PreparedSingleRowTests
             Raw($"special-{shift}", 3, 71,
                 Enumerable.Range(0, 3).Select(i => special[(i + shift) % special.Length]).ToArray(),
                 Enumerable.Range(0, 3 * 71).Select(i => special[(i + shift + 4) % special.Length]).ToArray(),
-                Enumerable.Range(0, 71).Select(i => special[(i + shift + 7) % special.Length]).ToArray(), kernel);
+                Enumerable.Range(0, 71).Select(i => special[(i + shift + 7) % special.Length]).ToArray());
+    }
+
+    [Fact]
+    public void ComparisonPreservesZeroInfinityAndNaNClassification()
+    {
+        Equal([BitConverter.Int32BitsToSingle(0x7fc12345)],
+            [BitConverter.Int32BitsToSingle(unchecked((int)0xffc54321))], "NaN payload");
+        Assert.Throws<InvalidDataException>(() => Equal([float.NaN], [0f], "NaN mismatch"));
+        Assert.Throws<InvalidDataException>(() => Equal([0f], [float.NaN], "Finite mismatch"));
+        Assert.Throws<InvalidDataException>(() => Equal([0f], [-0f], "Signed zero"));
+        Assert.Throws<InvalidDataException>(() => Equal([float.PositiveInfinity], [float.NegativeInfinity], "Infinity"));
+        Assert.Throws<InvalidDataException>(() => Equal([1f], [MathF.BitIncrement(1f)], "Finite bits"));
     }
 }
