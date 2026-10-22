@@ -30,8 +30,17 @@ public partial class CPUExecutionProvider
                 var fx = (Tensor<float>)data;
                 if (pool is null) return Success(op, Tensor<float>.Transpose(fx, perm));
                 var dims = Tensor<float>.TransposedShape(fx.Dimensions, perm);
-                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), dims);
-                return Success(op, Tensor<float>.Transpose(fx, rented, perm));
+                var buffer = pool.Rent<float>((int)fx.Length);
+                try
+                {
+                    var rented = new DenseTensor<float>(new Memory<float>(buffer), dims);
+                    return Success(op, Tensor<float>.Transpose(fx, rented, perm));
+                }
+                catch (Exception e) when (!Runtime.IsFatal(e))
+                {
+                    pool.Return(buffer);
+                    throw;
+                }
             }
             case TensorElementType.Double: return Success(op, Tensor<double>.Transpose((Tensor<double>)data, perm));
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Transpose((Tensor<Half>)data, perm));
@@ -174,8 +183,17 @@ public partial class CPUExecutionProvider
                 if (pool is null) return Success(op, Tensor<float>.Concat(tensors, axis));
                 var shape = Tensor<float>.ConcatShape(tensors, ref axis);
                 int count = checked((int)shape.Aggregate(1L, (length, dim) => checked(length * dim)));
-                var destination = new DenseTensor<float>(pool.Rent<float>(count).AsMemory(), shape);
-                return Success(op, Tensor<float>.Concat(tensors, axis, destination));
+                var buffer = pool.Rent<float>(count);
+                try
+                {
+                    var destination = new DenseTensor<float>(buffer.AsMemory(), shape);
+                    return Success(op, Tensor<float>.Concat(tensors, axis, destination));
+                }
+                catch (Exception e) when (!Runtime.IsFatal(e))
+                {
+                    pool.Return(buffer);
+                    throw;
+                }
             }
             case TensorElementType.Double: return Success(op, Tensor<double>.Concat(inputs.CastA<Tensor<double>>(), axis));
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Concat(inputs.CastA<Tensor<Half>>(), axis));
