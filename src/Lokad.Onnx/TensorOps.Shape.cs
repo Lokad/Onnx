@@ -206,7 +206,7 @@ where T : unmanaged
         int rank = x.Rank;
         int ax = axis < 0 ? axis + rank : axis;
         if (ax < 0 || ax >= rank) throw new ArgumentException(nameof(axis));
-        if (start < 0 || length < 0 || start + length > x.Dimensions[ax]) throw new ArgumentException("Chunk is out of range.");
+        if (start < 0 || length < 0 || start > x.Dimensions[ax] - length) throw new ArgumentException("Chunk is out of range.");
         var xd = x.ToDenseTensor();
         var outDims = xd.Dimensions.ToArray();
         outDims[ax] = length;
