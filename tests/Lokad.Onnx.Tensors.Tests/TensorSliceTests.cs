@@ -28,7 +28,9 @@ public class TensorSliceTests
         t2[.., 1] = ac;
         Assert.Equal(2, ac.Rank);
         ac = ac.Reshape(4, 1);
-        Assert.Throws<ArgumentOutOfRangeException>(() => t2[.., 2] = ac);
+        var beforeMismatch = t2.ToArray();
+        Assert.Throws<ArgumentException>(() => t2[.., 2] = ac);
+        Assert.Equal(beforeMismatch, t2.ToArray());
 
         se = t2[..3, 1, ..];
         Assert.Equal(se.Dimensions.ToArray(), new int[] { 2, 3 });

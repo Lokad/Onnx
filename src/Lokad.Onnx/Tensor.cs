@@ -638,21 +638,8 @@ namespace Lokad.Onnx
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             set
             {
-                var expanded = ExpandEllipsis(indices);
-                var defs = new SliceDef[expanded.Length];
-                for (var i = 0; i < expanded.Length; i++)
-                {
-                    defs[i] = expanded[i].ToSliceDef(dimensions[i]);
-                }
-                var sliceDims = SliceAxes(expanded);
-
-                // A source sharing this backing store is snapshotted first so the
-                // copy observes the original values rather than partially written ones.
-                var src = SharesStorage(this, value) ? Snapshot(value) : value;
-                foreach (var index in src.GetDimensionsIterator())
-                {
-                    this.SetValue(GetOffsetUnsafe(strides, sliceDims, defs, index), src[index]);
-                }
+                var slice = new TensorSlice<T>(this, indices);
+                slice.CopyFrom(value);
             }
         }
 
@@ -1484,8 +1471,7 @@ namespace Lokad.Onnx
             get => new TensorSlice<T>(this, ExpandEllipsis(ToSliceIndexes(indices)));
             set
             {
-                var ts = new TensorSlice<T>(this, ExpandEllipsis(ToSliceIndexes(indices)));
-                ts.CopyFrom((Tensor<T>) value);
+                this[ToSliceIndexes(indices)] = (Tensor<T>)value;
             }
         }
 
