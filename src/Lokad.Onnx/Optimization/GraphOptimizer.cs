@@ -13,85 +13,44 @@ internal static class GraphOptimizer
 {
     public sealed class Pass
     {
-        public Pass(string name, Func<ComputationalGraph, GraphFacts, PassResult> run)
+        public Pass(string name, Func<ComputationalGraph, GraphFacts, int> run)
         {
             Name = name;
             Run = run;
         }
 
         public string Name { get; }
-        public Func<ComputationalGraph, GraphFacts, PassResult> Run { get; }
-    }
-
-    public sealed class PassResult
-    {
-        public PassResult(bool changed, int rewritten)
-        {
-            Changed = changed;
-            Rewritten = rewritten;
-            Nodes = new List<int>();
-            Notes = new List<string>();
-        }
-
-        public bool Changed { get; }
-        public int Rewritten { get; }
-        public List<int> Nodes { get; }
-        public List<string> Notes { get; }
+        public Func<ComputationalGraph, GraphFacts, int> Run { get; }
     }
 
     public sealed class PassChange
     {
-        public PassChange(string pass, int rewritten, List<int> nodes, List<string> notes, TimeSpan elapsed)
+        public PassChange(string pass, int rewritten)
         {
             Pass = pass;
             Rewritten = rewritten;
-            Nodes = nodes;
-            Notes = notes;
-            Elapsed = elapsed;
         }
 
         public string Pass { get; }
         public int Rewritten { get; }
-        public List<int> Nodes { get; }
-        public List<string> Notes { get; }
-        public TimeSpan Elapsed { get; }
     }
 
     internal static IReadOnlyList<Pass> Passes { get; } = Array.AsReadOnly(new Pass[]
     {
-        Rewrite("layernorm", GraphFusion.FuseLayerNormPass, "fused {0} LayerNorm patterns"),
-        Rewrite("rmsnorm", GraphFusion.FuseRmsNorm, "fused {0} RMS normalization patterns"),
-        Rewrite("rope", GraphFusion.FuseRopePass, "fused {0} rotary-embedding patterns"),
-        Rewrite("gelu", GraphFusion.FuseGeluPass, "fused {0} exact-GELU patterns"),
-        Rewrite("gelu-tanh", GraphFusion.FuseGeluTanhPass, "fused {0} tanh-GELU patterns"),
-        Rewrite("convrelu", GraphFusion.FuseConvReluPass, "fused {0} Conv+Relu epilogues"),
-        Rewrite("addrelu", GraphFusion.FuseAddReluPass, "fused {0} Add+Relu epilogues"),
-        Rewrite("biasgelu", GraphFusion.FuseBiasGeluPass, "fused {0} bias+GELU regions"),
-        Rewrite("gemmgelu", GraphFusion.FuseGemmGeluPass, "fused {0} Gemm+GELU regions"),
-        Rewrite("scalematmul", GraphFusion.FuseScaledMatMulPass, "fused {0} scale+MatMul regions"),
-        Rewrite("maskedsoftmax", GraphFusion.FuseMaskedSoftmaxPass, "fused {0} mask+softmax regions"),
-        Rewrite("constfold", ConstFold.FoldConstants, "folded {0} constant subgraphs"),
-        new Pass("reshape-zerocopy", (graph, facts) =>
-        {
-            var rewritten = new List<int>();
-            int count = ShapeZeroCopy.RewriteSelfShapes(graph, facts, rewritten, out int rewired, out int swept);
-            var result = new PassResult(count > 0, count);
-            result.Nodes.AddRange(rewritten);
-            if (count > 0) result.Notes.Add("rewrote " + rewired + " reshape shape inputs; swept " + swept + " dead nodes");
-            return result;
-        }),
+        new Pass("layernorm", GraphFusion.FuseLayerNormPass),
+        new Pass("rmsnorm", GraphFusion.FuseRmsNorm),
+        new Pass("rope", GraphFusion.FuseRopePass),
+        new Pass("gelu", GraphFusion.FuseGeluPass),
+        new Pass("gelu-tanh", GraphFusion.FuseGeluTanhPass),
+        new Pass("convrelu", GraphFusion.FuseConvReluPass),
+        new Pass("addrelu", GraphFusion.FuseAddReluPass),
+        new Pass("biasgelu", GraphFusion.FuseBiasGeluPass),
+        new Pass("gemmgelu", GraphFusion.FuseGemmGeluPass),
+        new Pass("scalematmul", GraphFusion.FuseScaledMatMulPass),
+        new Pass("maskedsoftmax", GraphFusion.FuseMaskedSoftmaxPass),
+        new Pass("constfold", ConstFold.FoldConstants),
+        new Pass("reshape-zerocopy", ShapeZeroCopy.RewriteSelfShapes),
     });
-
-    static Pass Rewrite(string name, Func<ComputationalGraph, GraphFacts, List<int>, int> apply, string note) =>
-        new Pass(name, (graph, facts) =>
-        {
-            var rewritten = new List<int>();
-            int count = apply(graph, facts, rewritten);
-            var result = new PassResult(count > 0, count);
-            result.Nodes.AddRange(rewritten);
-            if (count > 0) result.Notes.Add(string.Format(note, count));
-            return result;
-        });
 
     public const int MaxRounds = 8;
 
@@ -115,12 +74,10 @@ internal static class GraphOptimizer
             foreach (var pass in Passes)
             {
                 if (off.Contains(pass.Name)) continue;
-                var sw = Stopwatch.StartNew();
-                var result = pass.Run(graph, facts);
-                sw.Stop();
-                if (result is null || !result.Changed) continue;
+                int rewritten = pass.Run(graph, facts);
+                if (rewritten <= 0) continue;
                 changed = true;
-                report.Add(new PassChange(pass.Name, result.Rewritten, result.Nodes, result.Notes, sw.Elapsed));
+                report.Add(new PassChange(pass.Name, rewritten));
                 // A pass that reports a change may have reordered the node list; later passes
                 // in this round must see fresh positions, never the pre-mutation snapshot.
                 facts = GraphFacts.Build(graph);

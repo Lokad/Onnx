@@ -38,7 +38,7 @@ internal static class ConstFold
         OpType.Reshape, OpType.Transpose, OpType.Slice,
     };
 
-    internal static int FoldConstants(ComputationalGraph graph, GraphFacts facts, List<int> rewritten)
+    internal static int FoldConstants(ComputationalGraph graph, GraphFacts facts)
     {
         var known = new Dictionary<string, ITensor>(StringComparer.Ordinal);
         var scratch = new ComputationalGraph();
@@ -80,7 +80,6 @@ internal static class ConstFold
             graph.Nodes[i] = foldedNode;
             known[output] = r.Outputs[0];
             scratch.Initializers[output] = r.Outputs[0];
-            rewritten.Add(i);
             folded++;
             foldedBytes += estimate;
         }

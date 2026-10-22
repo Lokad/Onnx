@@ -18,9 +18,9 @@ public class ConstantDeduplicationAllocationTests
             AddConstant(graph, "c" + i, new DenseTensor<float>(values, [length]));
         }
         var facts = GraphFacts.Build(graph);
-        ConstFold.FoldConstants(graph, facts, []);
+        ConstFold.FoldConstants(graph, facts);
         long start = GC.GetAllocatedBytesForCurrentThread();
-        ConstFold.FoldConstants(graph, facts, []);
+        ConstFold.FoldConstants(graph, facts);
         long allocated = GC.GetAllocatedBytesForCurrentThread() - start;
         long payloadBytes = (long)count * length * sizeof(float);
         Assert.True(allocated < 3 * payloadBytes, $"{count} constants: {allocated} bytes allocated for {payloadBytes} payload bytes.");
@@ -39,7 +39,7 @@ public class ConstantDeduplicationAllocationTests
             AddConstant(graph, "c" + i, new DenseTensor<float>(data, [length]));
         }
         AddConstant(graph, "duplicate", new DenseTensor<float>(new float[length], [length]));
-        ConstFold.FoldConstants(graph, GraphFacts.Build(graph), []);
+        ConstFold.FoldConstants(graph, GraphFacts.Build(graph));
         Assert.Equal(10, graph.Nodes.Count(n => n.Op == OpType.Constant));
         Assert.Equal("c0", graph.Nodes.Single(n => n.Name == "duplicateOut").Inputs[0]);
     }
@@ -51,7 +51,7 @@ public class ConstantDeduplicationAllocationTests
         AddConstant(graph, "float", new DenseTensor<float>(new float[4], [2, 2]));
         AddConstant(graph, "otherShape", new DenseTensor<float>(new float[4], [4]));
         AddConstant(graph, "otherType", new DenseTensor<int>(new int[4], [2, 2]));
-        ConstFold.FoldConstants(graph, GraphFacts.Build(graph), []);
+        ConstFold.FoldConstants(graph, GraphFacts.Build(graph));
         Assert.Equal(3, graph.Nodes.Count(n => n.Op == OpType.Constant));
     }
 

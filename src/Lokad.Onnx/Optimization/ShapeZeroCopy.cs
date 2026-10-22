@@ -19,12 +19,12 @@ namespace Lokad.Onnx.Optimization;
 internal static class ShapeZeroCopy
 {
 
-    internal static int RewriteSelfShapes(ComputationalGraph graph, GraphFacts facts, List<int> rewritten, out int rewired, out int swept)
+    internal static int RewriteSelfShapes(ComputationalGraph graph, GraphFacts facts)
     {
         var nodes = graph.Nodes;
         var shared = new Dictionary<string, string>(StringComparer.Ordinal);
         var pending = new List<KeyValuePair<long[], string>>();
-        rewired = 0; swept = 0;
+        int rewired = 0;
         for (int i = 0; i < nodes.Count; i++)
         {
             long[]? vector;
@@ -41,7 +41,6 @@ internal static class ShapeZeroCopy
             var node = nodes[i];
             node.Inputs = new string[] { node.Inputs[0], name };
             nodes[i] = node;
-            rewritten.Add(i);
             rewired++;
         }
         if (rewired == 0) return 0;
@@ -68,7 +67,8 @@ internal static class ShapeZeroCopy
         }
         int before = nodes.Count;
         ConstFold.SweepDeadNodes(graph, facts);
-        swept = before - nodes.Count; return rewired + swept;
+        int swept = before - nodes.Count;
+        return rewired + swept;
     }
 
     static string FreshName(ComputationalGraph graph, Dictionary<string, string> shared)

@@ -39,7 +39,7 @@ namespace Lokad.Onnx
             return (int)t.Length;
         }
 
-        public static int FuseLayerNormPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseLayerNormPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -49,7 +49,7 @@ namespace Lokad.Onnx
                 if (graph.Nodes[i].Op != OpType.Div) continue;
                 if (!IsFusableParticipant(graph.Nodes[i])) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchLayerNorm(graph, facts, drop, rewritten, i, out var dead, out var epsConst))
+                if (TryMatchLayerNorm(graph, facts, drop, i, out var dead, out var epsConst))
                 {
                     foreach (var d in dead) drop.Add(d);
                     if (epsConst >= 0)
@@ -80,7 +80,6 @@ namespace Lokad.Onnx
             ComputationalGraph graph,
             Optimization.GraphFacts facts,
             HashSet<int> drop,
-            List<int> rewritten,
             int divIndex,
             out List<int> dead,
             out int epsConst)
@@ -264,7 +263,6 @@ namespace Lokad.Onnx
             ln.Inputs = new[] { xPos, gamma, beta };
             ln.Attributes = new Dictionary<string, object> { { "axis", -1 }, { "epsilon", eps.Value } };
             graph.Nodes[ab] = ln;
-            rewritten.Add(ab);
             return true;
         }
 
@@ -276,7 +274,7 @@ namespace Lokad.Onnx
         /// ORT bit-identically.
         /// </summary>
 
-        public static int FuseGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -298,7 +296,6 @@ namespace Lokad.Onnx
                         var cnode = graph.Nodes[cn];
                         if (cnode.Outputs.All(ConstOnlyFeedsDead)) drop.Add(cn);
                     }
-                    if (survivor >= 0) rewritten.Add(survivor);
                     fused++;
                 }
             }
@@ -623,7 +620,7 @@ namespace Lokad.Onnx
         /// Fuses tanh-approximate GELU chains (x times one half; cube; times 0.044715; plus x; times sqrt(2/pi); Tanh; plus one; times) into native Gelu nodes carrying approximate=tanh.
         /// </summary>
 
-        public static int FuseGeluTanhPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseGeluTanhPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -643,7 +640,6 @@ namespace Lokad.Onnx
                         var cnode = graph.Nodes[cn];
                         if (cnode.Outputs.All(ConstOnlyFeedsDead)) drop.Add(cn);
                     }
-                    if (survivor >= 0) rewritten.Add(survivor);
                     fused++;
                 }
             }
@@ -661,7 +657,7 @@ namespace Lokad.Onnx
             return fused;
         }
 
-        public static int FuseConvReluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseConvReluPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -671,10 +667,9 @@ namespace Lokad.Onnx
                 if (graph.Nodes[i].Op != OpType.Relu) continue;
                 if (!IsFusableParticipant(graph.Nodes[i])) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchEpilogue(graph, facts, drop, i, OpType.Conv, 2, 3, OpType.ConvRelu, out int producer))
+                if (TryMatchEpilogue(graph, facts, drop, i, OpType.Conv, 2, 3, OpType.ConvRelu))
                 {
                     drop.Add(i);
-                    rewritten.Add(producer);
                     fused++;
                 }
             }
@@ -692,7 +687,7 @@ namespace Lokad.Onnx
             return fused;
         }
 
-        public static int FuseAddReluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseAddReluPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -702,10 +697,9 @@ namespace Lokad.Onnx
                 if (graph.Nodes[i].Op != OpType.Relu) continue;
                 if (!IsFusableParticipant(graph.Nodes[i])) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchEpilogue(graph, facts, drop, i, OpType.Add, 2, 2, OpType.AddRelu, out int producer))
+                if (TryMatchEpilogue(graph, facts, drop, i, OpType.Add, 2, 2, OpType.AddRelu))
                 {
                     drop.Add(i);
-                    rewritten.Add(producer);
                     fused++;
                 }
             }
@@ -737,10 +731,8 @@ namespace Lokad.Onnx
             OpType producerOp,
             int minInputs,
             int maxInputs,
-            OpType fusedOp,
-            out int producerIndex)
+            OpType fusedOp)
         {
-            producerIndex = -1;
             var relu = graph.Nodes[reluIndex];
             if (relu.Op != OpType.Relu || relu.IsFused) return false;
             if (!IsFusableParticipant(relu)) return false;
@@ -771,7 +763,6 @@ namespace Lokad.Onnx
             fused.IsFused = true;
             fused.Outputs = new[] { rout };
             graph.Nodes[pi] = fused;
-            producerIndex = pi;
             return true;
         }
 
@@ -787,7 +778,7 @@ namespace Lokad.Onnx
             graph.Nodes.AddRange(kept);
         }
 
-        public static int FuseBiasGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseBiasGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -796,10 +787,9 @@ namespace Lokad.Onnx
             {
                 if (graph.Nodes[i].Op != OpType.Gelu) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchBiasGelu(graph, facts, drop, i, out int producer))
+                if (TryMatchBiasGelu(graph, facts, drop, i))
                 {
                     drop.Add(i);
-                    rewritten.Add(producer);
                     fused++;
                 }
             }
@@ -818,10 +808,8 @@ namespace Lokad.Onnx
             ComputationalGraph graph,
             Optimization.GraphFacts facts,
             HashSet<int> drop,
-            int geluIndex,
-            out int producerIndex)
+            int geluIndex)
         {
-            producerIndex = -1;
             var gelu = graph.Nodes[geluIndex];
             if (gelu.Op != OpType.Gelu) return false;
             // The consumer may be a native exact GELU or an already-fused one
@@ -878,11 +866,10 @@ namespace Lokad.Onnx
             fused.Attributes = new Dictionary<string, object>();
             fused.Outputs = new[] { rout };
             graph.Nodes[pi] = fused;
-            producerIndex = pi;
             return true;
         }
 
-        public static int FuseMaskedSoftmaxPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseMaskedSoftmaxPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -891,10 +878,9 @@ namespace Lokad.Onnx
             {
                 if (graph.Nodes[i].Op != OpType.Softmax) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchMaskedSoftmax(graph, facts, drop, i, out int producer))
+                if (TryMatchMaskedSoftmax(graph, facts, drop, i))
                 {
                     drop.Add(i);
-                    rewritten.Add(producer);
                     fused++;
                 }
             }
@@ -916,10 +902,8 @@ namespace Lokad.Onnx
             ComputationalGraph graph,
             Optimization.GraphFacts facts,
             HashSet<int> drop,
-            int softmaxIndex,
-            out int producerIndex)
+            int softmaxIndex)
         {
-            producerIndex = -1;
             var sm = graph.Nodes[softmaxIndex];
             if (sm.Op != OpType.Softmax) return false;
             if (!IsFusableParticipant(sm)) return false;
@@ -951,7 +935,6 @@ namespace Lokad.Onnx
             fused.Attributes = sm.Attributes is null ? null : new Dictionary<string, object>(sm.Attributes);
             fused.Outputs = new[] { rout };
             graph.Nodes[pi] = fused;
-            producerIndex = pi;
             return true;
         }
 
@@ -971,7 +954,7 @@ namespace Lokad.Onnx
             return false;
         }
 
-        public static int FuseScaledMatMulPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseScaledMatMulPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             var trailingAt = new List<(int divIndex, Node fused)>();
@@ -984,7 +967,6 @@ namespace Lokad.Onnx
                 if (TryMatchScaledMatMul(graph, facts, drop, i, out int mulIndex))
                 {
                     drop.Add(mulIndex);
-                    rewritten.Add(i);
                     fused++;
                 }
                 else if (TryMatchTrailingDivScale(graph, facts, drop, i, out int divIndex, out Node trailing))
@@ -995,7 +977,6 @@ namespace Lokad.Onnx
                     drop.Add(i);
                     drop.Add(divIndex);
                     trailingAt.Add((divIndex, trailing));
-                    rewritten.Add(divIndex);
                     fused++;
                 }
             }
@@ -1152,7 +1133,7 @@ namespace Lokad.Onnx
             return true;
         }
 
-        public static int FuseGemmGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseGemmGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -1161,10 +1142,9 @@ namespace Lokad.Onnx
             {
                 if (graph.Nodes[i].Op != OpType.Gelu) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchGemmGelu(graph, facts, drop, i, out int producer))
+                if (TryMatchGemmGelu(graph, facts, drop, i))
                 {
                     drop.Add(i);
-                    rewritten.Add(producer);
                     fused++;
                 }
             }
@@ -1184,10 +1164,8 @@ namespace Lokad.Onnx
             ComputationalGraph graph,
             Optimization.GraphFacts facts,
             HashSet<int> drop,
-            int geluIndex,
-            out int producerIndex)
+            int geluIndex)
         {
-            producerIndex = -1;
             var gelu = graph.Nodes[geluIndex];
             if (gelu.Op != OpType.Gelu) return false;
             if (!Node.IsStandardDomain(gelu.Domain)) return false;
@@ -1269,11 +1247,10 @@ namespace Lokad.Onnx
                     if (changed) { consumer.Inputs = inputs; graph.Nodes[u] = consumer; }
                 }
             }
-            producerIndex = gemmIndex;
             return true;
         }
 
-        public static int FuseRopePass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        public static int FuseRopePass(ComputationalGraph graph, Optimization.GraphFacts facts)
         {
             var drop = new HashSet<int>();
             int fused = 0;
@@ -1286,7 +1263,6 @@ namespace Lokad.Onnx
                 if (TryMatchRope(graph, facts, drop, i, out var dead))
                 {
                     foreach (var d in dead) drop.Add(d);
-                    rewritten.Add(i);
                     fused++;
                 }
             }

@@ -117,8 +117,7 @@ public class ReshapeZeroCopyTests
     {
         var graph = Model.Load(ZeroCopyModel(), runOptimizer: false)!;
         var report = GraphOptimizer.Run(graph);
-        var change = Assert.Single(report.Where(c => c.Pass == "reshape-zerocopy"));
-        Assert.Contains("rewrote 2 reshape shape inputs", change.Notes[0]);
+        Assert.Single(report.Where(c => c.Pass == "reshape-zerocopy"));
         string shared = ReshapeOf(graph, "y1").Inputs[1];
         Assert.Equal(shared, ReshapeOf(graph, "y2").Inputs[1]);
         Assert.Equal(new long[] { 0, 0, 2, 2 }, ConstantValues(graph, shared));

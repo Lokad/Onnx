@@ -55,7 +55,7 @@ public class FoldBudgetTests
         // the load-wide bound is rounds times the per-invocation cap.
         var graph = Model.Load(CappedModel(10, 230400), runOptimizer: false)!;
         var facts = GraphFacts.Build(graph);
-        int folded = ConstFold.FoldConstants(graph, facts, new List<int>());
+        int folded = ConstFold.FoldConstants(graph, facts);
         Assert.True(folded > 0);
         Assert.Single(graph.Nodes, n => n.Op == OpType.Transpose && n.Outputs.Length == 1 && n.Outputs[0] == "t9");
         var feed = new Dictionary<string, ITensor> { ["x"] = DenseTensor<float>.OfValues(new float[230400]) };

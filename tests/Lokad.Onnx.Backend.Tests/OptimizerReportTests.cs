@@ -6,8 +6,7 @@ using Lokad.Onnx.Optimization;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
-/// P02: the unified optimizer pipeline exposes per-pass rewrite counts and
-/// execution time in its report, in deterministic pass order.
+/// The optimizer reports applied rewrite counts in deterministic pass order.
 /// </summary>
 public class OptimizerReportTests
 {
@@ -24,14 +23,15 @@ public class OptimizerReportTests
     }
 
     [Fact]
-    public void Run_ReportsElapsedAlongsideCounts()
+    public void Run_ReportsAppliedRewriteCountsAndReachesAFixedPoint()
     {
         var graph = Model.Load(StrayModel(), runOptimizer: false)!;
         var report = GraphOptimizer.Run(graph);
-        var fold = Assert.Single(report, c => c.Pass == "constfold");
-        Assert.True(fold.Rewritten > 0);
-        Assert.True(fold.Elapsed >= TimeSpan.Zero);
-        Assert.All(report, c => Assert.True(c.Elapsed >= TimeSpan.Zero));
+        var fold = Assert.Single(report);
+        Assert.Equal("constfold", fold.Pass);
+        Assert.Equal(1, fold.Rewritten);
+        Assert.Equal(OpType.Add, Assert.Single(graph.Nodes).Op);
+        Assert.Empty(GraphOptimizer.Run(graph));
     }
 
     [Fact]
