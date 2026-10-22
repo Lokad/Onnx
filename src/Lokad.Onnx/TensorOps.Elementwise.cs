@@ -247,18 +247,20 @@ where T : unmanaged
     }
 
     /// <summary>
-    /// Folds op(state, element) left to right in flat index order starting from
-    /// <paramref name="state"/>. An empty tensor returns <paramref name="state"/> unchanged.
+    /// Folds op(state, element) in row-major logical order, matching enumeration
+    /// regardless of storage layout, starting from <paramref name="state"/>.
+    /// An empty tensor returns <paramref name="state"/> unchanged.
     /// </summary>
     /// <param name="op">Fold operation; must be non-null.</param>
     /// <param name="state">Initial accumulator value.</param>
     /// <returns>The final accumulator value.</returns>
     public virtual T Accumulate(Func<T, T, T> op, T state)
     {
+        ArgumentNullException.ThrowIfNull(op);
         var result = state;
         for (int index = 0; index < Length; index++)
         {
-            result = op(result, GetValue(index));
+            result = op(result, GetLogicalValue(index));
         }
         return result;
     }
