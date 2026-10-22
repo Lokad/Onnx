@@ -94,35 +94,32 @@ internal static class ConstFold
 
     internal static void SweepDeadNodes(ComputationalGraph graph, GraphFacts facts)
     {
-        for (int round = 0; round < graph.Nodes.Count + 1; round++)
+        // Earlier folds may have changed producer positions. Build from the
+        // current list and leave malformed duplicate producers for validation.
+        var producers = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int i = 0; i < graph.Nodes.Count; i++)
         {
-            var consumers = new Dictionary<string, int>(StringComparer.Ordinal);
-            for (int i = 0; i < graph.Nodes.Count; i++)
+            foreach (var output in graph.Nodes[i].Outputs ?? Array.Empty<string>())
             {
-                foreach (var inp in GraphCaptures.NodeInputs(graph.Nodes[i]))
-                {
-                    if (string.IsNullOrEmpty(inp)) continue;
-                    consumers[inp] = consumers.TryGetValue(inp, out var c) ? c + 1 : 1;
-                }
+                if (!string.IsNullOrEmpty(output) && !producers.TryAdd(output, i)) return;
             }
-            var drop = new List<int>();
-            for (int i = 0; i < graph.Nodes.Count; i++)
-            {
-                bool live = false;
-                foreach (var o in graph.Nodes[i].Outputs ?? Array.Empty<string>())
-                {
-                    if (string.IsNullOrEmpty(o)) continue;
-                    if (facts.IsGraphOutput(o) || consumers.ContainsKey(o)) { live = true; break; }
-                }
-                if (!live) drop.Add(i);
-            }
-            if (drop.Count == 0) return;
-            var dead = new HashSet<int>(drop);
-            var kept = new List<Node>(graph.Nodes.Count - drop.Count);
-            for (int i = 0; i < graph.Nodes.Count; i++) if (!dead.Contains(i)) kept.Add(graph.Nodes[i]);
-            graph.Nodes.Clear();
-            graph.Nodes.AddRange(kept);
         }
+        var live = new bool[graph.Nodes.Count];
+        var pending = new Stack<int>();
+        foreach (var output in facts.GraphOutputs)
+            if (producers.TryGetValue(output, out int producer)) pending.Push(producer);
+        while (pending.TryPop(out int index))
+        {
+            if (live[index]) continue;
+            live[index] = true;
+            foreach (var input in GraphCaptures.NodeInputs(graph.Nodes[index]))
+                if (!string.IsNullOrEmpty(input) && producers.TryGetValue(input, out int producer) && !live[producer])
+                    pending.Push(producer);
+        }
+        int kept = 0;
+        for (int i = 0; i < graph.Nodes.Count; i++)
+            if (live[i]) graph.Nodes[kept++] = graph.Nodes[i];
+        graph.Nodes.RemoveRange(kept, graph.Nodes.Count - kept);
     }
 
     static void DedupeConstants(ComputationalGraph graph, GraphFacts facts)
