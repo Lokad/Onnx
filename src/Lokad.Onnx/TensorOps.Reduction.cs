@@ -177,6 +177,7 @@ where T : unmanaged
 
     public static Tensor<int> ReduceMean(Tensor<int> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes, TensorExecutionOptions options)
     {
+        options.Validate();
         StartOpStage(OpStage.ValidateArguments);
         var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
@@ -213,6 +214,7 @@ where T : unmanaged
 
         public static Tensor<long> ReduceMean(Tensor<long> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes, TensorExecutionOptions options)
     {
+        options.Validate();
         StartOpStage(OpStage.ValidateArguments);
         var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
