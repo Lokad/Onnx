@@ -74,15 +74,18 @@ def main():
     if args[:1] == ["--cases"]:
         if len(args) < 3:
             raise SystemExit("usage: python eng/parse_baseline.py [--cases a,b,c] <rep1.log> [rep2.log ...]")
-        want = args[1].split(",")
+        want = [name.strip() for name in args[1].split(",")]
+        unknown = [name for name in want if name not in ORDER + EXTENDED]
+        if unknown:
+            raise SystemExit("unknown case(s): " + ", ".join(repr(name) for name in unknown))
         logs = args[2:]
     else:
         logs = args
     if not logs:
         raise SystemExit("usage: python eng/parse_baseline.py <rep1.log> [rep2.log ...]")
     reps = [parse_rep(p) for p in logs]
-    order = [n for n in ORDER if want is None or n in want]
-    present = [n for n in EXTENDED if all(rep["status"].get(n) == "ok" and n in rep["cases"] for rep in reps) and (want is None or n in want)]
+    order = list(ORDER) if want is None else [n for n in ORDER + EXTENDED if n in want]
+    present = [] if want is not None else [n for n in EXTENDED if all(rep["status"].get(n) == "ok" and n in rep["cases"] for rep in reps)]
     for rep in reps:
         for name in order:
             if rep["status"].get(name) != "ok" or name not in rep["cases"]:
