@@ -280,82 +280,6 @@ namespace Lokad.Onnx
     public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor, INumericTensor
     where T : unmanaged
     {
-        internal static T Zero
-        {
-            get
-            {
-                if (typeof(T) == typeof(bool))
-                {
-                    return (T)(object)(false);
-                }
-                else if (typeof(T) == typeof(byte))
-                {
-                    return (T)(object)(byte)(0);
-                }
-                else if (typeof(T) == typeof(char))
-                {
-                    return (T)(object)(char)(0);
-                }
-                else if (typeof(T) == typeof(decimal))
-                {
-                    return (T)(object)(decimal)(0);
-                }
-                else if (typeof(T) == typeof(double))
-                {
-                    return (T)(object)(double)(0);
-                }
-                else if (typeof(T) == typeof(float))
-                {
-                    return (T)(object)(float)(0);
-                }
-                else if (typeof(T) == typeof(int))
-                {
-                    return (T)(object)(int)(0);
-                }
-                else if (typeof(T) == typeof(long))
-                {
-                    return (T)(object)(long)(0);
-                }
-                else if (typeof(T) == typeof(sbyte))
-                {
-                    return (T)(object)(sbyte)(0);
-                }
-                else if (typeof(T) == typeof(short))
-                {
-                    return (T)(object)(short)(0);
-                }
-                else if (typeof(T) == typeof(uint))
-                {
-                    return (T)(object)(uint)(0);
-                }
-                else if (typeof(T) == typeof(ulong))
-                {
-                    return (T)(object)(ulong)(0);
-                }
-                else if (typeof(T) == typeof(ushort))
-                {
-                    return (T)(object)(ushort)(0);
-                }
-                else if (typeof(T) == typeof(Half))
-                {
-                    return (T)(object)Half.Zero;
-                }
-                else if (typeof(T) == typeof(BFloat16))
-                {
-                    return (T)(object)BFloat16.Zero;
-                }
-                else if (typeof(T) == typeof(System.Numerics.Complex))
-                {
-                    return (T)(object)System.Numerics.Complex.Zero;
-                }
-                else if (typeof(T) == typeof(string))
-                {
-                    return (T)(object)("0");
-                }
-                throw new NotSupportedException();
-            }
-        }
-
         internal static T One
         {
             get
@@ -367,14 +291,6 @@ namespace Lokad.Onnx
                 else if (typeof(T) == typeof(byte))
                 {
                     return (T)(object)(byte)(1);
-                }
-                else if (typeof(T) == typeof(char))
-                {
-                    return (T)(object)(char)(1);
-                }
-                else if (typeof(T) == typeof(decimal))
-                {
-                    return (T)(object)(decimal)(1);
                 }
                 else if (typeof(T) == typeof(double))
                 {
@@ -423,10 +339,6 @@ namespace Lokad.Onnx
                 else if (typeof(T) == typeof(System.Numerics.Complex))
                 {
                     return (T)(object)System.Numerics.Complex.One;
-                }
-                else if (typeof(T) == typeof(string))
-                {
-                    return (T)(object)("1");
                 }
 
                 throw new NotSupportedException();
@@ -1794,12 +1706,7 @@ namespace Lokad.Onnx
 
         /// <summary>Alias of Range, including its bounded geometry and repeated-addition fill.</summary>
         public static Tensor<float> Arange(float start, float stop, float step) => Range(start, stop, step);
-        public static Tensor<T> Zeros(params int[] dims)
-        {
-            var t = new DenseTensor<T>((ReadOnlySpan<int>)dims);
-            t.Fill(Zero);
-            return t;
-        }
+        public static Tensor<T> Zeros(params int[] dims) => new DenseTensor<T>((ReadOnlySpan<int>)dims);
 
         public static Tensor<T> Ones(params int[] dims)
         {
