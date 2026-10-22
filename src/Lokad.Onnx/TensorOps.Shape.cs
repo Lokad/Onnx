@@ -335,10 +335,6 @@ where T : unmanaged
                 throw new ArgumentException("The permutation array has a repeated dimension.", nameof(perm));
             }
             p = (int[])perm.Clone();
-            for (int i = 0; i < p.Length; i++)
-            {
-                p[i] = ArrayUtilities.HandleNegativeAxisOrIndex(rank, p[i]);
-            }
         }
         else
         {
