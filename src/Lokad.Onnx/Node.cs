@@ -268,6 +268,10 @@ public partial struct Node
         {
             return Failure(Op, rejection ?? "The operator " + DescribeOperator() + " is not supported by the backend.");
         }
+        // Identity first accepts sequences at opset 14. Unknown versions keep
+        // the older restriction, as do other version-sensitive type gates.
+        if (Op == OpType.Identity && ResolvedOpsetVersion(graph) < 14 && InputTensor(graph, 0) is TensorSequence sequence)
+            return InputTypeNotSupported(Op, "input", sequence, "Sequence Identity requires opset 14 or later.");
         if (Inputs is not null && Op != OpType.SequenceAt && Op != OpType.Identity)
         {
             for (int i = 0; i < Inputs.Length; i++)
