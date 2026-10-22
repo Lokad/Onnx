@@ -58,7 +58,7 @@ public class ResizeExactCoordinateTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void NonunitScalesWithUnchangedSizesStillResample(bool wide)
+    public void NonunitScalesWithUnchangedSizesStillCopy(bool wide)
     {
         ITensor input = wide ? new DenseTensor<double>(new[] { 1d, double.PositiveInfinity, 3d, 4d }, [1, 1, 2, 2])
             : new DenseTensor<float>(new[] { 1f, float.PositiveInfinity, 3f, 4f }, [1, 1, 2, 2]);
@@ -66,8 +66,9 @@ public class ResizeExactCoordinateTests
             : DenseTensor<float>.OfValues(new[] { 1f, 1f, 1f, 1.25f });
         var result = CPUExecutionProvider.Resize(input, null, scales, null, "linear", "asymmetric", null, null, null, null);
         Assert.Equal(OpStatus.Success, result.Status);
-        double first = wide ? ((Tensor<double>)result.Outputs![0]).ToArray()[0] : ((Tensor<float>)result.Outputs![0]).ToArray()[0];
-        Assert.True(double.IsNaN(first));
+        var values = wide ? ((Tensor<double>)result.Outputs![0]).ToArray()
+            : ((Tensor<float>)result.Outputs![0]).ToArray().Select(v => (double)v).ToArray();
+        Assert.Equal(new[] { 1d, double.PositiveInfinity, 3d, 4d }, values);
     }
 
     [Theory]
