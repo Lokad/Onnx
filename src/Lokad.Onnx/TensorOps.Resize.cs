@@ -50,6 +50,14 @@ where T : unmanaged
         var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
+        // ORT copies a true identity resize. Interpolating it would introduce
+        // zero-weight nonfinite neighbors and can also lose signed-zero bits.
+        if (mode == MathOps.ResizeMode.Linear && hOut == hIn && wOut == wIn
+            && (scales is null || (scales.Length == 4 && scales.All(static s => s == 1d))))
+        {
+            xs.CopyTo(os);
+            return output;
+        }
         // Coordinates use the true scales when the caller derived sizes from
         // them: floored sizes would otherwise give back a different scale
         // (verified against ORT 1.29: 5 * 1.5 floors to 7 but samples with 1.5).
@@ -213,6 +221,12 @@ where T : unmanaged
         var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
+        if (mode == MathOps.ResizeMode.Linear && hOut == hIn && wOut == wIn
+            && (scales is null || (scales.Length == 4 && scales.All(static s => s == 1d))))
+        {
+            xs.CopyTo(os);
+            return output;
+        }
         var scaleH = scales is null ? (double)hOut / hIn : scales[2];
         var scaleW = scales is null ? (double)wOut / wIn : scales[3];
 
