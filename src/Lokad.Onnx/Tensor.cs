@@ -1004,7 +1004,7 @@ namespace Lokad.Onnx
                 if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(b.Storage, out System.ArraySegment<T> sb) || sb.Array is null) return true;
                 return ReferenceEquals(sa.Array, sb.Array);
             }
-            catch (Exception) { return true; }
+            catch (Exception ex) when (!Runtime.IsFatal(ex)) { return true; }
         }
 
         /// <summary>

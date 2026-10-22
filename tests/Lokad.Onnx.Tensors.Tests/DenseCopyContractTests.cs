@@ -1,3 +1,5 @@
+using System.Buffers;
+
 namespace Lokad.Onnx.Tensors.Tests;
 
 public class DenseCopyContractTests
@@ -7,6 +9,75 @@ public class DenseCopyContractTests
         public CopyTensor(int[] values, int[] shape, bool reversed = false) : base(values, shape, reversed) { }
         public CopyTensor(Memory<int> values, int[] shape) : base(values, shape) { }
         public void Assign(Tensor<int> source) => base.CopyFrom(source);
+        public int ReadCalls { get; private set; }
+        public override int GetValue(int index)
+        {
+            ReadCalls++;
+            return base.GetValue(index);
+        }
+    }
+
+    sealed class InspectionFailure(int[] values) : MemoryManager<int>
+    {
+        public Exception? Failure { get; set; }
+        public bool AttemptedFailure { get; private set; }
+        public override Span<int> GetSpan() => values;
+        protected override bool TryGetArray(out ArraySegment<int> segment)
+        {
+            if (Failure is { } failure)
+            {
+                AttemptedFailure = true;
+                throw failure;
+            }
+            segment = values;
+            return true;
+        }
+        public override MemoryHandle Pin(int elementIndex = 0) => throw new NotSupportedException();
+        public override void Unpin() { }
+        protected override void Dispose(bool disposing) { }
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public void FatalStorageInspectionFailuresPropagateBeforeCopy(bool stackExhaustion, bool sliceAssignment)
+    {
+        // Controlled exceptions exercise the policy without exhausting resources.
+        Exception failure = stackExhaustion ? new StackOverflowException("controlled") : new OutOfMemoryException("controlled");
+        using var memory = new InspectionFailure(new[] { 11, 22 });
+        var source = new CopyTensor(memory.Memory, new[] { 2 });
+        var destination = new CopyTensor(new[] { -1, -2 }, new[] { 2 });
+        memory.Failure = failure;
+
+        Assert.Same(failure, Record.Exception(() =>
+        {
+            if (sliceAssignment) destination[SliceIndex.All] = source;
+            else destination.Assign(source);
+        }));
+        Assert.True(memory.AttemptedFailure);
+        Assert.Equal(0, source.ReadCalls);
+        Assert.Equal(new[] { -1, -2 }, destination.ToArray());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void NonfatalStorageInspectionFailureSnapshotsOverlappingSource(bool sliceAssignment)
+    {
+        int[] values = { 1, 2, 3, 4, 5 };
+        using var memory = new InspectionFailure(values);
+        var source = new CopyTensor(memory.Memory[..4], new[] { 4 });
+        var destination = new CopyTensor(values.AsMemory(1, 4), new[] { 4 });
+        memory.Failure = new NotSupportedException("controlled unknown backing store");
+
+        if (sliceAssignment) destination[SliceIndex.All] = source;
+        else destination.Assign(source);
+
+        Assert.True(memory.AttemptedFailure);
+        Assert.Equal(4, source.ReadCalls);
+        Assert.Equal(new[] { 1, 1, 2, 3, 4 }, values);
     }
 
     [Theory]
