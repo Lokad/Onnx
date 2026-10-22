@@ -127,22 +127,7 @@ where T : unmanaged
         var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
-        StartOpStage(OpStage.CalculateIndices);
-        var (pdata, oshape, r) = PrepareReduction(data, plan.Axes);
-        var output = DenseTensor<float>.OfShape(oshape);
-
-        StartOpStage(OpStage.Math);
-        var xs = pdata.Buffer.Span;
-        var os = output.Buffer.Span;
-        for (int i = 0; i < os.Length; ++i)
-        {
-            int offset = i * r;
-            // Match the fixed four-lane reduction used by the native CPU
-            // reference. Linear summation amplifies error when a subsequent
-            // normalization subtracts a nearly constant mean.
-            os[i] = FloatReduction.Sum(xs.Slice(offset, r), Math.Min((-offset) & 3, r), 0, false);
-        }
-        return ApplyKeepDims(output, plan, keepDims);
+        return ApplyKeepDims(ReduceFloatCore(data, plan, mean: false), plan, keepDims);
     }
 
     public static Tensor<double> ReduceSum(Tensor<double> data, Tensor<int>? axes) => ReduceSum(data, axes, null, null);
@@ -258,6 +243,14 @@ where T : unmanaged
         var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
+        return ApplyKeepDims(ReduceFloatCore(data, plan, mean: true), plan, keepDims);
+    }
+
+    // Native sum and mean share their accumulation geometry: a fixed inner
+    // tree, linear outer sums, or inner block sums followed by outer sums.
+    // Mean divides once after accumulation, keeping its established association.
+    static DenseTensor<float> ReduceFloatCore(Tensor<float> data, ReductionPlan plan, bool mean)
+    {
         StartOpStage(OpStage.CalculateIndices);
         bool innerAxes = ArrayUtilities.AxesAreInnerMostDims(plan.Axes, data.Rank);
         Tensor<float> reductionData = data;
@@ -299,9 +292,9 @@ where T : unmanaged
                 sum = 0f;
                 for (int j = 0; j < r; ++j) sum += xs[offset + j];
             }
-            os[i] = sum / divisor;
+            os[i] = mean ? sum / divisor : sum;
         }
-        return ApplyKeepDims(output, plan, keepDims);
+        return output;
     }
 
     public static Tensor<double> ReduceMean(Tensor<double> data, Tensor<int>? axes) => ReduceMean(data, axes, null, null);
