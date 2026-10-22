@@ -57,7 +57,7 @@ public partial class CPUExecutionProvider
                 var dense = ((INumericTensor)source).ToDenseTensor();
                 if (!ReferenceEquals(dense, source)) return dense;
             }
-            catch
+            catch (Exception e) when (!Runtime.IsFatal(e))
             {
             }
             return source.Clone();
