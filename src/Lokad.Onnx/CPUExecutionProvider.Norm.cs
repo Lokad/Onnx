@@ -20,9 +20,18 @@ public partial class CPUExecutionProvider
         if (cos.ElementType != TensorElementType.Float) return InputTypeNotSupported(op, nameof(cos), cos);
         if (sin.ElementType != TensorElementType.Float) return InputTypeNotSupported(op, nameof(sin), sin);
         var fx = (Tensor<float>)x;
-        var rented = pool is null ? null : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
-        if (rented is null) return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, half.Value, axis ?? -1, concatAxis ?? -1));
-        return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, rented, half.Value, axis ?? -1, concatAxis ?? -1));
+        if (pool is null) return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, half.Value, axis ?? -1, concatAxis ?? -1));
+        var buffer = pool.Rent<float>((int)fx.Length);
+        try
+        {
+            var rented = new DenseTensor<float>(new Memory<float>(buffer), fx.Dimensions);
+            return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, rented, half.Value, axis ?? -1, concatAxis ?? -1));
+        }
+        catch (Exception e) when (!Runtime.IsFatal(e))
+        {
+            pool.Return(buffer);
+            throw;
+        }
     }
     public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis, float? epsilon, int? stashType, int outputCount, ExecutionOptions? options, TensorBufferPool? pool)
     {
@@ -43,14 +52,23 @@ public partial class CPUExecutionProvider
                 if (scale.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(scale), TensorElementType.Float, scale);
                 if (bias is not null && bias.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(bias), TensorElementType.Float, bias);
                 var fx = (Tensor<float>)x;
-                var destination = pool is null ? null : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions);
-                var result = Tensor<float>.LayerNormalizationCore(fx, (Tensor<float>)scale, (Tensor<float>?)bias, destination, ax, eps, outputCount, opts.Tensor);
-                return outputCount switch
+                var buffer = pool?.Rent<float>((int)fx.Length);
+                try
                 {
-                    1 => Success(op, result.Output),
-                    2 => Success(op, result.Output, result.Mean!),
-                    _ => Success(op, result.Output, result.Mean!, result.InvStdDev!)
-                };
+                    var destination = buffer is null ? null : new DenseTensor<float>(new Memory<float>(buffer), fx.Dimensions);
+                    var result = Tensor<float>.LayerNormalizationCore(fx, (Tensor<float>)scale, (Tensor<float>?)bias, destination, ax, eps, outputCount, opts.Tensor);
+                    return outputCount switch
+                    {
+                        1 => Success(op, result.Output),
+                        2 => Success(op, result.Output, result.Mean!),
+                        _ => Success(op, result.Output, result.Mean!, result.InvStdDev!)
+                    };
+                }
+                catch (Exception e) when (!Runtime.IsFatal(e))
+                {
+                    if (buffer is not null) pool!.Return(buffer);
+                    throw;
+                }
             }
             case TensorElementType.Double:
             {
