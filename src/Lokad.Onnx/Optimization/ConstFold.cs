@@ -44,7 +44,6 @@ internal static class ConstFold
         var scratch = new ComputationalGraph();
         long foldedBytes = 0;
         foreach (var kv in facts.Constants) { known[kv.Key] = kv.Value; scratch.Initializers[kv.Key] = kv.Value; }
-        var drop = new HashSet<int>();
         int folded = 0;
         for (int i = 0; i < graph.Nodes.Count; i++)
         {
@@ -128,39 +127,44 @@ internal static class ConstFold
 
     static void DedupeConstants(ComputationalGraph graph, GraphFacts facts)
     {
-        var groups = new Dictionary<string, List<int>>();
+        var groups = new Dictionary<(TensorElementType Type, string Shape, int Hash), List<(string Name, Array Data)>>();
+        var rename = new Dictionary<string, string>(StringComparer.Ordinal);
+        long retainedBytes = 0;
         for (int i = 0; i < graph.Nodes.Count; i++)
         {
             var node = graph.Nodes[i];
-            if (node.Op != OpType.Constant || node.Outputs is null || node.Outputs.Length != 1) continue;
+            if (node.Op != OpType.Constant || node.IsFused || !Node.IsStandardDomain(node.Domain)
+                || node.Outputs is null || node.Outputs.Length != 1) continue;
             string output = node.Outputs[0];
             if (string.IsNullOrEmpty(output) || facts.IsGraphOutput(output) || facts.CapturedValues.Contains(output)) continue;
             if (node.Attributes is null || !node.Attributes.TryGetValue("value", out var v) || !(v is ITensor t)) continue;
-            if (ByteCount(t) > MaxFoldBytes) continue;
-            string key = t.ElementType.ToString() + "|" + string.Join("x", t.Dims);
-            if (!groups.TryGetValue(key, out var list)) { list = new List<int>(); groups[key] = list; }
-            list.Add(i);
-        }
-        var rename = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var group in groups.Values)
-        {
-            var survivors = new List<int> { group[0] };
-            for (int a = 1; a < group.Count; a++)
+            long estimate = ByteCount(t);
+            if (estimate < 0 || estimate > MaxFoldBytes) continue;
+            // One logical snapshot per candidate, never one per comparison.
+            var data = t.ToArray();
+            if (!TryGetBits(data, out var bits) || bits.Length > MaxFoldBytes) continue;
+            var hash = new HashCode();
+            hash.AddBytes(bits);
+            var key = (t.ElementType, string.Join("x", t.Dims), hash.ToHashCode());
+            if (groups.TryGetValue(key, out var survivors))
             {
-                string dup = graph.Nodes[group[a]].Outputs[0];
-                var dupAttrs = graph.Nodes[group[a]].Attributes;
-                if (dupAttrs is null) continue;
-                if (!dupAttrs.TryGetValue("value", out var dupObj) || dupObj is not ITensor dupTensor) continue;
-                foreach (int s in survivors)
+                foreach (var survivor in survivors)
                 {
-                    string survivor = graph.Nodes[s].Outputs[0];
-                    var survivorAttrs = graph.Nodes[s].Attributes;
-                    if (survivorAttrs is null) continue;
-                    if (!survivorAttrs.TryGetValue("value", out var survivorObj) || survivorObj is not ITensor survivorTensor) continue;
-                    if (BitsEqual(survivorTensor, dupTensor)) { rename[dup] = survivor; break; }
+                    // A hash collision is not proof of equal payloads.
+                    if (TryGetBits(survivor.Data, out var candidate) && bits.SequenceEqual(candidate))
+                    {
+                        rename[output] = survivor.Name;
+                        break;
+                    }
                 }
-                if (!rename.ContainsKey(dup)) survivors.Add(group[a]);
             }
+            if (rename.ContainsKey(output)) continue;
+            // Bound pass-local snapshots, including actual widened Complex storage.
+            // A full budget still permits duplicates of already retained survivors.
+            if (bits.Length > MaxTotalFoldBytes - retainedBytes) continue;
+            if (survivors is null) groups.Add(key, survivors = new());
+            survivors.Add((output, data));
+            retainedBytes += bits.Length;
         }
         if (rename.Count == 0) return;
         for (int i = 0; i < graph.Nodes.Count; i++)
@@ -275,14 +279,6 @@ internal static class ConstFold
             }
         }
         catch (OverflowException) { return -1; }
-    }
-
-    static bool BitsEqual(ITensor a, ITensor b)
-    {
-        if (a.ElementType != b.ElementType) return false;
-        var da = a.ToArray();
-        var db = b.ToArray();
-        return TryGetBits(da, out var left) && TryGetBits(db, out var right) && left.SequenceEqual(right);
     }
 
     // ToArray supplies logical order. Use actual unmanaged storage widths:
