@@ -560,8 +560,8 @@ where T : unmanaged
 /// <remarks>
 /// Absent or explicitly empty axes are a no-op when flagged, else reduce all
 /// axes. Otherwise axes normalize (negative += rank), range-check against
-/// [-rank, rank-1], then deduplicate: the native engine reduces duplicated
-/// axes once instead of rejecting them (verified against ORT 1.29).
+/// [-rank, rank-1], then sort and deduplicate: axis order does not change
+/// native reduction traversal, and duplicated axes reduce once (ORT 1.29).
 /// </remarks>
 internal readonly struct ReductionPlan
 {
@@ -594,6 +594,8 @@ internal readonly struct ReductionPlan
                 throw new System.ArgumentException($"Axis {raw[i]} is out of range for tensor rank {rank}.", nameof(axes));
             normalized[i] = a;
         }
+        // Equivalent axis sets must use the same traversal and addition order.
+        Array.Sort(normalized);
         return new ReductionPlan(false, normalized.Distinct().ToArray(), keepDims);
     }
 }
