@@ -38,7 +38,6 @@ public partial class CPUExecutionProvider
             var parts = new List<int>();
             long rem = dim;
             while (rem > 0L) { int take = rem < chunk ? (int)rem : (int)chunk; parts.Add(take); rem -= take; }
-            if (parts.Count == 0) parts.Add(0);
             sizes = parts.ToArray();
             squeezePieces = !keep;
         }
