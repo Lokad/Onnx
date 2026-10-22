@@ -27,7 +27,9 @@ public sealed class TensorSequence : ITensor
 
     public TensorSequence(IEnumerable<ITensor> items)
     {
+        ArgumentNullException.ThrowIfNull(items);
         this.items = new List<ITensor>(items);
+        foreach (var item in this.items) ArgumentNullException.ThrowIfNull(item, nameof(items));
     }
 
     public IReadOnlyList<ITensor> Items => items;
@@ -44,7 +46,11 @@ public sealed class TensorSequence : ITensor
 
     public long Length => items.Count;
 
-    public void Add(ITensor item) => items.Add(item);
+    public void Add(ITensor item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        items.Add(item);
+    }
 
     public ITensor Clone() => new TensorSequence(items.Select(i => i.Clone()));
 
