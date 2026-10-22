@@ -259,49 +259,47 @@ where T : unmanaged
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
-        var (pdata, oshape, r) = PrepareReduction(data, plan.Axes);
+        bool innerAxes = ArrayUtilities.AxesAreInnerMostDims(plan.Axes, data.Rank);
+        Tensor<float> reductionData = data;
+        int[] reductionAxes = plan.Axes;
+        int innerExtent = 1;
+        if (!innerAxes && plan.Axes[^1] == data.Rank - 1)
+        {
+            // Native mixed-axis reduction sums contiguous inner blocks first,
+            // then accumulates those block sums over the remaining outer axes.
+            int split = plan.Axes.Length - 1;
+            while (split > 0 && plan.Axes[split - 1] == plan.Axes[split] - 1) split--;
+            innerExtent = ArrayUtilities.ComputeOffsetForReduction(data.dimensions, plan.Axes[split]);
+            reductionData = ReduceSum(data, DenseTensor<int>.OfValues(plan.Axes[split..]), true, false);
+            reductionAxes = plan.Axes[..split];
+        }
+        var (pdata, oshape, r) = PrepareReduction(reductionData, reductionAxes);
+        if (!ReferenceEquals(reductionData, data))
+            oshape = ArrayUtilities.ComputeShapesForReduction(data.dimensions, plan.Axes).Item1;
         var output = DenseTensor<float>.OfShape(oshape);
 
         StartOpStage(OpStage.Math);
         var xs = pdata.Buffer.Span;
         var os = output.Buffer.Span;
-        int i = 0;
-        if (options.UseSimd && r >= 32)
-        {
-            // Independent rows hide addition latency without reassociating any
-            // row's reduction. Keep scalar/short reductions on their old path.
-            for (; i <= os.Length - 4; i += 4)
-            {
-                var row0 = xs.Slice(i * r, r);
-                var row1 = xs.Slice((i + 1) * r, r);
-                var row2 = xs.Slice((i + 2) * r, r);
-                var row3 = xs.Slice((i + 3) * r, r);
-                float sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0;
-                for (int j = 0; j < r; j++)
-                {
-                    sum0 += row0[j];
-                    sum1 += row1[j];
-                    sum2 += row2[j];
-                    sum3 += row3[j];
-                }
-                os[i] = sum0 / r;
-                os[i + 1] = sum1 / r;
-                os[i + 2] = sum2 / r;
-                os[i + 3] = sum3 / r;
-            }
-        }
-        for (; i < os.Length; ++i)
+        float divisor = (float)r * innerExtent;
+        for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
             // Empty reductions yield zero instead of NaN (ORT 1.29).
-            if (r == 0)
+            if (divisor == 0)
             {
                 os[i] = 0f;
                 continue;
             }
-            float sum = 0f;
-            for (int j = 0; j < r; ++j) sum += xs[offset + j];
-            os[i] = sum / r;
+            float sum;
+            if (innerAxes)
+                sum = FloatReduction.Sum(xs.Slice(offset, r), Math.Min((-offset) & 3, r), 0, false);
+            else
+            {
+                sum = 0f;
+                for (int j = 0; j < r; ++j) sum += xs[offset + j];
+            }
+            os[i] = sum / divisor;
         }
         return ApplyKeepDims(output, plan, keepDims);
     }

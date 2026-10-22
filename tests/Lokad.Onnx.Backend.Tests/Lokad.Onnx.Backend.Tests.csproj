@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <None Update="fixtures\resnet-ort.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="fixtures\reducemean-ort.json" CopyToOutputDirectory="PreserveNewest" />
     <Compile Include="..\Shared\TestSupport.cs" Link="TestSupport.cs" />
     <Compile Include="..\Shared\NpySupport.cs" Link="NpySupport.cs" />
     <Compile Include="..\Shared\ReferenceKernels\*.cs" Link="ReferenceKernels\%(Filename)%(Extension)" />

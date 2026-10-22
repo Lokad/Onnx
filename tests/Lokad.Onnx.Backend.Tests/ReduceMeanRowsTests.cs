@@ -26,7 +26,7 @@ public class ReduceMeanRowsTests
     [InlineData(1, 1)]
     [InlineData(2, 0)]
     [InlineData(2, 1)]
-    public void EveryRowBoundaryAndLayoutRetainsSerialReductionBits(int kind, int axis)
+    public void EveryRowBoundaryAndLayoutMatchesCanonicalScalarBits(int kind, int axis)
     {
         foreach (int rows in new[] { 0, 1, 3, 4, 5, 7, 8, 9, 32 })
         foreach (int width in new[] { 0, 1, 31, 32, 33, 576 })
@@ -34,16 +34,12 @@ public class ReduceMeanRowsTests
             var data = Input(kind, rows, width);
             var before = Bits(data);
             var axes = DenseTensor<int>.OfValues(new[] { axis == 1 ? -1 : 0 });
-            int reduced = axis == 1 ? width : rows, count = axis == 1 ? rows : width;
-            var expected = new int[count];
-            for (int o = 0; o < count; o++)
-            {
-                float sum = 0;
-                for (int k = 0; k < reduced; k++) sum += axis == 1 ? data[o, k] : data[k, o];
-                expected[o] = BitConverter.SingleToInt32Bits(reduced == 0 ? 0f : sum / reduced);
-            }
+            var canonical = new DenseTensor<float>(data.ToArray(), data.Dimensions);
             foreach (bool keep in new[] { false, true })
             {
+                // Native arithmetic is checked independently by FloatMeanNativeTests.
+                // Here pin mode/layout equivalence and output ownership across tails.
+                var expected = Bits(Tensor<float>.ReduceMean(canonical, axes, keep, false, TensorExecutionOptions.Scalar));
                 var scalar = Tensor<float>.ReduceMean(data, axes, keep, false, TensorExecutionOptions.Scalar);
                 var actual = Tensor<float>.ReduceMean(data, axes, keep, false, TensorExecutionOptions.Simd);
                 Assert.Equal(expected, Bits(scalar));
