@@ -1,4 +1,4 @@
-{"reference":"ONNX Runtime 1.29.0 CPUExecutionProvider, opset 18; input patterns are exact FP32 bits defined in FloatMeanNativeTests","cases":[
+{"reference":"ONNX Runtime 1.29.0 CPUExecutionProvider, opset 18; input patterns are exact FP32 bits defined in FloatReductionNativeTests","cases":[
 {"name":"last-0-cancellation","shape":[5,0],"axes":[1],"pattern":"cancellation","expectedBits":[0,0,0,0,0]},
 {"name":"last-0-extreme","shape":[5,0],"axes":[1],"pattern":"extreme","expectedBits":[0,0,0,0,0]},
 {"name":"last-0-special","shape":[5,0],"axes":[1],"pattern":"special","expectedBits":[0,0,0,0,0]},

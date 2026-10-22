@@ -1,6 +1,33 @@
 # Lokad.Onnx.Data
 
-Text, image and audio input helpers. File-explicit entry points are offline: they only read the paths handed to them and never download. Tokenizer acquisition is the explicit exception: EnsureMe5sTokenizer and the named BERT loader download the asset when absent, so call them up front; everything downstream reuses the locked cache offline. The me5s lookup resolves the binary cache first, then models/multilingual-e5-small/sentencepiece.bpe.model by ancestor search, so the documented setup needs no manual copy.
+Text, image and audio helpers built from source; this project is nonpackable and
+is separate from the core NuGet package. File-explicit entry points use local
+assets. EnsureMe5sTokenizer and the named BERT loader explicitly acquire missing
+tokenizers; subsequent calls reuse their caches. The me5s lookup checks the binary
+cache, then models/multilingual-e5-small/sentencepiece.bpe.model by ancestor search.
+
+## EmbeddingGemma 2
+
+`EmbeddingGemma2Embedder` loads the local prepared FP32 bundle once and returns
+owned embedding arrays. Query and document methods apply different retrieval
+prompts; use the matching method when producing each kind of vector.
+
+```csharp
+using Lokad.Onnx;
+
+var embedder = new EmbeddingGemma2Embedder("models/embeddinggemma-2/prepared-fp32");
+var query = embedder.EmbedQuery("Which planet is known as the Red Planet?", 256,
+    CancellationToken.None);
+var documents = embedder.EmbedDocuments(
+    new[] { new EmbeddingGemma2Document("Mars is known as the Red Planet.", "Mars") },
+    256, CancellationToken.None);
+```
+
+Supported dimensions are 128, 256, 512 and 768. Defaults use 768 dimensions and
+a 512-token bound including prompt and BOS/EOS; overflow is rejected. Batches
+are bounded, calls serialize, and cancellation is checked between batches.
+See the [embedding guide](../../tests/embeddinggemma2/README.md) for prepared
+assets, tokenizer setup, space identity and complete Python/native qualification.
 
 ## Text (Text.cs)
 
@@ -47,9 +74,17 @@ Console.WriteLine(result.Text);
 ```
 
 Whisper uses local FP32 split assets, explicit language and greedy decoding.
-The API rejects more than 30 seconds and retains token/stop/no-speech metadata.
+The short `Transcribe` API rejects more than 30 seconds and retains
+token/stop/no-speech metadata. `TranscribeRecording` accepts bounded recordings
+through ten minutes and returns segment timestamps; see the
+[recording policy](../../tests/whisper/recording/README.md).
 See [component and application qualification](../../tests/whisper/README.md)
 for the pinned export and the unresolved full encoder/logit numerical gate.
+
+`ParakeetTranscriber` provides short and bounded-recording transcription with
+automatic language detection. See its [short API](../../tests/parakeet/transcribe/README.md)
+and [recording policy](../../tests/parakeet/recording/README.md) for model paths,
+quiet/hard window boundaries, partial results and qualification limits.
 
 ## Speaker diarization
 

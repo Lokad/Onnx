@@ -1,41 +1,83 @@
 # Lokad.Onnx.CLI (lonnx)
 
-Demo, inspection and benchmarking console over the core library. lonnx.cmd wraps the Release build (src/Lokad.Onnx.CLI/bin/Release/net10.0/). Inference verbs use local model assets; the me5s benchmark entries download their model and corpus once when absent, and text tokenization downloads its tokenizer only through the explicit EnsureMe5sTokenizer acquisition step.
+Build this repository project from source; it is separate from the core NuGet
+package. On Windows, lonnx.cmd invokes the Release build. See the
+[root setup instructions](../../README.md#build-and-try-the-cli).
 
-## Verbs
+## Commands
 
-- lonnx info <model.onnx> [--ops] [--init] [--op-filter <op>]: model metadata; list distinct ops or initializers, or filter nodes by op type.
-- lonnx run <model.onnx> <inputs...>: run inference. Inputs are path::format file args (see src/Lokad.Onnx.Data/README.md) or --text <props> <quoted text> for text. Useful flags: --softmax, --print-input, --save-input, --node <label> (single node), --disable-simd, --enable-intrinsics, --profile (per-op timing chart), --optimize-memory, --threads <n> (batch-parallel kernels, default 1).
-- Use bench.ps1 (local model, warmed-up e5 runs plus the MatMul sweep into artifacts/bench) for before/after comparisons; microbenchmarks live in tests/Lokad.Onnx.Bench (`Bench micro <id>`).
+Run lonnx.cmd --help or lonnx.cmd <verb> --help for current options.
 
-## Whisper transcription
+- info <model.onnx> inspects metadata; --ops, --init and --op-filter select details.
+- run <model.onnx> <inputs...> executes a graph with path::format inputs or
+  --text <props> <quoted text>. See the [input helpers](../Lokad.Onnx.Data/README.md).
+  Options include --softmax, --print-input, --save-input, --node, --profile,
+  --disable-simd, --enable-intrinsics, --optimize-memory and --threads.
+- embed <prepared-directory> produces EmbeddingGemma 2 query or document vectors.
+- transcribe <model-directory> <audio.wav> runs Whisper or Parakeet.
+- diarize <audio.wav> takes local model paths and produces Community-1 speaker timelines.
 
-```powershell
+## Text embeddings
+
+Use the locally prepared FP32 bundle:
+
+~~~powershell
+lonnx.cmd embed models/embeddinggemma-2/prepared-fp32 --query "Which planet is known as the Red Planet?" --dimensions 768
+lonnx.cmd embed models/embeddinggemma-2/prepared-fp32 --documents input.jsonl --batch-size 3 --dimensions 256
+~~~
+
+Document JSONL rows contain id, text and an optional title. Query and document
+prompts differ. Supported dimensions are 128, 256, 512 and 768; the default is
+768. Each JSON result includes the vector, token count and embedding-space
+identity. The default 512-token bound includes the prompt and BOS/EOS; overflow
+is rejected. See the [embedding guide](../../tests/embeddinggemma2/README.md)
+for local bundle preparation, batching, input/output contracts and qualification.
+
+## Speech transcription
+
+~~~powershell
 lonnx.cmd transcribe models/whisper-large-v3-turbo recording.wav --language fr --json
-```
+lonnx.cmd transcribe models/parakeet-tdt-0.6b-v3 recording.wav --model-type parakeet --json
+lonnx.cmd transcribe models/whisper-large-v3-turbo longer.wav --language en --recording --json
+~~~
 
-Stage the local Whisper Large V3 Turbo FP32 split assets first. The command
-accepts mono/stereo PCM or float WAV at 8000..192000 Hz, up to 30 seconds.
-Channels are averaged and filtered audio is resampled to 16 kHz. Language is
-explicit; `--max-tokens` accepts 1..444 and defaults to 444.
+Stage local FP32 assets first. Both models accept supported mono/stereo PCM or
+float WAV at 8000..192000 Hz, mix channels and resample to 16 kHz. Default
+transcription accepts up to 30 seconds. Whisper requires an explicit language;
+Parakeet detects language automatically.
 
-Text or one JSON result goes to stdout; diagnostics go to stderr. A token-limit
-result can be incomplete and is identified in JSON and stderr. There are no
-timestamps, translation or automatic language detection. See
-[Whisper qualification](../../tests/whisper/README.md).
+The explicit --recording mode accepts up to ten minutes, with bounded windows
+and partial-progress metadata. Whisper returns segment timestamps; Parakeet
+reports quiet/hard window boundaries. Token/window limits can return an
+explicitly marked incomplete result. See the [Whisper guide](../../tests/whisper/README.md),
+[Whisper recording policy](../../tests/whisper/recording/README.md),
+[Parakeet guide](../../tests/parakeet/transcribe/README.md) and
+[Parakeet recording policy](../../tests/parakeet/recording/README.md)
+for options and numerical/accuracy limits.
 
-The command never downloads assets or invokes an external decoder. Invalid
-options exit 2, missing files exit 4, invalid/unsupported input exits 5, and
-cancellation exits 130. Ctrl-C is observed between conversion and model calls;
-an in-flight model load or execution completes first. Longer recordings are
-rejected rather than truncated.
+## Speaker diarization
 
-## Distribution boundary
+~~~powershell
+lonnx.cmd diarize recording.wav --segmentation models/pyannote-segmentation/segmentation/model.onnx --embedding models/pyannote-embedding/embedding_encoder.onnx --projection models/pyannote-embedding/projection.onnx --plda models/pyannote-community-1/plda.json --json
+~~~
 
-The `Lokad.Onnx` NuGet package ships the core engine with its integrated
-file importer (`OnnxImport` on a pinned `Google.Protobuf` runtime dependency):
-tensors, graph execution, and the `OnnxModel` description API. Tokenizers,
-image helpers, and this CLI live outside the package and need their own
-dependencies.
-`eng/smoke-pack.ps1` proves the boundary by executing a fresh consumer
-against the packed core with no source references.
+This produces ordinary/exclusive speaker timelines from supported WAV files up
+to ten minutes. See the [diarization guide](../../tests/pyannote/diarization/README.md)
+for asset setup, result fields and qualification limits.
+
+These text/audio commands use local assets. Results go to stdout and diagnostics
+to stderr. Invalid options exit 2, missing files 4, invalid/unsupported input 5,
+and cancellation 130. Cancellation is checked between model calls; an in-flight
+load/execution completes first.
+
+## CPU comparisons and packaging
+
+Use the [routine benchmark command](../../eng/bench.md) for warmed, matched
+e5/Gemma comparisons against ORT. The root bench.ps1 script measures a fresh CLI
+process for each e5 sample, including startup/model load in wall time; its
+separate warmup process does not warm later samples. Microbenchmarks live in
+tests/Lokad.Onnx.Bench.
+
+The core package contains tensors, graph execution and OnnxImport on its pinned
+Google.Protobuf dependency. Data and CLI remain nonpackable source projects.
+[Package smoke](../../eng/smoke-pack.ps1) checks a fresh consumer without source references.
