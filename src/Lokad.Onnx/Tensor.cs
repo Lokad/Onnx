@@ -820,18 +820,7 @@ namespace Lokad.Onnx
             }
             else
             {
-                if (array == null)
-                {
-                    throw new ArgumentNullException(nameof(array));
-                }
-                if (array.Rank != 1)
-                {
-                    throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
-                }
-                if (array.Length < index + Length)
-                {
-                    throw new ArgumentException("The number of elements in the Tensor is greater than the available space from index to the end of the destination array.", nameof(array));
-                }
+                ValidateCopyTo(array, index, nameof(index));
 
                 for (int i = 0; i < length; i++)
                 {
@@ -975,19 +964,25 @@ namespace Lokad.Onnx
         /// </param>
         protected virtual void CopyTo(T[] array, int arrayIndex)
         {
-            if (array == null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-            if (array.Length < arrayIndex + Length)
-            {
-                throw new ArgumentException("The number of elements in the Tensor is greater than the available space from index to the end of the destination array.", nameof(array));
-            }
+            ValidateCopyTo(array, arrayIndex, nameof(arrayIndex));
 
             for (int i = 0; i < length; i++)
             {
                 array[arrayIndex + i] = GetValue(LogicalOffset(i));
             }
+        }
+
+        internal void ValidateCopyTo(Array? array, int arrayIndex, string indexParameterName)
+        {
+            ArgumentNullException.ThrowIfNull(array);
+            if (array.Rank != 1)
+                throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
+            if (array.GetLowerBound(0) != 0)
+                throw new ArgumentException("The destination array must have a zero lower bound.", nameof(array));
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(indexParameterName);
+            if (arrayIndex > array.Length || Length > array.Length - arrayIndex)
+                throw new ArgumentException("The number of elements in the Tensor is greater than the available space from index to the end of the destination array.", nameof(array));
         }
 
         /// <summary>

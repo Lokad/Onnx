@@ -178,16 +178,7 @@ namespace Lokad.Onnx
         /// <param name="arrayIndex">First destination position.</param>
         protected override void CopyTo(T[] array, int arrayIndex)
         {
-            if (array == null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-            if (array.Length < arrayIndex + Length)
-            {
-                throw new ArgumentException(
-                    "The number of elements in the Tensor is greater than the available space from index to " + 
-                    "the end of the destination array.", nameof(array));
-            }
+            ValidateCopyTo(array, arrayIndex, nameof(arrayIndex));
 
             // Row-major storage copies verbatim; column-major (reversed)
             // storage must decode through the strides, or ToArray would

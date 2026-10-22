@@ -51,6 +51,62 @@ public class LogicalCollectionTests
             Assert.Throws<ArgumentOutOfRangeException>(() => ((IList<int>)tensor)[invalid]);
     }
 
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(0, true)]
+    [InlineData(1, false)]
+    [InlineData(1, true)]
+    [InlineData(2, false)]
+    [InlineData(2, true)]
+    [InlineData(3, false)]
+    [InlineData(3, true)]
+    public void CopyToValidatesDestinationsAcrossLayouts(int layout, bool untyped)
+    {
+        foreach (bool empty in new[] { true, false })
+        {
+            var dense = new DenseTensor<int>(new[] { empty ? 0 : 2, 3 }, layout % 2 == 1);
+            Tensor<int> tensor = layout >= 2 ? dense.Slice(SliceIndex.All, new SliceIndex(0, 2)) : dense;
+            int value = 1;
+            foreach (var coordinate in tensor.GetDimensionsIterator()) tensor[coordinate] = value++;
+            void Copy(Array? array, int index)
+            {
+                if (untyped) ((ICollection)tensor).CopyTo(array!, index);
+                else ((ICollection<int>)tensor).CopyTo((int[]?)array!, index);
+            }
+            Array destination = untyped ? new object[(int)tensor.Length + 2] : new int[(int)tensor.Length + 2];
+            for (int i = 0; i < destination.Length; i++) destination.SetValue(99, i);
+            var untouched = destination.Cast<int>().ToArray();
+
+            Assert.Equal("array", Assert.Throws<ArgumentNullException>(() => Copy(null, 0)).ParamName);
+            foreach (int index in new[] { -1, int.MinValue })
+            {
+                var error = Assert.Throws<ArgumentOutOfRangeException>(() => Copy(destination, index));
+                Assert.Equal(untyped ? "index" : "arrayIndex", error.ParamName);
+                Assert.Equal(untouched, destination.Cast<int>());
+            }
+            foreach (int index in new[] { destination.Length + 1, int.MaxValue })
+            {
+                Assert.Throws<ArgumentException>(() => Copy(destination, index));
+                Assert.Equal(untouched, destination.Cast<int>());
+            }
+            if (!empty)
+            {
+                Assert.Throws<ArgumentException>(() => Copy(destination, 3));
+                Assert.Equal(untouched, destination.Cast<int>());
+            }
+            if (untyped)
+            {
+                Assert.Throws<ArgumentException>(() => Copy(new object[1, 2], 0));
+                var shifted = Array.CreateInstance(typeof(object), new[] { destination.Length }, new[] { 1 });
+                Assert.Throws<ArgumentException>(() => Copy(shifted, 0));
+            }
+
+            Copy(destination, 2);
+            Assert.Equal(new[] { 99, 99 }.Concat(tensor.ToArray()), destination.Cast<int>());
+            if (empty) Copy(Array.Empty<int>(), 0);
+        }
+    }
+
     [Fact]
     public void StructuralOrder_IsIndependentOfLayoutAndObeysOrderingRules()
     {
