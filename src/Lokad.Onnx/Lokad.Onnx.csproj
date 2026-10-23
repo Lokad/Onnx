@@ -54,8 +54,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.111" PrivateAssets="All" />
-    <!-- Protobuf runtime for the integrated importer (generated schema under Import/Generated). -->
-    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
   </ItemGroup>
 
   <Target Name="EnforceReleasePackageConfiguration" BeforeTargets="GenerateNuspec"

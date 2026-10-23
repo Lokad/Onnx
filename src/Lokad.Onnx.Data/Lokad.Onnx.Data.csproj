@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lokad.Onnx\Lokad.Onnx.csproj" />
+    <ProjectReference Include="../../tools/Lokad.Onnx.Protobuf/Lokad.Onnx.Protobuf.csproj" />
     <None Update="NOTICE.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Apache-2.0.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <Description>Reference ONNX reader using Google.Protobuf, for repository tools and source consumers.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Lokad.Onnx/Lokad.Onnx.csproj" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
+    <Compile Include="../../src/Lokad.Onnx/TensorLimits.cs" Link="Shared/TensorLimits.cs" />
+  </ItemGroup>
+</Project>

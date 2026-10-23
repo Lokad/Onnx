@@ -6,7 +6,7 @@ using System.Linq;
 
 /// <summary>
 /// Plain-data ONNX model description with no protobuf dependency. Produced by
-/// the integrated importer from protobuf messages (or built by hand in tests) and
+/// a caller-supplied reader (or built by hand) and
 /// consumed by Model.Load to assemble an executable ComputationalGraph.
 /// </summary>
 public sealed class OnnxModel

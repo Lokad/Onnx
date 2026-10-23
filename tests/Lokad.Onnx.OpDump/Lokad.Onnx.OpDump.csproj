@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lokad.Onnx\Lokad.Onnx.csproj" />
+    <ProjectReference Include="../../tools/Lokad.Onnx.Protobuf/Lokad.Onnx.Protobuf.csproj" />
   </ItemGroup>
 
 </Project>

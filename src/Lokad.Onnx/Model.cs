@@ -8,6 +8,32 @@ using static Lokad.Onnx.Runtime;
 
 public class Model
 {
+    /// <summary>Reads a model with a caller-supplied parser and assembles its graph.</summary>
+    /// <remarks>Reader failures propagate to this caller. No parser is registered globally.</remarks>
+    public static ComputationalGraph Load(string path, IOnnxModelReader reader) => Load(path, reader, long.MaxValue);
+
+    /// <summary>Reads a file with a caller-supplied parser and a packed-weight byte limit.</summary>
+    public static ComputationalGraph Load(string path, IOnnxModelReader reader, long maximumPackedWeightBytes)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        ArgumentNullException.ThrowIfNull(reader);
+        ArgumentOutOfRangeException.ThrowIfNegative(maximumPackedWeightBytes);
+        var graph = Load(reader.Read(path), maximumPackedWeightBytes);
+        graph.ModelFile = path;
+        return graph;
+    }
+
+    /// <summary>Reads borrowed memory synchronously using a caller-supplied parser.</summary>
+    public static ComputationalGraph Load(ReadOnlyMemory<byte> data, IOnnxModelReader reader) => Load(data, reader, long.MaxValue);
+
+    /// <summary>Reads borrowed memory with a caller-supplied parser and a packed-weight byte limit.</summary>
+    public static ComputationalGraph Load(ReadOnlyMemory<byte> data, IOnnxModelReader reader, long maximumPackedWeightBytes)
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+        ArgumentOutOfRangeException.ThrowIfNegative(maximumPackedWeightBytes);
+        return Load(reader.Read(data), maximumPackedWeightBytes);
+    }
+
     /// <summary>Assembles an executable graph from a plain-data description.</summary>
     /// <remarks>The description is consumed: its collections, node arrays and
     /// tensor payloads move into the graph without copying, so callers must

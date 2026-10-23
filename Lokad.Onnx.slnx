@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/tools/">
+    <Project Path="tools/Lokad.Onnx.Protobuf/Lokad.Onnx.Protobuf.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Lokad.Onnx/Lokad.Onnx.csproj" />
     <Project Path="src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj" />

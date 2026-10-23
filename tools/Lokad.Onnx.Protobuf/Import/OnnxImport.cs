@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using global::Onnx;
 
 /// <summary>
 /// File and buffer entry points for ONNX models. Parsing (protobuf) and
-/// external-data resolution ship inside the core library so packaged
-/// consumers can load model files and buffers directly.
+/// external-data resolution belong to the Protobuf reference adapter.
 /// </summary>
 public static class OnnxImport
 {
