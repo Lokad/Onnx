@@ -57,6 +57,11 @@ pinned Lokad.Tokenizers dependency from a matching sibling checkout or fetches
 its pinned source revision. On Windows, `build.cmd` and `lonnx.cmd` provide
 shortcuts for building and running the CLI.
 
+The restore script verifies the consumed Tokenizers assembly and dependency
+manifest against that build. A different cached package causes an explicit
+failure; retry with `NUGET_PACKAGES` pointing to a fresh directory. The script
+does not remove or overwrite shared cache entries to repair a mismatch.
+
 ## Models and workflows
 
 | Task | Models and guides |

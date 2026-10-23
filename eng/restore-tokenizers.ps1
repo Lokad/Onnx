@@ -28,6 +28,8 @@ $changes = @(git -C $SourceDirectory status --porcelain --untracked-files=normal
 if ($LASTEXITCODE -ne 0 -or $changes.Count -gt 0) { throw 'Build the qualified Tokenizers commit from a clean checkout.' }
 $project = Join-Path $SourceDirectory 'src/Lokad.Tokenizers.csproj'
 $feed = Join-Path $root 'artifacts/dependencies/nuget'
+$receipt = Join-Path $feed 'tokenizers-receipt.json'
+if (Test-Path -LiteralPath $receipt) { Remove-Item -LiteralPath $receipt }
 Invoke-Checked { dotnet restore $project --locked-mode --tl:off -v minimal }
 Invoke-Checked { dotnet pack $project -c Release --no-restore --tl:off --nologo -v minimal -o $feed }
 $configuration = Join-Path $root 'artifacts/dependencies/nuget.config'
@@ -43,6 +45,10 @@ $escapedFeed = [Security.SecurityElement]::Escape($feed)
 "@ | Set-Content -LiteralPath $configuration -Encoding utf8
 Invoke-Checked { dotnet restore Lokad.Onnx.slnx --configfile $configuration --tl:off -v minimal }
 $package = Join-Path $feed 'Lokad.Tokenizers.0.2.0.nupkg'
-@{ revision = $revision; version = '0.2.0'; packageSha256 = (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant() } |
-    ConvertTo-Json | Set-Content -LiteralPath (Join-Path $feed 'tokenizers-receipt.json') -Encoding utf8
-Write-Host "PASS qualified Tokenizers package restored from $revision"
+$verified = & (Join-Path $PSScriptRoot 'verify-tokenizers.ps1') -PackagePath $package -AssetsPath (Join-Path $root 'src/Lokad.Onnx.Data/obj/project.assets.json') |
+    ConvertFrom-Json
+@{ revision = $revision; version = '0.2.0'; packageSha256 = $verified.packageSha256
+    resolvedPackageDirectory = $verified.resolvedPackageDirectory
+    assemblySha256 = $verified.assemblySha256; manifestSha256 = $verified.manifestSha256 } |
+    ConvertTo-Json | Set-Content -LiteralPath $receipt -Encoding utf8
+Write-Host "PASS qualified Tokenizers assembly and manifest restored from $revision"

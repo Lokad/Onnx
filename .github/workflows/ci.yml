@@ -50,6 +50,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+      - name: Verify qualified dependency content
+        shell: pwsh
+        run: python -m unittest discover -s eng -p test_tokenizer_restore.py
       - name: Test Release
         shell: pwsh
         run: |
