@@ -77,10 +77,20 @@ public class BiasGeluInlineTests
         int width = Vector<float>.Count * 3;
         var data = Enumerable.Range(0, width * 5 + 3).Select(i => special[i % special.Length]).ToArray();
         var bias = Enumerable.Range(0, width).Select(i => special[(i * 7) % special.Length]).ToArray();
+        var dataBefore = data.ToArray();
+        var biasBefore = bias.ToArray();
         var expected = new float[data.Length];
         var actual = new float[data.Length];
         Tensor<float>.BiasGeluSpanFloatPtr4x(data, bias, expected);
         Tensor<float>.BiasGeluSpanFloatInline(data, bias, actual);
-        SameBits(expected, actual);
+        for (int i = 0; i < expected.Length; i++)
+        {
+            // Independent arithmetic may select a different NaN sign/payload.
+            // Finite values, signed zero and infinities must still match bits.
+            if (float.IsNaN(expected[i])) Assert.True(float.IsNaN(actual[i]), $"Lane {i}: expected NaN, actual {actual[i]}");
+            else SameBits(expected.AsSpan(i, 1), actual.AsSpan(i, 1));
+        }
+        SameBits(dataBefore, data);
+        SameBits(biasBefore, bias);
     }
 }

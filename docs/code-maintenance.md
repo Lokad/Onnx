@@ -45,6 +45,11 @@ classification. NaN payload/sign selection across independently compiled
 arithmetic is unspecified and is not part of that contract. Input immutability,
 output guards and zero-allocation assertions remain enforced.
 
+The same distinction applies to exceptional BiasGelu arithmetic: computed NaNs
+must remain NaNs; their sign and payload may differ between separately compiled
+kernels. Finite outputs, signed zeros and infinities still compare bit-for-bit.
+Input and bias buffers, including every NaN payload bit, must remain unchanged.
+
 Some production methods intentionally have equal source arithmetic but different
 JIT compilation attributes or instruction widths. Examples are `MathOps.ErfVector`
 and `ErfVectorInline`, and `ExpVectorEstrinPruned` and its inline twin. Packed
