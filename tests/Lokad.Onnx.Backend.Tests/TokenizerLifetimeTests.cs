@@ -125,4 +125,20 @@ public class TokenizerLifetimeTests
         Assert.Same(first, second);
         Assert.Throws<FileNotFoundException>(() => Text.GetOrLoadRobertaTokenizer("no-such-tokenizer.bpe.model"));
     }
+
+    [SkippableFact]
+    public void RobertaFileAliasesShareCachedInstance()
+    {
+        string path = Path.GetFullPath(AssetPath());
+        string originalDirectory = Directory.GetCurrentDirectory();
+        try
+        {
+            var original = Text.GetOrLoadRobertaTokenizer(path);
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(path)!);
+            string relative = Path.GetFileName(path);
+            Assert.Same(original, Text.GetOrLoadRobertaTokenizer(relative));
+            Assert.Same(original, Text.GetOrLoadRobertaTokenizer(Path.Combine(".", relative)));
+        }
+        finally { Directory.SetCurrentDirectory(originalDirectory); }
+    }
 }

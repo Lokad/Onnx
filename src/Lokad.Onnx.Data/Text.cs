@@ -66,7 +66,10 @@ public class Text
         }
     }
 
-    /// <summary>Process-wide file-backed BERT tokenizer cache keyed by vocab path.</summary>
+    static readonly StringComparer TokenizerFilePathComparer = OperatingSystem.IsWindows()
+        ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+
+    /// <summary>Process-wide file-backed BERT tokenizer cache keyed by absolute vocab path.</summary>
     /// <remarks>
     /// Lifetime: an entry lives until the file identity (length plus
     /// last-write time) observed at load disagrees with the file on disk,
@@ -79,7 +82,7 @@ public class Text
     /// held during encoding, and encodes serialize on the per-instance
     /// gate through the Text methods.
     /// </remarks>
-    static readonly Dictionary<string, SharedFileTokenizer<BertTokenizer>> BertFileCache = new Dictionary<string, SharedFileTokenizer<BertTokenizer>>();
+    static readonly Dictionary<string, SharedFileTokenizer<BertTokenizer>> BertFileCache = new Dictionary<string, SharedFileTokenizer<BertTokenizer>>(TokenizerFilePathComparer);
     static readonly object BertFileCacheGate = new object();
 
     /// <summary>Loads (downloading when absent) and caches the named BERT tokenizer.</summary>
@@ -263,7 +266,7 @@ public class Text
     /// synchronized; calling Encode on a returned instance directly from
     /// several threads is not.
     /// </remarks>
-    static readonly Dictionary<string, SharedFileTokenizer<XLMRobertaTokenizer>> RobertaCache = new Dictionary<string, SharedFileTokenizer<XLMRobertaTokenizer>>();
+    static readonly Dictionary<string, SharedFileTokenizer<XLMRobertaTokenizer>> RobertaCache = new Dictionary<string, SharedFileTokenizer<XLMRobertaTokenizer>>(TokenizerFilePathComparer);
     static readonly object RobertaCacheGate = new object();
 
     const string Me5sTokenizerFileName = "me5s-sentencepiece.bpe.model";
@@ -408,6 +411,9 @@ public class Text
         Func<string, TTokenizer> load,
         string assetKind)
     {
+        // Resolve once so identity, lookup and loading refer to the same file,
+        // even when the caller uses a relative path or dot segments.
+        if (!string.IsNullOrEmpty(path)) path = Path.GetFullPath(path);
         lock (cacheGate)
         {
             var identity = TokenizerFileIdentity(path);
