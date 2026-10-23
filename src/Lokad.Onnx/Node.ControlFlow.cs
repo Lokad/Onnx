@@ -73,6 +73,7 @@ public partial struct Node
         foreach (string name in GraphCaptures.FreeVariables(branch)) captures.Add(name, graph.GetInputTensor(name));
         var execution = branch.CreateExecution(options);
         execution.BindCaptures(captures);
+        execution.RequestSymbols = graph.RequestSymbols;
         bool succeeded = false;
         try
         {

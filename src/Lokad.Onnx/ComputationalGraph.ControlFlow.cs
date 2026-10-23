@@ -4,6 +4,8 @@ public partial class ComputationalGraph
 {
     internal Dictionary<long, string[]>? nodeReadNames;
     internal IReadOnlyDictionary<string, ITensor>? CapturedInputs;
+    // Borrowed by selected child executions; cleared when this run completes.
+    internal Dictionary<string, int>? RequestSymbols;
     List<SubgraphExecutionInfo>? subgraphExecutions;
 
     /// <summary>Separate diagnostics for nested executions, keyed by their owning node and branch.</summary>

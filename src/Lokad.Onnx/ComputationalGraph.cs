@@ -839,6 +839,7 @@ public partial class ComputationalGraph
         }
         finally
         {
+            RequestSymbols = null;
             LastRunTime = Stopwatch.GetElapsedTime(start);
             LastAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocStart;
             LastGcCollections = new int[] { GC.CollectionCount(0) - gc0, GC.CollectionCount(1) - gc1, GC.CollectionCount(2) - gc2 };
@@ -850,7 +851,7 @@ public partial class ComputationalGraph
         if (!ValidateRunOptions()) return false;
         if (_preparationError is not null) return Fail(_preparationError);
         SeedDeclaredOutputs();
-        var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
+        var symbolic = RequestSymbols ??= new Dictionary<string, int>(StringComparer.Ordinal);
         if (userInputs is ITensor[] uia)
         {
             if (!ResolveInputs(uia, useInitializers, symbolic))
