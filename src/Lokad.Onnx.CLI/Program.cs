@@ -555,17 +555,22 @@ class Program
         Info("Graph has input tensors: {i}", m.Inputs.Select(t => t.Describe()));
         Info("Graph has output tensors: {o}", m.Outputs.Select(t => t.Describe()));
         Info("Graph has initializer tensors: {i}", m.Initializers.Select(t => t.Describe()));
+        void AddTensorRole(OnnxValueInfo tensor, string role)
+        {
+            var description = tensors.TryGetValue(tensor.Name, out var existing) ? existing : tensor.Describe();
+            tensors[tensor.Name] = description + "<" + role + ">";
+        }
         foreach (var t in m.Initializers)
         {
-            tensors.Add(t.Name, t.Describe() + "<initializer>");
+            AddTensorRole(t, "initializer");
         }
         foreach (var t in m.Inputs)
         {
-            if (!tensors.ContainsKey(t.Name)) tensors.Add(t.Name, t.Describe() + "<input>");
+            AddTensorRole(t, "input");
         }
         foreach (var t in m.Outputs)
         {
-            tensors.Add(t.Name, t.Describe() + "<output>");
+            AddTensorRole(t, "output");
         }
         foreach (var n in m.Nodes)
         {
@@ -594,6 +599,7 @@ class Program
                 float[] fa => "float[] " + fa.Print(),
                 string s => "string " + s,
                 string[] sa => "string[] " + sa.Print(),
+                OnnxSubgraph graph => $"graph {graph.Name} ({graph.Inputs.Count} inputs, {graph.Outputs.Count} outputs, {graph.Initializers.Count} initializers, {graph.Nodes.Count} nodes)",
                 _ => throw new NotSupportedException(value.GetType().Name), 
             };
         if (opfilter is null)
