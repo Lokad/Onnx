@@ -150,12 +150,14 @@ namespace Lokad.Onnx
         public static ProfilerContext BeginExecution(bool enabled)
         {
             var current = ambient.Value;
-            if (!enabled && (current is null || !current.Enabled))
-                return shared;
             var ctx = new ProfilerContext(enabled, current, false, current is not null && current.WallOnly);
             ambient.Value = ctx;
             return ctx;
         }
+
+        // The shared disabled context never escapes through the public scope API.
+        internal static ProfilerContext BeginGraphExecution() =>
+            ambient.Value is { Enabled: true } ? BeginExecution() : shared;
 
         internal static void Restore(ProfilerContext? previous) => ambient.Value = previous;
 

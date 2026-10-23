@@ -83,12 +83,12 @@ public class LoggingCostTests
     }
 
     [Fact]
-    public void DisabledProfiler_SharesContext()
+    public void DisabledProfiler_PublicScopesAreIndependent()
     {
         using (var first = Profiler.BeginExecution(false))
         using (var second = Profiler.BeginExecution(false))
         {
-            Assert.Same(first, second);
+            Assert.NotSame(first, second);
             Assert.Empty(first.Profile);
             Profiler.StartNodeProfile(1, OpType.Relu);
             Profiler.StopNodeProfile();

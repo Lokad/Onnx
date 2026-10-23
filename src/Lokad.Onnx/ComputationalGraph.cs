@@ -876,7 +876,7 @@ public partial class ComputationalGraph
         List<DeferredRelease>? pendingRelease = null;
         using var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
 
-        using var profilerScope = Profiler.BeginExecution();
+        using var profilerScope = Profiler.BeginGraphExecution();
         using var poolScope = new ExecutionPoolScope(this, Options.Tensor.DisableBufferPool);
         var nodeOptions = Options with
         {
@@ -1220,7 +1220,7 @@ public partial class ComputationalGraph
                 }
             }
         }
-        using var profilerScope = Profiler.BeginExecution();
+        using var profilerScope = Profiler.BeginGraphExecution();
         OpResult r;
         try
         {
