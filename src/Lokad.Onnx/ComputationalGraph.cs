@@ -546,9 +546,11 @@ public partial class ComputationalGraph
         var requiredInputs = new Dictionary<string, ITensor?>(Inputs);
         if (useInitializers)
         {
+            var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
             foreach (var i in Inputs.Keys)
             {
-                if (InitializerBacksInput(i)) requiredInputs.Remove(i);
+                symbolic.Clear();
+                if (InitializerBacksInput(i, symbolic)) requiredInputs.Remove(i);
             }
         }
         return requiredInputs;
@@ -559,17 +561,29 @@ public partial class ComputationalGraph
     /// Never mutates bindings; <see cref="ApplyInitializerBindings"/> publishes the
     /// substitution after successful validation.
     /// </summary>
-    bool InitializerBacksInput(string i)
+    bool InitializerBacksInput(string i, Dictionary<string, int> symbolic)
     {
         if (!Initializers.TryGetValue(i, out var ii)) return false;
         var declared = FindInputDesc(i);
         Inputs.TryGetValue(i, out var bound);
-        var dims = bound?.Dims ?? declared?.Dims;
-        var elementType = bound?.ElementType ?? declared?.ElementType;
-        if (dims is not null && elementType is not null && ii.Dims.SequenceEqual(dims) && ii.ElementType == elementType) return true;
+        if (declared is not null
+            ? CheckDescriptorDims(declared, ii, symbolic, out _)
+            : bound is not null && ii.Dims.SequenceEqual(bound.Dims) && ii.ElementType == bound.ElementType)
+            return true;
         if (Log.IsEnabled(LogLevel.Error))
             Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), DescribeBoundInput(i));
         return false;
+    }
+
+    bool ValidateInitializerBindings(Dictionary<string, ITensor?> requiredInputs, Dictionary<string, int> symbolic)
+    {
+        foreach (var (name, declared) in Inputs)
+        {
+            if (requiredInputs.ContainsKey(name) || !Initializers.TryGetValue(name, out var initializer)) continue;
+            if (!CheckOneBoundInput(name, declared, initializer, symbolic, out var detail))
+                return Fail("Cannot use initializer for graph input {i}. {d}", name, detail ?? "Tensor shape or type does not match.");
+        }
+        return true;
     }
 
     /// <summary>
@@ -659,6 +673,11 @@ public partial class ComputationalGraph
                 validated.Add((key, userInputs[i]));
             }
         }
+        if (!ValidateInitializerBindings(requiredInputs, symbolic))
+        {
+            op.Abandon();
+            return false;
+        }
         foreach (var (key, value) in validated)
         {
             Info("Using user input {n} for graph input {i}.", value.TensorNameDesc(), DescribeBoundInput(key));
@@ -699,6 +718,11 @@ public partial class ComputationalGraph
                 op.Abandon();
                 return Fail("Cannot use user input {ui} for required input {ri}. Tensor type, rank or dimensions do not match. {d}", userInputs[kv.Key].TensorNameDesc(), DescribeBoundInput(kv.Key), detail ?? "");
             }
+        }
+        if (!ValidateInitializerBindings(requiredInputs, symbolic))
+        {
+            op.Abandon();
+            return false;
         }
         foreach (var kv in requiredInputs)
         {
