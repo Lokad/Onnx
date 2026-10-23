@@ -1,5 +1,7 @@
 # Label placement in identical e5 work — September 20, 2026
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/e5/fingerprint-model/label_diagnostic.py`.
+
 Balancing labels within each six-cycle block reduces the sensitivity of the
 control screen to their placement in the retained chronology. This supports
 testing a distinct locally balanced design. It does **not** change the failed
@@ -45,7 +47,7 @@ passing on a future host. The enabled-cache comparison remains unrun. A future
 design still needs prospectively fixed sampling and fresh matching A/A evidence;
 using a lucky seed or treating this diagnostic as qualification would be invalid.
 
-The [source](label_diagnostic.py) fixes 1,000 assignments per design, starting
+The [source](../../../archives/README.md) fixes 1,000 assignments per design, starting
 with seed `20260920 + 100*visit + caseIndex + 10000*replicate`, using the original
 LCG/Fisher–Yates arithmetic. Full original reconstruction and every simulated
 ratio/screen remain under `artifacts/e5-fingerprint-label-diagnostic-20260920`.

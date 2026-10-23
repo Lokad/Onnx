@@ -1,5 +1,7 @@
 # Parakeet: narrow the next experiment from the installed ORT evidence
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/observed-dense-where-results/review_current_gap.py`.
+
 The qualified product is `dddb60ef`: complete transcription takes **64.705703 s
 versus Microsoft ORT's 39.636305 s**, ratio **1.632486**. The masking change
 reduced latency by 4.436365% in its matched comparison. All release checks pass.
@@ -89,7 +91,7 @@ variation follows from this review. Padding remains a well-explained secondary
 target, with its actual frontend reflection/JIT behavior still requiring care.
 
 [All current group clocks and input identities](current-gap-20260924.json),
-[review implementation](review_current_gap.py),
+[review implementation](../../../archives/README.md),
 [complete application comparison](application-20260924.md),
 [padding routes](padding-routes-20260924.md),
 [actual padding call order](padding-call-order-20260924.md),

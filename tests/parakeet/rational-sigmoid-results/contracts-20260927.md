@@ -1,5 +1,7 @@
 # Rational sigmoid: focused correctness and generated-code checks pass
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/rational-sigmoid-source/prepare.py`.
+
 The fixed ORT-derived rational sigmoid passes all **12 focused tests normally
 and 12 with hardware intrinsics disabled**. Each mode checks 2,048,769 sweep
 values. Maximum absolute float error is **1.7881393e-7**, below the unchanged
@@ -41,7 +43,7 @@ pass; peak contract process-tree RSS is 341,430,272 bytes. Logging affected only
 the correctness processes. Ordinary-runtime timing uses a separate common consumer
 and retains the original 46-case screen, rounds, process order and every gate.
 
-[Candidate preparation](../rational-sigmoid-source/prepare.py),
+[Candidate preparation](../../../archives/README.md),
 [build and contract protocol](../rational-sigmoid-build/README.md),
 [performance protocol](../rational-sigmoid-screen/README.md),
 [underlying diagnosis](../sigmoid-execution-results/diagnosis-20260927.md).

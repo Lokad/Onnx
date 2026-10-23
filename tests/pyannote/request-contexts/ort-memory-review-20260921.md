@@ -1,5 +1,7 @@
 # ORT memory reuse and the pyannote request-lifetime change
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/audio/comparison/native_adapters.py`.
+
 Microsoft ORT's retained v1.29.0 source supports reusing temporary storage
 across executions while keeping caller-visible output allocations separate.
 This gives useful context for retaining Lokad embedding execution contexts
@@ -14,7 +16,7 @@ their SHA256 manifest. No download or new native execution was needed.
 
 In [session_options.h](https://github.com/microsoft/onnxruntime/blob/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/session_options.h#L112),
 memory-pattern planning, buffer reuse and the CPU memory arena default to
-enabled. The frozen [native adapter](../../audio/comparison/native_adapters.py)
+enabled. The frozen [native adapter](../../../archives/README.md)
 selects sequential CPU execution and one thread without overriding those
 three settings. Source defaults describe intended configuration; they do not
 establish that a particular model execution used a memory pattern.

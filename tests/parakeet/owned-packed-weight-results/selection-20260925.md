@@ -1,5 +1,7 @@
 # Actual Parakeet selection: one extra projection
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/owned-packed-weight-results/selection.py`.
+
 The first real-model census rejected the initial owned-weight candidate before
 transcription: it converted **88 weights instead of the intended 87**. All 87
 intended feed-forward weights were selected. The nine targets with existing
@@ -32,4 +34,4 @@ consumer builds without warnings and completes one model load without inference
 or forced collection. All failed and successful results are retained. The
 diagnostic closure is `fcbde9b4797d0fabfd03a883546296f516996b8f9b44c221fff24458ddebf1af`.
 [Exact loaded observations and graph comparison](selection-20260925.json) are
-published by the [read-only analysis](selection.py).
+published by the [read-only analysis](../../../archives/README.md).

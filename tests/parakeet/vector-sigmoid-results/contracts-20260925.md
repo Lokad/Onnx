@@ -1,5 +1,7 @@
 # Vector Sigmoid: compiled scope and numerical qualification
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/vector-sigmoid-source/Sigmoid.cs.txt`, `tests/parakeet/vector-sigmoid-source/SigmoidVectorTests.cs.txt`.
+
 The isolated candidate changes only `CPUExecutionProvider.Sigmoid` over M78.
 It uses the existing portable-vector exponential for float blocks and retains
 scalar tails, disabled-SIMD behavior, materialization, ownership and doubles.
@@ -44,5 +46,5 @@ Numerical closure:
 
 Raw evidence: `artifacts/parakeet-vector-sigmoid-build-amd-20260925`.
 [Preparation and execution](../vector-sigmoid-build/README.md),
-[candidate method](../vector-sigmoid-source/Sigmoid.cs.txt),
-[focused tests](../vector-sigmoid-source/SigmoidVectorTests.cs.txt).
+[candidate method](../../../archives/README.md),
+[focused tests](../../../archives/README.md).

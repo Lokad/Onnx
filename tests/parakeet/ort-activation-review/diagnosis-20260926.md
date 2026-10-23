@@ -1,5 +1,7 @@
 # Parakeet: the activation routine actually executed by ORT
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/ort-activation-review/analyze.py`.
+
 **The retained runtime samples identify `MlasSiluKernelAvx512F` in the installed
 ORT binary.** It computes sigmoid and multiplication by the original input
 together, using an AVX-512 rational approximation. This closes the earlier gap
@@ -76,7 +78,7 @@ the copy. All subsequent work used local files. Original sample, profile and
 failed-screen closures remain unchanged.
 
 [Machine-readable evidence](diagnosis-20260926.json),
-[read-only analyzer](analyze.py),
+[read-only analyzer](../../../archives/README.md),
 [original graph/source diagnosis](../packed-final-row-profile-results/diagnosis-20260925.md),
 [current-root profile](../owned-batch-isolation-profile-results/diagnosis-20260925.md),
 [rejected screen](../vector-sigmoid-results/screen-20260925.md).

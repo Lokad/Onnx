@@ -1,5 +1,7 @@
 # Parakeet sigmoid: arithmetic is the next bounded intervention
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/sigmoid-execution-results/summarize.py`.
+
 The completed diagnostic supports replacing general exponential evaluation with
 the rational logistic arithmetic observed in ORT. It does **not** establish a
 cycle-by-cycle explanation of the remaining difference. No product changed and
@@ -67,7 +69,7 @@ gate-Sigmoid leaf was not identified by the SiLU samples. The exact ORT SiLU
 algorithm still supplies a concrete arithmetic hypothesis for sigmoid.
 
 [All 46 cases and selected generated loops](observations-20260927.json),
-[read-only summary](summarize.py),
+[read-only summary](../../../archives/README.md),
 [actual ORT instructions and samples](../ort-activation-review/diagnosis-20260926.md),
 [complete current attribution](../pad-current-profile-results/diagnosis-20260927.md),
 [original rejected screen](../vector-sigmoid-results/screen-20260925.md).

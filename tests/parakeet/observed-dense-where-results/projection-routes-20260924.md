@@ -1,5 +1,7 @@
 # Parakeet: actual projection routes narrow the next experiment
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/observed-dense-where-results/review_projection_routes.py`, `tests/parakeet/observed-dense-where-results/review_projection_copy.py`.
+
 The qualified release remains **64.705703 s versus ORT 39.636305 s**, ratio
 **1.632486**. This investigation changes no product or benchmark result.
 
@@ -85,8 +87,8 @@ is retained; correction accounts explicitly for all 1,920 positional observation
 and matches their actual ORT shapes. No model execution was repeated to fix analysis.
 
 [Every route, shape, matched group and receipt](projection-routes-20260924.json),
-[route analysis](review_projection_routes.py),
+[route analysis](../../../archives/README.md),
 [shared-slice/source proof](projection-copy-20260924.json),
-[copy-path review](review_projection_copy.py),
+[copy-path review](../../../archives/README.md),
 [compiled observer scope](projection-build-20260924.md),
 [exact ORT native-kernel investigation](../ort-diagnosis-results/ort-kernels-20260924.md).

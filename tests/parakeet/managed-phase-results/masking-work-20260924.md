@@ -1,5 +1,7 @@
 # Parakeet masking and padding: where the index work comes from
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/masking-padding-layout-amd/work_counts.py`.
+
 The matched corpus and pinned sources predict **at least 1.63 billion
 coordinate-calculation loop steps** in Lokad's Where condition access and Pad
 copying per twenty-clip corpus. ORT works over contiguous spans and rows.
@@ -69,5 +71,5 @@ Reproduction: `C:/Python313/python.exe -X utf8 -B tests/parakeet/masking-padding
 (exclusive output; the current analysis is already closed).
 Evidence: `artifacts/parakeet-masking-padding-work-counts-20260924`.
 Closure: `21b37b9aaf36b8753717c190f97b2dc695413a98666eb28f229d470df292b4e8`.
-The [analyzer](../masking-padding-layout-amd/work_counts.py) verifies the corpus,
+The [analyzer](../../../archives/README.md) verifies the corpus,
 closed attribution and source identities before deriving these counts.

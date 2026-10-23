@@ -1,5 +1,7 @@
 # Parakeet stem: most of the difference is depthwise convolution
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/stem-diagnosis/review.py`.
+
 The two 3×3 depthwise convolutions explain **80.66% of the matched stem
 difference**. They take **1.534429 s in M78 versus 0.043986 s in ORT** per
 20-clip corpus. This is a more specific target than the whole stem or another
@@ -111,7 +113,7 @@ failure. Repository allocation was last measured at 45.31 GB; this diagnosis
 adds only source and report files.
 
 [All stem means](stem-20260925.csv), [all shapes, counts and source identities](diagnosis-20260925.json),
-[reconciliation code](review.py). Raw evidence is under
+[reconciliation code](../../../archives/README.md). Raw evidence is under
 `artifacts/parakeet-stem-diagnosis-20260925`.
 
 Closure: `469e436bf873876ff547db99ec1f42f2f6afd4da7669e83f911f039848944ca9`.

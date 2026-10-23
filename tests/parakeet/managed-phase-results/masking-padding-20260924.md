@@ -1,5 +1,7 @@
 # Parakeet masking and padding: complete matched work
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/managed-phase-amd/compare_masking_padding.py`.
+
 The 72 float selection operations and48 padding operations, including their
 input construction, cost **6.207072 profiled seconds in Lokad versus0.144281
 in Microsoft ORT**: a **6.062791-second difference** per twenty-clip corpus.
@@ -74,4 +76,4 @@ Closure: `0299d2e1d273b2651d45209cb7c9dffb623ae4149cf0cb5eed23eaf89d842e76`.
 Raw evidence: `artifacts/parakeet-masking-padding-attribution-20260924`.
 [Every matched operation](masking-padding-20260924.csv),
 [shared work, source identities and limitations](masking-padding-observations-20260924.json),
-and [analysis implementation](../managed-phase-amd/compare_masking_padding.py).
+and [analysis implementation](../../../archives/README.md).

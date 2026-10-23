@@ -1,5 +1,7 @@
 # Parakeet: original-weight ownership
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/weight-ownership-results/publish.py`.
+
 The ownership prediction passed. Removing two sets of references made all 96
 original feed-forward weight arrays collectible while all 37 existing packed
 copies retained their identities and bytes. Live managed memory fell by
@@ -56,7 +58,7 @@ Capture completed in 8.578 seconds with 17 resource samples and sampled peak RSS
 experiment and is not a transcription benchmark.
 
 [Audited snapshots, public result and source identities](ownership-20260925.json)
-are published by [publish.py](publish.py). Closure:
+are published by [publish.py](../../../archives/README.md). Closure:
 `abe97a41fbb60648a6ee55968cd5e36c861ac908603336bd2f465379cbb1f3cd`.
 The isolated Core still lacks release admission because two e5 repeatability
 controls failed. Product source and `BENCHMARK.md` remain unchanged.

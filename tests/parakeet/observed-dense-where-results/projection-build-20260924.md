@@ -1,5 +1,7 @@
 # Parakeet projection observer: compiled scope
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/observed-dense-where-results/review_projection_build.py`.
+
 The diagnostic build passes with Core **f95a13c5 unchanged byte for byte**.
 All eight AMD build jobs completed successfully. The isolated Data observer is
 65cd9716. The subsequent full-corpus capture is now closed; see the
@@ -32,7 +34,7 @@ second-worker memory refusal and its phase-only recovery are retained. No
 performance admission or change to BENCHMARK.md follows from this build.
 
 [Complete review](projection-build-20260924.json),
-[exact correction](review_projection_build.py),
+[exact correction](../../../archives/README.md),
 [frozen observation protocol](../projection-route-amd/README.md).
 
 Build review SHA256: 74c37c401fb7213480bb9c09ef7f9a3124fd669552e328e4deab8d28abd7b4aa.

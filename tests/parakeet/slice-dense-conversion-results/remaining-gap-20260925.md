@@ -1,5 +1,7 @@
 # Remaining Parakeet work after the positional-copy candidate
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/slice-dense-conversion-results/review_remaining_gap.py`.
+
 The candidate passes the [fresh application comparison](application-20260925.md):
 60.851605 seconds versus current64.941221 and ORT39.793582, a6.297410% gain
 and1.529181 ORT ratio. It still needs downstream release qualification.
@@ -40,6 +42,6 @@ remain distinct from sampled native execution. Finish the current candidate's
 release checks before selecting another product change.
 
 All[matched nodes, phases and source receipts](remaining-gap-20260925.json)
-and the[read-only reviewer](review_remaining_gap.py) are retained. The exact
+and the[read-only reviewer](../../../archives/README.md) are retained. The exact
 ORT binary and native routine remain documented in the
 [native investigation](../ort-diagnosis-results/ort-kernels-20260924.md).

@@ -1,5 +1,7 @@
 # ORT Parakeet padding obtains no new arena space in measured calls
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/pad-memory-results/inspect_ort.py`.
+
 The existing exact-model ORT profile already contains the allocator counters
 needed to narrow this investigation. All **2,880 measured encoder Pad calls**
 have zero change in both requested live bytes and arena live bytes, and zero
@@ -63,7 +65,7 @@ duration sweep or allocator implementation follows from this report alone.
 
 [All observed calls](ort-pad-allocations-20260926.csv),
 [verified inputs and per-request totals](ort-allocation-observations-20260926.json),
-[reader](inspect_ort.py). The reader verifies the original closed receipt,
+[reader](../../../archives/README.md). The reader verifies the original closed receipt,
 collection, raw profile, adapter and manifest, and hashes seven pinned ORT
 source files. Original profile closure: `615353b4d8524f8935076357c0949859553c27826d50d53ebd82fb002d146a85`.
 The release comparison remains 53.107381 versus 39.207695 seconds.

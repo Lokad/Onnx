@@ -1,5 +1,7 @@
 # Narrow the next Parakeet investigation to pointwise matrix execution
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/decoder-lstm-layout-profile-results/projection_review.py`.
+
 The [fresh complete partition](diagnosis-20260927.md) changes the priority.
 Decoder time is 1.933698 seconds managed versus 2.008664 seconds in ORT.
 Further decoder tuning has a weaker justification than the remaining encoder
@@ -27,7 +29,7 @@ new dump of internal buffers or per-node native kernel sampling.
 | Stem output | 1 | 0.273825 | 0.220776 | 0.053049 |
 
 [Exact members and shape checks](projection-breakdown-20260927.json) come from
-[the read-only calculation](projection_review.py). No historical clocks or new
+[the read-only calculation](../../../archives/README.md). No historical clocks or new
 inference contribute. The 120 square attention projections together differ by
 1.554389 seconds. A generic matrix-kernel change would mix their prepared and
 unprepared routes with the separate owned feed-forward path.

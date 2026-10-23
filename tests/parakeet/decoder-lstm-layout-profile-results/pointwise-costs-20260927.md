@@ -1,5 +1,7 @@
 # Pointwise arithmetic dominates; target column remainders
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/decoder-lstm-layout-profile-results/pointwise_cost_review.py`.
+
 The scoped observation accounts for all 3,840 pointwise calls in the original
 80-request Parakeet workload. **Arithmetic consumes 95.77% of pointwise time.**
 All inputs and weights already have dense storage. Input packing is only
@@ -98,5 +100,5 @@ Observed Core: `66b6f7f39bf943f71b011167b5741a1ff52be3f83fdf4bacebc66e7f6cb23cab
 All owners are terminal. Do not replay preparation, builds, captures or audit.
 
 [Machine-readable totals and shape fits](pointwise-cost-observations-20260927.json)
-come from the [read-only review](pointwise_cost_review.py), which verifies the
+come from the [read-only review](../../../archives/README.md), which verifies the
 closed evidence and retains all measured calls. No candidate has been built yet.

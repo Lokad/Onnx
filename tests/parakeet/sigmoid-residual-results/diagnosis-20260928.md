@@ -1,5 +1,7 @@
 # What the exact Parakeet comparison establishes
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/sigmoid-residual-results/review.py`.
+
 The qualified release remains **43.459339 seconds versus ORT 39.202810 seconds**,
 or **10.86% more time**. This diagnostic changes no product or benchmark score.
 
@@ -82,7 +84,7 @@ No inference, export or collection was repeated, and no acceptance check was
 relaxed.
 
 [Exact observations and input hashes](observations-20260928.json),
-[read-only review](review.py),
+[read-only review](../../../archives/README.md),
 [complete preceding node attribution](../transpose-axis-profile-results/diagnosis-20260928.md),
 [native SiLU proof](../ort-activation-review/diagnosis-20260926.md).
 

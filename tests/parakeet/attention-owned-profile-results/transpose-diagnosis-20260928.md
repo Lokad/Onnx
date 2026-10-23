@@ -1,5 +1,7 @@
 # One remaining Parakeet cost: move axis 1 to the end
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/attention-owned-profile-results/transpose_review.py`.
+
 The fresh, qualified application profiles isolate **0.858205 seconds** of
 excess time in 96 encoder transpose nodes. This is 95.6% of the complete
 transpose group's 0.897723-second difference. These clocks are diagnostic;
@@ -62,5 +64,5 @@ closed.
 
 [Full fresh application attribution](diagnosis-20260928.md).
 [Exact projection decomposition](projection-breakdown-20260928.json).
-[Read-only reproduction script](transpose_review.py) writes a new report once;
+[Read-only reproduction script](../../../archives/README.md) writes a new report once;
 the published result must never be overwritten or used to relaunch a capture.

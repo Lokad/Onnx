@@ -1,5 +1,7 @@
 # Parakeet owned packed weights: integration contracts
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/owned-packed-weight-results/publish.py`.
+
 The isolated candidate passes its focused graph and numerical contracts in
 normal, AVX512-disabled and hardware-intrinsics-disabled execution. It has not
 run the real model or established an application speedup. The qualified release
@@ -49,4 +51,4 @@ failures remain unresolved and continue to prevent release promotion.
 The repository inventory records 43.668 GB allocated and 53.027 GB logical file
 sizes; existing NTFS compression accounts for the distinction. No new model
 assets were downloaded. [Exact evidence and retained failures](contracts-20260925.json)
-are produced by the [read-only publisher](publish.py). Closure: `3fc949cad141d2a1fef1e3913436920f87f3cecb92f1bce94892c1037bc080f4`.
+are produced by the [read-only publisher](../../../archives/README.md). Closure: `3fc949cad141d2a1fef1e3913436920f87f3cecb92f1bce94892c1037bc080f4`.

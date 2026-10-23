@@ -1,5 +1,7 @@
 # Guarded slice materialization: copying contracts pass
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/slice-materialization-build-amd/correct_mode.py`.
+
 The isolated candidate passes **369/369 tensor tests with AVX-512 enabled and
 369/369 with it disabled**, with no skips. Both modes consume the same Core and
 test binaries. An explicit test checks the loaded Core hash, one visible
@@ -60,5 +62,5 @@ TRX files, the final closure and retained failures. Raw evidence is under
 `artifacts/parakeet-slice-materialization-build-amd-v2-20260924` and
 `artifacts/parakeet-slice-materialization-mode-amd-20260924`.
 The corrected source is `artifacts/parakeet-slice-materialization-source-v2-20260924`.
-Use [the correction controller](../slice-materialization-build-amd/correct_mode.py)
+Use [the correction controller](../../../archives/README.md)
 for provenance; its stage is closed and must not be observed again.

@@ -1,12 +1,14 @@
 # Exact pointwise matrix paths and the remaining attribution question
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/decoder-lstm-layout-profile-results/pointwise_review.py`.
+
 The next observation should separate arithmetic from materialization, clearing
 and packing inside the 48 encoder pointwise convolutions. Their fresh profiled
 times are 6.419682 seconds in Lokad and 4.390779 seconds in ORT. The source
 comparison identifies specific differences, but it does not establish which
 difference explains those 2.028903 seconds.
 
-The [read-only review](pointwise_review.py) checks all 48 nodes and their 3,840
+The [read-only review](../../../archives/README.md) checks all 48 nodes and their 3,840
 calls, including warmups, against the closed fresh native profile. It verifies
 all 19 output widths and the relevant managed files against qualified source
 `edc1a6c8`. It also verifies both retained stack exports against their recorded

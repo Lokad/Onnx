@@ -1,5 +1,7 @@
 # Parakeet: one packed payload preserves logical values
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/packed-logical-weight-results/publish.py`.
+
 The standalone representation passes **all 48 directed cases**. One packed
 array can preserve the logical weight values and feed the existing arithmetic
 routines without retaining its original array. This is a correctness and
@@ -50,7 +52,7 @@ sampled peak RSS 434,663,424 bytes; the hardware-disabled process completed in
 0.507 seconds. These are probe execution times, not model latency measurements.
 
 [Every case, output hash, instruction flag and resource result](representation-20260925.json)
-is published by [publish.py](publish.py). Closure:
+is published by [publish.py](../../../archives/README.md). Closure:
 `021b990189a2162d9b0b2db991d789434dba177c333b4fa5b97526661e9f8e89`.
 The [preceding ownership experiment](../weight-ownership-results/ownership-20260925.md)
 and [measured packing cost](../feed-forward-cost-results/diagnosis-20260925.md)

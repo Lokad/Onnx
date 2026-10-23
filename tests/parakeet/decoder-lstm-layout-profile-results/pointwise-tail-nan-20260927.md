@@ -1,5 +1,7 @@
 # The masked-tail failure is multiply operand order
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/pointwise-tail-nan-diagnostic/explain.py`.
+
 The first eight-row remainder candidate passes 2,598 normal-mode cases but fails
 260 exceptional AVX512-disabled cases. All finite cases and both 12-case public
 scalar comparisons pass. Every first failure is in masked remainder columns.
@@ -46,7 +48,7 @@ Original failed closure `58cb4026` remains under
 under `artifacts/parakeet-pointwise-tail-nan-diagnostic-20260927`: `review.json`,
 `explanation.json` (`8cb34b8e`) and disassembly (`a294c853`). Build owner 1219717 /
 birth1790528673.06 and capture owner 1220008 / birth1790528689.86 are terminal;
-collections contain 33 and 41 files. Reproduction: [explain.py](../pointwise-tail-nan-diagnostic/explain.py).
+collections contain 33 and 41 files. Reproduction: [explain.py](../../../archives/README.md).
 Repair procedure: [README](../pointwise-tail-operand-contracts-amd/README.md).
 
 ## Source-order repair did not alter generated code

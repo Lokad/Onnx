@@ -735,11 +735,6 @@ class Program
 
     public static void Exit(ExitResult result)
     {
-        if (Cts != null && !Cts.Token.CanBeCanceled)
-        {
-            Cts.Cancel();
-            Cts.Dispose();
-        }
         Environment.Exit((int)result);
     }
 

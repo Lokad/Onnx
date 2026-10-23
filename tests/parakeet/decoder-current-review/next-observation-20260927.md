@@ -1,5 +1,7 @@
 # Resolve the decoder projection question with one bounded observation
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/decoder-lstm-capture-amd/Capture.cs`, `tests/parakeet/packed-final-row-counters/Program.cs.txt`, `tests/parakeet/ort-diagnosis-amd/observer.py`, `tests/parakeet/ort-diagnosis-amd/audit_native.py`.
+
 The decision is whether to let the final one-row projection consume its existing
 prepared B layout. Keep the current vector width, four accumulators, reduction
 order, scalar tail and ownership fixed if an implementation follows. The observed
@@ -76,12 +78,12 @@ References: [current decoder partition](README.md),
 [accumulator caveat](packed-row-caveat-20260927.md),
 [current MatMul implementation](../../../src/Lokad.Onnx/TensorOps.MatMul.cs),
 [whole-graph accounting](../../../src/Lokad.Onnx/ComputationalGraph.cs),
-[existing decoder capture](../decoder-lstm-capture-amd/Capture.cs), and
-[encoder-only counters](../packed-final-row-counters/Program.cs.txt).
+[existing decoder capture](../../../archives/README.md), and
+[encoder-only counters](../../../archives/README.md).
 
 Clock sources: `onnxruntime/core/common/profiler.cc`, `profiler.h`, and
 `include/onnxruntime/core/common/common.h`, read with `git show` at the revision
 above; retained `artifacts/parakeet-ort-diagnosis-amd-20260924/collected/profile/observation.json`;
-[original observer](../ort-diagnosis-amd/observer.py) and
-[perf clock validation](../ort-diagnosis-amd/audit_native.py). This is source and
+[original observer](../../../archives/README.md) and
+[perf clock validation](../../../archives/README.md). This is source and
 retained-data review, not a completed combined capture.

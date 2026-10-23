@@ -1,5 +1,7 @@
 # Feed-forward diagnosis: distinguish preparation cost from arithmetic
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/slice-dense-conversion-results/review_feed_forward.py`.
+
 The slice-conversion candidate leaves **4.404191 seconds of profiled excess**
 across the two large feed-forward projection families compared with the earlier
 ORT profile. This is diagnostic attribution, not a predicted application gain.
@@ -51,4 +53,4 @@ implementation. Do not infer packing duration from requested bytes or restart
 the rejected inclusive-admission comparison.
 
 [Exact source objects, routes, prior rejection and provenance](feed-forward-review-20260925.json)
-are retained with the [read-only reviewer](review_feed_forward.py).
+are retained with the [read-only reviewer](../../../archives/README.md).

@@ -1,5 +1,7 @@
 # Padding: diagnose allocation behavior before another screen
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/pad-current-results/inspect_variation.py`, `tests/parakeet/pad-dispatch-source/Zzz.LastAxisPadDispatch.cs`.
+
 The current-root screen remains **rejected**. All twelve no-regression gates
 pass, but six candidate repeatability controls fail. The 94.7943% reduction in
 the eight primary synthetic cases is not an admitted application result.
@@ -73,14 +75,14 @@ before running it. No allocator change, kernel variant, longer-prefix retry,
 rescoring or full-model qualification is selected by this review.
 
 All 3,432 fixed blocks and all 48 suffix distributions are accounted for by
-[the reader](inspect_variation.py), [observations](variation-observations-20260926.json)
+[the reader](../../../archives/README.md), [observations](variation-observations-20260926.json)
 and [block distributions](variation-blocks-20260926.csv). It verifies every
 consumed raw file against its closed receipt and hashes both pinned ORT files.
 It performs no build, inference, download or VM action. The original screen's
 verdict and clocks remain in [the screen report](screen-20260926.md).
 
 Sources: [managed allocation](../../../src/Lokad.Onnx/DenseTensor.cs),
-[candidate helper](../pad-dispatch-source/Zzz.LastAxisPadDispatch.cs),
+[candidate helper](../../../archives/README.md),
 [ORT Pad](https://github.com/microsoft/onnxruntime/blob/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/providers/cpu/tensor/pad.cc),
 [ORT execution frame](https://github.com/microsoft/onnxruntime/blob/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/execution_frame.cc),
 [current attribution](../owned-batch-isolation-profile-results/diagnosis-20260925.md).

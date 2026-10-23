@@ -1,5 +1,7 @@
 # Rational sigmoid: fallback evidence narrows the next decision
 
+Historical producer sources are [archived](../../../archives/README.md). Restore them before running the original commands below. The source links refer to these original archive paths: `tests/parakeet/rational-sigmoid-results/analyze_fallback.py`.
+
 The additional observation used the exact qualified root and rejected rational
 candidate, with no product change. The ordinary screen remains **rejected**:
 74.992572% weighted reduction, 13 failed repeatability controls and four failed
@@ -66,7 +68,7 @@ explicitly. Application timing needs its own prospective decision and original
 gates after numerical correctness, before any source or BENCHMARK.md promotion.
 
 [Every case/process counter partition and generated scalar loop](fallback-observations-20260927.json),
-[read-only analyzer](analyze_fallback.py),
+[read-only analyzer](../../../archives/README.md),
 [failed ordinary screen](screen-20260927.md),
 [focused numerical contracts](contracts-20260927.md),
 [diagnostic protocol](../rational-sigmoid-fallback-diagnostic-amd/README.md).
