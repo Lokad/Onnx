@@ -14,7 +14,8 @@ public class Data
 
     public static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput)
     {
-        var op = Begin("Converting {c} file argument(s) to tensors", args.Count());
+        ArgumentNullException.ThrowIfNull(args);
+        var op = Begin("Converting file arguments to tensors");
         var tensors = new List<ITensor>();
         int index = 0;
         foreach (string arg in args)
