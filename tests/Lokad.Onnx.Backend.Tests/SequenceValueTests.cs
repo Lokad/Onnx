@@ -14,10 +14,14 @@ public class SequenceValueTests
     public void Import_Accepts_SequenceType()
     {
         var vp = new ValueInfoProto { Name = "s" };
-        vp.Type = new TypeProto { SequenceType = new TypeProto.Types.Sequence() };
+        vp.Type = new TypeProto { SequenceType = new TypeProto.Types.Sequence
+        {
+            ElemType = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = 1 } }
+        } };
         var dto = vp.ToValueDto();
         Assert.Equal("s", dto.Name);
         Assert.Equal(TensorElementType.Sequence, dto.ElementType);
+        Assert.Equal(TensorElementType.Float, dto.SequenceElementType);
         Assert.Empty(dto.Dims);
     }
 

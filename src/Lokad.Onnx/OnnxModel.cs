@@ -30,6 +30,11 @@ public class OnnxValueInfo
     public string Name = "";
     public TensorElementType ElementType;
     /// <summary>
+    /// Tensor element type for sequence values. Null preserves legacy untyped
+    /// sequence descriptions. Element shapes and ranks may vary.
+    /// </summary>
+    public TensorElementType? SequenceElementType = null;
+    /// <summary>
     /// Per-dimension extents. A negative entry marks an anonymous unknown
     /// extent: it accepts any non-negative value without coupling to other
     /// dimensions. Use <see cref="DimParams"/> for shared symbolic extents.

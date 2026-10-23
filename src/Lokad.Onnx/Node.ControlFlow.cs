@@ -41,8 +41,7 @@ public partial struct Node
             if (td is not null && ed is not null)
             {
                 if (td.ElementType != ed.ElementType) return "If branch output types must agree.";
-                // Descriptors currently omit sequence element types, so they
-                // cannot establish the required agreement across branches.
+                // Sequence-valued If outputs are not implemented.
                 if (td.ElementType == TensorElementType.Sequence) return "If currently supports tensor outputs only.";
                 if (version > 0 && version < 11 && !td.Dims.SequenceEqual(ed.Dims))
                     return "Before opset 11, If branch output shapes must agree.";

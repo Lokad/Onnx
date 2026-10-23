@@ -292,10 +292,17 @@ public static class ProtoConversions
     {
         if (vp.Type is not null && vp.Type.ValueCase == TypeProto.ValueOneofCase.SequenceType)
         {
+            var element = vp.Type.SequenceType.ElemType;
+            if (element is null || element.ValueCase != TypeProto.ValueOneofCase.TensorType)
+                throw new NotSupportedException($"The sequence {vp.Name} requires a tensor element type; nested sequences, maps and optional elements are unsupported.");
+            var elementType = (TensorElementType)element.TensorType.ElemType;
+            if (TensorBase.ElementByteSize(elementType) < 0 || elementType == TensorElementType.Complex128)
+                throw new NotSupportedException($"The sequence {vp.Name} has unsupported tensor element type {elementType}.");
             return new OnnxValueInfo
             {
                 Name = vp.Name,
                 ElementType = TensorElementType.Sequence,
+                SequenceElementType = elementType,
                 Dims = Array.Empty<int>(),
                 DimParams = Array.Empty<string?>(),
             };

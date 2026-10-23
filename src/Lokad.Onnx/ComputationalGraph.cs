@@ -468,14 +468,23 @@ public partial class ComputationalGraph
     static bool CheckDescriptorDims(OnnxValueInfo desc, ITensor actual, Dictionary<string, int> symbolic, out string? message)
     {
         message = null;
-        // Sequence-typed descriptors accept sequence values (of any length)
-        // and reject tensors; lengths are irrelevant, only sequence-ness matters.
-        if (actual is TensorSequence)
+        // Sequence length and element shapes may vary; imported tensor element
+        // types constrain every item. Legacy untyped descriptions stay permissive.
+        if (actual is TensorSequence sequence)
         {
             if (desc.ElementType != TensorElementType.Sequence)
             {
                 message = $"Tensor {actual.Name} is a sequence but descriptor {desc.Describe()} is not.";
                 return false;
+            }
+            if (desc.SequenceElementType is { } elementType)
+            {
+                for (int i = 0; i < sequence.Items.Count; i++)
+                {
+                    if (sequence.Items[i] is INumericTensor && sequence.Items[i].ElementType == elementType) continue;
+                    message = $"The sequence element {i} of {desc.Name} must be a tensor of type {elementType}, but has type {sequence.Items[i].ElementType}.";
+                    return false;
+                }
             }
             return true;
         }
