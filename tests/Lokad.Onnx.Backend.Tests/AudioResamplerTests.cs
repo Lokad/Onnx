@@ -27,10 +27,15 @@ public class AudioResamplerTests
     public void OneSampleRequestsAllocateTheirOutputWithoutLargeSetupStorage(int sourceRate)
     {
         var input = new[] { .5f };
-        AudioResampler.Resample(input, 48000, 16000);
-        long start = GC.GetAllocatedBytesForCurrentThread();
-        var output = AudioResampler.Resample(input, sourceRate, 16000);
-        long allocated = GC.GetAllocatedBytesForCurrentThread() - start;
+        // Keep runner work off the measured thread, and warm the exact rate:
+        // coprime rates scan a much longer normalization loop than 48000 Hz.
+        var (output, allocated) = Task.Factory.StartNew(() =>
+        {
+            AudioResampler.Resample(input, sourceRate, 16000);
+            long start = GC.GetAllocatedBytesForCurrentThread();
+            var result = AudioResampler.Resample(input, sourceRate, 16000);
+            return (result, GC.GetAllocatedBytesForCurrentThread() - start);
+        }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default).GetAwaiter().GetResult();
         Assert.Single(output);
         Assert.InRange(allocated, 0, 1024);
         Assert.Equal(.5f, input[0]);
