@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory)][string]$Output,
-    [string]$L0Ref = 'b2ffb909',
+    [Parameter(Mandatory)][string]$L0Ref,
     [string]$L1Ref = 'HEAD'
 )
 $ErrorActionPreference = 'Stop'

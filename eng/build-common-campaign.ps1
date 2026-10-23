@@ -1,29 +1,38 @@
 # Build pinned cores from local git archives and one shared runner. No VM access,
 # fetch, worktree deletion or modification of another experiment's outputs.
 param([Parameter(Mandatory)][string]$Output,
-      [string]$L0Ref = "4495fc68b9505b0b6fab73146bd905424588218e",
+      [Parameter(Mandatory)][string]$L0Ref,
       [string]$L1Ref = "HEAD",
       [switch]$CoreOnly)
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $destination = [IO.Path]::GetFullPath($Output)
 if (Test-Path -LiteralPath $destination) { throw "Output already exists; choose a new directory: $destination" }
-New-Item -ItemType Directory -Path $destination | Out-Null
 Push-Location $root
 try {
+    $sources = @(
+        foreach ($role in @('L0', 'L1')) {
+            $reference = if ($role -eq 'L0') { $L0Ref } else { $L1Ref }
+            $revision = (& git rev-parse --verify --end-of-options "$reference^{commit}" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $revision -notmatch '^[0-9a-f]{40}$') { throw "Invalid source revision $reference" }
+            $adapterPaths = @(& git ls-tree -d --name-only $revision -- tools/Lokad.Onnx.Protobuf)
+            if ($LASTEXITCODE -ne 0) { throw "Cannot inspect adapter layout for $role" }
+            [pscustomobject]@{ Role=$role; Revision=$revision; HasAdapter=($adapterPaths.Count -gt 0) }
+        }
+    )
+    if ($sources[0].HasAdapter -ne $sources[1].HasAdapter) { throw 'Cannot compare integrated and separate importer assemblies with one unchanged runner. Choose both refs from the same importer era.' }
+    New-Item -ItemType Directory -Path $destination | Out-Null
     $sdk = (& dotnet --version | Out-String).Trim()
     if ($LASTEXITCODE -ne 0) { throw "Cannot resolve build SDK" }
-    foreach ($role in @("L0", "L1")) {
-        $reference = if ($role -eq "L0") { $L0Ref } else { $L1Ref }
-        $revision = (& git rev-parse --verify --end-of-options "$reference^{commit}" | Out-String).Trim()
-        if ($LASTEXITCODE -ne 0 -or $revision -notmatch '^[0-9a-f]{40}$') { throw "Invalid source revision $reference" }
+    foreach ($sourceInfo in $sources) {
+        $role = $sourceInfo.Role
+        $revision = $sourceInfo.Revision
+        $hasAdapter = $sourceInfo.HasAdapter
         $leg = Join-Path $destination $role
         New-Item -ItemType Directory -Path $leg | Out-Null
         $archive = Join-Path $leg "source.zip"
-        $adapterPaths = @(& git ls-tree -d --name-only $revision -- tools/Lokad.Onnx.Protobuf)
-        if ($LASTEXITCODE -ne 0) { throw "Cannot inspect adapter layout for $role" }
-        $hasAdapter = $adapterPaths.Count -gt 0
-        $archivePaths = @('src/Lokad.Onnx') + $adapterPaths
+        $archivePaths = @('src/Lokad.Onnx')
+        if ($hasAdapter) { $archivePaths += 'tools/Lokad.Onnx.Protobuf' }
         & git archive --format=zip --output=$archive $revision @archivePaths
         if ($LASTEXITCODE -ne 0) { throw "git archive failed for $role" }
         $source = Join-Path $leg "source"
@@ -45,8 +54,6 @@ try {
         } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $leg "build.json") -Encoding utf8
         Write-Host "$role built $revision with SDK $sdk"
     }
-    $layouts = @('L0', 'L1' | ForEach-Object { (Get-Content (Join-Path $destination "$_/build.json") -Raw | ConvertFrom-Json).importer_layout })
-    if ($layouts[0] -ne $layouts[1]) { throw 'Cannot compare integrated and separate importer assemblies with one unchanged runner. Choose both refs from the same importer era.' }
     if ($CoreOnly) {
         Write-Host "Prepared pinned core archives/binaries in $destination"
         return

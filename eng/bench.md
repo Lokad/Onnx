@@ -23,6 +23,8 @@ vectors. Add `--case gemma2-128tok --case gemma2-512tok` for both widths, or
 model assets; its `eng` directory need not contain this command. Gemma fixtures
 come from the existing [reference lane](../tests/embeddinggemma2/README.md).
 Uncommitted source changes are absent from prepared Git-archive builds.
+Both preparation scripts require `-L0Ref`; `-L1Ref` defaults to HEAD. Invalid or
+incompatible refs are rejected before output directories or builds are created.
 
 `report.json` contains every timed call, per-process medians, managed/ORT ratios,
 paired candidate/control ratios and process variation. The immutable worker

@@ -25,19 +25,19 @@ for the new evidence contract. The two paths must not run concurrently.
 From the repository root, choose a new output directory:
 
 ```powershell
-pwsh -NoProfile -File eng/build-common-campaign.ps1 -Output artifacts/common-prepared
+pwsh -NoProfile -File eng/build-common-campaign.ps1 -L0Ref <control-commit> -L1Ref <candidate-commit> -Output artifacts/common-prepared
 python eng/run_common_campaign.py --prepared artifacts/common-prepared --output artifacts/common-smoke --cpu 4 --kind comparison --smoke
 dotnet artifacts/common-prepared/runner/Lokad.Onnx.Campaign.dll selftest
 python eng/test_common_campaign.py
 python eng/test_campaign_scorer.py
 ```
 
-Choose a CPU that exists on the local machine. The build script archives the
-released commit `4495fc68b9505b0b6fab73146bd905424588218e` and candidate HEAD
-from existing local git objects, builds both cores with the current pinned
-SDK, and builds one runner against L0. Override `-L0Ref`/`-L1Ref` explicitly
-when comparing another accepted candidate. No fetch or worktree deletion
-occurs. The archive, its digest, build logs and per-core `build.json` remain
+Choose a CPU that exists on the local machine. `-L0Ref` is required; `-L1Ref`
+defaults to HEAD. Select both commits from the same importer era. Preparation
+resolves both references and checks compatibility before creating output or
+invoking dotnet. It archives existing local Git objects, builds both cores with
+the current pinned SDK, and builds one runner against L0. No fetch or worktree
+deletion occurs. The archive, its digest, build logs and per-core `build.json` remain
 in the prepared directory. Uncommitted core changes are deliberately absent
 from a git-archive build. The common runner compiles the current local
 workload sources; its actual compiled bundle is hashed.
