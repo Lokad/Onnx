@@ -53,6 +53,10 @@ must remain NaNs; their sign and payload may differ between separately compiled
 kernels. Finite outputs, signed zeros and infinities still compare bit-for-bit.
 Input and bias buffers, including every NaN payload bit, must remain unchanged.
 
+The e5 gate disables JIT on-stack replacement for deterministic children and
+restores its caller's prior setting on every exit. Public profiler scopes own
+their mutable state; graph execution uses a private disabled fast path.
+
 Some production methods intentionally have equal source arithmetic but different
 JIT compilation attributes or instruction widths. Examples are `MathOps.ErfVector`
 and `ErfVectorInline`, and `ExpVectorEstrinPruned` and its inline twin. Packed
