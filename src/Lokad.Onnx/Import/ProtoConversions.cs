@@ -335,7 +335,7 @@ public static class ProtoConversions
         switch (ap.Type)
         {
             case AttributeProto.Types.AttributeType.Int: return ap.I;
-            case AttributeProto.Types.AttributeType.Ints: return ap.Ints.Select(v => checked((int)v)).ToArray();
+            case AttributeProto.Types.AttributeType.Ints: return ap.Ints.ToArray();
             case AttributeProto.Types.AttributeType.Float: return ap.F;
             case AttributeProto.Types.AttributeType.Floats: return ap.Floats.ToArray();
             case AttributeProto.Types.AttributeType.Tensor: return ap.T.ToTensor(baseDirectory);

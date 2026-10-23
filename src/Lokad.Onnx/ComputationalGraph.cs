@@ -1274,7 +1274,9 @@ public partial class ComputationalGraph
         {
             var node = Nodes[i];
             node.ID = i;
-            NormalizeIntArrayAttributes(node.Attributes);
+            // Constant arrays are payloads: narrowing their values changes
+            // the output element type even when every value fits in int32.
+            if (node.Op != OpType.Constant) NormalizeIntArrayAttributes(node.Attributes);
             Nodes[i] = node;
         }
         var lastUse = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -1326,7 +1328,8 @@ public partial class ComputationalGraph
     /// Replaces lossless long integer-array attributes with integer arrays
     /// so steady-state runs read the stored values without converting.
     /// Values that would overflow stay untouched, keeping their run-time
-    /// failure behavior. Imported graphs already arrive canonicalized.
+    /// failure behavior. Constant payloads are excluded by the caller; both
+    /// imported and hand-built geometry attributes are canonicalized here.
     /// </summary>
     static void NormalizeIntArrayAttributes(Dictionary<string, object>? attributes)
     {

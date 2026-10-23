@@ -34,7 +34,7 @@ public class NodePreparationTests
     }
 
     [Fact]
-    public void ImportedIntArrayAttributes_ArriveCanonicalized()
+    public void ImportedIntArrayAttributes_PreserveOnnxWidth()
     {
         var attr = new AttributeProto { Name = "axes", Type = AttributeProto.Types.AttributeType.Ints };
         attr.Ints.Add(0L);
@@ -42,8 +42,8 @@ public class NodePreparationTests
         var node = new NodeProto { Name = "r", OpType = "ReduceMean" };
         node.Attribute.Add(attr);
         var dto = node.ToNodeDto(null);
-        var axes = Assert.IsType<int[]>(dto.Attributes["axes"]);
-        Assert.Equal(new int[] { 0, 1 }, axes);
+        var axes = Assert.IsType<long[]>(dto.Attributes["axes"]);
+        Assert.Equal(new long[] { 0, 1 }, axes);
     }
 
     [Fact]
