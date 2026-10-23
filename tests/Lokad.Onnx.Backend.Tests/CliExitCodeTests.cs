@@ -90,6 +90,17 @@ public class CliExitCodeTests
         Assert.Equal(0, RunCli("run", Mnist(), TestSupport.CommittedImage("mnist4.png") + "::mnist").Exit);
     }
 
+    [SkippableFact]
+    public void SingleNodeProfile_ExitsSuccessAndPrintsOneNode()
+    {
+        var result = RunCli("run", Mnist(), TestSupport.CommittedImage("mnist4.png") + "::mnist",
+            "--node", "Convolution28", "--profile", "--disable-simd");
+        Assert.Equal(0, result.Exit);
+        Assert.Contains("Total graph node count: 1", result.Output);
+        Assert.Contains("Per-op stage breakdown", result.Output);
+        Assert.DoesNotContain("Stack empty", result.Output + result.Error);
+    }
+
     static ValueInfoProto FloatInfo(string name) => new() { Name = name, Type = new TypeProto
         { TensorType = new TypeProto.Types.Tensor { ElemType = 1,
             Shape = new TensorShapeProto { Dim = { new TensorShapeProto.Types.Dimension { DimValue = 2 } } } } } };

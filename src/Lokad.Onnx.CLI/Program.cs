@@ -488,6 +488,7 @@ class Program
             if (graph.ExecuteNode(ui, ro.Node, true, ExecutionProvider.CPU, execOptions))
             {
                 PrintOutputs(graph, ro);
+                if (ro.EnableProfiler && graph.LastProfile is { } profile) PrintProfile(profile);
                 Exit(ExitResult.SUCCESS);
             }
             else if (!graph.Nodes.Any(n => n.Name == ro.Node))

@@ -1182,10 +1182,23 @@ public partial class ComputationalGraph
                 }
             }
         }
+        using var profilerScope = Profiler.BeginExecution();
         OpResult r;
         try
         {
-            r = node.Execute(this, provider, Options);
+            if (profilerScope.Enabled)
+            {
+                if (profilerScope.WallOnly) profilerScope.StartNodeProfile(node.ID, node.Op);
+                else StartDetailedNodeProfile(profilerScope, node);
+            }
+            try
+            {
+                r = node.Execute(this, provider, Options);
+            }
+            finally
+            {
+                if (profilerScope.Enabled) profilerScope.StopNodeProfile();
+            }
         }
         catch (Exception ex)
         {
@@ -1209,6 +1222,8 @@ public partial class ComputationalGraph
                 TrackBind(Outputs, node.Outputs[i], r.Outputs[i]);
             }
         }
+        LastProfile = profilerScope.Profile;
+        LastWallProfile = profilerScope.Wall;
         op.Complete();
         return true;
     }
