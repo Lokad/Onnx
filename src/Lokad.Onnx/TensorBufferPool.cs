@@ -19,8 +19,9 @@ using System.Runtime.CompilerServices;
 /// dead buffers adopted into the pool; Dropped counts returns discarded by the per-shape cap. None is a
 /// substitute for the others: GC bytes come from the collector, live payload from tensor shapes, scratch
 /// from temporary kernel buffers, and pool-served bytes from these counters.
-/// Return contract: only single-dimensional (SZ) arrays are pooled. Null, multidimensional, and duplicate
-/// (already buffered) arrays are rejected with an exception. Foreign arrays (never rented from this pool)
+/// Return contract: only single-dimensional (SZ) arrays with non-nullable unmanaged elements are pooled.
+/// Null, incompatible-element, multidimensional, and duplicate (already buffered) arrays are rejected
+/// with an exception. Foreign arrays (never rented from this pool)
 /// are adopted for reuse; release logic still only returns owned storage.
 /// The bounded released-buffer cache supplies/retains only already-free arrays
 /// between executions. Ownership, live/outstanding records and metrics remain
@@ -128,8 +129,11 @@ public sealed class TensorBufferPool
         if (!array.GetType().IsSZArray) throw new ArgumentException("Only zero-based SZ arrays can be pooled.", nameof(array));
         var element = array.GetType().GetElementType();
         if (element is null) throw new ArgumentException("Only single-dimensional arrays can be pooled.", nameof(array));
+        bool ownedArray = IsOwned(array);
+        if (!ownedArray && !CanRentElement(element))
+            throw new ArgumentException("Array elements must be non-nullable unmanaged values.", nameof(array));
         if (buffered.Contains(array)) throw new ArgumentException("Array was already returned to the pool.", nameof(array));
-        if (IsOwned(array)) TrackReturn(array);
+        if (ownedArray) TrackReturn(array);
         var key = (element, array.Length);
         if (!free.TryGetValue(key, out var stack))
         {
@@ -147,6 +151,14 @@ public sealed class TensorBufferPool
             Dropped++;
         }
     }
+
+    // Rent-owned arrays already satisfy the generic constraint. Only foreign
+    // values need this untyped bridge to the runtime's GC-reference classifier;
+    // do not duplicate that classifier with a field walk or a type registry.
+    static bool CanRentElement(Type element) =>
+        element.IsValueType && Nullable.GetUnderlyingType(element) is null &&
+        !(bool)typeof(RuntimeHelpers).GetMethod(nameof(RuntimeHelpers.IsReferenceOrContainsReferences))!
+            .MakeGenericMethod(element).Invoke(null, null)!;
 
     void TrackRent(Array array, long bytes)
     {

@@ -4,6 +4,73 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class PoolOwnershipTests
 {
+    struct ManagedValue { public object? Item; }
+    readonly record struct UnmanagedValue(int Count, double Weight);
+    enum Tag : byte { First, Second }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void NonRentableReturnsRejectWithoutStateChangesOrRetention(int kind)
+    {
+        var pool = new TensorBufferPool();
+        var rejected = RejectUnrentable(pool, kind);
+        Assert.Equal(0, pool.Returned);
+        Assert.Equal(0, pool.Dropped);
+        Assert.Equal(0, pool.AllocatedNew);
+        Assert.Equal(0, pool.Reused);
+        Assert.Equal(0, pool.PeakOutstandingBytes);
+        Collect();
+        Assert.False(rejected.IsAlive);
+        var valid = pool.Rent<float>(2);
+        pool.Return(valid);
+        Assert.Same(valid, pool.Rent<float>(2));
+        GC.KeepAlive(pool);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static WeakReference RejectUnrentable(TensorBufferPool pool, int kind)
+    {
+        Array value = kind switch
+        {
+            0 => new string[] { "a", "b" },
+            1 => new object[] { new object() },
+            2 => new float[][] { [1], [2] },
+            3 => new ManagedValue[] { new() { Item = new object() } },
+            _ => new int?[] { 1, null }
+        };
+        var failure = Assert.Throws<ArgumentException>(() => pool.Return(value));
+        Assert.Equal("array", failure.ParamName);
+        Assert.False(pool.IsOwned(value));
+        return new WeakReference(value);
+    }
+
+    [Fact]
+    public void ForeignUnmanagedValuesRemainAdoptableAndOwnedReturnsRemainReusable()
+    {
+        CheckAdoption(new UnmanagedValue[] { new(3, .5) });
+        CheckAdoption(new[] { Tag.First, Tag.Second });
+        CheckAdoption(new[] { DateTime.UnixEpoch });
+        CheckAdoption(new System.Numerics.Complex[] { new(1, 2) });
+    }
+
+    static void CheckAdoption<T>(T[] array) where T : unmanaged
+    {
+        var pool = new TensorBufferPool();
+        pool.Return(array);
+        Assert.False(pool.IsOwned(array));
+        Assert.Same(array, pool.Rent<T>(array.Length));
+        Assert.True(pool.IsOwned(array));
+        pool.Return(array);
+        Assert.Same(array, pool.Rent<T>(array.Length));
+        Assert.Equal(2, pool.Returned);
+        Assert.Equal(2, pool.Reused);
+        Assert.Equal(0, pool.AllocatedNew);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
