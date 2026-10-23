@@ -42,3 +42,11 @@ are inconclusive. Keep the existing strict
 [isolated protocol](isolated-evidence.md) and [Gemma protocol](../tests/embeddinggemma2/README.md)
 for historical reproduction and release performance claims; short comparisons
 do not update the published benchmark table automatically.
+
+Importer assembly compatibility: the 0.4.0 Protobuf extraction moved parsing into
+`Lokad.Onnx.Protobuf`. For newly prepared comparisons, choose both source refs
+from the same importer era (`-L0Ref` and `-L1Ref`). Preparation builds a separate
+adapter from the baseline source when present and stages it unchanged with both
+cores. Integrated/separate importer mixes are rejected because one compiled
+caller cannot span that assembly move. Existing prepared historical runners and
+results remain valid with their original cores.

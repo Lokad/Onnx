@@ -15,6 +15,7 @@
     </AssemblyAttribute>
     <Reference Include="Lokad.Onnx" HintPath="$(CoreAssemblyPath)" Private="true" />
     <PackageReference Include="Google.Protobuf" Version="3.33.5" />
+    <Reference Include="Lokad.Onnx.Protobuf" HintPath="$(ProtobufAssemblyPath)" Condition="'$(ProtobufAssemblyPath)' != ''" Private="true" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
     <PackageReference Include="FastBertTokenizer" Version="0.4.67" />
     <PackageReference Include="Lokad.Tokenizers" Version="0.1.1" />

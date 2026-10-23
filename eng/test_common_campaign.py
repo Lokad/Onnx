@@ -136,6 +136,16 @@ class SupervisionTests(unittest.TestCase):
         self.assertEqual((staged["L1"]["runner"].parent / "Lokad.Onnx.dll").read_bytes(), b"L1")
         self.assertEqual((self.prepared / "runner" / "Lokad.Onnx.dll").read_bytes(), b"L0")
 
+    def test_mixed_importer_layout_is_rejected_before_staging(self):
+        path = self.prepared / "L1/build.json"
+        build = json.loads(path.read_text())
+        build["importer_layout"] = "separate"
+        path.write_text(json.dumps(build))
+        output = self.root / "run"
+        with self.assertRaisesRegex(evidence.EvidenceError, "different runners"):
+            lane.stage(self.prepared, output, "comparison")
+        self.assertFalse(output.exists())
+
     def test_aa_stages_identical_baseline(self):
         staged = lane.stage(self.prepared, self.root / "run", "aa")
         self.assertEqual(staged["L0"]["core_sha256"], staged["L1"]["core_sha256"])

@@ -13,4 +13,7 @@
     <Compile Include="../Shared/NpySupport.cs" Link="NpySupport.cs" />
     <EmbeddedResource Include="decoder-assets.json" LogicalName="decoder-assets.json" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../tools/Lokad.Onnx.Protobuf/Lokad.Onnx.Protobuf.csproj" />
+  </ItemGroup>
 </Project>

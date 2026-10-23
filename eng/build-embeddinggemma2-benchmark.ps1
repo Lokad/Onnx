@@ -19,6 +19,9 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not archive control Data sources' }
 $sharedSource = Join-Path $destination 'shared-source'
 Expand-Archive -LiteralPath $dataArchive -DestinationPath $sharedSource
 $dataSource = Join-Path $sharedSource 'src/Lokad.Onnx.Data'
-dotnet build tests/Lokad.Onnx.EmbeddingGemma2Bench -c Release --tl:off --nologo -v minimal "-p:CoreAssemblyPath=$baseline" "-p:GemmaDataSourcePath=$dataSource" -o (Join-Path $destination 'runner') *> (Join-Path $destination 'runner-build.log')
+$adapter = Join-Path $destination 'L0/core/Lokad.Onnx.Protobuf.dll'
+$adapterArguments = @()
+if (Test-Path -LiteralPath $adapter) { $adapterArguments += "-p:ProtobufAssemblyPath=$adapter" }
+dotnet build tests/Lokad.Onnx.EmbeddingGemma2Bench -c Release --tl:off --nologo -v minimal "-p:CoreAssemblyPath=$baseline" "-p:GemmaDataSourcePath=$dataSource" @adapterArguments -o (Join-Path $destination 'runner') *> (Join-Path $destination 'runner-build.log')
 if ($LASTEXITCODE -ne 0) { throw "Benchmark build failed: $destination/runner-build.log" }
 Write-Host "PASS one shared EmbeddingGemma 2 runner and pinned cores: $destination"

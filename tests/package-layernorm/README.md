@@ -1,5 +1,9 @@
 # Current LayerNorm package consumption
 
+This is a historical 0.2.0 qualification recipe, pinned to the integrated-importer
+source era. For the current dependency-free core and caller-supplied reader, run
+[package smoke](../../eng/smoke-pack.ps1).
+
 This verifies the distinct packaging boundary after the LayerNorm product change.
 It reuses the complete Windows/AMD product qualification through exact source
 equivalence, and runs an independent app restored from a new private feed/cache.

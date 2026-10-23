@@ -78,6 +78,7 @@ process for each e5 sample, including startup/model load in wall time; its
 separate warmup process does not warm later samples. Microbenchmarks live in
 tests/Lokad.Onnx.Bench.
 
-The core package contains tensors, graph execution and OnnxImport on its pinned
-Google.Protobuf dependency. Data and CLI remain nonpackable source projects.
+The core package contains tensors and graph execution with no runtime dependencies.
+Data and CLI explicitly reference the nonpackable Protobuf reader adapter; its
+Google.Protobuf dependency belongs to that adapter.
 [Package smoke](../../eng/smoke-pack.ps1) checks a fresh consumer without source references.

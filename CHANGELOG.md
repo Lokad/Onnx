@@ -21,6 +21,12 @@
 
 ### Changed
 
+- The core package has no runtime dependencies. ONNX parsing, generated messages,
+  `OnnxImport` and `ProtoConversions` moved into the nonpackable
+  [Protobuf reference adapter](tools/Lokad.Onnx.Protobuf/README.md). Applications
+  must rebuild with an adapter reference or provide `IOnnxModelReader`; the
+  adapter owns its parser/runtime version.
+
 - Destination alias checks resolve nested views to root storage and reject
   unresolved overlap before writing. Concurrent companion model loads use
   call-specific exceptions through `OnnxImport.LoadOrThrow`.

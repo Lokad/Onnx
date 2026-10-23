@@ -31,7 +31,10 @@ The null-suppression and documentation syntax scanners have also been retired;
 compiled assembly metadata still checks the approved friend boundary. Normal
 maintenance does not depend on SDK-internal analysis assemblies or a member-retention registry.
 
-Use `OnnxImport.LoadOrThrow` when an import failure must belong to its caller.
+Core model loading accepts a caller-supplied `IOnnxModelReader`; the core package
+has no runtime parser dependency. The nonpackable `tools/Lokad.Onnx.Protobuf`
+project owns the reference parser, generated messages and `OnnxImport` helpers.
+Use its `OnnxImport.LoadOrThrow` when an import failure must belong to its caller.
 The nullable `Load` overloads retain process-wide, last-write-wins diagnostics
 for compatibility. Optimizer passes have one immutable canonical order, with
 per-run/environment disable controls. The [correctness follow-up](engineering-fixes-20261020.md)

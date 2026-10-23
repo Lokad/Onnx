@@ -213,3 +213,11 @@ fresh per call; cache transfers remain inside Execute. DisableBufferPool and
 preparation invalidation clear retained storage. ExecuteNode keeps its existing
 non-pooled path. Record this environment setting alongside binary identity in
 diagnostics; it is not a promoted default or a qualified campaign result.
+
+Importer assembly compatibility: the 0.4.0 Protobuf extraction moved parsing into
+`Lokad.Onnx.Protobuf`. For newly prepared comparisons, choose both source refs
+from the same importer era (`-L0Ref` and `-L1Ref`). Preparation builds a separate
+adapter from the baseline source when present and stages it unchanged with both
+cores. Integrated/separate importer mixes are rejected because one compiled
+caller cannot span that assembly move. Existing prepared historical runners and
+results remain valid with their original cores.

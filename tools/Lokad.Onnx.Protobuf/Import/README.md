@@ -1,6 +1,6 @@
-# Lokad.Onnx.Import
+# Protobuf import implementation
 
-ONNX protobuf loading shipped in the core library: parses .onnx files and buffers (Google.Protobuf with generated schema code under Generated/) into the core OnnxModel DTO and hands it to Model.Load. Available to packaged consumers as well as the CLI, the test runners and the test suite.
+ONNX protobuf loading in the nonpackable reference adapter: parses .onnx files and buffers (Google.Protobuf with generated schema code under Generated/) into the core OnnxModel DTO and hands it to Model.Load. Used by CLI, Data, source consumers and tests. The core NuGet has no parser dependency. See the [adapter guide](../README.md).
 
 ## Entry points (OnnxImport)
 

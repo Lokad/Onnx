@@ -32,6 +32,9 @@ def stage(prepared, output, kind, runner_name=RUNNER):
     baseline = read_build(prepared, "L0")
     candidate = read_build(prepared, "L1") if kind == "comparison" else baseline
     evidence.require(baseline["sdk"] == candidate["sdk"], "core build SDKs differ")
+    layouts = [build.get("importer_layout", "integrated") for build in (baseline, candidate)]
+    evidence.require(all(layout in ("integrated", "separate") for layout in layouts), "unknown importer assembly layout")
+    evidence.require(layouts[0] == layouts[1], "integrated and separate importer assemblies require different runners; choose compatible source refs")
     runner = prepared / "runner"
     evidence.require((runner / runner_name).is_file(), "common runner missing")
     evidence.require(not output.exists(), "output already exists; choose a fresh directory")

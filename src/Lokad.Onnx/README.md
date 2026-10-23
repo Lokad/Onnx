@@ -23,17 +23,25 @@
 - Concurrency: one execution per graph instance at a time; a concurrent call fails. Run separate execution contexts on separate threads.
 - Inputs: caller-owned. The graph never takes input storage: constants, caller inputs and sequence elements are protected from buffer pooling.
 - Threading: sequential by default. TensorExecutionOptions MaxDegreeOfParallelism caps opt-in parallel float MatMul kernels (default 1).
-- Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0, via pack.cmd) with one pinned runtime dependency (Google.Protobuf, carrying the integrated importer under src/Lokad.Onnx/Import). Data, CLI, tests, and Bench declare IsPackable false and never ship.
+- Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0, via pack.cmd), with no runtime dependencies. The Protobuf reference adapter, Data, CLI, tests and Bench remain nonpackable source projects.
 
 ## Distribution boundary
 
-The core loads plain `OnnxModel` descriptions (see OnnxModel.cs) through
-`Model.Load`, and ships its own file and buffer parsing under
-`src/Lokad.Onnx/Import` (`OnnxImport`, protobuf-backed). Data helpers and
-the CLI live outside the package. Buffers import without a copy: `OnnxImport.Parse` and
-`OnnxImport.Load` take `ReadOnlyMemory<byte>` (slices and custom memory welcome, no
-`ToArray()`), with the same contracts as the `byte[]` overloads; the caller owns the
-memory during the call. External-weight sidecars still resolve from the model file path.
+The core consumes plain `OnnxModel` descriptions through `Model.Load`. To load
+files or memory, pass an `IOnnxModelReader` to `Model.Load(path, reader)` or
+`Model.Load(memory, reader)`. Overloads also accept a packed-weight byte limit.
+Reader exceptions propagate to the caller. Each read must return a fresh model;
+`Model.Load` consumes its collections and payloads without copying them. Memory
+is borrowed synchronously and must not be retained by the reader's result.
+
+The nonpackable [reference adapter](../../tools/Lokad.Onnx.Protobuf/README.md)
+owns Google.Protobuf and implements `ProtobufModelReader`. Existing `OnnxImport`
+convenience methods, `ProtoConversions` and generated `Onnx` messages now live
+in that assembly, preserving source names but requiring callers to rebuild with
+an adapter reference. File-based reads preserve external-weight context;
+memory-only reads explicitly reject unresolved sidecars. Metadata inspection
+remains available through the adapter's `OnnxImport.ParseMetadata`.
+
 A file-free local example:
 
     var mp = new OnnxModel { Name = "relu" };

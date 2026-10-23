@@ -1,11 +1,12 @@
 # Lokad.Onnx
 
 Lokad.Onnx is a CPU inference engine for ONNX models, written in C# for .NET 10.
-It provides tensors, an ONNX importer and graph execution, with SIMD and hardware
-intrinsics where available. Inference runs entirely in managed code.
+It provides tensors and graph execution, with SIMD and hardware intrinsics where
+available. ONNX parsing is supplied by a caller-chosen reader. Inference runs
+entirely in managed code.
 
-The **NuGet package contains the core engine**. Text, image and audio helpers
-live in the separate `Lokad.Onnx.Data` project; the `lonnx` CLI is another
+The **NuGet package contains the core engine with no runtime dependencies**.
+Text, image and audio helpers live in the separate `Lokad.Onnx.Data` project; the `lonnx` CLI is another
 repository project. Build these from source to use their higher-level APIs.
 
 ## Use the library
@@ -14,29 +15,36 @@ repository project. Build these from source to use their higher-level APIs.
 dotnet add package Lokad.Onnx
 ```
 
-With the [bundled MNIST model](https://github.com/Lokad/Onnx/blob/master/tests/Lokad.Onnx.Backend.Tests/models/mnist-8.onnx)
-saved as `mnist-8.onnx`, this example runs a constant 28×28 input and prints ten
-output scores:
+This example builds a small model description and runs it without a parser:
 
 ```csharp
 using Lokad.Onnx;
 
-var graph = OnnxImport.Load("mnist-8.onnx")
-    ?? throw new InvalidOperationException("Could not load the model.");
-
-var input = DenseTensor<float>.OfShape(1, 1, 28, 28);
-input.Fill(0.5f);
-
-if (!graph.Execute(new ITensor[] { input }, useInitializers: true))
-    throw new InvalidOperationException("Inference failed.");
-
-var scores = (Tensor<float>)graph.Outputs.Values.Single();
-Console.WriteLine(string.Join(", ", scores.ToArray()));
+var model = new OnnxModel { Name = "relu" };
+model.Opset[""] = 13;
+model.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = [2] });
+model.Outputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = [2] });
+model.Nodes.Add(new OnnxNode { Name = "relu", OpType = "Relu", Inputs = ["x"], Outputs = ["y"] });
+var graph = Model.Load(model);
+if (!graph.Execute(new ITensor[] { DenseTensor<float>.OfValues([-1, 2]) }, true))
+    throw new InvalidOperationException(graph.LastErrorMessage);
+Console.WriteLine(string.Join(", ", ((Tensor<float>)graph.Outputs["y"]).ToArray())); // 0, 2
 ```
 
-Use your model's input shapes and element types for other exports. See the
-[core API guide](https://github.com/Lokad/Onnx/blob/master/src/Lokad.Onnx/README.md)
-for tensor operations, execution options and output lifetime.
+For ONNX files, pass your implementation of `IOnnxModelReader` to
+`Model.Load("model.onnx", reader)`. Readers return the neutral `OnnxModel`
+description and own their parser dependencies, including any Protobuf version.
+
+Source builds can reference the nonpackable
+[Protobuf adapter](https://github.com/Lokad/Onnx/blob/master/tools/Lokad.Onnx.Protobuf/README.md)
+and use `new Lokad.Onnx.Protobuf.ProtobufModelReader()` as the reader. Data and
+CLI already reference it. **Migration:** `OnnxImport`, `ProtoConversions` and
+generated `Onnx` messages moved from the core to this adapter assembly; existing
+file-loading applications must rebuild with an adapter reference or supply their
+own reader. The core package alone no longer supplies `OnnxImport`.
+
+See the [core API guide](https://github.com/Lokad/Onnx/blob/master/src/Lokad.Onnx/README.md)
+for execution options, reader ownership and output lifetime.
 
 ## Build and try the CLI
 

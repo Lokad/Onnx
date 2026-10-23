@@ -20,7 +20,11 @@ try {
         $leg = Join-Path $destination $role
         New-Item -ItemType Directory -Path $leg | Out-Null
         $archive = Join-Path $leg "source.zip"
-        & git archive --format=zip --output=$archive $revision src/Lokad.Onnx
+        $adapterPaths = @(& git ls-tree -d --name-only $revision -- tools/Lokad.Onnx.Protobuf)
+        if ($LASTEXITCODE -ne 0) { throw "Cannot inspect adapter layout for $role" }
+        $hasAdapter = $adapterPaths.Count -gt 0
+        $archivePaths = @('src/Lokad.Onnx') + $adapterPaths
+        & git archive --format=zip --output=$archive $revision @archivePaths
         if ($LASTEXITCODE -ne 0) { throw "git archive failed for $role" }
         $source = Join-Path $leg "source"
         Expand-Archive -LiteralPath $archive -DestinationPath $source
@@ -28,21 +32,31 @@ try {
         $binary = Join-Path $leg "core"
         & dotnet build (Join-Path $source "src/Lokad.Onnx/Lokad.Onnx.csproj") -c Release --tl:off --nologo -v minimal -p:UseSharedCompilation=false -p:EnableSourceControlManagerQueries=false "-p:SourceRevisionId=$revision" -o $binary *> (Join-Path $leg "build.log")
         if ($LASTEXITCODE -ne 0) { throw "Core build failed; inspect $leg/build.log" }
+        if ($hasAdapter) {
+            & dotnet build (Join-Path $source "tools/Lokad.Onnx.Protobuf/Lokad.Onnx.Protobuf.csproj") -c Release --tl:off --nologo -v minimal -p:UseSharedCompilation=false -p:EnableSourceControlManagerQueries=false -p:CopyLocalLockFileAssemblies=true "-p:SourceRevisionId=$revision" -o $binary *> (Join-Path $leg "adapter-build.log")
+            if ($LASTEXITCODE -ne 0) { throw "Adapter build failed; inspect $leg/adapter-build.log" }
+        }
         $core = Join-Path $binary "Lokad.Onnx.dll"
         [ordered]@{
             source_sha = $revision; core_sha256 = (Get-FileHash -LiteralPath $core -Algorithm SHA256).Hash.ToLowerInvariant()
             core = "core/Lokad.Onnx.dll"; sdk = $sdk
+            importer_layout = if ($hasAdapter) { 'separate' } else { 'integrated' }
             source_archive_sha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
         } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $leg "build.json") -Encoding utf8
         Write-Host "$role built $revision with SDK $sdk"
     }
+    $layouts = @('L0', 'L1' | ForEach-Object { (Get-Content (Join-Path $destination "$_/build.json") -Raw | ConvertFrom-Json).importer_layout })
+    if ($layouts[0] -ne $layouts[1]) { throw 'Cannot compare integrated and separate importer assemblies with one unchanged runner. Choose both refs from the same importer era.' }
     if ($CoreOnly) {
         Write-Host "Prepared pinned core archives/binaries in $destination"
         return
     }
     $baseline = Join-Path $destination "L0/core/Lokad.Onnx.dll"
     $runner = Join-Path $destination "runner"
-    & dotnet build tests/Lokad.Onnx.Campaign/Lokad.Onnx.Campaign.csproj -c Release --tl:off --nologo -v minimal "-p:CoreAssemblyPath=$baseline" -o $runner *> (Join-Path $destination "runner-build.log")
+    $adapter = Join-Path $destination 'L0/core/Lokad.Onnx.Protobuf.dll'
+    $adapterArguments = @()
+    if (Test-Path -LiteralPath $adapter) { $adapterArguments += "-p:ProtobufAssemblyPath=$adapter" }
+    & dotnet build tests/Lokad.Onnx.Campaign/Lokad.Onnx.Campaign.csproj -c Release --tl:off --nologo -v minimal "-p:CoreAssemblyPath=$baseline" @adapterArguments -o $runner *> (Join-Path $destination "runner-build.log")
     if ($LASTEXITCODE -ne 0) { throw "Common runner build failed; inspect $destination/runner-build.log" }
     Write-Host "Prepared pinned cores and one common runner in $destination"
 } finally { Pop-Location }
