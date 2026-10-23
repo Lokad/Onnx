@@ -100,7 +100,9 @@ jobs. Deletions and renames count. Check a published commit's CI status minutes
 apart, and investigate failures rather than adding automatic retries.
 
 Ordinary and scalar tests build the CLI and both test projects through
-`eng/Tests.slnx`. The Linux ordinary job also compiles the full root solution,
+`eng/Tests.slnx`. Core, Data and the reader adapter are explicit solution entries
+so MSBuild preserves the requested configuration for their project references.
+The Linux ordinary job also compiles the full root solution,
 so benchmarks and standalone runners are built once in that matrix. CLI
 integration tests remain enabled on both operating systems and in scalar mode.
 The [focused maintenance receipt](focused-maintenance-20261020.md) records the

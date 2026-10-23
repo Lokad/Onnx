@@ -6,6 +6,14 @@ using System.Runtime.CompilerServices;
 public class AssemblyBoundaryTests
 {
     [Fact]
+    public void EngineAndCompanionsUseTheTestBuildConfiguration()
+    {
+        var expected = typeof(AssemblyBoundaryTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
+        foreach (var assembly in new[] { typeof(Model).Assembly, typeof(OnnxImport).Assembly, typeof(ParakeetTranscriber).Assembly })
+            Assert.Equal(expected, assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration);
+    }
+
+    [Fact]
     public void CoreHasNoParserDependencyOrGeneratedMessages()
     {
         var core = typeof(ComputationalGraph).Assembly;
