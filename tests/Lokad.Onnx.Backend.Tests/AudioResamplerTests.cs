@@ -5,6 +5,39 @@ using System.Text.Json;
 public class AudioResamplerTests
 {
     [Fact]
+    public void IndependentShortCoprimeRequestsMatchFullScipyArrays()
+    {
+        using var reference = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "fixtures", "audio-resampling-short.json")));
+        foreach (var item in reference.RootElement.GetProperty("cases").EnumerateArray())
+        {
+            var input = item.GetProperty("input").EnumerateArray().Select(v => v.GetSingle()).ToArray();
+            var saved = input.Select(BitConverter.SingleToInt32Bits).ToArray();
+            var expected = item.GetProperty("output").EnumerateArray().Select(v => v.GetSingle()).ToArray();
+            var actual = AudioResampler.Resample(input, item.GetProperty("source_rate").GetInt32(), item.GetProperty("destination_rate").GetInt32());
+            Assert.Equal(expected.Length, actual.Length);
+            for (int i = 0; i < actual.Length; i++) Assert.InRange(Math.Abs(actual[i] - expected[i]), 0, 1e-6f);
+            Assert.Equal(saved, input.Select(BitConverter.SingleToInt32Bits));
+        }
+    }
+
+    [Theory]
+    [InlineData(48000)]
+    [InlineData(48001)]
+    [InlineData(191999)]
+    public void OneSampleRequestsAllocateTheirOutputWithoutLargeSetupStorage(int sourceRate)
+    {
+        var input = new[] { .5f };
+        AudioResampler.Resample(input, 48000, 16000);
+        long start = GC.GetAllocatedBytesForCurrentThread();
+        var output = AudioResampler.Resample(input, sourceRate, 16000);
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - start;
+        Assert.Single(output);
+        Assert.InRange(allocated, 0, 1024);
+        Assert.Equal(.5f, input[0]);
+        Assert.True(float.IsFinite(output[0]));
+    }
+
+    [Fact]
     public void IndependentScipyFullArrays_AgreeAndKeepInput()
     {
         using var reference = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "fixtures", "audio-resampling.json")));

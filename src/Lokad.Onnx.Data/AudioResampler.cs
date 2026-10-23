@@ -10,6 +10,8 @@ public static class AudioResampler
     /// uses beta 8.6, half length 32 times max(up,down) and cutoff 0.94/max(up,down),
     /// with reduced integer up/down factors. The output has ceil(length*up/down)
     /// samples, starts at the input's time origin, and assumes zero outside the clip.
+    /// Short requests compute used coefficients on demand when a full table
+    /// would be disproportionate; normalization still scans the complete filter.
     /// Equal rates copy exactly. No clipping or volume normalization is applied.</remarks>
     public static float[] Resample(ReadOnlySpan<float> samples, int sourceRate, int destinationRate)
     {
@@ -23,15 +25,29 @@ public static class AudioResampler
         if (length > int.MaxValue) throw new ArgumentException("Resampled audio is too long.", nameof(samples));
         var output = new float[(int)length];
         int half = 32 * Math.Max(up, down);
-        var coefficients = Filter(half, 0.94 / Math.Max(up, down), up);
+        double cutoff = 0.94 / Math.Max(up, down);
+        long tapWork = (long)output.Length * Math.Min(samples.Length, 2 * half / up + 1);
+        bool materialize = tapWork >= (2 * half + 1) / 4;
+        var coefficients = Filter(half, cutoff, up, materialize, out double gain, out double denominator);
         for (int i = 0; i < output.Length; i++)
         {
             long center = (long)i * down;
             long first = Math.Max(0, (center - half + up - 1) / up);
             long last = Math.Min(samples.Length - 1, (center + half) / up);
             double sum = 0;
-            for (long input = first; input <= last; input++)
-                sum += samples[(int)input] * coefficients[(int)(half + center - input * up)];
+            if (coefficients is null)
+            {
+                for (long input = first; input <= last; input++)
+                {
+                    double coefficient = Coefficient((int)(center - input * up), half, cutoff, denominator) * gain;
+                    sum += samples[(int)input] * coefficient;
+                }
+            }
+            else
+            {
+                for (long input = first; input <= last; input++)
+                    sum += samples[(int)input] * coefficients[(int)(half + center - input * up)];
+            }
             float sample = (float)sum;
             if (!float.IsFinite(sample)) throw new ArgumentException("Resampled audio exceeds the float32 range.", nameof(samples));
             output[i] = sample;
@@ -45,21 +61,29 @@ public static class AudioResampler
         return a;
     }
 
-    static double[] Filter(int half, double cutoff, int up)
+    static double[]? Filter(int half, double cutoff, int up, bool materialize, out double gain, out double denominator)
     {
-        const double beta = 8.6;
-        var values = new double[2 * half + 1];
-        double denominator = BesselZero(beta), sum = 0;
+        var values = materialize ? new double[2 * half + 1] : null;
+        denominator = BesselZero(8.6);
+        double sum = 0;
         for (int i = -half; i <= half; i++)
         {
-            double x = i / (double)half;
-            double window = BesselZero(beta * Math.Sqrt(Math.Max(0, 1 - x * x))) / denominator;
-            double sinc = i == 0 ? cutoff : Math.Sin(Math.PI * cutoff * i) / (Math.PI * i);
-            values[i + half] = window * sinc;
-            sum += values[i + half];
+            double value = Coefficient(i, half, cutoff, denominator);
+            if (values is not null) values[i + half] = value;
+            sum += value;
         }
-        for (int i = 0; i < values.Length; i++) values[i] *= up / sum;
+        gain = up / sum;
+        if (values is not null)
+            for (int i = 0; i < values.Length; i++) values[i] *= gain;
         return values;
+    }
+
+    static double Coefficient(int offset, int half, double cutoff, double denominator)
+    {
+        double x = offset / (double)half;
+        double window = BesselZero(8.6 * Math.Sqrt(Math.Max(0, 1 - x * x))) / denominator;
+        double sinc = offset == 0 ? cutoff : Math.Sin(Math.PI * cutoff * offset) / (Math.PI * offset);
+        return window * sinc;
     }
 
     static double BesselZero(double x)
