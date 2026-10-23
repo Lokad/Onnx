@@ -59,6 +59,8 @@ their mutable state; graph execution uses a private disabled fast path.
 Measure tightly bounded allocation batches on a dedicated thread after warming
 the exact call sites, keeping test-runner work outside the sampled thread and
 retaining the original allocation limits.
+Long allocation measurements also use the existing nonparallel allocation
+collection, and warm shared hot methods before the exact-input warmup.
 
 Some production methods intentionally have equal source arithmetic but different
 JIT compilation attributes or instruction widths. Examples are `MathOps.ErfVector`

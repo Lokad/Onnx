@@ -2,6 +2,7 @@ namespace Lokad.Onnx.Backend.Tests;
 
 using System.Text.Json;
 
+[Collection("NonParallelAllocation")]
 public class AudioResamplerTests
 {
     [Fact]
@@ -24,18 +25,19 @@ public class AudioResamplerTests
     [InlineData(48000)]
     [InlineData(48001)]
     [InlineData(191999)]
-    public void OneSampleRequestsAllocateTheirOutputWithoutLargeSetupStorage(int sourceRate)
+    public async Task OneSampleRequestsAllocateTheirOutputWithoutLargeSetupStorage(int sourceRate)
     {
         var input = new[] { .5f };
-        // Keep runner work off the measured thread, and warm the exact rate:
-        // coprime rates scan a much longer normalization loop than 48000 Hz.
-        var (output, allocated) = Task.Factory.StartNew(() =>
+        // Warm the shared hot methods cheaply before the exact-rate request.
+        // A single long coprime scan can still overlap runtime tier transitions.
+        var (output, allocated) = await Task.Factory.StartNew(() =>
         {
+            for (int i = 0; i < 32; i++) AudioResampler.Resample(input, 48000, 16000);
             AudioResampler.Resample(input, sourceRate, 16000);
             long start = GC.GetAllocatedBytesForCurrentThread();
             var result = AudioResampler.Resample(input, sourceRate, 16000);
             return (result, GC.GetAllocatedBytesForCurrentThread() - start);
-        }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default).GetAwaiter().GetResult();
+        }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         Assert.Single(output);
         Assert.InRange(allocated, 0, 1024);
         Assert.Equal(.5f, input[0]);
