@@ -28,6 +28,84 @@ public class ExternalDataTests
         return proto;
     }
 
+    static float[] ReadFloats(TensorProto proto, string directory, bool typed)
+    {
+        if (typed) return (float[])proto.ReadExternalTensorData(directory);
+        proto.ResolveExternalData(directory);
+        return (float[])proto.GetTensorData();
+    }
+
+    static void WriteFloats(string file)
+    {
+        float[] values = [7.5f, -2.25f];
+        var bytes = new byte[values.Length * sizeof(float)];
+        Buffer.BlockCopy(values, 0, bytes, 0, bytes.Length);
+        File.WriteAllBytes(file, bytes);
+    }
+
+    public static IEnumerable<object[]> EquivalentDirectories()
+    {
+        foreach (bool typed in new[] { false, true })
+        foreach (int spelling in new[] { 0, 1, 2, 3, 4 })
+        foreach (bool nested in new[] { false, true })
+            yield return new object[] { typed, spelling, nested };
+    }
+
+    [Theory]
+    [MemberData(nameof(EquivalentDirectories))]
+    public void EquivalentBaseDirectoriesReadTheSameValues(bool typed, int spelling, bool nested)
+    {
+        WithTempDirectory(workspace =>
+        {
+            var directory = Path.Combine(workspace, "base");
+            var parent = nested ? Path.Combine(directory, "nested") : directory;
+            Directory.CreateDirectory(parent);
+            var file = Path.Combine(parent, "weights.bin");
+            WriteFloats(file);
+            var root = Path.GetPathRoot(directory)!;
+            var baseDirectory = spelling switch
+            {
+                0 => directory,
+                1 => directory + Path.DirectorySeparatorChar,
+                2 => directory + Path.AltDirectorySeparatorChar,
+                3 => directory + Path.DirectorySeparatorChar + Path.DirectorySeparatorChar,
+                _ => root
+            };
+            // Root coverage only reads this allocated temporary file; it never
+            // creates files at a filesystem or drive root.
+            var location = Path.GetRelativePath(spelling == 4 ? root : directory, file);
+            Assert.Equal(new[] { 7.5f, -2.25f }, ReadFloats(ExternalProto(location), baseDirectory, typed));
+        });
+    }
+
+    public static IEnumerable<object[]> EscapingLocations()
+    {
+        foreach (bool typed in new[] { false, true })
+        foreach (bool trailing in new[] { false, true })
+        foreach (int escape in new[] { 0, 1, 2 })
+            yield return new object[] { typed, trailing, escape };
+    }
+
+    [Theory]
+    [MemberData(nameof(EscapingLocations))]
+    public void DirectoryNormalizationStillRejectsAbsoluteParentAndSiblingLocations(bool typed, bool trailing, int escape)
+    {
+        WithTempDirectory(workspace =>
+        {
+            var directory = Path.Combine(workspace, "base");
+            var sibling = Path.Combine(workspace, "base-other");
+            Directory.CreateDirectory(directory);
+            Directory.CreateDirectory(sibling);
+            var file = escape == 0 ? Path.Combine(directory, "weights.bin")
+                : escape == 1 ? Path.Combine(workspace, "weights.bin") : Path.Combine(sibling, "weights.bin");
+            WriteFloats(file);
+            var location = escape == 0 ? file : Path.GetRelativePath(directory, file);
+            var baseDirectory = directory + (trailing ? Path.DirectorySeparatorChar.ToString() : "");
+            var failure = Assert.Throws<InvalidOperationException>(() => ReadFloats(ExternalProto(location), baseDirectory, typed));
+            Assert.Contains(escape == 0 ? "absolute location" : "outside the model directory", failure.Message);
+        });
+    }
+
     [Fact]
     public void ResolveExternalData_Loads_Offset_Length_Slice()
     {

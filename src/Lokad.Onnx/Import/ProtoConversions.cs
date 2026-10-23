@@ -163,7 +163,8 @@ public static class ProtoConversions
         if (System.IO.Path.IsPathRooted(location)) throw new InvalidOperationException($"Tensor {tp.Name} references external data with an absolute location {location}.");
         var baseFull = System.IO.Path.GetFullPath(baseDirectory);
         var path = System.IO.Path.GetFullPath(System.IO.Path.Combine(baseFull, location));
-        if (path != baseFull && !path.StartsWith(baseFull + System.IO.Path.DirectorySeparatorChar, StringComparison.Ordinal)) throw new InvalidOperationException($"Tensor {tp.Name} references external data outside the model directory: {location}.");
+        var prefix = System.IO.Path.EndsInDirectorySeparator(baseFull) ? baseFull : baseFull + System.IO.Path.DirectorySeparatorChar;
+        if (path != baseFull && !path.StartsWith(prefix, StringComparison.Ordinal)) throw new InvalidOperationException($"Tensor {tp.Name} references external data outside the model directory: {location}.");
         using var stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
         var fileLength = (ulong)stream.Length;
         if (offset > fileLength) throw new InvalidOperationException($"Tensor {tp.Name} references external data at offset {offset} past the end of {location} ({fileLength} bytes).");
