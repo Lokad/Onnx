@@ -56,6 +56,9 @@ Input and bias buffers, including every NaN payload bit, must remain unchanged.
 The e5 gate disables JIT on-stack replacement for deterministic children and
 restores its caller's prior setting on every exit. Public profiler scopes own
 their mutable state; graph execution uses a private disabled fast path.
+Measure tightly bounded allocation batches on a dedicated thread after warming
+the exact call sites, keeping test-runner work outside the sampled thread and
+retaining the original allocation limits.
 
 Some production methods intentionally have equal source arithmetic but different
 JIT compilation attributes or instruction widths. Examples are `MathOps.ErfVector`

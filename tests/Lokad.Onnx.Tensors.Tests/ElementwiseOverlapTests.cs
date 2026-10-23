@@ -113,29 +113,33 @@ public class ElementwiseOverlapTests
     }
 
     [Fact]
-    public void ExactInPlaceAndDisjointDenseWindows_AvoidPayloadSnapshots()
+    public async Task ExactInPlaceAndDisjointDenseWindows_AvoidPayloadSnapshots()
     {
-        foreach (int length in new[] { 1024, 65536 })
+        // Keep test-runner work off the thread whose allocation counter is sampled.
+        await Task.Factory.StartNew(() =>
         {
-            var storage = new float[2 * length];
-            var source = new DenseTensor<float>(storage.AsMemory(0, length), new[] { length });
-            var disjoint = new DenseTensor<float>(storage.AsMemory(length, length), new[] { length });
-            foreach (var destination in new[] { source, disjoint })
-            foreach (bool simd in new[] { false, true })
+            foreach (int length in new[] { 1024, 65536 })
             {
-                void Apply()
+                var storage = new float[2 * length];
+                var source = new DenseTensor<float>(storage.AsMemory(0, length), new[] { length });
+                var disjoint = new DenseTensor<float>(storage.AsMemory(length, length), new[] { length });
+                foreach (var destination in new[] { source, disjoint })
+                foreach (bool simd in new[] { false, true })
                 {
-                    if (simd) source.VectorizedApply(static x => x + Vector<float>.One, static x => x + 1, destination, TensorExecutionOptions.Simd);
-                    else source.Apply(static x => x + 1, destination);
+                    void Apply()
+                    {
+                        if (simd) source.VectorizedApply(static x => x + Vector<float>.One, static x => x + 1, destination, TensorExecutionOptions.Simd);
+                        else source.Apply(static x => x + 1, destination);
+                    }
+                    // Exercise the call sites before measuring: one call can leave
+                    // runtime profiling allocations in the following measured batch.
+                    for (int i = 0; i < 32; i++) Apply();
+                    long before = GC.GetAllocatedBytesForCurrentThread();
+                    for (int i = 0; i < 10; i++) Apply();
+                    long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+                    Assert.True(allocated < 4096, $"Safe dense windows allocated {allocated} bytes.");
                 }
-                // Exercise the call sites before measuring: one call can leave
-                // runtime profiling allocations in the following measured batch.
-                for (int i = 0; i < 32; i++) Apply();
-                long before = GC.GetAllocatedBytesForCurrentThread();
-                for (int i = 0; i < 10; i++) Apply();
-                long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
-                Assert.True(allocated < 4096, $"Safe dense windows allocated {allocated} bytes.");
             }
-        }
+        }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 }
