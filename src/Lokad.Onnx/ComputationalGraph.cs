@@ -656,6 +656,9 @@ public partial class ComputationalGraph
     }
 
     public bool ResolveInputs(ITensor[] userInputs, bool useInitializers)
+        => ResolveInputs(userInputs, useInitializers, new Dictionary<string, int>(StringComparer.Ordinal));
+
+    bool ResolveInputs(ITensor[] userInputs, bool useInitializers, Dictionary<string, int> symbolic)
     {
         using var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
         var requiredInputs = GetRequiredInputs(useInitializers);   
@@ -665,7 +668,6 @@ public partial class ComputationalGraph
             op.Abandon();
             return FailInputCountMismatch("graph", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
         }
-        var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         var validated = new List<(string Key, ITensor Value)>();
         for(int i = 0; i < requiredInputs.Keys.Count; i++)
         {
@@ -698,6 +700,9 @@ public partial class ComputationalGraph
     }
 
     public bool ResolveInputs(Dictionary<string, ITensor> userInputs, bool useInitializers)
+        => ResolveInputs(userInputs, useInitializers, new Dictionary<string, int>(StringComparer.Ordinal));
+
+    bool ResolveInputs(Dictionary<string, ITensor> userInputs, bool useInitializers, Dictionary<string, int> symbolic)
     {
         using var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
         var requiredInputs = GetRequiredInputs(useInitializers);
@@ -713,7 +718,6 @@ public partial class ComputationalGraph
                 return Fail("User input {n} is not a required graph input.", name);
             }
         }
-        var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var kv in requiredInputs)
         {
             if (!userInputs.ContainsKey(kv.Key))
@@ -846,16 +850,17 @@ public partial class ComputationalGraph
         if (!ValidateRunOptions()) return false;
         if (_preparationError is not null) return Fail(_preparationError);
         SeedDeclaredOutputs();
+        var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         if (userInputs is ITensor[] uia)
         {
-            if (!ResolveInputs(uia, useInitializers))
+            if (!ResolveInputs(uia, useInitializers, symbolic))
             {
                 return false;
             }
         }
         else if (userInputs is Dictionary<string, ITensor> uid)
         {
-            if (!ResolveInputs(uid, useInitializers))
+            if (!ResolveInputs(uid, useInitializers, symbolic))
             {
                 return false;
             }
@@ -978,7 +983,6 @@ public partial class ComputationalGraph
                 TrackBind(Outputs, name, captured.Clone());
             }
         }
-        var outputSymbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var desc in OutputDescs)
         {
             if (string.IsNullOrEmpty(desc.Name)) continue;
@@ -986,7 +990,7 @@ public partial class ComputationalGraph
             {
                 return Fail("Graph output {n} was not resolved by this run.", desc.Name);
             }
-            if (!CheckDescriptorDims(desc, bound, outputSymbolic, out var outputDetail))
+            if (!CheckDescriptorDims(desc, bound, symbolic, out var outputDetail))
             {
                 return Fail("Graph output {n} does not match its descriptor. {d}", desc.Name, outputDetail ?? "");
             }
