@@ -23,10 +23,10 @@ public static class OnnxImport
     }
 
     /// <summary>
-    /// Parses names, shapes, types and nodes without materializing initializer
+    /// Parses names, shapes, types and nodes without materializing tensor
     /// payloads, for inspection commands that never read weight values.
-    /// Initializer descriptions report element types and dimensions with empty
-    /// payloads; attribute tensors still materialize as small constants.
+    /// Initializers and tensor-valued attributes are OnnxTensor descriptions
+    /// with empty payloads, including inside nested graph attributes.
     /// </summary>
     /// <remarks>
     /// Cost contract: the complete protobuf still parses, including embedded
@@ -40,7 +40,7 @@ public static class OnnxImport
         using var stream = new FileStream(onnxInputFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 16, FileOptions.SequentialScan);
         var m = ModelProto.Parser.ParseFrom(stream);
         op.Complete();
-        return m.ToModelDto(dir, materializeInitializers: false);
+        return m.ToModelDto(dir, materializeTensors: false);
     }
 
     public static OnnxModel Parse(byte[] data)
@@ -153,7 +153,7 @@ public static class OnnxImport
     static InvalidDataException ImportFailure(Exception ex, string messageTemplate, string? path) =>
         new InvalidDataException(Log.Render(messageTemplate, path is null ? Array.Empty<object?>() : new object?[] { path }), ex);
 
-    static OnnxModel ToModelDto(this ModelProto mp, string? baseDirectory, bool materializeInitializers)
+    static OnnxModel ToModelDto(this ModelProto mp, string? baseDirectory, bool materializeTensors)
     {
         return new OnnxModel
         {
@@ -167,8 +167,8 @@ public static class OnnxImport
             MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value),
             Inputs = mp.Graph.Input.Select(vp => vp.ToValueDto()).ToList(),
             Outputs = mp.Graph.Output.Select(vp => vp.ToValueDto()).ToList(),
-            Initializers = mp.Graph.Initializer.Select(tp => tp.ToTensorDto(baseDirectory, materializeInitializers)).ToList(),
-            Nodes = mp.Graph.Node.Select(np => np.ToNodeDto(baseDirectory, materializeInitializers)).ToList(),
+            Initializers = mp.Graph.Initializer.Select(tp => tp.ToTensorDto(baseDirectory, materializeTensors)).ToList(),
+            Nodes = mp.Graph.Node.Select(np => np.ToNodeDto(baseDirectory, materializeTensors)).ToList(),
         };
     }
 }

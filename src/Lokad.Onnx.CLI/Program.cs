@@ -591,6 +591,7 @@ class Program
         string GetAttributeValueDesc(object value) =>
             value switch
             {
+                OnnxTensor tensor => "tensor " + tensor.Describe() + " (not materialized)",
                 ITensor i => "tensor " + i.TensorNameDesc() + ":" + i.PrintData(true),
                 int n => "int " + n.ToString(),
                 int[] na => "int[] " + na.Print(),

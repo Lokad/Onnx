@@ -105,6 +105,29 @@ public class CliExitCodeTests
         { TensorType = new TypeProto.Types.Tensor { ElemType = 1,
             Shape = new TensorShapeProto { Dim = { new TensorShapeProto.Types.Dimension { DimValue = 2 } } } } } };
 
+    [SkippableTheory]
+    [InlineData(0)] [InlineData(1)] [InlineData(2)]
+    public void ExternalTensorAttributeCanBeInspected(int mode)
+    {
+        string file = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx");
+        try
+        {
+            var model = new ModelProto { IrVersion = 8, Graph = new GraphProto { Name = "external-attribute", Output = { FloatInfo("y") } },
+                OpsetImport = { new OperatorSetIdProto { Version = 14 } } };
+            var tensor = new TensorProto { Name = "weights", DataType = 1, Dims = { 2 }, DataLocation = TensorProto.Types.DataLocation.External,
+                ExternalData = { new StringStringEntryProto { Key = "location", Value = "missing-weights-" + Guid.NewGuid().ToString("N") + ".bin" } } };
+            model.Graph.Node.Add(new NodeProto { Name = "constant", OpType = "Constant", Output = { "y" }, Attribute = {
+                new AttributeProto { Name = "value", Type = AttributeProto.Types.AttributeType.Tensor, T = tensor } } });
+            File.WriteAllBytes(file, model.ToByteArray());
+            var args = new List<string> { "info", file };
+            if (mode != 0) args.Add(mode == 1 ? "--ops" : "--init");
+            var result = RunCli(args.ToArray());
+            Assert.True(result.Exit == 0, result.Output + result.Error);
+            if (mode == 0) Assert.Contains("tensor weights:float:2 (not materialized)", result.Output);
+        }
+        finally { File.Delete(file); }
+    }
+
     static GraphProto Branch(string name, bool nested)
     {
         var graph = new GraphProto { Name = name, Output = { FloatInfo("shared") } };

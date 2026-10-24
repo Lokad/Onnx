@@ -339,7 +339,7 @@ public static class ProtoConversions
 
     public static object Value(this AttributeProto ap, string? baseDirectory) => Value(ap, baseDirectory, true);
 
-    static object Value(this AttributeProto ap, string? baseDirectory, bool materializeInitializers)
+    static object Value(this AttributeProto ap, string? baseDirectory, bool materializeTensors)
     {
         switch (ap.Type)
         {
@@ -347,7 +347,8 @@ public static class ProtoConversions
             case AttributeProto.Types.AttributeType.Ints: return ap.Ints.ToArray();
             case AttributeProto.Types.AttributeType.Float: return ap.F;
             case AttributeProto.Types.AttributeType.Floats: return ap.Floats.ToArray();
-            case AttributeProto.Types.AttributeType.Tensor: return ap.T.ToTensor(baseDirectory);
+            case AttributeProto.Types.AttributeType.Tensor:
+                return materializeTensors ? ap.T.ToTensor(baseDirectory) : ap.T.ToTensorDto(baseDirectory, false);
             case AttributeProto.Types.AttributeType.String: return ap.S.ToStringUtf8();
             case AttributeProto.Types.AttributeType.Strings: return ap.Strings.Select(s => s.ToStringUtf8()).ToArray();
             case AttributeProto.Types.AttributeType.Graph:
@@ -357,8 +358,8 @@ public static class ProtoConversions
                     Name = ap.G.Name,
                     Inputs = ap.G.Input.Select(v => v.ToValueDto()).ToList(),
                     Outputs = ap.G.Output.Select(v => v.ToValueDto()).ToList(),
-                    Initializers = ap.G.Initializer.Select(t => t.ToTensorDto(baseDirectory, materializeInitializers)).ToList(),
-                    Nodes = ap.G.Node.Select(n => n.ToNodeDto(baseDirectory, materializeInitializers)).ToList(),
+                    Initializers = ap.G.Initializer.Select(t => t.ToTensorDto(baseDirectory, materializeTensors)).ToList(),
+                    Nodes = ap.G.Node.Select(n => n.ToNodeDto(baseDirectory, materializeTensors)).ToList(),
                 };
             default: throw new NotSupportedException($"Cannot convert attribute proto value of type {ap.Type}.");
         }
@@ -366,14 +367,14 @@ public static class ProtoConversions
 
     public static OnnxNode ToNodeDto(this NodeProto np, string? baseDirectory) => ToNodeDto(np, baseDirectory, true);
 
-    internal static OnnxNode ToNodeDto(this NodeProto np, string? baseDirectory, bool materializeInitializers)
+    internal static OnnxNode ToNodeDto(this NodeProto np, string? baseDirectory, bool materializeTensors)
     {
         Runtime.Debug("Converting model node proto {npn} with op type {npot} and inputs {npi} and outputs {npot} and attributes [{npa}] to graph node.", np.Name, np.OpType, np.Input, np.Output, np.Attribute.Select(a => a.Name));
         // Tensor-valued attributes read external data directly into final
         // storage like top-level initializers do; without a directory the
         // conversion below rejects unresolved external tensors with a clear
-        // error. Attribute tensors are small constants, so they always
-        // materialize, even on metadata-only paths.
+        // error. Metadata-only conversion keeps tensor descriptors instead,
+        // including recursively nested attributes, without reading payloads.
         return new OnnxNode
         {
             Name = np.Name,
@@ -381,7 +382,7 @@ public static class ProtoConversions
             Domain = np.Domain ?? "",
             Inputs = np.Input.ToArray(),
             Outputs = np.Output.ToArray(),
-            Attributes = np.Attribute.ToDictionary(k => k.Name, v => v.Value(baseDirectory, materializeInitializers)),
+            Attributes = np.Attribute.ToDictionary(k => k.Name, v => v.Value(baseDirectory, materializeTensors)),
         };
     }
 }

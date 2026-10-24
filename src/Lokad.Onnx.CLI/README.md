@@ -17,6 +17,9 @@ Run lonnx.cmd --help or lonnx.cmd <verb> --help for current options.
 - transcribe <model-directory> <audio.wav> runs Whisper or Parakeet.
 - diarize <audio.wav> takes local model paths and produces Community-1 speaker timelines.
 
+`info` parses model metadata without reading external weight files. Tensor
+attributes show their name, type and shape with a `not materialized` marker.
+
 ## Text embeddings
 
 Use the locally prepared FP32 bundle:

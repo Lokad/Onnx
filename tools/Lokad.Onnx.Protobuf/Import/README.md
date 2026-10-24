@@ -5,6 +5,7 @@ ONNX protobuf loading in the nonpackable reference adapter: parses .onnx files a
 ## Entry points (OnnxImport)
 
 - Parse(path) / Parse(bytes): protobuf parse plus external-data resolution against the model file directory (missing location/file or out-of-range offset throws).
+- ParseMetadata(path): parses the complete protobuf, but keeps initializer and tensor-attribute payloads empty and never reads sidecars. Tensor attributes are OnnxTensor descriptors in this mode, including in nested graphs; full Parse returns executable ITensor attributes.
 - Load(path) / Load(bytes): parse plus Model.Load, with the real ModelFile stamped on the graph; returns null on nonfatal failures with the cause on LastErrorMessage/LastErrorCause plus the error log, while fatal runtime failures propagate.
 
 ## Conversions (ProtoConversions)

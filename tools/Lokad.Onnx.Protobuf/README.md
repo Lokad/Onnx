@@ -22,7 +22,9 @@ Memory reads borrow their input synchronously, accept slices without copying the
 encoded buffer, and return independently owned payloads. Unresolved external
 weights in memory input fail explicitly. `Model.Load` consumes the description.
 `OnnxImport.ParseMetadata` supports inspection without materializing weights or
-reading sidecars, while still parsing the whole Protobuf message.
+reading sidecars, while still parsing the whole Protobuf message. Initializers
+and tensor attributes, including nested attributes, are `OnnxTensor` descriptors
+with empty `Data`; full import keeps executable `ITensor` attributes.
 
 Package-only applications may implement `IOnnxModelReader` using their own
 parser, or adapt this source against their selected core/runtime versions. No
