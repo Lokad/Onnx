@@ -77,6 +77,8 @@ preparation fingerprint, diagnostics and released-buffer cache. The public graph
 remains mutable: keep structural-change detection and invalidation semantics.
 Folded transposes snapshot their effective permutation and prune obsolete owned
 payloads during preparation; generated-name slots replaced by callers are preserved.
+Both public preparation methods reject calls during execution; the internal
+run-entry path performs authorized preparation under the shared preparation lock.
 
 `PrepareOwnedMatMulWeights()` is the existing opt-in for the qualified Parakeet
 export. `ParakeetOwnedWeightPolicy` holds its exact name/shape selection;

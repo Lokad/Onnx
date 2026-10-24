@@ -208,7 +208,7 @@ public partial class ComputationalGraph
             {
                 throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
             }
-            RefreshLifetimeAnalysis();
+            RefreshLifetimeAnalysisCore();
         }
     }
 
@@ -370,7 +370,7 @@ public partial class ComputationalGraph
     {
         if (!_prepared || ComputeStructureFingerprint() != _preparedFingerprint)
         {
-            RefreshLifetimeAnalysis();
+            RefreshLifetimeAnalysisCore();
         }
     }
 
@@ -1360,7 +1360,12 @@ public partial class ComputationalGraph
     /// initializers map to <see cref="int.MaxValue"/> (live forever); produced-but-unconsumed
     /// intermediates map to their producer index. Tensor bindings are unchanged;
     /// experimental released-buffer storage is cleared.</remarks>
-    public void RefreshLifetimeAnalysis()
+    /// <remarks>Like <see cref="Prepare"/>, refuses preparation during execution.</remarks>
+    public void RefreshLifetimeAnalysis() => Prepare();
+
+    // The caller owns PrepareLock and has already authorized preparation. Run
+    // entry uses this body after acquiring _executing, unlike public requests.
+    void RefreshLifetimeAnalysisCore()
     {
         ReleasedBuffers?.Clear();
         FoldConstantTransposes();
