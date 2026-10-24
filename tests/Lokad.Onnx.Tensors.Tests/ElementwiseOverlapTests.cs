@@ -2,6 +2,10 @@ using System.Numerics;
 
 namespace Lokad.Onnx.Tensors.Tests;
 
+[CollectionDefinition("SequentialAllocation", DisableParallelization = true)]
+public class SequentialAllocationCollection { }
+
+[Collection("SequentialAllocation")]
 public class ElementwiseOverlapTests
 {
     public static IEnumerable<object[]> Cases()
@@ -131,9 +135,9 @@ public class ElementwiseOverlapTests
                         if (simd) source.VectorizedApply(static x => x + Vector<float>.One, static x => x + 1, destination, TensorExecutionOptions.Simd);
                         else source.Apply(static x => x + 1, destination);
                     }
-                    // Exercise the call sites before measuring: one call can leave
-                    // runtime profiling allocations in the following measured batch.
-                    for (int i = 0; i < 32; i++) Apply();
+                    // Warm past the early tiering thresholds on this dedicated thread;
+                    // 32 calls can still leave runtime work in the measured batch.
+                    for (int i = 0; i < 256; i++) Apply();
                     long before = GC.GetAllocatedBytesForCurrentThread();
                     for (int i = 0; i < 10; i++) Apply();
                     long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
