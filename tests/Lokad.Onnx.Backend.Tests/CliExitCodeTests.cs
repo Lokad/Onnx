@@ -57,25 +57,29 @@ public class CliExitCodeTests
         Assert.Equal(0, RunCli("info", Mnist(), "--op-filter", "MatMul").Exit);
     }
 
-    [SkippableFact]
-    public void MissingModel_ExitsNotFound()
+    [SkippableTheory]
+    [InlineData(0, "missing")] [InlineData(1, "missing")] [InlineData(2, "missing")]
+    [InlineData(0, "malformed")] [InlineData(1, "malformed")] [InlineData(2, "malformed")]
+    [InlineData(0, "unshaped")] [InlineData(1, "unshaped")] [InlineData(2, "unshaped")]
+    public void InspectionErrorsUseConsistentExitClasses(int mode, string failure)
     {
-        Assert.Equal(4, RunCli("info", Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx")).Exit);
-    }
-
-    [SkippableFact]
-    public void MalformedModel_ExitsInvalidInput()
-    {
-        var garbage = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx");
-        File.WriteAllBytes(garbage, new byte[] { 1, 2, 3, 4 });
+        string file = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx");
         try
         {
-            Assert.Equal(5, RunCli("info", garbage).Exit);
+            if (failure == "malformed") File.WriteAllBytes(file, [1, 2, 3, 4]);
+            else if (failure == "unshaped")
+            {
+                var model = new ModelProto { Graph = new GraphProto { Name = "unshaped", Output = {
+                    new ValueInfoProto { Name = "y", Type = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = 1 } } } } } };
+                File.WriteAllBytes(file, model.ToByteArray());
+            }
+            var args = new List<string> { "info", file };
+            if (mode != 0) args.Add(mode == 1 ? "--ops" : "--init");
+            var result = RunCli(args.ToArray());
+            Assert.Equal(failure == "missing" ? 4 : 5, result.Exit);
+            Assert.DoesNotContain("Unhandled runtime error", result.Output + result.Error);
         }
-        finally
-        {
-            File.Delete(garbage);
-        }
+        finally { File.Delete(file); }
     }
 
     [SkippableFact]

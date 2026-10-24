@@ -541,17 +541,8 @@ class Program
             }
             opfilter = op;
         }
-        OnnxModel m;
-        try
-        {
-            m = OnnxImport.ParseMetadata(file);
-        }
-        catch (Exception ex)
-        {
-            Error(ex, "Could not parse {f} as ONNX model file.", file);
-            Exit(ExitResult.INVALID_INPUT);
-            return;
-        }
+        var m = ReadModelMetadataOrExit(file);
+        if (m is null) return;
         var tensors = new Dictionary<string, string>();
         Info("Graph has input tensors: {i}", m.Inputs.Select(t => t.Describe()));
         Info("Graph has output tensors: {o}", m.Outputs.Select(t => t.Describe()));
@@ -636,10 +627,22 @@ class Program
         }
     }
 
+    static OnnxModel? ReadModelMetadataOrExit(string file)
+    {
+        try { return OnnxImport.ParseMetadata(file); }
+        catch (Exception ex) when (!IsFatal(ex))
+        {
+            Error(ex, "Could not parse {f} as ONNX model file.", file);
+            Exit(ExitResult.INVALID_INPUT);
+            return null;
+        }
+    }
+
     static void PrintModelOps(string file)
     {
         ExitIfFileNotFound(file);
-        var m = OnnxImport.ParseMetadata(file);
+        var m = ReadModelMetadataOrExit(file);
+        if (m is null) return;
         Info("Graph has {count} input tensor(s): {in}", m.Inputs.Count, m.Inputs.Select(t => t.Describe()));
         Info("Graph has {count} output tensor(s): {out}", m.Outputs.Count, m.Outputs.Select(t => t.Describe()));
         Info("Graph has {count} initializer tensor(s): {out}", m.Initializers.Count, m.Initializers.Select(t => t.Describe()));
@@ -668,7 +671,8 @@ class Program
     static void PrintModelInitializers(string file)
     {
         ExitIfFileNotFound(file);
-        var m = OnnxImport.ParseMetadata(file);
+        var m = ReadModelMetadataOrExit(file);
+        if (m is null) return;
         var inputs = m.Inputs.Select(i => i.Name);
         List<string> initializers = new List<string>();
         foreach (var i in m.Initializers)

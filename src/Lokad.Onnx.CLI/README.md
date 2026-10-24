@@ -19,6 +19,8 @@ Run lonnx.cmd --help or lonnx.cmd <verb> --help for current options.
 
 `info` parses model metadata without reading external weight files. Tensor
 attributes show their name, type and shape with a `not materialized` marker.
+Plain inspection, `--ops` and `--init` use the same error classes: malformed or
+unsupported metadata exits 5, a missing model exits 4, and invalid options exit 2.
 
 ## Text embeddings
 
