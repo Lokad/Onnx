@@ -75,6 +75,8 @@ Graphs and their execution contexts share one internal `GraphPreparationCache`
 for prepared weights and synchronization. Each context retains its own bindings,
 preparation fingerprint, diagnostics and released-buffer cache. The public graph
 remains mutable: keep structural-change detection and invalidation semantics.
+Folded transposes snapshot their effective permutation and prune obsolete owned
+payloads during preparation; generated-name slots replaced by callers are preserved.
 
 `PrepareOwnedMatMulWeights()` is the existing opt-in for the qualified Parakeet
 export. `ParakeetOwnedWeightPolicy` holds its exact name/shape selection;

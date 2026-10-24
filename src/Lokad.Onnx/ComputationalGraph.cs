@@ -50,7 +50,19 @@ public partial class ComputationalGraph
     /// the source initializer is detected per run and refolds on demand,
     /// while in-place content mutation requires <see cref="InvalidatePreparation"/>.
     /// </summary>
-    internal sealed record FoldedTranspose(string SourceName, ITensor SourceRef, long SourceLength, string PreparedName);
+    internal sealed record FoldedTranspose(string SourceName, ITensor SourceRef, long SourceLength,
+        string PreparedName, ITensor Prepared, int[] Permutation)
+    {
+        internal bool Matches(string sourceName, ITensor source, int[]? permutation)
+        {
+            if (SourceName != sourceName || !ReferenceEquals(SourceRef, source) || SourceLength != source.Length)
+                return false;
+            if (permutation is not null) return Permutation.AsSpan().SequenceEqual(permutation);
+            for (int i = 0; i < Permutation.Length; i++)
+                if (Permutation[i] != Permutation.Length - 1 - i) return false;
+            return true;
+        }
+    }
 
     readonly GraphPreparationCache preparation;
 
@@ -224,7 +236,7 @@ public partial class ComputationalGraph
             ReleasedBuffers?.Clear();
             lock (FoldLock)
             {
-                foreach (var fold in FoldedTransposes.Values) Initializers.Remove(fold.PreparedName);
+                foreach (var fold in FoldedTransposes.Values) RemoveFoldedInitializer(fold);
                 FoldedTransposes.Clear();
                 foreach (var packed in PackedWeights.Values)
                 {
@@ -241,10 +253,10 @@ public partial class ComputationalGraph
 
     /// <summary>
     /// Returns the prepared transposition for a constant-only Transpose node
-    /// when the source initializer is unchanged since the fold. Any doubt
+    /// when the source initializer and effective permutation match the fold. Any doubt
     /// falls through to normal computation.
     /// </summary>
-    internal bool TryGetFoldedTranspose(string nodeName, string[]? nodeInputs, ITensor? current, out ITensor? prepared)
+    internal bool TryGetFoldedTranspose(string nodeName, string[]? nodeInputs, ITensor? current, int[]? permutation, out ITensor? prepared)
     {
         prepared = null;
         if (string.IsNullOrEmpty(nodeName) || nodeInputs is null || nodeInputs.Length != 1
@@ -252,11 +264,9 @@ public partial class ComputationalGraph
         lock (FoldLock)
         {
             if (!FoldedTransposes.TryGetValue(nodeName, out var fold)) return false;
-            if (fold.SourceName != nodeInputs[0]) return false;
             if (!Initializers.TryGetValue(fold.SourceName, out var src)
-                || !ReferenceEquals(src, fold.SourceRef) || src.Length != fold.SourceLength) return false;
-            if (!ReferenceEquals(current, src)) return false;
-            if (!Initializers.TryGetValue(fold.PreparedName, out prepared) || prepared is null) return false;
+                || !ReferenceEquals(current, src) || !fold.Matches(nodeInputs[0], src, permutation)) return false;
+            if (!Initializers.TryGetValue(fold.PreparedName, out prepared) || !ReferenceEquals(prepared, fold.Prepared)) return false;
             return true;
         }
     }
@@ -266,27 +276,63 @@ public partial class ComputationalGraph
     /// initializer owned by the plan. The stored payload is an independent
     /// copy, never pool-rented storage.
     /// </summary>
-    internal void FoldTranspose(string nodeName, string[]? nodeInputs, ITensor? input, ITensor result)
+    internal void FoldTranspose(string nodeName, string[]? nodeInputs, ITensor? input, int[]? permutation, ITensor result)
     {
         if (string.IsNullOrEmpty(nodeName) || nodeInputs is null || nodeInputs.Length != 1
             || string.IsNullOrEmpty(nodeInputs[0]) || input is null) return;
         string sourceName = nodeInputs[0];
         lock (FoldLock)
         {
+            if (!Initializers.TryGetValue(sourceName, out var src) || !ReferenceEquals(input, src)) return;
             if (FoldedTransposes.TryGetValue(nodeName, out var existing))
             {
-                if (Initializers.TryGetValue(existing.SourceName, out var cur)
-                    && ReferenceEquals(cur, existing.SourceRef) && cur.Length == existing.SourceLength) return;
-                Initializers.Remove(existing.PreparedName);
+                if (existing.Matches(sourceName, src, permutation)
+                    && Initializers.TryGetValue(existing.PreparedName, out var held) && ReferenceEquals(held, existing.Prepared)) return;
+                RemoveFoldedInitializer(existing);
                 FoldedTransposes.Remove(nodeName);
             }
-            if (!Initializers.TryGetValue(sourceName, out var src) || !ReferenceEquals(input, src)) return;
             string preparedName = "folded:" + nodeName;
             if (Initializers.ContainsKey(preparedName) || Inputs.ContainsKey(preparedName)) return;
             var stored = result.Clone();
             stored.Name = preparedName;
             Initializers[preparedName] = stored;
-            FoldedTransposes[nodeName] = new FoldedTranspose(sourceName, src, src.Length, preparedName);
+            var axes = permutation is null ? Enumerable.Range(0, src.Rank).Reverse().ToArray() : (int[])permutation.Clone();
+            FoldedTransposes[nodeName] = new FoldedTranspose(sourceName, src, src.Length, preparedName, stored, axes);
+        }
+    }
+
+    // Call under FoldLock. A caller may have reused a generated-name slot.
+    void RemoveFoldedInitializer(FoldedTranspose fold)
+    {
+        if (Initializers.TryGetValue(fold.PreparedName, out var held) && ReferenceEquals(held, fold.Prepared))
+            Initializers.Remove(fold.PreparedName);
+    }
+
+    void PruneFoldedTransposes()
+    {
+        lock (FoldLock)
+        {
+            if (FoldedTransposes.Count == 0) return;
+            var current = new Dictionary<string, Node>(StringComparer.Ordinal);
+            foreach (var node in Nodes)
+                if (node.Op == OpType.Transpose && !string.IsNullOrEmpty(node.Name)) current.TryAdd(node.Name, node);
+            foreach (var (name, fold) in FoldedTransposes.ToArray())
+            {
+                bool keep = false;
+                if (current.TryGetValue(name, out var node) && node.Inputs is { Length: 1 }
+                    && Initializers.TryGetValue(node.Inputs[0], out var source)
+                    && Initializers.TryGetValue(fold.PreparedName, out var held) && ReferenceEquals(held, fold.Prepared))
+                {
+                    try { keep = fold.Matches(node.Inputs[0], source, node.Ints("perm")); }
+                    catch (Exception ex) when (ex is ArgumentException or OverflowException)
+                    {
+                        // Invalid attributes are reported by normal node execution.
+                    }
+                }
+                if (keep) continue;
+                RemoveFoldedInitializer(fold);
+                FoldedTransposes.Remove(name);
+            }
         }
     }
 
@@ -1294,6 +1340,7 @@ public partial class ComputationalGraph
     /// <remarks>Matches what first execution would fold lazily, so steady state is identical with the transpose compute moved from first run to prepare. Any failure skips the node silently and the lazy path handles it at run time exactly as before.</remarks>
     void FoldConstantTransposes()
     {
+        PruneFoldedTransposes();
         for (int i = 0; i < Nodes.Count; i++)
         {
             if (Nodes[i].Op != OpType.Transpose) continue;

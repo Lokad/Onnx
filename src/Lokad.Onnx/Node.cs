@@ -141,11 +141,12 @@ public partial struct Node
     internal OpResult TransposePrepared(ComputationalGraph graph, ExecutionOptions? opt)
     {
         var input = InputTensor(graph, 0);
-        if (graph.TryGetFoldedTranspose(Name, Inputs, input, out var prepared) && prepared is not null)
+        var permutation = Ints("perm");
+        if (graph.TryGetFoldedTranspose(Name, Inputs, input, permutation, out var prepared) && prepared is not null)
             return Success(OpType.Transpose, prepared);
-        var r = CPU.Transpose(input, Ints("perm"), opt, graph.ActivePool);
+        var r = CPU.Transpose(input, permutation, opt, graph.ActivePool);
         if (r.Status == OpStatus.Success && r.Outputs.Length == 1 && r.Outputs[0] is not null)
-            graph.FoldTranspose(Name, Inputs, input, r.Outputs[0]);
+            graph.FoldTranspose(Name, Inputs, input, permutation, r.Outputs[0]);
         return r;
     }
 

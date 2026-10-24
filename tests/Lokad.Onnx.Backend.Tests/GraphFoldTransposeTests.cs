@@ -2,6 +2,132 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class GraphFoldTransposeTests
 {
+    static ComputationalGraph MatrixTranspose(bool context)
+    {
+        var model = new OnnxModel { Name = "fold-lifecycle", Opset = { [""] = 13 },
+            Initializers = { new OnnxTensor { Name = "w", ElementType = TensorElementType.Float,
+                Dims = [2, 2], Data = new float[] { 1, 2, 3, 4 } } },
+            Outputs = { new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = [2, 2] } },
+            Nodes = { new OnnxNode { Name = "transpose", OpType = "Transpose", Inputs = ["w"], Outputs = ["y"],
+                Attributes = new() { ["perm"] = new int[] { 1, 0 } } } } };
+        var graph = Model.Load(model);
+        return context ? graph.CreateExecution(ExecutionOptions.Scalar) : graph;
+    }
+
+    static Tensor<float> RunMatrix(ComputationalGraph graph)
+    {
+        Assert.True(graph.Execute(NoInputs(), true), graph.LastErrorMessage);
+        return Assert.IsAssignableFrom<Tensor<float>>(graph.Outputs["y"]);
+    }
+
+    [Theory]
+    [InlineData(false, false, false)] [InlineData(false, false, true)]
+    [InlineData(false, true, false)] [InlineData(false, true, true)]
+    [InlineData(true, false, false)] [InlineData(true, false, true)]
+    [InlineData(true, true, false)] [InlineData(true, true, true)]
+    public void ChangedPermutationUsesCurrentAxes(bool context, bool prepare, bool editArray)
+    {
+        var graph = MatrixTranspose(context);
+        var held = RunMatrix(graph);
+        if (editArray)
+        {
+            var axes = (int[])graph.Nodes[0].Attributes!["perm"];
+            axes[0] = 0; axes[1] = 1;
+        }
+        else graph.Nodes[0].Attributes!["perm"] = new int[] { 0, 1 };
+        if (prepare) graph.Prepare();
+        Assert.Equal(new float[] { 1, 2, 3, 4 }, RunMatrix(graph).ToArray());
+        Assert.Equal(new float[] { 1, 3, 2, 4 }, held.ToArray());
+    }
+
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public void EquivalentDefaultPermutationAndUnchangedPreparationReuseFold(bool context)
+    {
+        var graph = MatrixTranspose(context);
+        var held = RunMatrix(graph);
+        graph.Nodes[0].Attributes!.Remove("perm");
+        graph.Prepare();
+        Assert.Same(held, RunMatrix(graph));
+        graph.Prepare();
+        Assert.Same(held, RunMatrix(graph));
+    }
+
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public void InvalidPermutationDoesNotReturnAnOldFold(bool context)
+    {
+        var graph = MatrixTranspose(context);
+        var held = RunMatrix(graph);
+        graph.Nodes[0].Attributes!["perm"] = new int[] { 0, 0 };
+        Assert.False(graph.Execute(NoInputs(), true));
+        Assert.Equal("transpose", graph.LastFailedNodeName);
+        Assert.Equal(new float[] { 1, 3, 2, 4 }, held.ToArray());
+    }
+
+    [Theory]
+    [InlineData(false, "rename")] [InlineData(true, "rename")]
+    [InlineData(false, "remove")] [InlineData(true, "remove")]
+    [InlineData(false, "replace")] [InlineData(true, "replace")]
+    public void ChangedNodesDropObsoleteFoldedPayloads(bool context, string edit)
+    {
+        var graph = MatrixTranspose(context);
+        var held = RunMatrix(graph);
+        if (edit == "rename")
+            for (int i = 0; i < 20; i++)
+            {
+                var node = graph.Nodes[0]; node.Name = "transpose-" + i; graph.Nodes[0] = node;
+                graph.Prepare();
+                Assert.Single(graph.Initializers.Keys.Where(n => n.StartsWith("folded:")));
+            }
+        else
+        {
+            if (edit == "remove")
+            {
+                graph.Nodes.Clear(); graph.OutputDescs.Clear(); graph.Outputs.Clear();
+            }
+            else
+            {
+                var node = graph.Nodes[0]; node.Op = OpType.Identity; node.OpTypeName = "Identity";
+                node.Attributes = null; graph.Nodes[0] = node;
+            }
+            graph.Prepare();
+            Assert.DoesNotContain(graph.Initializers.Keys, n => n.StartsWith("folded:"));
+        }
+        Assert.Equal(new float[] { 1, 3, 2, 4 }, held.ToArray());
+        Assert.True(graph.Execute(NoInputs(), true), graph.LastErrorMessage);
+    }
+
+    [Theory]
+    [InlineData(false, false)] [InlineData(false, true)]
+    [InlineData(true, false)] [InlineData(true, true)]
+    public void CacheCleanupPreservesCallerReplacement(bool context, bool invalidate)
+    {
+        var graph = MatrixTranspose(context);
+        var held = RunMatrix(graph);
+        var replacement = DenseTensor<float>.OfValues(new float[,] { { 9, 9 }, { 9, 9 } });
+        graph.Initializers["folded:transpose"] = replacement;
+        if (invalidate) graph.InvalidatePreparation();
+        else
+        {
+            var node = graph.Nodes[0]; node.Name = "renamed"; graph.Nodes[0] = node;
+            graph.Prepare();
+        }
+        Assert.Same(replacement, graph.Initializers["folded:transpose"]);
+        Assert.Equal(new float[] { 1, 3, 2, 4 }, RunMatrix(graph).ToArray());
+        Assert.Equal(new float[] { 1, 3, 2, 4 }, held.ToArray());
+    }
+
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public void CallerReplacementIsNotMistakenForCachedOutput(bool context)
+    {
+        var graph = MatrixTranspose(context);
+        RunMatrix(graph);
+        graph.Initializers["folded:transpose"] = DenseTensor<float>.OfValues(new float[,] { { 9, 9 }, { 9, 9 } });
+        Assert.Equal(new float[] { 1, 3, 2, 4 }, RunMatrix(graph).ToArray());
+    }
+
     static ComputationalGraph NewGraph()
     {
         var g = new ComputationalGraph();
