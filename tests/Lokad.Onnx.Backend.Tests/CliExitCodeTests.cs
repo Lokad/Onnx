@@ -245,6 +245,74 @@ public class CliExitCodeTests
         Assert.Contains("Remote model locations are not supported", result.Output);
     }
 
+    [SkippableTheory]
+    [InlineData("", false)]
+    [InlineData("--debug", true)]
+    [InlineData("-d", true)]
+    [InlineData("--debug=true", true)]
+    [InlineData("--debug=TRUE", true)]
+    [InlineData("--debug=false", false)]
+    [InlineData("--debug --debug=false", false)]
+    [InlineData("--debug=false -d", true)]
+    [InlineData("--debug=true --debug=false", false)]
+    [InlineData("--debug=false --debug=true", true)]
+    public void RunDebugFlags_UseResolvedVerbosity(string flags, bool enabled)
+    {
+        var args = new List<string> { "run", Mnist(), TestSupport.CommittedImage("mnist4.png") + "::mnist" };
+        args.AddRange(flags.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        var result = RunCli(args.ToArray());
+        Assert.Equal(0, result.Exit);
+        Assert.Contains("Plus214_Output_0:float:1x10:", result.Output);
+        Assert.Equal(enabled, result.Output.Contains(" DEBUG ", StringComparison.Ordinal));
+    }
+
+    [SkippableTheory]
+    [InlineData("info", "garbage")]
+    [InlineData("run", "")]
+    [InlineData("embed", "1")]
+    [InlineData("transcribe", "garbage")]
+    [InlineData("diarize", "garbage")]
+    public void InvalidGlobalDebug_ExitsInvalidOptionsOnCorrectStream(string verb, string value)
+    {
+        foreach (bool beforeVerb in new[] { false, true })
+        {
+            string flag = "--debug=" + value;
+            var args = beforeVerb ? new[] { flag, verb } : new[] { verb, flag };
+            // A later valid flag must not hide an earlier malformed value.
+            var result = RunCli(args.Concat(new[] { "--debug=true" }).ToArray());
+            Assert.Equal(2, result.Exit);
+            Assert.Contains("Option --debug must be true or false.", result.Output + result.Error);
+            if (verb is "embed" or "transcribe" or "diarize")
+            {
+                Assert.Empty(result.Output);
+                Assert.NotEmpty(result.Error);
+            }
+            else Assert.Empty(result.Error);
+        }
+    }
+
+    [SkippableTheory]
+    [InlineData("embed")]
+    [InlineData("transcribe")]
+    [InlineData("diarize")]
+    public void GlobalInlineDebug_ReachesLocalAssetValidation(string verb)
+    {
+        string missing = Path.Combine(Path.GetTempPath(), "lonnx-missing-" + Guid.NewGuid().ToString("N"));
+        string[] arguments = verb switch
+        {
+            "embed" => new[] { missing, "--query", "test" },
+            "transcribe" => new[] { missing, missing + ".wav", "--language", "en" },
+            _ => new[] { missing + ".wav", "--segmentation", missing, "--embedding", missing,
+                         "--projection", missing, "--plda", missing }
+        };
+        var args = new[] { "--debug=true", verb }.Concat(arguments).Append("--debug=false").ToArray();
+        var result = RunCli(args);
+        Assert.Equal(4, result.Exit);
+        Assert.Empty(result.Output);
+        Assert.NotEmpty(result.Error);
+        Assert.DoesNotContain(" DEBUG ", result.Error);
+    }
+
     [SkippableFact]
     public void SingleNodeProfile_ExitsSuccessAndPrintsOneNode()
     {

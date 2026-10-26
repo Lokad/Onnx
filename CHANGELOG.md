@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- Global `--debug=true/false` options are validated and honored across CLI verbs;
+  logging uses the parser's resolved value, including repeated-flag precedence.
 - `run` accepts local model filenames and directories beginning with `http`;
   remote HTTP/HTTPS URLs remain rejected, regardless of scheme casing.
 - `To2DArray` rejects ragged/null rows instead of losing values or leaking indexing

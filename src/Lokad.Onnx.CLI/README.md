@@ -8,6 +8,10 @@ package. On Windows, lonnx.cmd invokes the Release build. See the
 
 Run lonnx.cmd --help or lonnx.cmd <verb> --help for current options.
 
+`--debug` and `-d` enable debug logs for every command. Use `--debug=true` or
+`--debug=false` to set verbosity explicitly; the last occurrence wins. These
+global flags may appear before or after the verb. Invalid boolean values exit 2.
+
 - info <model.onnx> inspects metadata; --ops, --init and --op-filter select details.
 - run <model.onnx> <inputs...> executes a graph with path::format inputs or
   --text <props> <quoted text>. See the [input helpers](../Lokad.Onnx.Data/README.md).

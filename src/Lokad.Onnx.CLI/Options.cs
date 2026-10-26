@@ -89,10 +89,10 @@ public sealed class ParseResult
 public static class ArgsParser
 {
     static readonly HashSet<string> InfoFlags = new HashSet<string>(StringComparer.Ordinal)
-        { "ops", "init", "op-filter", "debug" };
+        { "ops", "init", "op-filter" };
     static readonly HashSet<string> RunFlags = new HashSet<string>(StringComparer.Ordinal)
         { "save-input", "softmax", "node", "text", "print-input", "disable-simd",
-          "enable-intrinsics", "profile", "optimize-memory", "threads", "debug" };
+          "enable-intrinsics", "profile", "optimize-memory", "threads" };
 
     static bool IsFlag(string token) => token.StartsWith("--", StringComparison.Ordinal);
     static bool IsShort(string token) => token.Length == 2 && token[0] == '-' && token[1] != '-';
@@ -101,6 +101,7 @@ public static class ArgsParser
     {
         var result = new ParseResult();
         bool debug = false;
+        string? debugError = null;
         bool help = false;
         bool version = false;
         string verb = "";
@@ -108,6 +109,12 @@ public static class ArgsParser
         foreach (var token in args)
         {
             if (token == "--debug" || token == "-d") { debug = true; continue; }
+            if (token.StartsWith("--debug=", StringComparison.Ordinal))
+            {
+                if (!bool.TryParse(token.AsSpan("--debug=".Length), out debug))
+                    debugError = "Option --debug must be true or false.";
+                continue;
+            }
             if (token == "--help") { help = true; continue; }
             if (token == "--version") { version = true; continue; }
             if (verb.Length == 0 && !IsFlag(token) && !IsShort(token)) { verb = token; continue; }
@@ -144,7 +151,8 @@ public static class ArgsParser
             return result;
         }
         result.Verb = verb;
-        var parsed = verb == "info" ? ParseInfo(rest) : verb == "run" ? ParseRun(rest) : verb == "diarize" ? ParseDiarize(rest)
+        var parsed = debugError is not null ? Fail(debugError)
+            : verb == "info" ? ParseInfo(rest) : verb == "run" ? ParseRun(rest) : verb == "diarize" ? ParseDiarize(rest)
             : verb == "embed" ? ParseEmbed(rest) : ParseTranscribe(rest);
         parsed.Verb = verb;
         if (parsed.Outcome == ParseOutcome.Ok && parsed.Value is not null) parsed.Value.Debug = debug;

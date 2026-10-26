@@ -39,9 +39,8 @@ class Program
     #region Entry point
     static void Main(string[] args)
     {
-        bool debug = (args.Contains("--debug") || args.Contains("-d"));
         var parsed = ArgsParser.Parse(args);
-        UseConsoleLogging(debug, parsed.Verb is "transcribe" or "diarize" or "embed");
+        UseConsoleLogging(parsed.Value?.Debug ?? false, parsed.Verb is "transcribe" or "diarize" or "embed");
         switch (parsed.Outcome)
         {
             case ParseOutcome.Version:
@@ -93,7 +92,7 @@ class Program
         Console.WriteLine("  diarize <audio.wav> [model options]                 Produce Community-1 speaker timelines.");
         Console.WriteLine("  embed <prepared-directory> [options]                Produce EmbeddingGemma 2 text vectors.");
         Console.WriteLine("Common options:");
-        Console.WriteLine("  --debug, -d   Enable debug mode.");
+        Console.WriteLine("  --debug[=true|false], -d   Set debug mode (last occurrence wins).");
         Console.WriteLine("  --help        Show this help and exit.");
         Console.WriteLine("  --version     Show version and exit.");
     }
