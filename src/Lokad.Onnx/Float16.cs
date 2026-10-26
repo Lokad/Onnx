@@ -86,13 +86,13 @@ namespace Lokad.Onnx
         /// <summary>
         /// BFloat16 Min value
         /// </summary>
-        public static BFloat16 MinValue => new BFloat16(MinValueBits);  // 65,407
+        public static BFloat16 MinValue => new BFloat16(MinValueBits);
 
         /// <summary>
         /// BFloat16 Max value
         /// </summary>
 
-        public static BFloat16 MaxValue => new BFloat16(MaxValueBits); // 32,639
+        public static BFloat16 MaxValue => new BFloat16(MaxValueBits);
 
         /// <summary>
         /// bfloat16 representation bits

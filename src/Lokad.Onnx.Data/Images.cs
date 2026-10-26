@@ -20,11 +20,6 @@ namespace Lokad.Onnx
                 return null;
             }
             using var image = Image.Load<Rgba32>(name);
-            if (image is null)
-            {
-                Error("Could not load file {f} as image.", name);
-                return null;
-            }
 
             Info("File {f} is {H}x{W}x{p}bpp image.", name, image.Height, image.Width, image.PixelType.BitsPerPixel);
             var n = Path.Combine((Path.GetDirectoryName(name) ?? ""), Path.GetFileNameWithoutExtension(name)
@@ -260,11 +255,6 @@ namespace Lokad.Onnx
                 return null;
             }
             using var image = Image.Load<Rgba32>(file);
-            if (image is null)
-            {
-                Error("Could not load file {f} as image.", file);
-                return null;
-            }
 
             Info("File {f} is {H}x{W}x{p}bpp image.", file, image.Height, image.Width, image.PixelType.BitsPerPixel);
             return ImageToArrayF(image);
@@ -277,11 +267,6 @@ namespace Lokad.Onnx
                 return null;
             }
             using var image = Image.Load<Rgba32>(file);
-            if (image is null)
-            {
-                Error("Could not load file {f} as image.", file);
-                return null;
-            }
 
             Info("File {f} is {H}x{W}x{p}bpp image.", file, image.Height, image.Width, image.PixelType.BitsPerPixel);
             image.Mutate(i => i.Grayscale());
