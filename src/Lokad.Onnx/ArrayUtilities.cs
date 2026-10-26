@@ -380,12 +380,24 @@ namespace Lokad.Onnx
             return axes;
         }
 
+        /// <summary>Copies equal-length, non-null rows into independent matrix storage.</summary>
+        /// <remarks>An empty source produces 0x0; equally empty rows preserve their row count.
+        /// Cells are copied without cloning referenced objects; null cell values are allowed.</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
+        /// <exception cref="ArgumentException">A row is null or has a different length.</exception>
         public static T[,] To2DArray<T>(this T[][] source)
         {
-            var result = new T[source.Length, source[0].Length];
+            ArgumentNullException.ThrowIfNull(source);
+            int columns = source.Length == 0 ? 0 : (source[0]?.Length ?? 0);
             for (int i = 0; i < source.Length; i++)
             {
-                for (int j = 0; j < source[0].Length; j++) result[i, j] = source[i][j];
+                if (source[i] is null || source[i].Length != columns)
+                    throw new ArgumentException($"Row {i} must be non-null and have length {columns}.", nameof(source));
+            }
+            var result = new T[source.Length, columns];
+            for (int i = 0; i < source.Length; i++)
+            {
+                for (int j = 0; j < columns; j++) result[i, j] = source[i][j];
             }
             return result;
         }

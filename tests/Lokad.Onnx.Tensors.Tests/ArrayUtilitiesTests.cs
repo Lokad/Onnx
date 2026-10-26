@@ -2,6 +2,76 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class ArrayUtilitiesTests
 {
+    [Fact]
+    public void To2DArrayCopiesRectangularValuesIntoIndependentStorage()
+    {
+        int[][] rows = [[1, 2], [3, 4]];
+        var matrix = rows.To2DArray();
+        Assert.Equal(2, matrix.GetLength(0));
+        Assert.Equal(2, matrix.GetLength(1));
+        Assert.Equal(new[] { 1, 2, 3, 4 }, matrix.Cast<int>());
+        matrix[0, 0] = 99;
+        Assert.Equal(1, rows[0][0]);
+        rows[1][1] = 88;
+        Assert.Equal(4, matrix[1, 1]);
+    }
+
+    [Fact]
+    public void To2DArrayEmptySourceProducesZeroByZero()
+    {
+        var matrix = Array.Empty<int[]>().To2DArray();
+        Assert.Equal(0, matrix.GetLength(0));
+        Assert.Equal(0, matrix.GetLength(1));
+    }
+
+    [Fact]
+    public void To2DArrayEmptyRowsPreserveRowCount()
+    {
+        var matrix = new[] { Array.Empty<int>(), Array.Empty<int>() }.To2DArray();
+        Assert.Equal(2, matrix.GetLength(0));
+        Assert.Equal(0, matrix.GetLength(1));
+    }
+
+    public static IEnumerable<object[]> NonrectangularRows()
+    {
+        yield return new object[] { new int[][] { [1], [2, 3] } };
+        yield return new object[] { new int[][] { [], [42] } };
+        yield return new object[] { new int[][] { [1, 2], [3] } };
+        yield return new object[] { new int[][] { [1, 2], [] } };
+        yield return new object[] { new int[][] { null!, [1] } };
+        yield return new object[] { new int[][] { [1], null! } };
+        yield return new object[] { new int[][] { [], null! } };
+    }
+
+    [Theory]
+    [MemberData(nameof(NonrectangularRows))]
+    public void To2DArrayRejectsRaggedAndNullRows(int[][] rows)
+    {
+        var error = Assert.Throws<ArgumentException>(() => rows.To2DArray());
+        Assert.Equal("source", error.ParamName);
+    }
+
+    [Fact]
+    public void To2DArrayRejectsNullSource()
+    {
+        var error = Assert.Throws<ArgumentNullException>(() => ArrayUtilities.To2DArray<int>(null!));
+        Assert.Equal("source", error.ParamName);
+    }
+
+    [Fact]
+    public void To2DArrayPreservesReferenceValuesAndNullCells()
+    {
+        var value = new object();
+        object?[][] rows = [[value, null], [null, value]];
+        var matrix = rows.To2DArray();
+        Assert.Same(value, matrix[0, 0]);
+        Assert.Same(value, matrix[1, 1]);
+        Assert.Null(matrix[0, 1]);
+        Assert.Null(matrix[1, 0]);
+        rows[0][0] = null;
+        Assert.Same(value, matrix[0, 0]);
+    }
+
     [Theory]
     [InlineData(false, 23, 0, 1, 2, 3)]
     [InlineData(true, 23, 0, 1, 2, 3)]

@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- `To2DArray` rejects ragged/null rows instead of losing values or leaking indexing
+  errors. Empty input returns 0x0; equally empty rows preserve their row count.
 - The e5 gate skips only explicit unavailable-FMA exits in optional intrinsics
   mode; real runner failures now fail verification instead of becoming skips.
 - ONNX operator names require exact, case-sensitive names; numeric enum values,
