@@ -157,7 +157,6 @@ public class Model
         var node = new Node()
         {
             Name = np.Name,
-            ID = np.Name.GetHashCode(),
             Attributes = np.Attributes.ToDictionary(p => p.Key, p => p.Value is OnnxSubgraph branch
                 ? (object)BuildBranch(branch, graph.Opset, runOptimizer, visiting, graph.MaximumPackedWeightBytes) : p.Value),
             Op = op,

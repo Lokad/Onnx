@@ -42,13 +42,16 @@ public class OnnxValueInfo
     public int[] Dims = Array.Empty<int>();
     /// <summary>
     /// Optional per-dimension symbolic names, aligned with <see cref="Dims"/>.
-    /// Null means legacy/unknown (no symbolic info); a null entry means the
-    /// dimension is fixed; a non-null entry names a symbolic dimension shared
-    /// across the model. Descriptions are treated as immutable after load.
+    /// Null means no symbolic information. A null entry uses the corresponding
+    /// extent in Dims, including negative anonymous unknowns; a non-null entry
+    /// names a symbolic dimension shared across the model. Descriptions are
+    /// treated as immutable after load.
     /// </summary>
     public string?[]? DimParams = null;
 
-    public string Describe() => $"{Name}:{ElementType.ToString().ToLowerInvariant()}:{string.Join("x", Dims.Select(d => d.ToString()))}";
+    public string Describe() => $"{Name}:{ElementType.ToString().ToLowerInvariant()}:{string.Join("x", Dims.Select((d, axis) =>
+        DimParams is not null && axis < DimParams.Length && DimParams[axis] is { Length: > 0 } symbol
+            ? symbol : d < 0 ? "?" : d.ToString()))}";
 }
 
 public sealed class OnnxTensor : OnnxValueInfo

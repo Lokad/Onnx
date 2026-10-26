@@ -323,7 +323,7 @@ public static class ProtoConversions
             Dims = vp.Type.TensorType.Shape.Dim.Select(d => d.ValueCase switch
             {
                 TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue => Convert.ToInt32(d.DimValue),
-                TensorShapeProto.Types.Dimension.ValueOneofCase.DimParam => 0,
+                TensorShapeProto.Types.Dimension.ValueOneofCase.DimParam => string.IsNullOrEmpty(d.DimParam) ? -1 : 0,
                 // Anonymous unknown dimension: neither value nor name; distinct from fixed zero.
                 _ => -1,
             }).ToArray(),

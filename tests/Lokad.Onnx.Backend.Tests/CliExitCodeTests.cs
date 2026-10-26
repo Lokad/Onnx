@@ -365,6 +365,36 @@ public class CliExitCodeTests
         Attribute = { new AttributeProto { Name = "then_branch", Type = AttributeProto.Types.AttributeType.Graph, G = Branch("then", nested) },
             new AttributeProto { Name = "else_branch", Type = AttributeProto.Types.AttributeType.Graph, G = Branch("else", false) } } };
 
+    [SkippableTheory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void InspectionPreservesSymbolicUnknownAndZeroDimensions(int mode)
+    {
+        var input = FloatInfo("x");
+        input.Type.TensorType.Shape.Dim.Clear();
+        input.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimParam = "batch" });
+        input.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension());
+        input.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = 0 });
+        var output = input.Clone();
+        output.Name = "y";
+        var model = new ModelProto { IrVersion = 10, OpsetImport = { new OperatorSetIdProto { Version = 18 } },
+            Graph = new GraphProto { Name = "shape-labels", Input = { input }, Output = { output },
+                Node = { new NodeProto { OpType = "Identity", Input = { "x" }, Output = { "y" } } } } };
+        string file = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".onnx");
+        try
+        {
+            File.WriteAllBytes(file, model.ToByteArray());
+            var arguments = new List<string> { "info", file };
+            if (mode != 0) arguments.Add(mode == 1 ? "--ops" : "--init");
+            var result = RunCli(arguments.ToArray());
+            Assert.True(result.Exit == 0, result.Output + result.Error);
+            Assert.Contains("x:float:batchx?x0", result.Output);
+            Assert.Contains("y:float:batchx?x0", result.Output);
+        }
+        finally { File.Delete(file); }
+    }
+
     static ModelProto InspectionModel(int kind)
     {
         var model = new ModelProto { IrVersion = 10, Graph = new GraphProto { Name = "inspection" },

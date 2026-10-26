@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- Empty symbolic model dimensions remain unknown instead of becoming fixed zero.
+  Metadata and graph diagnostics show symbolic names and `?` for anonymous extents.
 - Removing a broadcast singleton preserves values and shared write targets,
   including scalar results. Empty broadcasts can be converted, cloned and reshaped.
 - Full graph execution forwards scratch/copy byte events to supplied reporters,

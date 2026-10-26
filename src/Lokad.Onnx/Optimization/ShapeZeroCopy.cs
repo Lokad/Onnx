@@ -52,7 +52,6 @@ internal static class ShapeZeroCopy
             var constant = new Node
             {
                 Name = pending[p].Value,
-                ID = pending[p].Value.GetHashCode(),
                 Attributes = new Dictionary<string, object> { ["value"] = tensor },
                 Op = OpType.Constant,
                 OpTypeName = OpType.Constant.ToString(),
