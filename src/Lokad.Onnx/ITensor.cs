@@ -102,7 +102,7 @@ namespace Lokad.Onnx
 
         string PrintData(bool includeWhitespace);
 
-        string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
+        string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLowerInvariant()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
 
         ITensor Cast<U>() where U : unmanaged
         {

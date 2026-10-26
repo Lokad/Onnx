@@ -3,6 +3,8 @@ namespace Lokad.Onnx.Backend.Tests;
 using System.Diagnostics;
 using Google.Protobuf;
 using Lokad.Onnx.Tests.Support;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using global::Onnx;
 
 /// <summary>
@@ -393,6 +395,81 @@ public class CliExitCodeTests
             Assert.Contains("y:float:batchx?x0", result.Output);
         }
         finally { File.Delete(file); }
+    }
+
+    static ModelProto OutputBindingModel(bool alias, int rank)
+    {
+        int[] outputShape = rank switch { 1 => new[] { 2 }, 2 => new[] { 1, 2 }, _ => new[] { 1, 1, 1, 2 } };
+        var input = FloatInfo("x");
+        input.Type.TensorType.Shape.Dim.Clear();
+        foreach (int dim in new[] { 1, 1, 1, 2 })
+            input.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = dim });
+        var output = FloatInfo("alpha");
+        output.Type.TensorType.Shape.Dim.Clear();
+        foreach (int dim in outputShape)
+            output.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = dim });
+        var second = output.Clone();
+        second.Name = "beta";
+        int[] target = alias ? new[] { 1 }.Concat(outputShape).ToArray() : outputShape;
+        var model = new ModelProto { IrVersion = 10, OpsetImport = { new OperatorSetIdProto { Version = 18 } },
+            Graph = new GraphProto { Name = "output-bindings", Input = { input }, Output = { output, second },
+                Initializer = { new TensorProto { Name = "shape", DataType = 7, Dims = { target.Length },
+                    Int64Data = { target.Select(dim => (long)dim) } } },
+                Node = { new NodeProto { OpType = "Reshape", Input = { "x", "shape" }, Output = { "row" } } } } };
+        if (alias)
+        {
+            model.Graph.Initializer.Add(new TensorProto { Name = "position", DataType = 7, Int64Data = { 0 } });
+            model.Graph.Node.Add(new NodeProto { OpType = "SplitToSequence", Input = { "row" }, Output = { "parts" },
+                Attribute = { new AttributeProto { Name = "axis", Type = AttributeProto.Types.AttributeType.Int, I = 0 },
+                    new AttributeProto { Name = "keepdims", Type = AttributeProto.Types.AttributeType.Int, I = 0 } } });
+        }
+        foreach (string name in new[] { "alpha", "beta" })
+            model.Graph.Node.Add(alias
+                ? new NodeProto { OpType = "SequenceAt", Input = { "parts", "position" }, Output = { name } }
+                : new NodeProto { OpType = "Identity", Input = { "row" }, Output = { name } });
+        return model;
+    }
+
+    [SkippableTheory]
+    [InlineData(true, 4, false)]
+    [InlineData(false, 4, false)]
+    [InlineData(true, 1, false)]
+    [InlineData(false, 1, false)]
+    [InlineData(true, 1, true)]
+    [InlineData(false, 1, true)]
+    [InlineData(true, 2, true)]
+    [InlineData(false, 2, true)]
+    public void OutputBindingNamesSurviveAliasing(bool alias, int rank, bool softmax)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "lonnx-output-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        string modelPath = Path.Combine(directory, "model.onnx"), imagePath = Path.Combine(directory, "input.png");
+        try
+        {
+            File.WriteAllBytes(modelPath, OutputBindingModel(alias, rank).ToByteArray());
+            using var image = new Image<Rgb24>(2, 1);
+            image[0, 0] = new Rgb24(255, 255, 255);
+            image.SaveAsPng(imagePath);
+            var arguments = new List<string> { "run", modelPath, imagePath };
+            if (softmax) arguments.Add("--softmax");
+            var result = RunCli(arguments.ToArray());
+            Assert.True(result.Exit == 0, result.Output + result.Error);
+            var lines = result.Output.Split('\n').Where(line =>
+                System.Text.RegularExpressions.Regex.IsMatch(line, @"INFO\s+(alpha|beta):float:")).ToArray();
+            string shape = rank switch { 1 => "2", 2 => "1x2", _ => "1x1x1x2" };
+            string suffix = softmax ? "-><softmax>" : "";
+            Assert.Collection(lines,
+                line => Assert.Contains("alpha:float:" + shape + suffix + ":", line),
+                line => Assert.Contains("beta:float:" + shape + suffix + ":", line));
+            foreach (string line in lines)
+                Assert.Contains(softmax ? "[0.73106,0.26894]" : "[1.00000,0.00000]", line);
+        }
+        finally
+        {
+            File.Delete(modelPath);
+            File.Delete(imagePath);
+            Directory.Delete(directory);
+        }
     }
 
     static ModelProto InspectionModel(int kind)

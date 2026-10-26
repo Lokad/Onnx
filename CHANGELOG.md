@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- CLI output labels retain each binding's name when tensors alias, including
+  softmax output. Runtime tensor dtype names use invariant casing across cultures.
 - Empty symbolic model dimensions remain unknown instead of becoming fixed zero.
   Metadata and graph diagnostics show symbolic names and `?` for anonymous extents.
 - Removing a broadcast singleton preserves values and shared write targets,

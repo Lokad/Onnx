@@ -516,22 +516,24 @@ class Program
     static void PrintOutputs(ComputationalGraph graph, RunOptions ro)
     {
         Info("Printing outputs...");
-        foreach (var o in graph.Outputs.Values)
+        foreach (var output in graph.Outputs)
         {
+            var o = output.Value;
             if (o is null) continue;
+            var label = $"{output.Key}:{o.ElementType.ToString().ToLowerInvariant()}:{string.Join("x", o.Dims)}";
             if (ro.Softmax && o.Rank == 1)
             {
-                Info("Applying softmax to {n}...", o.TensorNameDesc());
-                Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                Info("Applying softmax to {n}...", label);
+                Info("{n}:{v}", label + "-><softmax>", o.Softmax().PrintData(false));
             }
             else if (ro.Softmax && o is INumericTensor num && num.Rank == 2 && num.Dims[0] == 1)
             {
-                Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", num.RemoveDim(0).Softmax().PrintData(false));
+                Info("Converting {n} to vector and applying softmax...", label);
+                Info("{n}:{v}", label + "-><softmax>", num.RemoveDim(0).Softmax().PrintData(false));
             }
             else
             {
-                Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                Info("{n}:{v}", label, o.PrintData(false));
             }
         }
     }
