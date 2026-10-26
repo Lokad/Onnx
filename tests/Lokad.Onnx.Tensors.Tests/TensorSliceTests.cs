@@ -2,6 +2,64 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class TensorSliceTests
 {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(5)]
+    public void ScalarIndexBoundaries_ReadAndWriteResolvedPositions(int length)
+    {
+        int[] original = Enumerable.Range(10, length).ToArray();
+        var indices = Enumerable.Range(0, length).Select(i => new Index(i))
+            .Concat(Enumerable.Range(1, length).Select(i => new Index(i, fromEnd: true)));
+        foreach (Index index in indices)
+        {
+            var tensor = DenseTensor<int>.OfValues(original);
+            var expected = (int[])original.Clone();
+            Assert.Equal(expected[index], tensor[index]);
+            expected[index] = 91;
+            tensor[index] = 91;
+            Assert.Equal(expected, tensor.ToArray());
+        }
+        foreach (Index index in new[] { new Index(length), new Index(length + 1, fromEnd: true) })
+        {
+            var tensor = DenseTensor<int>.OfValues(original);
+            Assert.ThrowsAny<ArgumentException>(() => _ = tensor[index]);
+            Assert.ThrowsAny<ArgumentException>(() => tensor[index] = 91);
+            Assert.Equal(original, tensor.ToArray());
+        }
+        var legacy = DenseTensor<int>.OfValues(original);
+        if (length == 0)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _ = legacy[^0]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => legacy[^0] = 91);
+        }
+        else
+        {
+            Assert.Equal(original[^1], legacy[^0]);
+            legacy[^0] = 91;
+            var expected = (int[])original.Clone();
+            expected[^1] = 91;
+            Assert.Equal(expected, legacy.ToArray());
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ScalarIndexAtFirstElement_WorksAcrossLayouts(bool reversed)
+    {
+        foreach (bool nested in new[] { false, true })
+        {
+            var root = new DenseTensor<int>(Enumerable.Range(10, 6).ToArray(), new[] { 2, 1, 3 }, reversed);
+            Tensor<int> parent = nested ? root[0..2, 0..1, 0..3] : root;
+            var expected = root.ToArray();
+            Assert.Equal(parent[0, 0, 0], parent[^2, ^1, ^3]);
+            parent[^2, ^1, ^3] = 91;
+            expected[0] = 91;
+            Assert.Equal(expected, root.ToArray());
+        }
+    }
+
     [Fact]
     public void CanSlice()
     {

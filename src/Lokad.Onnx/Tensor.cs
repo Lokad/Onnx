@@ -613,8 +613,8 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Converts System Index coordinates (including from-end ^ syntax) into plain
-        /// positions, with the same bounds checks the inline query used to perform.
+        /// Resolves System.Index coordinates before checking their bounds.
+        /// The legacy scalar ^0 selector remains an alias for the last element.
         /// </summary>
         private int[] ResolveIndexes(Index[] indices)
         {
@@ -623,9 +623,12 @@ namespace Lokad.Onnx
             {
                 Index i = indices[n];
                 if (i.Equals(^0)) resolved[n] = dimensions[n] - 1;
-                else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
-                else if (i.IsFromEnd) resolved[n] = dimensions[n] - i.Value;
-                else resolved[n] = i.Value;
+                else
+                {
+                    int position = i.GetOffset(dimensions[n]);
+                    if ((uint)position >= (uint)dimensions[n]) throw new ArgumentException(n.ToString());
+                    resolved[n] = position;
+                }
             }
             return resolved;
         }
