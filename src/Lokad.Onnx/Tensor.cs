@@ -1199,39 +1199,21 @@ namespace Lokad.Onnx
 
         #region IStructuralEquatable members
         bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            if (other is Tensor<T>)
-            {
-                return Equals((Tensor<T>)other, comparer);
-            }
-
-            var otherArray = other as Array;
-
-            if (otherArray != null)
-            {
-                return Equals(otherArray, comparer);
-            }
-
-            throw new ArgumentException($"Cannot compare {nameof(Tensor<T>)} to {other.GetType()}.", nameof(other));
-        }
+            // Arrays cannot consider tensors equal in the reverse direction.
+            => other is Tensor<T> tensor && Equals(tensor, comparer);
 
         private bool Equals(Tensor<T> other, IEqualityComparer comparer)
         {
             if (Rank != other.Rank)
             {
-                throw new ArgumentException($"Cannot compare {nameof(Tensor<T>)} with Rank {Rank} to {nameof(other)} with Rank {other.Rank}.", nameof(other));
+                return false;
             }
 
             for (int i = 0; i < dimensions.Length; i++)
             {
                 if (dimensions[i] != other.dimensions[i])
                 {
-                    throw new ArgumentException($"Cannot compare {nameof(Tensor<T>)}s with differning dimension {i}, {dimensions[i]} != {other.dimensions[i]}.", nameof(other));
+                    return false;
                 }
             }
 
@@ -1246,36 +1228,6 @@ namespace Lokad.Onnx
             return true;
         }
 
-        private bool Equals(Array other, IEqualityComparer comparer)
-        {
-            if (Rank != other.Rank)
-            {
-                throw new ArgumentException($"Cannot compare {nameof(Tensor<T>)} with Rank {Rank} to {nameof(Array)} with rank {other.Rank}.", nameof(other));
-            }
-
-            for (int i = 0; i < dimensions.Length; i++)
-            {
-                var otherDimension = other.GetLength(i);
-                if (dimensions[i] != otherDimension)
-                {
-                    throw new ArgumentException($"Cannot compare {nameof(Tensor<T>)} to {nameof(Array)} with differning dimension {i}, {dimensions[i]} != {otherDimension}.", nameof(other));
-                }
-            }
-
-            var indices = new int[Rank];
-            var logicalStrides = ArrayUtilities.GetStrides(dimensions);
-            for (int i = 0; i < Length; i++)
-            {
-                ArrayUtilities.GetIndices(logicalStrides, false, i, indices, 0);
-
-                if (!comparer.Equals(GetValue(LogicalOffset(i)), other.GetValue(indices)))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
         int IStructuralEquatable.GetHashCode(IEqualityComparer comparer)
         {
             int hashCode = 0;

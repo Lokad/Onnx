@@ -21,6 +21,10 @@
 
 ### Changed
 
+- Tensor structural equality now requires same-shaped `Tensor<T>` values.
+  Arrays, foreign types and different shapes compare unequal, making equality
+  symmetric and safe for hash collections. Convert arrays explicitly with
+  `array.ToTensor<T>()` to compare contents; array ordering comparisons remain.
 - `System.Numerics.Complex` tensors now report `Complex128`, matching their two
   double components and 16-byte width. DTO/custom-reader clients using the old
   incorrect `Complex64` label must switch to `Complex128`; the old label now

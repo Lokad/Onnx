@@ -18,6 +18,12 @@
 
 ## Caller contracts
 
+- Structural equality: `Tensor<T>` values are equal only to same-shaped tensors
+  with comparer-equal elements, independently of layout. Arrays, foreign types
+  and different shapes compare unequal without throwing. This changes the old
+  one-way tensor/array equality; explicitly convert an array with
+  `array.ToTensor<T>()` before comparing contents. Ordering comparisons through
+  `IStructuralComparable` retain their existing array support.
 - Complex values: `Tensor<System.Numerics.Complex>` uses `Complex128` (two doubles,
   16 bytes). DTO/custom-reader clients must replace the earlier incorrect
   `Complex64` label with `Complex128`. `Complex64` has no managed dense form;

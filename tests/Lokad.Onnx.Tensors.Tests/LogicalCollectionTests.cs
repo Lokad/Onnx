@@ -123,7 +123,8 @@ public class LogicalCollectionTests
             Assert.Equal(a == b, Tensor<int>.Equals(left, right));
             var array = new int[,] { { values[b][0], values[b][1] }, { values[b][2], values[b][3] } };
             Assert.Equal(Math.Sign(a - b), Math.Sign(((IStructuralComparable)left).CompareTo(array, Comparer.Default)));
-            Assert.Equal(a == b, ((IStructuralEquatable)left).Equals(array, EqualityComparer<int>.Default));
+            Assert.False(((IStructuralEquatable)left).Equals(array, EqualityComparer<int>.Default));
+            Assert.Equal(a == b, Tensor<int>.Equals(left, array.ToTensor<int>()));
         }
     }
 
