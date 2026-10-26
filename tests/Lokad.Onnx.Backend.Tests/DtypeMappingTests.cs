@@ -31,7 +31,7 @@ public class DtypeMappingTests
             (TensorElementType.Double, new double[] { 1.25, -2.5 }),
             (TensorElementType.Float16, new Half[] { Half.One, Half.Zero }),
             (TensorElementType.BFloat16, new BFloat16[] { BFloat16.One, BFloat16.Zero }),
-            (TensorElementType.Complex64, new Complex[] { new Complex(1, 2), new Complex(3, 4) }),
+            (TensorElementType.Complex128, new Complex[] { new Complex(1, 2), new Complex(3, 4) }),
         };
         foreach (var (type, data) in cases)
         {
@@ -131,20 +131,11 @@ public class DtypeMappingTests
     [Fact]
     public void Import_RejectsComplex128Explicitly()
     {
-        // Complex128 has no dispatch arm, no dense factory, and no
-        // importer path: the refusal names the tensor like Complex64.
+        // Core Complex128 movement is supported; reference wire decoding is
+        // still unsupported for both complex kinds and names the tensor.
         var c = new TensorProto { Name = "c128", DataType = (int)TensorElementType.Complex128 };
         var ex = Assert.Throws<NotSupportedException>(() => c.GetTensorData());
         Assert.Contains("c128", ex.Message);
-    }
-
-    [Fact]
-    public void ElementArray_RejectsComplex128()
-    {
-        // The dense-array factory stops at float64; complex128 has no
-        // dense representation by design (complex64 works only through
-        // the generic Tensor<T> path, never this factory).
-        Assert.Throws<NotSupportedException>(() => TensorBase.CreateElementArray(TensorElementType.Complex128, 2));
     }
 
     [Fact]

@@ -297,7 +297,7 @@ public static class ProtoConversions
             if (element is null || element.ValueCase != TypeProto.ValueOneofCase.TensorType)
                 throw new NotSupportedException($"The sequence {vp.Name} requires a tensor element type; nested sequences, maps and optional elements are unsupported.");
             var elementType = (TensorElementType)element.TensorType.ElemType;
-            if (TensorBase.ElementByteSize(elementType) < 0 || elementType == TensorElementType.Complex128)
+            if (TensorBase.ElementByteSize(elementType) < 0 || TensorBase.GetElementTypeInfo(elementType) is null)
                 throw new NotSupportedException($"The sequence {vp.Name} has unsupported tensor element type {elementType}.");
             return new OnnxValueInfo
             {

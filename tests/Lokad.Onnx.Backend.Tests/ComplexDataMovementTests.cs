@@ -4,7 +4,7 @@ using CPU = Lokad.Onnx.CPUExecutionProvider;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
-/// Complex64 data-movement arms (Reshape, Transpose, Concat, Gather, Slice)
+/// Complex128 data-movement arms (Reshape, Transpose, Concat, Gather, Slice)
 /// succeed through the public API even though import refuses complex tensors,
 /// so their values are pinned here hand-computed; arithmetic and Cast refuse
 /// cleanly. The differential corpus has no complex dtype support.
@@ -60,18 +60,18 @@ public class ComplexDataMovementTests
     [Fact]
     public void ComplexCast_RefusedBothDirections()
     {
-        // The Cast input gate and the target gate both exclude Complex64
-        // (the target arm is commented out); neither direction reaches a kernel.
+        // Complex casts remain unsupported in either direction.
         var c = DenseTensor<Complex>.OfValues(new Complex[] { new Complex(1, 1) });
         var f = DenseTensor<float>.OfValues(new float[] { 1f });
         Assert.Equal(OpStatus.Failure, CPU.Cast(c, TensorElementType.Float, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Cast(f, TensorElementType.Complex64, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Cast(f, TensorElementType.Complex128, null).Status);
     }
 
     [Fact]
     public void ComplexArithmetic_RefusedCleanly()
     {
-        // No arithmetic arm exists for Complex64 (movement ops only), so every
+        // No arithmetic arm exists for Complex128 (movement ops only), so every
         // form fails descriptively like the half-width boundary.
         var a = DenseTensor<Complex>.OfValues(new Complex[] { new Complex(1, 1), new Complex(2, 2) });
         var b = DenseTensor<Complex>.OfValues(new Complex[] { new Complex(3, 3), new Complex(4, 4) });
@@ -86,8 +86,7 @@ public class ComplexDataMovementTests
     [Fact]
     public void ComplexSplit_RefusedCleanly()
     {
-        // ORT refuses complex64 Split at graph init (probed); Split is the
-        // one movement op without a Complex arm, matching that refusal.
+        // Split remains unsupported for complex inputs.
         var x = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(1, 0), new System.Numerics.Complex(2, 0), new System.Numerics.Complex(3, 0), new System.Numerics.Complex(4, 0) }, new int[] { 1, 4 });
         var r = CPU.Split(x, DenseTensor<long>.OfValues(new long[] { 2L, 2L }), 1, null, null, null, null);
         Assert.Equal(OpStatus.Failure, r.Status);

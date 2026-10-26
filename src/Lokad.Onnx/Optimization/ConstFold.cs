@@ -278,7 +278,7 @@ internal static class ConstFold
     }
 
     // ToArray supplies logical order. Use actual unmanaged storage widths:
-    // Complex64 deliberately uses the wider CLR Complex representation here.
+    // CLR Complex contains two doubles, matching the Complex128 representation.
     static bool TryGetBits(Array data, out ReadOnlySpan<byte> bits)
     {
         switch (data)

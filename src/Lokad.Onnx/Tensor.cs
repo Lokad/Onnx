@@ -139,7 +139,7 @@ namespace Lokad.Onnx
                 { typeof(uint), new TensorTypeInfo( TensorElementType.UInt32, sizeof(uint)) },
                 { typeof(ulong), new TensorTypeInfo( TensorElementType.UInt64, sizeof(ulong)) },
                 { typeof(BFloat16), new TensorTypeInfo( TensorElementType.BFloat16, sizeof(ushort)) },
-                { typeof(System.Numerics.Complex), new TensorTypeInfo( TensorElementType.Complex64, sizeof(double) * 2) }
+                { typeof(System.Numerics.Complex), new TensorTypeInfo( TensorElementType.Complex128, sizeof(double) * 2) }
             };
 
             tensorElementTypeInfoMap = new Dictionary<TensorElementType, TensorElementTypeInfo>();
@@ -191,8 +191,9 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Fixed storage size in bytes for element types with one, or -1 for
-        /// variable-size (String) and unsupported types. Single home for the
+        /// Fixed ONNX element width, including known types without a managed
+        /// representation, or -1 for variable-size (String) and unknown types.
+        /// Single home for the
         /// byte-size table used by import validation and external-data reads.
         /// </summary>
         public static int ElementByteSize(TensorElementType elementType) => elementType switch
@@ -234,6 +235,7 @@ namespace Lokad.Onnx
             TensorElementType.Int64 => new long[length],
             TensorElementType.UInt64 => new ulong[length],
             TensorElementType.Double => new double[length],
+            TensorElementType.Complex128 => new Complex[length],
             _ => throw new NotSupportedException($"Unsupported element type {elementType}; no dense array representation."),
         };
 
@@ -256,7 +258,8 @@ namespace Lokad.Onnx
             TensorElementType.Double => new DenseTensor<double>(memory: (double[])data, dims),
             TensorElementType.Float16 => new DenseTensor<Half>(memory: (Half[])data, dims),
             TensorElementType.BFloat16 => new DenseTensor<BFloat16>(memory: (BFloat16[])data, dims),
-            TensorElementType.Complex64 => new DenseTensor<Complex>(memory: (Complex[])data, dims),
+            TensorElementType.Complex128 => new DenseTensor<Complex>(memory: (Complex[])data, dims),
+            TensorElementType.Complex64 => throw new ArgumentException("Complex64 requires float32 components and has no managed dense representation. Use Complex128 for System.Numerics.Complex payloads."),
             _ => throw new ArgumentException($"Cannot convert model tensor of element type {elementType}."),
         };
 

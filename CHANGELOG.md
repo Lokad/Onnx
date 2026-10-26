@@ -21,6 +21,15 @@
 
 ### Changed
 
+- `System.Numerics.Complex` tensors now report `Complex128`, matching their two
+  double components and 16-byte width. DTO/custom-reader clients using the old
+  incorrect `Complex64` label must switch to `Complex128`; the old label now
+  fails explicitly. Existing core data-movement operations are retained;
+  complex wire import, arithmetic and casts remain unsupported.
+- Flat view reads/writes reject invalid indices before accessing backing data.
+  Graph live-payload metrics include sequence elements; nested/cyclic sequence
+  graph values are rejected before ownership traversal.
+
 - The core package has no runtime dependencies. ONNX parsing, generated messages,
   `OnnxImport` and `ProtoConversions` moved into the nonpackable
   [Protobuf reference adapter](tools/Lokad.Onnx.Protobuf/README.md). Applications
