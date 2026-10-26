@@ -87,13 +87,13 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
 
     /// <summary>
     /// Materializes the broadcast view with block copies over contiguous source
-    /// runs instead of the per-element indexed base implementation, which
-    /// allocates an index array per element. Falls back to the base path when
-    /// the source is not a standard row-major dense tensor or the positional
-    /// dimension mapping does not hold.
+    /// runs instead of the base implementation's per-element coordinate indexing.
+    /// Falls back to the base path when the source is not a standard row-major
+    /// dense tensor or the positional dimension mapping does not hold.
     /// </summary>
     public override DenseTensor<T> ToDenseTensor()
     {
+        if (Length == 0) return new DenseTensor<T>(dimensions);
         var src = source as DenseTensor<T> ?? source.ToDenseTensor();
         if (src.IsReversedStride) return base.ToDenseTensor();
         int rank = Rank;
@@ -179,15 +179,11 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
         if (dimensions[dim] != 1) throw new ArgumentException($"Can only remove a dimension of size 1. Dimension {dim} has size {dimensions[dim]}.", nameof(dim));
         var dims = dimensions.ToList();
         dims.RemoveAt(dim);
-        var bdims = broadcastedDims.Copy();
-        for (int i = 0; i < bdims.Length; i++)
-        {
-            if (bdims[i] >= dim)
-            {
-                bdims[i] -= 1;
-            }
-        }
-        return new BroadcastedTensor<T>(source.RemoveDim(dim), dims.ToArray(), bdims);
+        var bdims = broadcastedDims.Where(axis => axis != dim)
+            .Select(axis => axis > dim ? axis - 1 : axis).ToArray();
+        var reducedSource = source.RemoveDim(dim);
+        return bdims.Length == 0 ? reducedSource
+            : new BroadcastedTensor<T>(reducedSource, dims.ToArray(), bdims);
     }
 
     public override BroadcastedTensor<T> BroadcastDim(int dim, int size)

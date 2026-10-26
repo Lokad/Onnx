@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- Removing a broadcast singleton preserves values and shared write targets,
+  including scalar results. Empty broadcasts can be converted, cloned and reshaped.
 - Full graph execution forwards scratch/copy byte events to supplied reporters,
   while preserving independent per-run metrics and separate child-scope accounting.
 - Scalar from-end `^Length` indices address the first element, including `^1`

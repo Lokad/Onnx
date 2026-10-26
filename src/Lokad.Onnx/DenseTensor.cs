@@ -262,6 +262,10 @@ namespace Lokad.Onnx
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride) { IsReshapeView = true };
         }
 
+        /// <summary>
+        /// Returns this instance when row-major; reversed layouts are copied into
+        /// new row-major storage. Use <see cref="Clone"/> for an independent copy.
+        /// </summary>
         public override DenseTensor<T> ToDenseTensor()
         {
             // Row-major values already sit in flat order, so the tensor itself qualifies.

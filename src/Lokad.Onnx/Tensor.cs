@@ -1248,7 +1248,9 @@ namespace Lokad.Onnx
         #region Translations
 
         /// <summary>
-        /// Copies this tensor into dense storage (a Clone when already dense).
+        /// Returns a dense representation of this tensor, which may share backing
+        /// storage or be the same instance. Use <see cref="Clone"/> when independent
+        /// backing storage is required.
         /// </summary>
         /// <returns></returns>
         public virtual DenseTensor<T> ToDenseTensor()
