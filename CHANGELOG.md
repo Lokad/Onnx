@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- C# ranges starting at `^0` select an empty view, preventing empty-range writes
+  from overwriting parent tensors.
 - Operation completion and abandonment logs retain formatted argument values,
   including when start messages are filtered out.
 - `BFloat16.CompareTo` treats signed zeros as equal, restoring sorted-collection

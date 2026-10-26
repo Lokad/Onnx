@@ -261,9 +261,12 @@ namespace Lokad.Onnx
 
         public static implicit operator SliceIndex(int index) => Index(index);
         public static implicit operator SliceIndex(string slice) => new SliceIndex(slice);
+        /// <summary>Converts a forward range; a start at the axis end selects no elements.</summary>
         public static implicit operator SliceIndex(Range range)
         {
             if (range.Equals(Range.All)) return Ellipsis;
+            // Unlike a ^0 stop, a ^0 start cannot become an omitted bound.
+            if (range.Start.Equals(^0)) return new SliceIndex(0, 0);
             return new SliceIndex(start: FromIndex(range.Start), stop: FromIndex(range.End));
         }
 

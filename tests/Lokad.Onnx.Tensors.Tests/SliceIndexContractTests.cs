@@ -2,6 +2,66 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class SliceIndexContractTests
 {
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(0, true)]
+    [InlineData(1, false)]
+    [InlineData(1, true)]
+    [InlineData(5, false)]
+    [InlineData(5, true)]
+    public void RangeStartingAtEnd_IsEmptyAndCannotChangeParent(int length, bool untyped)
+    {
+        var parent = DenseTensor<int>.OfValues(Enumerable.Range(10, length).ToArray());
+        var before = parent.ToArray();
+        foreach (Range range in new Range[] { ^0.., ^0..^0 })
+        {
+            Tensor<int> selection = untyped
+                ? (Tensor<int>)((ITensor)parent)[new object[] { range }]
+                : parent[range];
+            Assert.Equal(new[] { 0 }, selection.Dimensions.ToArray());
+            Assert.Empty(selection.ToArray());
+            selection.Fill(91);
+            if (untyped) ((ITensor)parent)[new object[] { range }] = DenseTensor<int>.OfShape(0);
+            else parent[range] = DenseTensor<int>.OfShape(0);
+            Assert.Equal(before, parent.ToArray());
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RangeStartingAtEnd_PreservesEmptyAxisAcrossLayouts(bool reversed)
+    {
+        foreach (bool nested in new[] { false, true })
+        {
+            var root = new DenseTensor<int>(Enumerable.Range(0, 6).ToArray(), new[] { 2, 3 }, reversed);
+            Tensor<int> parent = nested ? root[0..2, 0..3] : root;
+            var before = root.ToArray();
+            var selection = parent[1.., ^0..];
+            Assert.Equal(new[] { 1, 0 }, selection.Dimensions.ToArray());
+            Assert.Empty(selection.ToArray());
+            selection.Fill(91);
+            Assert.Equal(before, root.ToArray());
+        }
+    }
+
+    [Fact]
+    public void OrdinaryRangeValuesAndWritesMatchArraySelections()
+    {
+        foreach (Range range in new Range[] { .., 0..0, 5.., 5..5, ^1.., ^1..^0, ..^1, 1..4 })
+        {
+            int[] original = { 0, 1, 2, 3, 4 };
+            var parent = DenseTensor<int>.OfValues(original);
+            var selection = parent[range];
+            Assert.Equal(original[range], selection.ToArray());
+            var (offset, length) = range.GetOffsetAndLength(original.Length);
+            selection.Fill(91);
+            var expected = (int[])original.Clone();
+            expected.AsSpan(offset, length).Fill(91);
+            Assert.Equal(expected, parent.ToArray());
+        }
+    }
+
     static SliceIndex[] SelectionKinds() => new[]
     {
         new SliceIndex(0, 0), new SliceIndex("..."), new SliceIndex("newaxis"),
