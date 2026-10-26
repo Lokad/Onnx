@@ -523,6 +523,7 @@ public partial class ComputationalGraph
                 message = $"Tensor {actual.Name} is a sequence but descriptor {desc.Describe()} is not.";
                 return false;
             }
+            if (!CheckFlatSequence(sequence, out message)) return false;
             if (desc.SequenceElementType is { } elementType)
             {
                 for (int i = 0; i < sequence.Items.Count; i++)
@@ -570,6 +571,21 @@ public partial class ComputationalGraph
                 symbolic[param] = ad[i];
             }
         }
+        return true;
+    }
+
+    // The supported runtime sequence contains tensors, never another sequence.
+    // Check one level before bindings reach recursive ownership traversal.
+    static bool CheckFlatSequence(ITensor value, out string? message)
+    {
+        message = null;
+        if (value is not TensorSequence sequence) return true;
+        for (int i = 0; i < sequence.Items.Count; i++)
+            if (sequence.Items[i] is TensorSequence)
+            {
+                message = $"The sequence element {i} of {sequence.Name} is a nested sequence; nested sequences are unsupported.";
+                return false;
+            }
         return true;
     }
 
@@ -697,7 +713,7 @@ public partial class ComputationalGraph
         var desc = FindInputDesc(key);
         detail = null;
         return desc is null
-            ? declared is not null && InputDimsCompatible(declared, provided)
+            ? CheckFlatSequence(provided, out detail) && declared is not null && InputDimsCompatible(declared, provided)
             : CheckDescriptorDims(desc, provided, symbolic, out detail);
     }
 
@@ -1555,6 +1571,10 @@ public partial class ComputationalGraph
 
     string? ValidatePreparation()
     {
+        foreach (var (name, value) in Initializers)
+            if (!CheckFlatSequence(value, out var detail)) return $"Invalid initializer {name}: {detail}";
+        foreach (var value in EnumerateAttributeTensors())
+            if (!CheckFlatSequence(value, out var detail)) return $"Invalid tensor attribute: {detail}";
         try
         {
             foreach (var description in InputDescs.Concat(OutputDescs))
@@ -1787,18 +1807,24 @@ public partial class ComputationalGraph
     /// the variable maps use the reverse index, falling back to conservative
     /// true while unknown-kind tensors are live.
     /// </summary>
-    static int ElementByteSize(TensorElementType element) => element switch
-    {
-        TensorElementType.Bool or TensorElementType.Int8 or TensorElementType.UInt8 => 1,
-        TensorElementType.Int16 or TensorElementType.UInt16 or TensorElementType.Float16 or TensorElementType.BFloat16 => 2,
-        TensorElementType.Int32 or TensorElementType.UInt32 or TensorElementType.Float => 4,
-        TensorElementType.Int64 or TensorElementType.UInt64 or TensorElementType.Double or TensorElementType.Complex64 => 8,
-        TensorElementType.Complex128 => 16,
-        _ => 0,
-    };
-
     /// <summary>Logical payload bytes of one binding, counting aliases per binding like the full scan.</summary>
-    static long PayloadBytes(ITensor? tensor) => tensor is null ? 0L : tensor.Length * ElementByteSize(tensor.ElementType);
+    static long PayloadBytes(ITensor? tensor)
+    {
+        if (tensor is null) return 0;
+        if (tensor is TensorSequence sequence)
+        {
+            long bytes = 0;
+            foreach (var item in sequence.Items)
+            {
+                if (item is TensorSequence) throw new NotSupportedException("Nested tensor sequences are unsupported.");
+                bytes = checked(bytes + NumericPayloadBytes(item));
+            }
+            return bytes;
+        }
+        return NumericPayloadBytes(tensor);
+    }
+
+    static long NumericPayloadBytes(ITensor tensor) => tensor.Length * Math.Max(0, TensorBase.ElementByteSize(tensor.ElementType));
 
     /// <summary>Sums logical payload bytes over the run bindings (inputs, outputs, live intermediates).</summary>
     /// <remarks>Counts per binding without deduplicating aliased storage, matching the manual
@@ -1807,9 +1833,9 @@ public partial class ComputationalGraph
     long LivePayloadBytes()
     {
         long total = 0;
-        foreach (var kv in Inputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
-        foreach (var kv in Outputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
-        foreach (var kv in IntermediateOutputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
+        foreach (var kv in Inputs) total += PayloadBytes(kv.Value);
+        foreach (var kv in Outputs) total += PayloadBytes(kv.Value);
+        foreach (var kv in IntermediateOutputs) total += PayloadBytes(kv.Value);
         if (CapturedInputs is not null)
             foreach (var tensor in CapturedInputs.Values) total += PayloadBytes(tensor);
         return total;

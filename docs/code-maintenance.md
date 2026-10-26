@@ -79,6 +79,9 @@ Folded transposes snapshot their effective permutation and prune obsolete owned
 payloads during preparation; generated-name slots replaced by callers are preserved.
 Both public preparation methods reject calls during execution; the internal
 run-entry path performs authorized preparation under the shared preparation lock.
+Live payload metrics sum flat sequence elements per binding, including aliases,
+using the same element widths as tensor metadata. Nested sequence graph values
+are rejected before ownership/accounting traversal; container construction remains available.
 
 `PrepareOwnedMatMulWeights()` is the existing opt-in for the qualified Parakeet
 export. `ParakeetOwnedWeightPolicy` holds its exact name/shape selection;
