@@ -19,9 +19,13 @@ public class CliExitCodeTests
     }
 
     static (int Exit, string Output, string Error) RunCli(params string[] args)
+        => RunCliFrom(null, args);
+
+    static (int Exit, string Output, string Error) RunCliFrom(string? workingDirectory, params string[] args)
     {
         var psi = new ProcessStartInfo("dotnet", "")
         {
+            WorkingDirectory = workingDirectory ?? "",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -199,6 +203,46 @@ public class CliExitCodeTests
     public void ValidMnistRun_ExitsSuccess()
     {
         Assert.Equal(0, RunCli("run", Mnist(), TestSupport.CommittedImage("mnist4.png") + "::mnist").Exit);
+    }
+
+    [SkippableTheory]
+    [InlineData("http-model.onnx")]
+    [InlineData("https-model.onnx")]
+    [InlineData("http-models/model.onnx")]
+    [InlineData("HTTP-model.onnx")]
+    [InlineData("model.onnx")]
+    public void RunLocalRelativeModelPath_ProducesOutput(string relativePath)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "lonnx-cli-" + Guid.NewGuid().ToString("N"));
+        string model = Path.Combine(directory, relativePath);
+        string parent = Path.GetDirectoryName(model)!;
+        Directory.CreateDirectory(parent);
+        try
+        {
+            File.Copy(Mnist(), model);
+            var result = RunCliFrom(directory, "run", relativePath, TestSupport.CommittedImage("mnist4.png") + "::mnist");
+            Assert.Equal(0, result.Exit);
+            Assert.Contains("Plus214_Output_0:float:1x10:", result.Output);
+            Assert.DoesNotContain("Remote model locations", result.Output + result.Error);
+        }
+        finally
+        {
+            File.Delete(model);
+            if (parent != directory) Directory.Delete(parent);
+            Directory.Delete(directory);
+        }
+    }
+
+    [SkippableTheory]
+    [InlineData("http://example.invalid/model.onnx")]
+    [InlineData("https://example.invalid/model.onnx")]
+    [InlineData("HTTP://example.invalid/model.onnx")]
+    [InlineData("HTTPS://example.invalid/model.onnx")]
+    public void RunRemoteModelUrl_ExitsNotFoundWithoutLoading(string url)
+    {
+        var result = RunCli("run", url, TestSupport.CommittedImage("mnist4.png") + "::mnist");
+        Assert.Equal(4, result.Exit);
+        Assert.Contains("Remote model locations are not supported", result.Output);
     }
 
     [SkippableFact]

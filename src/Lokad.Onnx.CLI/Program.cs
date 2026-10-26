@@ -375,7 +375,8 @@ class Program
     }
     static void Run(RunOptions ro)
     {
-        if (ro.File.StartsWith("http"))
+        if (ro.File.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+            ro.File.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
         {
             Error("Remote model locations are not supported; download the model first and pass a local file path.");
             Exit(ExitResult.NOT_FOUND);

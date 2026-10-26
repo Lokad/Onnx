@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- `run` accepts local model filenames and directories beginning with `http`;
+  remote HTTP/HTTPS URLs remain rejected, regardless of scheme casing.
 - `To2DArray` rejects ragged/null rows instead of losing values or leaking indexing
   errors. Empty input returns 0x0; equally empty rows preserve their row count.
 - The e5 gate skips only explicit unavailable-FMA exits in optional intrinsics

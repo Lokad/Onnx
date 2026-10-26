@@ -29,6 +29,8 @@ Numeric, padded and combined enum expressions are invalid filter options (exit 2
 `run` reports input preparation failures, including corrupt images and malformed
 resize descriptors, as invalid input (exit 5). Graph execution errors keep their
 existing execution diagnostics and exit codes.
+Model paths are local files, including relative names beginning with `http`.
+HTTP/HTTPS URLs are rejected; download the model before invoking `run`.
 
 ## Text embeddings
 
