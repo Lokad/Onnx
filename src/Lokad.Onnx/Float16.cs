@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Lokad.Onnx
@@ -288,34 +287,12 @@ namespace Lokad.Onnx
         /// Compares this object to another object, returning an integer that indicates the relationship.
         /// </summary>
         /// <param name="other">Object to compare to</param>
+        /// <remarks>Both signed zeros compare equal. All NaNs compare equal to
+        /// each other and precede every non-NaN value.</remarks>
         /// <returns>A value less than zero if this is less than <paramref name="other"/>,
         /// zero if this is equal to <paramref name="other"/>, 
         /// or a value greater than zero if this is greater than <paramref name="other"/>.</returns>
-        public int CompareTo(BFloat16 other)
-        {
-            if (this < other)
-            {
-                return -1;
-            }
-
-            if (this > other)
-            {
-                return 1;
-            }
-
-            if (this == other)
-            {
-                return 0;
-            }
-
-            if (IsNaN(this))
-            {
-                return IsNaN(other) ? 0 : -1;
-            }
-
-            Debug.Assert(IsNaN(other));
-            return 1;
-        }
+        public int CompareTo(BFloat16 other) => ((float)this).CompareTo((float)other);
 
         /// <summary>
         /// Returns a value indicating whether this instance and other BFloat16 represent the same value.

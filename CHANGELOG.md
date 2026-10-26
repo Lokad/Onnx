@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- `BFloat16.CompareTo` treats signed zeros as equal, restoring sorted-collection
+  lookups and tensor structural ordering while retaining existing operator semantics.
 - Global `--debug=true/false` options are validated and honored across CLI verbs;
   logging uses the parser's resolved value, including repeated-flag precedence.
 - `run` accepts local model filenames and directories beginning with `http`;

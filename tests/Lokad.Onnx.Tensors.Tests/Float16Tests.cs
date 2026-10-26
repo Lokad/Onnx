@@ -1,9 +1,72 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lokad.Onnx.Tensors.Tests;
 
 public class Float16Tests
 {
+    [Fact]
+    public void BFloat16_CompareTo_OrdersBoundaryEquivalenceClasses()
+    {
+        // Each integer denotes an independently expected position in value order.
+        // All NaNs form one class, as do both signed zeros.
+        var cases = new (ushort Bits, int Order)[]
+        {
+            (0x7F81, 0), (0x7FC1, 0), (0xFF81, 0), (0xFFC1, 0),
+            (0xFF80, 1), (0xFF7F, 2), (0xBF80, 3), (0x8001, 4),
+            (0x8000, 5), (0x0000, 5), (0x0001, 6), (0x3F80, 7),
+            (0x7F7F, 8), (0x7F80, 9)
+        };
+        foreach (var left in cases)
+        foreach (var right in cases)
+        {
+            var a = new BFloat16(left.Bits);
+            var b = new BFloat16(right.Bits);
+            int expected = left.Order.CompareTo(right.Order);
+            Assert.Equal(expected, Math.Sign(a.CompareTo(b)));
+            Assert.Equal(expected, Math.Sign(Comparer<BFloat16>.Default.Compare(a, b)));
+        }
+    }
+
+    [Fact]
+    public void BFloat16_CompareTo_PreservesObjectContracts()
+    {
+        IComparable positive = BFloat16.Zero;
+        IComparable negative = BFloat16.NegativeZero;
+        Assert.True(positive.CompareTo(null) > 0);
+        Assert.Throws<ArgumentException>(() => positive.CompareTo("0"));
+        Assert.Equal(0, positive.CompareTo(BFloat16.NegativeZero));
+        Assert.Equal(0, negative.CompareTo(BFloat16.Zero));
+    }
+
+    [Fact]
+    public void BFloat16_SortedCollections_TreatSignedZerosAsOneValue()
+    {
+        foreach (var value in new[] { BFloat16.Zero, BFloat16.NegativeZero })
+        {
+            var other = value.value == 0 ? BFloat16.NegativeZero : BFloat16.Zero;
+            var sorted = new SortedSet<BFloat16> { value };
+            var hashed = new HashSet<BFloat16> { value, other };
+            Assert.True(sorted.Contains(other));
+            Assert.False(sorted.Add(other));
+            Assert.Single(hashed);
+            Assert.Equal(hashed.Count, sorted.Count);
+            Assert.True(sorted.Remove(other));
+            Assert.Empty(sorted);
+        }
+    }
+
+    [Fact]
+    public void BFloat16_TensorStructuralComparison_TreatsSignedZerosAsEqual()
+    {
+        var positive = DenseTensor<BFloat16>.OfValues(new[] { BFloat16.Zero });
+        var negative = DenseTensor<BFloat16>.OfValues(new[] { BFloat16.NegativeZero });
+        Assert.True(StructuralComparisons.StructuralEqualityComparer.Equals(positive, negative));
+        Assert.Equal(0, ((IStructuralComparable)positive).CompareTo(negative, Comparer.Default));
+        Assert.Equal(0, ((IStructuralComparable)negative).CompareTo(positive, Comparer.Default));
+    }
+
     [Fact]
     public void Float16_Roundtrip_And_Compare()
     {
