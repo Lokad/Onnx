@@ -56,11 +56,11 @@ public partial class CPUExecutionProvider
     {
         if (data is Tensor<long> l)
         {
-            long value = l.ToArray()[0];
+            long value = l.GetValue(0);
             TensorLimits.ValidateGeometry(value, name);
             return value;
         }
-        if (data is Tensor<int> i) return i.ToArray()[0];
+        if (data is Tensor<int> i) return i.GetValue(0);
         throw new ArgumentException($"Expected int32/int64 scalar tensor for {name}.");
     }
 

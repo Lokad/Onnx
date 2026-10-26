@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- Empty `SequenceAt` indices return a descriptive failure; valid indices retain
+  their behavior and scalar index reads avoid copying the tensor payload.
 - `run` classifies nonfatal input-preparation failures as invalid input (exit 5),
   including corrupt images and malformed resize descriptors.
 - Cold Windows tokenizer dependency restoration and standalone e5 conformance
