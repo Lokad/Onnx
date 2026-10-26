@@ -34,6 +34,12 @@
 - Concurrency: one execution per graph instance at a time; a concurrent call fails. Run separate execution contexts on separate threads.
 - Inputs: caller-owned. The graph never takes input storage: constants, caller inputs and sequence elements are protected from buffer pooling.
 - Threading: sequential by default. TensorExecutionOptions MaxDegreeOfParallelism caps opt-in parallel float MatMul kernels (default 1).
+- Byte reporters: `ScratchReporter` and `CopyReporter` receive events from direct calls
+  and graph execution, including selected child graphs. Reporters are caller-owned,
+  must be thread-safe and may accumulate across runs. Null disables caller reporting;
+  graph-owned `LastScratchBytes`/`LastCopyBytes` remain per-run and exclude child scopes,
+  whose metrics appear in `LastSubgraphExecutions`. Nonfatal reporter exceptions in a
+  graph follow node failure handling; fatal exceptions propagate.
 - Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0, via pack.cmd), with no runtime dependencies. The Protobuf reference adapter, Data, CLI, tests and Bench remain nonpackable source projects.
 
 ## Distribution boundary

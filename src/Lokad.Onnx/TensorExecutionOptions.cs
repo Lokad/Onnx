@@ -41,13 +41,17 @@ public sealed class CopyAccountant : ICopyAccountant
 
 public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntrinsics, int MaxDegreeOfParallelism)
 {
-    /// <summary>Optional per-run scratch-byte sink; null disables accounting.</summary>
+    /// <summary>Optional caller-owned scratch-byte sink; null disables caller reporting.</summary>
+    /// <remarks>Graphs forward events from their own and selected child scopes. Caller totals may
+    /// accumulate across runs; graph LastScratchBytes remains independent and excludes children.</remarks>
     public IScratchAccountant? ScratchReporter { get; init; }
 
     /// <summary>Measurement-only diagnostic: when true, graph execution skips buffer pooling and every provider allocates fresh outputs. Default false; timing with this flag is never a performance claim.</summary>
     public bool DisableBufferPool { get; init; }
 
-    /// <summary>Optional per-run copy-byte sink; null disables accounting.</summary>
+    /// <summary>Optional caller-owned copy-byte sink; null disables caller reporting.</summary>
+    /// <remarks>Graphs forward events from their own and selected child scopes. Caller totals may
+    /// accumulate across runs; graph LastCopyBytes remains independent and excludes children.</remarks>
     public ICopyAccountant? CopyReporter { get; init; }
     /// <summary>Optional prepared packed-MatMul map; null disables packed routing.</summary>
     internal IReadOnlyDictionary<float[], PackedMatMulWeight>? PackedMatMulWeights { get; init; }

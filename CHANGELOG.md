@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- Full graph execution forwards scratch/copy byte events to supplied reporters,
+  while preserving independent per-run metrics and separate child-scope accounting.
 - Scalar from-end `^Length` indices address the first element, including `^1`
   on singleton axes. The legacy scalar `^0` alias still addresses the last element.
 - C# ranges starting at `^0` select an empty view, preventing empty-range writes

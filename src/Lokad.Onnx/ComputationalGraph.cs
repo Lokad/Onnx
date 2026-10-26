@@ -1623,6 +1623,35 @@ public partial class ComputationalGraph
         return null;
     }
 
+    // Caller reporters include selected child work; these totals describe only this scope.
+    sealed class ExecutionAccountant : IScratchAccountant, ICopyAccountant
+    {
+        readonly IScratchAccountant? scratchReporter;
+        readonly ICopyAccountant? copyReporter;
+        long scratchBytes, copyBytes;
+
+        public ExecutionAccountant(TensorExecutionOptions options)
+        {
+            scratchReporter = options.ScratchReporter is ExecutionAccountant parentScratch
+                ? parentScratch.scratchReporter : options.ScratchReporter;
+            copyReporter = options.CopyReporter is ExecutionAccountant parentCopy
+                ? parentCopy.copyReporter : options.CopyReporter;
+        }
+
+        public long TotalScratchBytes => Interlocked.Read(ref scratchBytes);
+        public long TotalCopyBytes => Interlocked.Read(ref copyBytes);
+        public void AddScratchBytes(long bytes)
+        {
+            Interlocked.Add(ref scratchBytes, bytes);
+            scratchReporter?.AddScratchBytes(bytes);
+        }
+        public void AddCopyBytes(long bytes)
+        {
+            Interlocked.Add(ref copyBytes, bytes);
+            copyReporter?.AddCopyBytes(bytes);
+        }
+    }
+
     readonly struct ExecutionPoolScope : IDisposable
     {
         readonly ComputationalGraph graph;
@@ -1632,8 +1661,9 @@ public partial class ComputationalGraph
             if (disableBufferPool || !graph.ReuseReleasedBuffers) graph.ReleasedBuffers?.Clear();
             graph.ActivePool = disableBufferPool ? null : graph.ReuseReleasedBuffers
                 ? new TensorBufferPool(graph.GetReleasedBuffers()) : new TensorBufferPool();
-            graph.ActiveScratch = new ScratchAccountant();
-            graph.ActiveCopy = new CopyAccountant();
+            var accountant = new ExecutionAccountant(graph.Options.Tensor);
+            graph.ActiveScratch = accountant;
+            graph.ActiveCopy = accountant;
         }
         public void Dispose()
         {
