@@ -45,6 +45,38 @@ public class CliExitCodeTests
 
     static string Mnist() => TestSupport.CommittedModel("mnist-8.onnx");
 
+    [SkippableTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RunInvalidImage_ExitsInvalidInput(bool truncated)
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".png");
+        try
+        {
+            byte[] bytes = truncated
+                ? File.ReadAllBytes(TestSupport.CommittedImage("mnist4.png"))[..16]
+                : "This is not a PNG image"u8.ToArray();
+            File.WriteAllBytes(path, bytes);
+            var result = RunCli("run", Mnist(), path + "::mnist");
+            Assert.Equal(5, result.Exit);
+            Assert.Contains("Cannot prepare model inputs", result.Output + result.Error);
+            Assert.DoesNotContain("Unhandled runtime error", result.Output + result.Error);
+        }
+        finally { File.Delete(path); }
+    }
+
+    [SkippableTheory]
+    [InlineData(":224")]
+    [InlineData("0:0")]
+    [InlineData("224:")]
+    [InlineData("nonsense")]
+    public void RunMalformedResize_ExitsInvalidInput(string format)
+    {
+        var result = RunCli("run", Mnist(), TestSupport.CommittedImage("mnist4.png") + "::" + format);
+        Assert.Equal(5, result.Exit);
+        Assert.DoesNotContain("Unhandled runtime error", result.Output + result.Error);
+    }
+
     [SkippableFact]
     public void InvalidFilter_ExitsInvalidOptions()
     {

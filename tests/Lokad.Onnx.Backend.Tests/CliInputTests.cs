@@ -20,6 +20,30 @@ public class CliInputTests
 
     static string MnistPng() => TestSupport.CommittedImage("mnist2.png");
 
+    [Theory]
+    [InlineData(":224")]
+    [InlineData("224:")]
+    [InlineData("224")]
+    [InlineData("224:224:1")]
+    [InlineData("nonsense")]
+    [InlineData("")]
+    [InlineData("224:nope")]
+    [InlineData("2147483648:28")]
+    public void MalformedImageDimensions_ReturnNull(string format)
+    {
+        Assert.Null(Images.GetImageTensorFromFileArg(MnistPng(), new[] { format }, 1, false));
+    }
+
+    [Fact]
+    public void CustomImageDimensions_PreserveValidResize()
+    {
+        var tensor = Images.GetImageTensorFromFileArg(MnistPng(), new[] { "28:28" }, 1, false);
+        Assert.NotNull(tensor);
+        Assert.Equal(new[] { 1, 1, 28, 28 }, tensor.Dims);
+        Assert.Equal(((Tensor<float>)Images.GetImageTensorFromFileArg(MnistPng(), new[] { "mnist" }, 1, false)!).ToArray(),
+            ((Tensor<float>)tensor).ToArray());
+    }
+
     static string SeedMe5sTokenizer()
     {
         ModelFixture.RequireModelOrSkip("e5 tokenizer", "models", "multilingual-e5-small", "sentencepiece.bpe.model");

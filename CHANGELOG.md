@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- `run` classifies nonfatal input-preparation failures as invalid input (exit 5),
+  including corrupt images and malformed resize descriptors.
 - Cold Windows tokenizer dependency restoration and standalone e5 conformance
   setup; packaged README links resolve outside a repository checkout.
 - Cross-platform embedding fixture hashes and explicit node opset preservation

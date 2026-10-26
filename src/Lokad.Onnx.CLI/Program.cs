@@ -390,25 +390,34 @@ class Program
             return;
         }
         ITensor[]? ui;
-        if (!string.IsNullOrEmpty(ro.Text))
+        try
         {
-            if (ro.Inputs.Count() != 1)
+            if (!string.IsNullOrEmpty(ro.Text))
             {
-                Error("The --text option requires exactly one input argument.");
-                Exit(ExitResult.INVALID_INPUT);
-                return;
+                if (ro.Inputs.Count() != 1)
+                {
+                    Error("The --text option requires exactly one input argument.");
+                    Exit(ExitResult.INVALID_INPUT);
+                    return;
+                }
+                var head = ro.Text.Split(':')[0];
+                if ((string.IsNullOrEmpty(head) || head == "me5s") && !Lokad.Onnx.Text.EnsureMe5sTokenizer())
+                {
+                    Exit(ExitResult.INVALID_INPUT);
+                    return;
+                }
+                ui = GetTextTensors(ro.Inputs.First(), ro.Text);
             }
-            var head = ro.Text.Split(':')[0];
-            if ((string.IsNullOrEmpty(head) || head == "me5s") && !Lokad.Onnx.Text.EnsureMe5sTokenizer())
+            else
             {
-                Exit(ExitResult.INVALID_INPUT);
-                return;
+                ui = GetInputTensorsFromFileArgs(ro.Inputs, ro.SaveInput);
             }
-            ui = GetTextTensors(ro.Inputs.First(), ro.Text);
         }
-        else
+        catch (Exception ex) when (!IsFatal(ex))
         {
-            ui = GetInputTensorsFromFileArgs(ro.Inputs, ro.SaveInput);
+            Error("Cannot prepare model inputs: {m}.", ex.Message);
+            Exit(ExitResult.INVALID_INPUT);
+            return;
         }
         if (ui is null || ui.Length == 0)
         {

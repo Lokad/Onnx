@@ -60,29 +60,18 @@ namespace Lokad.Onnx
                         + "_" + $"{image.Height}x{image.Width}_{index}.png");
                     return ImageToTensorF3N(SaveImage(image, n, saveInput)).WithName(n);
                 }
-                else if (char.IsDigit(props[0].Split(':').First()[0]))
+                else if (!string.IsNullOrEmpty(props[0]) && char.IsDigit(props[0][0]))
                 {
-                    if (props[0].Split(':').All(d => Int32.TryParse(d, out var _)))
-                    {
-                        var dims = props[0].Split(':').Select(d => Int32.Parse(d)).ToArray();
-                        if (dims.Length != 2)
-                        {
-                            Error("Cannot parse specified image dimensions {d}.", props[0]);
-                            return null;
-                        }
-                        else
-                        {
-                            image.Mutate(i => i.Resize(dims[0], dims[1]));
-                            n = Path.Combine((Path.GetDirectoryName(name) ?? ""), Path.GetFileNameWithoutExtension(name)
-                                + "_" + $"{image.Height}x{image.Width}_{index}.png");
-                            return ImageToTensorF(SaveImage(image, n, saveInput)).WithName(n);
-                        }
-                    }
-                    else
+                    var dims = props[0].Split(':');
+                    if (dims.Length != 2 || !int.TryParse(dims[0], out int width) || !int.TryParse(dims[1], out int height))
                     {
                         Error("Cannot parse specified image dimensions {d}.", props[0]);
                         return null;
                     }
+                    image.Mutate(i => i.Resize(width, height));
+                    n = Path.Combine((Path.GetDirectoryName(name) ?? ""), Path.GetFileNameWithoutExtension(name)
+                        + "_" + $"{image.Height}x{image.Width}_{index}.png");
+                    return ImageToTensorF(SaveImage(image, n, saveInput)).WithName(n);
                 }
                 else
                 {
