@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- Operation completion and abandonment logs retain formatted argument values,
+  including when start messages are filtered out.
 - `BFloat16.CompareTo` treats signed zeros as equal, restoring sorted-collection
   lookups and tensor structural ordering while retaining existing operator semantics.
 - Global `--debug=true/false` options are validated and honored across CLI verbs;

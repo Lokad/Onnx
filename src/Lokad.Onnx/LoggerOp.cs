@@ -21,11 +21,13 @@ public class LoggerOp :  IDisposable
         isSilent = silent;
     }
 
+    /// <summary>Starts an operation, capturing its formatted label when scope logging is enabled.</summary>
     public LoggerOp(string opName, params object?[] args)
     {
         timer.Start();
-        this.opName = opName;
-        Log.Write(LogLevel.Info, opName + "...", args);
+        // Abandonment still needs context when Info start messages are filtered.
+        this.opName = Log.IsEnabled(LogLevel.Error) ? Log.Render(opName, args) : opName;
+        Log.Write(LogLevel.Info, "{0}...", this.opName);
     }
 
     public void Complete()
@@ -55,6 +57,7 @@ public class LoggerOp :  IDisposable
         }
     }
 
+    /// <summary>Operation label reused by start, completion and abandonment messages.</summary>
     public string opName = "";
 
     public Stopwatch timer = new Stopwatch();

@@ -3,6 +3,13 @@ namespace Lokad.Onnx.Backend.Tests;
 [Collection("SequentialLogSink")]
 public class LogTests
 {
+    sealed class LabelValue
+    {
+        public string Text = "original{asset}";
+        public int Renders;
+        public override string ToString() { Renders++; return Text; }
+    }
+
     [Fact]
     public void Render_Substitutes_Named_Holes_Positionallly()
     {
@@ -38,8 +45,10 @@ public class LogTests
     {
         var lines = new System.Collections.Generic.List<string>();
         var previous = Log.Sink;
+        var previousLevel = Log.MinLevel;
         try
         {
+            Log.MinLevel = LogLevel.Info;
             Log.Sink = (level, message) => { if (level == LogLevel.Info) { lock (lines) lines.Add(message); } };
             using (var op = new LoggerOp("Executing graph {n} from {f}", "g", "m.onnx"))
             {
@@ -49,9 +58,66 @@ public class LogTests
         finally
         {
             Log.Sink = previous;
+            Log.MinLevel = previousLevel;
         }
         Assert.Contains("Executing graph g from m.onnx...", lines);
-        Assert.Contains(lines, line => System.Text.RegularExpressions.Regex.IsMatch(line, @"Executing graph .* completed in \d+ms\."));
+        Assert.Contains(lines, line => System.Text.RegularExpressions.Regex.IsMatch(line, @"^Executing graph g from m\.onnx completed in \d+ms\.$"));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void LoggerOp_Abandonment_KeepsContextWhenStartFiltered(bool explicitlyAbandon)
+    {
+        var lines = new List<(LogLevel Level, string Message)>();
+        var previousSink = Log.Sink;
+        var previousLevel = Log.MinLevel;
+        try
+        {
+            Log.MinLevel = LogLevel.Warn;
+            Log.Sink = (level, message) => lines.Add((level, message));
+            using (var op = Runtime.Begin("Preparing {graph} from {0}", "graph{{c}}", "model{c}.onnx"))
+            {
+                if (explicitlyAbandon) op.Abandon();
+            }
+            var line = Assert.Single(lines);
+            Assert.Equal(LogLevel.Error, line.Level);
+            Assert.StartsWith("Preparing graph{{c}} from model{c}.onnx abandoned after ", line.Message);
+            Assert.Matches(@" abandoned after \d+ms\.$", line.Message);
+        }
+        finally
+        {
+            Log.Sink = previousSink;
+            Log.MinLevel = previousLevel;
+        }
+    }
+
+    [Fact]
+    public void LoggerOp_CapturesArgumentsOnce()
+    {
+        var lines = new List<string>();
+        var value = new LabelValue();
+        var previousSink = Log.Sink;
+        var previousLevel = Log.MinLevel;
+        try
+        {
+            Log.MinLevel = LogLevel.Info;
+            Log.Sink = (level, message) => lines.Add(message);
+            using (var op = Runtime.Begin("Work {asset}", value))
+            {
+                value.Text = "changed";
+                op.Complete();
+            }
+            Assert.Equal(1, value.Renders);
+            Assert.Equal(2, lines.Count);
+            Assert.Equal("Work original{asset}...", lines[0]);
+            Assert.StartsWith("Work original{asset} completed in ", lines[1]);
+        }
+        finally
+        {
+            Log.Sink = previousSink;
+            Log.MinLevel = previousLevel;
+        }
     }
 
     [Fact]
