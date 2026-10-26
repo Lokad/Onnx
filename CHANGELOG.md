@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- ONNX operator names require exact, case-sensitive names; numeric enum values,
+  surrounding whitespace and combined enum expressions remain unsupported.
 - Empty `SequenceAt` indices return a descriptive failure; valid indices retain
   their behavior and scalar index reads avoid copying the tensor payload.
 - `run` classifies nonfatal input-preparation failures as invalid input (exit 5),

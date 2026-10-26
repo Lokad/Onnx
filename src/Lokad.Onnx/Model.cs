@@ -146,7 +146,8 @@ public class Model
     static Node ToNode(OnnxNode np, ComputationalGraph graph, bool runOptimizer, HashSet<OnnxSubgraph> visiting)
     {
         var domain = np.Domain ?? "";
-        if (!Enum.TryParse<OpType>(np.OpType, false, out var op))
+        if (!Enum.TryParse<OpType>(np.OpType, false, out var op)
+            || !string.Equals(np.OpType, Enum.GetName(op), StringComparison.Ordinal))
         {
             op = OpType.Unknown;
         }

@@ -29,7 +29,7 @@
   `Complex64` label with `Complex128`. `Complex64` has no managed dense form;
   passing `Complex[]` under that label now fails explicitly. Core shape/data
   movement remains available; complex wire import, arithmetic and casts remain unsupported.
-- Operator surface: SupportedOps plus (domain, operator, opset) identity is checked at load and run; anything outside it fails explicitly instead of silently degrading.
+- Operator surface: SupportedOps plus (domain, operator, opset) identity is checked at load and run; anything outside it fails explicitly instead of silently degrading. Model operator names are exact and case-sensitive; numeric enum values, padded names and combined enum expressions are unsupported. Unknown operators remain inspectable and fail execution with their original name in the diagnostic.
 - Outputs: retain the tensor values you need from Outputs before Reset or another execution repopulates the binding dictionary. Held output tensors remain valid across subsequent calls; retaining them does not require cloning their payload. Eligible IntermediateOutputs entries may already be cleared after their final use. See [runtime lifetime and memory policies](../../docs/runtime-options.md).
 - Concurrency: one execution per graph instance at a time; a concurrent call fails. Run separate execution contexts on separate threads.
 - Inputs: caller-owned. The graph never takes input storage: constants, caller inputs and sequence elements are protected from buffer pooling.
