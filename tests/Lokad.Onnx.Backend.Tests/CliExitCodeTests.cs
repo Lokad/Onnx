@@ -45,6 +45,81 @@ public class CliExitCodeTests
 
     static string Mnist() => TestSupport.CommittedModel("mnist-8.onnx");
 
+    static void WithOperatorModel(string name, string domain, Action<string> inspect)
+    {
+        var model = new ModelProto { IrVersion = 10, Graph = new GraphProto { Name = "operator-name",
+            Input = { FloatInfo("x") }, Output = { FloatInfo("y") },
+            Node = { new NodeProto { Name = "op", OpType = name, Domain = domain, Input = { "x" }, Output = { "y" } } } },
+            OpsetImport = { new OperatorSetIdProto { Domain = "", Version = 18 } } };
+        if (domain.Length != 0) model.OpsetImport.Add(new OperatorSetIdProto { Domain = domain, Version = 1 });
+        string path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".onnx");
+        try
+        {
+            File.WriteAllBytes(path, model.ToByteArray());
+            inspect(path);
+        }
+        finally { File.Delete(path); }
+    }
+
+    public static IEnumerable<object[]> InspectionNames()
+    {
+        foreach (var (name, domain, supported) in new[] {
+            ("Relu", "", true), ("Abs", "", true), ("Relu", "com.example", false),
+            ("ExternalAttention", "com.example", false), ("FancyNewOp", "", false),
+            (((int)OpType.Relu).ToString(System.Globalization.CultureInfo.InvariantCulture), "", false),
+            (" Relu ", "", false), ("Relu, Abs", "", false), ("relu", "", false), ("999999", "", false) })
+            yield return new object[] { name, domain, supported };
+    }
+
+    [SkippableTheory]
+    [MemberData(nameof(InspectionNames))]
+    public void InspectionPreservesNameAndSupport(string name, string domain, bool supported)
+    {
+        WithOperatorModel(name, domain, path =>
+        {
+            var plain = RunCli("info", path);
+            var listing = RunCli("info", path, "--ops");
+            Assert.Equal(0, plain.Exit);
+            Assert.Equal(0, listing.Exit);
+            string identity = (domain.Length == 0 ? "" : domain + ":") + name;
+            Assert.Contains(identity + (supported ? " [supported]" : " [unsupported]"), listing.Output);
+            Assert.Contains("Node op has op type: " + name + ", inputs:", plain.Output);
+        });
+    }
+
+    [SkippableTheory]
+    [InlineData("FancyNewOp", "", "Abs", false)]
+    [InlineData("ExternalAttention", "com.example", "Abs", false)]
+    [InlineData("185", "", "Relu", false)]
+    [InlineData(" Relu ", "", "Relu", false)]
+    [InlineData("Relu, Abs", "", "Relu", false)]
+    [InlineData("relu", "", "Relu", false)]
+    [InlineData("Abs", "", "aBs", true)]
+    [InlineData("Relu", "", "rElU", true)]
+    [InlineData("Relu", "com.example", "Relu", true)]
+    [InlineData("Relu", "", "Abs", false)]
+    [InlineData("Abs", "", "Relu", false)]
+    public void InspectionFiltersLiteralModelNames(string name, string domain, string filter, bool included)
+    {
+        WithOperatorModel(name, domain, path =>
+        {
+            var result = RunCli("info", path, "--op-filter", filter);
+            Assert.Equal(0, result.Exit);
+            if (included) Assert.Contains("Node op has op type: " + name + ", inputs:", result.Output);
+            else Assert.DoesNotContain("Node op has op type:", result.Output);
+        });
+    }
+
+    [SkippableTheory]
+    [InlineData("185")]
+    [InlineData("999999")]
+    [InlineData(" Relu ")]
+    [InlineData("Relu, Abs")]
+    public void InvalidOperatorFilterSyntax_ExitsInvalidOptions(string filter)
+    {
+        Assert.Equal(2, RunCli("info", Mnist(), "--op-filter", filter).Exit);
+    }
+
     [SkippableTheory]
     [InlineData(false)]
     [InlineData(true)]

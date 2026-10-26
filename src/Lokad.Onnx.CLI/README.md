@@ -22,6 +22,10 @@ attributes show their name, type and shape with a `not materialized` marker.
 Plain inspection, `--ops` and `--init` use the same error classes: malformed or
 unsupported metadata exits 5, a missing model exits 4, and invalid options exit 2.
 
+Inspection preserves original operator names, including unknown names. Model
+names match exactly; `--op-filter` accepts named operators case-insensitively.
+Numeric, padded and combined enum expressions are invalid filter options (exit 2).
+
 `run` reports input preparation failures, including corrupt images and malformed
 resize descriptors, as invalid input (exit 5). Graph execution errors keep their
 existing execution diagnostics and exit codes.

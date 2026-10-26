@@ -539,16 +539,17 @@ class Program
     static void PrintModelInfo(string file, string? _opfilter)
     {
         ExitIfFileNotFound(file);
-        OpType? opfilter = null;
+        string? opfilter = null;
         if (_opfilter is not null)
         {
-            if (!Enum.TryParse<OpType>(_opfilter, true, out var op))
+            if (!Enum.TryParse<OpType>(_opfilter, true, out var op)
+                || !string.Equals(_opfilter, Enum.GetName(op), StringComparison.OrdinalIgnoreCase))
             {
                 Error("The specified operation type {op} is not valid.", _opfilter);
                 Exit(ExitResult.INVALID_OPTIONS);
                 return;
             }
-            opfilter = op;
+            opfilter = op.ToString();
         }
         var m = ReadModelMetadataOrExit(file);
         if (m is null) return;
@@ -614,15 +615,13 @@ class Program
         }
         foreach (var n in m.Nodes)
         {
-            OpType op = OpType.Unknown;
-            Enum.TryParse<OpType>(n.OpType, false, out op);
-            if (opfilter is not null && op != opfilter)
+            if (opfilter is not null && !string.Equals(n.OpType, opfilter, StringComparison.Ordinal))
             {
                 continue;
             }
             Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and "
                 + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."),
-                n.Name, op.ToString(),
+                n.Name, n.OpType,
                 n.Inputs.Select(t => GetTensorDesc(t)).ToArray(),
                 n.Outputs.Select(t => GetTensorDesc(t)).ToArray());
 
@@ -671,6 +670,7 @@ class Program
             int version = m.Opset.TryGetValue(domain ?? "", out var v) ? v
                 : m.Opset.TryGetValue("", out var d) ? d : -1;
             bool supported = Enum.TryParse<OpType>(opName, false, out var op)
+                && string.Equals(opName, Enum.GetName(op), StringComparison.Ordinal)
                 && OperatorSchemas.IsSupported(op, domain, version, false);
             Console.WriteLine(display + (supported ? "[supported]" : "[unsupported]"));
         }
