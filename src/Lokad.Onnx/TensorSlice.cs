@@ -44,6 +44,7 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     internal int ParentOffset(int index)
     {
+        if (index < 0 || index >= Length) throw new ArgumentOutOfRangeException(nameof(index));
         if (strides.Length > parent.Rank) throw new ArgumentOutOfRangeException(nameof(index), "Too many stride dimensions for the parent rank.");
         Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
 

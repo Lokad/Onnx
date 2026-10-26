@@ -58,6 +58,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     /// </summary>
     internal int ToSourceOffset(int index)
     {
+        if (index < 0 || index >= Length) throw new ArgumentOutOfRangeException(nameof(index));
         int rem = index;
         int offset = 0;
         for (int d = Rank - 1; d >= 0; d--)
