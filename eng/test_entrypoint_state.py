@@ -14,7 +14,7 @@ PWSH = shutil.which('pwsh')
 
 @unittest.skipUnless(PWSH, 'PowerShell 7 is required')
 class E5EnvironmentTests(unittest.TestCase):
-    def run_gate(self, scenario, initial):
+    def run_gate(self, scenario, initial, failure=None, require_intrinsics=False):
         with tempfile.TemporaryDirectory(prefix='lonnx-entrypoint-') as directory:
             root = Path(directory).resolve()
             self.assertEqual(root.parent, Path(tempfile.gettempdir()).resolve())
@@ -34,8 +34,11 @@ class E5EnvironmentTests(unittest.TestCase):
 $ErrorActionPreference = 'Stop'
 $before = $env:DOTNET_JitOSR
 $global:ObservedFlags = [Collections.Generic.List[string]]::new()
+$global:ModeCalls = @{}
+$global:ReferenceRan = $false
 function mockpython {
     $global:ObservedFlags.Add($env:DOTNET_JitOSR)
+    if ($args[0] -eq '-m') { $global:ReferenceRan = $true }
     if ($env:LOKAD_ENTRYPOINT_CASE -eq 'child-throws' -and $args[0] -eq '-c') { throw 'fixture child failure' }
     $global:LASTEXITCODE = if ($env:LOKAD_ENTRYPOINT_CASE -eq 'native-fails' -and $args[0] -eq '-m') { 7 } else { 0 }
     if ($args[0] -eq '--version') { 'Python fixture' }
@@ -45,6 +48,14 @@ function dotnet {
     $outputIndex = [Array]::IndexOf($args, '--output')
     if ($outputIndex -ge 0) { '{}' | Set-Content -LiteralPath $args[$outputIndex + 1] }
     $global:LASTEXITCODE = 0
+    $modeIndex = [Array]::IndexOf($args, '--mode')
+    if ($modeIndex -ge 0) {
+        $mode = $args[$modeIndex + 1]
+        $global:ModeCalls[$mode] = [int]$global:ModeCalls[$mode] + 1
+        if ($mode -eq $env:LOKAD_ENTRYPOINT_FAIL_MODE -and $global:ModeCalls[$mode] -eq [int]$env:LOKAD_ENTRYPOINT_FAIL_ATTEMPT) {
+            $global:LASTEXITCODE = [int]$env:LOKAD_ENTRYPOINT_FAIL_EXIT
+        }
+    }
 }
 function Get-FileHash($Path, $Algorithm) {
     $hash = if ($Path -like '*model.onnx') { '__MODEL__' }
@@ -52,9 +63,15 @@ function Get-FileHash($Path, $Algorithm) {
     [pscustomobject]@{ Hash = $hash }
 }
 $caught = $null
-try { & (Join-Path $PSScriptRoot 'eng/test-e5.ps1') -Python mockpython; $code = $LASTEXITCODE }
+try {
+    & (Join-Path $PSScriptRoot 'eng/test-e5.ps1') -Python mockpython -RequireIntrinsics:($env:LOKAD_ENTRYPOINT_REQUIRE -eq '1')
+    $code = $LASTEXITCODE
+}
 catch { $caught = $_.Exception.Message; $code = 17 }
-@{ before=$before; after=$env:DOTNET_JitOSR; code=$code; caught=$caught; flags=@($global:ObservedFlags) } |
+$artifactPath = Join-Path $PSScriptRoot 'artifacts/e5/dotnet-intrinsics.json'
+$artifact = if (Test-Path -LiteralPath $artifactPath) { Get-Content -LiteralPath $artifactPath -Raw | ConvertFrom-Json } else { $null }
+@{ before=$before; after=$env:DOTNET_JitOSR; code=$code; caught=$caught; flags=@($global:ObservedFlags)
+   intrinsics=$artifact; referenceRan=$global:ReferenceRan; modeCalls=$global:ModeCalls } |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $PSScriptRoot 'state.json')
 exit 0
 '''.replace('__MODEL__', model_hash).replace('__TOKENIZER__', tokenizer_hash)
@@ -62,6 +79,9 @@ exit 0
             runner.write_text(wrapper, encoding='utf-8')
             env = os.environ.copy()
             env['LOKAD_ENTRYPOINT_CASE'] = scenario
+            mode, attempt, exit_code = failure or ('', 0, 0)
+            env.update(LOKAD_ENTRYPOINT_FAIL_MODE=mode, LOKAD_ENTRYPOINT_FAIL_ATTEMPT=str(attempt),
+                       LOKAD_ENTRYPOINT_FAIL_EXIT=str(exit_code), LOKAD_ENTRYPOINT_REQUIRE='1' if require_intrinsics else '0')
             if initial is None:
                 env.pop('DOTNET_JitOSR', None)
             else:
@@ -93,6 +113,37 @@ exit 0
 
     def test_success_restores_environment_and_children_get_deterministic_setting(self):
         self.check_scenario('success', 0)
+
+    def check_runner_exit(self, mode, attempt, exit_code, required, expected):
+        for initial in (None, '1'):
+            with self.subTest(mode=mode, attempt=attempt, exit_code=exit_code, required=required, initial=initial):
+                state = self.run_gate('success', initial, (mode, attempt, exit_code), required)
+                self.assertEqual(state['code'], expected, state)
+                self.assertEqual(state['before'], initial)
+                self.assertEqual(state['after'], initial, state)
+                self.assertTrue(all(flag == '0' for flag in state['flags']), state)
+                skipped = mode == 'intrinsics' and attempt == 1 and exit_code == 3 and not required
+                self.assertEqual(bool((state['intrinsics'] or {}).get('unsupported')), skipped, state)
+                self.assertEqual(state['referenceRan'], expected == 0, state)
+                if skipped:
+                    self.assertEqual(state['modeCalls']['intrinsics'], 1)
+
+    def test_optional_intrinsics_skips_only_explicit_unavailable_exit(self):
+        for code in (0, 3, 4, 17):
+            self.check_runner_exit('intrinsics', 1, code, False, 0 if code in (0, 3) else 1)
+
+    def test_required_intrinsics_rejects_first_run_failures(self):
+        for code in (3, 4, 17):
+            self.check_runner_exit('intrinsics', 1, code, True, 1)
+
+    def test_repeat_failures_never_become_hardware_skips(self):
+        for code in (3, 4, 17):
+            self.check_runner_exit('intrinsics', 2, code, False, 1)
+
+    def test_other_modes_never_skip_failure_exits(self):
+        for mode in ('scalar', 'simd'):
+            for code in (3, 4):
+                self.check_runner_exit(mode, 1, code, False, 1)
 
 
 @unittest.skipUnless(PWSH and shutil.which('git'), 'PowerShell 7 and Git are required')

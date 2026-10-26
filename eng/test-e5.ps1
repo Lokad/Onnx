@@ -55,7 +55,7 @@ try {
         $repeat = "$artifacts/dotnet-$m.repeat.json"
         Invoke-GateNative { & dotnet $runner --model $model --tokenizer $tokenizer --cases $cases --mode $m --output $first }
         if ($LASTEXITCODE -ne 0) {
-            if ($m -eq "intrinsics" -and !$RequireIntrinsics) {
+            if ($m -eq "intrinsics" -and $LASTEXITCODE -eq 3 -and !$RequireIntrinsics) {
                 Write-Host "UNSUPPORTED intrinsics: x86 FMA not available on this machine (rerun with -RequireIntrinsics to enforce)"
                 Remove-Item $first -Force -ErrorAction SilentlyContinue
                 Remove-Item $repeat -Force -ErrorAction SilentlyContinue

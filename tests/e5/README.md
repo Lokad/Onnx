@@ -21,11 +21,14 @@ French accents, Japanese, punctuation plus tab and NBSP, 512-token truncation).
 
     .\eng\test-e5.ps1 -Python C:\Python313\python.exe -RequireIntrinsics
 
-The script verifies hashes, builds `tests/Lokad.Onnx.E5Runner`, runs the
-scalar, SIMD, and intrinsic modes twice each (byte-identical artifacts
-required; without x86 FMA the intrinsics run records an unsupported-marker
-artifact and its three conformance tests skip instead of failing), then runs
-`tests/e5/python/test_e5_conformance.py`, which checks
+The shown command requires x86 FMA. Omit `-RequireIntrinsics` to allow an
+unavailable intrinsics mode: only the runner's explicit unavailable-hardware
+exit 3 records an unsupported marker and skips its three conformance tests.
+Other runner failures, including any repeat failure, fail the gate.
+
+The script verifies hashes, builds `tests/Lokad.Onnx.E5Runner`, runs each
+available scalar, SIMD and intrinsic mode twice with byte-identical artifacts,
+then runs `tests/e5/python/test_e5_conformance.py`, which checks
 exact tokenizer inputs, full hidden states, pooled embeddings, and the
 semantic ranking margin (>= 0.10, measured 0.18).
 

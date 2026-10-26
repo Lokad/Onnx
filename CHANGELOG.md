@@ -91,6 +91,8 @@
 
 ### Fixed
 
+- The e5 gate skips only explicit unavailable-FMA exits in optional intrinsics
+  mode; real runner failures now fail verification instead of becoming skips.
 - ONNX operator names require exact, case-sensitive names; numeric enum values,
   surrounding whitespace and combined enum expressions remain unsupported.
 - Metadata inspection preserves unknown operator names and filters literal model
