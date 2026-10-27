@@ -137,17 +137,10 @@ public class CliInputTests
         });
     }
 
-    static string RepoRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        for (int i = 0; i < 5; i++) dir = dir!.Parent!;
-        return dir!.FullName;
-    }
-
     static string CliDll()
     {
-        var dll = Path.Combine(RepoRoot(), "src", "Lokad.Onnx.CLI", "bin", "Release", "net10.0", "Lokad.Onnx.CLI.dll");
-        Assert.True(File.Exists(dll), "Build the Release CLI first (build.cmd): " + dll);
+        var dll = TestSupport.CliDll();
+        Assert.True(File.Exists(dll), "Build the CLI in the test configuration first: " + dll);
         return dll;
     }
 

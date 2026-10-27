@@ -1,8 +1,10 @@
+using System.Reflection;
+
 namespace Lokad.Onnx.Tests.Support;
 
 /// <summary>
 /// Test-only discovery shared by both test assemblies through linking (ships nowhere):
-/// repository-root discovery and committed-asset paths.
+/// repository-root discovery, CLI build and committed-asset paths.
 /// Numerical expectations stay in the test classes; this file only finds files.
 /// </summary>
 internal static class TestSupport
@@ -23,4 +25,11 @@ internal static class TestSupport
 
     internal static string CommittedImage(string fileName) =>
         Path.Combine(RepoRoot(), "tests", "Lokad.Onnx.Backend.Tests", "images", fileName);
+
+    internal static string CliDll()
+    {
+        string configuration = typeof(TestSupport).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration
+            ?? throw new InvalidOperationException("Cannot determine the test build configuration.");
+        return Path.Combine(RepoRoot(), "src", "Lokad.Onnx.CLI", "bin", configuration, "net10.0", "Lokad.Onnx.CLI.dll");
+    }
 }

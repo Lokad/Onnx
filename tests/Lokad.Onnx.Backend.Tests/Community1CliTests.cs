@@ -7,8 +7,8 @@ public class Community1CliTests
 {
     static (int Code, string Output, string Error) Run(params string[] arguments)
     {
-        string dll = Path.Combine(TestSupport.RepoRoot(), "src/Lokad.Onnx.CLI/bin/Release/net10.0/Lokad.Onnx.CLI.dll");
-        Assert.True(File.Exists(dll), "Build the Release CLI first.");
+        string dll = TestSupport.CliDll();
+        Assert.True(File.Exists(dll), "Build the CLI in the test configuration first: " + dll);
         var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
         start.ArgumentList.Add(dll); foreach (string argument in arguments) start.ArgumentList.Add(argument);
         using var process = Process.Start(start) ?? throw new InvalidOperationException();

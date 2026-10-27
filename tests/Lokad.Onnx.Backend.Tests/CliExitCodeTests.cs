@@ -8,15 +8,15 @@ using SixLabors.ImageSharp.PixelFormats;
 using global::Onnx;
 
 /// <summary>
-/// Exit codes are process properties: each case launches the built Release
+/// Exit codes are process properties: each case launches the matching built
 /// CLI in a fresh process and asserts the observed exit class.
 /// </summary>
 public class CliExitCodeTests
 {
     static string CliDll()
     {
-        var dll = Path.Combine(TestSupport.RepoRoot(), "src", "Lokad.Onnx.CLI", "bin", "Release", "net10.0", "Lokad.Onnx.CLI.dll");
-        Skip.IfNot(File.Exists(dll), "CLI Release build not present; build src/Lokad.Onnx.CLI in Release first.");
+        var dll = TestSupport.CliDll();
+        Skip.IfNot(File.Exists(dll), "CLI build missing for the test configuration: " + dll);
         return dll;
     }
 

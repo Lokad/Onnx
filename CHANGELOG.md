@@ -93,6 +93,8 @@
 
 ### Fixed
 
+- CLI tests use their selected build configuration instead of reusing a leftover
+  Release executable or requiring one during Debug runs.
 - Constant-fold and deduplication budgets use actual element widths, rejecting
   oversized Complex128 results and retaining eligible FP16/BF16 optimizations.
 - CLI output labels retain each binding's name when tensors alias, including

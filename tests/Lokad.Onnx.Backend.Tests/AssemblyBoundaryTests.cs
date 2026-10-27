@@ -2,6 +2,7 @@ namespace Lokad.Onnx.Backend.Tests;
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Lokad.Onnx.Tests.Support;
 
 public class AssemblyBoundaryTests
 {
@@ -9,7 +10,8 @@ public class AssemblyBoundaryTests
     public void EngineAndCompanionsUseTheTestBuildConfiguration()
     {
         var expected = typeof(AssemblyBoundaryTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
-        foreach (var assembly in new[] { typeof(Model).Assembly, typeof(OnnxImport).Assembly, typeof(ParakeetTranscriber).Assembly })
+        foreach (var assembly in new[] { typeof(Model).Assembly, typeof(OnnxImport).Assembly, typeof(ParakeetTranscriber).Assembly,
+            Assembly.LoadFrom(TestSupport.CliDll()) })
             Assert.Equal(expected, assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration);
     }
 
