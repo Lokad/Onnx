@@ -139,7 +139,16 @@ public sealed class WhisperTranscriber
                 ? generation.DecodeTimestamps(hidden, options, (initial, feeds) => Execute(initial ? first : past, feeds), cancellation)
                 : generation.Decode(hidden, options, (initial, feeds) => Execute(initial ? first : past, feeds), cancellation);
         }
-        finally { encoding.Reset(); first.Reset(); past.Reset(); }
+        finally { ResetAfterWindow(encoding); ResetAfterWindow(first); ResetAfterWindow(past); }
+    }
+
+    static void ResetAfterWindow(GraphExecution context)
+    {
+        context.Reset();
+        // These private bindings are no longer needed; retain their declared
+        // slots for the next request and leave prepared/cached storage intact.
+        Dictionary<string, ITensor?> inputs = context.Inputs;
+        foreach (string name in inputs.Keys) inputs[name] = null;
     }
 
     static IReadOnlyDictionary<string, ITensor> Execute(GraphExecution context, Dictionary<string, ITensor> feeds)

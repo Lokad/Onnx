@@ -1114,6 +1114,11 @@ public partial class ComputationalGraph
         LastCopyBytes = 0;
         LastPeakLiveBytes = 0;
         LastGcCollections = new int[3];
+        ClearLiveIndex();
+    }
+
+    void ClearLiveIndex()
+    {
         liveArrayUsers = null;
         liveUnknownTensors = null;
         liveIndexSeeded = false;
@@ -1332,6 +1337,8 @@ public partial class ComputationalGraph
 
     public void Reset(bool gc)
     {
+        // Bookkeeping for the completed run must not root discarded payloads.
+        ClearLiveIndex();
         foreach (var o in IntermediateOutputs.Keys)
         {
             livePayloadBytes -= PayloadBytes(IntermediateOutputs[o]);

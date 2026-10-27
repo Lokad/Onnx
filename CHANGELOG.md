@@ -93,6 +93,10 @@
 
 ### Fixed
 
+- Whisper clears private input bindings after each window, releasing finished
+  request buffers while preserving reusable contexts and released-array caches.
+- Graph reset drops transient live-payload bookkeeping references while
+  preserving input bindings, released buffers and completed-run diagnostics.
 - `Resize` copies unchanged shapes across supported modes and element types,
   preserving exact values and floating bits even with fractional scales.
 - Scratch buffers return to the pool when a caller's accounting hook throws,
