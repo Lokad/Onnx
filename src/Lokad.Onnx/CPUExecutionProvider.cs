@@ -43,7 +43,8 @@ public partial class CPUExecutionProvider
             for (int k = 0; k < values.Length; k++)
             {
                 long value = values[k];
-                if (!(allowSliceMarkers && (value == long.MinValue || value == long.MaxValue)))
+                // Exporters also use -INT64_MAX for an open-ended reverse slice.
+                if (!(allowSliceMarkers && (value == long.MinValue || value == -long.MaxValue || value == long.MaxValue)))
                     TensorLimits.ValidateGeometry(value, nameof(data));
                 clamped[k] = value > int.MaxValue ? int.MaxValue : value < int.MinValue ? int.MinValue : (int)value;
             }

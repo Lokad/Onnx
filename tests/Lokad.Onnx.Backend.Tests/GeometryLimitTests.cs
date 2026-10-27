@@ -32,7 +32,42 @@ public class GeometryLimitTests
         var reverse = CPUExecutionProvider.Slice(input, Values(long.MaxValue), Values(long.MinValue), axis, Values(-1), null);
         Assert.Equal(new[] { 3, 2, 1 }, ((Tensor<int>)reverse.Outputs[0]).ToArray());
         Assert.ThrowsAny<ArgumentException>(() => CPUExecutionProvider.Slice(input, Values(Bound + 1), Values(Bound + 1), axis, Values(1), null));
+        Assert.ThrowsAny<ArgumentException>(() => CPUExecutionProvider.Slice(input, Values(0), Values(-long.MaxValue + 1), axis, Values(-1), null));
         Assert.ThrowsAny<ArgumentException>(() => CPUExecutionProvider.Slice(input, Values(0), Values(3), axis, Values(long.MaxValue), null));
+        Assert.ThrowsAny<ArgumentException>(() => CPUExecutionProvider.Slice(input, Values(0), Values(3), axis, Values(-long.MaxValue), null));
+    }
+
+    [Theory]
+    [InlineData(long.MinValue)]
+    [InlineData(-long.MaxValue)]
+    public void ExporterReverseSliceEndMarkersWorkAtProviderAndGraphBoundaries(long end)
+    {
+        var input = DenseTensor<float>.OfValues(new[] { 1f, 2f, 3f });
+        var starts = DenseTensor<long>.OfValues(new[] { -1L });
+        var ends = DenseTensor<long>.OfValues(new[] { end });
+        var axes = DenseTensor<long>.OfValues(new[] { 0L });
+        var steps = DenseTensor<long>.OfValues(new[] { -1L });
+        var result = CPUExecutionProvider.Slice(input, starts, ends, axes, steps, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new[] { 3f, 2f, 1f }, ((Tensor<float>)result.Outputs[0]).ToArray());
+
+        var model = new OnnxModel
+        {
+            Opset = { [""] = 13 },
+            Inputs = { new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = [3] } },
+            Outputs = { new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = [3] } },
+            Initializers = {
+                new OnnxTensor { Name = "start", ElementType = TensorElementType.Int64, Dims = [1], Data = new long[] { -1 } },
+                new OnnxTensor { Name = "end", ElementType = TensorElementType.Int64, Dims = [1], Data = new[] { end } },
+                new OnnxTensor { Name = "axis", ElementType = TensorElementType.Int64, Dims = [1], Data = new long[] { 0 } },
+                new OnnxTensor { Name = "step", ElementType = TensorElementType.Int64, Dims = [1], Data = new long[] { -1 } }
+            },
+            Nodes = { new OnnxNode { OpType = "Slice", Name = "reverse", Inputs = ["x", "start", "end", "axis", "step"], Outputs = ["y"] } }
+        };
+        var graph = Model.Load(model);
+        Assert.True(graph.Execute(new Dictionary<string, ITensor> { ["x"] = input }, true), graph.LastErrorMessage);
+        Assert.Equal(new[] { 3f, 2f, 1f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+        Assert.Equal(new[] { 1f, 2f, 3f }, input.ToArray());
     }
 
     [Fact]

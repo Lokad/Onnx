@@ -55,6 +55,8 @@
 - Scratch buffers return to the pool when accounting hooks throw; graph execution
   forwards scratch/copy events while keeping per-run and child metrics separate.
 - View indexing validates bounds and nested-storage aliasing before access.
+  Slice accepts the `-Int64.MaxValue` open-ended reverse marker used by the
+  Parakeet/Pyannote exports while keeping ordinary geometry bounded.
   Broadcast singleton removal, empty views, from-end indices and empty C# ranges
   preserve values and write targets. Sequence accounting includes flat elements
   and rejects nested/cyclic graph values before traversal.

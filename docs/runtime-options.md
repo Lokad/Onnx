@@ -75,8 +75,9 @@ dimensions are invalid except symbolic metadata and the reshape `-1` marker.
 `Range` / `Arange` require finite start, exclusive limit and nonzero delta within
 the signed bound. A step facing away from the limit yields an empty range.
 Output counts must fit Int32. Floating ranges retain repeated-addition semantics.
-Slice's exact Int64 minimum/maximum start/end markers are normalized before
-validation; other oversized values, including axes and steps, are rejected.
+Slice's exact Int64 minimum/maximum and `-Int64.MaxValue` start/end markers are
+normalized before validation. The latter is used by reverse-slice exporters.
+Other oversized values, including axes and steps, are rejected.
 
 This limit applies to geometry, not numeric payloads: Int64 tensors may contain
 Int64 extrema and floating tensors retain IEEE exceptional values. Casts, external
