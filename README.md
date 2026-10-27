@@ -88,10 +88,11 @@ specific workloads with Microsoft ONNX Runtime.
 
 ## Development
 
-After building the solution:
+See the [development guide](https://github.com/Lokad/Onnx/blob/master/docs/code-maintenance.md)
+for project boundaries, setup, validation and packaging. After building the solution:
 
 ```powershell
-dotnet test Lokad.Onnx.slnx -c Release --no-build --tl:off --nologo -v minimal
+dotnet test eng/Tests.slnx -c Release --no-build --tl:off --nologo -v minimal
 ```
 
 Tests use bundled fixtures and explicitly staged local models. Missing large

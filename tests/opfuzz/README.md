@@ -4,7 +4,7 @@ Seeded single-op differential tests: frozen corpus plus a file-driven dump runne
 comparing Lokad.Onnx against frozen ONNX Runtime references in scalar, SIMD, and
 intrinsics modes. Never part of the default `dotnet test` run.
 
-Comparisons follow the supported [tensor geometry domain](../../docs/tensor-limits.md).
+Comparisons follow the supported [tensor geometry domain](../../docs/runtime-options.md#tensor-geometry-limits).
 The frozen `range_inf_delta` case instead requires the specific nonfinite-geometry
 execution failure and no output in every available mode: Lokad intentionally
 rejects the infinite step that ORT treats as empty. This case is tested, without

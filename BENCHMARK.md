@@ -1,7 +1,10 @@
 # CPU benchmarks for Lokad.Onnx
 
-The September rows measure the 0.3.0 inference implementation on 2026-09-28 UTC.
-The EmbeddingGemma 2 row measures optimized source `98b9234c` on 2026-10-17 UTC.
+These are the latest published matched CPU measurements for the listed workloads.
+The September rows measure the 0.3.0 implementation (`04584fc2`) on 2026-09-28 UTC;
+EmbeddingGemma 2 measures source `98b9234c` on 2026-10-17 UTC. They retain those
+measured revisions during 0.4.0 preparation: subsequent correctness and lifetime
+fixes have not been given a new matched performance comparison.
 **Lower is better.** Times are seconds; Lokad / ORT is the latency ratio, so
 1.100 means 10.0% more time.
 
@@ -24,19 +27,11 @@ Each row is a matched comparison for that workload. Audio rows measure complete
 applications; embedding, vision and GPT-2 rows measure prepared graph calls.
 The workloads differ, so their absolute times should not be compared to each other.
 
-The September inference implementation is source `04584fc2`, measured as Core `c471f5d1`
-and Data `b04aea50`. Its [root and package qualification](tests/parakeet/transpose-axis-results/root-20260928.md)
-verifies that the normal build (Core `e98edee2`, Data `7f4dd050`) preserves all
-3,288 Core and 697 Data method bodies, implementation flags, public declarations
-and assembly attributes. Both full test suites pass in normal and AVX512-disabled
-modes, and independent NuGet consumption passes. Ordinary mode passes 3,603 backend
-and 394 tensor tests; the report records the exact hardware-dependent skips.
-The [0.3.0 release checks](docs/release-0.3.0.md) verify that the validation package
-preserves all of those Core and Data methods, implementation flags and public
-declarations. The published package uses the same Core sources, regenerated with
-the build commit recorded in its metadata; its Core is `6b794a47`. Package contents
-and independent consumption pass. Release preparation changes version metadata
-and test coverage, with no new performance claim.
+Source/binary identities and package checks for the September measurements are
+recorded with their [qualification evidence](tests/parakeet/transpose-axis-results/root-20260928.md).
+The current 0.4.0 NuGet package contains only the dependency-free core. Audio and
+embedding application helpers are nonpackable Data source APIs; their measured
+end-to-end workloads include that companion code.
 
 ## What is timed
 
@@ -94,8 +89,8 @@ They do not establish uniform speedups for isolated operators or fallback paths.
 
 DINOv2 is excluded by the [known-divergence registry](tests/Lokad.Onnx.Bench/KnownDivergences.cs):
 its registered output exceeds the 1e-4 agreement bound, so the runner withholds
-timing. Whisper Large V3 Turbo is supported; a current-release matched timing
-refresh and optimization remain deferred. Neither row has a qualified ratio.
+timing. Whisper Large V3 Turbo is supported but has no completed matched timing
+refresh. Neither row has a qualified ratio.
 
 Native agreement on these fixtures does not establish general transcription or
 diarization accuracy. [Model support and qualification](docs/model-support.md)
@@ -111,7 +106,11 @@ and [Parakeet protocol](tests/parakeet/transpose-axis-app-amd/README.md)
 specify the assets, inputs, process order, boundaries and checks behind the table.
 Use the already downloaded `models/multilingual-e5-small/model.onnx` for e5.
 
-For ordinary local comparisons, build and run the repository harness:
+For new e5/Gemma comparisons, use [eng/bench.py](eng/bench.md) with committed
+prepared cores and pinned local inputs. Its default Gemma case is 128 tokens
+with 768 output dimensions; tokenization is outside the compute timer.
+
+The multi-model local harness is also available:
 
 ```powershell
 dotnet build tests/Lokad.Onnx.Bench -c Release --tl:off --nologo -v minimal
@@ -120,5 +119,3 @@ dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 dinov3
 
 The local harness has its own sampling protocol and packaged ORT dependency;
 its output is a new measurement. `bench.ps1` additionally includes CLI startup.
-Optimization priority is **Parakeet, then Pyannote**, with a matched complete
-application target of Lokad / ORT <= 1.05. Whisper optimization is deferred.

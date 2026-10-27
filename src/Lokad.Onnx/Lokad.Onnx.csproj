@@ -19,7 +19,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>0.4.0 adds prepared FP32 EmbeddingGemma 2 text-graph execution, LessOrEqual support, exact RMS normalization fusion, and qualified CPU matrix, GELU and buffer-reuse improvements. The package targets .NET 10 and contains the managed inference core; the text embedding API and CLI remain repository companion projects, with Lokad.Onnx.Data nonpackable. See CHANGELOG.md and BENCHMARK.md for qualification and limitations.</PackageReleaseNotes>
+    <PackageReleaseNotes>0.4.0 adds prepared FP32 EmbeddingGemma 2 text-graph execution, LessOrEqual and exact RMS normalization fusion, CPU matrix/GELU improvements, and tensor lifetime and correctness fixes. The .NET 10 core has no runtime dependencies: ONNX file loading requires IOnnxModelReader; OnnxImport, ProtoConversions and generated messages moved to the source Protobuf adapter, so existing clients must rebuild with an adapter reference. Data embedding/audio APIs, CLI and the reference adapter remain nonpackable source projects. See CHANGELOG.md for migration and limitations; published benchmarks retain their measured revisions.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/Lokad/Onnx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Lokad/Onnx.git</RepositoryUrl>

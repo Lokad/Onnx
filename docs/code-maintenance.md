@@ -1,125 +1,92 @@
-# Code maintenance
+# Development guide
 
-The core library is packaged; Data, CLI and development tools are not. Preserve
-public APIs, supported numerical behavior and tensor ownership when simplifying
-code. A source search cannot establish whether an external application uses a
-public member or whether a diagnostic invokes an internal method by reflection.
+## Project boundaries
 
-## Maintained entrypoints
+The solution targets .NET 10. The core `src/Lokad.Onnx` project is the only
+NuGet package and has no runtime dependencies. It contains tensors, CPU kernels,
+the neutral `OnnxModel` description, graph preparation and execution.
 
-Use `eng/test.ps1` for normal tests (`-Coverage` opts into local coverage and
-`-BuildTools` also compiles the full developer solution),
-`eng/test-opfuzz.ps1` for native differential contracts, and `eng/smoke-pack.ps1`
-for a real package consumer. The e5 and Gemma
-lanes are `eng/test-e5.ps1` and `eng/test-embeddinggemma2.ps1`. Audio replay lanes
-remain `eng/test-whisper.ps1`, `eng/test-parakeet.ps1`, and the frontend,
-transcription, embedding, diarization and accuracy examples under `tests`.
+The nonpackable [Protobuf adapter](../tools/Lokad.Onnx.Protobuf/README.md)
+implements `IOnnxModelReader` and owns generated messages and parser dependencies.
+[Data](../src/Lokad.Onnx.Data/README.md) provides text/image/audio workflows;
+[CLI](../src/Lokad.Onnx.CLI/README.md) exposes them as `lonnx` commands. Tests,
+benchmarks and model/reference tools are also nonpackable. Keep parser types and
+companion dependencies out of the core's public boundary.
 
-For CPU optimization, use the [routine comparison command](../eng/bench.md).
-It reuses the current Campaign/Gemma workers and their supervision/correctness
-checks. Strict scoring protocols remain available when a release claim needs
-stronger qualification. Run one measurement lane at a time and clean up verified
-owned leftovers before timing.
+## Build, test and pack
 
-## Review and numerical contracts
+Use the SDK selected by global.json and PowerShell 7. From the repository root:
 
-Prefer explicit arguments and small changes. TODO comments should explain the
-missing work. Review those conventions with the code rather than maintaining a
-custom C# parser or a CI allowlist of comments. The previous Roslyn source audit
-and optional-parameter/TODO scanners are [archived](../archives/README.md).
-The null-suppression and documentation syntax scanners have also been retired;
-compiled assembly metadata still checks the approved friend boundary. Normal
-maintenance does not depend on SDK-internal analysis assemblies or a member-retention registry.
+```powershell
+pwsh -NoProfile -File eng/restore-tokenizers.ps1
+pwsh -NoProfile -File eng/test.ps1 -Configuration Release -BuildTools
+pwsh -NoProfile -File eng/smoke-pack.ps1 -Configuration Release
+```
 
-Core model loading accepts a caller-supplied `IOnnxModelReader`; the core package
-has no runtime parser dependency. The nonpackable `tools/Lokad.Onnx.Protobuf`
-project owns the reference parser, generated messages and `OnnxImport` helpers.
-Use its `OnnxImport.LoadOrThrow` when an import failure must belong to its caller.
-The nullable `Load` overloads retain process-wide, last-write-wins diagnostics
-for compatibility. Optimizer passes have one immutable canonical order, with
-per-run/environment disable controls. The [correctness follow-up](engineering-fixes-20261020.md)
-records the view-index fixes, import/cache ownership and full ResNet reference.
+The restore script builds the pinned Lokad.Tokenizers source package and verifies
+the consumed dependency. A cache mismatch fails explicitly; use a fresh
+`NUGET_PACKAGES` directory rather than modifying a shared cache.
 
-Keep independent numerical expectations in `tests/Shared/ReferenceKernels`.
-Calling the optimized implementation from its reference would invalidate the
-comparison. The prepared LSTM projection contract compares every finite value,
-signed zero and infinity bit-for-bit; exceptional arithmetic must preserve NaN
-classification. NaN payload/sign selection across independently compiled
-arithmetic is unspecified and is not part of that contract. Input immutability,
-output guards and zero-allocation assertions remain enforced.
+`eng/test.ps1` restores, builds and runs `eng/Tests.slnx`, including CLI integration
+tests. `-BuildTools` also builds the full root solution; `-Coverage` opts into
+local coverage. To reuse a Release build:
 
-The same distinction applies to exceptional BiasGelu arithmetic: computed NaNs
-must remain NaNs; their sign and payload may differ between separately compiled
-kernels. Finite outputs, signed zeros and infinities still compare bit-for-bit.
-Input and bias buffers, including every NaN payload bit, must remain unchanged.
+```powershell
+dotnet test eng/Tests.slnx -c Release --no-build --tl:off --nologo -v minimal
+```
 
-The e5 gate disables JIT on-stack replacement for deterministic children and
-restores its caller's prior setting on every exit. Public profiler scopes own
-their mutable state; graph execution uses a private disabled fast path.
-Measure tightly bounded allocation batches on a dedicated thread after warming
-the exact call sites, keeping test-runner work outside the sampled thread and
-retaining the original allocation limits.
-Long allocation measurements also use the existing nonparallel allocation
-collection, and warm shared hot methods before the exact-input warmup.
+Set `DOTNET_EnableHWIntrinsic=0` for the scalar/fallback gate. Always disable the
+.NET terminal logger with `--tl:off`. Ordinary tests use bundled fixtures;
+large-model tests require explicitly staged local assets and report missing
+assets as skips. Use the existing local e5 model at
+models/multilingual-e5-small/model.onnx. See the [testing guide](../tests/README.md)
+for strict local-model selection and Python/reference setup.
 
-Some production methods intentionally have equal source arithmetic but different
-JIT compilation attributes or instruction widths. Examples are `MathOps.ErfVector`
-and `ErfVectorInline`, and `ExpVectorEstrinPruned` and its inline twin. Packed
-matrix and convolution kernels likewise require numerical and affected-model
-checks before consolidation. Keep their separate compiled entrypoints when
-qualification shows a benefit.
+`pack.cmd` creates the Release core package. `eng/smoke-pack.ps1` also restores
+and runs a consumer using only that package from an isolated local feed, checking
+contents and the absence of runtime dependencies.
 
-## Preparation ownership and model policy
+## Correctness and optimization
 
-Graphs and their execution contexts share one internal `GraphPreparationCache`
-for prepared weights and synchronization. Each context retains its own bindings,
-preparation fingerprint, diagnostics and released-buffer cache. The public graph
-remains mutable: keep structural-change detection and invalidation semantics.
-Folded transposes snapshot their effective permutation and prune obsolete owned
-payloads during preparation; generated-name slots replaced by callers are preserved.
-Both public preparation methods reject calls during execution; the internal
-run-entry path performs authorized preparation under the shared preparation lock.
-Live payload metrics sum flat sequence elements per binding, including aliases,
-using the same element widths as tensor metadata. Nested sequence graph values
-are rejected before ownership/accounting traversal; container construction remains available.
+`CPUExecutionProvider.SupportedOps` and `OperatorSchemas.All` define supported
+operators and schema rules. Preserve exact operator names, opsets, shape/type
+validation, input immutability and [output lifetime](runtime-options.md).
+Views require root-storage alias checks; unknown aliases must remain conservative.
+Public APIs can have external users even when repository searches find few calls.
 
-`PrepareOwnedMatMulWeights()` is the existing opt-in for the qualified Parakeet
-export. `ParakeetOwnedWeightPolicy` holds its exact name/shape selection;
-`GraphOwnedPacking` owns the generic consumer, alias and storage checks. A node
-rename can still disable eligibility. Additional exports/shapes need explicit
-qualification; do not broaden selection solely because dimensions match.
+Keep independent expectations in tests/Shared/ReferenceKernels; a reference must
+not call the optimized implementation it checks. `eng/test-opfuzz.ps1` runs the
+single-op native differential lane. `eng/test-e5.ps1`,
+`eng/test-embeddinggemma2.ps1`, `eng/test-whisper.ps1` and
+`eng/test-parakeet.ps1` cover selected models with staged assets. Model-specific
+frontend and public-result checks are linked from the [support guide](model-support.md).
+Numerical tolerance, decision agreement, ownership and accuracy are separate checks.
 
-## Runtime experiments and archives
+At fixed execution mode and thread count, compare deterministic repeats; do not
+demand bitwise identity across modes. The e5 lane disables JIT on-stack
+replacement for deterministic children. Exceptional-value contracts distinguish
+NaN classification from unspecified NaN payload/sign selection in independently
+compiled arithmetic. Keep original input bits intact. Measure allocation on a
+warmed dedicated thread and use the nonparallel allocation collection when
+checking exact zero-allocation contracts.
 
-The nine qualified comparison controls are listed in
-[runtime options](runtime-options.md). Default-off internal experiments and
-mutable legacy-routing hooks have been retired. Public options and entrypoints
-remain compatible. New experiments should have a concrete workload, acceptance
-criterion and promotion/retirement decision before becoming permanent runtime
-branches.
+Use [eng/bench.py](../eng/bench.md) for routine CPU comparisons and
+[BENCHMARK.md](../BENCHMARK.md) for published measurements and protocols. Run one
+timing lane at a time, clear verified owned leftover processes, keep all samples
+and compare identical inputs. A microbenchmark gain alone does not qualify a
+model-wide speedup. Similar arithmetic can need separate compiled entrypoints
+for different JIT attributes or vector widths; validate affected models before
+consolidating kernels. New runtime branches need a concrete workload and an
+acceptance criterion.
 
-Closed producers and obsolete recovery/retention tools are indexed against their
-original Git commit in [archives](../archives/README.md). Reports and result data
-stay browsable at their historical paths. Original source paths/bytes, including
-the forty previously hash-locked C# inputs, can be restored into an isolated
-directory. Active examples, replay tools, reference generators and their shared
-dependencies remain maintained. Keep future experiments on the shared runner
-instead of cloning launch/observe scripts.
+## CI
 
-## CI scope
+Every push/PR classifies changed paths. Markdown-only changes skip the numerical
+matrix; packaged README/CHANGELOG changes still run package smoke. Code, package
+metadata, workflows, fixtures and unknown paths conservatively run the full
+Windows/Linux ordinary/scalar, differential and package jobs. Deletions and
+renames count. The Linux ordinary job also builds all solution tools.
 
-Every push/PR gets a lightweight change-classification job. Markdown-only edits
-skip the numerical matrix; README and CHANGELOG also run package smoke because
-they ship in the package. Code, workflow, fixtures, build files and unknown paths
-conservatively run the full Windows/Linux normal/scalar, differential and package
-jobs. Deletions and renames count. Check a published commit's CI status minutes
-apart, and investigate failures rather than adding automatic retries.
-
-Ordinary and scalar tests build the CLI and both test projects through
-`eng/Tests.slnx`. Core, Data and the reader adapter are explicit solution entries
-so MSBuild preserves the requested configuration for their project references.
-The Linux ordinary job also compiles the full root solution,
-so benchmarks and standalone runners are built once in that matrix. CLI
-integration tests remain enabled on both operating systems and in scalar mode.
-The [focused maintenance receipt](focused-maintenance-20261020.md) records the
-project closure, allocation measurements and qualification results.
+After a push, wait at least **180 seconds** before checking CI and between status
+observations; increase the interval while queued. Investigate failures rather
+than probing repeatedly or adding automatic retries.

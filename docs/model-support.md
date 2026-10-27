@@ -1,286 +1,77 @@
-# Model support and qualification
+# Model support
 
-Lokad.Onnx executes these model families in managed C# on the CPU. The audio
-APIs use specific FP32 exports and local model files; they do not download models
-or delegate inference to native ONNX Runtime. The commands below require the
-Release CLI and the assets described in each model's linked instructions.
+Lokad.Onnx runs ONNX graphs on the CPU in managed C# for .NET 10. Support depends
+on the export's operators, opsets, element types and shapes. The operator registry
+in [OperatorSchema.cs](../src/Lokad.Onnx/OperatorSchema.cs) and
+`CPUExecutionProvider.SupportedOps` define the implemented surface; a model name
+alone does not guarantee compatibility with every export.
 
-Audio orchestration APIs live in the repository's `Lokad.Onnx.Data` project;
-the core `Lokad.Onnx` NuGet package does not include that assembly. The
-[2026-09-28 implementation qualification](../tests/parakeet/transpose-axis-results/root-20260928.md)
-records complete suites and independent package consumption for that measured
-0.3.0 implementation, including direct and Winograd convolution and output
-ownership. Its matched AMD dialogue comparison is **9.920 seconds versus
-Microsoft ORT 8.949 seconds (1.108 ratio)**. Complete Parakeet transcription
-takes **43.459 seconds versus ORT 39.203 seconds (1.109 ratio)** on the
-twenty-clip workload. [BENCHMARK.md](../BENCHMARK.md) identifies each published
-row's measured revision, date and protocol. Both ten-minute
-meetings and recovery preserve native speaker timelines. These speed changes
-do not expand the model/accuracy coverage stated below.
+The NuGet package contains the dependency-free inference core. Text, image and
+audio helpers are in the nonpackable [Data project](../src/Lokad.Onnx.Data/README.md);
+the [CLI](../src/Lokad.Onnx.CLI/README.md) also builds from source. Models are
+separate local assets. File loading requires an `IOnnxModelReader`, such as the
+source [Protobuf adapter](../tools/Lokad.Onnx.Protobuf/README.md).
 
-The [2026-09-21 memory package check](../tests/whisper/memory-product-v2/results-20260921.md)
-retains released-buffer and LayerNorm evidence from its historical configurations.
-Its experimental fingerprint-cache and wider-LayerNorm controls have since been
-removed. See [runtime options](runtime-options.md) for current memory policies
-and diagnostic controls.
+## Models and workflows
 
-| Model | Available application behavior | Qualification and remaining limits |
+| Model/export | Available behavior | Scope and limitations |
 |---|---|---|
-| EmbeddingGemma 2 | Offline text embeddings through `EmbeddingGemma2Embedder` in nonpackable Data or `lonnx embed`, with query/document prompts and 128/256/512/768 dimensions | The pinned prepared FP32 export passes Python/source/native/managed checks on 15 cases through 512 tokens; integrated tests cover exact token IDs/masks, padding, repeated calls, output ownership, and recovery. Larger configured limits need separate qualification. The [2026-10-17 repeated FP32 comparison](../tests/embeddinggemma2/benchmarks-20261017-fixedwidth.md) reports 165.3 ms versus ORT 168.0 ms at 128 tokens for its identified source revision; this uses its own balanced repeat protocol, separate from historical strict A/A qualification. The 8-bit weight-only export requires additional compressed kernels and has separate precision differences. See [preparation, usage, and numerical bounds](../tests/embeddinggemma2/README.md). |
-| multilingual-e5-small | Embeddings through `ComputationalGraph` or `lonnx run` | Native output checks cover scalar, SIMD and intrinsic execution. [BENCHMARK.md](../BENCHMARK.md) records the published matched workloads and measured revisions. Earlier [interleaved-process observations](../tests/e5/interleaved-processes/aa-results-20260920.md) and [isolated-deployment observations](../tests/e5/fingerprint-deployment/aa-results-20260920.md) retain their original configurations and verdicts. Current controls are documented in [runtime options](runtime-options.md). |
-| Parakeet TDT 0.6B V3 | Short `Transcribe` API; `TranscribeRecording` and `lonnx transcribe --model-type parakeet --recording` for up to ten minutes with independent windows and explicit boundaries/limits | Short recorded decisions agree locally and on AMD; all 784 AMD arrays pass, while three Windows duration-logit arrays fail. Twenty clean-English clips have 11/559 word errors. A separate five-language FLEURS check has 26/418 clean and 36/418 artificial-noise word errors, identical to ORT, with all 41 public results matching. Recording API/CLI cases match the native reference on Windows and AMD, including 600-second repeated speech and silence. AMD speech takes 233.855 API seconds; sequence peak sampled RSS is 12.379 GB. Accuracy is limited: connected/leading-silence variants have 4/160 and 18/160 word errors; DC-offset hard-cut stress has 84/160. Two natural ten-minute AMI meetings have 570/2,461 word errors (23.1613% WER), identical to ORT; all three public comparisons and ownership/recovery checks pass. Broader natural-noise/conversation coverage and Windows numerical acceptance remain open. A [controlled Windows encoder trace](../tests/parakeet/layer-trace/results-20260921.md) also exposes stem and late-layer intermediate failures despite a passing final encoder tensor; the original duration-logit failure remains. On that selected clip, both FP32 stem outputs also exceed the same limit against [independent float64 references](../tests/parakeet/stem-reference-v3/results-20260921.md); this adds accuracy evidence without qualifying the full pipeline. [Natural meeting evidence](../tests/audio/natural-meetings/results-20260920.md). [Five-language evidence](../tests/audio/multilingual/results-20260920.md). [Short usage](../tests/parakeet/transcribe/README.md), [recording policy](../tests/parakeet/recording/README.md), [AMD evidence](../tests/parakeet/recording-amd/results-20260919.md). |
-| Whisper Large V3 Turbo | `WhisperTranscriber.Transcribe` for up to 30 seconds; `TranscribeRecording` and CLI `--recording` for bounded recordings up to ten minutes, with segment timestamps | Short recorded decisions agree locally and on AMD; decoder/cache components pass their tensor checks. The twenty-recording English check records 10/559 word errors. A separate five-language FLEURS check has 17/418 clean and 38/418 artificial-noise word errors, identical to ORT, with all 41 public results matching. Recording mode matches native tokens, timestamps, seek and stop decisions on constructed 69/72-second fixtures, with work limits and CLI/API agreement. A separate 600-second repeated-speech API request and repeat match native on Windows and AMD: 26 windows, 64 segments and 1,865 tokens. Sequence peaks are 13.851 GB and 11.720 GB sampled RSS, respectively; silence, ownership and recovery checks pass. These are finite resource observations. Two natural ten-minute AMI meetings have 668/2,461 word errors (27.1434% WER), identical to ORT; all three public comparisons and ownership/recovery checks pass. Native Whisper uses the declared Linux continuation after a preserved Windows memory failure and retry refusal. Broader natural-noise/conversation/language coverage and full encoder/logit numerical agreement remain open. [Natural meeting evidence](../tests/audio/natural-meetings/results-20260920.md). [Five-language evidence](../tests/audio/multilingual/results-20260920.md). Language is explicit; automatic detection, translation and word timestamps are not implemented. [Short usage](../tests/whisper/README.md), [recording policy](../tests/whisper/recording/README.md), [AMD API/CLI evidence](../tests/whisper/recording-amd/results-20260919.md), [maximum-speech API evidence](../tests/whisper/maximum-speech/results-20260919.md). |
-| pyannote Community-1 | `Community1Diarizer` and `lonnx diarize`; segmentation, speaker embeddings, automatic clustering and ordinary/exclusive speaker intervals, through ten minutes | Connected recorded decisions agree locally and on AMD. Two natural ten-minute AMI meetings have aggregate ordinary/exclusive DER of 21.4593%/24.7763%, identical to the ORT application; all three public request comparisons, ownership and recovery pass, with maximum centroid scaled error 9.24802e-7 for the corrected `1d10d22` frontend. That earlier managed AMD replay took 1,318.819/1,326.954 API seconds; sequence peak sampled RSS is 3.647 GB. [Corrected-frontend replay](../tests/pyannote/frame-meetings/results-20260920.md). These are two fixed excerpts, not corpus-wide accuracy or matched cross-host latency evidence. Constructed ten-minute requests also have finite application/resource proof on both hosts. Filterbank and some earlier silence tensors still fail the full numerical gate; complete long intermediate traces and broader accuracy remain open. [Natural meeting results](../tests/pyannote/natural-meetings/results-20260920.md), [pipeline](../tests/pyannote/diarization/README.md), [dialogue and Windows long-request evidence](../tests/pyannote/dialogue/README.md), [AMD constructed maximum-duration evidence](../tests/pyannote/maximum-amd/results-20260919.md). |
+| [EmbeddingGemma 2](../tests/embeddinggemma2/README.md) | `EmbeddingGemma2Embedder` and `lonnx embed`; query/document prompts, padded batches and owned normalized vectors | Prepared FP32 export; 128/256/512/768 dimensions. Source/Python/native/managed checks cover inputs through 512 tokens, exact token IDs/masks, padding, repeats and recovery. Larger configured limits need separate qualification. The assessed 8-bit weight-only export needs compressed kernels that are not implemented. |
+| [multilingual-e5-small](../tests/e5/README.md) | Graph execution and `lonnx run` text input | Native-reference checks cover scalar, SIMD and intrinsic execution. Use the pinned local model and tokenizer. |
+| MNIST | Image inference through the graph API and CLI | Model and sample images are included under tests/Lokad.Onnx.Backend.Tests. |
+| DINOv3 ViT-S/16, [ResNet50](../tests/resnet/README.md), GPT-2 | Prepared graph execution | Complete-output regression fixtures cover the selected exports, GPT-2 state, output ownership and recovery. These are graph APIs, not complete image applications or a text-generation service. |
+| DINOv2-small | Graph execution | The benchmark export exceeds the full-output numerical agreement bound and is excluded from qualified timing. |
+| [Parakeet TDT 0.6B V3](../tests/parakeet/transcribe/README.md) | `ParakeetTranscriber`, `lonnx transcribe --model-type parakeet` | Short transcription and explicit recording mode through ten minutes. Recorded public decisions match ORT; Windows tensor-level differences remain. |
+| [Whisper Large V3 Turbo](../tests/whisper/README.md) | `WhisperTranscriber`, `lonnx transcribe` | Short transcription and explicit recording mode through ten minutes, with segment timestamps. Language is explicit. Automatic language detection, translation and word timestamps are not implemented. Full encoder/logit agreement with ORT remains incomplete. |
+| [pyannote Community-1](../tests/pyannote/diarization/README.md) | `Community1Diarizer`, `lonnx diarize` | Segmentation, speaker embeddings, clustering, ordinary/exclusive speaker intervals through ten minutes. Recorded timelines match the native application; complete intermediate tensor agreement is not established. |
 
-For example, after staging the pinned assets:
+EmbeddingGemma's smaller output dimensions reduce stored vector size; they do
+not reduce transformer computation. Prompts and special tokens count toward the
+input limit. Follow the model guide for asset preparation and numerical bounds.
 
-```powershell
-lonnx.cmd transcribe models/parakeet-tdt-0.6b-v3 recording.wav --model-type parakeet --json
-lonnx.cmd transcribe models/parakeet-tdt-0.6b-v3 longer.wav --model-type parakeet --recording --json
-lonnx.cmd transcribe models/whisper-large-v3-turbo recording.wav --language en --json
-lonnx.cmd transcribe models/whisper-large-v3-turbo longer.wav --language en --recording --json
-```
+## Audio contracts and accuracy
 
-Both transcription commands accept supported mono/stereo RIFF/WAVE files and
-convert them to mono 16 kHz PCM. Default transcription rejects inputs longer than
-30 seconds; both explicit recording modes accept up to ten minutes and report
-observed windows and the processed position. Whisper reports committed timed
-segments; Parakeet exposes quiet/hard boundaries and joins completed window text.
-Token/window limits produce an explicitly marked partial result. Cancellation takes
-effect between graph calls; an in-flight model call finishes first. The public
-PCM APIs expect callers to supply the required sample rate directly.
+The CLI accepts supported mono/stereo RIFF/WAVE files and converts them to mono
+16 kHz PCM. PCM APIs require the declared sample rate. Default transcription
+accepts at most 30 seconds; `TranscribeRecording` / `--recording` accepts up to ten
+minutes. Whisper returns timed segments; Parakeet joins independent windows and
+reports quiet/hard boundaries. Token/window limits mark partial results.
+Cancellation is observed between graph calls; an in-flight call finishes first.
+See the [Parakeet](../tests/parakeet/recording/README.md) and
+[Whisper](../tests/whisper/recording/README.md) recording policies.
 
-Native agreement of a transcript or speaker timeline does not establish full
-tensor agreement or accuracy against human annotations. The numerical gate is
-`abs(actual-reference) / max(1, abs(reference)) <= 1e-4`, with exact checks for
-integer decisions and shape. Recorded failures remain failures under this rule.
+Agreement with ORT does not measure accuracy against human labels. On the two
+fixed ten-minute AMI meeting excerpts, Parakeet has 23.1613% word error and Whisper
+27.1434%, matching their native applications. Pyannote's ordinary/exclusive
+diarization error is 21.4593% / 24.7763% on those excerpts. These are small, fixed
+samples with overlapping speakers, not corpus-wide accuracy or a recognizer
+ranking. Broader conversational, language and natural-noise coverage is limited.
+See the [ASR evaluation](../tests/audio/natural-meetings/results-20260920.md) and
+[corrected-frontend diarization evaluation](../tests/pyannote/frame-meetings/results-20260920.md).
 
-The isolated [Parakeet arithmetic/Pyannote composition](../tests/parakeet/portable-models/results-20260922.md)
-now passes all 784 recorded Parakeet native arrays on Windows and twenty public
-clips at this same bound. Its Pyannote regression and all 166 shared-model
-arrays also pass. This candidate has not been promoted: production's three
-Windows duration-logit failures and the separate intermediate-layer findings
-remain recorded. Complete fixture qualification does not imply every
-intermediate activation agrees or that a speed improvement has been selected.
+## Numerical limits
 
-The [complete WeSpeaker filterbank reference](../tests/pyannote/filterbank-reference/results-20260920.md)
-checks all 711,680 values of the original 21-case frontend corpus against two
-independent double calculations with fixed saved coefficients. Managed outputs
-all stay within `1e-4` of both references, maximum `8.31940e-5`; the original native
-frontend exceeds that limit at two values, maximum `1.34618e-4`. Complete double
-stages agree within `4.36557e-11`, with independent scalar Fourier checks.
-The original three direct managed/native failures remain recorded.
+Native comparisons normally use
+`abs(actual-reference) / max(1, abs(reference)) <= 1e-4`, with exact shapes and
+integer decisions. Floating outputs are not promised to be bitwise identical
+across engines, execution modes or thread counts.
 
-The subsequent [complete pipeline-window check](../tests/pyannote/filterbank-windows/results-20260920.md)
-covers all 32 saved filterbanks and both configurations on both hosts. Against
-the same two double references, the dialogue has 36 failed Windows values and
-38 failed AMD values, with maxima `1.81312e-4` and `1.83761e-4`; its saved native
-frontend has 164 failures, maximum `2.40954e-4`. The earlier padded pipeline
-windows add one Windows failure and none on AMD. Both reference routes agree
-throughout. The original direct-comparison failures and separate segmentation
-silence issue remain open; the first corpus's managed pass does not generalize
-to every retained window. These checks support further arithmetic investigation,
-without changing the acceptance threshold or application results.
+Parakeet's recorded AMD arrays pass this bound, while three Windows duration-logit
+arrays fail. Selected Windows intermediate traces also differ despite a passing
+final encoder output; see the [layer trace](../tests/parakeet/layer-trace/results-20260921.md).
+Whisper's full encoder and consequent logits can exceed the bound even where
+token decisions match. [Independent double-precision encoder references](../tests/whisper/full-reference/results-20260920.md)
+show accumulated error in both FP32 engines; public transcript agreement does not
+resolve that tensor-level limit.
 
-The [controlled coefficient check](../tests/pyannote/filterbank-coefficients/results-20260920.md)
-captures both archived Windows assemblies' actual mel tables and holds all 32
-saved double power spectra fixed. Substituting managed for native coefficients
-leaves the same 36 dialogue failures and one earlier-window failure, with the
-same maxima. The remaining arithmetic needs further investigation; this result
-does not qualify a product change or attribute AMD coefficient behavior.
+Pyannote's frontend preserves frame preprocessing in double precision and passes
+its independent reference checks, but some native FP32 filterbank values differ
+beyond the bound; segmentation silence and complete intermediate coverage remain
+limitations. See the [frontend reference contract](../tests/pyannote/frame-product-amd/results-20260920.md).
+Known DINOv2 differences are recorded in the
+[benchmark divergence registry](../tests/Lokad.Onnx.Bench/KnownDivergences.cs).
 
-The [frame-precision experiment](../tests/pyannote/filterbank-precision/results-20260920.md)
-identifies intermediate frame rounding as the remaining frontend error source.
-Product `1d10d22` preserves frame preprocessing in double. Its
-[Windows qualification](../tests/pyannote/frame-product/local-results-20260920.md)
-passes all 99 affected tests and all 53 complete inputs against both independent
-reference implementations, using either captured coefficient policy. Native FP32
-agreement still fails at 187 values; seven coordinates have disjoint native and
-reference tolerance intervals. The new frontend uses a prospective mathematical
-reference criterion at the unchanged `1e-4` bound, with native differences retained.
-The [source-archived AMD qualification](../tests/pyannote/frame-product-amd/results-20260920.md)
-also passes all 99 tests and all 53 inputs. Its actual tables differ at six
-entries, so both independent references were regenerated with those captured
-coefficients. Maximum product/reference error is `2.02761e-6`; direct-native
-comparison retains 186 failures. The [connected natural-meeting replay](../tests/pyannote/frame-meetings/results-20260920.md)
-now passes all three original public comparisons with this changed frontend.
-Both speaker timelines match the retained ORT outputs exactly, maximum centroid
-error is `9.24802e-7`, and ordinary/exclusive aggregate DER remains
-21.4593%/24.7763%. All 5,353 resource samples and 33 damaged-record refusals pass;
-the worker peaks at 3.647 GB. These one-pass accuracy/resource durations do not
-replace the matched application latency tables.
-
-The isolated [convolution/LSTM optimization candidate](../tests/pyannote/optimized-meetings/results-20260921.md)
-also passes both complete ten-minute meetings and recovery on Windows. Its
-ordinary and exclusive timelines match the retained ORT results exactly,
-preserving the same aggregate DER; maximum centroid error is `8.98141e-7`.
-All 1,460 resource samples pass, with 1.778 GB peak sampled RSS. This was an earlier isolated candidate; the newer portable composition is now
-integrated and separately measured on AMD as described above. Its
-[fresh matched Windows comparison](../tests/pyannote/optimized-ort/results-20260921.md)
-takes 12.446 seconds versus ORT's 6.584 seconds for the full 30-second dialogue,
-a 1.890 ratio, with all 64 public calls passing. These descriptive measurements
-retain process variation and do not establish calibrated parity.
-Its [complete Parakeet regression](../tests/pyannote/optimized-parakeet/results-20260921.md)
-preserves all 784 arrays / 3,090,494 values bit-for-bit and all public contracts.
-That pyannote candidate retains the same three Windows duration-logit failures,
-with unchanged maximum scaled native error `2.321004867553711e-4`.
-A separate [Parakeet partial-sum candidate](../tests/parakeet/reduction-model/results-20260921.md)
-now passes all 784 original native arrays and twenty public corpus requests.
-Its maximum scaled error is `6.02124463442898e-5` at the unchanged `1e-4` bound.
-The [corrected tensor-dispatch successor](../tests/parakeet/reduction-dispatch/results-20260921.md)
-retains that complete native pass while preserving all original raw kernels.
-It resolves the preceding two suite failures: all 3,101 backend tests and 342
-tensor tests pass, and all 166 shared-model arrays meet their native bounds.
-The additional DinoV3 hash was independently qualified on every output before
-being accepted in the isolated test copy. These results apply to the candidate;
-AMD, performance qualification and production promotion remain pending.
-The affected pyannote replay preserves all 18 graph arrays / 2,917,107 values
-bit-for-bit and passes sixteen complete public requests against native results.
-The corrected Parakeet candidate's [full application comparison](../tests/parakeet/arithmetic-comparison/results-20260921.md)
-passes all 480 public requests and resource guards, but managed repeatability
-controls fail. Numerical qualification remains valid; no speedup or production
-promotion follows that trial.
-
-The historical Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0.
-Whisper's later memory implementation passes AMD conformance and endurance.
-Its [subsequent matched timing attempt](../tests/audio/whisper-amd/disk-failure-20260921.md)
-stops at the disk-space guard in its final timing worker, so the matched AMD
-Whisper latency result remains incomplete. The earlier memory failure is
-preserved separately below.
-
-The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
-adds twenty FLEURS read recordings and their deterministic 10 dB noise variants.
-Both recognizers match ORT on all public decisions. This small, partly correlated
-sample does not establish general natural-noise or conversation accuracy. The
-separate [natural meeting evaluation](../tests/audio/natural-meetings/results-20260920.md)
-adds two independent ten-minute, four-speaker excerpts. Its chronological
-mixed-speaker reference retains fillers and truncated words; overlap makes
-reference ordering ambiguous. The results apply to those excerpts and do not
-establish an overall recognizer ranking.
-
-The [labeled ASR observation](../tests/audio/accuracy/results-20260919.md)
-retains every error on its fixed twenty-recording subset. Its one-word
-difference between the recognizers is too small to establish a general ranking.
-
-The subsequent [Whisper numerical localization](../tests/whisper/numerical-20260919.md)
-retains the failed full-pipeline gate: 21 encoder arrays and 405 logit arrays
-exceed the tolerance. All 707 decoder-logit arrays pass in a separate diagnostic
-using native encoder states, with independently advanced managed caches. Both
-paths match every token decision. This narrows the remaining investigation to
-the source of the differing encoder states; diagnostic success does not qualify
-the complete managed pipeline.
-
-The [full-corpus encoder input comparison](../tests/whisper/input-cross-isolated/results-20260920.md)
-then reproduces all 42 saved baselines and compares both engines on identical
-features. All 21 cases still exceed `1e-4` with either feature source, so frontend
-rounding alone does not explain the encoder discrepancy. Its 42 finite workers
-complete within the unchanged resource guards; this does not qualify a
-long-lived transcriber process or identify the more accurate FP32 engine.
-The [saved-frame analysis](../tests/whisper/frame-distribution/results-20260920.md)
-places about 97% of failing values beyond the original recordings, but also
-retains thousands of failures before their ends. No encoder positions are
-excluded from qualification.
-
-The subsequent [selected natural-case traces](../tests/whisper/trace-selected/results-20260920.md)
-first exceed `1e-4` at encoder layer 20 in all six case/feature comparisons.
-Managed final outputs retain their unmodified bits; native instrumentation
-differences remain below the threshold, with maximum `6.41e-5`. This nominates
-layer 20 for controlled same-input investigation. It does not identify a faulty
-operator or replace full-corpus qualification. All 656 intermediate arrays,
-including the repeated first case, are retained and independently checked.
-
-The [controlled layer-20 comparison](../tests/whisper/layer20-cross/results-20260920.md)
-then reproduces all sixteen same-engine traced boundaries bit for bit. Across
-all twelve intermediate outputs, both engines agree on identical incoming
-arrays: maximum scaled difference `4.33326e-5`. Changing only the saved incoming
-array produces layer-end differences of roughly `6.6e-4` to `1.3e-3` within
-either engine. This localizes amplification of existing input differences in
-these selected cases. It does not establish which earlier arithmetic is more
-accurate or resolve the full encoder/logit numerical failures. All 384 complete
-arrays and the first-case repeats remain available.
-
-The [higher-precision K/fc1 diagnostic](../tests/whisper/natural-projection-reference/results-20260920.md)
-checks each projection against a float64 calculation on its own saved normalized
-input and original weights. All 64 comparisons stay below `1e-4`, with maximum
-`5.94843e-6`; all repeats match and 1,727 scalar checks pass. The larger diagonal
-differences at these stages are reproduced by propagating the differing inputs.
-This narrows the investigation but leaves the full-encoder numerical failures
-and the accuracy of earlier arithmetic unresolved.
-
-The [complete encoder reference](../tests/whisper/full-reference/results-20260920.md)
-compares all twenty clips, both feature sources and the first-clip repeat with
-two float64 implementations. All 3,444 complete boundary arrays agree within
-`2.96624e-12`, including padding. Both original FP32 engines exceed `1e-4` on
-all 42 final arrays against each reference: Lokad has 456,704 failed values,
-maximum `0.00311033`; ORT has 264,648, maximum `0.00347588`, each out of 80,640,000.
-This provides independent implementation evidence about accumulated encoder
-error, without proving arbitrary-precision bounds or changing the native gate.
-The original FP32 runs were reused; existing transcript/token agreement and
-the remaining numerical limitations both stand.
-
-Comparing all 41 [saved selected-case trace boundaries against both float64
-references](../tests/whisper/trace-reference/results-20260920.md) confirms that
-both FP32 engines exceed the numerical limit. The first saved failure is layer
-20 for fifteen of sixteen engine/feature paths, and layer 22 for one managed
-path. All saved boundaries through layer 19 pass in those selected cases.
-This reuses three natural cases and a repeat, retains native trace-instrumentation
-effects, and does not identify an erroneous operator or qualify the full corpus.
-
-DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
-fixtures, including independently carried GPT states and ownership/recovery
-checks. They exercise common kernels beyond e5 and audio; these fixtures are
-not general-purpose image or text generation application APIs.
-
-See [runtime options](runtime-options.md) for enabled optimizations, diagnostic
-controls and explicit intermediate-lifetime selection. Packed-weight and
-released-array cache limits bound those caches individually, not total process
-memory. Published resource observations apply to their stated recording,
-hardware, revision and request count.
-
-Whisper now reuses its execution contexts with 512/128/128 MiB released-array
-budgets and shares 635,187,200 bytes of identical private decoder weights on the
-pinned export. Each request keeps independent attention state; caller inputs and
-previously returned outputs remain valid. These budgets bound cached payload,
-not total process memory.
-
-The integrated changes pass [100 AMD requests](../tests/whisper/weight-sharing-v2/results-20260920.md),
-with warm allocations 75.5% below the original implementation, and recording,
-concurrent speech and recovery checks on [Windows](../tests/whisper/memory-contracts-v2/local-results-20260921.md)
-and [AMD](../tests/whisper/memory-contracts-amd/results-20260921.md). The
-[coherent build and package qualification](../tests/whisper/memory-product-v2/results-20260921.md)
-passes both full test suites and public cache-budget checks. Source and executable
-method comparisons connect the integrated files to those tested artifacts.
-
-The [original AMD resource failure](../tests/audio/amd-comparison/resource-failure-20260920.md),
-[collection diagnostic](../tests/whisper/memory-collection/results-20260920.md) and
-[failed snapshot assertion](../tests/whisper/weight-sharing/failure-20260920.md)
-remain recorded in their reports. The successful candidate uses normal collection.
-Existing numerical and broader accuracy limits remain open. A separate
-[matched AMD Whisper comparison](../tests/audio/whisper-amd/disk-failure-20260921.md) stopped at a disk-space guard in its final timing process;
-allocation and endurance observations are not ORT latency measurements.
-
-The [whole-layer float64 reference diagnostic](../tests/whisper/layer20-reference/results-20260921.md)
-now separates inherited and local error for the same selected layer-20 cases.
-All 768 comparisons of local rounding against the exact saved input's reference
-pass `1e-4` (maximum `4.77353e-5`), while both float64 routes agree within
-`4.81837e-14`. All 64 final-output comparisons of inherited error exceed `1e-4`.
-Thus even computing this layer in float64 on these unchanged incoming FP32 states
-does not by itself meet the full-reference boundary limit. This points toward
-earlier accumulated error; it neither identifies its first cause nor changes the
-existing full-encoder gate or application support claims.
-
-A subsequent [matrix-precision diagnostic](../tests/whisper/matmul-precision/results-20260921.md)
-changes only matrix accumulation to float64 in an otherwise identical unfused
-float32 interpreter. Final maximum errors fall by 19%, 57% and 41% across the
-three selected recordings, but every full output still fails `1e-4`, and the
-prospective halving screen fails. All 328 arrays and the repeated case are
-verified. This identifies a contribution from matrix rounding in that operator
-sequence; it does not qualify an unimplemented managed kernel or alter existing
-model acceptance.
-
-The [stem-state intervention](../tests/whisper/stem-intervention/results-20260921.md)
-then replaces the state after the first 14 encoder nodes with the rounded
-float64 reference and reuses the original controls. Both arithmetic modes fail
-their prospective improvement screens, and every final array still exceeds
-`1e-4`. All 288 suffix arrays are verified. This does not justify a stem-only
-product change; the complete-model numerical limitation remains.
+[BENCHMARK.md](../BENCHMARK.md) identifies the workload, date, source revision and
+protocol for each published timing. Those observations do not qualify every
+export or promise a process memory ceiling. See [runtime behavior](runtime-options.md)
+for ownership, concurrency and cache budgets.

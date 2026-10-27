@@ -5,181 +5,91 @@
 ### Added
 
 - Prepared FP32 text-graph execution for Google's EmbeddingGemma 2, including
-  ONNX `LessOrEqual` with broadcasting and a bounded retained packed-weight cache.
-- Repository companion `EmbeddingGemma2Embedder` API and `lonnx embed` command
-  for retrieval queries and documents, with 128/256/512/768-dimensional normalized
-  outputs, bounded padded batches, cancellation and caller-owned vectors.
-  See [asset preparation and usage](tests/embeddinggemma2/README.md).
-- Independent Python source-model, original-ONNX and prepared-ONNX references,
-  exact tokenizer-input checks, scalar/SIMD/default conformance and byte-repeat
-  checks, plus integrated API and CLI coverage.
-- Isolated single-thread CPU comparisons with frozen inputs, balanced process
-  ordering, complete raw samples and recorded memory and allocation costs.
-- Shared routine CPU comparison command with balanced core ordering, retained
-  samples and numerical checks, without mandatory calibration or cooldown.
-  See [routine benchmarks](eng/bench.md).
+  broadcasting `LessOrEqual`, exact RMS normalization fusion and bounded retained
+  packed weights.
+- Repository companion `EmbeddingGemma2Embedder` and `lonnx embed` for retrieval
+  queries/documents, with 128/256/512/768-dimensional normalized outputs, padded
+  batches, cancellation and caller-owned vectors. Data and CLI remain nonpackable.
+  See [preparation and usage](tests/embeddinggemma2/README.md).
+- Independent Python/source/native embedding references, exact tokenizer-input
+  checks and scalar/SIMD/default conformance; a shared
+  [routine CPU comparison command](eng/bench.md) retains raw samples and numerical
+  checks for prepared cores.
 
 ### Changed
 
-- Parakeet and WeSpeaker finite-output validation scans existing tensor values
-  without allocating full-sized temporary payload copies.
-- Tensor structural equality now requires same-shaped `Tensor<T>` values.
-  Arrays, foreign types and different shapes compare unequal, making equality
-  symmetric and safe for hash collections. Convert arrays explicitly with
-  `array.ToTensor<T>()` to compare contents; array ordering comparisons remain.
-- `System.Numerics.Complex` tensors now report `Complex128`, matching their two
-  double components and 16-byte width. DTO/custom-reader clients using the old
-  incorrect `Complex64` label must switch to `Complex128`; the old label now
-  fails explicitly. Existing core data-movement operations are retained;
+- **Parser dependency removed from the core package.** Applications load neutral
+  `OnnxModel` descriptions or supply `IOnnxModelReader`. `OnnxImport`,
+  `ProtoConversions` and generated `Onnx` messages moved to the nonpackable
+  [Protobuf adapter](tools/Lokad.Onnx.Protobuf/README.md). Existing file-loading
+  clients must rebuild with an adapter reference or provide their own reader.
+  The adapter owns its parser dependencies and version.
+- **Tensor equality** requires same-shaped `Tensor<T>` values. Arrays, foreign
+  types and different shapes compare unequal. Convert arrays explicitly with
+  `array.ToTensor<T>()` for content equality; array ordering comparisons remain.
+- **Complex type metadata:** `System.Numerics.Complex` uses `Complex128` (16 bytes).
+  Custom-reader/DTO clients must replace the incorrect `Complex64` label;
   complex wire import, arithmetic and casts remain unsupported.
-- Flat view reads/writes reject invalid indices before accessing backing data.
-  Graph live-payload metrics include sequence elements; nested/cyclic sequence
-  graph values are rejected before ownership traversal.
-
-- The core package has no runtime dependencies. ONNX parsing, generated messages,
-  `OnnxImport` and `ProtoConversions` moved into the nonpackable
-  [Protobuf reference adapter](tools/Lokad.Onnx.Protobuf/README.md). Applications
-  must rebuild with an adapter reference or provide `IOnnxModelReader`; the
-  adapter owns its parser/runtime version.
-
-- Destination alias checks resolve nested views to root storage and reject
-  unresolved overlap before writing. Concurrent companion model loads use
-  call-specific exceptions through `OnnxImport.LoadOrThrow`.
-- The optimizer uses one immutable ordered pass set. Named BERT loads share
-  per-key work outside the global cache gate; string joins enumerate once.
-- ResNet conformance compares complete independent ORT vectors in all execution
-  modes and checks exact managed repeats, replacing a historical implementation
-  hash. See [the reference contract](tests/resnet/README.md).
-- Ordinary test builds include the CLI and test projects; ancillary benchmark
-  and runner projects compile once in the normal CI matrix instead of four times.
-- Immutable execution-option presets are reused, and ordinary/wall-only graph
-  execution avoids constructing detailed profiling callbacks for every node.
-- Exact RMS normalization fusion, including runtime control inputs, with
-  operator schema, output-use and arithmetic-order checks.
-- Packed FP32 matrix kernels and AVX-512 tanh GELU, including specialized
-  128-row projections. Other shapes retain their existing dispatch paths.
-- Execution-buffer reuse for eligible float `Split`, `Concat` and `Neg` outputs,
-  vectorized contiguous row-scalar arithmetic, and interleaved mean reductions
-  that preserve each output's arithmetic order.
-- The companion Data project uses qualified Lokad.Tokenizers 0.2.0 for Gemma
-  tokenization; build tooling restores the pinned tokenizer source package.
-- Package icon resized to 128×128 pixels.
-- Reference and experimental softmax, GELU and exponential kernels now compile
-  only into test/benchmark support; unused helpers and obsolete commented code
-  have been removed from production sources.
-- Binary arithmetic shares validation, dtype dispatch and prepared broadcast
-  shapes, reducing repeated metadata allocations while preserving pooling and
-  arithmetic. Integer Resize shares traversal with explicit per-type conversions.
-- Shared index decomposition, fusion node compaction and file-tokenizer cache
-  preparation retain existing public APIs, diagnostics and ownership behavior.
-  See [cleanup qualification](docs/cleanup-20261019.md).
-- Retired fourteen default-off runtime controls and exclusive internal
-  experiments; qualified normal paths and public numerical/options APIs remain.
-- Closed experiment producers and obsolete maintenance tooling are recoverable
-  from an indexed [Git-history archive](archives/README.md); historical reports
-  and active reference/replay tools remain available.
-- Removed custom optional-parameter/TODO gates and the SDK-internal source audit.
-  Markdown changes avoid the full CI matrix; packaged documentation still gets
-  package smoke checks. See [maintenance guidance](docs/code-maintenance.md).
-- Retired the remaining null-suppression/documentation syntax scanners while
-  retaining a compiled assembly-boundary check. Test coverage collection is
-  explicitly enabled with `eng/test.ps1 -Coverage` instead of running in every CI job.
-- Execution contexts share prepared-weight caches directly, avoiding discarded
-  cache/lock allocations while retaining public graph mutation behavior.
-  Parakeet owned-weight eligibility is isolated from generic storage/alias checks.
-- Routine and strict benchmarks share staging and model-worker implementations;
-  existing evidence layouts remain readable with their recorded source provenance.
-  See [follow-up qualification](docs/simplification-20261020.md#maintenance-follow-up).
+- Shape/index/range geometry has an intentional inclusive magnitude limit of
+  **2^48**, with tighter Int32 dimension/allocation limits. This does not restrict
+  numeric tensor payloads. See [runtime contracts](docs/runtime-options.md#tensor-geometry-limits).
+- Packed FP32 matrix kernels, AVX-512 tanh GELU and eligible Split/Concat/Neg
+  buffer reuse improve the prepared embedding path. Contiguous row-scalar and
+  mean-reduction paths preserve each output's arithmetic order.
+- Execution contexts share prepared-weight caches and retain independent
+  bindings/diagnostics. Binary arithmetic shares validation and broadcast
+  preparation; ordinary execution avoids detailed per-node profiling callbacks.
+- Data uses pinned Lokad.Tokenizers 0.2.0. Build tooling verifies the consumed
+  dependency instead of repairing shared caches. The package icon is 128×128.
+- Removed unused internal experiments and custom source-policy scanners;
+  production documentation is consolidated into three current guides. Historical
+  experiment sources remain recoverable through [Git history](archives/README.md).
 
 ### Fixed
 
-- Lifetime tracking removes array roots when their final reference disappears,
-  allowing discarded unpooled intermediates to collect during execution.
-- Whisper clears private input bindings after each window, releasing finished
-  request buffers while preserving reusable contexts and released-array caches.
-- Graph reset drops transient live-payload bookkeeping references while
-  preserving input bindings, released buffers and completed-run diagnostics.
-- `Resize` copies unchanged shapes across supported modes and element types,
-  preserving exact values and floating bits even with fractional scales.
-- Scratch buffers return to the pool when a caller's accounting hook throws,
-  preserving the original exception and graph failure handling.
-- Int64 `ReduceSum`, `ReduceMean` and `ReduceSumSquare` preserve small
-  contributions with compensated double accumulation, retaining conversion
-  rounding and final integer saturation.
-- Queued Parakeet recording calls defer audio copies until processing starts,
-  avoiding payload-sized allocations when cancelled while waiting.
-- CLI tests use their selected build configuration instead of reusing a leftover
-  Release executable or requiring one during Debug runs.
-- Constant-fold and deduplication budgets use actual element widths, rejecting
-  oversized Complex128 results and retaining eligible FP16/BF16 optimizations.
-- CLI output labels retain each binding's name when tensors alias, including
-  softmax output. Runtime tensor dtype names use invariant casing across cultures.
-- Empty symbolic model dimensions remain unknown instead of becoming fixed zero.
-  Metadata and graph diagnostics show symbolic names and `?` for anonymous extents.
-- Removing a broadcast singleton preserves values and shared write targets,
-  including scalar results. Empty broadcasts can be converted, cloned and reshaped.
-- Full graph execution forwards scratch/copy byte events to supplied reporters,
-  while preserving independent per-run metrics and separate child-scope accounting.
-- Scalar from-end `^Length` indices address the first element, including `^1`
-  on singleton axes. The legacy scalar `^0` alias still addresses the last element.
-- C# ranges starting at `^0` select an empty view, preventing empty-range writes
-  from overwriting parent tensors.
-- Operation completion and abandonment logs retain formatted argument values,
-  including when start messages are filtered out.
-- `BFloat16.CompareTo` treats signed zeros as equal, restoring sorted-collection
-  lookups and tensor structural ordering while retaining existing operator semantics.
-- Global `--debug=true/false` options are validated and honored across CLI verbs;
-  logging uses the parser's resolved value, including repeated-flag precedence.
-- `run` accepts local model filenames and directories beginning with `http`;
-  remote HTTP/HTTPS URLs remain rejected, regardless of scheme casing.
-- `To2DArray` rejects ragged/null rows instead of losing values or leaking indexing
-  errors. Empty input returns 0x0; equally empty rows preserve their row count.
-- The e5 gate skips only explicit unavailable-FMA exits in optional intrinsics
-  mode; real runner failures now fail verification instead of becoming skips.
-- ONNX operator names require exact, case-sensitive names; numeric enum values,
-  surrounding whitespace and combined enum expressions remain unsupported.
-- Metadata inspection preserves unknown operator names and filters literal model
-  names. Named filter options remain case-insensitive; enum-expression options
-  are rejected as invalid instead of selecting an unrelated operator.
-- Empty `SequenceAt` indices return a descriptive failure; valid indices retain
-  their behavior and scalar index reads avoid copying the tensor payload.
-- `run` classifies nonfatal input-preparation failures as invalid input (exit 5),
-  including corrupt images and malformed resize descriptors.
-- Cold Windows tokenizer dependency restoration and standalone e5 conformance
-  setup; packaged README links resolve outside a repository checkout.
-- Cross-platform embedding fixture hashes and explicit node opset preservation
-  in RMS normalization fusion.
-- LSTM projection exceptional-value tests preserve NaN classification while
-  checking all finite values, signed zeros and infinities bit-for-bit, avoiding
-  an unspecified NaN-payload comparison across compiled reductions.
-- Exact-zero kernel allocation checks use the existing nonparallel collection
-  to avoid interference from concurrent tests; numerical/allocation gates remain.
+- Dead unpooled intermediates can collect during execution when their final
+  indexed reference disappears. Reset clears transient bookkeeping while
+  preserving inputs, released-buffer caches and completed-run diagnostics.
+- Whisper releases private input bindings after each window. Queued Parakeet
+  recording calls avoid copying audio when cancelled before processing starts.
+- Scratch buffers return to the pool when accounting hooks throw; graph execution
+  forwards scratch/copy events while keeping per-run and child metrics separate.
+- View indexing validates bounds and nested-storage aliasing before access.
+  Broadcast singleton removal, empty views, from-end indices and empty C# ranges
+  preserve values and write targets. Sequence accounting includes flat elements
+  and rejects nested/cyclic graph values before traversal.
+- Int64 Sum/Mean/SumSquare reductions use compensated double accumulation.
+  Identity Resize preserves exact values and floating bits across supported
+  modes/types. Constant-fold budgets use actual element widths, including
+  Complex128, FP16 and BF16.
+- BFloat16 sorted comparisons treat signed zeros as equal. Ragged/null array
+  rows are rejected instead of losing values. Empty symbolic dimensions stay
+  unknown; model diagnostics preserve symbolic names and unknown operators.
+- Operator names require exact case-sensitive matches. CLI debug settings,
+  aliased output labels, culture-invariant dtype names, local path handling and
+  invalid-input failures are consistent across verbs. Import failures belong
+  to the calling load; formatted operation logs retain their argument values.
+- Cross-platform tokenizer restoration, embedding fixtures, CLI test build
+  selection and packaged README links; ResNet conformance now checks complete
+  independent native vectors instead of a historical implementation hash.
 
 ### Qualification and limitations
 
-- The NuGet package contains the managed .NET 10 inference core, with
-  Google.Protobuf 3.33.5 as its only runtime dependency. The embedding API lives
-  in the nonpackable `Lokad.Onnx.Data` project; the CLI and model assets are
-  separate. See the [model support matrix](docs/model-support.md).
-- EmbeddingGemma 2 is qualified in FP32 through 512 input tokens at all four
-  output sizes. Smaller outputs reduce vector size without reducing transformer
-  computation. The separately assessed 8-bit weight-only export requires
-  compressed kernels that Lokad.Onnx does not implement.
-- Integer int32 linear Resize retains a pre-existing difference from ORT:
-  extreme nonidentity align-corners cases differ at some rounding boundaries.
-  Both engines' exact results are pinned
-  independently in the [Resize conformance cases](tests/opfuzz/python/test_integer_resize_conformance.py).
-- On the measured AMD CPU, the 128-token case takes 165.33 ms versus ORT's
-  168.01 ms (ratio 0.984); an independent repeat with identical candidate bytes
-  gives ratio 0.982. The 512-token case remains slower at 781.72/737.86 ms
-  (ratio 1.059). These are workload-specific single-thread observations, with
-  tokenization and model loading outside the compute timer. See the
-  [complete comparison and repeated measurements](tests/embeddinggemma2/benchmarks-20261017-fixedwidth.md)
-  and [benchmark table](BENCHMARK.md).
-- Cross-engine FP32 agreement uses the documented numerical tolerances;
-  same-engine repeats and the accepted arithmetic-preserving optimizations
-  retain byte identity. The previously reproduced Windows ResNet frozen-hash
-  baseline failure remains recorded in the comparison report.
+- The package contains only the managed .NET 10 core, **with no runtime
+  dependencies**. Data, CLI, the reference parser and model assets are separate.
+  See [model support](docs/model-support.md) and [runtime behavior](docs/runtime-options.md).
+- EmbeddingGemma 2 is qualified in FP32 through 512 tokens at all four output
+  sizes. Smaller vectors do not reduce transformer computation. The assessed
+  8-bit weight-only export requires unimplemented compressed kernels.
+- Published [benchmarks](BENCHMARK.md) retain their measured revisions and
+  protocols: the October 128-token FP32 Gemma comparison is 165.33 ms versus ORT
+  168.01 ms (ratio 0.984); 512 tokens is 781.72/737.86 ms (1.059). These are not
+  new measurements of the final 0.4.0 package.
+- Nonidentity Int32 linear Resize can differ from ORT at extreme align-corners
+  rounding boundaries. Both results are pinned in the
+  [conformance cases](tests/opfuzz/python/test_integer_resize_conformance.py).
+  DINOv2 timing remains excluded by its numerical gate. Audio public-result
+  agreement does not establish full tensor agreement or broad accuracy.
 
 ## 0.3.0 — 2026-09-28
 
