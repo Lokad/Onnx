@@ -178,25 +178,6 @@ internal static class ConstFold
         SweepDeadNodes(graph, facts);
     }
 
-    static long ElementWidth(TensorElementType t)
-    {
-        switch (t)
-        {
-            case TensorElementType.Bool:
-            case TensorElementType.Int8:
-            case TensorElementType.UInt8: return 1;
-            case TensorElementType.Int16:
-            case TensorElementType.UInt16: return 2;
-            case TensorElementType.Int32:
-            case TensorElementType.UInt32:
-            case TensorElementType.Float: return 4;
-            case TensorElementType.Int64:
-            case TensorElementType.UInt64:
-            case TensorElementType.Double: return 8;
-            default: return 8;
-        }
-    }
-
     /// <summary>Sound upper bound on a foldable node's output bytes from input
     /// dimensions alone: exact for same-count ops and Concat, an over-approximation
     /// for Slice/Gather. Negative signals refusal (unknown shapes, bad attributes,
@@ -218,6 +199,8 @@ internal static class ConstFold
                         if (node.Inputs is null || node.Inputs.Length < 2) return -1;
                         if (!known.TryGetValue(node.Inputs[0], out var gdata)) return -1;
                         if (!known.TryGetValue(node.Inputs[1], out var gidx)) return -1;
+                        int gatherWidth = TensorBase.ElementByteSize(gdata.ElementType);
+                        if (gatherWidth <= 0) return -1;
                         int axis = node.Int("axis", null) ?? 0;
                         int rank = gdata.Dims.Length;
                         if (axis < 0) axis += rank;
@@ -226,28 +209,31 @@ internal static class ConstFold
                         int dim = gdata.Dims[axis];
                         if (dim > 1) tail = gdata.Length / dim;
                         else if (dim < 1) return 0;
-                        return gidx.Length * tail * ElementWidth(gdata.ElementType);
+                        return gidx.Length * tail * gatherWidth;
                     case OpType.Unsqueeze:
                     case OpType.Transpose:
                     case OpType.Reshape:
                     case OpType.Slice:
                         if (node.Inputs is null || node.Inputs.Length < 1) return -1;
                         if (!known.TryGetValue(node.Inputs[0], out var data)) return -1;
+                        int width = TensorBase.ElementByteSize(data.ElementType);
+                        if (width <= 0) return -1;
                         long n = 1;
                         foreach (var d in data.Dims)
                         {
                             if (d < 0) return -1;
                             n *= d;
                         }
-                        return n * ElementWidth(data.ElementType);
+                        return n * width;
                     case OpType.Concat:
                         if (node.Inputs is null || node.Inputs.Length < 1) return -1;
                         long total = 0;
                         foreach (var inp in node.Inputs)
                         {
                             if (string.IsNullOrEmpty(inp) || !known.TryGetValue(inp, out var part)) return -1;
-                            total += ByteCount(part);
-                            if (total < 0) return -1;
+                            long bytes = ByteCount(part);
+                            if (bytes < 0) return -1;
+                            total += bytes;
                         }
                         return total;
                     default:
@@ -260,6 +246,8 @@ internal static class ConstFold
 
     static long ByteCount(ITensor t)
     {
+        int width = TensorBase.ElementByteSize(t.ElementType);
+        if (width <= 0) return -1;
         try
         {
             checked
@@ -269,9 +257,9 @@ internal static class ConstFold
                 {
                     if (d < 0) return -1;
                     n *= d;
-                    if (n > MaxFoldBytes) return n * ElementWidth(t.ElementType);
+                    if (n > MaxFoldBytes) return n * width;
                 }
-                return n * ElementWidth(t.ElementType);
+                return n * width;
             }
         }
         catch (OverflowException) { return -1; }

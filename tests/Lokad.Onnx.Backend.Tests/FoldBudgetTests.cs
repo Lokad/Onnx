@@ -92,7 +92,7 @@ public class FoldBudgetTests
     }
 
     [Fact]
-    public void GatherBlowupEstimate_SkipsBeforeAllocating()
+    public void GatherIntermediate_RespectsByteBudget()
     {
         var mp = new OnnxModel { Name = "tiny-gather-blowup" };
         mp.Opset[""] = 14;
@@ -102,9 +102,12 @@ public class FoldBudgetTests
         var idxt = Model.ToTensor(new OnnxTensor { ElementType = TensorElementType.Int64, Dims = new[] { 300000 }, Data = idx });
         mp.Nodes.Add(new OnnxNode { OpType = "Constant", Domain = "", Inputs = new string[0], Outputs = new[] { "d" }, Attributes = new Dictionary<string, object> { ["value"] = data } });
         mp.Nodes.Add(new OnnxNode { OpType = "Constant", Domain = "", Inputs = new string[0], Outputs = new[] { "i" }, Attributes = new Dictionary<string, object> { ["value"] = idxt } });
-        mp.Nodes.Add(new OnnxNode { OpType = "Gather", Domain = "", Inputs = new[] { "d", "i" }, Outputs = new[] { "z" }, Attributes = new Dictionary<string, object>() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Gather", Domain = "", Inputs = new[] { "d", "i" }, Outputs = new[] { "mid" }, Attributes = new Dictionary<string, object>() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Identity", Inputs = new[] { "mid" }, Outputs = new[] { "z" } });
         var graph = Model.Load(mp)!;
         Assert.Contains(graph.Nodes, n => n.Op == OpType.Gather);
+        var small = Model.Load(ConstantFoldWidthTests.GatherModel(TensorElementType.Float, 2));
+        Assert.Equal(OpType.Constant, small.Nodes.Single(n => n.Outputs.Contains("mid")).Op);
         Assert.True(graph.Execute(new Dictionary<string, ITensor>(), true), graph.LastErrorMessage);
         var got = ((Tensor<float>)graph.Outputs["z"]).ToArray();
         Assert.Equal(300000, got.Length);

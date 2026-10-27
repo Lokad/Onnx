@@ -93,6 +93,8 @@
 
 ### Fixed
 
+- Constant-fold and deduplication budgets use actual element widths, rejecting
+  oversized Complex128 results and retaining eligible FP16/BF16 optimizations.
 - CLI output labels retain each binding's name when tensors alias, including
   softmax output. Runtime tensor dtype names use invariant casing across cultures.
 - Empty symbolic model dimensions remain unknown instead of becoming fixed zero.
