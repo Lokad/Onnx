@@ -119,10 +119,10 @@ public sealed class ParakeetTranscriber
         cancellation.ThrowIfCancellationRequested();
         foreach (float value in samples)
             if (!float.IsFinite(value)) throw new ArgumentException("Audio samples must be finite.", nameof(samples));
-        var owned = samples.ToArray();
         lock (gate)
         {
             cancellation.ThrowIfCancellationRequested();
+            var owned = samples.ToArray();
             return ParakeetRecordingPolicy.Run(owned, options.MaxWindows, (start, length) =>
             {
                 var window = owned.AsSpan(start, length);

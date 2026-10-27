@@ -93,6 +93,8 @@
 
 ### Fixed
 
+- Queued Parakeet recording calls defer audio copies until processing starts,
+  avoiding payload-sized allocations when cancelled while waiting.
 - CLI tests use their selected build configuration instead of reusing a leftover
   Release executable or requiring one during Debug runs.
 - Constant-fold and deduplication budgets use actual element widths, rejecting
