@@ -93,6 +93,8 @@
 
 ### Fixed
 
+- Scratch buffers return to the pool when a caller's accounting hook throws,
+  preserving the original exception and graph failure handling.
 - Int64 `ReduceSum`, `ReduceMean` and `ReduceSumSquare` preserve small
   contributions with compensated double accumulation, retaining conversion
   rounding and final integer saturation.

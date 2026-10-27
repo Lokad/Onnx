@@ -23,8 +23,17 @@ where T : unmanaged
     static U[] RentScratch<U>(int length, TensorExecutionOptions options) where U : unmanaged
     {
         var rented = ArrayPool<U>.Shared.Rent(length);
-        options.ScratchReporter?.AddScratchBytes((long)length * Unsafe.SizeOf<U>());
-        return rented;
+        try
+        {
+            options.ScratchReporter?.AddScratchBytes((long)length * Unsafe.SizeOf<U>());
+            return rented;
+        }
+        catch
+        {
+            // The caller owns cleanup only after this helper returns.
+            ArrayPool<U>.Shared.Return(rented);
+            throw;
+        }
     }
 
     // Spatial expansion adapted from voice 8af223e/e35653a; no reduction blocking.
