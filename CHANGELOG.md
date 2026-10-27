@@ -93,6 +93,8 @@
 
 ### Fixed
 
+- `Resize` copies unchanged shapes across supported modes and element types,
+  preserving exact values and floating bits even with fractional scales.
 - Scratch buffers return to the pool when a caller's accounting hook throws,
   preserving the original exception and graph failure handling.
 - Int64 `ReduceSum`, `ReduceMean` and `ReduceSumSquare` preserve small
@@ -157,9 +159,9 @@
   output sizes. Smaller outputs reduce vector size without reducing transformer
   computation. The separately assessed 8-bit weight-only export requires
   compressed kernels that Lokad.Onnx does not implement.
-- Integer int32 linear Resize retains two pre-existing differences from ORT:
-  identity resizing rounds through float32, and extreme align-corners cases
-  differ at some rounding boundaries. Both engines' exact results are pinned
+- Integer int32 linear Resize retains a pre-existing difference from ORT:
+  extreme nonidentity align-corners cases differ at some rounding boundaries.
+  Both engines' exact results are pinned
   independently in the [Resize conformance cases](tests/opfuzz/python/test_integer_resize_conformance.py).
 - On the measured AMD CPU, the 128-token case takes 165.33 ms versus ORT's
   168.01 ms (ratio 0.984); an independent repeat with identical candidate bytes

@@ -41,6 +41,19 @@ where T : unmanaged
         return (nOut, cOut, hOut, wOut, nIn, cIn, hIn, wIn);
     }
 
+    // ORT copies unchanged shapes before interpolation, including fractional
+    // scales that floor back to the input size. Unsupported configurations
+    // must still reach their failure paths instead of taking this shortcut.
+    static bool CanCopyResize(int hIn, int wIn, int hOut, int wOut, MathOps.ResizeMode mode,
+        MathOps.ResizeCoordinateTransformation coordinates, MathOps.ResizeNearestMode nearest, double[]? scales) =>
+        hOut == hIn && wOut == wIn
+        && (mode is MathOps.ResizeMode.Nearest or MathOps.ResizeMode.Linear or MathOps.ResizeMode.Cubic)
+        && (coordinates is MathOps.ResizeCoordinateTransformation.HalfPixel
+            or MathOps.ResizeCoordinateTransformation.AlignCorners or MathOps.ResizeCoordinateTransformation.Asymmetric)
+        && (mode != MathOps.ResizeMode.Nearest || nearest is MathOps.ResizeNearestMode.Floor
+            or MathOps.ResizeNearestMode.Ceil or MathOps.ResizeNearestMode.RoundPreferFloor or MathOps.ResizeNearestMode.RoundPreferCeil)
+        && (scales is null || (scales.Length == 4 && scales.All(static s => double.IsFinite(s) && s > 0d)));
+
     public static Tensor<float> Resize(Tensor<float> input, int[] sizes, MathOps.ResizeMode mode, MathOps.ResizeCoordinateTransformation coordinateTransformationMode, MathOps.ResizeNearestMode nearestMode, float cubicCoeffA, double[]? scales)
     {
         StartOpStage(OpStage.ValidateArguments);
@@ -50,10 +63,7 @@ where T : unmanaged
         var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
-        // ORT copies unchanged-size Resize, including fractional scales that
-        // round back to the input size. Interpolation would alter nonfinite bits.
-        if (mode == MathOps.ResizeMode.Linear && hOut == hIn && wOut == wIn
-            && (scales is null || (scales.Length == 4 && scales.All(static s => double.IsFinite(s) && s > 0d))))
+        if (CanCopyResize(hIn, wIn, hOut, wOut, mode, coordinateTransformationMode, nearestMode, scales))
         {
             xs.CopyTo(os);
             return output;
@@ -221,8 +231,7 @@ where T : unmanaged
         var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
-        if (mode == MathOps.ResizeMode.Linear && hOut == hIn && wOut == wIn
-            && (scales is null || (scales.Length == 4 && scales.All(static s => double.IsFinite(s) && s > 0d))))
+        if (CanCopyResize(hIn, wIn, hOut, wOut, mode, coordinateTransformationMode, nearestMode, scales))
         {
             xs.CopyTo(os);
             return output;
@@ -429,6 +438,12 @@ where T : unmanaged
         var xd = input.ToRowMajor();
         var xs = xd.Buffer.Span;
         var os = output.Buffer.Span;
+        if ((mode is MathOps.ResizeMode.Nearest or MathOps.ResizeMode.Linear)
+            && CanCopyResize(hIn, wIn, hOut, wOut, mode, coordinateTransformationMode, nearestMode, scales))
+        {
+            xs.CopyTo(os);
+            return output;
+        }
         // Coordinates use the true scales when the caller derived sizes from
         // them, exactly like the float core.
         var scaleH = scales is null ? (float)hOut / hIn : (float)scales[2];

@@ -1,8 +1,8 @@
-"""Fresh integer Resize checks, including exact pins for two baseline ORT differences.
+"""Fresh integer Resize checks, including the remaining nonidentity baseline pin.
 
-The identity/align-corners int32 limitations reproduce with the frozen f53d699d
-core. A maintenance refactor must preserve those bytes; changing their behavior
-requires a separate numerical fix. Both engines are checked exactly below,
+Int32 identity resizing must match ORT exactly. The nonidentity align-corners
+limitation reproduces with the frozen f53d699d core and remains independently
+pinned until a separate numerical fix. Both engines are checked exactly below,
 without xfail, skips or wider tolerances. Frozen corpus files remain unchanged.
 """
 from pathlib import Path
@@ -27,6 +27,8 @@ CASES = [
         ("nearest", "half_pixel", "round_prefer_ceil", 2.0),
         ("linear", "half_pixel", "round_prefer_floor", 1.5),
         ("linear", "asymmetric", "round_prefer_floor", 1.0),
+        ("nearest", "asymmetric", "floor", 1.25),
+        ("linear", "asymmetric", "round_prefer_floor", 1.25),
         ("linear", "align_corners", "round_prefer_floor", 2.0),
     )
 ]
@@ -42,11 +44,6 @@ def input_array(dtype):
 
 
 def legacy_int32_results(mode, coordinate, scale):
-    if (mode, coordinate, scale) == ("linear", "asymmetric", 1.0):
-        return (
-            np.array([-2147483648, -2147483648, -16777216, 16777216], np.int32).reshape(1, 1, 2, 2),
-            np.array([-2147483648, 2147483647, -16777217, 16777217], np.int32).reshape(1, 1, 2, 2),
-        )
     if (mode, coordinate, scale) == ("linear", "align_corners", 2.0):
         managed = [[-2147483648, -715827776, 715827968, -2147483648],
                    [-1437248128, -479082624, 479082752, 1437248128],
