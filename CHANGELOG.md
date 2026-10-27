@@ -85,10 +85,11 @@
 - EmbeddingGemma 2 is qualified in FP32 through 512 tokens at all four output
   sizes. Smaller vectors do not reduce transformer computation. The assessed
   8-bit weight-only export requires unimplemented compressed kernels.
-- Published [benchmarks](BENCHMARK.md) retain their measured revisions and
-  protocols: the October 128-token FP32 Gemma comparison is 165.33 ms versus ORT
-  168.01 ms (ratio 0.984); 512 tokens is 781.72/737.86 ms (1.059). These are not
-  new measurements of the final 0.4.0 package.
+- Refreshed [CPU benchmarks](BENCHMARK.md) for the 0.4.0 candidate on the quiet
+  EPYC 9V45 VM: seven checked workloads, two fresh processes per engine, all
+  samples and process ranges retained. FP32 Gemma at 128 tokens takes
+  176.91 ms versus ORT 178.83 ms (ratio 0.989).
+  Loading/tokenization are outside that vector-compute timer.
 - Nonidentity Int32 linear Resize can differ from ORT at extreme align-corners
   rounding boundaries. Both results are pinned in the
   [conformance cases](tests/opfuzz/python/test_integer_resize_conformance.py).
