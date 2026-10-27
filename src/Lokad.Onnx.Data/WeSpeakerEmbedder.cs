@@ -134,8 +134,8 @@ public sealed class WeSpeakerEmbedder
         if (!execution.Outputs.TryGetValue(outputName, out var output) || output is not Tensor<float> tensor
             || !tensor.Dimensions.SequenceEqual(shape))
             throw new InvalidDataException("Unexpected WeSpeaker output: " + outputName);
-        foreach (float value in tensor.ToArray())
-            if (!float.IsFinite(value)) throw new InvalidDataException("Nonfinite WeSpeaker output: " + outputName);
+        for (int i = 0; i < tensor.Length; i++)
+            if (!float.IsFinite(tensor.GetValue(i))) throw new InvalidDataException("Nonfinite WeSpeaker output: " + outputName);
         return tensor;
     }
 

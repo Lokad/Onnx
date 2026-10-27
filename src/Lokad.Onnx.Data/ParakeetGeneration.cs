@@ -167,8 +167,11 @@ internal sealed class ParakeetGeneration
     internal static Tensor<float> RequireFloat(IReadOnlyDictionary<string, ITensor> outputs, string name, int[] shape)
     {
         if (!outputs.TryGetValue(name, out var value) || value is not Tensor<float> tensor
-            || !tensor.Dimensions.SequenceEqual(shape) || tensor.ToArray().Any(v => !float.IsFinite(v)))
+            || !tensor.Dimensions.SequenceEqual(shape))
             throw new InvalidDataException("Unexpected or nonfinite Parakeet output: " + name);
+        for (int i = 0; i < tensor.Length; i++)
+            if (!float.IsFinite(tensor.GetValue(i)))
+                throw new InvalidDataException("Unexpected or nonfinite Parakeet output: " + name);
         return tensor;
     }
 }

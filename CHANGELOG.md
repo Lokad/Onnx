@@ -21,6 +21,8 @@
 
 ### Changed
 
+- Parakeet and WeSpeaker finite-output validation scans existing tensor values
+  without allocating full-sized temporary payload copies.
 - Tensor structural equality now requires same-shaped `Tensor<T>` values.
   Arrays, foreign types and different shapes compare unequal, making equality
   symmetric and safe for hash collections. Convert arrays explicitly with
