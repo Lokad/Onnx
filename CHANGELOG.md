@@ -52,6 +52,8 @@
   preserving inputs, released-buffer caches and completed-run diagnostics.
 - Whisper releases private input bindings after each window. Queued Parakeet
   recording calls avoid copying audio when cancelled before processing starts.
+- The pinned Community-1 segmentation export's conflicting internal `frames`
+  annotation is corrected by its companion loader; core symbol validation stays strict.
 - Scratch buffers return to the pool when accounting hooks throw; graph execution
   forwards scratch/copy events while keeping per-run and child metrics separate.
 - View indexing validates bounds and nested-storage aliasing before access.

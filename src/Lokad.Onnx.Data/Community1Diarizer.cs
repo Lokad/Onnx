@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 
 /// <summary>A speaker interval in seconds from the beginning of the supplied PCM.</summary>
@@ -38,12 +39,31 @@ public sealed class Community1Diarizer
     public Community1Diarizer(string segmentationPath, string embeddingEncoderPath, string projectionPath, string pldaPath)
     {
         ArgumentException.ThrowIfNullOrEmpty(segmentationPath);
-        segmentation = OnnxImport.LoadOrThrow(segmentationPath, 32L * 1024 * 1024);
+        var model = OnnxImport.Parse(segmentationPath);
+        using (var stream = File.OpenRead(segmentationPath))
+            NormalizeSegmentationSymbols(model, Convert.ToHexStringLower(SHA256.HashData(stream)));
+        segmentation = Model.Load(model, 32L * 1024 * 1024);
+        segmentation.ModelFile = segmentationPath;
         if (segmentation.Inputs.Count != 1 || !segmentation.Inputs.ContainsKey("waveform")
             || segmentation.Outputs.Count != 1 || !segmentation.Outputs.ContainsKey("scores"))
             throw new NotSupportedException("Expected the Community-1 segmentation export with waveform input and scores output.");
         embedder = new WeSpeakerEmbedder(embeddingEncoderPath, projectionPath);
         clusterer = new Community1Clusterer(pldaPath);
+    }
+
+    static void NormalizeSegmentationSymbols(OnnxModel model, string sha256)
+    {
+        // This export reuses "frames" before and after temporal downsampling.
+        // Correct its private branch annotation before load; keep core global
+        // symbol validation and all other exports' annotations unchanged.
+        if (sha256 != "af62796adfc46ab36fb27c183e7fe6530a745c665b64e949acd73bf01a18a31a") return;
+        var conditional = model.Nodes.FirstOrDefault(n => n.Name == "If_117" && n.OpType == "If");
+        if (conditional is null || !conditional.Attributes.TryGetValue("then_branch", out var value)
+            || value is not OnnxSubgraph branch) return;
+        var output = branch.Outputs.FirstOrDefault(d => d.Name == "122");
+        if (output?.Dims.Length == 3 && output.Dims[1] == 80
+            && output.DimParams is { Length: 3 } symbols && symbols[2] == "frames")
+            symbols[2] = "sincnet_frames";
     }
 
     /// <summary>Diarizes finite normalized mono 16 kHz PCM of at most ten minutes. Empty input returns NoSpeech.</summary>
