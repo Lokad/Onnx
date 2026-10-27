@@ -1970,17 +1970,23 @@ public partial class ComputationalGraph
         if (liveUnknownTensors.Remove(tensor)) return;
         if (TryCollectSingleRoot(tensor, out Array? root))
         {
-            if (root is not null && liveArrayUsers.TryGetValue(root, out int c)) liveArrayUsers[root] = c - 1;
+            if (root is not null) RemoveLiveRootRef(root);
             return;
         }
         var roots = new HashSet<Array>();
         if (CollectAliasRoot(tensor, roots))
         {
-            foreach (var r in roots)
-            {
-                if (liveArrayUsers.TryGetValue(r, out int c)) liveArrayUsers[r] = c - 1;
-            }
+            foreach (var r in roots) RemoveLiveRootRef(r);
         }
+    }
+
+    void RemoveLiveRootRef(Array root)
+    {
+        var users = liveArrayUsers!;
+        if (!users.TryGetValue(root, out int count)) return;
+        if (count > 1) users[root] = count - 1;
+        // A zero-count key would itself keep the discarded array alive.
+        else users.Remove(root);
     }
 
     /// <summary>

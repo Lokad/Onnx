@@ -93,6 +93,8 @@
 
 ### Fixed
 
+- Lifetime tracking removes array roots when their final reference disappears,
+  allowing discarded unpooled intermediates to collect during execution.
 - Whisper clears private input bindings after each window, releasing finished
   request buffers while preserving reusable contexts and released-array caches.
 - Graph reset drops transient live-payload bookkeeping references while
