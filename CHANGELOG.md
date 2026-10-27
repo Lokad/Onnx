@@ -93,6 +93,9 @@
 
 ### Fixed
 
+- Int64 `ReduceSum`, `ReduceMean` and `ReduceSumSquare` preserve small
+  contributions with compensated double accumulation, retaining conversion
+  rounding and final integer saturation.
 - Queued Parakeet recording calls defer audio copies until processing starts,
   avoiding payload-sized allocations when cancelled while waiting.
 - CLI tests use their selected build configuration instead of reusing a leftover

@@ -28,7 +28,7 @@ public partial class CPUExecutionProvider
             TensorElementType.Float => Success(op, Tensor<float>.ReduceSum(SquareForReduction((Tensor<float>)data), dimensions, keep, noop)),
             TensorElementType.Double => Success(op, Tensor<double>.ReduceSum(SquareForReduction((Tensor<double>)data), dimensions, keep, noop)),
             TensorElementType.Int32 => Success(op, IntegerSumSquare((Tensor<int>)data, dimensions, keep, noop)),
-            TensorElementType.Int64 => Success(op, IntegerSumSquare((Tensor<long>)data, dimensions, keep, noop)),
+            TensorElementType.Int64 => Success(op, Tensor<long>.ReduceSumSquareInt64((Tensor<long>)data, dimensions, keep, noop)),
             _ => InputTypeNotSupported(op, nameof(data), data)
         };
     }

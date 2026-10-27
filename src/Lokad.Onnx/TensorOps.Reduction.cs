@@ -107,14 +107,45 @@ where T : unmanaged
         for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
-            // Integer sums saturate (ORT 1.29), and int64 probes show the
-            // accumulation itself runs in double: extreme vectors like
-            // [Max, Max, Min, Min] yield 0, impossible for running
-            // saturation (Min) or wide-then-clamp (-2). In-range double
-            // sums of integers are exact, so only the final cast saturates.
-            double sum = 0.0;
-            for (int j = 0; j < r; ++j) sum += xs[offset + j];
-            os[i] = sum >= 9223372036854775808.0 ? long.MaxValue : sum <= -9223372036854775808.0 ? long.MinValue : (long)sum;
+            // Match ORT's serial compensated double accumulation and final
+            // saturation. Conversion of individual Int64 values can round.
+            var sum = new Int64ReductionAccumulator();
+            for (int j = 0; j < r; ++j) sum.Add(xs[offset + j]);
+            os[i] = sum.Sum;
+        }
+        return ApplyKeepDims(output, plan, keepDims);
+    }
+
+    internal static Tensor<long> ReduceSumSquareInt64(Tensor<long> data, Tensor<int>? axes, bool keepDims, bool noop)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        var plan = PlanReduction(data.Rank, axes, keepDims, false, noop, out _);
+        if (plan.IsNoOp)
+        {
+            // A reduction no-op still squares each value, without aliasing input.
+            var values = data.ToArray();
+            StartOpStage(OpStage.Math);
+            for (int i = 0; i < values.Length; i++)
+            {
+                var square = new Int64ReductionAccumulator();
+                square.AddSquare(values[i]);
+                values[i] = square.Sum;
+            }
+            return new DenseTensor<long>(values, data.Dimensions);
+        }
+
+        StartOpStage(OpStage.CalculateIndices);
+        var (pdata, oshape, r) = PrepareReduction(data, plan.Axes);
+        var output = DenseTensor<long>.OfShape(oshape);
+        StartOpStage(OpStage.Math);
+        var xs = pdata.Buffer.Span;
+        var os = output.Buffer.Span;
+        for (int i = 0; i < os.Length; i++)
+        {
+            int offset = i * r;
+            var sum = new Int64ReductionAccumulator();
+            for (int j = 0; j < r; j++) sum.AddSquare(xs[offset + j]);
+            os[i] = sum.Sum;
         }
         return ApplyKeepDims(output, plan, keepDims);
     }
@@ -214,19 +245,11 @@ where T : unmanaged
         for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
-            // Empty reductions yield zero; without the guard the quotient
-            // below divides by zero (ORT 1.29 agrees on 0 for every dtype).
-            if (r == 0)
-            {
-                os[i] = 0;
-                continue;
-            }
-            // ORT 1.29 divides the double accumulation and truncates toward
-            // zero ([1,2] gives 1, [-1,-2] gives -1, [2^53+1,1] gives 2^53).
-            double mean = 0.0;
-            for (int j = 0; j < r; ++j) mean += xs[offset + j];
-            mean /= r;
-            os[i] = mean >= 9223372036854775808.0 ? long.MaxValue : mean <= -9223372036854775808.0 ? long.MinValue : (long)mean;
+            // Divide the compensated double sum, then truncate/saturate.
+            // Conversion still rounds: [2^53+1,1] gives 2^52. Empty means are 0.
+            var sum = new Int64ReductionAccumulator();
+            for (int j = 0; j < r; ++j) sum.Add(xs[offset + j]);
+            os[i] = sum.Mean(r);
         }
         return ApplyKeepDims(output, plan, keepDims);
     }
