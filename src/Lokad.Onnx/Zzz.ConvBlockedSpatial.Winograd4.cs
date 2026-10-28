@@ -29,7 +29,15 @@ internal static unsafe partial class ConvBlockedSpatial
             for (int x = 0; x < 6; x++)
             {
                 WeightWinograd4(rows[x], rows[6 + x], rows[12 + x], column);
-                for (int y = 0; y < 6; y++) result[((y * 6 + x) * c + ic) * m + oc] = (float)column[y];
+                for (int y = 0; y < 6; y++)
+                {
+                    // AVX-512 consumes contiguous sixteen-output panels, avoiding
+                    // power-of-two channel strides within the reduction loop.
+                    int index = lanes == 16
+                        ? (y * 6 + x) * c * m + (oc / 16 * c + ic) * 16 + oc % 16
+                        : ((y * 6 + x) * c + ic) * m + oc;
+                    result[index] = (float)column[y];
+                }
             }
         }
         return Finite(result) ? result : null;
@@ -64,7 +72,7 @@ internal static unsafe partial class ConvBlockedSpatial
     {
         int top = first / tileWidth * 4 - 1, left = first % tileWidth * 4 - 1;
         if (Avx512F.IsSupported && count == WinogradBatch && first / tileWidth == (first + 7) / tileWidth
-            && top >= 0 && top + 5 < h && left >= 0 && left + 35 < w)
+            && w >= 32)
         {
             TransformWinograd4InputContiguous(input, transformed, c, h, w, top, left);
             return;
@@ -104,8 +112,22 @@ internal static unsafe partial class ConvBlockedSpatial
     static void TransformWinograd4InputContiguous(ReadOnlySpan<float> input, Span<float> transformed,
         int c, int h, int w, int top, int left)
     {
-        // Two load pairs cover columns left through left+35, proved by the caller.
-        var order = Vector512.Create(Vector256.Create(0, 4, 8, 12, 16, 20, 24, 28), Vector256<int>.Zero);
+        // Clamp each 32-column load window to its row; mask only padded tiles.
+        bool border = top < 0 || top + 5 >= h || left < 0 || left + 35 >= w;
+        int base0 = Math.Clamp(left, 0, w - 32), base1 = Math.Clamp(left + 4, 0, w - 32);
+        var tiles = Vector256.Create(0, 4, 8, 12, 16, 20, 24, 28);
+        var order = Vector512.Create(tiles + Vector256.Create(left - base0), Vector256<int>.Zero);
+        var order4 = Vector512.Create(tiles + Vector256.Create(left + 4 - base1), Vector256<int>.Zero);
+        Vector256<int>* masks = stackalloc Vector256<int>[6];
+        if (border)
+        {
+            for (int x = 0; x < 6; x++)
+            {
+                var positions = tiles + Vector256.Create(left + x);
+                masks[x] = Vector256.GreaterThanOrEqual(positions, Vector256<int>.Zero)
+                    & Vector256.LessThan(positions, Vector256.Create(w));
+            }
+        }
         var one = Vector512.Create(1); var two = Vector512.Create(2); var three = Vector512.Create(3);
         Vector256<float>* rows = stackalloc Vector256<float>[36];
         Vector256<float>* temporary = stackalloc Vector256<float>[36];
@@ -114,15 +136,22 @@ internal static unsafe partial class ConvBlockedSpatial
         {
             for (int y = 0; y < 6; y++)
             {
-                float* start = source + ic * h * w + (top + y) * w + left;
-                var a = Avx512F.LoadVector512(start); var b = Avx512F.LoadVector512(start + 16);
+                if (border && (uint)(top + y) >= (uint)h)
+                {
+                    for (int x = 0; x < 6; x++) rows[y * 6 + x] = Vector256<float>.Zero;
+                    continue;
+                }
+                float* row = source + ic * h * w + (top + y) * w;
+                var a = Avx512F.LoadVector512(row + base0); var b = Avx512F.LoadVector512(row + base0 + 16);
                 rows[y * 6] = Avx512F.PermuteVar16x32x2(a, order, b).GetLower();
                 rows[y * 6 + 1] = Avx512F.PermuteVar16x32x2(a, order + one, b).GetLower();
                 rows[y * 6 + 2] = Avx512F.PermuteVar16x32x2(a, order + two, b).GetLower();
                 rows[y * 6 + 3] = Avx512F.PermuteVar16x32x2(a, order + three, b).GetLower();
-                a = Avx512F.LoadVector512(start + 4); b = Avx512F.LoadVector512(start + 20);
-                rows[y * 6 + 4] = Avx512F.PermuteVar16x32x2(a, order, b).GetLower();
-                rows[y * 6 + 5] = Avx512F.PermuteVar16x32x2(a, order + one, b).GetLower();
+                a = Avx512F.LoadVector512(row + base1); b = Avx512F.LoadVector512(row + base1 + 16);
+                rows[y * 6 + 4] = Avx512F.PermuteVar16x32x2(a, order4, b).GetLower();
+                rows[y * 6 + 5] = Avx512F.PermuteVar16x32x2(a, order4 + one, b).GetLower();
+                if (border)
+                    for (int x = 0; x < 6; x++) rows[y * 6 + x] = (rows[y * 6 + x].AsInt32() & masks[x]).AsSingle();
             }
             for (int y = 0; y < 6; y++) InputWinograd4(rows + y * 6, 1, temporary + y * 6, 1);
             for (int x = 0; x < 6; x++) InputWinograd4(temporary + x, 6, rows + x, 6);

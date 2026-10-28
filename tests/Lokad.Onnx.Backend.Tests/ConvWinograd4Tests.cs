@@ -4,6 +4,10 @@ public partial class ConvBlockedSpatialTests
 {
     [Theory]
     [InlineData(16, 1, 1)]
+    [InlineData(16, 1, 32)]
+    [InlineData(32, 3, 35)]
+    [InlineData(64, 7, 36)]
+    [InlineData(16, 9, 64)]
     [InlineData(16, 5, 33)]
     [InlineData(32, 6, 34)]
     [InlineData(64, 7, 65)]
@@ -13,6 +17,8 @@ public partial class ConvBlockedSpatialTests
 
     [Theory]
     [InlineData(16, 48)]
+    [InlineData(128, 48)]
+    [InlineData(256, 48)]
     [InlineData(128, 128)]
     [InlineData(256, 256)]
     public void OptInShapesMatchDoubleConvolutionOnNormalData(int c, int m)

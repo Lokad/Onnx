@@ -26,7 +26,7 @@ internal static unsafe partial class ConvBlockedSpatial
                 var a5 = Vector512<float>.Zero;
                 var a6 = Vector512<float>.Zero;
                 var a7 = Vector512<float>.Zero;
-                float* weights = u + (component * c + first) * m + oc;
+                float* weights = u + component * c * m + oc * c + first * lanes;
                 float* inputs = v + (component * c + first) * WinogradBatch;
                 for (int ic = 0; ic < 8; ic++)
                 {
@@ -39,7 +39,7 @@ internal static unsafe partial class ConvBlockedSpatial
                     a5 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[5]), weight, a5);
                     a6 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[6]), weight, a6);
                     a7 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[7]), weight, a7);
-                    weights += m; inputs += WinogradBatch;
+                    weights += lanes; inputs += WinogradBatch;
                 }
                 int level = 0;
                 for (int group = first / 8; (group & 1) != 0; group >>= 1, level++)

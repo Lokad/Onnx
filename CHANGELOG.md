@@ -22,6 +22,8 @@
   selects it for Community-1. See [runtime options](docs/runtime-options.md).
 - ReLU uses wider float vectors and fewer comparisons while preserving NaN
   payloads, signed zero and compact tails.
+- Larger convolution tiles use contiguous prepared output panels and bounded
+  contiguous input loads at padded borders, preserving the same reductions.
 
 ## 0.4.0 — 2026-10-28
 
