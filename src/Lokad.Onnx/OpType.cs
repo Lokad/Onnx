@@ -205,5 +205,6 @@ public enum OpType
     MaskedSoftmax,
     Unknown,
     FusedRmsNormalization,
+    FusedSigmoidMul,
 }
 

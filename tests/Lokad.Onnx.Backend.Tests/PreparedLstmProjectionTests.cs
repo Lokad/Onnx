@@ -81,4 +81,38 @@ public class PreparedLstmProjectionTests
         Assert.ThrowsAny<Xunit.Sdk.XunitException>(() => Equal([1f], [MathF.BitIncrement(1f)]));
     }
 
+    [Theory]
+    [InlineData(0, 65)]
+    [InlineData(37, 65)]
+    [InlineData(640, 2560)]
+    public void WideProjectionPreservesAscendingSeparateArithmetic(int inputs, int columns)
+    {
+        int block = PreparedLstmProjection.ColumnsPerBlock;
+        var random = new Random(42);
+        var x = Enumerable.Range(0, inputs).Select(_ => (float)(random.NextDouble() * 2 - 1)).ToArray();
+        var weights = Enumerable.Range(0, inputs * columns).Select(_ => (float)(random.NextDouble() * .2 - .1)).ToArray();
+        var panel = new float[weights.Length]; var expected = new float[columns];
+        for (int col = 0; col < columns; col++)
+        {
+            int group = col / block * block, count = Math.Min(block, columns - group);
+            float sum = 0;
+            for (int k = 0; k < inputs; k++)
+            {
+                float weight = weights[k * columns + col];
+                panel[group * inputs + k * count + col - group] = weight;
+                float product = (float)((double)x[k] * weight);
+                sum = (float)((double)sum + product);
+            }
+            expected[col] = sum;
+        }
+        var savedX = x.ToArray(); var savedPanel = panel.ToArray();
+        foreach (bool wide in new[] { true, false })
+        {
+            var actual = new float[columns];
+            PreparedLstmProjection.Multiply(x, panel, actual, wide);
+            for (int i = 0; i < columns; i++)
+                Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(actual[i]));
+        }
+        Assert.Equal(savedX, x); Assert.Equal(savedPanel, panel);
+    }
 }

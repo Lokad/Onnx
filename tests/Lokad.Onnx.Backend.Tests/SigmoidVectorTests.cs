@@ -167,6 +167,20 @@ public class SigmoidVectorTests
     }
 
     [Fact]
+    public void WideAndPortableVectorsKeepIdenticalBitsAndTails()
+    {
+        var values = new float[16407];
+        uint state = 0x91e10da5;
+        for (int i = 0; i < values.Length; i++)
+        {
+            state ^= state << 13; state ^= state >> 17; state ^= state << 5;
+            values[i] = BitConverter.Int32BitsToSingle(unchecked((int)state));
+        }
+        var input = new DenseTensor<float>(values, new[] { values.Length });
+        EqualBits(Run(input, ExecutionOptions.Simd).ToArray(), Run(input).ToArray());
+    }
+
+    [Fact]
     public void DoublePathRemainsExact()
     {
         double[] values = [double.NegativeInfinity, -double.MaxValue, -1000, -710, -1.5, -0.0, 0.0, 1.5, 710, 1000, double.MaxValue, double.PositiveInfinity, double.NaN];

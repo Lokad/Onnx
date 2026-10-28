@@ -3,6 +3,7 @@ namespace Lokad.Onnx;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 internal static class PreparedLstmProjection
 {
@@ -10,13 +11,29 @@ internal static class PreparedLstmProjection
     // Keep the original reader's four accumulators and arithmetic.
     internal static int ColumnsPerBlock => 4 * Vector<float>.Count;
 
-    internal static void Multiply(ReadOnlySpan<float> input, ReadOnlySpan<float> panel, Span<float> output)
+    internal static void Multiply(ReadOnlySpan<float> input, ReadOnlySpan<float> panel, Span<float> output, bool useIntrinsics = true)
     {
         if (panel.Length != checked(input.Length * output.Length))
             throw new ArgumentException("The projection panel does not match its input and output dimensions.");
         int width = Vector<float>.Count, block = ColumnsPerBlock, o = 0;
         ref float weights = ref MemoryMarshal.GetReference(panel);
         ref float destination = ref MemoryMarshal.GetReference(output);
+        if (useIntrinsics && Vector512.IsHardwareAccelerated && block == 32)
+        {
+            for (; o <= output.Length - block; o += block)
+            {
+                var a = Vector512<float>.Zero; var b = a;
+                for (int k = 0; k < input.Length; k++)
+                {
+                    var x = Vector512.Create(input[k]);
+                    nuint row = (nuint)(o * input.Length + k * block);
+                    a = Vector512.Add(a, Vector512.Multiply(x, Vector512.LoadUnsafe(ref weights, row)));
+                    b = Vector512.Add(b, Vector512.Multiply(x, Vector512.LoadUnsafe(ref weights, row + 16)));
+                }
+                a.StoreUnsafe(ref destination, (nuint)o);
+                b.StoreUnsafe(ref destination, (nuint)(o + 16));
+            }
+        }
         if (Vector.IsHardwareAccelerated)
         {
             for (; o <= output.Length - block; o += block)

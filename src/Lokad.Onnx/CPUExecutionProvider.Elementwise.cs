@@ -505,8 +505,14 @@ public partial class CPUExecutionProvider
     }
 
     public static OpResult Sigmoid(ITensor? X, ExecutionOptions? options)
+        => SigmoidCore(X, options, false);
+
+    internal static OpResult SigmoidMul(ITensor? X, ExecutionOptions? options)
+        => SigmoidCore(X, options, true);
+
+    static OpResult SigmoidCore(ITensor? X, ExecutionOptions? options, bool multiplyInput)
     {
-        var op = OpType.Sigmoid;
+        var op = multiplyInput ? OpType.FusedSigmoidMul : OpType.Sigmoid;
         if (X is null) return MissingInput(op, nameof(X));
         var opts = (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
@@ -521,10 +527,14 @@ public partial class CPUExecutionProvider
                 if (xs.Length >= Vector<float>.Count && opts.Tensor.UseSimd
                     && Vector.IsHardwareAccelerated && !x.IsReversedStride)
                 {
-                    SigmoidRationalVector(xs, ys);
+                    SigmoidRationalVector(xs, ys, opts.Tensor.UseIntrinsics, multiplyInput);
                     return Success(op, y);
                 }
-                for (int i = 0; i < xs.Length; i++) ys[i] = 1f / (1f + MathF.Exp(-xs[i]));
+                for (int i = 0; i < xs.Length; i++)
+                {
+                    float value = 1f / (1f + MathF.Exp(-xs[i]));
+                    ys[i] = multiplyInput ? xs[i] * value : value;
+                }
                 return Success(op, y);
             }
             case TensorElementType.Double:
@@ -533,7 +543,11 @@ public partial class CPUExecutionProvider
                 var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
                 var xs = x.Buffer.Span;
                 var ys = y.Buffer.Span;
-                for (int i = 0; i < xs.Length; i++) ys[i] = 1.0 / (1.0 + Math.Exp(-xs[i]));
+                for (int i = 0; i < xs.Length; i++)
+                {
+                    double value = 1.0 / (1.0 + Math.Exp(-xs[i]));
+                    ys[i] = multiplyInput ? xs[i] * value : value;
+                }
                 return Success(op, y);
             }
             default: return InputTypeNotSupported(op, nameof(X), X);

@@ -198,8 +198,8 @@ public partial class CPUExecutionProvider
                     int xOff = (t * batch + b) * inputSize;
                     if (preparedInput is not null && preparedRecurrent is not null)
                     {
-                        PreparedLstmProjection.Multiply(xs.Slice(xOff, inputSize), preparedInput, xw);
-                        PreparedLstmProjection.Multiply(hv, preparedRecurrent, hr);
+                        PreparedLstmProjection.Multiply(xs.Slice(xOff, inputSize), preparedInput, xw, opts.Tensor.UseIntrinsics);
+                        PreparedLstmProjection.Multiply(hv, preparedRecurrent, hr, opts.Tensor.UseIntrinsics);
                     }
                     else if (projections is not null)
                     {

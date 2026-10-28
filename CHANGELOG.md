@@ -13,6 +13,10 @@
   follow, preserving the existing arithmetic for those final columns.
 - Cached matrix products reuse AVX-512 panels for odd row groups, avoiding
   temporary weight copies while retaining the existing fallback kernels.
+- Sigmoid and prepared decoder projections use wider AVX-512 vectors while
+  preserving their existing arithmetic and vector tails.
+- Adjacent sigmoid/input-multiply activations combine into one pass when the
+  intermediate is private, retaining runtime type checks and the same polynomial.
 
 ## 0.4.0 — 2026-10-28
 

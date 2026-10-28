@@ -160,7 +160,7 @@ internal sealed class GraphFacts
                 return madd;
             }
             if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu
-                && pn.Op != OpType.FusedRmsNormalization) return null;
+                && pn.Op != OpType.FusedRmsNormalization && pn.Op != OpType.FusedSigmoidMul) return null;
             if (pn.Inputs is null || pn.Inputs.Length < 1) return null;
             return ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
         }
@@ -318,6 +318,7 @@ internal sealed class GraphFacts
             case OpType.Relu:
             case OpType.Gelu:
             case OpType.Tanh:
+            case OpType.Sigmoid:
             case OpType.Erf:
             case OpType.Softmax:
             case OpType.MaskedSoftmax:

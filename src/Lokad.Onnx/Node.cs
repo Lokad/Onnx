@@ -429,6 +429,7 @@ public partial struct Node
         OpType.Tanh => CPU.Tanh(InputTensor(graph, 0), opt),
 
         OpType.Sigmoid => CPU.Sigmoid(InputTensor(graph, 0), opt),
+        OpType.FusedSigmoidMul => CPU.SigmoidMul(InputTensor(graph, 0), opt),
 
         OpType.Clip => CPU.Clip(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             GetFloat("min", null), GetFloat("max", null), opt, ResolvedOpsetVersion(graph)),

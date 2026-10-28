@@ -42,6 +42,7 @@ internal static class GraphOptimizer
         new Pass("rope", GraphFusion.FuseRopePass),
         new Pass("gelu", GraphFusion.FuseGeluPass),
         new Pass("gelu-tanh", GraphFusion.FuseGeluTanhPass),
+        new Pass("sigmoid-mul", GraphFusion.FuseSigmoidMul),
         new Pass("convrelu", GraphFusion.FuseConvReluPass),
         new Pass("addrelu", GraphFusion.FuseAddReluPass),
         new Pass("biasgelu", GraphFusion.FuseBiasGeluPass),
