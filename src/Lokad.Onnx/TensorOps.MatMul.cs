@@ -136,22 +136,21 @@ where T : unmanaged
 
     /// <summary>
     /// Selects the panel-packed kernel for a B-side operand resolving to a
-    /// fresh packed clone. Every unmet condition falls back to the unpacked
-    /// path, so Scalar and Simd modes, missing FMA, odd row counts outside exact
-    /// 3-row groups, and stale mappings keep reading original row-major bytes
-    /// by construction. Three-row groups (P65) cover odd multiples of 3 exactly.
+    /// fresh packed clone. Scalar/Simd modes, missing hardware and stale mappings
+    /// keep their logical operand path. The wide consumer also covers odd row
+    /// groups; the legacy consumers still require two/three-row groups.
     /// </summary>
     static DenseTensor<float>? ResolvePackedKernel(TensorExecutionOptions options, Tensor<float> y, int m)
     {
         if (!options.UseSimd || !options.UseIntrinsics || !Fma.IsSupported) return null;
-        // The 2-row kernel needs even rows; odd counts route packed only when exact
-        // 3-row groups cover them (P65).
         if (m == 1)
         {
             // Consume an existing preparation only in the current wide one-row territory.
             if (y.Dimensions[^1] < M1BlockedMinColumns) return null;
         }
-        else if ((m & 1) != 0 && (m % 3) != 0) return null;
+        else if ((m & 1) != 0 && (m % 3) != 0
+            && !(AblationSwitches.EnablePackedAvx512Rows && Avx512F.IsSupported
+                && m >= 8 && y.Dimensions[^1] >= 32)) return null;
         var found = GraphPacking.ResolvePacked(options.PackedMatMulWeights, y);
         if (found is null || found.Dimensions.Length != 2) return null;
         int n = found.Dimensions[0], k = found.Dimensions[1];

@@ -11,6 +11,8 @@
   LSTM reductions retain their separate multiply/add order.
 - Dynamic matrix products use wide packed panels even when compact column tails
   follow, preserving the existing arithmetic for those final columns.
+- Cached matrix products reuse AVX-512 panels for odd row groups, avoiding
+  temporary weight copies while retaining the existing fallback kernels.
 
 ## 0.4.0 — 2026-10-28
 
