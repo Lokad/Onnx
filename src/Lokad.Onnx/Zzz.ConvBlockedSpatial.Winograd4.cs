@@ -104,7 +104,7 @@ internal static unsafe partial class ConvBlockedSpatial
             for (int y = 0; y < 6; y++) InputWinograd4(rows + y * 6, 1, temporary + y * 6, 1);
             for (int x = 0; x < 6; x++) InputWinograd4(temporary + x, 6, rows + x, 6);
             for (int component = 0; component < 36; component++)
-                *(Vector256<float>*)(destination + (component * c + ic) * 8) = rows[component];
+                *(Vector256<float>*)(destination + (component * WinogradInputChannels(c, 36) + ic) * 8) = rows[component];
         }
     }
 
@@ -156,7 +156,7 @@ internal static unsafe partial class ConvBlockedSpatial
             for (int y = 0; y < 6; y++) InputWinograd4(rows + y * 6, 1, temporary + y * 6, 1);
             for (int x = 0; x < 6; x++) InputWinograd4(temporary + x, 6, rows + x, 6);
             for (int component = 0; component < 36; component++)
-                *(Vector256<float>*)(destination + (component * c + ic) * 8) = rows[component];
+                *(Vector256<float>*)(destination + (component * WinogradInputChannels(c, 36) + ic) * 8) = rows[component];
         }
     }
 

@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
 namespace Lokad.Onnx.Backend.Tests;
@@ -34,6 +35,17 @@ public class PreparedLstmProjectionTests
         }
         return result;
     }
+    // Keep the counter independent of the allocating assertion/hash caller.
+    // Compile this test-only region directly, so its own tiering cannot be
+    // mistaken for an allocation in the projection under test.
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.AggressiveOptimization)]
+    static long MeasureAllocations(ReadOnlySpan<float> input, ReadOnlySpan<float> packed, Span<float> output)
+    {
+        long start = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 8; i++) PreparedLstmProjection.Multiply(input, packed, output);
+        return GC.GetAllocatedBytesForCurrentThread() - start;
+    }
+
     static void Raw(float[] input, float[] flat, int columns)
     {
         var packed = Pack(flat, input.Length, columns);
@@ -47,9 +59,8 @@ public class PreparedLstmProjectionTests
         // Check steady-state allocations after first-use and tiering work.
         for (int i = 0; i < 64; i++) PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
         Equal(expected, actual);
-        long start = GC.GetAllocatedBytesForCurrentThread();
-        for (int i = 0; i < 8; i++) PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
-        Assert.Equal(0, GC.GetAllocatedBytesForCurrentThread() - start);
+        long allocated = MeasureAllocations(input, packed, actual.AsSpan(1, columns));
+        Assert.Equal(0, allocated);
         Equal(expected, actual); Assert.Equal(inputHash, Hash(input)); Assert.Equal(packedHash, Hash(packed));
     }
 

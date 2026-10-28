@@ -27,7 +27,7 @@ internal static unsafe partial class ConvBlockedSpatial
                 var a6 = Vector512<float>.Zero;
                 var a7 = Vector512<float>.Zero;
                 float* weights = u + component * c * m + oc * c + first * lanes;
-                float* inputs = v + (component * c + first) * WinogradBatch;
+                float* inputs = v + (component * WinogradInputChannels(c, 36) + first) * WinogradBatch;
                 for (int ic = 0; ic < 8; ic++)
                 {
                     var weight = *(Vector512<float>*)weights;

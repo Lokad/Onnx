@@ -9,6 +9,10 @@ internal static unsafe partial class ConvBlockedSpatial
 {
     internal const int WinogradBatch = 8;
 
+    // Avoid power-of-two component strides in the larger F(4,3) input scratch.
+    // One unused channel changes placement only, never the reduction order.
+    static int WinogradInputChannels(int c, int components) => c + (components == 36 && c >= 64 ? 1 : 0);
+
     internal static float[]? PrepareWinograd(ReadOnlySpan<float> weights, int c, int m, int lanes)
     {
         Geometry(c, m, 1, 1, 1, lanes);
@@ -48,7 +52,7 @@ internal static unsafe partial class ConvBlockedSpatial
         try
         {
             int components = (tileSize + 2) * (tileSize + 2);
-            long a = checked((long)components * c * WinogradBatch), b = checked((long)components * m * WinogradBatch);
+            long a = checked((long)components * WinogradInputChannels(c, components) * WinogradBatch), b = checked((long)components * m * WinogradBatch);
             long d = checked((long)m * h * w);
             if (checked(a + b + d) > 64L * 1024 * 1024 / sizeof(float)) return false;
             input = (int)a; products = (int)b; output = (int)d;
@@ -82,6 +86,11 @@ internal static unsafe partial class ConvBlockedSpatial
         if (lanes == 16 && !Avx512F.IsSupported || lanes == 8 && (!Avx2.IsSupported || !Fma.IsSupported))
             throw new PlatformNotSupportedException();
         if (!Finite(input) || !Finite(prepared) || !Finite(bias) || !Finite(residual)) return false;
+
+        int inputChannels = WinogradInputChannels(c, components);
+        if (inputChannels != c)
+            for (int component = 0; component < components; component++)
+                transformed.Slice((component * inputChannels + c) * WinogradBatch, WinogradBatch).Clear();
         int tileWidth = 1 + (w - 1) / tileSize, tiles = checked((1 + (h - 1) / tileSize) * tileWidth);
         for (int first = 0; first < tiles; first += WinogradBatch)
         {
