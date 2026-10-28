@@ -17,6 +17,11 @@
   preserving their existing arithmetic and vector tails.
 - Adjacent sigmoid/input-multiply activations combine into one pass when the
   intermediate is private, retaining runtime type checks and the same polynomial.
+- Prepared convolutions offer an explicit four-output-tile mode with bounded
+  reductions, shared weight budgets and direct fallback. The WeSpeaker companion
+  selects it for Community-1. See [runtime options](docs/runtime-options.md).
+- ReLU uses wider float vectors and fewer comparisons while preserving NaN
+  payloads, signed zero and compact tails.
 
 ## 0.4.0 — 2026-10-28
 

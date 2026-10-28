@@ -75,6 +75,28 @@ public partial class ComputationalGraph
     internal object FoldLock => preparation.FoldLock;
 
     internal object PrepareLock => preparation.PrepareLock;
+    internal bool Winograd4Enabled => preparation.Winograd4;
+
+    /// <summary>Opts into larger tiles for eligible prepared convolution weights.</summary>
+    /// <remarks>Call with exclusive access before creating execution contexts. Ordinary preparation
+    /// keeps the smaller tiles. Reductions above 64 channels require AVX-512 and use pairwise
+    /// channel groups. The existing packed-weight budget and direct fallback still apply.</remarks>
+    public void PrepareWinograd4Weights()
+    {
+        if (System.Threading.Volatile.Read(ref _executing) != 0)
+            throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
+        lock (PrepareLock)
+        {
+            if (System.Threading.Volatile.Read(ref _executing) != 0)
+                throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
+            if (!preparation.Winograd4)
+            {
+                InvalidatePreparation();
+                preparation.Winograd4 = true;
+            }
+            Prepare();
+        }
+    }
 
     /// <summary>
     /// Retained input descriptions (with symbolic dimension names) for

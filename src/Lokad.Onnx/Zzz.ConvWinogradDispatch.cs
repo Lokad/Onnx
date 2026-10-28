@@ -7,9 +7,9 @@ internal static class ConvWinogradDispatch
 {
     internal static bool Execute(DenseTensor<float> input, float[] prepared,
         DenseTensor<float>? bias, DenseTensor<float> output, int c, int m, int h, int w,
-        int lanes, TensorExecutionOptions options)
+        int lanes, TensorExecutionOptions options, int tileSize = 2)
     {
-        if (!ConvBlockedSpatial.PlanWinograd(c, m, h, w, out int ni, out int np, out int no)) return false;
+        if (!ConvBlockedSpatial.PlanWinograd(c, m, h, w, out int ni, out int np, out int no, tileSize)) return false;
         float[]? transformed = null, products = null, blocked = null;
         try
         {
@@ -21,7 +21,7 @@ internal static class ConvWinogradDispatch
             options.ScratchReporter?.AddScratchBytes((long)no * sizeof(float));
             return ConvBlockedSpatial.ExecuteWinograd(input.Buffer.Span, prepared,
                 bias is null ? default : bias.Buffer.Span, default, output.Buffer.Span,
-                transformed, products, blocked, c, m, h, w, lanes, false);
+                transformed, products, blocked, c, m, h, w, lanes, false, tileSize);
         }
         finally
         {

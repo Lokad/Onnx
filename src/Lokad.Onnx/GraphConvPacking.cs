@@ -11,6 +11,7 @@ internal sealed record PackedConvWeight(string SourceName, DenseTensor<float> So
     float[] SourceArray, int[] Shape, int Lanes, float[] Values)
 {
     internal float[]? WinogradValues { get; init; }
+    internal int OutputTileSize { get; init; } = 2;
 }
 
 internal static class GraphConvPacking
@@ -42,13 +43,15 @@ internal static class GraphConvPacking
     }
 
     // The optional representation and the direct fallback share the per-weight cap.
-    internal static bool WinogradShape(int c, int m, long directElements, out int elements)
+    internal static bool WinogradShape(int c, int m, long directElements, out int elements, int tileSize = 2)
     {
         elements = 0;
+        if (tileSize is not (2 or 4) || tileSize == 4 && c > 64 && c is not (128 or 256)) return false;
         if (c < 16 || c % 16 != 0 || m < 32 || m % 16 != 0 || directElements < 1) return false;
         long maximum = Math.Min(Array.MaxLength, GraphPacking.MaxPackedBytes / sizeof(float) - directElements);
-        if (maximum < 0 || m > maximum / 16 / c) return false;
-        elements = 16 * c * m;
+        int components = (tileSize + 2) * (tileSize + 2);
+        if (maximum < 0 || m > maximum / components / c) return false;
+        elements = components * c * m;
         return true;
     }
 
@@ -115,7 +118,7 @@ internal static class GraphConvPacking
             {
                 long optionalBytes = record.WinogradValues.LongLength * sizeof(float);
                 if (winograd.Contains(record.SourceName)
-                    && WinogradShape(record.Shape[1], record.Shape[0], source.Elements, out int elements)
+                    && WinogradShape(record.Shape[1], record.Shape[0], source.Elements, out int elements, record.OutputTileSize)
                     && record.WinogradValues.Length == elements
                     && optionalBytes <= graph.MaximumPackedWeightBytes - retained)
                     retained += optionalBytes;
@@ -142,13 +145,17 @@ internal static class GraphConvPacking
         foreach (var pair in graph.PackedConvWeights.ToArray())
         {
             var record = pair.Value;
+            int c = record.Shape[1];
+            int tileSize = graph.Winograd4Enabled && (c <= 64 || record.Lanes == 16 && c is (128 or 256)) ? 4 : 2;
             if (record.WinogradValues is not null || !winograd.Contains(record.SourceName)
-                || !WinogradShape(record.Shape[1], record.Shape[0], record.Values.LongLength, out int elements)) continue;
+                || !WinogradShape(record.Shape[1], record.Shape[0], record.Values.LongLength, out int elements, tileSize)) continue;
             long bytes = (long)elements * sizeof(float);
             if (bytes > graph.MaximumPackedWeightBytes - graph.RetainedPackedWeightBytes) continue;
-            var values = ConvBlockedSpatial.PrepareWinograd(record.Source.Buffer.Span, record.Shape[1], record.Shape[0], record.Lanes);
+            var values = tileSize == 4
+                ? ConvBlockedSpatial.PrepareWinograd4(record.Source.Buffer.Span, record.Shape[1], record.Shape[0], record.Lanes)
+                : ConvBlockedSpatial.PrepareWinograd(record.Source.Buffer.Span, record.Shape[1], record.Shape[0], record.Lanes);
             if (values is null) continue;
-            graph.PackedConvWeights[pair.Key] = record with { WinogradValues = values };
+            graph.PackedConvWeights[pair.Key] = record with { WinogradValues = values, OutputTileSize = tileSize };
             graph.RetainedPackedWeightBytes += bytes;
         }
     }
@@ -164,7 +171,7 @@ internal static class GraphConvPacking
             || !ReferenceEquals(record.SourceArray, array) || record.Lanes != lanes
             || !record.Shape.AsSpan().SequenceEqual(dense.Dimensions) || record.Values.LongLength != elements) return null;
         if (record.WinogradValues is not null
-            && (!WinogradShape(record.Shape[1], record.Shape[0], elements, out int count)
+            && (!WinogradShape(record.Shape[1], record.Shape[0], elements, out int count, record.OutputTileSize)
                 || record.WinogradValues.Length != count)) return null;
         return record;
     }

@@ -863,11 +863,21 @@ where T : unmanaged
         fixed (float* s = xs, d = ys)
         {
             int i = 0;
+            if (useSimd && Vector512.IsHardwareAccelerated)
+            {
+                var wideZero = Vector512<float>.Zero;
+                for (; i <= n - Vector512<float>.Count; i += Vector512<float>.Count)
+                {
+                    var value = *(Vector512<float>*)(s + i);
+                    var negative = Vector512.LessThan(value, wideZero);
+                    *(Vector512<float>*)(d + i) = Vector512.ConditionalSelect(negative, wideZero, value);
+                }
+            }
             for (; i <= (useSimd ? n - w : -1); i += w)
             {
                 var v = *(Vector256<float>*)(s + i);
-                var keep = Vector256.GreaterThan(v, zero) | Vector256.Equals(v, zero) | ~Vector256.Equals(v, v);
-                *(Vector256<float>*)(d + i) = Vector256.ConditionalSelect(keep, v, zero);
+                var negative = Vector256.LessThan(v, zero);
+                *(Vector256<float>*)(d + i) = Vector256.ConditionalSelect(negative, zero, v);
             }
             for (; i < n; i++) d[i] = s[i] <= 0.0f ? (s[i] == 0.0f ? s[i] : 0.0f) : s[i];
         }
@@ -903,8 +913,8 @@ where T : unmanaged
             for (; i <= (useSimd ? n - w : -1); i += w)
             {
                 var v = *(Vector256<double>*)(s + i);
-                var keep = Vector256.GreaterThan(v, zero) | Vector256.Equals(v, zero) | ~Vector256.Equals(v, v);
-                *(Vector256<double>*)(d + i) = Vector256.ConditionalSelect(keep, v, zero);
+                var negative = Vector256.LessThan(v, zero);
+                *(Vector256<double>*)(d + i) = Vector256.ConditionalSelect(negative, zero, v);
             }
             for (; i < n; i++) d[i] = s[i] <= 0.0 ? (s[i] == 0.0 ? s[i] : 0.0) : s[i];
         }

@@ -4,7 +4,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx;
 
-// Bounded F(2,3) convolution used by prepared graph dispatch, with direct fallback.
+// Bounded prepared Winograd convolution, with direct fallback.
 internal static unsafe partial class ConvBlockedSpatial
 {
     internal const int WinogradBatch = 8;
@@ -40,13 +40,15 @@ internal static unsafe partial class ConvBlockedSpatial
         return Finite(result) ? result : null;
     }
 
-    internal static bool PlanWinograd(int c, int m, int h, int w, out int input, out int products, out int output)
+    internal static bool PlanWinograd(int c, int m, int h, int w, out int input, out int products, out int output, int tileSize = 2)
     {
         input = products = output = 0;
-        if (c < 1 || m < 1 || h < 1 || w < 1) return false;
+        if (c < 1 || m < 1 || h < 1 || w < 1 || tileSize is not (2 or 4)
+            || tileSize == 4 && c > 64 && c is not (128 or 256)) return false;
         try
         {
-            long a = checked(16L * c * WinogradBatch), b = checked(16L * m * WinogradBatch);
+            int components = (tileSize + 2) * (tileSize + 2);
+            long a = checked((long)components * c * WinogradBatch), b = checked((long)components * m * WinogradBatch);
             long d = checked((long)m * h * w);
             if (checked(a + b + d) > 64L * 1024 * 1024 / sizeof(float)) return false;
             input = (int)a; products = (int)b; output = (int)d;
@@ -58,11 +60,13 @@ internal static unsafe partial class ConvBlockedSpatial
     internal static bool ExecuteWinograd(ReadOnlySpan<float> input, ReadOnlySpan<float> prepared,
         ReadOnlySpan<float> bias, ReadOnlySpan<float> residual, Span<float> destination,
         Span<float> transformed, Span<float> products, Span<float> blocked,
-        int c, int m, int h, int w, int lanes, bool relu)
+        int c, int m, int h, int w, int lanes, bool relu, int tileSize = 2)
     {
         Geometry(c, m, h, w, 1, lanes);
-        if (!PlanWinograd(c, m, h, w, out int ni, out int np, out int no)) return false;
-        if (input.Length != checked(c * h * w) || prepared.Length != checked(16 * c * m)
+        if (tileSize == 4 && c > 64 && lanes != 16) return false;
+        if (!PlanWinograd(c, m, h, w, out int ni, out int np, out int no, tileSize)) return false;
+        int components = (tileSize + 2) * (tileSize + 2);
+        if (input.Length != checked(c * h * w) || prepared.Length != checked(components * c * m)
             || destination.Length != no || (bias.Length != 0 && bias.Length != m)
             || (residual.Length != 0 && residual.Length != no)
             || transformed.Length < ni || products.Length < np || blocked.Length < no)
@@ -78,18 +82,25 @@ internal static unsafe partial class ConvBlockedSpatial
         if (lanes == 16 && !Avx512F.IsSupported || lanes == 8 && (!Avx2.IsSupported || !Fma.IsSupported))
             throw new PlatformNotSupportedException();
         if (!Finite(input) || !Finite(prepared) || !Finite(bias) || !Finite(residual)) return false;
-        int tileWidth = (w + 1) / 2, tiles = checked(((h + 1) / 2) * tileWidth);
+        int tileWidth = 1 + (w - 1) / tileSize, tiles = checked((1 + (h - 1) / tileSize) * tileWidth);
         for (int first = 0; first < tiles; first += WinogradBatch)
         {
             int count = Math.Min(WinogradBatch, tiles - first);
-            TransformWinogradInput(input, transformed, c, h, w, tileWidth, first, count);
+            if (tileSize == 4) TransformWinograd4Input(input, transformed, c, h, w, tileWidth, first, count);
+            else TransformWinogradInput(input, transformed, c, h, w, tileWidth, first, count);
             if (!Finite(transformed)) return false;
             fixed (float* v = transformed, u = prepared, p = products, dst = blocked)
             {
-                if (lanes == 16) MultiplyWinograd512(v, u, p, c, m);
-                else MultiplyWinograd256(v, u, p, c, m);
+                if (tileSize == 4 && c > 64) MultiplyWinograd4Pairwise512(v, u, p, c, m);
+                else if (lanes == 16) MultiplyWinograd512(v, u, p, c, m, components);
+                else MultiplyWinograd256(v, u, p, c, m, components);
                 if (!Finite(products)) return false;
-                if (lanes == 16) OutputWinograd512(p, dst, m, h, w, tileWidth, first, count);
+                if (tileSize == 4)
+                {
+                    if (lanes == 16) OutputWinograd4_512(p, dst, m, h, w, tileWidth, first, count);
+                    else OutputWinograd4_256(p, dst, m, h, w, tileWidth, first, count);
+                }
+                else if (lanes == 16) OutputWinograd512(p, dst, m, h, w, tileWidth, first, count);
                 else OutputWinograd256(p, dst, m, h, w, tileWidth, first, count);
             }
         }

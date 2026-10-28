@@ -55,6 +55,22 @@ clears them. Model weights, packed weights, caller-held outputs and other live
 allocations are outside this budget. Loading APIs separately accept a
 `maximumPackedWeightBytes` limit for retained packed matrix weights.
 
+Prepared 3×3 convolutions ordinarily use two-output Winograd tiles. Applications
+can opt into four-output tiles before creating execution contexts:
+
+```csharp
+graph.PrepareWinograd4Weights();
+var execution = graph.CreateExecution(ExecutionOptions.Memory);
+```
+
+Call with exclusive access to the graph. Eligible reductions use at most 64 input
+channels, or 128/256 channels on AVX-512 with pairwise channel-group sums. Weight
+transforms are computed once in double precision and stored as floats; execution
+remains FP32. Both transformed and direct weights count against the existing
+packed-weight budget. Unsupported shapes, inadequate budgets and unsafe numerical
+intermediates retain the ordinary fallback. The repository WeSpeaker companion
+selects this mode with a 128 MiB packed-weight budget.
+
 `LastAllocatedBytes`, `LastPool*`, `LastScratchBytes`, `LastCopyBytes` and
 `LastPeakLiveBytes` describe different costs: managed allocations, pool service,
 scratch/copy traffic and live payload per binding. Aliases can count more than

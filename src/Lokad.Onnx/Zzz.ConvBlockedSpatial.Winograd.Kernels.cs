@@ -3,10 +3,10 @@ using System.Runtime.Intrinsics.X86;
 namespace Lokad.Onnx;
 internal static unsafe partial class ConvBlockedSpatial
 {
-    static void MultiplyWinograd256(float* v, float* u, float* p, int c, int m)
+    static void MultiplyWinograd256(float* v, float* u, float* p, int c, int m, int components)
     {
         const int lanes = 8;
-        for (int k = 0; k < 16; k++)
+        for (int k = 0; k < components; k++)
         for (int oc = 0; oc < m; oc += lanes)
         {
             var a0 = Vector256<float>.Zero;
@@ -75,33 +75,51 @@ internal static unsafe partial class ConvBlockedSpatial
             }
         }
     }
-    static void MultiplyWinograd512(float* v, float* u, float* p, int c, int m)
+    static void MultiplyWinograd512(float* v, float* u, float* p, int c, int m, int components)
     {
         const int lanes = 16;
-        for (int k = 0; k < 16; k++)
-        for (int oc = 0; oc < m; oc += lanes)
+        for (int k = 0; k < components; k++)
+        for (int oc = 0; oc < m; oc += 2 * lanes)
         {
-            var a0 = Vector512<float>.Zero;
-            var a1 = Vector512<float>.Zero;
-            var a2 = Vector512<float>.Zero;
-            var a3 = Vector512<float>.Zero;
-            var a4 = Vector512<float>.Zero;
-            var a5 = Vector512<float>.Zero;
-            var a6 = Vector512<float>.Zero;
-            var a7 = Vector512<float>.Zero;
+            bool second = oc + lanes < m;
+            var a0 = Vector512<float>.Zero; var b0 = a0;
+            var a1 = Vector512<float>.Zero; var b1 = a1;
+            var a2 = Vector512<float>.Zero; var b2 = a2;
+            var a3 = Vector512<float>.Zero; var b3 = a3;
+            var a4 = Vector512<float>.Zero; var b4 = a4;
+            var a5 = Vector512<float>.Zero; var b5 = a5;
+            var a6 = Vector512<float>.Zero; var b6 = a6;
+            var a7 = Vector512<float>.Zero; var b7 = a7;
             float* weights = u + k * c * m + oc;
             float* inputs = v + k * c * WinogradBatch;
             for (int ic = 0; ic < c; ic++)
             {
-                var weight = *(Vector512<float>*)weights;
-                a0 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[0]), weight, a0);
-                a1 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[1]), weight, a1);
-                a2 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[2]), weight, a2);
-                a3 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[3]), weight, a3);
-                a4 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[4]), weight, a4);
-                a5 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[5]), weight, a5);
-                a6 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[6]), weight, a6);
-                a7 = Avx512F.FusedMultiplyAdd(Vector512.Create(inputs[7]), weight, a7);
+                var w0 = *(Vector512<float>*)weights;
+                var w1 = second ? *(Vector512<float>*)(weights + lanes) : Vector512<float>.Zero;
+                var x0 = Vector512.Create(inputs[0]);
+                a0 = Avx512F.FusedMultiplyAdd(x0, w0, a0);
+                b0 = Avx512F.FusedMultiplyAdd(x0, w1, b0);
+                var x1 = Vector512.Create(inputs[1]);
+                a1 = Avx512F.FusedMultiplyAdd(x1, w0, a1);
+                b1 = Avx512F.FusedMultiplyAdd(x1, w1, b1);
+                var x2 = Vector512.Create(inputs[2]);
+                a2 = Avx512F.FusedMultiplyAdd(x2, w0, a2);
+                b2 = Avx512F.FusedMultiplyAdd(x2, w1, b2);
+                var x3 = Vector512.Create(inputs[3]);
+                a3 = Avx512F.FusedMultiplyAdd(x3, w0, a3);
+                b3 = Avx512F.FusedMultiplyAdd(x3, w1, b3);
+                var x4 = Vector512.Create(inputs[4]);
+                a4 = Avx512F.FusedMultiplyAdd(x4, w0, a4);
+                b4 = Avx512F.FusedMultiplyAdd(x4, w1, b4);
+                var x5 = Vector512.Create(inputs[5]);
+                a5 = Avx512F.FusedMultiplyAdd(x5, w0, a5);
+                b5 = Avx512F.FusedMultiplyAdd(x5, w1, b5);
+                var x6 = Vector512.Create(inputs[6]);
+                a6 = Avx512F.FusedMultiplyAdd(x6, w0, a6);
+                b6 = Avx512F.FusedMultiplyAdd(x6, w1, b6);
+                var x7 = Vector512.Create(inputs[7]);
+                a7 = Avx512F.FusedMultiplyAdd(x7, w0, a7);
+                b7 = Avx512F.FusedMultiplyAdd(x7, w1, b7);
                 weights += m; inputs += WinogradBatch;
             }
             float* output = p + (k * m + oc) * WinogradBatch;
@@ -113,6 +131,18 @@ internal static unsafe partial class ConvBlockedSpatial
             *(Vector512<float>*)(output + 5 * lanes) = a5;
             *(Vector512<float>*)(output + 6 * lanes) = a6;
             *(Vector512<float>*)(output + 7 * lanes) = a7;
+            if (second)
+            {
+                output += lanes * WinogradBatch;
+                *(Vector512<float>*)(output + 0 * lanes) = b0;
+                *(Vector512<float>*)(output + 1 * lanes) = b1;
+                *(Vector512<float>*)(output + 2 * lanes) = b2;
+                *(Vector512<float>*)(output + 3 * lanes) = b3;
+                *(Vector512<float>*)(output + 4 * lanes) = b4;
+                *(Vector512<float>*)(output + 5 * lanes) = b5;
+                *(Vector512<float>*)(output + 6 * lanes) = b6;
+                *(Vector512<float>*)(output + 7 * lanes) = b7;
+            }
         }
     }
     static void OutputWinograd512(float* p, float* output, int m, int h, int w, int tileWidth, int first, int count)

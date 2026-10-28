@@ -28,7 +28,8 @@ public sealed class WeSpeakerEmbedder
     {
         ArgumentException.ThrowIfNullOrEmpty(encoderPath);
         ArgumentException.ThrowIfNullOrEmpty(projectionPath);
-        encoder = Load(encoderPath, 64L * 1024 * 1024);
+        encoder = Load(encoderPath, 128L * 1024 * 1024);
+        encoder.PrepareWinograd4Weights();
         projection = Load(projectionPath, 8L * 1024 * 1024);
         RequireNames(encoder, "fbank_features", EncodedName);
         RequireNames(projection, "pooled", "embedding");

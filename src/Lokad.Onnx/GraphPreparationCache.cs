@@ -13,4 +13,5 @@ internal sealed class GraphPreparationCache
     internal readonly Dictionary<float[], PackedLstmWeight> PackedLstmWeights = new();
     internal readonly object FoldLock = new();
     internal readonly object PrepareLock = new();
+    internal bool Winograd4;
 }

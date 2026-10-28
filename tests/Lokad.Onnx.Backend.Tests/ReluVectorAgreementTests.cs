@@ -70,6 +70,35 @@ public class ReluVectorAgreementTests
     }
 
     [Fact]
+    public void FloatSpanTailsOffsetsAndInPlaceKeepExactBits()
+    {
+        float[] edges = EdgesF.Concat(new[]
+        {
+            System.BitConverter.Int32BitsToSingle(0x7f800001),
+            System.BitConverter.Int32BitsToSingle(unchecked((int)0xffc12345))
+        }).ToArray();
+        foreach (int length in Enumerable.Range(0, 34).Append(129))
+        foreach (bool simd in new[] { false, true })
+        {
+            const float guard = 9876543f;
+            var source = Enumerable.Repeat(guard, length + 2).ToArray();
+            for (int i = 0; i < length; i++) source[i + 1] = edges[i % edges.Length];
+            var expected = Tensor<float>.Relu(DenseTensor<float>.OfValues((System.ReadOnlySpan<float>)source.AsSpan(1, length), new[] { length })).ToArray();
+            var saved = source.Select(System.BitConverter.SingleToInt32Bits).ToArray();
+            var output = Enumerable.Repeat(guard, length + 2).ToArray();
+            Tensor<float>.ReluSpanFloat(source.AsSpan(1, length), output.AsSpan(1, length), simd);
+            Assert.Equal(expected.Select(System.BitConverter.SingleToInt32Bits),
+                output.AsSpan(1, length).ToArray().Select(System.BitConverter.SingleToInt32Bits));
+            Assert.Equal(guard, output[0]); Assert.Equal(guard, output[^1]);
+            Assert.Equal(saved, source.Select(System.BitConverter.SingleToInt32Bits));
+            Tensor<float>.ReluSpanFloat(source.AsSpan(1, length), source.AsSpan(1, length), simd);
+            Assert.Equal(expected.Select(System.BitConverter.SingleToInt32Bits),
+                source.AsSpan(1, length).ToArray().Select(System.BitConverter.SingleToInt32Bits));
+            Assert.Equal(guard, source[0]); Assert.Equal(guard, source[^1]);
+        }
+    }
+
+    [Fact]
     public void ProviderRelu_UsesVectorPathWithSameValues()
     {
         var r = CPUExecutionProvider.Relu(DenseTensor<float>.OfValues(new float[] { -2f, -0f, 0f, 3f, float.NaN }), null);
