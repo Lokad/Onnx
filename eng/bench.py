@@ -33,6 +33,9 @@ def summarize(workers):
         groups[key] = statistics.mean(samples) if aggregation == 'mean' else statistics.median(samples)
     result = {}
     for name in sorted({key[0] for key in groups}):
+        aggregations = {w.get('aggregation', 'median') for w in workers if w['case'] == name}
+        evidence.require(len(aggregations) == 1, 'worker aggregation changed within a case')
+        aggregation = next(iter(aggregations))
         pairs = sorted({key[1] for key in groups if key[0] == name})
         arms = {}
         for role in ('L0', 'L1'):
@@ -40,11 +43,12 @@ def summarize(workers):
             ort = [groups[name, pair, role, 'ort'] for pair in pairs]
             arms[role] = dict(lok_ms=statistics.median(lok), ort_ms=statistics.median(ort),
                 lok_ort=statistics.median(a / b for a, b in zip(lok, ort)),
-                lok_process_medians_ms=lok, ort_process_medians_ms=ort,
                 lok_spread=(max(lok) - min(lok)) / statistics.median(lok),
                 ort_spread=(max(ort) - min(ort)) / statistics.median(ort))
+            arms[role][f'lok_process_{aggregation}s_ms'] = lok
+            arms[role][f'ort_process_{aggregation}s_ms'] = ort
         ratios = [groups[name, pair, 'L1', 'lok'] / groups[name, pair, 'L0', 'lok'] for pair in pairs]
-        result[name] = dict(arms=arms, paired_candidate_control=ratios,
+        result[name] = dict(arms=arms, process_aggregation=aggregation, paired_candidate_control=ratios,
             candidate_control=statistics.median(ratios))
     return result
 

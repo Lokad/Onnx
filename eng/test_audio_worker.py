@@ -40,6 +40,8 @@ class AudioWorkerTests(unittest.TestCase):
                    for pair in (1, 2) for role in ('L0', 'L1') for engine in ('lok', 'ort')]
         summary = bench.summarize(workers)['parakeet']
         self.assertEqual(34., summary['arms']['L1']['lok_ms'])
+        self.assertEqual([34., 34.], summary['arms']['L1']['lok_process_means_ms'])
+        self.assertNotIn('lok_process_medians_ms', summary['arms']['L1'])
         self.assertEqual(1., summary['candidate_control'])
 
     def test_missing_duplicate_or_reordered_calls_fail(self):
