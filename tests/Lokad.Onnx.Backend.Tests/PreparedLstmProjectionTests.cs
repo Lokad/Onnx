@@ -44,6 +44,9 @@ public class PreparedLstmProjectionTests
         CPUExecutionProvider.LstmProjectOrdered(input, flat, expected.AsSpan(1, columns));
         PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
         Equal(expected, actual);
+        // Check steady-state allocations after first-use and tiering work.
+        for (int i = 0; i < 64; i++) PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
+        Equal(expected, actual);
         long start = GC.GetAllocatedBytesForCurrentThread();
         for (int i = 0; i < 8; i++) PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
         Assert.Equal(0, GC.GetAllocatedBytesForCurrentThread() - start);
