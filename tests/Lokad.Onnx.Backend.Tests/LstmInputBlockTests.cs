@@ -17,6 +17,7 @@ public class LstmInputBlockTests
     [InlineData(60, 511)] [InlineData(128, 512)] [InlineData(256, 513)]
     public void StridedRowsTailsSentinelsAndDoubleReference(int reduction, int outputs)
     {
+        foreach (bool allowWide in new[] { false, true })
         foreach (int rows in new[] { 1, 2, 3, 4 })
         foreach (int gap in new[] { 0, 3 })
         foreach (bool reverse in new[] { false, true })
@@ -25,7 +26,7 @@ public class LstmInputBlockTests
             var input = Values(4 + rows * stride, 3); var panel = Values(reduction * outputs, 7);
             int[] beforeInput = Bits(input), beforePanel = Bits(panel);
             var result = Enumerable.Repeat(BitConverter.Int32BitsToSingle(unchecked((int)0x7fc02345)), rows * outputs + 4).ToArray();
-            CPUExecutionProvider.LstmProjectOrderedRows(input, start, reverse ? -stride : stride, reduction, panel, result.AsSpan(2, rows * outputs), rows);
+            CPUExecutionProvider.LstmProjectOrderedRows(input, start, reverse ? -stride : stride, reduction, panel, result.AsSpan(2, rows * outputs), rows, allowWide);
             var expected = new float[outputs];
             for (int r = 0; r < rows; r++)
             {
@@ -50,6 +51,7 @@ public class LstmInputBlockTests
     public void NonfiniteAndSignedZeroKeepSelectedProjectionBits(int outputs)
     {
         const int reduction = 13, stride = 17;
+        foreach (bool allowWide in new[] { false, true })
         foreach (int rows in new[] { 1, 2, 3, 4 })
         foreach (bool reverse in new[] { false, true })
         foreach (float special in new[] { 0f, -0f, float.PositiveInfinity, float.NegativeInfinity, float.MaxValue,
@@ -60,7 +62,7 @@ public class LstmInputBlockTests
             for (int o = 0; o < outputs; o += 3) panel[7 * outputs + o] = special;
             var beforeInput = Bits(input); var beforePanel = Bits(panel); var actual = new float[rows * outputs];
             int start = reverse ? (rows - 1) * stride : 0, step = reverse ? -stride : stride;
-            CPUExecutionProvider.LstmProjectOrderedRows(input, start, step, reduction, panel, actual, rows);
+            CPUExecutionProvider.LstmProjectOrderedRows(input, start, step, reduction, panel, actual, rows, allowWide);
             for (int r = 0; r < rows; r++)
             {
                 var expected = new float[outputs]; CPUExecutionProvider.LstmProjectOrdered(input.AsSpan(start + r * step, reduction), panel, expected);

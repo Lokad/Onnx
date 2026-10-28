@@ -11,13 +11,15 @@ public class LstmOutputLaneTests
     static int[] Bits(float[] values) => values.Select(BitConverter.SingleToInt32Bits).ToArray();
 
     [Theory]
-    [InlineData(0, 0)] [InlineData(0, 35)] [InlineData(1, 33)]
-    [InlineData(13, 68)] [InlineData(60, 512)] [InlineData(128, 512)] [InlineData(256, 512)]
-    public void PanelHasScalarReductionOrderAndIndependentDoubleAgreement(int reduction, int outputs)
+    [InlineData(0, 0, false)] [InlineData(0, 35, false)] [InlineData(1, 33, false)]
+    [InlineData(13, 68, false)] [InlineData(60, 512, false)] [InlineData(128, 512, false)] [InlineData(256, 512, false)]
+    [InlineData(0, 64, true)] [InlineData(7, 63, true)] [InlineData(7, 64, true)] [InlineData(7, 65, true)]
+    [InlineData(13, 68, true)] [InlineData(60, 512, true)] [InlineData(128, 512, true)] [InlineData(256, 512, true)]
+    public void PanelHasScalarReductionOrderAndIndependentDoubleAgreement(int reduction, int outputs, bool allowWide)
     {
         var x = Values(reduction, 3); var w = Values(reduction * outputs, 7);
         var y = Enumerable.Repeat(float.NaN, outputs + 4).ToArray();
-        CPUExecutionProvider.LstmProjectOrdered(x, w, y.AsSpan(2, outputs));
+        CPUExecutionProvider.LstmProjectOrdered(x, w, y.AsSpan(2, outputs), allowWide);
         for (int o = 0; o < outputs; o++)
         {
             float scalar = 0; double reference = 0;

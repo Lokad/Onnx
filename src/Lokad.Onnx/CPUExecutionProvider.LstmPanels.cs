@@ -14,12 +14,14 @@ public partial class CPUExecutionProvider
     {
         readonly float[] storage;
         readonly int inputSize, hiddenSize, outputs, inputElements;
+        readonly bool allowWide;
 
-        LstmProjectionPanels(float[] storage, int inputSize, int hiddenSize, int directions)
+        LstmProjectionPanels(float[] storage, int inputSize, int hiddenSize, int directions, bool allowWide)
         {
             this.storage = storage;
             this.inputSize = inputSize;
             this.hiddenSize = hiddenSize;
+            this.allowWide = allowWide;
             outputs = checked(4 * hiddenSize);
             inputElements = checked(directions * outputs * inputSize);
         }
@@ -38,7 +40,7 @@ public partial class CPUExecutionProvider
                 int outputs = checked(4 * hiddenSize);
                 Transpose(w, storage.AsSpan(0, w.Length), inputSize, outputs, directions);
                 Transpose(r, storage.AsSpan(w.Length, r.Length), hiddenSize, outputs, directions);
-                return new LstmProjectionPanels(storage, inputSize, hiddenSize, directions);
+                return new LstmProjectionPanels(storage, inputSize, hiddenSize, directions, options.UseIntrinsics);
             }
             catch
             {
@@ -58,10 +60,10 @@ public partial class CPUExecutionProvider
 
         internal void InputBlock(int direction, ReadOnlySpan<float> input, int start, int stride, int rows, Span<float> output) =>
             LstmProjectOrderedRows(input, start, stride, inputSize,
-                storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), output, rows);
+                storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), output, rows, allowWide);
 
         internal void Recurrent(int direction, ReadOnlySpan<float> x, Span<float> y) =>
-            LstmProjectOrdered(x, storage.AsSpan(inputElements + direction * hiddenSize * outputs, hiddenSize * outputs), y);
+            LstmProjectOrdered(x, storage.AsSpan(inputElements + direction * hiddenSize * outputs, hiddenSize * outputs), y, allowWide);
 
         public void Dispose() => ArrayPool<float>.Shared.Return(storage);
 
@@ -73,13 +75,14 @@ public partial class CPUExecutionProvider
         }
     }
 
-    internal static void LstmProjectOrdered(ReadOnlySpan<float> input, ReadOnlySpan<float> panel, Span<float> output)
+    internal static void LstmProjectOrdered(ReadOnlySpan<float> input, ReadOnlySpan<float> panel, Span<float> output, bool allowWide = false)
     {
         if (panel.Length != checked(input.Length * output.Length))
             throw new ArgumentException("The projection panel does not match its input and output dimensions.");
         int width = Vector<float>.Count, block = 4 * width, o = 0;
         ref float weights = ref MemoryMarshal.GetReference(panel);
         ref float destination = ref MemoryMarshal.GetReference(output);
+        if (allowWide) o = LstmProjectOrderedWide(input, panel, output);
         if (Vector.IsHardwareAccelerated)
         {
             for (; o <= output.Length - block; o += block)

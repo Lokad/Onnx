@@ -76,11 +76,17 @@ internal static unsafe partial class ConvBlockedSpatial
 
     static bool Finite(ReadOnlySpan<float> values)
     {
-        var exponent = Vector256.Create(0x7f800000);
         fixed (float* p = values)
         {
             int i = 0;
-            for (; i + 8 <= values.Length; i += 8)
+            if (Avx512F.IsSupported)
+            {
+                var wideExponent = Vector512.Create(0x7f800000);
+                for (; i <= values.Length - 16; i += 16)
+                    if (Vector512.EqualsAny(Avx512F.LoadVector512(p + i).AsInt32() & wideExponent, wideExponent)) return false;
+            }
+            var exponent = Vector256.Create(0x7f800000);
+            for (; i <= values.Length - 8; i += 8)
                 if (Vector256.EqualsAny(((Vector256<float>*)p)[i / 8].AsInt32() & exponent, exponent)) return false;
             for (; i < values.Length; i++) if (!float.IsFinite(p[i])) return false;
         }

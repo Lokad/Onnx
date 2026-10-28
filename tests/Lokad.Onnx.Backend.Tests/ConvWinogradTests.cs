@@ -147,6 +147,28 @@ public partial class ConvBlockedSpatialTests
         Equal(snapshot, Run(graph).ToArray()); Equal(snapshot, held.ToArray());
     }
 
+    [Theory]
+    [InlineData(15)]
+    [InlineData(16)]
+    [InlineData(31)]
+    [InlineData(32)]
+    [InlineData(63)]
+    public void NonfiniteInputAcrossVectorBoundariesFallsBackAndRecovers(int index)
+    {
+        var graph = Graph();
+        var input = Operand(graph, "x");
+        var original = input.ToArray();
+        var held = Run(graph); var snapshot = held.ToArray();
+        foreach (float value in new[] { float.PositiveInfinity, BitConverter.Int32BitsToSingle(unchecked((int)0x7fc01234)) })
+        {
+            input.Buffer.Span[index] = value;
+            Equal(Reference(graph), Run(graph).ToArray());
+            Equal(snapshot, held.ToArray());
+            original.AsSpan().CopyTo(input.Buffer.Span);
+            Equal(snapshot, Run(graph).ToArray());
+        }
+    }
+
     [Fact]
     public void OptionalPreparationAndScratchBoundsRejectOversizeWithoutAllocation()
     {

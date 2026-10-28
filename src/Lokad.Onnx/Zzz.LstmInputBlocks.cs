@@ -8,7 +8,7 @@ public partial class CPUExecutionProvider
 {
     // Four independent time rows share weights; each output retains its original reduction order.
     internal static void LstmProjectOrderedRows(ReadOnlySpan<float> input, int rowStart, int rowStride, int inputSize,
-        ReadOnlySpan<float> panel, Span<float> output, int rows)
+        ReadOnlySpan<float> panel, Span<float> output, int rows, bool allowWide = false)
     {
         if ((uint)(rows - 1) >= 4u || inputSize < 0 || output.Length % rows != 0)
             throw new ArgumentException("Invalid ordered projection row dimensions.");
@@ -23,7 +23,7 @@ public partial class CPUExecutionProvider
         if (rows < 4)
         {
             for (int r = 0; r < rows; r++)
-                LstmProjectOrdered(input.Slice(rowStart + r * rowStride, inputSize), panel, output.Slice(r * outputs, outputs));
+                LstmProjectOrdered(input.Slice(rowStart + r * rowStride, inputSize), panel, output.Slice(r * outputs, outputs), allowWide);
             return;
         }
         int width = Vector<float>.Count, block = 2 * width, o = 0;
@@ -31,6 +31,7 @@ public partial class CPUExecutionProvider
         int s0 = rowStart, s1 = rowStart + rowStride, s2 = rowStart + 2 * rowStride, s3 = rowStart + 3 * rowStride;
         ref float weights = ref MemoryMarshal.GetReference(panel);
         ref float destination = ref MemoryMarshal.GetReference(output);
+        if (allowWide) o = LstmProjectOrderedRowsWide(input, s0, s1, s2, s3, inputSize, panel, output, outputs);
         if (Vector.IsHardwareAccelerated)
         {
             for (; o <= vectorEnd - block; o += block)

@@ -4,7 +4,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx;
 
-// Isolated numerical prototype. No graph or product dispatch references this file.
+// Bounded F(2,3) convolution used by prepared graph dispatch, with direct fallback.
 internal static unsafe partial class ConvBlockedSpatial
 {
     internal const int WinogradBatch = 8;

@@ -7,6 +7,8 @@
   See the [comparison commands](eng/bench.md).
 - Owned packed projections reuse the AVX-512 row-sharing kernels, preserving
   the existing packed layout and per-element FMA order.
+- Small LSTM projections and convolution finite checks use AVX-512 when available;
+  LSTM reductions retain their separate multiply/add order.
 
 ## 0.4.0 — 2026-10-28
 
