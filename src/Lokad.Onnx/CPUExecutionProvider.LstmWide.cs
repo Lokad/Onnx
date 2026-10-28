@@ -40,7 +40,7 @@ public partial class CPUExecutionProvider
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static int LstmProjectOrderedRowsWide(ReadOnlySpan<float> input, int s0, int s1, int s2, int s3, int inputSize,
-        ReadOnlySpan<float> panel, Span<float> output, int outputs)
+        ReadOnlySpan<float> panel, Span<float> output, int outputs, bool preparedPanels = false)
     {
         if (!Avx512F.IsSupported) return 0;
         ref float weights = ref MemoryMarshal.GetReference(panel);
@@ -50,9 +50,11 @@ public partial class CPUExecutionProvider
         {
             var a0 = Vector512<float>.Zero; var b0 = a0;
             var a1 = a0; var b1 = a0; var a2 = a0; var b2 = a0; var a3 = a0; var b3 = a0;
+            int stride = preparedPanels ? 32 : outputs;
+            int start = preparedPanels ? o * inputSize : o;
             for (int k = 0; k < inputSize; k++)
             {
-                nuint row = (nuint)(k * outputs + o);
+                nuint row = (nuint)(start + k * stride);
                 var w0 = Vector512.LoadUnsafe(ref weights, row);
                 var w1 = Vector512.LoadUnsafe(ref weights, row + 16);
                 var x0 = Vector512.Create(input[s0 + k]);

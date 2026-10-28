@@ -99,14 +99,7 @@ internal static class GraphLstmPacking
     static PackedLstmWeight Prepare(Source source)
     {
         var values = new float[Elements]; var input = source.Tensor.Buffer.Span;
-        int block = PreparedLstmProjection.ColumnsPerBlock;
-        for (int o = 0; o < 4 * HiddenSize; o += block)
-        {
-            int columns = Math.Min(block, 4 * HiddenSize - o);
-            for (int k = 0; k < HiddenSize; k++)
-            for (int lane = 0; lane < columns; lane++)
-                values[o * HiddenSize + k * columns + lane] = input[(o + lane) * HiddenSize + k];
-        }
+        PreparedLstmProjection.Pack(input, values, HiddenSize, 4 * HiddenSize, 1);
         return new PackedLstmWeight(source.Name, source.Tensor, source.Array, source.Tensor.Dimensions.ToArray(), values);
     }
 

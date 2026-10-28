@@ -14,14 +14,15 @@ public partial class CPUExecutionProvider
     {
         readonly float[] storage;
         readonly int inputSize, hiddenSize, outputs, inputElements;
-        readonly bool allowWide;
+        readonly bool allowWide, preparedPanels;
 
-        LstmProjectionPanels(float[] storage, int inputSize, int hiddenSize, int directions, bool allowWide)
+        LstmProjectionPanels(float[] storage, int inputSize, int hiddenSize, int directions, bool allowWide, bool preparedPanels)
         {
             this.storage = storage;
             this.inputSize = inputSize;
             this.hiddenSize = hiddenSize;
             this.allowWide = allowWide;
+            this.preparedPanels = preparedPanels;
             outputs = checked(4 * hiddenSize);
             inputElements = checked(directions * outputs * inputSize);
         }
@@ -38,9 +39,19 @@ public partial class CPUExecutionProvider
             {
                 options.ScratchReporter?.AddScratchBytes((long)count * sizeof(float));
                 int outputs = checked(4 * hiddenSize);
-                Transpose(w, storage.AsSpan(0, w.Length), inputSize, outputs, directions);
-                Transpose(r, storage.AsSpan(w.Length, r.Length), hiddenSize, outputs, directions);
-                return new LstmProjectionPanels(storage, inputSize, hiddenSize, directions, options.UseIntrinsics);
+                bool prepared = options.UseIntrinsics && System.Runtime.Intrinsics.X86.Avx512F.IsSupported
+                    && PreparedLstmProjection.ColumnsPerBlock == 32 && outputs % 32 == 0;
+                if (prepared)
+                {
+                    PreparedLstmProjection.Pack(w, storage.AsSpan(0, w.Length), inputSize, outputs, directions);
+                    PreparedLstmProjection.Pack(r, storage.AsSpan(w.Length, r.Length), hiddenSize, outputs, directions);
+                }
+                else
+                {
+                    Transpose(w, storage.AsSpan(0, w.Length), inputSize, outputs, directions);
+                    Transpose(r, storage.AsSpan(w.Length, r.Length), hiddenSize, outputs, directions);
+                }
+                return new LstmProjectionPanels(storage, inputSize, hiddenSize, directions, options.UseIntrinsics, prepared);
             }
             catch
             {
@@ -58,12 +69,26 @@ public partial class CPUExecutionProvider
                 target[d * length + k * outputs + o] = source[d * length + o * inputs + k];
         }
 
-        internal void InputBlock(int direction, ReadOnlySpan<float> input, int start, int stride, int rows, Span<float> output) =>
-            LstmProjectOrderedRows(input, start, stride, inputSize,
-                storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), output, rows, allowWide);
+        internal void InputBlock(int direction, ReadOnlySpan<float> input, int start, int stride, int rows, Span<float> output)
+        {
+            var panel = storage.AsSpan(direction * inputSize * outputs, inputSize * outputs);
+            if (!preparedPanels)
+                LstmProjectOrderedRows(input, start, stride, inputSize, panel, output, rows, allowWide);
+            else if (rows == 4)
+                LstmProjectOrderedRowsWide(input, start, start + stride, start + 2 * stride, start + 3 * stride,
+                    inputSize, panel, output, outputs, true);
+            else
+                for (int r = 0; r < rows; r++)
+                    PreparedLstmProjection.Multiply(input.Slice(start + r * stride, inputSize), panel,
+                        output.Slice(r * outputs, outputs));
+        }
 
-        internal void Recurrent(int direction, ReadOnlySpan<float> x, Span<float> y) =>
-            LstmProjectOrdered(x, storage.AsSpan(inputElements + direction * hiddenSize * outputs, hiddenSize * outputs), y, allowWide);
+        internal void Recurrent(int direction, ReadOnlySpan<float> x, Span<float> y)
+        {
+            var panel = storage.AsSpan(inputElements + direction * hiddenSize * outputs, hiddenSize * outputs);
+            if (preparedPanels) PreparedLstmProjection.Multiply(x, panel, y);
+            else LstmProjectOrdered(x, panel, y, allowWide);
+        }
 
         public void Dispose() => ArrayPool<float>.Shared.Return(storage);
 

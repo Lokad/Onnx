@@ -37,6 +37,8 @@ public class LstmOutputLaneTests
     [Theory]
     [InlineData("forward", 16, 13, false)]
     [InlineData("reverse", 17, 60, true)]
+    [InlineData("reverse", 24, 60, true)]
+    [InlineData("bidirectional", 16, 13, true)]
     [InlineData("bidirectional", 128, 256, false)]
     public void CompleteTrajectoriesMutableWeightsAndHeldOutputsKeepScalarBits(string direction, int hidden, int inputs, bool coupled)
     {

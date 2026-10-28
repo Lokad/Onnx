@@ -24,6 +24,8 @@
   payloads, signed zero and compact tails.
 - Larger convolution tiles use contiguous prepared output panels and bounded
   contiguous input loads at padded borders, preserving the same reductions.
+- Small AVX-512 LSTMs reuse the decoder's packed projection format. Paired
+  decoder panels share input loads, retaining separate multiply/add order.
 
 ## 0.4.0 — 2026-10-28
 
