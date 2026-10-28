@@ -10,6 +10,20 @@ import isolated_evidence as isolated
 
 
 class BenchTests(unittest.TestCase):
+    def test_runtime_identity_accepts_release_and_complete_preview_versions(self):
+        env = dict(host='host', cpu='AMD', os='Linux', architecture='x64', sdk='11.0.100-rc.3.26522.148',
+                   runtime='', isa='AVX2,FMA', affinity='0x4',
+                   settings=dict(jit='default-tiered', gc='workstation', variables={'DOTNET_TieredCompilation': '1'}))
+        for runtime in ('.NET 10.0.8', '.NET 11.0.0', '.NET 11.0.0-rc.3.26522.148', '.NET 11.0.0-preview.7.26351.2'):
+            with self.subTest(runtime=runtime):
+                env['runtime'] = runtime
+                self.assertEqual(runtime, isolated.environment(dict(environment=env))['runtime'])
+        for runtime in ('.NET 11', '.NET 11.0', '.NET 11.0.0-rc.', '.NET 11.0.0-rc.3 extra', '.NET 11.0.0-unknown'):
+            with self.subTest(runtime=runtime):
+                env['runtime'] = runtime
+                with self.assertRaisesRegex(evidence.EvidenceError, 'runtime version'):
+                    isolated.environment(dict(environment=env))
+
     def test_routine_import_does_not_load_campaign_frontends_or_scorer(self):
         code = "import sys; import bench; assert not {'run_common_campaign', 'run_isolated_e5', 'run_embeddinggemma2', 'score_campaign'}.intersection(sys.modules)"
         subprocess.run([sys.executable, '-c', code], cwd=Path(__file__).parent, check=True)

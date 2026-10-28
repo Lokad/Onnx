@@ -83,7 +83,8 @@ def environment(record):
     require(set(env) == {"host", "cpu", "os", "architecture", "sdk", "runtime", "isa", "affinity", "settings"}, "environment fields differ")
     for key in set(env) - {"settings"}:
         require(isinstance(env[key], str) and env[key].strip(), "empty environment field: " + key)
-    require(re.fullmatch(r"\.NET \d+\.\d+\.\d+", env["runtime"]), "runtime patch missing")
+    require(re.fullmatch(r"\.NET \d+\.\d+\.\d+(?:-(?:preview|rc)\.\d+(?:\.\d+)*)?", env["runtime"]),
+            "runtime version missing patch or valid prerelease")
     require(env["architecture"] in ("x64", "arm64"), "unsupported process architecture")
     mask = int(env["affinity"], 16)
     require(mask > 0 and mask & (mask - 1) == 0, "affinity is not one CPU")
