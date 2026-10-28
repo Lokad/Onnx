@@ -12,25 +12,28 @@ public partial class MathOps
 {
     internal static unsafe bool TryPackedAvx512Rows(int m, int n, int k, float* x, float* packed, float* dest)
     {
-        if (!Avx512F.IsSupported || !Fma.IsSupported || m < 8 || n <= 0 || k <= 0 || k % 32 != 0)
+        if (!Avx512F.IsSupported || !Fma.IsSupported || m < 8 || n <= 0 || k < 32)
             return false;
+        int fullColumns = k / 32 * 32;
+        float* allX = x; float* allDest = dest;
         int main = m / 12 * 12;
         int rest = m - main;
         if (rest == 1) { main -= 12; rest = 13; }
         if (rest == 4 && main >= 12) { main -= 12; rest = 16; }
         else if (rest == 2 && main >= 12) { main -= 12; rest = 14; }
         if (main > 0)
-            for (int column = 0; column < k; column += 32)
+            for (int column = 0; column < fullColumns; column += 32)
                 PackedTile12(main, n, x, packed + column * n, dest, k, column);
         x += main * n;
         dest += main * k;
         int eights = 0;
         while (rest >= 8 && rest != 9) { eights += 8; rest -= 8; }
         if (eights > 0)
-            for (int column = 0; column < k; column += 32)
+            for (int column = 0; column < fullColumns; column += 32)
                 PackedTile8(eights, n, x, packed + column * n, dest, k, column);
         x += eights * n;
         dest += eights * k;
+        if (fullColumns != k) PackedColumnTailsEvenRows(main + eights, n, k, allX, packed, allDest);
         if (rest == 0) return true;
         if (rest % 3 == 0)
             mm_unsafe_vectorized_intrinsics_3x4packed(rest, n, k, x, packed, dest);

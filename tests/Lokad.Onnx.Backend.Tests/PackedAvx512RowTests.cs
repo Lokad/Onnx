@@ -14,11 +14,11 @@ public class PackedAvx512RowTests
     }
 
     [Fact]
-    public unsafe void SmallRowsAndColumnTailsStayOnExistingRoutes()
+    public unsafe void SmallRowsAndSubPanelWidthsStayOnExistingRoutes()
     {
         foreach (int m in new[] { 0, 1, 2, 3, 7 })
             Assert.False(MathOps.TryPackedAvx512Rows(m, 384, 384, null, null, null));
-        foreach (int k in new[] { 0, 1, 7, 8, 15, 16, 31, 33, 63, 95 })
+        foreach (int k in new[] { 0, 1, 7, 8, 15, 16, 31 })
             Assert.False(MathOps.TryPackedAvx512Rows(12, 384, k, null, null, null));
         Assert.False(MathOps.TryPackedAvx512Rows(12, 0, 384, null, null, null));
     }
@@ -29,7 +29,7 @@ public class PackedAvx512RowTests
         Skip.If(!Avx512F.IsSupported || !Fma.IsSupported, "AVX-512F and FMA required.");
         var random = new Random(20260918);
         foreach (int m in new[] { 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 64, 128, 512 })
-        foreach (var (n, k) in new[] { (1, 32), (3, 64), (31, 96), (65, 384) })
+        foreach (var (n, k) in new[] { (1, 32), (3, 64), (31, 96), (65, 384), (65, 33), (65, 39), (65, 40), (65, 63), (65, 65), (65, 95), (65, 751) })
         {
             const int offset = 3;
             const float guard = -12345.5f;
@@ -49,7 +49,11 @@ public class PackedAvx512RowTests
             {
                 float acc = expected[offset + row * k + col];
                 for (int reduction = 0; reduction < n; reduction++)
-                    acc = MathF.FusedMultiplyAdd(b[reduction * k + col], a[offset + row * n + reduction], acc);
+                {
+                    float av = a[offset + row * n + reduction], bv = b[reduction * k + col];
+                    int fmaColumns = k / 32 * 32 + k % 32 / 8 * 8;
+                    acc = col < fmaColumns ? MathF.FusedMultiplyAdd(bv, av, acc) : acc + av * bv;
+                }
                 expected[offset + row * k + col] = acc;
             }
             fixed (float* ap = a, bp = b, pp = packed, cp = output)

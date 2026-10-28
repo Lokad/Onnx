@@ -193,11 +193,10 @@ where T : unmanaged
         const long TiledPackMaxSmallElements = 65536;
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
-            // Reuse the existing wide consumer for small dynamic attention
-            // panels. This local choice preserves owned/convolution routing.
-            // Full-panel and hardware
-            // refusal remain in TryPackedAvx512Rows; short reductions stay AVX2.
-            bool wideDynamic = Avx512F.IsSupported && n <= 512 && k <= 512;
+            // Packing and its size limits are unchanged. Wide row sharing now
+            // consumes complete panels even when compact column tails follow;
+            // those tails retain the existing FMA/separate-arithmetic boundary.
+            bool wideDynamic = AblationSwitches.EnablePackedAvx512Rows && Avx512F.IsSupported;
             int blocked = m - (m % 2);
             if ((m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {

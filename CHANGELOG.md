@@ -9,6 +9,8 @@
   the existing packed layout and per-element FMA order.
 - Small LSTM projections and convolution finite checks use AVX-512 when available;
   LSTM reductions retain their separate multiply/add order.
+- Dynamic matrix products use wide packed panels even when compact column tails
+  follow, preserving the existing arithmetic for those final columns.
 
 ## 0.4.0 — 2026-10-28
 
