@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 — Unreleased
+## 0.4.0 — 2026-10-28
 
 ### Added
 
@@ -85,7 +85,7 @@
 - EmbeddingGemma 2 is qualified in FP32 through 512 tokens at all four output
   sizes. Smaller vectors do not reduce transformer computation. The assessed
   8-bit weight-only export requires unimplemented compressed kernels.
-- Refreshed [CPU benchmarks](BENCHMARK.md) for the 0.4.0 candidate on the quiet
+- Refreshed [CPU benchmarks](BENCHMARK.md) for 0.4.0 on the quiet
   EPYC 9V45 VM: seven checked workloads, two fresh processes per engine, all
   samples and process ranges retained. FP32 Gemma at 128 tokens takes
   176.91 ms versus ORT 178.83 ms (ratio 0.989).

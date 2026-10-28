@@ -1,6 +1,6 @@
 # CPU benchmarks for Lokad.Onnx
 
-Measured on **2026-10-27** for the 0.4.0 candidate, source `83f4e1b4`, on the
+Measured on **2026-10-27** for 0.4.0, source `83f4e1b4`, on the
 existing `onnx-bench` Azure Standard_D4as_v7 VM: AMD EPYC 9V45, 4 vCPU / 16 GiB.
 Every worker uses **one logical CPU (CPU 2)**. Managed workers run .NET 10.0.8;
 native inference uses Microsoft ONNX Runtime **1.29.0 CPUExecutionProvider**.
