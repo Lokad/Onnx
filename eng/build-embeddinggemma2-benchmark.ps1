@@ -1,13 +1,14 @@
 param(
     [Parameter(Mandatory)][string]$Output,
     [Parameter(Mandatory)][string]$L0Ref,
-    [string]$L1Ref = 'HEAD'
+    [string]$L1Ref = 'HEAD',
+    [ValidateSet('net10.0', 'net11.0')][string]$Framework = 'net11.0'
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 $destination = [IO.Path]::GetFullPath($Output)
-& ./eng/build-common-campaign.ps1 -Output $destination -L0Ref $L0Ref -L1Ref $L1Ref -CoreOnly
+& ./eng/build-common-campaign.ps1 -Output $destination -L0Ref $L0Ref -L1Ref $L1Ref -CoreOnly -Framework $Framework
 if ($LASTEXITCODE -ne 0) { throw 'Core preparation failed' }
 $baseline = Join-Path $destination 'L0/core/Lokad.Onnx.dll'
 # Compile the shared API consumer against the same revision as the control core.
@@ -22,6 +23,6 @@ $dataSource = Join-Path $sharedSource 'src/Lokad.Onnx.Data'
 $adapter = Join-Path $destination 'L0/core/Lokad.Onnx.Protobuf.dll'
 $adapterArguments = @()
 if (Test-Path -LiteralPath $adapter) { $adapterArguments += "-p:ProtobufAssemblyPath=$adapter" }
-dotnet build tests/Lokad.Onnx.EmbeddingGemma2Bench -c Release --tl:off --nologo -v minimal "-p:CoreAssemblyPath=$baseline" "-p:GemmaDataSourcePath=$dataSource" @adapterArguments -o (Join-Path $destination 'runner') *> (Join-Path $destination 'runner-build.log')
+dotnet build tests/Lokad.Onnx.EmbeddingGemma2Bench -c Release -f $Framework --tl:off --nologo -v minimal "-p:CoreAssemblyPath=$baseline" "-p:GemmaDataSourcePath=$dataSource" @adapterArguments -o (Join-Path $destination 'runner') *> (Join-Path $destination 'runner-build.log')
 if ($LASTEXITCODE -ne 0) { throw "Benchmark build failed: $destination/runner-build.log" }
 Write-Host "PASS one shared EmbeddingGemma 2 runner and pinned cores: $destination"

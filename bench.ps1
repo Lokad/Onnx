@@ -3,7 +3,8 @@ param(
   [int]$MatMulIterations = 5,
   [int]$MatMulWarmups = 2,
   [string]$Model = 'models/multilingual-e5-small/model.onnx',
-  [string]$OutDir = 'artifacts/bench'
+  [string]$OutDir = 'artifacts/bench',
+  [ValidateSet('net10.0', 'net11.0')][string]$Framework = 'net11.0'
 )
 # Methodology (startup-inclusive): every e5 sample below runs in a FRESH CLI
 # process, so per-sample wall time includes process startup, model load, and
@@ -14,11 +15,11 @@ if ($Iters -lt 1) { throw "Iters must be at least 1 (got $Iters); empty runs can
 $root = $PSScriptRoot
 Set-Location $root
 if (-not (Test-Path $Model)) { throw "Model not found: $Model (expected the git-ignored local e5 asset)." }
-$cli = 'src/Lokad.Onnx.CLI/bin/Release/net10.0/Lokad.Onnx.CLI.exe'
-$bench = 'tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll'
-dotnet build src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj -c Release --tl:off --nologo -v minimal -p:NuGetAudit=false | Out-Null
+$cli = "src/Lokad.Onnx.CLI/bin/Release/$Framework/Lokad.Onnx.CLI.exe"
+$bench = "tests/Lokad.Onnx.Bench/bin/Release/$Framework/Lokad.Onnx.Bench.dll"
+dotnet build src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj -c Release -f $Framework --tl:off --nologo -v minimal -p:NuGetAudit=false | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'CLI Release build failed.' }
-dotnet build tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj -c Release --tl:off --nologo -v minimal -p:NuGetAudit=false | Out-Null
+dotnet build tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj -c Release -f $Framework --tl:off --nologo -v minimal -p:NuGetAudit=false | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'Bench Release build failed.' }
 New-Item -ItemType Directory -Force $OutDir | Out-Null
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
@@ -85,6 +86,7 @@ $result = [ordered]@{
   methodology = $methodology
   commit = (git rev-parse --short HEAD)
   sdk = (dotnet --version)
+  targetFramework = $Framework
   cpu = (Get-CimInstance Win32_Processor | Select-Object -First 1 -ExpandProperty Name)
   ramGB = [math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 1)
   config = 'Release'

@@ -7,6 +7,14 @@ accounting. It requires no A/A calibration and adds no cooldown. Each worker
 keeps its existing warmup: 30 seconds of conditioning for e5 and at least
 10 seconds plus 32 calls for Gemma. Engines run in separate processes on one CPU.
 
+Preparation defaults to .NET 11. Pass `-Framework net10.0` to either preparation
+script for a .NET 10 control. Both cores and the shared runner use the selected
+framework; build receipts record it. Both source revisions must declare that
+framework. Use `-Framework net10.0` for older 0.4.0 comparisons and a commit
+with dual-framework support for the .NET 11 baseline. Incompatible revisions
+fail before creating outputs or starting builds. Use the pinned SDK in global.json
+and keep the selected runtime installed on the benchmark host.
+
 Prepare committed cores locally, then run on the machine with the local models:
 
 ```powershell

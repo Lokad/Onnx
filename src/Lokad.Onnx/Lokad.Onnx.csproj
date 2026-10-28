@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -13,13 +13,13 @@
     <Description>100% managed-code ONNX inference for .NET: tensor types and kernels, file-order graph execution over a CPU provider, and transparent buffer pooling.</Description>
     <Company>Lokad</Company>
     <Authors>Lokad</Authors>
-    <AssemblyVersion>0.4.0</AssemblyVersion>
-    <FileVersion>0.4.0</FileVersion>
-    <Version>0.4.0</Version>
+    <AssemblyVersion>0.5.0</AssemblyVersion>
+    <FileVersion>0.5.0</FileVersion>
+    <Version>0.5.0</Version>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>0.4.0 adds prepared FP32 EmbeddingGemma 2 text-graph execution, LessOrEqual and exact RMS normalization fusion, CPU matrix/GELU improvements, and tensor lifetime and correctness fixes. The .NET 10 core has no runtime dependencies: ONNX file loading requires IOnnxModelReader; OnnxImport, ProtoConversions and generated messages moved to the source Protobuf adapter, so existing clients must rebuild with an adapter reference. Data embedding/audio APIs, CLI and the reference adapter remain nonpackable source projects. See CHANGELOG.md for migration and limitations; published benchmarks retain their measured revisions.</PackageReleaseNotes>
+    <PackageReleaseNotes>0.5.0 adds .NET 10 and .NET 11 targets. The core remains dependency-free; Data, CLI and the reference Protobuf adapter remain nonpackable source projects. See CHANGELOG.md for changes and migration notes.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/Lokad/Onnx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Lokad/Onnx.git</RepositoryUrl>

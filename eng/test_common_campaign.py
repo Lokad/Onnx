@@ -151,6 +151,16 @@ class SupervisionTests(unittest.TestCase):
         self.assertEqual(staged["L0"]["core_sha256"], staged["L1"]["core_sha256"])
         self.assertEqual((staged["L1"]["runner"].parent / "Lokad.Onnx.dll").read_bytes(), b"L0")
 
+    def test_mixed_frameworks_are_rejected_before_staging(self):
+        path = self.prepared / "L1/build.json"
+        build = json.loads(path.read_text())
+        build["target_framework"] = "net11.0"
+        path.write_text(json.dumps(build))
+        output = self.root / "run"
+        with self.assertRaisesRegex(evidence.EvidenceError, "target frameworks differ"):
+            lane.stage(self.prepared, output, "comparison")
+        self.assertFalse(output.exists())
+
     def test_existing_or_recursive_output_is_refused(self):
         for output in (self.prepared, self.prepared / "nested"):
             with self.subTest(output=output), self.assertRaises(evidence.EvidenceError):

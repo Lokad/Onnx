@@ -1,7 +1,8 @@
 # Lokad.Onnx.CLI (lonnx)
 
 Build this repository project from source; it is separate from the core NuGet
-package. On Windows, lonnx.cmd invokes the Release build. See the
+package. On Windows, lonnx.cmd invokes the .NET 11 Release build; set
+`LONNX_FRAMEWORK=net10.0` to use the .NET 10 build. See the
 [root setup instructions](../../README.md#build-and-try-the-cli).
 
 ## Commands

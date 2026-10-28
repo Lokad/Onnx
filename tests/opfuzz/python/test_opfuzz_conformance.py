@@ -24,7 +24,7 @@ CORPUS = os.path.normpath(os.path.join(HERE, "..", "corpus"))
 RUNNER = os.environ.get(
     "OPDUMP_DLL",
     os.path.normpath(os.path.join(
-        HERE, "..", "..", "Lokad.Onnx.OpDump", "bin", "Release", "net10.0", "Lokad.Onnx.OpDump.dll")),
+        HERE, "..", "..", "Lokad.Onnx.OpDump", "bin", "Release", "net11.0", "Lokad.Onnx.OpDump.dll")),
 )
 
 DTYPES = {"float32": np.float32, "float64": np.float64, "int64": np.int64, "int32": np.int32, "bool": np.bool_, "uint32": np.uint32, "uint64": np.uint64, "int8": np.int8, "uint8": np.uint8, "int16": np.int16, "uint16": np.uint16}

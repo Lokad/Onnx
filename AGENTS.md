@@ -17,11 +17,11 @@ When writing complex features or significant refactors, use an ExecPlan (as desc
 The ONNX model at `models\multilingual-e5-small\model.onnx` is already downloaded from Hugging Face and is git-ignored. Use it for the `lonnx run` e5 example instead of fetching the URL.
 
 ## Repo map (high-signal)
-- `Lokad.Onnx.slnx`: root solution (XML format); targets net10.0 across projects.
+- `Lokad.Onnx.slnx`: root solution (XML format); targets net10.0 and net11.0 across projects.
 - `src\Lokad.Onnx`: core library and NuGet package (tensors, graph execution, shared infra); unsafe + SIMD options.
 
 - `src\Lokad.Onnx.Data`: nonpackable text/image IO, embedding and audio APIs (tokenizers, ImageSharp).
-- `src\Lokad.Onnx.CLI`: `lonnx` CLI (verbs: `info`, `run`, `embed`, `diarize`, `transcribe`); output in `src\Lokad.Onnx.CLI\bin\Release\net10.0\`.
+- `src\Lokad.Onnx.CLI`: `lonnx` CLI (verbs: `info`, `run`, `embed`, `diarize`, `transcribe`); default wrapper uses `src\Lokad.Onnx.CLI\bin\Release\net11.0\`. Set `LONNX_FRAMEWORK=net10.0` for the .NET 10 build.
 
 - `tests\Lokad.Onnx.Backend.Tests`: xUnit backend tests + MNIST assets.
 - `tests\Lokad.Onnx.Tensors.Tests`: xUnit tensor tests.
@@ -32,7 +32,7 @@ The ONNX model at `models\multilingual-e5-small\model.onnx` is already downloade
 - Build all: `build.cmd` (restore + CLI build). Uses `--tl:off`.
 - Pack NuGet: `pack.cmd` (builds `src\Lokad.Onnx`, the packable core).
 - CLI wrapper: `lonnx.cmd` calls Release `Lokad.Onnx.CLI.exe`.
-- Run ordinary tests: `eng/test.ps1 -Configuration Release` restores, builds and tests `eng/Tests.slnx`. Add `-BuildTools` to also compile all solution tools.
+- Run ordinary tests: `eng/test.ps1 -Configuration Release` restores, builds and tests `eng/Tests.slnx` for both frameworks. Add `-Framework net10.0` or `-Framework net11.0` to select one; `-BuildTools` also compiles all solution tools.
 - Reuse a Release build: `dotnet test eng/Tests.slnx -c Release --tl:off --nologo -v minimal --no-build`. Set `DOTNET_EnableHWIntrinsic=0` for the hardware-disabled gate.
 - Python lanes: `pip install -r tests/e5/python/requirements.txt`, then `eng/test-e5.ps1` or `eng/test-opfuzz.ps1` (run under pwsh 7).
 

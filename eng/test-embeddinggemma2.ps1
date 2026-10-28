@@ -4,7 +4,8 @@ param(
     [string]$Artifacts = 'artifacts/embeddinggemma2',
     [string[]]$Modes = @('scalar', 'simd', 'default'),
     [switch]$SkipBuild,
-    [switch]$FrozenInputsOnly
+    [switch]$FrozenInputsOnly,
+    [ValidateSet('net10.0', 'net11.0')][string]$Framework = 'net11.0'
 )
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path -Parent $PSScriptRoot)
@@ -28,10 +29,10 @@ try {
     Invoke-Checked { & $Python eng/prepare-embeddinggemma2.py --source $ModelDirectory --output $prepared --verify --reference $reference }
     if (!$SkipBuild) {
         Invoke-Checked { & ./eng/restore-tokenizers.ps1 }
-        Invoke-Checked { dotnet build tests/Lokad.Onnx.EmbeddingGemma2Runner -c Release --tl:off --nologo -v minimal }
-        if (!$FrozenInputsOnly) { Invoke-Checked { dotnet build src/Lokad.Onnx.CLI -c Release --tl:off --nologo -v minimal } }
+        Invoke-Checked { dotnet build tests/Lokad.Onnx.EmbeddingGemma2Runner -c Release -f $Framework --tl:off --nologo -v minimal }
+        if (!$FrozenInputsOnly) { Invoke-Checked { dotnet build src/Lokad.Onnx.CLI -c Release -f $Framework --tl:off --nologo -v minimal } }
     }
-    $runner = 'tests/Lokad.Onnx.EmbeddingGemma2Runner/bin/Release/net10.0/Lokad.Onnx.EmbeddingGemma2Runner.dll'
+    $runner = "tests/Lokad.Onnx.EmbeddingGemma2Runner/bin/Release/$Framework/Lokad.Onnx.EmbeddingGemma2Runner.dll"
     foreach ($mode in $Modes) {
         $first = Join-Path $Artifacts "managed-$mode"
         $repeat = Join-Path $Artifacts "managed-$mode-repeat"
@@ -52,7 +53,7 @@ try {
         $api = Join-Path $Artifacts 'api'
         Invoke-Checked { dotnet $runner api $prepared tests/embeddinggemma2/cases.json $reference $api }
         Invoke-Checked { & $Python tests/embeddinggemma2/python/verify_api.py --reference $reference --actual $api --cases tests/embeddinggemma2/cases.json }
-        Invoke-Checked { & $Python tests/embeddinggemma2/python/verify_cli.py --cli src/Lokad.Onnx.CLI/bin/Release/net10.0/Lokad.Onnx.CLI.dll --model-dir $prepared --reference $reference --cases tests/embeddinggemma2/cases.json --output (Join-Path $Artifacts 'cli') }
+        Invoke-Checked { & $Python tests/embeddinggemma2/python/verify_cli.py --cli "src/Lokad.Onnx.CLI/bin/Release/$Framework/Lokad.Onnx.CLI.dll" --model-dir $prepared --reference $reference --cases tests/embeddinggemma2/cases.json --output (Join-Path $Artifacts 'cli') }
     }
 } finally {
     foreach ($name in $saved.Keys) { [Environment]::SetEnvironmentVariable($name, $saved[$name]) }

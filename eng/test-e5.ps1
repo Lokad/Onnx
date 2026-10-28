@@ -1,6 +1,7 @@
 param(
     [string]$Python = "python",
-    [switch]$RequireIntrinsics
+    [switch]$RequireIntrinsics,
+    [ValidateSet('net10.0', 'net11.0')][string]$Framework = 'net11.0'
 )
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
@@ -45,9 +46,9 @@ try {
     if ($probeEc -ne 0) { Fail "python is missing test dependencies (see tests/e5/python/requirements.txt)" }
     Invoke-GateNative { & ./eng/restore-tokenizers.ps1 }
     if ($LASTEXITCODE -ne 0) { Fail "qualified tokenizer package restore failed" }
-    Invoke-GateNative { & dotnet build tests/Lokad.Onnx.E5Runner --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false }
+    Invoke-GateNative { & dotnet build tests/Lokad.Onnx.E5Runner -f $Framework --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false }
     if ($LASTEXITCODE -ne 0) { Fail "E5Runner build failed" }
-    $runner = "tests/Lokad.Onnx.E5Runner/bin/Release/net10.0/Lokad.Onnx.E5Runner.dll"
+    $runner = "tests/Lokad.Onnx.E5Runner/bin/Release/$Framework/Lokad.Onnx.E5Runner.dll"
     New-Item -ItemType Directory -Path $artifacts -Force | Out-Null
     $modes = @("scalar", "simd", "intrinsics")
     foreach ($m in $modes) {

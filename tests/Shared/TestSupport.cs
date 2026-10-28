@@ -30,6 +30,10 @@ internal static class TestSupport
     {
         string configuration = typeof(TestSupport).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration
             ?? throw new InvalidOperationException("Cannot determine the test build configuration.");
-        return Path.Combine(RepoRoot(), "src", "Lokad.Onnx.CLI", "bin", configuration, "net10.0", "Lokad.Onnx.CLI.dll");
+        string framework = typeof(TestSupport).Assembly.GetCustomAttribute<System.Runtime.Versioning.TargetFrameworkAttribute>()?.FrameworkName
+            ?? throw new InvalidOperationException("Cannot determine the test target framework.");
+        var version = new System.Runtime.Versioning.FrameworkName(framework).Version;
+        return Path.Combine(RepoRoot(), "src", "Lokad.Onnx.CLI", "bin", configuration,
+            $"net{version.Major}.{version.Minor}", "Lokad.Onnx.CLI.dll");
     }
 }

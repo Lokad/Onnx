@@ -29,6 +29,7 @@ Require(!core.GetReferencedAssemblies().Any(a => a.Name == "Google.Protobuf" || 
 Require(!core.GetExportedTypes().Any(t => t.Namespace == "Onnx"), "Core exports generated messages");
 Require(!AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "Google.Protobuf" || a.GetName().Name == "Lokad.Onnx.Protobuf"), "Consumer loaded a parser assembly");
 Console.WriteLine("SMOKE-CORE-OK DTO, custom file reader, borrowed memory reader; no Protobuf");
+Console.WriteLine(System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
 
 // A synthetic format reader proves dependency injection without a parser library.
 sealed class CustomReader : IOnnxModelReader

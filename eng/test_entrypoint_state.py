@@ -148,7 +148,7 @@ exit 0
 
 @unittest.skipUnless(PWSH and shutil.which('git'), 'PowerShell 7 and Git are required')
 class BenchmarkPreparationTests(unittest.TestCase):
-    def run_preparation(self, script_name, choice):
+    def run_preparation(self, script_name, choice, framework='net11.0'):
         with tempfile.TemporaryDirectory(prefix='lonnx-preparation-') as directory:
             root = Path(directory).resolve()
             self.assertEqual(root.parent, Path(tempfile.gettempdir()).resolve())
@@ -158,7 +158,7 @@ class BenchmarkPreparationTests(unittest.TestCase):
                 shutil.copyfile(ROOT / 'eng' / name, eng / name)
             core = root / 'src/Lokad.Onnx'
             core.mkdir(parents=True)
-            (core / 'Lokad.Onnx.csproj').write_text('<Project />', encoding='utf-8')
+            (core / 'Lokad.Onnx.csproj').write_text('<Project><PropertyGroup><TargetFrameworks>net10.0;net11.0</TargetFrameworks></PropertyGroup></Project>', encoding='utf-8')
             data = root / 'src/Lokad.Onnx.Data'
             data.mkdir()
             (data / 'EmbeddingGemma2Fixture.cs').write_text('// fixture, never compiled', encoding='utf-8')
@@ -172,7 +172,12 @@ class BenchmarkPreparationTests(unittest.TestCase):
                 return result.stdout.strip()
 
             git('init', '-q')
+            (core / 'Lokad.Onnx.csproj').write_text('<Project><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>', encoding='utf-8')
             git('add', '-f', 'src', 'global.json')
+            git('commit', '-qm', 'net10 fixture')
+            net10 = git('rev-parse', 'HEAD')
+            (core / 'Lokad.Onnx.csproj').write_text('<Project><PropertyGroup><TargetFrameworks>net10.0;net11.0</TargetFrameworks></PropertyGroup></Project>', encoding='utf-8')
+            git('add', '-f', 'src')
             git('commit', '-qm', 'integrated fixture')
             integrated = git('rev-parse', 'HEAD')
             adapter = root / 'tools/Lokad.Onnx.Protobuf'
@@ -184,7 +189,7 @@ class BenchmarkPreparationTests(unittest.TestCase):
             refs = {
                 'missing': (None, None), 'invalid': ('no-such-ref', None),
                 'mixed': (integrated, separate), 'integrated': (integrated, integrated),
-                'separate': (separate, None)
+                'separate': (separate, None), 'unsupported': (net10, None)
             }
             baseline, candidate = refs[choice]
             wrapper = r'''
@@ -201,7 +206,7 @@ function dotnet {
     }
     $global:LASTEXITCODE = 0
 }
-$parameters = @{ Output = (Join-Path $PSScriptRoot 'output') }
+$parameters = @{ Output = (Join-Path $PSScriptRoot 'output'); Framework = $env:FIXTURE_FRAMEWORK }
 if ($env:FIXTURE_BASELINE) { $parameters.L0Ref = $env:FIXTURE_BASELINE }
 if ($env:FIXTURE_CANDIDATE) { $parameters.L1Ref = $env:FIXTURE_CANDIDATE }
 $caught = $null
@@ -214,7 +219,7 @@ exit 0
             runner = root / 'wrapper.ps1'
             runner.write_text(wrapper, encoding='utf-8')
             env = os.environ.copy()
-            env.update(FIXTURE_SCRIPT=script_name, FIXTURE_BASELINE=baseline or '', FIXTURE_CANDIDATE=candidate or '')
+            env.update(FIXTURE_SCRIPT=script_name, FIXTURE_BASELINE=baseline or '', FIXTURE_CANDIDATE=candidate or '', FIXTURE_FRAMEWORK=framework)
             result = subprocess.run([PWSH, '-NoProfile', '-NonInteractive', '-File', str(runner)],
                                     env=env, text=True, capture_output=True, timeout=25)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -242,6 +247,18 @@ exit 0
 
     def test_mixed_layout_does_not_create_output_or_start_dotnet(self):
         self.check_rejection('mixed')
+
+    def test_unsupported_framework_does_not_create_output_or_start_dotnet(self):
+        self.check_rejection('unsupported')
+
+    def test_net10_selection_reaches_all_builds(self):
+        for script in ['build-common-campaign.ps1', 'build-embeddinggemma2-benchmark.ps1']:
+            with self.subTest(script=script):
+                state = self.run_preparation(script, 'integrated', framework='net10.0')
+                self.assertEqual(state['code'], 0, state)
+                for command in state['dotnetCalls']:
+                    if command.startswith('build '):
+                        self.assertIn('-f net10.0', command)
 
     def test_same_era_refs_reach_existing_preparation_paths(self):
         for script in ['build-common-campaign.ps1', 'build-embeddinggemma2-benchmark.ps1']:

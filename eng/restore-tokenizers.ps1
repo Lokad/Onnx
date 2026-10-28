@@ -30,8 +30,13 @@ $project = Join-Path $SourceDirectory 'src/Lokad.Tokenizers.csproj'
 $feed = Join-Path $root 'artifacts/dependencies/nuget'
 $receipt = Join-Path $feed 'tokenizers-receipt.json'
 if (Test-Path -LiteralPath $receipt) { Remove-Item -LiteralPath $receipt }
-Invoke-Checked { dotnet restore $project --locked-mode --tl:off -v minimal }
-Invoke-Checked { dotnet pack $project -c Release --no-restore --tl:off --nologo -v minimal -o $feed }
+# SDK selection follows the working directory, even for an absolute project
+# path. Respect the dependency's global.json when our root SDK changes.
+Push-Location $SourceDirectory
+try {
+    Invoke-Checked { dotnet restore $project --locked-mode --tl:off -v minimal }
+    Invoke-Checked { dotnet pack $project -c Release --no-restore --tl:off --nologo -v minimal -o $feed }
+} finally { Pop-Location }
 $configuration = Join-Path $root 'artifacts/dependencies/nuget.config'
 $escapedFeed = [Security.SecurityElement]::Escape($feed)
 @"

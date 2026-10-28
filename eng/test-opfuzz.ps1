@@ -1,5 +1,6 @@
 param(
-    [string]$Python = "python"
+    [string]$Python = "python",
+    [ValidateSet('net10.0', 'net11.0')][string]$Framework = 'net11.0'
 )
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
@@ -30,8 +31,12 @@ foreach ($f in $actual) {
     if (!$expected.ContainsKey($rel) -or $expected[$rel] -ne $h) { Fail "hash mismatch or unknown file: $rel" }
 }
 Write-Host "PASS assets: corpus hashes match ($($expected.Count) files)"
-Invoke-GateNative { & dotnet build tests/Lokad.Onnx.OpDump --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false }
+Invoke-GateNative { & dotnet build tests/Lokad.Onnx.OpDump -f $Framework --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false }
 if ($LASTEXITCODE -ne 0) { Fail "OpDump build failed" }
-Invoke-GateNative { & $Python -m pytest tests/opfuzz/python -q --no-header }
-if ($LASTEXITCODE -ne 0) { Fail "opfuzz conformance suite failed" }
+$savedRunner = $env:OPDUMP_DLL
+try {
+    $env:OPDUMP_DLL = Join-Path $root "tests/Lokad.Onnx.OpDump/bin/Release/$Framework/Lokad.Onnx.OpDump.dll"
+    Invoke-GateNative { & $Python -m pytest tests/opfuzz/python -q --no-header }
+    if ($LASTEXITCODE -ne 0) { Fail "opfuzz conformance suite failed" }
+} finally { $env:OPDUMP_DLL = $savedRunner }
 Write-Host "PASS opfuzz conformance"

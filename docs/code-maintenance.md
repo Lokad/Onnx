@@ -2,7 +2,7 @@
 
 ## Project boundaries
 
-The solution targets .NET 10. The core `src/Lokad.Onnx` project is the only
+The solution targets .NET 10 and .NET 11. The core `src/Lokad.Onnx` project is the only
 NuGet package and has no runtime dependencies. It contains tensors, CPU kernels,
 the neutral `OnnxModel` description, graph preparation and execution.
 
@@ -15,7 +15,8 @@ companion dependencies out of the core's public boundary.
 
 ## Build, test and pack
 
-Use the SDK selected by global.json and PowerShell 7. From the repository root:
+Use the SDK selected by global.json and PowerShell 7. Install both runtimes and
+the .NET 10 SDK pinned by the Tokenizers dependency. From the repository root:
 
 ```powershell
 pwsh -NoProfile -File eng/restore-tokenizers.ps1
@@ -30,6 +31,10 @@ the consumed dependency. A cache mismatch fails explicitly; use a fresh
 `eng/test.ps1` restores, builds and runs `eng/Tests.slnx`, including CLI integration
 tests. `-BuildTools` also builds the full root solution; `-Coverage` opts into
 local coverage. To reuse a Release build:
+
+Both frameworks run by default. Add `-Framework net10.0` or `-Framework net11.0`
+to select one. Model replay scripts accept the same parameter and default to
+.NET 11. Benchmark preparation also defaults to .NET 11.
 
 ```powershell
 dotnet test eng/Tests.slnx -c Release --no-build --tl:off --nologo -v minimal

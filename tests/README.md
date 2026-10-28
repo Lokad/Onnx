@@ -18,7 +18,10 @@ Ordinary gate (from repo root):
     dotnet test --tl:off --nologo -v minimal -c Release --no-build eng/Tests.slnx
 
 Or use `eng/test.ps1`, which runs the same steps, including the CLI needed by
-integration tests. Add `-BuildTools` to also compile benchmarks and standalone
+integration tests. Both .NET 10 and .NET 11 run by default; add
+`-Framework net10.0` or `-Framework net11.0` to select one. Install both runtimes
+and use the SDK in global.json. Model replay scripts default to .NET 11 and
+accept the same framework selector. Add `-BuildTools` to also compile benchmarks and standalone
 runners through the full root solution; CI does this once in its Linux ordinary
 job. Add `-Coverage` to collect Cobertura reports under ignored
 `artifacts/coverage`; ordinary CI does not collect them.

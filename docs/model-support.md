@@ -1,6 +1,6 @@
 # Model support
 
-Lokad.Onnx runs ONNX graphs on the CPU in managed C# for .NET 10. Support depends
+Lokad.Onnx runs ONNX graphs on the CPU in managed C# for .NET 10 and .NET 11. Support depends
 on the export's operators, opsets, element types and shapes. The operator registry
 in [OperatorSchema.cs](../src/Lokad.Onnx/OperatorSchema.cs) and
 `CPUExecutionProvider.SupportedOps` define the implemented surface; a model name

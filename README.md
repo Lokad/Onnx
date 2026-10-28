@@ -1,6 +1,6 @@
 # Lokad.Onnx
 
-Lokad.Onnx is a CPU inference engine for ONNX models, written in C# for .NET 10.
+Lokad.Onnx is a CPU inference engine for ONNX models, written in C# for .NET 10 and .NET 11.
 It provides tensors and graph execution, with SIMD and hardware intrinsics where
 available. ONNX parsing is supplied by a caller-chosen reader. Inference runs
 entirely in managed code.
@@ -48,13 +48,15 @@ for execution options, reader ownership and output lifetime.
 
 ## Build and try the CLI
 
-Requires the .NET 10 SDK and PowerShell 7. From the repository root:
+Requires the SDK pinned in global.json, the .NET 10 SDK for the qualified
+Tokenizers dependency, and PowerShell 7. Keep both .NET 10 and .NET 11 runtimes
+installed to run both targets. From the repository root:
 
 ```powershell
 pwsh -NoProfile -File eng/restore-tokenizers.ps1
 dotnet build Lokad.Onnx.slnx -c Release --tl:off --nologo -v minimal
 
-$cli = 'src/Lokad.Onnx.CLI/bin/Release/net10.0/Lokad.Onnx.CLI.dll'
+$cli = 'src/Lokad.Onnx.CLI/bin/Release/net11.0/Lokad.Onnx.CLI.dll'
 dotnet $cli --help
 dotnet $cli run tests/Lokad.Onnx.Backend.Tests/models/mnist-8.onnx tests/Lokad.Onnx.Backend.Tests/images/mnist4.png::mnist --softmax
 ```
