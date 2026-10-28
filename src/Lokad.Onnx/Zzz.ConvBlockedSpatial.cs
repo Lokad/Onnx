@@ -74,20 +74,44 @@ internal static unsafe partial class ConvBlockedSpatial
         return true;
     }
 
-    static bool Finite(ReadOnlySpan<float> values)
+    internal static bool Finite(ReadOnlySpan<float> values)
     {
+        // Absolute IEEE encodings put every non-finite value above float.MaxValue.
         fixed (float* p = values)
         {
             int i = 0;
             if (Avx512F.IsSupported)
             {
-                var wideExponent = Vector512.Create(0x7f800000);
+                var sign = Vector512.Create(int.MaxValue);
+                var a = Vector512<int>.Zero; var b = a; var c = a; var d = a;
+                for (; i <= values.Length - 64; i += 64)
+                {
+                    a = Avx512F.Max(a, Avx512F.LoadVector512(p + i).AsInt32() & sign);
+                    b = Avx512F.Max(b, Avx512F.LoadVector512(p + i + 16).AsInt32() & sign);
+                    c = Avx512F.Max(c, Avx512F.LoadVector512(p + i + 32).AsInt32() & sign);
+                    d = Avx512F.Max(d, Avx512F.LoadVector512(p + i + 48).AsInt32() & sign);
+                }
+                a = Avx512F.Max(Avx512F.Max(a, b), Avx512F.Max(c, d));
                 for (; i <= values.Length - 16; i += 16)
-                    if (Vector512.EqualsAny(Avx512F.LoadVector512(p + i).AsInt32() & wideExponent, wideExponent)) return false;
+                    a = Avx512F.Max(a, Avx512F.LoadVector512(p + i).AsInt32() & sign);
+                if (Vector512.GreaterThanAny(a, Vector512.Create(0x7f7fffff))) return false;
             }
-            var exponent = Vector256.Create(0x7f800000);
-            for (; i <= values.Length - 8; i += 8)
-                if (Vector256.EqualsAny(((Vector256<float>*)p)[i / 8].AsInt32() & exponent, exponent)) return false;
+            else if (Avx2.IsSupported)
+            {
+                var sign = Vector256.Create(int.MaxValue);
+                var a = Vector256<int>.Zero; var b = a; var c = a; var d = a;
+                for (; i <= values.Length - 32; i += 32)
+                {
+                    a = Avx2.Max(a, Avx.LoadVector256(p + i).AsInt32() & sign);
+                    b = Avx2.Max(b, Avx.LoadVector256(p + i + 8).AsInt32() & sign);
+                    c = Avx2.Max(c, Avx.LoadVector256(p + i + 16).AsInt32() & sign);
+                    d = Avx2.Max(d, Avx.LoadVector256(p + i + 24).AsInt32() & sign);
+                }
+                a = Avx2.Max(Avx2.Max(a, b), Avx2.Max(c, d));
+                for (; i <= values.Length - 8; i += 8)
+                    a = Avx2.Max(a, Avx.LoadVector256(p + i).AsInt32() & sign);
+                if (Vector256.GreaterThanAny(a, Vector256.Create(0x7f7fffff))) return false;
+            }
             for (; i < values.Length; i++) if (!float.IsFinite(p[i])) return false;
         }
         return true;
