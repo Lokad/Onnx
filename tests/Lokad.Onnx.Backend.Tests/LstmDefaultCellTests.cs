@@ -65,8 +65,19 @@ public class LstmDefaultCellTests
             Assert.Equal(int.MinValue, BitConverter.SingleToInt32Bits(firstFrame[4]));
             Assert.Equal(0, BitConverter.SingleToInt32Bits(firstFrame[5]));
             for (int i = 0; i < 3; i++)
-                Assert.Equal(Bits(((Tensor<float>)expected.Outputs[i]).ToArray()),
-                    Bits(((Tensor<float>)actual.Outputs[i]).ToArray()));
+            {
+                var reference = ((Tensor<float>)expected.Outputs[i]).ToArray();
+                var valuesOut = ((Tensor<float>)actual.Outputs[i]).ToArray();
+                Assert.Equal(reference.Length, valuesOut.Length);
+                for (int j = 0; j < reference.Length; j++)
+                {
+                    // As in the projection tests, arithmetic can select either
+                    // NaN sign/payload. Every other value stays bit-exact.
+                    if (float.IsNaN(reference[j])) Assert.True(float.IsNaN(valuesOut[j]));
+                    else Assert.Equal(BitConverter.SingleToInt32Bits(reference[j]),
+                        BitConverter.SingleToInt32Bits(valuesOut[j]));
+                }
+            }
         }
         Assert.Equal(Bits(values), Bits(c.ToArray()));
     }
