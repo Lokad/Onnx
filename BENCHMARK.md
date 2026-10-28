@@ -1,9 +1,10 @@
 # CPU benchmarks for Lokad.Onnx
 
-Measured on **2026-10-27** for 0.4.0, source `83f4e1b4`, on the
+Measured on **2026-10-28** for upcoming 0.5.0, source `1e898206`, on the
 existing `onnx-bench` Azure Standard_D4as_v7 VM: AMD EPYC 9V45, 4 vCPU / 16 GiB.
-Every worker uses **one logical CPU (CPU 2)**. Managed workers run .NET 10.0.8;
-native inference uses Microsoft ONNX Runtime **1.29.0 CPUExecutionProvider**.
+Every worker uses **one logical CPU (CPU 2)**. Managed workers run .NET
+**11.0.0-rc.3.26522.148** (SDK 11 RC3); the package also supports .NET 10.
+Native inference uses Microsoft ONNX Runtime **1.29.0 CPUExecutionProvider**.
 Loading, preparation and validation are outside the timers.
 
 Times are seconds; **lower is better**. Lokad / ORT is the latency ratio, so 1.100
@@ -12,13 +13,13 @@ host; small differences within the process ranges are inconclusive.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---|---:|---:|---:|
-| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 33.359048 | 17.891236 | **1.865** |
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 7.003582 | 3.967896 | **1.765** |
-| multilingual-e5-small | One 30-token forward pass | 0.010854 | 0.009490 | **1.144** |
-| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.176912 | 0.178833 | **0.989** |
-| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.060046 | 0.050507 | **1.189** |
-| ResNet50 | One 224x224 image, feature export | 0.067117 | 0.032353 | **2.075** |
-| GPT-2 | Four-token prefill, empty past state | 0.026500 | 0.018154 | **1.460** |
+| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 20.657613 | 17.778912 | **1.162** |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 5.337817 | 3.914974 | **1.363** |
+| multilingual-e5-small | One 30-token forward pass | 0.010777 | 0.009266 | **1.163** |
+| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.175807 | 0.170663 | **1.030** |
+| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.057334 | 0.050377 | **1.138** |
+| ResNet50 | One 224x224 image, feature export | 0.048641 | 0.032173 | **1.512** |
+| GPT-2 | Four-token prefill, empty past state | 0.025921 | 0.017700 | **1.464** |
 
 DINOv2 remains excluded from timing by its full-output numerical gate.
 Whisper Large V3 Turbo is supported but has no matched timing in this refresh.
@@ -29,7 +30,7 @@ See [model support](docs/model-support.md) for export, numerical and accuracy li
 Each workload runs in four fresh processes, ordered managed / ORT / ORT / managed.
 The table takes the median of the two process results for each engine. All calls
 are retained, with no trimming or strict historical A/A calibration. The
-[report and process ranges](tests/benchmarks/release-0.4.0-20261027.md) link every warmup and measured clock,
+[report and process ranges](tests/benchmarks/release-0.5.0-20261028.md) link every warmup and measured clock,
 model/input/binary identities and numerical checks.
 
 Parakeet times the complete public transcription API, including frontend,
@@ -64,6 +65,6 @@ applications use the nonpackable Data project.
 
 Use [eng/bench.py](eng/bench.md) for routine e5/Gemma comparisons with committed
 prepared cores; Gemma defaults to 128 tokens and 768 dimensions. Reuse the local
-models/multilingual-e5-small/model.onnx. The [refresh report](tests/benchmarks/release-0.4.0-20261027.md) describes
+models/multilingual-e5-small/model.onnx. The [refresh report](tests/benchmarks/release-0.5.0-20261028.md) describes
 the graph/audio consumers and exact sampling behind this table. The local
 multi-model harness has its own sampling protocol; bench.ps1 includes CLI startup.

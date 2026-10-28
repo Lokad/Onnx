@@ -26,6 +26,8 @@
   contiguous input loads at padded borders, preserving the same reductions.
 - Small AVX-512 LSTMs reuse the decoder's packed projection format. Paired
   decoder panels share input loads, retaining separate multiply/add order.
+- Refreshed the seven-model [CPU comparisons](BENCHMARK.md) on .NET 11, with
+  complete audio APIs, full-output checks and retained raw timing evidence.
 
 ## 0.4.0 — 2026-10-28
 
