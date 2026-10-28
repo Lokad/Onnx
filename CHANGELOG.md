@@ -5,6 +5,8 @@
 - Core, source companions and correctness tests target both .NET 10 and .NET 11.
 - Benchmark preparation defaults to .NET 11, with an explicit .NET 10 control.
   See the [comparison commands](eng/bench.md).
+- Owned packed projections reuse the AVX-512 row-sharing kernels, preserving
+  the existing packed layout and per-element FMA order.
 
 ## 0.4.0 — 2026-10-28
 

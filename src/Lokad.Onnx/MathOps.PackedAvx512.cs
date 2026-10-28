@@ -5,9 +5,9 @@ using System.Runtime.Intrinsics.X86;
 namespace Lokad.Onnx;
 
 // Adapted from feature/voice-model-cpu-benchmarks at 2b1138fe6f5d085e3749f6867d1603b1131ff029.
-// This experiment imports only the full 32-column, 8/12-row accumulation tiles.
+// Full 32-column, 8/12-row accumulation tiles share the existing packed layout.
 // Existing destination clearing, E94 column tails and AVX2 fallbacks stay intact.
-// Enable explicitly with LOKAD_ONNX_PACKED_AVX512_ROWS=1 before process startup.
+// Enabled by default; disable with LOKAD_ONNX_PACKED_AVX512_ROWS=0 for diagnostics.
 public partial class MathOps
 {
     internal static unsafe bool TryPackedAvx512Rows(int m, int n, int k, float* x, float* packed, float* dest)

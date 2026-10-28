@@ -16,6 +16,8 @@ public abstract partial class Tensor<T> where T : unmanaged
 
     static unsafe void RunOwnedPackedRows(int m, int n, int k, float* x, float* packed, float* output)
     {
+        if (AblationSwitches.EnablePackedAvx512Rows
+            && MathOps.TryPackedAvx512Rows(m, n, k, x, packed, output)) return;
         if (m % 3 == 0)
             MathOps.ShortWideMultiply3Rows(m, n, k, x, packed, output);
         else

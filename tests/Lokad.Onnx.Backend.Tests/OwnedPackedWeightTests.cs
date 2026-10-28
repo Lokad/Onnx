@@ -197,6 +197,40 @@ public class OwnedPackedWeightTests
     }
 
     [SkippableTheory]
+    [InlineData(49)]
+    [InlineData(50)]
+    [InlineData(51)]
+    public void OwnedRowGroupsMatchIndependentFmaSamples(int m)
+    {
+        Skip.If(!Avx512F.IsSupported || !Fma.IsSupported, "AVX-512F and FMA required.");
+        const int n = 1024, k = 4096;
+        var graph = Graph(n, k, m, 0, false);
+        var input = (Tensor<float>)graph.Inputs["x"]!;
+        var source = (Tensor<float>)graph.Initializers["w"];
+        float[] originalInput = input.ToArray(), originalWeight = source.ToArray();
+        Assert.Equal(1, graph.PrepareOwnedMatMulWeights());
+        var packed = Assert.IsType<OwnedPackedTensor>(graph.Initializers["w"]);
+        float[] originalPacked = (float[])packed.PackedArray.Clone();
+        var execution = graph.CreateExecution(ExecutionOptions.Memory);
+        Assert.True(execution.Execute(new Dictionary<string, ITensor> { ["x"] = input }, true), execution.LastErrorMessage);
+        var output = Assert.IsAssignableFrom<Tensor<float>>(execution.Outputs["y"]);
+        // Cross vector/column panels, every row group, and the final row. This
+        // scalar oracle does not call any packed or vector matrix kernel.
+        for (int row = 0; row < m; row++)
+        foreach (int col in new[] { 0, 15, 16, 31, 32, k - 1 })
+        {
+            float expected = 0;
+            for (int red = 0; red < n; red++)
+                expected = MathF.FusedMultiplyAdd(originalWeight[red * k + col], originalInput[row * n + red], expected);
+            Assert.Equal(BitConverter.SingleToInt32Bits(expected), BitConverter.SingleToInt32Bits(output.GetValue(row * k + col)));
+        }
+        Exact(originalInput, input.ToArray());
+        Exact(originalPacked, packed.PackedArray);
+        Assert.Equal(0, execution.LastScratchBytes);
+        Assert.Equal(0L, execution.LastCopyBytes);
+    }
+
+    [SkippableTheory]
     [InlineData(false)]
     [InlineData(true)]
     public void PackedStorageDestinationAliasIsRejectedBeforeAnyWrite(bool batched)
