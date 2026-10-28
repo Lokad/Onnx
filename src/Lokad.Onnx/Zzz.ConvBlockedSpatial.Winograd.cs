@@ -114,12 +114,12 @@ internal static unsafe partial class ConvBlockedSpatial
             }
         }
         // Never expose a partial result when intermediate arithmetic overflows.
-        if (!Finite(blocked) || !EpilogueRange(blocked) || !EpilogueRange(bias) || !EpilogueRange(residual)) return false;
+        if (!EpilogueRange(blocked) || !EpilogueRange(bias) || !EpilogueRange(residual)) return false;
         UnpackEpilogue(blocked, destination, bias, residual, m, h * w, lanes, relu);
         return true;
     }
 
-    static bool EpilogueRange(ReadOnlySpan<float> values)
+    internal static bool EpilogueRange(ReadOnlySpan<float> values)
     {
         const float limit = float.MaxValue / 4;
         int i = 0;
@@ -128,25 +128,29 @@ internal static unsafe partial class ConvBlockedSpatial
             if (Avx512F.IsSupported)
             {
                 var mask = Vector512.Create(int.MaxValue);
-                var bound = Vector512.Create(limit);
+                var bound = Vector512.Create(BitConverter.SingleToInt32Bits(limit));
                 for (; i <= values.Length - 16; i += 16)
                 {
-                    var magnitude = Avx512F.And(Avx512F.LoadVector512(p + i).AsInt32(), mask).AsSingle();
+                    var magnitude = Avx512F.And(Avx512F.LoadVector512(p + i).AsInt32(), mask);
                     if (Avx512F.CompareGreaterThan(magnitude, bound).ExtractMostSignificantBits() != 0) return false;
                 }
             }
             else if (Avx2.IsSupported)
             {
                 var mask = Vector256.Create(int.MaxValue);
-                var bound = Vector256.Create(limit);
+                var bound = Vector256.Create(BitConverter.SingleToInt32Bits(limit));
                 for (; i <= values.Length - 8; i += 8)
                 {
-                    var magnitude = Avx2.And(Avx.LoadVector256(p + i).AsInt32(), mask).AsSingle();
-                    if (Avx.MoveMask(Avx.Compare(magnitude, bound, FloatComparisonMode.OrderedGreaterThanNonSignaling)) != 0) return false;
+                    var magnitude = Avx2.And(Avx.LoadVector256(p + i).AsInt32(), mask);
+                    if (Avx.MoveMask(Avx2.CompareGreaterThan(magnitude, bound).AsSingle()) != 0) return false;
                 }
             }
         }
-        for (; i < values.Length; i++) if (MathF.Abs(values[i]) > limit) return false;
+        // Absolute float encodings are ordered for finite values; every NaN
+        // and infinity lies above the bound as well. This includes finiteness.
+        int limitBits = BitConverter.SingleToInt32Bits(limit);
+        for (; i < values.Length; i++)
+            if ((BitConverter.SingleToInt32Bits(values[i]) & int.MaxValue) > limitBits) return false;
         return true;
     }
 
