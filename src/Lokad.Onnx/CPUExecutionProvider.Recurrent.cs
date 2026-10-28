@@ -152,6 +152,8 @@ public partial class CPUExecutionProvider
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
         int H = hiddenSize;
+        bool defaultCell = (activations is null || activations.Length == 0) && bd is not null
+            && pd is null && !clip.HasValue && !inputForget;
         float[]? preparedInput = null, preparedRecurrent = null;
         if (seq == 1 && batch == 1 && numDirections == 1 && !reverse && inputSize == 640 && H == 640
             && opts.Tensor.UseSimd && System.Numerics.Vector.IsHardwareAccelerated)
@@ -228,6 +230,11 @@ public partial class CPUExecutionProvider
                             for (int k = 0; k < H; k++) acc += hv[k] * rs[rRow + k];
                             hr[gh] = acc;
                         }
+                    }
+                    if (defaultCell)
+                    {
+                        LstmDefaultCell(xw, hr, bd!.Buffer.Span.Slice(bDir, 8 * H), cv, hv, yArr.AsSpan(yOff, H));
+                        continue;
                     }
                     for (int h = 0; h < H; h++)
                     {
