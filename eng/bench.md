@@ -1,7 +1,7 @@
 # Routine CPU comparisons
 
 `bench.py` runs the current validated workers against two prepared cores, in
-`control,candidate / candidate,control` order. It retains 33 calls from every
+`control,candidate / candidate,control` order. The e5/Gemma lanes retain 33 calls from every
 engine process, numerical checks, input/model/binary identities and process
 accounting. It requires no A/A calibration and adds no cooldown. Each worker
 keeps its existing warmup: 30 seconds of conditioning for e5 and at least
@@ -33,6 +33,32 @@ come from the existing [reference lane](../tests/embeddinggemma2/README.md).
 Uncommitted source changes are absent from prepared Git-archive builds.
 Both preparation scripts require `-L0Ref`; `-L1Ref` defaults to HEAD. Invalid or
 incompatible refs are rejected before output directories or builds are created.
+
+Complete Parakeet and Community-1 comparisons use the same command and process
+staging. Prepare the complete core/Data/adapter product for each committed source:
+
+```powershell
+pwsh -NoProfile -File eng/build-audio-benchmark.ps1 -L0Ref <control-commit> -L1Ref <candidate-commit> -Output artifacts/audio-prepared
+```
+
+On the Linux quiet box, with the pinned native Python environment and existing
+hash-bound fixture manifest, run:
+
+```sh
+python eng/bench.py --model parakeet --prepared <audio-prepared> --root <asset-root> --fixtures <parakeet.json> --output <new-results> --cpu 2 --dotnet <dotnet-executable> --native-python <audio-env>/bin/python
+```
+
+Use `--model pyannote` with its manifest for Community-1. `--verify-only` runs
+both managed products and the native application without timing. The fixture set
+is fixed: all twenty Parakeet recordings, or Community-1's 30-second dialogue
+plus its ownership/recovery controls. Every timed worker runs one warmup pass
+and three measured passes, retaining all calls. A process value is the mean of
+full-workload pass sums; setup and peak resident memory are recorded separately.
+No output copies, frontend, decoder, embedding or clustering work is removed
+from the complete API timer. The three conformance workers must pass before
+any timed worker starts. The retained native adapter/upstream sources and model
+files are inputs checked against the manifest; the benchmark does not download
+assets. Audio uses Linux CPU 2 to preserve its existing fixture protocol.
 
 `report.json` contains every timed call, per-process medians, managed/ORT ratios,
 paired candidate/control ratios and process variation. The immutable worker

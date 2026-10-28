@@ -151,6 +151,39 @@ class SupervisionTests(unittest.TestCase):
         self.assertEqual(staged["L0"]["core_sha256"], staged["L1"]["core_sha256"])
         self.assertEqual((staged["L1"]["runner"].parent / "Lokad.Onnx.dll").read_bytes(), b"L0")
 
+    def audio_products(self):
+        for role in ('L0', 'L1'):
+            leg = self.prepared / role
+            archive = leg / 'data-source.zip'
+            archive.write_bytes(b'synthetic Data source, never compiled')
+            path = leg / 'build.json'
+            build = json.loads(path.read_text())
+            for name in ('Lokad.Onnx.Data.dll', 'Lokad.Onnx.Protobuf.dll'):
+                (leg / 'core' / name).write_bytes((role + name).encode())
+            build.update(data_source_archive_sha256=evidence.sha256(archive),
+                         product_files={p.name: evidence.sha256(p) for p in (leg / 'core').glob('*.dll')})
+            path.write_text(json.dumps(build))
+
+    def test_audio_staging_uses_each_revisions_data_and_adapter(self):
+        self.audio_products()
+        staged = lane.stage(self.prepared, self.root / 'run', 'comparison', product=True)
+        for role in ('L0', 'L1'):
+            for name in ('Lokad.Onnx.Data.dll', 'Lokad.Onnx.Protobuf.dll'):
+                self.assertEqual((role + name).encode(), (staged[role]['runner'].parent / name).read_bytes())
+
+    def test_audio_aa_stages_only_baseline_product(self):
+        self.audio_products()
+        staged = lane.stage(self.prepared, self.root / 'run', 'aa', product=True)
+        self.assertEqual(b'L0Lokad.Onnx.Data.dll', (staged['L1']['runner'].parent / 'Lokad.Onnx.Data.dll').read_bytes())
+
+    def test_changed_audio_binary_is_rejected_before_staging(self):
+        self.audio_products()
+        (self.prepared / 'L1/core/Lokad.Onnx.Data.dll').write_bytes(b'changed')
+        output = self.root / 'run'
+        with self.assertRaisesRegex(evidence.EvidenceError, 'audio product file changed'):
+            lane.stage(self.prepared, output, 'comparison', product=True)
+        self.assertFalse(output.exists())
+
     def test_mixed_frameworks_are_rejected_before_staging(self):
         path = self.prepared / "L1/build.json"
         build = json.loads(path.read_text())

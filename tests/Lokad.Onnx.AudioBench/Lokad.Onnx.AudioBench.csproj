@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <UseSharedCompilation>false</UseSharedCompilation>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>CampaignSdk</_Parameter1>
+      <_Parameter2>$(NETCoreSdkVersion)</_Parameter2>
+    </AssemblyAttribute>
+    <Compile Include="../Shared/NpySupport.cs" Link="NpySupport.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ProductDirectory)' == ''">
+    <ProjectReference Include="../../src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ProductDirectory)' != ''">
+    <Reference Include="$(ProductDirectory)/*.dll" />
+  </ItemGroup>
+</Project>

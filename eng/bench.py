@@ -5,12 +5,14 @@ import os
 from pathlib import Path
 import shutil
 import statistics
+import sys
 
 import campaign_evidence as evidence
 import isolated_evidence as isolated
 import benchmark_worker as common
 import gemma_worker as gemma
 import e5_worker as e5
+import audio_worker as audio
 
 
 def visits(pairs):
@@ -26,7 +28,9 @@ def summarize(workers):
         evidence.require(samples and all(math.isfinite(value) and value > 0 for value in samples), 'missing/invalid timings')
         key = (worker['case'], worker['pair'], worker['role'], worker['engine'])
         evidence.require(key not in groups, 'duplicate worker')
-        groups[key] = statistics.median(samples)
+        aggregation = worker.get('aggregation', 'median')
+        evidence.require(aggregation in ('median', 'mean'), 'unknown worker aggregation')
+        groups[key] = statistics.mean(samples) if aggregation == 'mean' else statistics.median(samples)
     result = {}
     for name in sorted({key[0] for key in groups}):
         pairs = sorted({key[1] for key in groups if key[0] == name})
@@ -56,6 +60,9 @@ def run(args):
     output, prepared = args.output.resolve(), args.prepared.resolve()
     common.ROOT = args.root.resolve()
     order = visits(args.pairs)
+    if args.model in ('parakeet', 'pyannote'):
+        return audio.run(args, summarize, order)
+    evidence.require(not args.verify_only, '--verify-only is an audio mode')
     cases = args.case or ['e5-30tok' if args.model == 'e5' else 'gemma2-128tok']
     evidence.require(len(cases) == len(set(cases)) and all(name in (isolated.CASES if args.model == 'e5' else gemma.CASES) for name in cases), 'invalid/repeated case')
     evidence.require(0 <= args.cpu < 64, 'invalid CPU')
@@ -117,7 +124,7 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--model', choices=('e5', 'gemma'), required=True)
+    parser.add_argument('--model', choices=('e5', 'gemma', 'parakeet', 'pyannote'), required=True)
     parser.add_argument('--prepared', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--root', type=Path, default=common.ROOT)
@@ -127,6 +134,9 @@ def main():
     parser.add_argument('--pairs', type=int, default=2)
     parser.add_argument('--dimensions', type=int, choices=(128, 256, 512, 768), default=768)
     parser.add_argument('--packed-weight-budget', type=int, default=576 * 1024 * 1024)
+    parser.add_argument('--dotnet', default='dotnet', help='audio worker dotnet executable')
+    parser.add_argument('--native-python', default=sys.executable, help='pinned native audio environment')
+    parser.add_argument('--verify-only', action='store_true', help='audio conformance without timing')
     args = parser.parse_args()
     try:
         run(args)

@@ -8,6 +8,7 @@
     <Project Path="src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Lokad.Onnx.AudioBench/Lokad.Onnx.AudioBench.csproj" />
     <Project Path="tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj" />
     <Project Path="tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj" />
     <Project Path="tests/Lokad.Onnx.E5Runner/Lokad.Onnx.E5Runner.csproj" />

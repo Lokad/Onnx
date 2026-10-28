@@ -28,6 +28,7 @@ jobs:
         run: |
           python3 -m unittest discover -s eng -p test_ci_scope.py
           python3 -m unittest discover -s eng -p test_bench.py
+          python3 -m unittest discover -s eng -p test_audio_worker.py
           python3 -m unittest discover -s eng -p test_common_campaign.py
           python3 -m unittest discover -s eng -p test_entrypoint_state.py
           python3 -m unittest discover -s eng -p test_parse_baseline.py

@@ -28,7 +28,7 @@ def read_build(prepared, role):
     evidence.require(isinstance(build["sdk"], str) and build["sdk"], "build SDK missing")
     return dict(build, path=core)
 
-def stage(prepared, output, kind, runner_name=RUNNER):
+def stage(prepared, output, kind, runner_name=RUNNER, product=False):
     baseline = read_build(prepared, "L0")
     candidate = read_build(prepared, "L1") if kind == "comparison" else baseline
     evidence.require(baseline["sdk"] == candidate["sdk"], "core build SDKs differ")
@@ -37,6 +37,15 @@ def stage(prepared, output, kind, runner_name=RUNNER):
     layouts = [build.get("importer_layout", "integrated") for build in (baseline, candidate)]
     evidence.require(all(layout in ("integrated", "separate") for layout in layouts), "unknown importer assembly layout")
     evidence.require(layouts[0] == layouts[1], "integrated and separate importer assemblies require different runners; choose compatible source refs")
+    if product:
+        for role, build in (("L0", baseline), ("L1", candidate)):
+            leg = build['path'].parent.parent
+            evidence.require(evidence.sha256(leg / 'data-source.zip') == build['data_source_archive_sha256'], 'Data source archive changed')
+            files = build['product_files']
+            evidence.require({'Lokad.Onnx.dll', 'Lokad.Onnx.Data.dll', 'Lokad.Onnx.Protobuf.dll'} <= set(files), 'incomplete audio product')
+            for name, digest in files.items():
+                evidence.require(Path(name).name == name and name.endswith('.dll'), 'invalid product filename')
+                evidence.require(evidence.sha256(leg / 'core' / name) == digest, 'audio product file changed: ' + name)
     runner = prepared / "runner"
     evidence.require((runner / runner_name).is_file(), "common runner missing")
     evidence.require(not output.exists(), "output already exists; choose a fresh directory")
@@ -46,7 +55,11 @@ def stage(prepared, output, kind, runner_name=RUNNER):
     for role, build in (("L0", baseline), ("L1", candidate)):
         destination = output / "staged" / role
         shutil.copytree(runner, destination)
-        shutil.copyfile(build["path"], destination / "Lokad.Onnx.dll")
+        if product:
+            for name in build['product_files']:
+                shutil.copyfile(build['path'].parent / name, destination / name)
+        else:
+            shutil.copyfile(build["path"], destination / "Lokad.Onnx.dll")
         result[role] = dict(build, runner=destination / runner_name)
     return result
 
