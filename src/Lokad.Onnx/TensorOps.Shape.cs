@@ -398,17 +398,19 @@ where T : unmanaged
             }
             return;
         }
-        // Moving axis 1 to the end is a matrix transpose per batch. Use the
-        // existing contiguous-load tile when both axes contain a complete tile.
-        if (rank == 3 && perm[0] == 0 && perm[1] == 2 && perm[2] == 1
+        // Matrix swaps and batched axis-1-to-last swaps share the existing
+        // contiguous-load tile when both axes contain a complete tile.
+        if ((rank == 2 && perm[0] == 1 && perm[1] == 0
+                || rank == 3 && perm[0] == 0 && perm[1] == 2 && perm[2] == 1)
             && typeof(T) == typeof(float) && AblationSwitches.EnableVectorTransposeFaces && Avx.IsSupported
-            && xd.Dimensions[1] >= 8 && xd.Dimensions[2] >= 8 && HasStandardStrides(xd))
+            && xd.Dimensions[rank - 2] >= 8 && xd.Dimensions[rank - 1] >= 8 && HasStandardStrides(xd))
         {
             unsafe
             {
                 using var source = xd.Buffer.Pin();
                 using var target = destination.Buffer.Pin();
-                transpose_unsafe_shuffle8x8_lastTwoAxes(xd.Dimensions[0], 1, xd.Dimensions[1], xd.Dimensions[2],
+                transpose_unsafe_shuffle8x8_lastTwoAxes(rank == 2 ? 1 : xd.Dimensions[0], 1,
+                    xd.Dimensions[rank - 2], xd.Dimensions[rank - 1],
                     (float*)source.Pointer, (float*)target.Pointer);
             }
             return;
