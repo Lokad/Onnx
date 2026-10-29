@@ -631,21 +631,29 @@ where T : unmanaged
             ArrayUtilities.CopyAxisChunks(denseY.Buffer.Span, y.dimensions[axis], output.Buffer.Span, x.dimensions[axis] + y.dimensions[axis], outer, inner, 0, x.dimensions[axis], y.dimensions[axis]);
             return output;
         }
-        var di = output.GetDimensionsIterator();    
-        foreach (var index in di)
-        {
-            if (index[axis] < x.dimensions[axis])
-            {
-                output[index] = x[index];
-            }
-            else
-            {
-                var loc = index.Copy();
-                loc[axis] -= x.dimensions[axis];
-                output[index] = y[loc];
-            }
-        }
+        CopyConcatInput(x, output, axis, 0, outer, inner);
+        CopyConcatInput(y, output, axis, x.dimensions[axis], outer, inner);
         return output;
+    }
+
+    // A small view must not force unrelated dense inputs through coordinate reads.
+    // Exact-class admission preserves custom tensors' virtual indexing semantics.
+    static void CopyConcatInput(Tensor<T> input, DenseTensor<T> output, int axis,
+        int axisOffset, int outer, int inner)
+    {
+        int axisLength = input.dimensions[axis];
+        if (input.GetType() == typeof(DenseTensor<T>) && input is DenseTensor<T> dense && HasStandardStrides(dense))
+        {
+            ArrayUtilities.CopyAxisChunks(dense.Buffer.Span, axisLength, output.Buffer.Span,
+                output.dimensions[axis], outer, inner, 0, axisOffset, axisLength);
+            return;
+        }
+        foreach (var index in input.GetDimensionsIterator())
+        {
+            var location = index.Copy();
+            location[axis] += axisOffset;
+            output[location] = input[index];
+        }
     }
     public static Tensor<T> Concat(Tensor<T>[] inputs, int axis)
         => Concat(inputs, axis, null);
@@ -697,6 +705,20 @@ where T : unmanaged
                     sourceSpan.Slice(outerIndex * axisLength * inner, axisLength * inner).CopyTo(outputSpan.Slice((outerIndex * shape[axis] + destinationAxisOffset) * inner, axisLength * inner));
                 }
                 destinationAxisOffset += axisLength;
+            }
+            return output;
+        }
+        bool aliasesDestination = false;
+        if (destination is not null)
+            foreach (var input in inputs)
+                if (TensorAlias.SharesBackingMemory(input, output)) { aliasesDestination = true; break; }
+        if (!aliasesDestination)
+        {
+            int destinationAxisOffset = 0;
+            foreach (var input in inputs)
+            {
+                CopyConcatInput(input, output, axis, destinationAxisOffset, outer, inner);
+                destinationAxisOffset += input.dimensions[axis];
             }
             return output;
         }

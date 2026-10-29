@@ -21,6 +21,9 @@
 - The Parakeet companion prepares static relative-position projections for
   its supported input window once, replacing the original matrices with
   smaller projected tables while preserving every supported request length.
+- Scalar-false masks reuse the dense selection path, and mixed concatenations
+  retain block copies for dense inputs while preserving output ownership and
+  alias-safe fallback ordering.
 - Sigmoid and prepared decoder projections use wider AVX-512 vectors while
   preserving their existing arithmetic and vector tails.
 - Adjacent sigmoid/input-multiply activations combine into one pass when the

@@ -6,6 +6,61 @@ namespace Lokad.Onnx.Backend.Tests;
 // Public selection and ownership contracts for the measured mask geometries.
 public class DenseScalarWhereTests
 {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void ScalarFalseSidePreservesBroadcastPayloadsAndOwnership(int mode)
+    {
+        const int frames = 41, channels = 128;
+        var backing = Values(channels * frames + 13);
+        var before = Bits(backing);
+        var values = new DenseTensor<float>(backing.AsMemory(7, channels * frames), new[] { 1, channels, frames });
+        var mask = DenseTensor<bool>.OfShape(1, 1, frames);
+        var bytes = MemoryMarshal.AsBytes(mask.Buffer.Span);
+        for (int i = 0; i < frames; i++) bytes[i] = mode == 0 ? (byte)0 : mode == 1 ? (byte)255 : (byte)(i % 3 == 0 ? 0 : 2);
+        var scalar = Scalar(BitConverter.Int32BitsToSingle(unchecked((int)0xffc01234)));
+        var actual = Select(mask, values, scalar);
+        var expected = Enumerable.Range(0, channels * frames).Select(i => bytesFor(i % frames) ? before[7+i] : unchecked((int)0xffc01234)).ToArray();
+        bool bytesFor(int i) => mode == 1 || mode == 2 && i % 3 != 0;
+        Assert.Equal(expected, Bits(actual.ToArray()));
+        Assert.Equal(before, Bits(backing));
+        mask.Buffer.Span.Clear(); scalar.SetValue(0, 17); values.SetValue(0, 19);
+        _ = Select(mask, values, scalar);
+        Assert.Equal(expected, Bits(actual.ToArray()));
+        actual.SetValue(1, 23); Assert.Equal(before[8], Bits(backing)[8]);
+    }
+
+    [Fact]
+    public void ScalarFalseSideKeepsGenericShapeAndDerivedValueSemantics()
+    {
+        var derived = new AdjustedDense();
+        var selected = Select(DenseTensor<bool>.OfValues(new[] { true }), derived, Scalar(-0f));
+        Assert.Equal(Enumerable.Range(0,4096).Select(i => i+1000f), selected.ToArray());
+        Assert.Throws<ArgumentException>(() => CPU.Where(DenseTensor<bool>.OfShape(3), derived, Scalar(0), null));
+        var values = new DenseTensor<float>(Enumerable.Range(0,4096).Select(i => i+1000f).ToArray(),new[] {4096});
+        var expanded = Select(new DenseTensor<bool>(new[] { true, false }, new[] { 2,1 }), values, Scalar(-0f));
+        Assert.Equal(new[] { 2,4096 }, expanded.Dimensions.ToArray());
+        Assert.Equal(Enumerable.Range(0,4096).Select(i => i+1000f), expanded.ToArray().Take(4096));
+        Assert.All(Bits(expanded.ToArray()).Skip(4096), bits => Assert.Equal(int.MinValue,bits));
+    }
+
+    [Theory]
+    [InlineData(4096)]
+    [InlineData(4097)]
+    public void ScalarFalseSideHandlesBoundedMaskAndLargerFallback(int frames)
+    {
+        var values = new DenseTensor<float>(Values(2*frames),new[] {1,2,frames});
+        var mask = DenseTensor<bool>.OfShape(1,1,frames);
+        var bytes = MemoryMarshal.AsBytes(mask.Buffer.Span);
+        for(int i=0;i<frames;i++)bytes[i]=(byte)(i%3==0?0:255);
+        var saved=bytes.ToArray();
+        var result=Select(mask,values,Scalar(-0f));
+        var expected=Bits(values.ToArray()).Select((bits,i)=>saved[i%frames]!=0?bits:int.MinValue);
+        Assert.Equal(expected,Bits(result.ToArray()));
+        Assert.Equal(saved,MemoryMarshal.AsBytes(mask.Buffer.Span).ToArray());
+    }
+
     public static IEnumerable<object[]> AttentionFrames => new[]
         { 51,61,83,88,89,102,106,112,114,120,151,156,157,158,167,169,190,222,225 }
         .Select(t => new object[] { t });

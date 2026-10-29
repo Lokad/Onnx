@@ -343,6 +343,12 @@ public partial class CPUExecutionProvider
                     if (DenseScalarWhere.Try(c, x, y, out var selected))
                         return Success(op, selected);
                 }
+                else if (x.Length >= 4096 && y.Length == 1)
+                {
+                    Profiler.StartOpStage(OpStage.ValidateArguments);
+                    if (DenseScalarWhere.TryFalse(c, x, y, out var selected))
+                        return Success(op, selected);
+                }
                 return Success(op, Tensor<float>.Where(c, x, y));
             }
             case TensorElementType.Double: return Success(op, Tensor<double>.Where((Tensor<bool>)condition, (Tensor<double>)X, (Tensor<double>)Y));

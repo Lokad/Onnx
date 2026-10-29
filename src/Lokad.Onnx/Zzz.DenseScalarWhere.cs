@@ -57,6 +57,25 @@ internal static class DenseScalarWhere
         return true;
     }
 
+    // Keep the established scalar-true kernel unchanged. A bounded inverse
+    // mask lets scalar-false calls reuse its validation, run coalescing and copies.
+    // Input masks retain their original bytes, including noncanonical truth values.
+    internal static bool TryFalse<T>(Tensor<bool> condition, Tensor<T> values,
+        Tensor<T> scalar, [NotNullWhen(true)] out Tensor<T>? output) where T : unmanaged
+    {
+        output = null;
+        if (condition.GetType() != typeof(DenseTensor<bool>) || condition.IsReversedStride
+            || condition.Length > 4096 || values.GetType() != typeof(DenseTensor<T>)
+            || scalar.GetType() != typeof(DenseTensor<T>) || values.IsReversedStride || scalar.IsReversedStride
+            || scalar.Length != 1 || values.Rank < 1 || values.Rank > 8
+            || scalar.Rank > values.Rank || condition.Rank > values.Rank) return false;
+        var inverse = new DenseTensor<bool>(condition.Dimensions);
+        var source = MemoryMarshal.AsBytes(((DenseTensor<bool>)condition).Buffer.Span);
+        var destination = inverse.Buffer.Span;
+        for (int i = 0; i < destination.Length; i++) destination[i] = source[i] == 0;
+        return Try(inverse, scalar, values, out output);
+    }
+
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.AggressiveOptimization)]
     private static void SelectMixed<T>(ReadOnlySpan<byte> mask, T scalar,
         ReadOnlySpan<T> values, Span<T> destination, ReadOnlySpan<int> shape,
