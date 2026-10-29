@@ -1,6 +1,6 @@
 # CPU benchmarks for Lokad.Onnx
 
-Measured on **2026-10-28** for upcoming 0.5.0, source `1e898206`, on the
+Measured on **2026-10-29** for upcoming 0.5.0, source `a4417547`, on the
 existing `onnx-bench` Azure Standard_D4as_v7 VM: AMD EPYC 9V45, 4 vCPU / 16 GiB.
 Every worker uses **one logical CPU (CPU 2)**. Managed workers run .NET
 **11.0.0-rc.3.26522.148** (SDK 11 RC3); the package also supports .NET 10.
@@ -13,13 +13,13 @@ host; small differences within the process ranges are inconclusive.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---|---:|---:|---:|
-| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 20.657613 | 17.778912 | **1.162** |
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 5.337817 | 3.914974 | **1.363** |
-| multilingual-e5-small | One 30-token forward pass | 0.010777 | 0.009266 | **1.163** |
-| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.175807 | 0.170663 | **1.030** |
-| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.057334 | 0.050377 | **1.138** |
-| ResNet50 | One 224x224 image, feature export | 0.048641 | 0.032173 | **1.512** |
-| GPT-2 | Four-token prefill, empty past state | 0.025921 | 0.017700 | **1.464** |
+| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 20.791532 | 18.207472 | **1.142** |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 4.706645 | 3.942498 | **1.194** |
+| multilingual-e5-small | One 30-token forward pass | 0.010219 | 0.009318 | **1.097** |
+| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.174824 | 0.170033 | **1.028** |
+| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.056578 | 0.049859 | **1.135** |
+| ResNet50 | One 224x224 image, feature export | 0.047789 | 0.032085 | **1.489** |
+| GPT-2 | Four-token prefill, empty past state | 0.025771 | 0.017946 | **1.436** |
 
 DINOv2 remains excluded from timing by its full-output numerical gate.
 Whisper Large V3 Turbo is supported but has no matched timing in this refresh.
@@ -30,7 +30,7 @@ See [model support](docs/model-support.md) for export, numerical and accuracy li
 Each workload runs in four fresh processes, ordered managed / ORT / ORT / managed.
 The table takes the median of the two process results for each engine. All calls
 are retained, with no trimming or strict historical A/A calibration. The
-[report and process ranges](tests/benchmarks/release-0.5.0-20261028.md) link every warmup and measured clock,
+[report and process ranges](tests/benchmarks/release-0.5.0-20261029.md) link every warmup and measured clock,
 model/input/binary identities and numerical checks.
 
 Parakeet times the complete public transcription API, including frontend,
@@ -65,6 +65,6 @@ applications use the nonpackable Data project.
 
 Use [eng/bench.py](eng/bench.md) for routine e5/Gemma comparisons with committed
 prepared cores; Gemma defaults to 128 tokens and 768 dimensions. Reuse the local
-models/multilingual-e5-small/model.onnx. The [refresh report](tests/benchmarks/release-0.5.0-20261028.md) describes
+models/multilingual-e5-small/model.onnx. The [refresh report](tests/benchmarks/release-0.5.0-20261029.md) describes
 the graph/audio consumers and exact sampling behind this table. The local
 multi-model harness has its own sampling protocol; bench.ps1 includes CLI startup.

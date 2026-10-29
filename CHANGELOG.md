@@ -22,12 +22,15 @@
   selects it for Community-1. See [runtime options](docs/runtime-options.md).
 - ReLU uses wider float vectors and fewer comparisons while preserving NaN
   payloads, signed zero and compact tails.
-- Larger convolution tiles use contiguous prepared output panels and bounded
-  contiguous input loads at padded borders, preserving the same reductions.
+- Larger convolution tiles use bounded padding in prepared inputs and weights,
+  reuse scratch addresses and load contiguous inputs at padded borders, preserving
+  the same reductions. Input permutation indices are prepared once on .NET 11;
+  .NET 10 retains its existing loop.
 - Small AVX-512 LSTMs reuse the decoder's packed projection format. Paired
   decoder panels share input loads, retaining separate multiply/add order.
-- Refreshed the seven-model [CPU comparisons](BENCHMARK.md) on .NET 11, with
-  complete audio APIs, full-output checks and retained raw timing evidence.
+- Refreshed the seven-model [CPU comparisons](BENCHMARK.md) on .NET 11. Complete
+  Parakeet and Community-1 workloads measure 1.142 and 1.194 times ORT latency
+  on the dedicated one-CPU host, with full-output checks and retained raw clocks.
 
 ## 0.4.0 — 2026-10-28
 
