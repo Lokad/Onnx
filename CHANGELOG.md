@@ -18,6 +18,9 @@
 - Explicit owned preparation keeps qualified Parakeet convolution regions in
   time-major storage on AVX-512 CPUs, using one payload per pointwise weight
   and bounded temporary buffers with the original operator fallback.
+- The Parakeet companion prepares static relative-position projections for
+  its supported input window once, replacing the original matrices with
+  smaller projected tables while preserving every supported request length.
 - Sigmoid and prepared decoder projections use wider AVX-512 vectors while
   preserving their existing arithmetic and vector tails.
 - Adjacent sigmoid/input-multiply activations combine into one pass when the
