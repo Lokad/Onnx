@@ -65,66 +65,69 @@ internal static unsafe partial class ConvBlockedSpatial
                 int level = 0;
                 for (int group = first / 8; (group & 1) != 0; group >>= 1, level++)
                 {
-                    a0 = partial[level * WinogradBatch * 2 + 0] + a0;
-                    a1 = partial[level * WinogradBatch * 2 + 1] + a1;
-                    a2 = partial[level * WinogradBatch * 2 + 2] + a2;
-                    a3 = partial[level * WinogradBatch * 2 + 3] + a3;
-                    a4 = partial[level * WinogradBatch * 2 + 4] + a4;
-                    a5 = partial[level * WinogradBatch * 2 + 5] + a5;
-                    a6 = partial[level * WinogradBatch * 2 + 6] + a6;
-                    a7 = partial[level * WinogradBatch * 2 + 7] + a7;
+                    Vector512<float>* carry = partial + level * WinogradBatch * 2;
+                    a0 = carry[0] + a0;
+                    a1 = carry[1] + a1;
+                    a2 = carry[2] + a2;
+                    a3 = carry[3] + a3;
+                    a4 = carry[4] + a4;
+                    a5 = carry[5] + a5;
+                    a6 = carry[6] + a6;
+                    a7 = carry[7] + a7;
                     if (second)
                     {
-                        b0 = partial[level * WinogradBatch * 2 + WinogradBatch + 0] + b0;
-                        b1 = partial[level * WinogradBatch * 2 + WinogradBatch + 1] + b1;
-                        b2 = partial[level * WinogradBatch * 2 + WinogradBatch + 2] + b2;
-                        b3 = partial[level * WinogradBatch * 2 + WinogradBatch + 3] + b3;
-                        b4 = partial[level * WinogradBatch * 2 + WinogradBatch + 4] + b4;
-                        b5 = partial[level * WinogradBatch * 2 + WinogradBatch + 5] + b5;
-                        b6 = partial[level * WinogradBatch * 2 + WinogradBatch + 6] + b6;
-                        b7 = partial[level * WinogradBatch * 2 + WinogradBatch + 7] + b7;
+                        b0 = carry[WinogradBatch + 0] + b0;
+                        b1 = carry[WinogradBatch + 1] + b1;
+                        b2 = carry[WinogradBatch + 2] + b2;
+                        b3 = carry[WinogradBatch + 3] + b3;
+                        b4 = carry[WinogradBatch + 4] + b4;
+                        b5 = carry[WinogradBatch + 5] + b5;
+                        b6 = carry[WinogradBatch + 6] + b6;
+                        b7 = carry[WinogradBatch + 7] + b7;
                     }
                 }
-                partial[level * WinogradBatch * 2 + 0] = a0;
-                partial[level * WinogradBatch * 2 + 1] = a1;
-                partial[level * WinogradBatch * 2 + 2] = a2;
-                partial[level * WinogradBatch * 2 + 3] = a3;
-                partial[level * WinogradBatch * 2 + 4] = a4;
-                partial[level * WinogradBatch * 2 + 5] = a5;
-                partial[level * WinogradBatch * 2 + 6] = a6;
-                partial[level * WinogradBatch * 2 + 7] = a7;
+                Vector512<float>* pending = partial + level * WinogradBatch * 2;
+                pending[0] = a0;
+                pending[1] = a1;
+                pending[2] = a2;
+                pending[3] = a3;
+                pending[4] = a4;
+                pending[5] = a5;
+                pending[6] = a6;
+                pending[7] = a7;
                 if (second)
                 {
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 0] = b0;
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 1] = b1;
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 2] = b2;
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 3] = b3;
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 4] = b4;
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 5] = b5;
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 6] = b6;
-                    partial[level * WinogradBatch * 2 + WinogradBatch + 7] = b7;
+                    pending[WinogradBatch + 0] = b0;
+                    pending[WinogradBatch + 1] = b1;
+                    pending[WinogradBatch + 2] = b2;
+                    pending[WinogradBatch + 3] = b3;
+                    pending[WinogradBatch + 4] = b4;
+                    pending[WinogradBatch + 5] = b5;
+                    pending[WinogradBatch + 6] = b6;
+                    pending[WinogradBatch + 7] = b7;
                 }
             }
             int finalLevel = c == 128 ? 4 : 5;
+            Vector512<float>* total = partial + finalLevel * WinogradBatch * 2;
             float* output = p + (component * m + oc) * WinogradBatch;
-            *(Vector512<float>*)(output + 0 * lanes) = partial[finalLevel * WinogradBatch * 2 + 0];
-            *(Vector512<float>*)(output + 1 * lanes) = partial[finalLevel * WinogradBatch * 2 + 1];
-            *(Vector512<float>*)(output + 2 * lanes) = partial[finalLevel * WinogradBatch * 2 + 2];
-            *(Vector512<float>*)(output + 3 * lanes) = partial[finalLevel * WinogradBatch * 2 + 3];
-            *(Vector512<float>*)(output + 4 * lanes) = partial[finalLevel * WinogradBatch * 2 + 4];
-            *(Vector512<float>*)(output + 5 * lanes) = partial[finalLevel * WinogradBatch * 2 + 5];
-            *(Vector512<float>*)(output + 6 * lanes) = partial[finalLevel * WinogradBatch * 2 + 6];
-            *(Vector512<float>*)(output + 7 * lanes) = partial[finalLevel * WinogradBatch * 2 + 7];
+            *(Vector512<float>*)(output + 0 * lanes) = total[0];
+            *(Vector512<float>*)(output + 1 * lanes) = total[1];
+            *(Vector512<float>*)(output + 2 * lanes) = total[2];
+            *(Vector512<float>*)(output + 3 * lanes) = total[3];
+            *(Vector512<float>*)(output + 4 * lanes) = total[4];
+            *(Vector512<float>*)(output + 5 * lanes) = total[5];
+            *(Vector512<float>*)(output + 6 * lanes) = total[6];
+            *(Vector512<float>*)(output + 7 * lanes) = total[7];
             if (second)
             {
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 0 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 0];
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 1 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 1];
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 2 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 2];
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 3 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 3];
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 4 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 4];
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 5 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 5];
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 6 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 6];
-                *(Vector512<float>*)(output + WinogradBatch * lanes + 7 * lanes) = partial[finalLevel * WinogradBatch * 2 + WinogradBatch + 7];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 0 * lanes) = total[WinogradBatch + 0];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 1 * lanes) = total[WinogradBatch + 1];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 2 * lanes) = total[WinogradBatch + 2];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 3 * lanes) = total[WinogradBatch + 3];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 4 * lanes) = total[WinogradBatch + 4];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 5 * lanes) = total[WinogradBatch + 5];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 6 * lanes) = total[WinogradBatch + 6];
+                *(Vector512<float>*)(output + WinogradBatch * lanes + 7 * lanes) = total[WinogradBatch + 7];
             }
         }
     }
