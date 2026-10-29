@@ -144,32 +144,33 @@ internal static unsafe partial class ConvBlockedSpatial
         {
             for (int y = 0; y < 6; y++)
             {
+                Vector256<float>* rowBuffer = rows + y * 6;
                 if (border && (uint)(top + y) >= (uint)h)
                 {
-                    for (int x = 0; x < 6; x++) rows[y * 6 + x] = Vector256<float>.Zero;
+                    for (int x = 0; x < 6; x++) rowBuffer[x] = Vector256<float>.Zero;
                     continue;
                 }
                 float* row = source + ic * h * w + (top + y) * w;
                 var a = Avx512F.LoadVector512(row + base0); var b = Avx512F.LoadVector512(row + base0 + 16);
-                rows[y * 6] = Avx512F.PermuteVar16x32x2(a, order, b).GetLower();
+                rowBuffer[0] = Avx512F.PermuteVar16x32x2(a, order, b).GetLower();
 #if NET11_0_OR_GREATER
-                rows[y * 6 + 1] = Avx512F.PermuteVar16x32x2(a, order1, b).GetLower();
-                rows[y * 6 + 2] = Avx512F.PermuteVar16x32x2(a, order2, b).GetLower();
-                rows[y * 6 + 3] = Avx512F.PermuteVar16x32x2(a, order3, b).GetLower();
+                rowBuffer[1] = Avx512F.PermuteVar16x32x2(a, order1, b).GetLower();
+                rowBuffer[2] = Avx512F.PermuteVar16x32x2(a, order2, b).GetLower();
+                rowBuffer[3] = Avx512F.PermuteVar16x32x2(a, order3, b).GetLower();
 #else
-                rows[y * 6 + 1] = Avx512F.PermuteVar16x32x2(a, order + one, b).GetLower();
-                rows[y * 6 + 2] = Avx512F.PermuteVar16x32x2(a, order + two, b).GetLower();
-                rows[y * 6 + 3] = Avx512F.PermuteVar16x32x2(a, order + three, b).GetLower();
+                rowBuffer[1] = Avx512F.PermuteVar16x32x2(a, order + one, b).GetLower();
+                rowBuffer[2] = Avx512F.PermuteVar16x32x2(a, order + two, b).GetLower();
+                rowBuffer[3] = Avx512F.PermuteVar16x32x2(a, order + three, b).GetLower();
 #endif
                 a = Avx512F.LoadVector512(row + base1); b = Avx512F.LoadVector512(row + base1 + 16);
-                rows[y * 6 + 4] = Avx512F.PermuteVar16x32x2(a, order4, b).GetLower();
+                rowBuffer[4] = Avx512F.PermuteVar16x32x2(a, order4, b).GetLower();
 #if NET11_0_OR_GREATER
-                rows[y * 6 + 5] = Avx512F.PermuteVar16x32x2(a, order5, b).GetLower();
+                rowBuffer[5] = Avx512F.PermuteVar16x32x2(a, order5, b).GetLower();
 #else
-                rows[y * 6 + 5] = Avx512F.PermuteVar16x32x2(a, order4 + one, b).GetLower();
+                rowBuffer[5] = Avx512F.PermuteVar16x32x2(a, order4 + one, b).GetLower();
 #endif
                 if (border)
-                    for (int x = 0; x < 6; x++) rows[y * 6 + x] = (rows[y * 6 + x].AsInt32() & masks[x]).AsSingle();
+                    for (int x = 0; x < 6; x++) rowBuffer[x] = (rowBuffer[x].AsInt32() & masks[x]).AsSingle();
             }
             for (int y = 0; y < 6; y++) InputWinograd4(rows + y * 6, 1, temporary + y * 6, 1);
             for (int x = 0; x < 6; x++) InputWinograd4(temporary + x, 6, rows + x, 6);
