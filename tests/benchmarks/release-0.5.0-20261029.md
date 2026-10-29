@@ -1,18 +1,18 @@
 # 0.5.0 CPU benchmark evidence
 
-Engine source: `0ade33f23cfb8bd3ef095ba7fd6243cce68d5e8c`. The measured core is the exact .NET 11 assembly from the qualified 0.5.0 package. SDK `11.0.100-rc.3.26522.148`; runtime `11.0.0-rc.3.26522.148`. The package also contains a separately qualified .NET 10 asset.
+Engine source: `8c5ba9c415dade4b4597509f5972ad61b80c9e76`. The measured core is the exact .NET 11 assembly from the qualified 0.5.0 package. SDK `11.0.100-rc.3.26522.148`; runtime `11.0.0-rc.3.26522.148`. The package also contains a separately qualified .NET 10 asset.
 
 Azure `onnx-bench`, Standard_D4as_v7, AMD EPYC 9V45, four vCPUs / 16 GiB. Workers execute serially on CPU 2, monitoring on CPU 0. Native inference is Microsoft ORT 1.29.0 CPUExecutionProvider. Loading and preparation are outside timing.
 
 | Model | Workload | Managed seconds | ORT seconds | Ratio |
 |---|---|---:|---:|---:|
-| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 20.998276 | 18.432081 | **1.139** |
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 4.801282 | 4.079063 | **1.177** |
-| multilingual-e5-small | One 30-token forward pass | 0.010579 | 0.009781 | **1.082** |
-| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.182760 | 0.179390 | **1.019** |
-| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.056910 | 0.052106 | **1.092** |
-| ResNet50 | One 224x224 image, feature export | 0.050259 | 0.033537 | **1.499** |
-| GPT-2 | Four-token prefill, empty past state | 0.026270 | 0.019544 | **1.344** |
+| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 20.964610 | 18.299801 | **1.146** |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 4.602582 | 4.069858 | **1.131** |
+| multilingual-e5-small | One 30-token forward pass | 0.010892 | 0.009975 | **1.092** |
+| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.180462 | 0.180953 | **0.997** |
+| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.056967 | 0.051920 | **1.097** |
+| ResNet50 | One 224x224 image, feature export | 0.051771 | 0.033626 | **1.540** |
+| GPT-2 | Four-token prefill, empty past state | 0.026663 | 0.019114 | **1.395** |
 
 The [raw report](release-0.5.0-20261029.json) retains every warmup and measured clock, frequency, process interval/range, model/input/output identity, source/assembly/package hash and numerical outcome. All fourteen conformance workers pass before twenty-eight timing workers. Each case uses managed/native/native/managed process order and the median of two process results. No samples are trimmed and no calibration admission is added.
 
@@ -22,13 +22,13 @@ Graph timers include Reset, complete graph execution and copying every float out
 
 | Model | Managed process seconds | Native process seconds |
 |---|---|---|
-| Parakeet TDT 0.6B V3 | 21.043326, 20.953225 | 18.368808, 18.495355 |
-| Pyannote Community-1 | 4.652645, 4.949919 | 4.087148, 4.070978 |
-| multilingual-e5-small | 0.010532, 0.010625 | 0.009726, 0.009836 |
-| EmbeddingGemma 2 (FP32) | 0.184724, 0.180797 | 0.179948, 0.178833 |
-| DINOv3 ViT-S/16 | 0.055957, 0.057864 | 0.052186, 0.052026 |
-| ResNet50 | 0.050744, 0.049773 | 0.033596, 0.033478 |
-| GPT-2 | 0.026376, 0.026164 | 0.019409, 0.019680 |
+| Parakeet TDT 0.6B V3 | 20.977808, 20.951412 | 18.355288, 18.244313 |
+| Pyannote Community-1 | 4.558534, 4.646630 | 4.065655, 4.074061 |
+| multilingual-e5-small | 0.010964, 0.010819 | 0.009940, 0.010009 |
+| EmbeddingGemma 2 (FP32) | 0.181494, 0.179429 | 0.180437, 0.181468 |
+| DINOv3 ViT-S/16 | 0.055828, 0.058106 | 0.051818, 0.052022 |
+| ResNet50 | 0.051980, 0.051562 | 0.033556, 0.033697 |
+| GPT-2 | 0.026743, 0.026583 | 0.018817, 0.019411 |
 
 Differences within these ranges are inconclusive. These observations apply to the named workloads on this host; they are not a universal parity claim.
 
@@ -38,6 +38,6 @@ Complete graph arrays are compared directly between engines with identical shape
 
 DINOv2 remains excluded: its fresh full-output error is 0.000148850994908, above 1e-4 and within the existing 1e-3 tripwire. Its complete managed and native output hashes are identical to the preceding qualification. Whisper has no matched timing in this refresh.
 
-Core SHA256: `2c1fd036882d69fb04a5948cb8aa81cbd2da5f08223307428d199b5e8fdaa8b9`. Qualified package SHA256: `8ac00b03750c056c236224fd70858a36bdaa9bb6d82d170925a901bf0086183a`. The raw report distinguishes the same-source frozen reference build from the measured package assembly.
+Core SHA256: `9ba5c8d64f747b50ed8352c707b920f3859fcf035ddf7c13ad8b709dd03b24ec`. Qualified package SHA256: `295a7be14f3bc87790e1619c084758079ea7e3a178a40d25dab44ab2e1fee6d1`. The raw report distinguishes the same-source frozen reference build from the measured package assembly.
 
-The [0.4.0 report](release-0.4.0-20261027.md) remains available. It uses .NET 10; changes between those release tables include both engine and runtime changes. Matched engineering controls separately qualified the kernel improvements and .NET 10 compatibility. Parakeet meets the original 1.15 latency-ratio target at 1.139. Community-1 remains above it at 1.177; further performance work is open.
+The [0.4.0 report](release-0.4.0-20261027.md) remains available. It uses .NET 10; changes between those release tables include both engine and runtime changes. Matched engineering controls separately qualified the kernel improvements and .NET 10 compatibility. Both complete audio applications meet the original 1.15 latency-ratio target on this host: Parakeet 1.146 and Community-1 1.131. The process ranges above remain part of these workload-specific observations.

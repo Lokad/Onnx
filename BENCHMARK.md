@@ -1,6 +1,6 @@
 # CPU benchmarks for Lokad.Onnx
 
-Measured on **2026-10-29** for upcoming 0.5.0, source `0ade33f2`, on the
+Measured on **2026-10-29** for upcoming 0.5.0, source `8c5ba9c4`, on the
 existing `onnx-bench` Azure Standard_D4as_v7 VM: AMD EPYC 9V45, 4 vCPU / 16 GiB.
 Every worker uses **one logical CPU (CPU 2)**. Managed workers run .NET
 **11.0.0-rc.3.26522.148** (SDK 11 RC3); the package also supports .NET 10.
@@ -13,13 +13,13 @@ host; small differences within the process ranges are inconclusive.
 
 | Model | Measured workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---|---:|---:|---:|
-| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 20.998276 | 18.432081 | **1.139** |
-| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 4.801282 | 4.079063 | **1.177** |
-| multilingual-e5-small | One 30-token forward pass | 0.010579 | 0.009781 | **1.082** |
-| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.182760 | 0.179390 | **1.019** |
-| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.056910 | 0.052106 | **1.092** |
-| ResNet50 | One 224x224 image, feature export | 0.050259 | 0.033537 | **1.499** |
-| GPT-2 | Four-token prefill, empty past state | 0.026270 | 0.019544 | **1.344** |
+| Parakeet TDT 0.6B V3 | Transcribe 20 clips / 213.265 seconds of audio | 20.964610 | 18.299801 | **1.146** |
+| Pyannote Community-1 | Complete diarization of a 30-second dialogue | 4.602582 | 4.069858 | **1.131** |
+| multilingual-e5-small | One 30-token forward pass | 0.010892 | 0.009975 | **1.092** |
+| EmbeddingGemma 2 (FP32) | One 128-token input to an owned 768-value embedding | 0.180462 | 0.180953 | **0.997** |
+| DINOv3 ViT-S/16 | One 224x224 image, full weights | 0.056967 | 0.051920 | **1.097** |
+| ResNet50 | One 224x224 image, feature export | 0.051771 | 0.033626 | **1.540** |
+| GPT-2 | Four-token prefill, empty past state | 0.026663 | 0.019114 | **1.395** |
 
 DINOv2 remains excluded from timing by its full-output numerical gate.
 Whisper Large V3 Turbo is supported but has no matched timing in this refresh.
