@@ -98,9 +98,10 @@ public partial class MathOps
                 Vector512<float> cB1 = ((Vector512<float>*)(cGroup + 10 * K))[1];
                 Vector512<float> cC0 = ((Vector512<float>*)(cGroup + 11 * K))[0];
                 Vector512<float> cC1 = ((Vector512<float>*)(cGroup + 11 * K))[1];
-                for (int j = 0; j < N; ++j)
+                float* weightRow = panel;
+                for (nint j = 0; j < N; ++j, weightRow += 2 * Vector512<float>.Count)
                 {
-                    var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
+                    var Bpv = (Vector512<float>*)weightRow;
                     var b0 = Bpv[0];
                     var b1 = Bpv[1];
                     var aa = Vector512.Create(Ap1[j]);
