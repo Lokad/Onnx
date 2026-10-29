@@ -18,7 +18,8 @@ internal static unsafe partial class ConvBlockedSpatial
         // Preserve direct fallback for magnitudes that can overflow the original
         // seven-term float transform. Precision changes here must not broaden it.
         foreach (float value in weights) if (MathF.Abs(value) > float.MaxValue / 8) return null;
-        var result = new float[checked(36 * c * m)];
+        int weightChannels = WinogradWeightChannels(c, 4);
+        var result = new float[checked(36 * weightChannels * m)];
         Span<double> rows = stackalloc double[18];
         Span<double> column = stackalloc double[6];
         for (int oc = 0; oc < m; oc++)
@@ -34,7 +35,7 @@ internal static unsafe partial class ConvBlockedSpatial
                     // AVX-512 consumes contiguous sixteen-output panels, avoiding
                     // power-of-two channel strides within the reduction loop.
                     int index = lanes == 16
-                        ? (y * 6 + x) * c * m + (oc / 16 * c + ic) * 16 + oc % 16
+                        ? (y * 6 + x) * weightChannels * m + (oc / 16 * weightChannels + ic) * 16 + oc % 16
                         : ((y * 6 + x) * c + ic) * m + oc;
                     result[index] = (float)column[y];
                 }

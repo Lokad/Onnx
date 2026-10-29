@@ -13,6 +13,10 @@ internal static unsafe partial class ConvBlockedSpatial
     // One unused channel changes placement only, never the reduction order.
     static int WinogradInputChannels(int c, int components) => c + (components == 36 && c >= 64 ? 1 : 0);
 
+    // One unused channel separates the paired large-reduction weight panels
+    // from their original power-of-two byte strides. Logical reductions stay c.
+    internal static int WinogradWeightChannels(int c, int tileSize) => c + (tileSize == 4 && c > 64 ? 1 : 0);
+
     internal static float[]? PrepareWinograd(ReadOnlySpan<float> weights, int c, int m, int lanes)
     {
         Geometry(c, m, 1, 1, 1, lanes);
@@ -70,7 +74,7 @@ internal static unsafe partial class ConvBlockedSpatial
         if (tileSize == 4 && c > 64 && lanes != 16) return false;
         if (!PlanWinograd(c, m, h, w, out int ni, out int np, out int no, tileSize)) return false;
         int components = (tileSize + 2) * (tileSize + 2);
-        if (input.Length != checked(c * h * w) || prepared.Length != checked(components * c * m)
+        if (input.Length != checked(c * h * w) || prepared.Length != checked(components * WinogradWeightChannels(c, tileSize) * m)
             || destination.Length != no || (bias.Length != 0 && bias.Length != m)
             || (residual.Length != 0 && residual.Length != no)
             || transformed.Length < ni || products.Length < np || blocked.Length < no)

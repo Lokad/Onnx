@@ -57,7 +57,8 @@ public partial class ConvBlockedSpatialTests
         {
             int tile = c <= 64 || GraphConvPacking.Lanes == 16 ? 4 : 2;
             Assert.Equal(tile, record.OutputTileSize);
-            Assert.Equal((tile + 2) * (tile + 2) * c * m, record.WinogradValues!.Length);
+            int weightChannels = tile == 4 && c > 64 ? c + 1 : c;
+            Assert.Equal((tile + 2) * (tile + 2) * weightChannels * m, record.WinogradValues!.Length);
         }
         var held = Run(graph); var snapshot = held.ToArray(); Close(reference, snapshot);
         Equal(snapshot, Run(graph).ToArray()); Equal(snapshot, held.ToArray());

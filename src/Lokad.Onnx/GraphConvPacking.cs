@@ -50,8 +50,9 @@ internal static class GraphConvPacking
         if (c < 16 || c % 16 != 0 || m < 32 || m % 16 != 0 || directElements < 1) return false;
         long maximum = Math.Min(Array.MaxLength, GraphPacking.MaxPackedBytes / sizeof(float) - directElements);
         int components = (tileSize + 2) * (tileSize + 2);
-        if (maximum < 0 || m > maximum / components / c) return false;
-        elements = components * c * m;
+        int weightChannels = ConvBlockedSpatial.WinogradWeightChannels(c, tileSize);
+        if (maximum < 0 || m > maximum / components / weightChannels) return false;
+        elements = components * weightChannels * m;
         return true;
     }
 

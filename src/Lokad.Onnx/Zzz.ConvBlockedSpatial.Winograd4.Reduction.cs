@@ -12,6 +12,7 @@ internal static unsafe partial class ConvBlockedSpatial
     static void MultiplyWinograd4Pairwise512(float* v, float* u, float* p, int c, int m)
     {
         const int lanes = 16;
+        int weightChannels = WinogradWeightChannels(c, 4);
         Vector512<float>* partial = stackalloc Vector512<float>[6 * WinogradBatch * 2];
         for (int component = 0; component < 36; component++)
         for (int oc = 0; oc < m; oc += 2 * lanes)
@@ -27,12 +28,12 @@ internal static unsafe partial class ConvBlockedSpatial
                 var a5 = Vector512<float>.Zero; var b5 = a5;
                 var a6 = Vector512<float>.Zero; var b6 = a6;
                 var a7 = Vector512<float>.Zero; var b7 = a7;
-                float* weights = u + component * c * m + oc * c + first * lanes;
+                float* weights = u + component * weightChannels * m + oc * weightChannels + first * lanes;
                 float* inputs = v + (component * WinogradInputChannels(c, 36) + first) * WinogradBatch;
                 for (int ic = 0; ic < 8; ic++)
                 {
                     var weight = *(Vector512<float>*)weights;
-                    var weight1 = second ? *(Vector512<float>*)(weights + c * lanes) : Vector512<float>.Zero;
+                    var weight1 = second ? *(Vector512<float>*)(weights + weightChannels * lanes) : Vector512<float>.Zero;
                     var x0 = Vector512.Create(inputs[0]);
                     a0 = Avx512F.FusedMultiplyAdd(x0, weight, a0);
                     var x1 = Vector512.Create(inputs[1]);
