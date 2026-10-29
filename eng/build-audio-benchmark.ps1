@@ -10,6 +10,8 @@ $root = Split-Path -Parent $PSScriptRoot
 Push-Location $root
 try {
     $destination = [IO.Path]::GetFullPath($Output)
+    $harnessSha = (& git rev-parse --verify 'HEAD^{commit}' | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or $harnessSha -notmatch '^[0-9a-f]{40}$') { throw 'Cannot freeze audio caller source' }
     & ./eng/build-common-campaign.ps1 -Output $destination -L0Ref $L0Ref -L1Ref $L1Ref -Framework $Framework -CoreOnly
     if ($LASTEXITCODE -ne 0) { throw 'Core preparation failed' }
     foreach ($role in @('L0', 'L1')) {
@@ -34,7 +36,19 @@ try {
         $build | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $receipt -Encoding utf8
     }
     $baseline = Join-Path $destination 'L0/core'
-    & dotnet build tests/Lokad.Onnx.AudioBench -c Release -f $Framework --tl:off --nologo -v minimal "-p:ProductDirectory=$baseline" -o (Join-Path $destination 'runner') *> (Join-Path $destination 'runner-build.log')
+    $harnessArchive = Join-Path $destination 'runner-source.zip'
+    & git archive --format=zip --output=$harnessArchive $harnessSha global.json tests/Lokad.Onnx.AudioBench tests/Shared/NpySupport.cs
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot archive common audio caller' }
+    $harnessSource = Join-Path $destination 'runner-source'
+    Expand-Archive -LiteralPath $harnessArchive -DestinationPath $harnessSource
+    & dotnet build (Join-Path $harnessSource 'tests/Lokad.Onnx.AudioBench') -c Release -f $Framework --tl:off --nologo -v minimal "-p:ProductDirectory=$baseline" "-p:SourceRevisionId=$harnessSha" -o (Join-Path $destination 'runner') *> (Join-Path $destination 'runner-build.log')
     if ($LASTEXITCODE -ne 0) { throw "Audio caller build failed; inspect $destination/runner-build.log" }
+    [ordered]@{
+        source_sha = $harnessSha
+        source_archive_sha256 = (Get-FileHash $harnessArchive -Algorithm SHA256).Hash.ToLowerInvariant()
+        runner_sha256 = (Get-FileHash (Join-Path $destination 'runner/Lokad.Onnx.AudioBench.dll') -Algorithm SHA256).Hash.ToLowerInvariant()
+        sdk = (& dotnet --version | Out-String).Trim()
+        target_framework = $Framework
+    } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $destination 'runner-build.json') -Encoding utf8
     Write-Host "PASS one audio caller and pinned complete products: $destination"
 } finally { Pop-Location }

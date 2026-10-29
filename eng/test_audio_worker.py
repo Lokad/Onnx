@@ -17,16 +17,31 @@ class AudioWorkerTests(unittest.TestCase):
 
     def record(self, fixture):
         rows = []
-        ticks = 0
-        for iteration in range(4):
+        v2 = fixture['schema'] == 2
+        phases = (['first-use'] + ['conditioning'] * fixture['conditioning_passes'] + ['measured'] * fixture['measured_passes']) if v2 else ['warmup', 'measured', 'measured', 'measured']
+        ticks = 124 if v2 else 0
+        for iteration, phase in enumerate(phases):
             for i, case in enumerate(fixture['cases']):
                 seconds = (i+1)*(iteration+1)
-                rows.append(dict(name=case['name'], **{'pass': iteration}, phase='warmup' if iteration == 0 else 'measured',
+                rows.append(dict(name=case['name'], **{'pass': iteration}, phase=phase,
                                  seconds=seconds, start_ticks=ticks, end_ticks=ticks+seconds, frequency=1,
-                                 result=copy.deepcopy(case['expected']), maximum_centroid_error=0., input_sha256=case['raw_sha256'], ownership=True))
+                                 result=copy.deepcopy(case['expected']), maximum_centroid_error=0., input_sha256=case['raw_sha256'], ownership=True,
+                                 gc_before=[0, 0, 0], gc_after=[1, 0, 0], allocated_bytes=100,
+                                 heap_bytes_before=1000, heap_bytes_after=1100, gc_pause_seconds=.1))
                 ticks += seconds
-        return dict(schema=1, family='parakeet', engine='managed', conformance=False, held_outputs_unchanged=True,
-                    affinity=4, setup_seconds=123., flags={}, records=rows)
+        value = dict(schema=fixture['schema'], family='parakeet', engine='managed', conformance=False, held_outputs_unchanged=True,
+                     affinity=4, setup_seconds=123., flags={}, records=rows)
+        if v2:
+            value.update(producer='audio-sustained-v2',
+                         schedule=dict(first_use_passes=1, conditioning_passes=fixture['conditioning_passes'], measured_passes=fixture['measured_passes']),
+                         startup=dict(entry_utc='2026-10-29T11:00:00Z', entry_ticks=0, setup_start_ticks=1, setup_end_ticks=124, frequency=1, preparation_seconds=1.))
+        return value
+
+    def fixture_v2(self):
+        fixture = self.fixture()
+        fixture.pop('warmup_passes')
+        fixture.update(schema=2, protocol='audio-sustained-v2', conditioning_passes=2, measured_passes=4, process_timeout_seconds=1800)
+        return fixture
 
     def test_full_twenty_clip_passes_exclude_warmup_and_setup(self):
         fixture = self.fixture()
@@ -34,6 +49,51 @@ class AudioWorkerTests(unittest.TestCase):
         samples = audio.measured(value, fixture, [c['name'] for c in fixture['cases']], 'timing')
         self.assertEqual([420000., 630000., 840000.], samples)
         self.assertEqual(80, len(value['records']))
+
+    def test_v2_keeps_first_use_conditioning_and_setup_separate(self):
+        fixture = self.fixture_v2()
+        value = self.record(fixture)
+        samples = audio.measured(value, fixture, [c['name'] for c in fixture['cases']], 'timing')
+        self.assertEqual([840000., 1050000., 1260000., 1470000.], samples)
+        self.assertEqual(140, len(value['records']))
+        self.assertEqual(['first-use', 'conditioning', 'conditioning', 'measured', 'measured', 'measured', 'measured'], protocol.schedule(fixture, 'timing'))
+        # Conformance still exercises every case, without claiming any timing.
+        value['records'] = value['records'][:20]
+        value['conformance'] = True
+        self.assertEqual([], audio.measured(value, fixture, [c['name'] for c in fixture['cases']], 'conformance'))
+
+    def test_v2_cannot_hide_missing_calls_or_mislabel_first_use_as_measured(self):
+        fixture = self.fixture_v2()
+        for kind in ('missing', 'extra', 'phase', 'pass', 'schedule', 'producer', 'startup', 'pause', 'collections', 'allocation'):
+            value = self.record(fixture)
+            if kind == 'missing': value['records'].pop()
+            elif kind == 'extra': value['records'].append(value['records'][-1])
+            elif kind == 'phase': value['records'][0]['phase'] = 'measured'
+            elif kind == 'pass': value['records'][60]['pass'] = 2
+            elif kind == 'schedule': value['schedule']['conditioning_passes'] = 1
+            elif kind == 'producer': value['producer'] = 'audio-full-api-v1'
+            elif kind == 'startup': value['startup']['setup_end_ticks'] += 1
+            elif kind == 'pause': value['records'][0]['gc_pause_seconds'] = -1
+            elif kind == 'collections': value['records'][0]['gc_after'] = [-1, 0, 0]
+            else: value['records'][0]['allocated_bytes'] = -1
+            with self.subTest(kind=kind), self.assertRaises(AssertionError):
+                audio.measured(value, fixture, [c['name'] for c in fixture['cases']], 'timing')
+
+    def test_protocol_versions_require_explicit_bounded_schedules(self):
+        for field, bad in [('schema', 3), ('protocol', 'audio-full-api-v1'), ('conditioning_passes', -1),
+                           ('conditioning_passes', True), ('measured_passes', 1), ('measured_passes', 33),
+                           ('process_timeout_seconds', 0), ('warmup_passes', 1)]:
+            fixture = self.fixture_v2()
+            fixture[field] = bad
+            with self.subTest(field=field, value=bad), self.assertRaises(AssertionError):
+                protocol.definition(fixture)
+        legacy = self.fixture()
+        legacy['warmup_passes'] = 2
+        with self.assertRaises(AssertionError):
+            protocol.definition(legacy)
+        pilot = self.fixture_v2()
+        pilot['conditioning_passes'] = 0
+        self.assertEqual(['first-use', 'measured', 'measured', 'measured', 'measured'], protocol.schedule(pilot, 'timing'))
 
     def test_mean_is_preserved_in_shared_summary(self):
         workers = [dict(case='parakeet', pair=pair, role=role, engine=engine, aggregation='mean', samples_ms=[1., 1., 100.])

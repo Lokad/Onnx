@@ -51,14 +51,40 @@ python eng/bench.py --model parakeet --prepared <audio-prepared> --root <asset-r
 Use `--model pyannote` with its manifest for Community-1. `--verify-only` runs
 both managed products and the native application without timing. The fixture set
 is fixed: all twenty Parakeet recordings, or Community-1's 30-second dialogue
-plus its ownership/recovery controls. Every timed worker runs one warmup pass
-and three measured passes, retaining all calls. A process value is the mean of
+plus its ownership/recovery controls. A schema-1 timed worker runs one warmup
+pass and three measured passes, retaining all calls. A process value is the mean of
 full-workload pass sums; setup and peak resident memory are recorded separately.
 No output copies, frontend, decoder, embedding or clustering work is removed
 from the complete API timer. The three conformance workers must pass before
 any timed worker starts. The retained native adapter/upstream sources and model
 files are inputs checked against the manifest; the benchmark does not download
 assets. Audio uses Linux CPU 2 to preserve its existing fixture protocol.
+
+For sustained investigations, schema 2 uses protocol `audio-sustained-v2`.
+Keep the same assets, native pins and complete case set. Replace `warmup_passes`
+with explicit `conditioning_passes` (0–32), `measured_passes` (2–32), and
+`process_timeout_seconds` (60–7200). Each process first runs one complete
+`first-use` pass, then the declared conditioning passes, then every measured
+pass. Conformance runs the first-use pass only. The process value is the mean
+of measured full-workload sums; first-use and conditioning stay in raw records.
+Declare the schedule before launch and apply it to both engines. This is a
+different protocol; historical schema-1 reports keep their original meaning.
+
+Both producers record API-construction time separately from entry-to-constructor
+preparation (input validation/imports), with monotonic clocks. The supervisor
+retains total process elapsed time; it includes validation and reporting and
+must not be called model-loading time. First-use timings are per case in the
+declared order: later cases already benefit from earlier calls. Managed rows
+also retain allocation bytes, collection counts, GC pause-duration deltas and
+managed-heap estimates around each API call. These counters do not themselves
+attribute allocation sites or establish pause overhead; collect diagnostic
+traces separately from timing.
+
+Audio preparation freezes a common caller from HEAD in `runner-source.zip`,
+builds that archive, and records its identity in `runner-build.json`, separately
+from L0/L1 engine/Data source identities. Schema 2 requires this provenance.
+Commit caller changes before preparing products; uncommitted caller changes
+are excluded just like uncommitted engine changes.
 
 `report.json` contains every timed call, per-process medians, managed/ORT ratios,
 paired candidate/control ratios and process variation. The immutable worker

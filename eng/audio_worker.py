@@ -17,8 +17,8 @@ RUNNER = 'Lokad.Onnx.AudioBench.dll'
 
 def manifest(path, family):
     value = protocol.read(path)
-    evidence.require(value['schema'] == 1 and value['family'] == family, 'wrong audio fixture family/schema')
-    evidence.require((value['warmup_passes'], value['measured_passes']) == (1, 3), 'audio pass definition changed')
+    protocol.definition(value)
+    evidence.require(value['family'] == family, 'wrong audio fixture family')
     cases = value['cases']
     evidence.require(len({c['name'] for c in cases}) == len(cases), 'duplicate audio case')
     targets = [c['name'] for c in cases if family == 'parakeet' or c['samples'] == 480000]
@@ -30,11 +30,11 @@ def measured(value, fixture, targets, phase):
     protocol.validate_records(value, fixture, phase)
     if phase == 'conformance':
         return []
-    # Sum every selected clip in a pass. Mean of these three sums is identical
-    # to the published sum of per-clip means, including the full 20-clip ASR set.
+    # Retain all measured full-workload sums. Conditioning and first-use stay
+    # in the raw records and never enter the sustained process mean.
     samples = [sum(r['seconds'] for r in value['records'] if r['pass'] == i and r['name'] in targets) * 1000
-               for i in range(fixture['warmup_passes'], fixture['warmup_passes'] + fixture['measured_passes'])]
-    evidence.require(len(samples) == 3 and all(math.isfinite(x) and x > 0 for x in samples), 'missing audio samples')
+               for i, label in enumerate(protocol.schedule(fixture, phase)) if label == 'measured']
+    evidence.require(len(samples) == fixture['measured_passes'] and all(math.isfinite(x) and x > 0 for x in samples), 'missing audio samples')
     return samples
 
 
@@ -55,9 +55,10 @@ def child(build, root, output, role, pair, engine, family, fixture_path, fixture
         process = common.spawn_child(command, 2, cwd=root, env=env, stdout=log, stderr=log,
                                      preexec_fn=lambda: os.sched_setaffinity(0, {2}))
         try:
-            deadline = time.monotonic() + 900
+            timeout = protocol.definition(fixture)[2]
+            deadline = time.monotonic() + timeout
             while process.poll() is None:
-                evidence.require(time.monotonic() < deadline, 'audio process exceeded 900 seconds')
+                evidence.require(time.monotonic() < deadline, f'audio process exceeded {timeout} seconds')
                 try:
                     child_process = psutil.Process(process.pid)
                     evidence.require(child_process.cpu_affinity() == [2], 'audio process affinity changed')
@@ -90,9 +91,10 @@ def child(build, root, output, role, pair, engine, family, fixture_path, fixture
         raise failure
     evidence.require(code == 0, 'audio worker failed: ' + stem)
     value = protocol.read(destination / 'result.json')
-    evidence.require(value['producer'] == 'audio-full-api-v1', 'wrong audio producer')
+    evidence.require(value['producer'] == protocol.definition(fixture)[0], 'wrong audio producer')
     evidence.require(value['manifest_sha256'] == evidence.sha256(fixture_path), 'audio fixture changed')
     if engine == 'lok':
+        evidence.require(value['runner_sha256'] == evidence.sha256(build['runner']), 'loaded audio caller changed')
         for name, digest in build['product_files'].items():
             evidence.require(evidence.sha256(build['runner'].parent / name) == digest, 'staged product changed')
         evidence.require(value['core_sha256'] == build['core_sha256'], 'loaded core changed')
@@ -116,7 +118,16 @@ def run(args, summarize, order):
     output, prepared, root = args.output.resolve(), args.prepared.resolve(), args.root.resolve()
     fixture_path = args.fixtures.resolve()
     fixture, targets = manifest(fixture_path, args.model)
+    harness = None
+    if fixture['schema'] == 2:
+        harness = protocol.read(prepared / 'runner-build.json')
+        evidence.digest(harness['source_sha'], 'audio caller source', 40)
+        evidence.require(evidence.sha256(prepared / 'runner-source.zip') == harness['source_archive_sha256'], 'audio caller source archive changed')
+        evidence.require(evidence.sha256(prepared / 'runner' / RUNNER) == harness['runner_sha256'], 'audio caller changed')
     builds = common.stage(prepared, output, 'comparison', RUNNER, product=True)
+    if harness is not None:
+        evidence.require(all(build['sdk'] == harness['sdk'] and build['target_framework'] == harness['target_framework'] for build in builds.values()), 'caller/product build environment differs')
+        common.save_json(output / 'runner-build.json', harness)
     common.save_json(output / 'fixture.json', fixture)
     # The supervisor is separate from the single CPU used by workers.
     os.sched_setaffinity(0, {0})
@@ -143,9 +154,10 @@ def run(args, summarize, order):
                 workers.append(item)
                 common.save_json(output / f'completed-{index:03d}.json', item)
     report = dict(kind='engineering-comparison', model=args.model, pairs=args.pairs,
-                  contract='complete public API; one warmup pass; three measured passes; process mean of full-workload sums; startup separate',
+                  protocol=protocol.definition(fixture)[0], schedule=protocol.definition(fixture)[1],
+                  contract='complete public API; declared phases retained; process mean of measured full-workload sums; setup and first-use separate',
                   fixture_sha256=evidence.sha256(fixture_path), target_cases=targets, verification=verification,
-                  producer_files=sources,
+                  producer_files=sources, harness=harness,
                   builds={role: {key: build[key] for key in ('source_sha', 'sdk', 'target_framework', 'core_sha256', 'product_files', 'source_archive_sha256', 'data_source_archive_sha256')}
                           for role, build in builds.items()},
                   workers=workers, summary=summarize(workers))

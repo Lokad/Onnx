@@ -7,6 +7,7 @@ using System.Text.Json;
 using Lokad.Onnx;
 using Lokad.Onnx.Tests.Support;
 
+long entryTicks=Stopwatch.GetTimestamp();string entryUtc=DateTimeOffset.UtcNow.ToString("O");
 if(args.Length!=4)throw new ArgumentException("root manifest output conformance|timing");
 if(!OperatingSystem.IsWindows() && !OperatingSystem.IsLinux())throw new PlatformNotSupportedException("Verified process affinity required");
 string root=Path.GetFullPath(args[0]),manifestPath=Path.GetFullPath(args[1]),output=Path.GetFullPath(args[2]);
@@ -14,7 +15,16 @@ bool conformance=args[3]=="conformance";if(!conformance && args[3]!="timing")thr
 if(Directory.Exists(output)||File.Exists(output))throw new IOException("Existing output");
 using var process=Process.GetCurrentProcess();Require(Affinity(process)==4,"CPU2 affinity required before CLR");
 using var document=JsonDocument.Parse(File.ReadAllBytes(manifestPath));var manifest=document.RootElement;
-Require(manifest.GetProperty("schema").GetInt32()==1,"Schema");
+int schema=manifest.GetProperty("schema").GetInt32();Require(schema is 1 or 2,"Schema");
+int conditioning=0,measuredPasses=manifest.GetProperty("measured_passes").GetInt32();
+if(schema==1)Require(manifest.GetProperty("warmup_passes").GetInt32()==1 && measuredPasses==3,"audio-v1 schedule changed");
+else
+{
+    Require(manifest.GetProperty("protocol").GetString()=="audio-sustained-v2" && !manifest.TryGetProperty("warmup_passes",out _),"audio-v2 protocol");
+    conditioning=manifest.GetProperty("conditioning_passes").GetInt32();
+    int timeout=manifest.GetProperty("process_timeout_seconds").GetInt32();
+    Require(conditioning is >=0 and <=32 && measuredPasses is >=2 and <=32 && timeout is >=60 and <=7200,"audio-v2 schedule");
+}
 string family=manifest.GetProperty("family").GetString()!;
 string PathOf(JsonElement spec)
 {
@@ -34,18 +44,20 @@ long setupStart=Stopwatch.GetTimestamp();
 ParakeetTranscriber? parakeet=family=="parakeet"?new(Path.GetDirectoryName(models["nemo128.onnx"])!):null;
 Community1Diarizer? pyannote=family=="pyannote"?new(models["segmentation"],models["encoder"],models["projection"],models["plda"]):null;
 Require(parakeet is not null || pyannote is not null,"Unknown family");
-double setupSeconds=Stopwatch.GetElapsedTime(setupStart).TotalSeconds;
+long setupEnd=Stopwatch.GetTimestamp();double setupSeconds=(setupEnd-setupStart)/(double)Stopwatch.Frequency;
 var records=new List<object>();var held=new List<(object Result,string Snapshot)>();var first=new Dictionary<string,string>();
-int warmup=conformance?1:manifest.GetProperty("warmup_passes").GetInt32(),measured=conformance?0:manifest.GetProperty("measured_passes").GetInt32();
-for(int pass=0;pass<warmup+measured;pass++)foreach(var c in cases)
+int passes=conformance?1:1+conditioning+measuredPasses;
+for(int pass=0;pass<passes;pass++)foreach(var c in cases)
 {
     Require(Hash(c.Pcm)==c.Hash,"Input changed before request");
     foreach(var old in held)Require(JsonSerializer.Serialize(old.Result)==old.Snapshot,"Held output changed");
     var gcBefore=Enumerable.Range(0,3).Select(GC.CollectionCount).ToArray();long allocated=GC.GetTotalAllocatedBytes();
+    long heapBefore=GC.GetTotalMemory(false);TimeSpan pauseBefore=GC.GetTotalPauseDuration();
     long start=Stopwatch.GetTimestamp();object actual;
     if(parakeet is not null)actual=parakeet.Transcribe(c.Pcm,16000,ParakeetTranscriptionOptions.Default,CancellationToken.None);
     else actual=pyannote!.Diarize(c.Pcm,16000,CancellationToken.None);
-    long end=Stopwatch.GetTimestamp();long allocatedAfter=GC.GetTotalAllocatedBytes();var gcAfter=Enumerable.Range(0,3).Select(GC.CollectionCount).ToArray();
+    long end=Stopwatch.GetTimestamp();TimeSpan pauseAfter=GC.GetTotalPauseDuration();long heapAfter=GC.GetTotalMemory(false);
+    long allocatedAfter=GC.GetTotalAllocatedBytes();var gcAfter=Enumerable.Range(0,3).Select(GC.CollectionCount).ToArray();
     JsonElement normalized=actual switch
     {
         ParakeetTranscription p=>JsonSerializer.SerializeToElement(new{text=p.Text,token_ids=p.TokenIds,frame_indices=p.FrameIndices,duration_frames=p.DurationFrames,stop_reason=p.StopReason.ToString(),encoded_frames=p.EncodedFrames,decoder_calls=p.DecoderCalls}),
@@ -56,18 +68,27 @@ for(int pass=0;pass<warmup+measured;pass++)foreach(var c in cases)
     string snapshot=JsonSerializer.Serialize(actual);
     if(first.TryGetValue(c.Name,out var prior))Require(prior==snapshot,"Repeat changed output");else first[c.Name]=snapshot;
     held.Add((actual,snapshot));NoOrt();
-    var row=new{name=c.Name,pass,phase=pass<warmup?"warmup":"measured",seconds=(end-start)/(double)Stopwatch.Frequency,start_ticks=start,end_ticks=end,frequency=Stopwatch.Frequency,
-        result=normalized,maximum_centroid_error=error,input_sha256=c.Hash,ownership=true,gc_before=gcBefore,gc_after=gcAfter,allocated_bytes=allocatedAfter-allocated};
+    string phase=schema==1?(pass==0?"warmup":"measured"):(pass==0?"first-use":pass<=conditioning?"conditioning":"measured");
+    var row=new{name=c.Name,pass,phase,seconds=(end-start)/(double)Stopwatch.Frequency,start_ticks=start,end_ticks=end,frequency=Stopwatch.Frequency,
+        result=normalized,maximum_centroid_error=error,input_sha256=c.Hash,ownership=true,gc_before=gcBefore,gc_after=gcAfter,allocated_bytes=allocatedAfter-allocated,
+        gc_pause_seconds=(pauseAfter-pauseBefore).TotalSeconds,heap_bytes_before=heapBefore,heap_bytes_after=heapAfter};
     records.Add(row);File.WriteAllText(Path.Combine(output,$"{records.Count-1:D3}.json"),JsonSerializer.Serialize(row,json));
     Console.WriteLine($"{family} {row.phase} pass={pass} {c.Name} {row.seconds:F4}s");
 }
 foreach(var old in held)Require(JsonSerializer.Serialize(old.Result)==old.Snapshot,"Final held output changed");
 Require(cases.All(c=>Hash(c.Pcm)==c.Hash),"Final input mutation");
-File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{schema=1,producer="audio-full-api-v1",family,engine="managed",conformance,records,setup_seconds=setupSeconds,
+var result=JsonSerializer.SerializeToElement(new{schema,producer=schema==1?"audio-full-api-v1":"audio-sustained-v2",family,engine="managed",conformance,records,setup_seconds=setupSeconds,
     manifest_sha256=Sha(manifestPath),core_sha256=Sha(typeof(ComputationalGraph).Assembly.Location),data_sha256=Sha(typeof(ParakeetTranscriber).Assembly.Location),runner_sha256=Sha(Assembly.GetExecutingAssembly().Location),
     sdk=Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyMetadataAttribute>().Single(a=>a.Key=="CampaignSdk").Value,
     runtime=RuntimeInformation.FrameworkDescription,os=RuntimeInformation.OSDescription,affinity=Affinity(process),processor_count=Environment.ProcessorCount,
-    peak_working_set=process.PeakWorkingSet64,held_outputs_unchanged=true,flags=Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k=>k.StartsWith("LOKAD_")||k.StartsWith("COMPlus_")||k.StartsWith("DOTNET_")).ToDictionary(k=>k,Environment.GetEnvironmentVariable)},json));
+    peak_working_set=process.PeakWorkingSet64,held_outputs_unchanged=true,flags=Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k=>k.StartsWith("LOKAD_")||k.StartsWith("COMPlus_")||k.StartsWith("DOTNET_")).ToDictionary(k=>k,Environment.GetEnvironmentVariable)}).EnumerateObject().ToDictionary(p=>p.Name,p=>(object?)p.Value.Clone());
+if(schema==2)
+{
+    result["schedule"]=new{first_use_passes=1,conditioning_passes=conditioning,measured_passes=measuredPasses};
+    result["startup"]=new{entry_utc=entryUtc,entry_ticks=entryTicks,setup_start_ticks=setupStart,setup_end_ticks=setupEnd,frequency=Stopwatch.Frequency,
+        preparation_seconds=(setupStart-entryTicks)/(double)Stopwatch.Frequency};
+}
+File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(result,json));
 return 0;
 
 static string Sha(string p){using var stream=File.OpenRead(p);return Convert.ToHexStringLower(SHA256.HashData(stream));}

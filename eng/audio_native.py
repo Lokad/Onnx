@@ -1,5 +1,6 @@
 """Independent pinned ORT applications; numerical checks stay outside API timing."""
 import argparse
+import datetime as dt
 import hashlib
 import importlib.metadata
 import importlib.util
@@ -10,10 +11,12 @@ from pathlib import Path
 import sys
 import time
 
-from audio_protocol import check_result, pin, read, validate_records, write
+from audio_protocol import check_result, definition, pin, read, schedule, validate_records, write
 
 
 def main():
+    entry_ticks = time.perf_counter_ns()
+    entry_utc = dt.datetime.now(dt.timezone.utc).isoformat()
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['root', 'manifest', 'output']:
         parser.add_argument(name, type=Path)
@@ -23,7 +26,8 @@ def main():
     assert not args.output.exists()
     manifest, root = read(args.manifest), args.root.resolve()
     family = manifest['family']
-    assert manifest['schema'] == 1 and family in ('parakeet', 'pyannote')
+    producer, counts, _ = definition(manifest)
+    assert family in ('parakeet', 'pyannote')
     flags = {k: v for k, v in os.environ.items() if k.lower().startswith(('lokad_', 'dotnet_', 'complus_', 'omp_', 'mkl_', 'openblas_', 'blis_', 'numexpr_'))}
     assert not any(k.lower().startswith(('lokad_', 'dotnet_', 'complus_')) for k in flags)
     for key in ['OMP_NUM_THREADS', 'MKL_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'BLIS_NUM_THREADS', 'NUMEXPR_NUM_THREADS']:
@@ -58,12 +62,12 @@ def main():
         assert hashlib.sha256(before).hexdigest() == case['raw_sha256']
         cases.append((case, pcm, before))
     args.output.mkdir()
-    start = time.perf_counter()
+    setup_start = time.perf_counter_ns()
     model = getattr(module, {'parakeet': 'Parakeet', 'pyannote': 'Pyannote'}[family])(root, manifest)
-    setup = time.perf_counter()-start
+    setup_end = time.perf_counter_ns()
+    setup = (setup_end-setup_start)/1e9
     records, held, first = [], [], {}
-    warmups = manifest['warmup_passes']
-    for iteration in range(1 if args.mode == 'conformance' else warmups+manifest['measured_passes']):
+    for iteration, phase in enumerate(schedule(manifest, args.mode)):
         for case, pcm, before in cases:
             assert pcm.tobytes() == before
             for result, snapshot in held:
@@ -79,7 +83,7 @@ def main():
             else:
                 first[case['name']] = snapshot
             held.append((actual, snapshot))
-            row = dict(name=case['name'], **{'pass': iteration}, phase='warmup' if args.mode == 'conformance' or iteration < warmups else 'measured',
+            row = dict(name=case['name'], **{'pass': iteration}, phase=phase,
                        seconds=(end-start)/1e9, start_ticks=start, end_ticks=end, frequency=1000000000,
                        result=actual, maximum_centroid_error=error, input_sha256=hashlib.sha256(before).hexdigest(), ownership=True)
             records.append(row)
@@ -94,11 +98,15 @@ def main():
         if path.is_file() and '.so' in path.name and any(token in str(path).lower() for token in ['numpy', 'scipy', 'torch', 'onnxruntime', 'blas', 'mkl']):
             numeric[str(path)] = pin(path)
     assert numeric and any('onnxruntime' in path for path in numeric)
-    value = dict(schema=1, producer='audio-full-api-v1', family=family, engine='ort', conformance=args.mode == 'conformance',
+    value = dict(schema=manifest['schema'], producer=producer, family=family, engine='ort', conformance=args.mode == 'conformance',
                  records=records, setup_seconds=setup, manifest_sha256=pin(args.manifest)['sha256'], runner_sha256=pin(Path(__file__))['sha256'],
                  adapter_sha256=pin(adapter)['sha256'], runtime=sys.version, python_binary=pin(Path(sys.executable)), versions=manifest['native_versions'],
                  native_binaries=manifest['native_binaries'], numeric_libraries=numeric, affinity=4, flags=flags, held_outputs_unchanged=True,
                  native_settings=dict(provider='CPUExecutionProvider', intra_threads=1, inter_threads=1, sequential=True, graph_optimizations='all', spinning=False))
+    if manifest['schema'] == 2:
+        value.update(schedule=counts, startup=dict(entry_utc=entry_utc, entry_ticks=entry_ticks,
+                     setup_start_ticks=setup_start, setup_end_ticks=setup_end, frequency=1000000000,
+                     preparation_seconds=(setup_start-entry_ticks)/1e9))
     validate_records(value, manifest, args.mode)
     write(args.output/'result.json', value)
 
