@@ -22,6 +22,8 @@
   selects it for Community-1. See [runtime options](docs/runtime-options.md).
 - ReLU uses wider float vectors and fewer comparisons while preserving NaN
   payloads, signed zero and compact tails.
+- Dense one-dimensional max pooling uses AVX-512 on .NET 11 for three-sample
+  windows with stride three, preserving signed-zero ties and ignored NaNs.
 - Larger convolution tiles use bounded padding in prepared inputs and weights,
   reuse scratch and transformed-row addresses, and load contiguous inputs at borders, preserving
   the same reductions. Input permutation indices are prepared once on .NET 11;
@@ -29,7 +31,7 @@
 - Small AVX-512 LSTMs reuse the decoder's packed projection format. Paired
   decoder panels share input loads, retaining separate multiply/add order.
 - Refreshed the seven-model [CPU comparisons](BENCHMARK.md) on .NET 11. Complete
-  Parakeet and Community-1 workloads measure 1.148 and 1.184 times ORT latency
+  Parakeet and Community-1 workloads measure 1.139 and 1.177 times ORT latency
   on one logical CPU of the dedicated host, with full-output checks and retained raw clocks.
 
 ## 0.4.0 — 2026-10-28
