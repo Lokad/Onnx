@@ -113,6 +113,13 @@ internal static unsafe partial class ConvBlockedSpatial
     static void TransformWinograd4InputContiguous(ReadOnlySpan<float> input, Span<float> transformed,
         int c, int h, int w, int top, int left)
     {
+#if NET11_0_OR_GREATER
+        if ((c & 1) == 0)
+        {
+            TransformWinograd4InputContiguousPaired(input, transformed, c, h, w, top, left);
+            return;
+        }
+#endif
         // Clamp each 32-column load window to its row; mask only padded tiles.
         bool border = top < 0 || top + 5 >= h || left < 0 || left + 35 >= w;
         int base0 = Math.Clamp(left, 0, w - 32), base1 = Math.Clamp(left + 4, 0, w - 32);

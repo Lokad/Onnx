@@ -12,6 +12,10 @@ public partial class ConvBlockedSpatialTests
     [InlineData(32, 6, 34)]
     [InlineData(64, 7, 65)]
     [InlineData(32, 13, 135)]
+    [InlineData(16, 7, 32)]
+    [InlineData(64, 5, 33)]
+    [InlineData(128, 7, 80)]
+    [InlineData(256, 5, 36)]
     public void LargerOptInTilesMatchDoubleConvolution(int c, int h, int w)
         => CheckLargerTiles(c, 32, h, w, false);
 
