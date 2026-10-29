@@ -4,6 +4,8 @@ namespace Lokad.Onnx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 using static OpResult;
 public partial class CPUExecutionProvider
@@ -184,10 +186,12 @@ public partial class CPUExecutionProvider
         /// lands directly in the result through the shared overwriting entry, and the
         /// scale/bias pass runs only when it can change anything.
         /// </summary>
-        static Tensor<float> GemmFloat(Tensor<float> a, Tensor<float> b, Tensor<float>? c, int m, int k, int n, float alpha, float beta, TensorExecutionOptions tensorOptions)
+        static Tensor<float> GemmFloat(Tensor<float> a, Tensor<float> b, Tensor<float>? c, int m, int k, int n, float alpha, float beta, TensorExecutionOptions tensorOptions, bool denseTransposedRow = false)
         {
             var y = DenseTensor<float>.OfShape(m, n);
-            Tensor<float>.MatMul2D(a, b, y, tensorOptions);
+            if (denseTransposedRow)
+                GemmTransposedRow((DenseTensor<float>)a, (DenseTensor<float>)b, y, k, n);
+            else Tensor<float>.MatMul2D(a, b, y, tensorOptions);
             if (alpha == 1f && (c is null || beta == 0f)) return y;
             var ys = y.Buffer.Span;
             if (c is null || beta == 0f)
@@ -218,6 +222,35 @@ public partial class CPUExecutionProvider
                 for (int j = 0; j < n; j++) ys[i * n + j] = alpha * ys[i * n + j] + beta * cbias[r + (ccols == 1 ? 0 : j)];
             }
             return y;
+        }
+
+        // Each lane is one output, retaining the original sequential FMA
+        // reduction. Read the existing row-major B without materializing B^T.
+        static unsafe void GemmTransposedRow(DenseTensor<float> a, DenseTensor<float> b, DenseTensor<float> y, int reduction, int columns)
+        {
+            fixed (float* x = a.Buffer.Span, weights = b.Buffer.Span, output = y.Buffer.Span)
+            {
+                int complete = columns / 8 * 8;
+                for (int column = 0; column < complete; column += 8)
+                {
+                    float* w0 = weights + column * reduction;
+                    float* w1 = w0 + reduction, w2 = w1 + reduction, w3 = w2 + reduction;
+                    float* w4 = w3 + reduction, w5 = w4 + reduction, w6 = w5 + reduction, w7 = w6 + reduction;
+                    var sum = Vector256<float>.Zero;
+                    for (int j = 0; j < reduction; j++)
+                    {
+                        var values = Vector256.Create(w0[j], w1[j], w2[j], w3[j], w4[j], w5[j], w6[j], w7[j]);
+                        sum = Fma.MultiplyAdd(values, Vector256.Create(x[j]), sum);
+                    }
+                    sum.Store(output + column);
+                }
+                for (int column = complete; column < columns; column++)
+                {
+                    float sum = 0; float* row = weights + column * reduction;
+                    for (int j = 0; j < reduction; j++) sum += row[j] * x[j];
+                    output[column] = sum;
+                }
+            }
         }
 
         /// <summary>
@@ -264,6 +297,12 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Float:
             {
+                if (transA == 0 && transB == 1 && m == 1
+                    && A is DenseTensor<float> { IsReversedStride: false } directA
+                    && B is DenseTensor<float> { IsReversedStride: false } directB
+                    && opts.Tensor.UseSimd && opts.Tensor.UseIntrinsics && Fma.IsSupported
+                    && opts.Tensor.MaxDegreeOfParallelism == 1)
+                    return Success(op, GemmFloat(directA, directB, (Tensor<float>?)C, m, k, n, alpha, beta, opts.Tensor, true));
                 var ea = transA == 1 ? Tensor<float>.Transpose((Tensor<float>)A, null) : (Tensor<float>)A;
                 var eb = transB == 1 ? Tensor<float>.Transpose((Tensor<float>)B, null) : (Tensor<float>)B;
                 return Success(op, GemmFloat(ea, eb, (Tensor<float>?)C, m, k, n, alpha, beta, opts.Tensor));

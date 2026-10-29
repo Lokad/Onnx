@@ -13,6 +13,8 @@
   follow, preserving the existing arithmetic for those final columns.
 - Cached matrix products reuse AVX-512 panels for odd row groups, avoiding
   temporary weight copies while retaining the existing fallback kernels.
+- Dense single-row Gemm reads transposed weights directly on FMA-capable CPUs,
+  avoiding a full weight copy per call while preserving reduction order.
 - Sigmoid and prepared decoder projections use wider AVX-512 vectors while
   preserving their existing arithmetic and vector tails.
 - Adjacent sigmoid/input-multiply activations combine into one pass when the
