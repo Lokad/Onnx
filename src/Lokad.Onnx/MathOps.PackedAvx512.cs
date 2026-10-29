@@ -59,17 +59,11 @@ public partial class MathOps
             for (int i = 0; i < M; i += 12)
             {
                 var Ap1 = A + i * N;
-                var Ap2 = Ap1 + N;
-                var Ap3 = Ap2 + N;
-                var Ap4 = Ap3 + N;
-                var Ap5 = Ap4 + N;
-                var Ap6 = Ap5 + N;
-                var Ap7 = Ap6 + N;
-                var Ap8 = Ap7 + N;
-                var Ap9 = Ap8 + N;
-                var ApA = Ap9 + N;
-                var ApB = ApA + N;
-                var ApC = ApB + N;
+                var Ap3 = Ap1 + N + N;
+                var Ap5 = Ap3 + N + N;
+                var Ap7 = Ap5 + N + N;
+                var Ap9 = Ap7 + N + N;
+                var ApB = Ap9 + N + N;
                 // C addresses recompute at the cold load/store points (8-row
                 // style) so the twelve C-row pointers do not stay live
                 // across the reduction loop and spill the A-row bases.
@@ -101,43 +95,44 @@ public partial class MathOps
                 float* weightRow = panel;
                 for (nint j = 0; j < N; ++j, weightRow += 2 * Vector512<float>.Count)
                 {
+                    nint next = j + N;
                     var Bpv = (Vector512<float>*)weightRow;
                     var b0 = Bpv[0];
                     var b1 = Bpv[1];
                     var aa = Vector512.Create(Ap1[j]);
                     c00 = Avx512F.FusedMultiplyAdd(aa, b0, c00);
                     c01 = Avx512F.FusedMultiplyAdd(aa, b1, c01);
-                    aa = Vector512.Create(Ap2[j]);
+                    aa = Vector512.Create(Ap1[next]);
                     c10 = Avx512F.FusedMultiplyAdd(aa, b0, c10);
                     c11 = Avx512F.FusedMultiplyAdd(aa, b1, c11);
                     aa = Vector512.Create(Ap3[j]);
                     c20 = Avx512F.FusedMultiplyAdd(aa, b0, c20);
                     c21 = Avx512F.FusedMultiplyAdd(aa, b1, c21);
-                    aa = Vector512.Create(Ap4[j]);
+                    aa = Vector512.Create(Ap3[next]);
                     c30 = Avx512F.FusedMultiplyAdd(aa, b0, c30);
                     c31 = Avx512F.FusedMultiplyAdd(aa, b1, c31);
                     aa = Vector512.Create(Ap5[j]);
                     c40 = Avx512F.FusedMultiplyAdd(aa, b0, c40);
                     c41 = Avx512F.FusedMultiplyAdd(aa, b1, c41);
-                    aa = Vector512.Create(Ap6[j]);
+                    aa = Vector512.Create(Ap5[next]);
                     c50 = Avx512F.FusedMultiplyAdd(aa, b0, c50);
                     c51 = Avx512F.FusedMultiplyAdd(aa, b1, c51);
                     aa = Vector512.Create(Ap7[j]);
                     c70 = Avx512F.FusedMultiplyAdd(aa, b0, c70);
                     c71 = Avx512F.FusedMultiplyAdd(aa, b1, c71);
-                    aa = Vector512.Create(Ap8[j]);
+                    aa = Vector512.Create(Ap7[next]);
                     c80 = Avx512F.FusedMultiplyAdd(aa, b0, c80);
                     c81 = Avx512F.FusedMultiplyAdd(aa, b1, c81);
                     aa = Vector512.Create(Ap9[j]);
                     c90 = Avx512F.FusedMultiplyAdd(aa, b0, c90);
                     c91 = Avx512F.FusedMultiplyAdd(aa, b1, c91);
-                    aa = Vector512.Create(ApA[j]);
+                    aa = Vector512.Create(Ap9[next]);
                     cA0 = Avx512F.FusedMultiplyAdd(aa, b0, cA0);
                     cA1 = Avx512F.FusedMultiplyAdd(aa, b1, cA1);
                     aa = Vector512.Create(ApB[j]);
                     cB0 = Avx512F.FusedMultiplyAdd(aa, b0, cB0);
                     cB1 = Avx512F.FusedMultiplyAdd(aa, b1, cB1);
-                    aa = Vector512.Create(ApC[j]);
+                    aa = Vector512.Create(ApB[next]);
                     cC0 = Avx512F.FusedMultiplyAdd(aa, b0, cC0);
                     cC1 = Avx512F.FusedMultiplyAdd(aa, b1, cC1);
                 }
