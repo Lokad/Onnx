@@ -430,6 +430,9 @@ public partial struct Node
 
         OpType.Sigmoid => CPU.Sigmoid(InputTensor(graph, 0), opt),
         OpType.FusedSigmoidMul => CPU.SigmoidMul(InputTensor(graph, 0), opt),
+        OpType.FusedConformerConv => CPU.ConformerConv(InputTensor(graph, 0), InputTensor(graph, 1),
+            InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), InputTensor(graph, 5),
+            InputTensor(graph, 6), InputTensor(graph, 7), opt),
 
         OpType.Clip => CPU.Clip(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             GetFloat("min", null), GetFloat("max", null), opt, ResolvedOpsetVersion(graph)),

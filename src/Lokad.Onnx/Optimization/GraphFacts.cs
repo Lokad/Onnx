@@ -160,7 +160,8 @@ internal sealed class GraphFacts
                 return madd;
             }
             if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu
-                && pn.Op != OpType.FusedRmsNormalization && pn.Op != OpType.FusedSigmoidMul) return null;
+                && pn.Op != OpType.FusedRmsNormalization && pn.Op != OpType.FusedSigmoidMul
+                && pn.Op != OpType.FusedConformerConv) return null;
             if (pn.Inputs is null || pn.Inputs.Length < 1) return null;
             return ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
         }

@@ -7,6 +7,11 @@ namespace Lokad.Onnx;
 /// </summary>
 internal static class ParakeetOwnedWeightPolicy
 {
+    internal static bool IsEligiblePointwise(string? name, int channels, int outputs) =>
+        channels == 1024 && outputs is 1024 or 2048 && name is not null
+        && name.StartsWith("/layers.", StringComparison.Ordinal)
+        && name.EndsWith("/conv/Transpose_1", StringComparison.Ordinal);
+
     internal static bool IsEligible(string? name, int n, int k)
     {
         if (name is null) return false;

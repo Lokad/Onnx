@@ -62,6 +62,52 @@ public class OwnedPackedWeightTests
         Assert.Throws<NotImplementedException>(() => { _ = tensor.Storage; });
     }
 
+    [Theory]
+    [InlineData(1, 1)]
+    [InlineData(7, 33)]
+    [InlineData(8, 64)]
+    [InlineData(17, 31)]
+    public void PointwiseLogicalOrderAndPhysicalMatrixShareOneOwnedPayload(int channels, int outputs)
+    {
+        var values = Values(channels * outputs);
+        int[] bits = { 0, unchecked((int)0x80000000), 0x7fc00001, unchecked((int)0xffc12345) };
+        for (int i = 0; i < Math.Min(bits.Length, values.Length); i++) values[i] = BitConverter.Int32BitsToSingle(bits[i]);
+        var saved = values.ToArray();
+        var tensor = OwnedPackedTensor.FromPointwise(values, channels, outputs);
+        Assert.Equal(new[] { outputs, channels, 1 }, tensor.Dimensions.ToArray());
+        Assert.True(tensor.IsTransposedLogical);
+        Exact(saved, tensor.ToDenseTensor().Buffer.Span);
+        Exact(saved, values);
+        var matrix = tensor.PhysicalMatrix;
+        Assert.False(matrix.IsTransposedLogical);
+        Assert.Same(tensor.PackedArray, matrix.PackedArray);
+        Assert.Equal(new[] { channels, outputs }, matrix.Dimensions.ToArray());
+        for (int output = 0; output < outputs; output++)
+            for (int channel = 0; channel < channels; channel++)
+                Assert.Equal(BitConverter.SingleToInt32Bits(saved[output * channels + channel]),
+                    BitConverter.SingleToInt32Bits(matrix[channel, output]));
+
+        var shape = Assert.IsType<OwnedPackedTensor>(tensor.Reshape(new[] { channels, outputs }));
+        Exact(saved, shape.ToDenseTensor().Buffer.Span);
+        Assert.Same(tensor.PackedArray, shape.PackedArray);
+        Assert.Null(OwnedPackedTensor.Resolve(shape));
+        Assert.Same(matrix, OwnedPackedTensor.Resolve(matrix));
+        int logical = values.Length - 1;
+        shape.SetValue(logical, 23);
+        Assert.Equal(23f, tensor.GetValue(logical));
+        Assert.Equal(23f, matrix[channels - 1, outputs - 1]);
+        matrix[channels - 1, outputs - 1] = 31;
+        Assert.Equal(31f, tensor.GetValue(logical));
+        var clone = tensor.Clone(); clone.SetValue(logical, 17);
+        Assert.Equal(31f, tensor.GetValue(logical));
+        values[logical] = -7;
+        Assert.Equal(31f, tensor.GetValue(logical));
+        var slice = tensor.Slice(new SliceIndex(0, outputs), new SliceIndex(0, channels), new SliceIndex(0, 1));
+        Assert.Same(tensor.PackedArray, OwnedPackedTensor.FindStorage(slice)!.PackedArray);
+        Assert.Equal(31f, slice.GetValue(logical));
+        Assert.Throws<ArgumentException>(() => tensor.Reshape(new[] { values.Length + 1 }));
+    }
+
     [SkippableFact]
     public void PreparationIsOptIn_Idempotent_AndSurvivesInvalidation()
     {

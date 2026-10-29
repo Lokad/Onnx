@@ -206,5 +206,6 @@ public enum OpType
     Unknown,
     FusedRmsNormalization,
     FusedSigmoidMul,
+    FusedConformerConv,
 }
 

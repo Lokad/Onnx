@@ -15,6 +15,9 @@
   temporary weight copies while retaining the existing fallback kernels.
 - Dense single-row Gemm reads transposed weights directly on FMA-capable CPUs,
   avoiding a full weight copy per call while preserving reduction order.
+- Explicit owned preparation keeps qualified Parakeet convolution regions in
+  time-major storage on AVX-512 CPUs, using one payload per pointwise weight
+  and bounded temporary buffers with the original operator fallback.
 - Sigmoid and prepared decoder projections use wider AVX-512 vectors while
   preserving their existing arithmetic and vector tails.
 - Adjacent sigmoid/input-multiply activations combine into one pass when the
