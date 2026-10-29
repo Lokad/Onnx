@@ -683,6 +683,15 @@ where T : unmanaged
     /// </summary>
     static void MaxPoolSpanFloat(System.Span<float> xs, System.Span<float> ys, int N, int C, int H, int W, int kH, int kW, int strideHeight, int strideWidth, int dilationHeight, int dilationWidth, PadInfo pad, int outH, int outW)
     {
+#if NET11_0_OR_GREATER
+        if (System.Runtime.Intrinsics.X86.Avx512F.IsSupported && W == 1 && outW == 1 && kW == 1
+            && strideWidth == 1 && dilationWidth == 1 && kH == 3 && strideHeight == 3 && dilationHeight == 1
+            && pad.top == 0 && pad.left == 0 && pad.bottom == 0 && pad.right == 0)
+        {
+            MaxPoolTriples(xs, ys, N * C, H, outH);
+            return;
+        }
+#endif
         for (int n = 0; n < N; n++)
             for (int d = 0; d < C; d++)
                 for (int yR = 0; yR < outH; yR++)
