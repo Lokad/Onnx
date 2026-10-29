@@ -129,7 +129,14 @@ internal static unsafe partial class ConvBlockedSpatial
                     & Vector256.LessThan(positions, Vector256.Create(w));
             }
         }
+#if NET11_0_OR_GREATER
+        var order1 = order + Vector512.Create(1);
+        var order2 = order + Vector512.Create(2);
+        var order3 = order + Vector512.Create(3);
+        var order5 = order4 + Vector512.Create(1);
+#else
         var one = Vector512.Create(1); var two = Vector512.Create(2); var three = Vector512.Create(3);
+#endif
         Vector256<float>* rows = stackalloc Vector256<float>[36];
         Vector256<float>* temporary = stackalloc Vector256<float>[36];
         fixed (float* source = input, destination = transformed)
@@ -145,12 +152,22 @@ internal static unsafe partial class ConvBlockedSpatial
                 float* row = source + ic * h * w + (top + y) * w;
                 var a = Avx512F.LoadVector512(row + base0); var b = Avx512F.LoadVector512(row + base0 + 16);
                 rows[y * 6] = Avx512F.PermuteVar16x32x2(a, order, b).GetLower();
+#if NET11_0_OR_GREATER
+                rows[y * 6 + 1] = Avx512F.PermuteVar16x32x2(a, order1, b).GetLower();
+                rows[y * 6 + 2] = Avx512F.PermuteVar16x32x2(a, order2, b).GetLower();
+                rows[y * 6 + 3] = Avx512F.PermuteVar16x32x2(a, order3, b).GetLower();
+#else
                 rows[y * 6 + 1] = Avx512F.PermuteVar16x32x2(a, order + one, b).GetLower();
                 rows[y * 6 + 2] = Avx512F.PermuteVar16x32x2(a, order + two, b).GetLower();
                 rows[y * 6 + 3] = Avx512F.PermuteVar16x32x2(a, order + three, b).GetLower();
+#endif
                 a = Avx512F.LoadVector512(row + base1); b = Avx512F.LoadVector512(row + base1 + 16);
                 rows[y * 6 + 4] = Avx512F.PermuteVar16x32x2(a, order4, b).GetLower();
+#if NET11_0_OR_GREATER
+                rows[y * 6 + 5] = Avx512F.PermuteVar16x32x2(a, order5, b).GetLower();
+#else
                 rows[y * 6 + 5] = Avx512F.PermuteVar16x32x2(a, order4 + one, b).GetLower();
+#endif
                 if (border)
                     for (int x = 0; x < 6; x++) rows[y * 6 + x] = (rows[y * 6 + x].AsInt32() & masks[x]).AsSingle();
             }
