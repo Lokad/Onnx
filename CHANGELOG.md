@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.0 — Unreleased
+## 0.5.0 — 2026-10-30
 
 - Restore the v0.3.0 Protobuf-facing API in the core package: `OnnxImport`,
   `ProtoConversions` and generated `Onnx` messages, including direct file/buffer

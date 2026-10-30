@@ -1,6 +1,6 @@
 # CPU benchmarks for Lokad.Onnx
 
-Measured on **2026-10-30** for upcoming 0.5.0, product source `d5f8ecad` / benchmark tooling `abc51b74`, on the existing **onnx-bench** Azure Standard_D4as_v7 VM: AMD EPYC 9V45, 4 vCPU / 16 GiB. Workers run serially on **one logical CPU (CPU 2)**. Managed execution uses **.NET 11 RC3**; the package also supports .NET 10. Native execution uses **Microsoft ORT 1.29.0 CPUExecutionProvider**.
+Measured on **2026-10-30** for 0.5.0, product source `d5f8ecad` / benchmark tooling `abc51b74`, on the existing **onnx-bench** Azure Standard_D4as_v7 VM: AMD EPYC 9V45, 4 vCPU / 16 GiB. Workers run serially on **one logical CPU (CPU 2)**. Managed execution uses **.NET 11 RC3**; the package also supports .NET 10. Native execution uses **Microsoft ORT 1.29.0 CPUExecutionProvider**.
 
 The complete prepared seven-model benchmark finished in **41.27 minutes**, including startup, checks, staging, loading, warmup, measurement and report writing. All 58 workers completed. See the [full report](tests/benchmarks/release-0.5.0-full-20261030.md) and [commands](eng/bench.md).
 
