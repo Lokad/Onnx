@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import statistics
 import struct
+import time
 
 import benchmark_worker as common
 import campaign_evidence as evidence
@@ -75,7 +76,7 @@ def measured(record, smoke):
         raw.extend(t * 1000 / frequency for t in ticks)
     return raw
 
-def worker(directory, entry, smoke, manifest):
+def worker(directory, entry, smoke, manifest, check_guest_noise=True):
     paths = {name: isolated.bound(directory, binding) for name, binding in entry.items() if name != "role" and name != "rep"}
     require(set(paths) == {"process", "config", "supervision", "log", "error", "before", "after"}, "missing worker files")
     record, config, supervision = (isolated.read_json(paths[k]) for k in ("process", "config", "supervision"))
@@ -86,7 +87,8 @@ def worker(directory, entry, smoke, manifest):
             evidence.timestamp(record["completed_utc"]) <= evidence.timestamp(supervision["exited_utc"]), "unsupervised timestamps")
     require(record["mode"] == supervision["mode"] and record["case"] == supervision["case"], "supervisor workload differs")
     command = supervision["command"]
-    require(len(command) == 4 and command[0] == "dotnet" and command[2] == record["mode"] and isolated.name_of(command[3]) == paths["config"].name, "supervised command differs")
+    require(len(command) == 4 and command[0].replace('\\', '/').split('/')[-1] in ('dotnet', 'dotnet.exe')
+            and command[2] == record["mode"] and isolated.name_of(command[3]) == paths["config"].name, "supervised command differs")
     parts = command[1].replace("\\", "/").split("/")
     role = parts[-2]
     require(role in ("L0", "L1") and parts[-3] == "staged" and parts[-1] == "Lokad.Onnx.EmbeddingGemma2Bench.dll", "supervised runner differs")
@@ -115,10 +117,13 @@ def worker(directory, entry, smoke, manifest):
     accounting = processes.foreign_fraction(before, after, supervision["supervisor_pid"])
     require(accounting == supervision["accounting"], "process accounting differs")
     # Same provisional guest-noise cap as the existing isolated producer.
-    require(smoke or accounting["foreign_cpu_fraction"] <= .01, "foreign guest CPU exceeds 1%")
+    require(not check_guest_noise or smoke or accounting["foreign_cpu_fraction"] <= .01, "foreign guest CPU exceeds 1%")
     return record, measured(record, smoke), supervision
 
-def child(build, root, output, name, mode, cpu, dimensions, budget, smoke, env, index, prefix="worker"):
+def child(build, root, output, name, mode, cpu, dimensions, budget, smoke, env, index, prefix="worker",
+          overall_deadline=None, dotnet='dotnet'):
+    if overall_deadline is not None:
+        require(time.monotonic() < overall_deadline, 'full benchmark duration limit exceeded before launch')
     stem = f"{prefix}-{index:03d}-{name}-{mode}"
     paths = {key: output / (stem + suffix) for key, suffix in (("process", ".json"), ("config", ".config.json"),
         ("supervision", ".supervision.json"), ("log", ".log"), ("error", ".err.log"), ("before", ".pre.json"), ("after", ".post.json"))}
@@ -127,16 +132,25 @@ def child(build, root, output, name, mode, cpu, dimensions, budget, smoke, env, 
         core_sha256=build["core_sha256"], packed_weight_budget=budget, smoke=smoke)
     common.save_json(paths["config"], config)
     before = processes.snapshot(); common.save_json(paths["before"], before)
-    command = ["dotnet", str(build["runner"]), mode, str(paths["config"])]
+    command = [str(dotnet), str(build["runner"]), mode, str(paths["config"])]
     launched = dt.datetime.now(dt.timezone.utc)
     print("Starting " + stem, flush=True)
+    failure = None
     with paths["log"].open("x", encoding="utf-8") as stdout, paths["error"].open("x", encoding="utf-8") as stderr:
+        timeout = 600 if overall_deadline is None else min(600, overall_deadline - time.monotonic())
+        require(timeout > 0, 'full benchmark duration limit exceeded before launch')
         process = common.spawn_child(command, cpu, cwd=root, stdout=stdout, stderr=stderr, env=env)
-        code = common.wait_child(process, stem, timeout=600)
+        try:
+            code = common.wait_child(process, stem, timeout=timeout)
+        except BaseException as error:
+            failure = error
+            code = process.returncode
     exited = dt.datetime.now(dt.timezone.utc)
     after = processes.snapshot(); common.save_json(paths["after"], after)
     common.save_json(paths["supervision"], dict(supervisor_pid=os.getpid(), pid=process.pid, mode=mode, case=name,
         command=command, launched_utc=launched.isoformat(), exited_utc=exited.isoformat(), exit_code=code,
-        accounting=processes.foreign_fraction(before, after, os.getpid())))
+        accounting=processes.foreign_fraction(before, after, os.getpid()), failure=None if failure is None else str(failure)))
+    if failure is not None:
+        raise failure
     require(code == 0, "worker failed: " + str(paths["error"]))
     return {key: isolated.binding(path, output) for key, path in paths.items()}

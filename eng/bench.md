@@ -1,5 +1,60 @@
 # Routine CPU comparisons
 
+## Full seven-model benchmark
+
+`--model full` compares one qualified current package with ORT on the existing
+Linux quiet box, using .NET 11 by default and CPU 2. It covers complete Parakeet
+transcription, Community-1 diarization, e5, EmbeddingGemma 2 at 128 tokens / 768 values,
+DINOv3, ResNet50 and GPT-2. It requires prepared local models, numerical fixtures,
+the pinned native Python environment and a qualified core/Data product. It does
+not download assets, build sources or wait for CI during the benchmark.
+
+Commit caller/tool changes before preparing the callers. `-Product` is the `L1`
+directory of an existing qualified audio preparation, with its `build.json`,
+source archives and `core` DLL closure. The preparer preserves those DLLs and
+builds the audio, graph and Gemma callers against them:
+
+```powershell
+pwsh -NoProfile -File eng/build-full-benchmark.ps1 -Product <qualified-preparation>/L1 -Output <new-full-preparation>
+```
+
+On the quiet box, bind the existing fixtures once. Graph inputs/references and
+models remain local; the generated manifest records their hashes and changes
+only the audio pass schedule and graph core identity. The inventory argument
+accepts the existing protected asset inventory; all supplied files are checked.
+
+```sh
+python eng/prepare-full-fixtures.py --prepared <full-preparation> --graphs <graphs.json> --gemma <gemma-fixtures>/fixtures.json --parakeet <parakeet.json> --pyannote <community.json> --audio-root <audio-assets> --gemma-root <gemma-checkout> --inventory <protected-identity.json> --output <new-fixture-directory>
+python eng/bench.py --model full --prepared <full-preparation> --fixtures <new-fixture-directory>/full.json --output <new-results> --cpu 2 --dotnet <dotnet11>/dotnet --native-python <audio-env>/bin/python
+```
+
+The fixed schedule has six independent managed/native process pairs per audio
+application, balanced in engine order. Every audio process retains one first-use
+pass, two conditioning passes and three measured complete passes. All twenty
+Parakeet clips and all four Community cases remain; the Community score is the
+complete 30-second dialogue. Fourteen complete-output verification workers run
+before any timing. The five other models each use two fresh processes per
+engine, retaining their established graph or Gemma warmup and measurement counts.
+No unused source-control arm or duplicate native arm runs in this mode.
+
+Audio scores use process means and geometric paired ratios, with a two-sided 95%
+Student-t interval on log ratios (df 5). All calls and large observations remain.
+An interval that does not establish the 3% target is reported as such; sampling
+is never extended after inspecting results. Earlier long protocols and their
+proofs retain their original identities. Guest CPU variation is recorded; the
+full mode does not reject a run on the old 1% guest-noise screen.
+
+The full invocation has a 3600-second limit, including fixture checks, staging,
+loading, warmup, measurements, output validation and report writing. Remaining
+time bounds each owned child. On expiry, only that child is stopped and completed
+worker/failure records remain. An incomplete run does not count as a full
+benchmark. A successful run has `report.json` plus a hash-bound `complete.json`
+with total elapsed seconds and no `failure.json`. The command's actual duration
+must be measured on the quiet box before claiming this protocol stays below 60
+minutes; historical cost estimates alone do not establish that claim.
+
+## Source comparisons
+
 `bench.py` runs the current validated workers against two prepared cores, in
 `control,candidate / candidate,control` order. The e5/Gemma lanes retain 33 calls from every
 engine process, numerical checks, input/model/binary identities and process
@@ -35,7 +90,7 @@ Both preparation scripts require `-L0Ref`; `-L1Ref` defaults to HEAD. Invalid or
 incompatible refs are rejected before output directories or builds are created.
 
 Complete Parakeet and Community-1 comparisons use the same command and process
-staging. Prepare the complete core/Data/adapter product for each committed source:
+staging. Prepare the complete core/Data product for each committed source:
 
 ```powershell
 pwsh -NoProfile -File eng/build-audio-benchmark.ps1 -L0Ref <control-commit> -L1Ref <candidate-commit> -Output artifacts/audio-prepared

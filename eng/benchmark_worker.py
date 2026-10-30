@@ -29,12 +29,16 @@ def read_build(prepared, role):
     return dict(build, path=core)
 
 def stage(prepared, output, kind, runner_name=RUNNER, product=False):
-    baseline = read_build(prepared, "L0")
-    candidate = read_build(prepared, "L1") if kind == "comparison" else baseline
-    evidence.require(baseline["sdk"] == candidate["sdk"], "core build SDKs differ")
-    evidence.require(baseline.get("target_framework", "net10.0") == candidate.get("target_framework", "net10.0"),
-                     "core target frameworks differ")
-    for build in (baseline, candidate):
+    evidence.require(kind in ('aa', 'comparison', 'current'), 'unknown staging kind')
+    if kind == 'current':
+        builds = {'L1': read_build(prepared, 'L1')}
+    else:
+        baseline = read_build(prepared, 'L0')
+        builds = {'L0': baseline, 'L1': read_build(prepared, 'L1') if kind == 'comparison' else baseline}
+    evidence.require(len({build['sdk'] for build in builds.values()}) == 1, 'core build SDKs differ')
+    evidence.require(len({build.get('target_framework', 'net10.0') for build in builds.values()}) == 1,
+                     'core target frameworks differ')
+    for build in builds.values():
         if product:
             leg = build['path'].parent.parent
             evidence.require(evidence.sha256(leg / 'data-source.zip') == build['data_source_archive_sha256'], 'Data source archive changed')
@@ -53,7 +57,7 @@ def stage(prepared, output, kind, runner_name=RUNNER, product=False):
     evidence.require(not output.is_relative_to(prepared), "output must be outside the prepared tree")
     output.mkdir(parents=True)
     result = {}
-    for role, build in (("L0", baseline), ("L1", candidate)):
+    for role, build in builds.items():
         destination = output / "staged" / role
         shutil.copytree(runner, destination)
         files = build['product_files'] if product else build.get('runtime_files', {'Lokad.Onnx.dll': build['core_sha256']})

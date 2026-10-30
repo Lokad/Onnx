@@ -3,7 +3,10 @@ import copy
 import json
 from pathlib import Path
 import tempfile
+import sys
+import types
 import unittest
+from unittest import mock
 
 import audio_protocol as protocol
 import audio_worker as audio
@@ -11,6 +14,41 @@ import bench
 
 
 class AudioWorkerTests(unittest.TestCase):
+    def test_expired_full_budget_never_launches_a_worker(self):
+        with mock.patch.object(audio.time, 'monotonic', return_value=101), mock.patch.object(audio.common, 'spawn_child') as spawn:
+            with self.assertRaisesRegex(ValueError, 'duration limit exceeded before launch'):
+                audio.child({}, Path('.'), Path('.'), 'L1', 1, 'lok', 'parakeet', Path('fixture.json'), {}, [],
+                            'timing', 'dotnet', 'python', 1, overall_deadline=100)
+            spawn.assert_not_called()
+
+    def test_full_budget_expiry_stops_only_owned_worker_and_keeps_failure_receipt(self):
+        class OwnedProcess:
+            pid = 4242
+            returncode = None
+            terminated = False
+
+            def poll(self): return self.returncode
+            def terminate(self): self.terminated = True; self.returncode = -15
+            def wait(self, timeout=None): return self.returncode
+            def kill(self): raise AssertionError('graceful termination should suffice')
+
+        process = OwnedProcess()
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            with mock.patch.dict(sys.modules, {'psutil': types.SimpleNamespace()}), \
+                    mock.patch.object(audio.time, 'monotonic', side_effect=[0, 0, 101]), \
+                    mock.patch.object(audio.common, 'spawn_child', return_value=process) as spawn:
+                with self.assertRaisesRegex(ValueError, 'full benchmark duration limit exceeded'):
+                    audio.child({'runner': Path('caller.dll')}, output, output, 'L1', 1, 'lok', 'parakeet',
+                                output/'fixture.json', self.fixture_v2(), [], 'timing', 'dotnet', 'python', 1,
+                                overall_deadline=100)
+            self.assertTrue(process.terminated)
+            spawn.assert_called_once()
+            receipt = json.loads((output/'audio-001-parakeet-l1-lok-timing.supervision.json').read_text())
+            self.assertEqual(4242, receipt['pid'])
+            self.assertEqual(-15, receipt['exit_code'])
+            self.assertEqual('full benchmark duration limit exceeded', receipt['failure'])
+
     def fixture(self):
         cases = [dict(name=f'clip-{i}', samples=16000, raw_sha256=str(i)*64, expected={'token_ids': [i]}) for i in range(20)]
         return dict(schema=1, family='parakeet', warmup_passes=1, measured_passes=3, cases=cases)

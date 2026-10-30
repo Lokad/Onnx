@@ -61,6 +61,9 @@ def check_native(record, signatures):
 
 
 def run(args):
+    if args.model == 'full':
+        import full_benchmark
+        return full_benchmark.run(args)
     output, prepared = args.output.resolve(), args.prepared.resolve()
     common.ROOT = args.root.resolve()
     order = visits(args.pairs)
@@ -128,20 +131,24 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--model', choices=('e5', 'gemma', 'parakeet', 'pyannote'), required=True)
+    parser.add_argument('--model', choices=('e5', 'gemma', 'parakeet', 'pyannote', 'full'), required=True)
     parser.add_argument('--prepared', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--root', type=Path, default=common.ROOT)
     parser.add_argument('--fixtures', type=Path)
     parser.add_argument('--case', action='append')
     parser.add_argument('--cpu', type=int, required=True)
-    parser.add_argument('--pairs', type=int, default=2)
+    parser.add_argument('--pairs', type=int, help='source comparison pairs (default2); full mode has fixed sampling')
     parser.add_argument('--dimensions', type=int, choices=(128, 256, 512, 768), default=768)
     parser.add_argument('--packed-weight-budget', type=int, default=576 * 1024 * 1024)
     parser.add_argument('--dotnet', default='dotnet', help='audio worker dotnet executable')
     parser.add_argument('--native-python', default=sys.executable, help='pinned native audio environment')
     parser.add_argument('--verify-only', action='store_true', help='audio conformance without timing')
     args = parser.parse_args()
+    if args.model == 'full' and args.pairs is not None:
+        parser.error('full mode has a prospectively fixed six audio pairs; --pairs is for source comparisons')
+    if args.pairs is None:
+        args.pairs = 2
     try:
         run(args)
     except (evidence.EvidenceError, OSError, ValueError) as error:

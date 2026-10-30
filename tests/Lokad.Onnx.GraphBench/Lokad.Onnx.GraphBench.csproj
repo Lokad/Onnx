@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <UseSharedCompilation>false</UseSharedCompilation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Shared/NpySupport.cs" Link="NpySupport.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ProductDirectory)' == ''">
+    <ProjectReference Include="../../src/Lokad.Onnx/Lokad.Onnx.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ProductDirectory)' != ''">
+    <Reference Include="Lokad.Onnx" HintPath="$(ProductDirectory)/Lokad.Onnx.dll" Private="true" />
+    <Reference Include="Google.Protobuf" HintPath="$(ProductDirectory)/Google.Protobuf.dll" Private="true" />
+  </ItemGroup>
+</Project>

@@ -38,7 +38,10 @@ def measured(value, fixture, targets, phase):
     return samples
 
 
-def child(build, root, output, role, pair, engine, family, fixture_path, fixture, targets, phase, dotnet, python, index):
+def child(build, root, output, role, pair, engine, family, fixture_path, fixture, targets, phase, dotnet, python, index,
+          overall_deadline=None):
+    if overall_deadline is not None:
+        evidence.require(time.monotonic() < overall_deadline, 'full benchmark duration limit exceeded before launch')
     import psutil
     stem = f'audio-{index:03d}-{family}-{role.lower()}-{engine}-{phase}'
     destination = output / stem
@@ -57,8 +60,12 @@ def child(build, root, output, role, pair, engine, family, fixture_path, fixture
         try:
             timeout = protocol.definition(fixture)[2]
             deadline = time.monotonic() + timeout
+            timeout_message = f'audio process exceeded {timeout} seconds'
+            if overall_deadline is not None and overall_deadline < deadline:
+                deadline = overall_deadline
+                timeout_message = 'full benchmark duration limit exceeded'
             while process.poll() is None:
-                evidence.require(time.monotonic() < deadline, f'audio process exceeded {timeout} seconds')
+                evidence.require(time.monotonic() < deadline, timeout_message)
                 try:
                     child_process = psutil.Process(process.pid)
                     evidence.require(child_process.cpu_affinity() == [2], 'audio process affinity changed')

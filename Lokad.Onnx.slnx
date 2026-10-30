@@ -1,6 +1,4 @@
 <Solution>
-  <Folder Name="/tools/">
-  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Lokad.Onnx/Lokad.Onnx.csproj" />
     <Project Path="src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj" />
@@ -12,6 +10,7 @@
     <Project Path="tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj" />
     <Project Path="tests/Lokad.Onnx.E5Runner/Lokad.Onnx.E5Runner.csproj" />
     <Project Path="tests/Lokad.Onnx.EmbeddingGemma2Runner/Lokad.Onnx.EmbeddingGemma2Runner.csproj" />
+    <Project Path="tests/Lokad.Onnx.GraphBench/Lokad.Onnx.GraphBench.csproj" />
     <Project Path="tests/Lokad.Onnx.OpDump/Lokad.Onnx.OpDump.csproj" />
     <Project Path="tests/Lokad.Onnx.Tensors.Tests/Lokad.Onnx.Tensors.Tests.csproj" />
   </Folder>

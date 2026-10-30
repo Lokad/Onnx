@@ -136,6 +136,17 @@ class SupervisionTests(unittest.TestCase):
         self.assertEqual((staged["L1"]["runner"].parent / "Lokad.Onnx.dll").read_bytes(), b"L1")
         self.assertEqual((self.prepared / "runner" / "Lokad.Onnx.dll").read_bytes(), b"L0")
 
+    def test_current_staging_does_not_read_or_run_the_baseline(self):
+        # A full current-package/native comparison has only one source arm.
+        # Make the unused baseline invalid to prove it is neither read nor staged.
+        (self.prepared / 'L0/source.zip').write_bytes(b'unavailable old baseline')
+        self.runtime_dependencies()
+        staged = lane.stage(self.prepared, self.root / 'run', 'current')
+        self.assertEqual({'L1'}, set(staged))
+        self.assertEqual(b'L1', (staged['L1']['runner'].parent / 'Lokad.Onnx.dll').read_bytes())
+        self.assertEqual(b'L1', (staged['L1']['runner'].parent / 'Google.Protobuf.dll').read_bytes())
+        self.assertFalse((self.root / 'run/staged/L0').exists())
+
     def runtime_dependencies(self):
         for role in ('L0', 'L1'):
             leg = self.prepared / role
