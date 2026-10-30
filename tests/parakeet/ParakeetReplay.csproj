@@ -15,6 +15,5 @@
     <EmbeddedResource Include="generate_reference.py" LogicalName="parakeet-generator.py" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../tools/Lokad.Onnx.Protobuf/Lokad.Onnx.Protobuf.csproj" />
   </ItemGroup>
 </Project>

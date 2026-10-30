@@ -8,7 +8,7 @@ using global::Onnx;
 
 /// <summary>
 /// File and buffer entry points for ONNX models. Parsing (protobuf) and
-/// external-data resolution belong to the Protobuf reference adapter.
+/// external-data resolution ship in the core package with the generated messages.
 /// </summary>
 public static class OnnxImport
 {

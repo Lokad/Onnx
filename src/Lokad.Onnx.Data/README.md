@@ -1,9 +1,8 @@
 # Lokad.Onnx.Data
 
 Text, image and audio helpers built from source; this project is nonpackable and
-is separate from the core NuGet package. Model file loading explicitly uses the
-nonpackable [Protobuf adapter](../../tools/Lokad.Onnx.Protobuf/README.md); its
-parser dependency is outside the core package. File-explicit entry points use local
+is separate from the core NuGet package. Model file loading uses the core's
+integrated `OnnxImport` API. File-explicit entry points use local
 assets. EnsureMe5sTokenizer and the named BERT loader explicitly acquire missing
 tokenizers; subsequent calls reuse their caches. The me5s lookup checks the binary
 cache, then models/multilingual-e5-small/sentencepiece.bpe.model by ancestor search.

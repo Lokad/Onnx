@@ -61,7 +61,9 @@ are checked. Graph scaled error is <=1e-4; audio retains exact token/frame/speak
 decisions and its timeline/centroid gates. Gemma retains component, relative-L2,
 cosine and unit-norm gates. ORT uses one intra/inter-op thread, sequential
 execution and all graph optimizations. No profiler or dispatch override is enabled.
-The core package has no runtime dependencies; Data remains nonpackable.
+These measurements use the package identified in the report, before the importer
+was reintegrated. The current core package depends on Google.Protobuf;
+Data remains nonpackable. The changed package is undergoing qualification.
 
 ## Running comparisons
 

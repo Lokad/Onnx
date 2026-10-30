@@ -18,7 +18,6 @@ try {
         $leg = Join-Path $destination $role
         $receipt = Join-Path $leg 'build.json'
         $build = Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json -AsHashtable
-        if ($build.importer_layout -ne 'separate') { throw 'Audio comparisons require the separate Protobuf adapter.' }
         $archive = Join-Path $leg 'data-source.zip'
         & git archive --format=zip --output=$archive $build.source_sha src/Lokad.Onnx.Data
         if ($LASTEXITCODE -ne 0) { throw "Cannot archive $role Data sources" }

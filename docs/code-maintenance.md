@@ -3,15 +3,14 @@
 ## Project boundaries
 
 The solution targets .NET 10 and .NET 11. The core `src/Lokad.Onnx` project is the only
-NuGet package and has no runtime dependencies. It contains tensors, CPU kernels,
-the neutral `OnnxModel` description, graph preparation and execution.
+NuGet package. It contains tensors, CPU kernels, ONNX import and generated
+messages, the neutral `OnnxModel` description, graph preparation and execution.
+Google.Protobuf 3.33.5 or newer is its only runtime dependency.
 
-The nonpackable [Protobuf adapter](../tools/Lokad.Onnx.Protobuf/README.md)
-implements `IOnnxModelReader` and owns generated messages and parser dependencies.
 [Data](../src/Lokad.Onnx.Data/README.md) provides text/image/audio workflows;
 [CLI](../src/Lokad.Onnx.CLI/README.md) exposes them as `lonnx` commands. Tests,
-benchmarks and model/reference tools are also nonpackable. Keep parser types and
-companion dependencies out of the core's public boundary.
+benchmarks and model/reference tools are also nonpackable. Keep companion
+dependencies out of the core's public boundary.
 
 ## Build, test and pack
 
@@ -49,7 +48,8 @@ for strict local-model selection and Python/reference setup.
 
 `pack.cmd` creates the Release core package. `eng/smoke-pack.ps1` also restores
 and runs a consumer using only that package from an isolated local feed, checking
-contents and the absence of runtime dependencies.
+contents, direct file/buffer import, generated-message access and the single
+Google.Protobuf dependency with no upper version bound.
 
 ## Correctness and optimization
 

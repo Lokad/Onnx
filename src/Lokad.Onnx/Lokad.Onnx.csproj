@@ -19,7 +19,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>0.5.0 adds .NET 10 and .NET 11 targets. The core remains dependency-free; Data, CLI and the reference Protobuf adapter remain nonpackable source projects. See CHANGELOG.md for changes and migration notes.</PackageReleaseNotes>
+    <PackageReleaseNotes>0.5.0 adds .NET 10 and .NET 11 targets and restores integrated ONNX file and buffer import with one Google.Protobuf dependency. Data and CLI remain nonpackable source projects. See CHANGELOG.md for changes and migration notes.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/Lokad/Onnx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Lokad/Onnx.git</RepositoryUrl>
@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.111" PrivateAssets="All" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
   </ItemGroup>
 
   <Target Name="EnforceReleasePackageConfiguration" BeforeTargets="GenerateNuspec"

@@ -39,9 +39,10 @@ separate source-model reference and calibrated CPU benchmark instructions.
 
 ## Local setup
 
-- The .NET 10 SDK selected by [global.json](../global.json), PowerShell 7, and
-  Python 3.13 for the native lanes. All NuGet references use exact versions
-  in the project files; nothing is vendored.
+- The SDK selected by [global.json](../global.json), both .NET 10 and .NET 11
+  runtimes, PowerShell 7, and Python 3.13 for the native lanes. NuGet references
+  declare their versions in the project files; the core's Google.Protobuf
+  dependency accepts 3.33.5 and newer. Nothing is vendored.
 - Python lane environments (test-only oracles, never loaded by .NET):
   `pip install -r tests/e5/python/requirements.txt` for the e5 lane,
   `pip install -r tests/opfuzz/python/requirements.txt` plus the generator

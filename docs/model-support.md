@@ -6,11 +6,12 @@ in [OperatorSchema.cs](../src/Lokad.Onnx/OperatorSchema.cs) and
 `CPUExecutionProvider.SupportedOps` define the implemented surface; a model name
 alone does not guarantee compatibility with every export.
 
-The NuGet package contains the dependency-free inference core. Text, image and
+The NuGet package contains the inference core and ONNX importer, with
+Google.Protobuf as its sole runtime dependency. Text, image and
 audio helpers are in the nonpackable [Data project](../src/Lokad.Onnx.Data/README.md);
 the [CLI](../src/Lokad.Onnx.CLI/README.md) also builds from source. Models are
-separate local assets. File loading requires an `IOnnxModelReader`, such as the
-source [Protobuf adapter](../tools/Lokad.Onnx.Protobuf/README.md).
+separate local assets. Use `OnnxImport.LoadOrThrow` for a file, or `OnnxImport.Load`
+for a file or buffer, directly from the core package.
 
 ## Models and workflows
 

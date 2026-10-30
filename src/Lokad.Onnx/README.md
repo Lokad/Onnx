@@ -1,6 +1,6 @@
 # Lokad.Onnx (core)
 
-100% managed-code CPU ONNX inference for .NET 10: tensor types and kernels plus graph loading and execution. This project is also the shipped NuGet package (Lokad.Onnx, lib/net10.0 only, built via pack.cmd). Everything lives in the Lokad.Onnx namespace.
+Managed-code CPU ONNX inference for .NET 10 and .NET 11: tensor types and kernels plus graph loading and execution. This project is the shipped NuGet package (Lokad.Onnx, lib/net10.0 and lib/net11.0, built via pack.cmd). Its only runtime dependency is Google.Protobuf 3.33.5 or newer. Generated messages use the Onnx namespace; engine APIs use Lokad.Onnx.
 
 ## Areas
 
@@ -25,7 +25,7 @@
   `array.ToTensor<T>()` before comparing contents. Ordering comparisons through
   `IStructuralComparable` retain their existing array support.
 - Complex values: `Tensor<System.Numerics.Complex>` uses `Complex128` (two doubles,
-  16 bytes). DTO/custom-reader clients must replace the earlier incorrect
+  16 bytes). DTO clients must replace the earlier incorrect
   `Complex64` label with `Complex128`. `Complex64` has no managed dense form;
   passing `Complex[]` under that label now fails explicitly. Core shape/data
   movement remains available; complex wire import, arithmetic and casts remain unsupported.
@@ -40,24 +40,22 @@
   graph-owned `LastScratchBytes`/`LastCopyBytes` remain per-run and exclude child scopes,
   whose metrics appear in `LastSubgraphExecutions`. Nonfatal reporter exceptions in a
   graph follow node failure handling; fatal exceptions propagate.
-- Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0, via pack.cmd), with no runtime dependencies. The Protobuf reference adapter, Data, CLI, tests and Bench remain nonpackable source projects.
+- Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0 and net11.0, via pack.cmd), with Google.Protobuf as its sole runtime dependency. Data, CLI, tests and Bench remain nonpackable source projects.
 
 ## Distribution boundary
 
-The core consumes plain `OnnxModel` descriptions through `Model.Load`. To load
-files or memory, pass an `IOnnxModelReader` to `Model.Load(path, reader)` or
-`Model.Load(memory, reader)`. Overloads also accept a packed-weight byte limit.
-Reader exceptions propagate to the caller. Each read must return a fresh model;
-`Model.Load` consumes its collections and payloads without copying them. Memory
-is borrowed synchronously and must not be retained by the reader's result.
+The package includes `OnnxImport`, `ProtoConversions` and generated `Onnx`
+messages. Use `OnnxImport.LoadOrThrow(path)` for direct file loading. `Load`
+accepts files, byte arrays and read-only memory, returning null on nonfatal failures,
+with import diagnostics on `LastErrorMessage` and `LastErrorCause`. File-based
+reads resolve external weights relative to the model file; memory-only reads
+reject unresolved sidecars. `OnnxImport.ParseMetadata` inspects graph metadata
+without reading sidecars. See the [import guide](Import/README.md).
 
-The nonpackable [reference adapter](../../tools/Lokad.Onnx.Protobuf/README.md)
-owns Google.Protobuf and implements `ProtobufModelReader`. Existing `OnnxImport`
-convenience methods, `ProtoConversions` and generated `Onnx` messages now live
-in that assembly, preserving source names but requiring callers to rebuild with
-an adapter reference. File-based reads preserve external-weight context;
-memory-only reads explicitly reject unresolved sidecars. Metadata inspection
-remains available through the adapter's `OnnxImport.ParseMetadata`.
+The core also consumes plain `OnnxModel` descriptions through `Model.Load`,
+including an optional packed-weight byte limit. It consumes those descriptions'
+collections and payloads without copying them. Imported buffers are borrowed
+synchronously; returned models and graphs do not retain the caller's buffer.
 
 A file-free local example:
 

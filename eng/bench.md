@@ -105,10 +105,8 @@ are inconclusive. Keep the existing strict
 for historical reproduction and release performance claims; short comparisons
 do not update the published benchmark table automatically.
 
-Importer assembly compatibility: the 0.4.0 Protobuf extraction moved parsing into
-`Lokad.Onnx.Protobuf`. For newly prepared comparisons, choose both source refs
-from the same importer era (`-L0Ref` and `-L1Ref`). Preparation builds a separate
-adapter from the baseline source when present and stages it unchanged with both
-cores. Integrated/separate importer mixes are rejected because one compiled
-caller cannot span that assembly move. Existing prepared historical runners and
-results remain valid with their original cores.
+New comparisons build the integrated core and its runtime dependencies from
+both pinned source revisions. Each leg stages its own DLLs from a hashed runtime
+manifest, including Google.Protobuf. Select revisions compatible with the shared
+caller's API. Historical prepared runners and results retain their original
+binary and dependency manifests; preparation does not rebuild a separate parser.

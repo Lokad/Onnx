@@ -2,10 +2,10 @@
 
 Lokad.Onnx is a CPU inference engine for ONNX models, written in C# for .NET 10 and .NET 11.
 It provides tensors and graph execution, with SIMD and hardware intrinsics where
-available. ONNX parsing is supplied by a caller-chosen reader. Inference runs
-entirely in managed code.
+available. ONNX loading and inference run entirely in managed code.
 
-The **NuGet package contains the core engine with no runtime dependencies**.
+The **NuGet package contains the engine and ONNX importer**, with Google.Protobuf
+as its only runtime dependency (3.33.5 or newer).
 Text, image and audio helpers live in the separate `Lokad.Onnx.Data` project; the `lonnx` CLI is another
 repository project. Build these from source to use their higher-level APIs.
 
@@ -31,20 +31,13 @@ if (!graph.Execute(new ITensor[] { DenseTensor<float>.OfValues([-1, 2]) }, true)
 Console.WriteLine(string.Join(", ", ((Tensor<float>)graph.Outputs["y"]).ToArray())); // 0, 2
 ```
 
-For ONNX files, pass your implementation of `IOnnxModelReader` to
-`Model.Load("model.onnx", reader)`. Readers return the neutral `OnnxModel`
-description and own their parser dependencies, including any Protobuf version.
-
-Source builds can reference the nonpackable
-[Protobuf adapter](https://github.com/Lokad/Onnx/blob/master/tools/Lokad.Onnx.Protobuf/README.md)
-and use `new Lokad.Onnx.Protobuf.ProtobufModelReader()` as the reader. Data and
-CLI already reference it. **Migration:** `OnnxImport`, `ProtoConversions` and
-generated `Onnx` messages moved from the core to this adapter assembly; existing
-file-loading applications must rebuild with an adapter reference or supply their
-own reader. The core package alone no longer supplies `OnnxImport`.
+Load an ONNX file directly with `OnnxImport.LoadOrThrow("model.onnx")`.
+Use `OnnxImport.Load` for `byte[]` or `ReadOnlyMemory<byte>` input; it returns
+null on failure and records import diagnostics. Generated `Onnx`
+messages and `ProtoConversions` are included in the core package, as in v0.3.0.
 
 See the [core API guide](https://github.com/Lokad/Onnx/blob/master/src/Lokad.Onnx/README.md)
-for execution options, reader ownership and output lifetime.
+for execution options, import behavior and output lifetime.
 
 ## Build and try the CLI
 

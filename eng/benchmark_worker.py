@@ -34,18 +34,19 @@ def stage(prepared, output, kind, runner_name=RUNNER, product=False):
     evidence.require(baseline["sdk"] == candidate["sdk"], "core build SDKs differ")
     evidence.require(baseline.get("target_framework", "net10.0") == candidate.get("target_framework", "net10.0"),
                      "core target frameworks differ")
-    layouts = [build.get("importer_layout", "integrated") for build in (baseline, candidate)]
-    evidence.require(all(layout in ("integrated", "separate") for layout in layouts), "unknown importer assembly layout")
-    evidence.require(layouts[0] == layouts[1], "integrated and separate importer assemblies require different runners; choose compatible source refs")
-    if product:
-        for role, build in (("L0", baseline), ("L1", candidate)):
+    for build in (baseline, candidate):
+        if product:
             leg = build['path'].parent.parent
             evidence.require(evidence.sha256(leg / 'data-source.zip') == build['data_source_archive_sha256'], 'Data source archive changed')
             files = build['product_files']
-            evidence.require({'Lokad.Onnx.dll', 'Lokad.Onnx.Data.dll', 'Lokad.Onnx.Protobuf.dll'} <= set(files), 'incomplete audio product')
-            for name, digest in files.items():
-                evidence.require(Path(name).name == name and name.endswith('.dll'), 'invalid product filename')
-                evidence.require(evidence.sha256(leg / 'core' / name) == digest, 'audio product file changed: ' + name)
+            evidence.require({'Lokad.Onnx.dll', 'Lokad.Onnx.Data.dll'} <= set(files), 'incomplete audio product')
+        else:
+            files = build.get('runtime_files', {'Lokad.Onnx.dll': build['core_sha256']})
+        evidence.require(files.get('Lokad.Onnx.dll') == build['core_sha256'], 'runtime manifest core mismatch')
+        for name, digest in files.items():
+            evidence.require(Path(name).name == name and '\\' not in name and name.endswith('.dll'), 'invalid runtime filename')
+            evidence.require(evidence.sha256(build['path'].parent / name) == evidence.digest(digest, 'runtime file'),
+                             'runtime file changed: ' + name)
     runner = prepared / "runner"
     evidence.require((runner / runner_name).is_file(), "common runner missing")
     evidence.require(not output.exists(), "output already exists; choose a fresh directory")
@@ -55,11 +56,9 @@ def stage(prepared, output, kind, runner_name=RUNNER, product=False):
     for role, build in (("L0", baseline), ("L1", candidate)):
         destination = output / "staged" / role
         shutil.copytree(runner, destination)
-        if product:
-            for name in build['product_files']:
-                shutil.copyfile(build['path'].parent / name, destination / name)
-        else:
-            shutil.copyfile(build["path"], destination / "Lokad.Onnx.dll")
+        files = build['product_files'] if product else build.get('runtime_files', {'Lokad.Onnx.dll': build['core_sha256']})
+        for name in files:
+            shutil.copyfile(build['path'].parent / name, destination / name)
         result[role] = dict(build, runner=destination / runner_name)
     return result
 

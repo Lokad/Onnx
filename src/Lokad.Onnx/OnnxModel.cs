@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// Plain-data ONNX model description with no protobuf dependency. Produced by
-/// a caller-supplied reader (or built by hand) and
+/// Plain-data ONNX model description. Produced by the integrated protobuf
+/// importer (or built by hand) and
 /// consumed by Model.Load to assemble an executable ComputationalGraph.
 /// </summary>
 public sealed class OnnxModel

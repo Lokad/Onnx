@@ -136,14 +136,27 @@ class SupervisionTests(unittest.TestCase):
         self.assertEqual((staged["L1"]["runner"].parent / "Lokad.Onnx.dll").read_bytes(), b"L1")
         self.assertEqual((self.prepared / "runner" / "Lokad.Onnx.dll").read_bytes(), b"L0")
 
-    def test_mixed_importer_layout_is_rejected_before_staging(self):
-        path = self.prepared / "L1/build.json"
-        build = json.loads(path.read_text())
-        build["importer_layout"] = "separate"
-        path.write_text(json.dumps(build))
-        output = self.root / "run"
-        with self.assertRaisesRegex(evidence.EvidenceError, "different runners"):
-            lane.stage(self.prepared, output, "comparison")
+    def runtime_dependencies(self):
+        for role in ('L0', 'L1'):
+            leg = self.prepared / role
+            (leg / 'core/Google.Protobuf.dll').write_bytes(role.encode())
+            path = leg / 'build.json'
+            build = json.loads(path.read_text())
+            build['runtime_files'] = {p.name: evidence.sha256(p) for p in (leg / 'core').glob('*.dll')}
+            path.write_text(json.dumps(build))
+
+    def test_staging_uses_each_revisions_runtime_closure(self):
+        self.runtime_dependencies()
+        staged = lane.stage(self.prepared, self.root / 'run', 'comparison')
+        for role in ('L0', 'L1'):
+            self.assertEqual(role.encode(), (staged[role]['runner'].parent / 'Google.Protobuf.dll').read_bytes())
+
+    def test_changed_runtime_dependency_is_rejected_before_staging(self):
+        self.runtime_dependencies()
+        (self.prepared / 'L1/core/Google.Protobuf.dll').write_bytes(b'changed')
+        output = self.root / 'run'
+        with self.assertRaisesRegex(evidence.EvidenceError, 'runtime file changed'):
+            lane.stage(self.prepared, output, 'comparison')
         self.assertFalse(output.exists())
 
     def test_aa_stages_identical_baseline(self):
@@ -158,17 +171,17 @@ class SupervisionTests(unittest.TestCase):
             archive.write_bytes(b'synthetic Data source, never compiled')
             path = leg / 'build.json'
             build = json.loads(path.read_text())
-            for name in ('Lokad.Onnx.Data.dll', 'Lokad.Onnx.Protobuf.dll'):
+            for name in ('Lokad.Onnx.Data.dll', 'Google.Protobuf.dll'):
                 (leg / 'core' / name).write_bytes((role + name).encode())
             build.update(data_source_archive_sha256=evidence.sha256(archive),
                          product_files={p.name: evidence.sha256(p) for p in (leg / 'core').glob('*.dll')})
             path.write_text(json.dumps(build))
 
-    def test_audio_staging_uses_each_revisions_data_and_adapter(self):
+    def test_audio_staging_uses_each_revisions_data_and_runtime(self):
         self.audio_products()
         staged = lane.stage(self.prepared, self.root / 'run', 'comparison', product=True)
         for role in ('L0', 'L1'):
-            for name in ('Lokad.Onnx.Data.dll', 'Lokad.Onnx.Protobuf.dll'):
+            for name in ('Lokad.Onnx.Data.dll', 'Google.Protobuf.dll'):
                 self.assertEqual((role + name).encode(), (staged[role]['runner'].parent / name).read_bytes())
 
     def test_audio_aa_stages_only_baseline_product(self):
@@ -180,7 +193,7 @@ class SupervisionTests(unittest.TestCase):
         self.audio_products()
         (self.prepared / 'L1/core/Lokad.Onnx.Data.dll').write_bytes(b'changed')
         output = self.root / 'run'
-        with self.assertRaisesRegex(evidence.EvidenceError, 'audio product file changed'):
+        with self.assertRaisesRegex(evidence.EvidenceError, 'runtime file changed'):
             lane.stage(self.prepared, output, 'comparison', product=True)
         self.assertFalse(output.exists())
 

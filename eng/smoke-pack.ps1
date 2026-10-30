@@ -27,8 +27,20 @@ try {
     $nuspec = $zip.Entries | Where-Object { $_.Name.EndsWith(".nuspec") } | Select-Object -First 1
     $reader = New-Object System.IO.StreamReader($nuspec.Open())
     try { $spec = $reader.ReadToEnd() } finally { $reader.Dispose() }
-    $depIds = @([regex]::Matches($spec, '<dependency id="([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
-    if ($depIds.Count -ne 0) { Fail ("core must have no runtime dependencies: " + ($depIds -join ",")) }
+    [xml]$manifest = $spec
+    $groups = @($manifest.SelectNodes('//*[local-name()="dependencies"]/*[local-name()="group"]'))
+    if ($groups.Count -ne 2) { Fail 'expected dependency groups for .NET 10 and .NET 11' }
+    foreach ($framework in @('net10.0', 'net11.0')) {
+        $group = @($groups | Where-Object { $_.targetFramework -eq $framework })
+        if ($group.Count -ne 1) { Fail "missing $framework dependency group" }
+        $dependencies = @($group[0].SelectNodes('*[local-name()="dependency"]'))
+        if ($dependencies.Count -ne 1 -or $dependencies[0].id -ne 'Google.Protobuf') {
+            Fail 'Google.Protobuf must be the only runtime dependency'
+        }
+        if ($dependencies[0].version -notin @('3.33.5', '[3.33.5, )', '[3.33.5,)')) {
+            Fail 'Google.Protobuf must allow version 3.33.5 and newer, without an upper bound'
+        }
+    }
     $assemblies = @($names | Where-Object { $_ -like "lib/*.dll" -or $_ -like "lib/*/*.dll" })
     if ($assemblies.Count -ne 2 -or @($assemblies | Where-Object { $_ -notin @('lib/net10.0/Lokad.Onnx.dll', 'lib/net11.0/Lokad.Onnx.dll') }).Count -ne 0) {
         Fail 'package must contain exactly the .NET 10 and .NET 11 core assemblies'
@@ -52,7 +64,14 @@ $feed = Join-Path $work "feed"
 New-Item -ItemType Directory -Force $work | Out-Null
 New-Item -ItemType Directory -Force $feed | Out-Null
 Copy-Item $nupkg.FullName $feed
-# Only the private local feed is available: the packed core must restore offline.
+# Reuse the dependency already restored for the core; do not contact a remote feed.
+$coreAssets = Get-Content (Join-Path $root 'src/Lokad.Onnx/obj/project.assets.json') -Raw | ConvertFrom-Json
+$protobufPackage = $coreAssets.packageFolders.PSObject.Properties.Name |
+    ForEach-Object { Join-Path $_ 'google.protobuf/3.33.5/google.protobuf.3.33.5.nupkg' } |
+    Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+if (-not $protobufPackage) { Fail 'restored Google.Protobuf 3.33.5 nupkg is missing from the core package cache' }
+Copy-Item -LiteralPath $protobufPackage -Destination $feed
+# Only the private local feed is available: both packages must restore offline.
 Set-Content (Join-Path $work "nuget.config") '<configuration><packageSources><clear /><add key="local" value="feed" /></packageSources></configuration>'
 Copy-Item (Join-Path $root "tests/Lokad.Onnx.PackageConsumer/Consumer.csproj") $work
 Copy-Item (Join-Path $root "tests/Lokad.Onnx.PackageConsumer/Program.cs") $work
@@ -64,7 +83,9 @@ try {
     if ($LASTEXITCODE -ne 0) { Fail "package-only restore failed" }
     $assets = Get-Content obj/project.assets.json -Raw | ConvertFrom-Json
     $libraries = @($assets.libraries.PSObject.Properties.Name)
-    if ($libraries.Count -ne 1 -or $libraries[0] -ne "Lokad.Onnx/$version") { Fail "consumer restored unexpected dependencies" }
+    if ($libraries.Count -ne 2 -or $libraries -notcontains "Lokad.Onnx/$version" -or $libraries -notcontains 'Google.Protobuf/3.33.5') {
+        Fail 'consumer restored unexpected dependencies'
+    }
     foreach ($framework in $Frameworks) {
         & dotnet build Consumer.csproj -c $Configuration -f $framework --no-restore --tl:off --nologo -v minimal "-p:CorePackageVersion=$version"
         if ($LASTEXITCODE -ne 0) { Fail "package-only build failed for $framework" }
@@ -80,8 +101,10 @@ try {
         $out | Write-Host
         $runtime = Get-Content "$binaryDirectory/Lokad.Onnx.PackageConsumer.deps.json" -Raw | ConvertFrom-Json
         $runtimeLibraries = @($runtime.libraries.PSObject.Properties.Name)
-        if ($runtimeLibraries.Count -ne 2 -or $runtimeLibraries -notcontains "Lokad.Onnx/$version") { Fail "consumer runtime has unexpected dependencies" }
-        if (Test-Path "$binaryDirectory/Google.Protobuf.dll") { Fail "consumer contains Protobuf" }
+        if ($runtimeLibraries.Count -ne 3 -or $runtimeLibraries -notcontains "Lokad.Onnx/$version" -or $runtimeLibraries -notcontains 'Google.Protobuf/3.33.5') {
+            Fail 'consumer runtime has unexpected dependencies'
+        }
+        if (-not (Test-Path "$binaryDirectory/Google.Protobuf.dll")) { Fail 'consumer is missing Google.Protobuf' }
         if (Test-Path "$binaryDirectory/Lokad.Onnx.Protobuf.dll") { Fail "consumer contains reference adapter" }
         Write-Host "PASS consume $framework"
     }

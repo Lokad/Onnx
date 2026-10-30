@@ -2,6 +2,10 @@
 
 ## 0.5.0 — Unreleased
 
+- Restore the v0.3.0 Protobuf-facing API in the core package: `OnnxImport`,
+  `ProtoConversions` and generated `Onnx` messages, including direct file/buffer
+  loading. Remove the separate adapter project and reader-injection API.
+  Google.Protobuf is again the sole runtime dependency, accepting 3.33.5 and newer.
 - Core, source companions and correctness tests target both .NET 10 and .NET 11.
 - Benchmark preparation defaults to .NET 11, with an explicit .NET 10 control.
   See the [comparison commands](eng/bench.md).
@@ -69,9 +73,10 @@
 - **Parser dependency removed from the core package.** Applications load neutral
   `OnnxModel` descriptions or supply `IOnnxModelReader`. `OnnxImport`,
   `ProtoConversions` and generated `Onnx` messages moved to the nonpackable
-  [Protobuf adapter](tools/Lokad.Onnx.Protobuf/README.md). Existing file-loading
+  Protobuf adapter. Existing file-loading
   clients must rebuild with an adapter reference or provide their own reader.
-  The adapter owns its parser dependencies and version.
+  The adapter owns its parser dependencies and version. Version 0.5.0 restores
+  these APIs and the Google.Protobuf dependency to the core package.
 - **Tensor equality** requires same-shaped `Tensor<T>` values. Arrays, foreign
   types and different shapes compare unequal. Convert arrays explicitly with
   `array.ToTensor<T>()` for content equality; array ordering comparisons remain.

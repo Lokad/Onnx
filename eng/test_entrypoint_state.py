@@ -180,16 +180,14 @@ class BenchmarkPreparationTests(unittest.TestCase):
             git('add', '-f', 'src')
             git('commit', '-qm', 'integrated fixture')
             integrated = git('rev-parse', 'HEAD')
-            adapter = root / 'tools/Lokad.Onnx.Protobuf'
-            adapter.mkdir(parents=True)
-            (adapter / 'Lokad.Onnx.Protobuf.csproj').write_text('<Project />', encoding='utf-8')
-            git('add', '-f', 'tools')
-            git('commit', '-qm', 'separate fixture')
-            separate = git('rev-parse', 'HEAD')
+            (core / 'Fixture.cs').write_text('// candidate fixture, never compiled', encoding='utf-8')
+            git('add', '-f', 'src')
+            git('commit', '-qm', 'candidate fixture')
+            candidate_head = git('rev-parse', 'HEAD')
             refs = {
                 'missing': (None, None), 'invalid': ('no-such-ref', None),
-                'mixed': (integrated, separate), 'integrated': (integrated, integrated),
-                'separate': (separate, None), 'unsupported': (net10, None)
+                'integrated': (integrated, integrated),
+                'default-candidate': (integrated, None), 'unsupported': (net10, None)
             }
             baseline, candidate = refs[choice]
             wrapper = r'''
@@ -225,8 +223,9 @@ exit 0
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             state = json.loads((root / 'state.json').read_text(encoding='utf-8-sig'))
             if state['code'] == 0:
-                state['layouts'] = [json.loads((root / 'output' / role / 'build.json').read_text(encoding='utf-8-sig'))['importer_layout']
-                                    for role in ['L0', 'L1']]
+                state['builds'] = [json.loads((root / 'output' / role / 'build.json').read_text(encoding='utf-8-sig'))
+                                   for role in ['L0', 'L1']]
+                state['expected_sources'] = [baseline, candidate or candidate_head]
             return state
 
     def check_rejection(self, choice):
@@ -245,9 +244,6 @@ exit 0
     def test_invalid_ref_does_not_create_output_or_start_dotnet(self):
         self.check_rejection('invalid')
 
-    def test_mixed_layout_does_not_create_output_or_start_dotnet(self):
-        self.check_rejection('mixed')
-
     def test_unsupported_framework_does_not_create_output_or_start_dotnet(self):
         self.check_rejection('unsupported')
 
@@ -260,15 +256,17 @@ exit 0
                     if command.startswith('build '):
                         self.assertIn('-f net10.0', command)
 
-    def test_same_era_refs_reach_existing_preparation_paths(self):
+    def test_pinned_and_default_candidate_refs_reach_preparation_paths(self):
         for script in ['build-common-campaign.ps1', 'build-embeddinggemma2-benchmark.ps1']:
-            for layout in ['integrated', 'separate']:
-                with self.subTest(script=script, layout=layout):
-                    state = self.run_preparation(script, layout)
+            for choice in ['integrated', 'default-candidate']:
+                with self.subTest(script=script, choice=choice):
+                    state = self.run_preparation(script, choice)
                     self.assertEqual(state['code'], 0, state)
                     self.assertTrue(state['outputExists'])
                     self.assertGreater(len(state['dotnetCalls']), 2)
-                    self.assertEqual(state['layouts'], [layout, layout])
+                    self.assertEqual([b['source_sha'] for b in state['builds']], state['expected_sources'])
+                    self.assertEqual([b['target_framework'] for b in state['builds']], ['net11.0', 'net11.0'])
+                    self.assertTrue(all('Lokad.Onnx.dll' in b['runtime_files'] for b in state['builds']))
 
 
 if __name__ == '__main__':
