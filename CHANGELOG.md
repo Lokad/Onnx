@@ -47,10 +47,13 @@
   .NET 10 retains its existing loop.
 - Small AVX-512 LSTMs reuse the decoder's packed projection format. Paired
   decoder panels share input loads, retaining separate multiply/add order.
-- Refreshed the seven-model [CPU comparisons](BENCHMARK.md) on .NET 11. Sustained
-  complete Parakeet and Community-1 workloads measure 1.018 and 0.996
-  times ORT latency on one logical CPU; both point and upper 95% process-pair
-  bounds are below 1.03, with full-output checks and retained raw clocks.
+- Added a fixed full seven-model [CPU comparison](eng/bench.md) with a
+  one-hour budget; the complete prepared .NET 11 run took 41.27 minutes,
+  retaining all 58 workers, complete workloads and numerical checks.
+- Refreshed all seven [CPU comparison figures](BENCHMARK.md) with the
+  integrated package. The separate larger audio qualification measures
+  Parakeet 1.015 and Community-1 0.999 times ORT latency on one logical CPU;
+  both point estimates and upper 95% process-pair bounds are below 1.03.
 
 ## 0.4.0 — 2026-10-28
 

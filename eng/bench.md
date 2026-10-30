@@ -49,9 +49,10 @@ loading, warmup, measurements, output validation and report writing. Remaining
 time bounds each owned child. On expiry, only that child is stopped and completed
 worker/failure records remain. An incomplete run does not count as a full
 benchmark. A successful run has `report.json` plus a hash-bound `complete.json`
-with total elapsed seconds and no `failure.json`. The command's actual duration
-must be measured on the quiet box before claiming this protocol stays below 60
-minutes; historical cost estimates alone do not establish that claim.
+with total elapsed seconds and no `failure.json`. The [complete measured run](../tests/benchmarks/release-0.5.0-full-20261030.md)
+finished in 41.27 minutes on the existing quiet box, including CLI startup.
+Future runs must meet the same complete-workload and duration gates; a historical
+cost estimate or partial run does not establish success.
 
 ## Source comparisons
 
