@@ -119,7 +119,8 @@ def execute(args,build,output,config,paths,audio_fixtures,graphs,gemma_manifest,
         elif case=='gemma2-128tok':
             smoke=phase=='conformance'
             entry=gemma.child(dict(build,runner=build['runner'].parent/'Lokad.Onnx.EmbeddingGemma2Bench.dll'),Path(config['gemma_root']),output,
-                case,engine,args.cpu,768,args.packed_weight_budget,smoke,env,job['index'],overall_deadline=deadline,dotnet=args.dotnet)
+                case,engine,args.cpu,768,args.packed_weight_budget,smoke,dict(env,DOTNET_TieredCompilation='1'),
+                job['index'],overall_deadline=deadline,dotnet=args.dotnet)
             record,samples,_=gemma.worker(output,entry,smoke,gemma_manifest,check_guest_noise=False)
             evidence.require(record['source_sha']==build['source_sha'] and record['core_sha256']==build['core_sha256'],'full Gemma product changed')
             item=dict(case=case,engine=engine,samples_ms=samples,files=entry,native_signature=record['native_module'],

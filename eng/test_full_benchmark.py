@@ -8,6 +8,8 @@ from unittest import mock
 import gemma_worker as gemma
 import full_benchmark as full
 import campaign_evidence as evidence
+import isolated_evidence as isolated
+import time
 from types import SimpleNamespace
 
 
@@ -23,6 +25,28 @@ def completed_workers():
 
 
 class FullScheduleTests(unittest.TestCase):
+    def test_gemma_declares_default_tiering_without_overriding_graph_workers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            build=dict(runner=root/'Lokad.Onnx.AudioBench.dll',source_sha='a'*40,core_sha256='b'*64)
+            args=SimpleNamespace(cpu=2,packed_weight_budget=576*1024**2,dotnet='dotnet',native_python='python')
+            jobs=[dict(index=i,case=case,engine='lok',phase='conformance',pair=0)
+                  for i,case in enumerate(('gemma2-128tok','e5-30tok'),1)]
+            record=dict(source_sha=build['source_sha'],core_sha256=build['core_sha256'],native_module=None,load_ticks=1,stopwatch_frequency=1)
+            with mock.patch.dict(full.os.environ,{'DOTNET_TieredCompilation':'0','COMPlus_GCStress':'1','LOKAD_ForceScalar':'1'},clear=True), \
+                    mock.patch.object(full,'jobs',return_value=jobs),mock.patch.object(full.gemma,'child',return_value={}) as child, \
+                    mock.patch.object(full.gemma,'worker',return_value=(record,[1.,1.],{})), \
+                    mock.patch.object(full.graph,'child',return_value={'result':'graph/result.json'}) as graph:
+                full.execute(args,build,root,dict(gemma_root=str(root),native_versions={}),{'graphs':root/'graphs.json'},
+                             {},{}, {},time.monotonic()+60)
+            gemma_variables={k:v for k,v in child.call_args.args[9].items() if k.lower().startswith(('dotnet_','complus_','lokad_'))}
+            graph_variables={k:v for k,v in graph.call_args.args[9].items() if k.lower().startswith(('dotnet_','complus_','lokad_'))}
+            host=dict(host='fixture',cpu='fixture',os='Linux',architecture='x64',sdk='fixture',runtime='.NET 11.0.0-rc.3.26522.148',
+                      isa='fixture',affinity='4',settings=dict(jit='default-tiered',gc='fixture',variables=gemma_variables))
+            isolated.environment(dict(environment=host))
+            self.assertEqual({'DOTNET_TieredCompilation':'1'},gemma_variables)
+            self.assertEqual({},graph_variables)
+
     def test_all_seven_full_workloads_and_fixed_balanced_pairs(self):
         jobs=full.jobs()
         self.assertEqual(58,len(jobs))
