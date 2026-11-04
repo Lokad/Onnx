@@ -73,6 +73,7 @@ does not remove or overwrite shared cache entries to repair a mismatch.
 | Image inference | MNIST, DINOv2, DINOv3, ResNet50 |
 | Speech transcription | [Whisper Large V3 Turbo](https://github.com/Lokad/Onnx/blob/master/tests/whisper/README.md), [Parakeet TDT 0.6B V3](https://github.com/Lokad/Onnx/blob/master/tests/parakeet/transcribe/README.md) |
 | Speaker diarization | [pyannote Community-1](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/diarization/README.md) |
+| Waveform synthesis from tensors | [Paradee-8M-v1.2 FP32 / INT8](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md#paradee-runtime) through the core graph API |
 | Transformer graph execution | GPT-2 |
 
 Support depends on the export's operators, opsets, element types and shapes.

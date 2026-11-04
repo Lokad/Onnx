@@ -86,6 +86,33 @@ public class ParadeeOperatorTests
     }
 
     [Theory]
+    [InlineData(OpType.Less)]
+    [InlineData(OpType.LessOrEqual)]
+    [InlineData(OpType.Greater)]
+    [InlineData(OpType.GreaterOrEqual)]
+    public void LargeRightScalarComparisonsPreserveStridedValuesNanSemanticsAndRank(OpType op)
+    {
+        var values = Enumerable.Range(0, 1024).Select(i => (float)(i % 11 - 5)).ToArray();
+        values[13] = float.NaN;values[14] = float.PositiveInfinity;
+        var matrix = new DenseTensor<float>(values, new[] { 32, 32 });
+        var view = Output<float>(CPUExecutionProvider.Transpose(matrix, new[] { 1, 0 }, null, null));
+        foreach (float limit in new[] { 0f, float.NaN })
+        {
+            var scalar = new DenseTensor<float>(new[] { limit }, new[] { 1, 1 });
+            OpResult Execute(ExecutionOptions options) => op switch
+            {
+                OpType.Less => CPUExecutionProvider.Less(view, scalar, options),
+                OpType.LessOrEqual => CPUExecutionProvider.LessOrEqual(view, scalar, options),
+                OpType.Greater => CPUExecutionProvider.Greater(view, scalar, options),
+                _ => CPUExecutionProvider.GreaterOrEqual(view, scalar, options),
+            };
+            Assert.Equal(Output<bool>(Execute(ExecutionOptions.Scalar)).ToArray(), Output<bool>(Execute(ExecutionOptions.Simd)).ToArray());
+            var higherRank = new DenseTensor<float>(new[] { limit }, new[] { 1, 1, 1 });
+            Assert.Equal(new[] { 1, 32, 32 }, Output<bool>(CPUExecutionProvider.Less(view, higherRank, ExecutionOptions.Simd)).Dimensions.ToArray());
+        }
+    }
+
+    [Theory]
     [InlineData(0, 1, 24)]
     [InlineData(1, 2, 12)]
     [InlineData(-1, 6, 4)]

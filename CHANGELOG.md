@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- Run the published Paradee-8M-v1.2 FP32 and INT8 ONNX exports from supplied
+  phoneme-ID, speed and voice tensors through the core graph API. See
+  [tested exports and numerical limits](docs/model-support.md#paradee-runtime).
+- Add ConvTranspose1D, rank-3 nearest Resize, RandomNormalLike, CumSum,
+  GatherElements, Flatten, Exp, Round, IsNaN, ordered comparisons and variadic Min.
+  Add Half-to-float/double storage conversion, DequantizeLinear and Mod for the
+  INT8 export; general FP16 arithmetic remains unsupported.
+- Accelerate eligible float ConvTranspose1D through the existing matrix kernels
+  and overlap-add, and large float comparisons against a scalar. Preserve scalar
+  execution and mutable initializer behavior.
+- Qualify both Paradee exports with frozen inputs and controlled-noise references
+  on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
+  use explicit signal-error bounds; they are not bitwise identical across engines.
+
 ## 0.5.0 — 2026-10-30
 
 - Restore the v0.3.0 Protobuf-facing API in the core package: `OnnxImport`,

@@ -14,7 +14,7 @@ public partial class CPUExecutionProvider
         const OpType op = OpType.ConvTranspose;
         if (input is null) return MissingInput(op, nameof(input));
         if (weights is null) return MissingInput(op, nameof(weights));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         if (input.Rank != 3) return WrongInputShape(op, nameof(input), 3, input);
         if (weights.Rank != 3) return WrongInputShape(op, nameof(weights), 3, weights);
         if (weights.ElementType != input.ElementType) return WrongInputType(op, nameof(weights), input.ElementType, weights);
@@ -50,12 +50,58 @@ public partial class CPUExecutionProvider
             return WrongInputShape(op, nameof(bias), bias, "Bias must have one element per output channel.");
         return input.ElementType switch
         {
-            TensorElementType.Float => Success(op, ConvTransposeValues((Tensor<float>)input, (Tensor<float>)weights, (Tensor<float>?)bias,
-                groups, stride, dilation, left, (int)outputChannels, (int)outputLength)),
+            TensorElementType.Float => Success(op, groups == 1 && channels >= 16 && kernel >= 16 && opts.Tensor.UseSimd && Vector.IsHardwareAccelerated
+                && outputChannels * kernel <= (16L * 1024 * 1024) / length
+                ? ConvTransposeMatrix((Tensor<float>)input, (Tensor<float>)weights, (Tensor<float>?)bias,
+                    stride, dilation, left, (int)outputChannels, (int)outputLength, opts.Tensor)
+                : ConvTransposeValues((Tensor<float>)input, (Tensor<float>)weights, (Tensor<float>?)bias,
+                    groups, stride, dilation, left, (int)outputChannels, (int)outputLength)),
             TensorElementType.Double => Success(op, ConvTransposeValues((Tensor<double>)input, (Tensor<double>)weights, (Tensor<double>?)bias,
                 groups, stride, dilation, left, (int)outputChannels, (int)outputLength)),
             _ => InputTypeNotSupported(op, nameof(input), input),
         };
+    }
+
+    static DenseTensor<float> ConvTransposeMatrix(Tensor<float> input, Tensor<float> weights, Tensor<float>? bias,
+        int stride, int dilation, int left, int outputChannels, int outputLength, TensorExecutionOptions options)
+    {
+        // Each matrix row contains one frame's reconstructed channels/kernels.
+        // Sum channels through the existing GEMM dispatcher, then overlap-add frames.
+        var x = input.ToRowMajor();
+        var w = weights.ToRowMajor();
+        int channels = input.Dimensions[1], length = input.Dimensions[2], kernel = weights.Dimensions[2];
+        var matrix = w.Reshape(channels, outputChannels * kernel);
+        var result = new DenseTensor<float>(new[] { input.Dimensions[0], outputChannels, outputLength });
+        var y = result.Buffer.Span;
+        for (int batch = 0; batch < input.Dimensions[0]; batch++)
+        {
+            var frame = new DenseTensor<float>(x.Buffer.Slice(batch * channels * length, channels * length), new[] { channels, length });
+            var transposed = Tensor<float>.Transpose(frame, new[] { 1, 0 });
+            var expanded = Tensor<float>.MatMul2D(transposed, matrix, options).ToRowMajor();
+            options.ScratchReporter?.AddScratchBytes(expanded.Length * sizeof(float));
+            var values = expanded.Buffer.Span;
+            for (int sample = 0; sample < length; sample++)
+                for (int channel = 0; channel < outputChannels; channel++)
+                {
+                    int source = (sample * outputChannels + channel) * kernel;
+                    int destination = (batch * outputChannels + channel) * outputLength;
+                    long start = (long)sample * stride - left;
+                    for (int tap = 0; tap < kernel; tap++)
+                    {
+                        long position = start + (long)tap * dilation;
+                        if ((ulong)position < (ulong)outputLength) y[destination + (int)position] += values[source + tap];
+                    }
+                }
+        }
+        if (bias is not null)
+            for (int batch = 0; batch < input.Dimensions[0]; batch++)
+                for (int channel = 0; channel < outputChannels; channel++)
+                {
+                    float value = bias.GetLogicalValue(channel);
+                    var row = y.Slice((batch * outputChannels + channel) * outputLength, outputLength);
+                    for (int i = 0; i < row.Length; i++) row[i] += value;
+                }
+        return result;
     }
 
     static DenseTensor<T> ConvTransposeValues<T>(Tensor<T> input, Tensor<T> weights, Tensor<T>? bias,

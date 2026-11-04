@@ -85,6 +85,24 @@ public class ConvTranspose1DTests
     }
 
     [Fact]
+    public void MatrixReconstructionMatchesScalarWithDilationBiasAndChangedWeights()
+    {
+        var input = new DenseTensor<float>(Enumerable.Range(0, 64).Select(i => (i % 5 - 2) * .25f).ToArray(), new[] { 1, 16, 4 });
+        var weights = new DenseTensor<float>(Enumerable.Range(0, 16 * 2 * 17).Select(i => (i % 7 - 3) * .125f).ToArray(), new[] { 16, 2, 17 });
+        var bias = DenseTensor<float>.OfValues(new[] { .5f, -.25f });
+        OpResult Execute(ExecutionOptions options) => CPUExecutionProvider.ConvTranspose(input, weights, bias, null,
+            new[] { 2 }, 1, null, new[] { 1, 2 }, new[] { 2 }, new[] { 1 }, null, options);
+        for (int revision = 0; revision < 2; revision++)
+        {
+            var expected = Output<float>(Execute(ExecutionOptions.Scalar));
+            var actual = Output<float>(Execute(ExecutionOptions.Simd));
+            Assert.Equal(new[] { 1, 2, 37 }, actual.Dimensions.ToArray());
+            Assert.Equal(expected.ToArray(), actual.ToArray());
+            weights.SetValue(0, weights.GetValue(0) + 1f);
+        }
+    }
+
+    [Fact]
     public void SchemaDispatchExecutesAndCallerOwnedOutputsSurviveAnotherCall()
     {
         var graph = new ComputationalGraph { Opset = new() { [""] = 17 } };

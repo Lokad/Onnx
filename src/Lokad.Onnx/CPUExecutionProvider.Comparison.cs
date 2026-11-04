@@ -20,10 +20,15 @@ public partial class CPUExecutionProvider
     {
         if (a is null) return MissingInput(op, nameof(a));
         if (b is null) return MissingInput(op, nameof(b));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         if (a.ElementType != b.ElementType)
             return WrongInputType(op, nameof(b), "Input tensors must be of the same type.", b);
         Profiler.StartOpStage(OpStage.Math);
+        if (opts.Tensor.UseSimd && Vector.IsHardwareAccelerated && a is Tensor<float> single && b is Tensor<float> scalar)
+        {
+            var fast = RightScalarComparison(single, scalar, op);
+            if (fast is not null) return Success(op, fast);
+        }
         return a.ElementType switch
         {
             TensorElementType.Float => Success(op, OrderedCompare((Tensor<float>)a, (Tensor<float>)b, op)),
@@ -38,6 +43,25 @@ public partial class CPUExecutionProvider
             TensorElementType.UInt64 => Success(op, OrderedCompare((Tensor<ulong>)a, (Tensor<ulong>)b, op)),
             _ => InputTypeNotSupported(op, nameof(a), a),
         };
+    }
+
+    static DenseTensor<bool>? RightScalarComparison(Tensor<float> input, Tensor<float> scalar, OpType op)
+    {
+        if (input.Length < 256 || scalar.Length != 1 || scalar.Rank > input.Rank) return null;
+        var data = input.ToRowMajor();
+        var result = new DenseTensor<bool>(input.Dimensions.ToArray());
+        var values = data.Buffer.Span;
+        var target = result.Buffer.Span;
+        float limit = scalar.GetLogicalValue(0);
+        switch (op)
+        {
+            case OpType.Less: for (int i = 0; i < values.Length; i++) target[i] = values[i] < limit; break;
+            case OpType.LessOrEqual: for (int i = 0; i < values.Length; i++) target[i] = values[i] <= limit; break;
+            case OpType.Greater: for (int i = 0; i < values.Length; i++) target[i] = values[i] > limit; break;
+            case OpType.GreaterOrEqual: for (int i = 0; i < values.Length; i++) target[i] = values[i] >= limit; break;
+            default: throw new ArgumentOutOfRangeException(nameof(op));
+        }
+        return result;
     }
 
     static Tensor<bool> OrderedCompare<T>(Tensor<T> a, Tensor<T> b, OpType op) where T : unmanaged, INumber<T>

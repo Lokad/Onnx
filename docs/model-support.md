@@ -25,10 +25,45 @@ for a file or buffer, directly from the core package.
 | [Parakeet TDT 0.6B V3](../tests/parakeet/transcribe/README.md) | `ParakeetTranscriber`, `lonnx transcribe --model-type parakeet` | Short transcription and explicit recording mode through ten minutes. Recorded public decisions match ORT; Windows tensor-level differences remain. |
 | [Whisper Large V3 Turbo](../tests/whisper/README.md) | `WhisperTranscriber`, `lonnx transcribe` | Short transcription and explicit recording mode through ten minutes, with segment timestamps. Language is explicit. Automatic language detection, translation and word timestamps are not implemented. Full encoder/logit agreement with ORT remains incomplete. |
 | [pyannote Community-1](../tests/pyannote/diarization/README.md) | `Community1Diarizer`, `lonnx diarize` | Segmentation, speaker embeddings, clustering, ordinary/exclusive speaker intervals through ten minutes. Recorded timelines match the native application; complete intermediate tensor agreement is not established. |
+| [Paradee-8M-v1.2](#paradee-runtime), FP32 and INT8 | Core graph execution from supplied tensors to a 24 kHz waveform | Both original opset-17 exports qualify on .NET 10/11 with fixed phoneme IDs. Text pronunciation, sentence splitting and audio-file writing belong to the caller. |
 
 EmbeddingGemma's smaller output dimensions reduce stored vector size; they do
 not reduce transformer computation. Prompts and special tokens count toward the
 input limit. Follow the model guide for asset preparation and numerical bounds.
+
+## Paradee runtime
+
+The tested exports are `onnx/paradee.onnx` and `onnx/paradee_int8.onnx` from
+`sahilmahendrakar/Paradee-8M-v1.2`, revision
+`ed2934d4df8a4fd891e29584c5e1104649409765`. Load them through the existing
+`OnnxImport` and graph APIs. Inputs are `input_ids` (int64 `[1,T]`, at most 512
+IDs including endpoint padding), `speed` (float32 `[1]`) and `voice` (int64 `[1]`,
+0 through 3). `waveform` is float32 `[1,samples]` at 24 kHz. No speech frontend
+or additional runtime dependency is required to execute these tensors.
+
+The INT8 export widens Half storage and dequantizes weights to float32 during
+execution; it does not use integer convolution or general FP16 arithmetic.
+ConvTranspose currently supports rank-3 float/double tensors, groups, dilation,
+strides, explicit pads and output padding, with `NOTSET`/`VALID` auto padding.
+Explicit `output_shape` and `SAME` auto padding are unsupported. Rank-3 Resize
+uses the existing nearest-neighbor implementation and its supported modes.
+
+Eight fixed input cases cover all four voices, two speeds, and lengths 14, 62,
+194 and 512. Original exports produce finite outputs of the recorded shapes;
+controlled-noise companions check exact duration decisions, pitch and cumulative
+phase within the usual `1e-4` scaled bound, and waveforms with peak absolute
+error at most `1e-3` and signal-to-error ratio at least 50 dB. These are numerical
+agreement limits, not a speech-quality evaluation. The stricter uniform `1e-4`
+waveform bound fails because small pitch errors accumulate into phase and are
+amplified by the harmonic synthesizer. Original exports contain
+`RandomNormalLike`, so independent draws cannot be compared sample for sample.
+
+The [fixed input tensors](../tests/Lokad.Onnx.Backend.Tests/fixtures/paradee-inputs.json)
+need no pronunciation library. Private model qualification uses
+`LONNX_PARADEE_FIXTURES` and the four tests in
+[ParadeeRuntimeTests.cs](../tests/Lokad.Onnx.Backend.Tests/ParadeeRuntimeTests.cs).
+Ordinary CI runs the small operator fixtures offline; missing private models
+produce explicit skips. An explicitly supplied invalid asset root fails.
 
 ## Audio contracts and accuracy
 

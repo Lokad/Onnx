@@ -166,3 +166,37 @@ both pinned source revisions. Each leg stages its own DLLs from a hashed runtime
 manifest, including Google.Protobuf. Select revisions compatible with the shared
 caller's API. Historical prepared runners and results retain their original
 binary and dependency manifests; preparation does not rebuild a separate parser.
+
+## Paradee runtime comparison
+
+`bench-paradee.py` reuses the graph workers for the original Paradee FP32 and
+INT8 exports. Supply a prepared, hashed manifest with the committed 14-token
+and 62-token fixed inputs, plus a passing private-model TRX for the actual
+managed core DLL. The producer must be a clean committed checkout. This is a
+separate focused comparison; the seven-model full routine is unchanged.
+
+```text
+python eng/bench-paradee.py --manifest /path/to/benchmark.json \
+  --runner /path/to/Lokad.Onnx.GraphBench.dll \
+  --qualification /path/to/paradee-default.trx \
+  --dotnet /home/lokad/.dotnet11/dotnet \
+  --native-python /path/to/ort-environment/bin/python \
+  --output /path/to/fresh-results --cpu 2 --max-seconds 1700
+```
+
+Reserve exclusive access to the shared VM first. Each engine uses at least 32
+warmup calls and ten seconds of warmup, then 33 measured calls including Reset,
+execution and complete output copies. Six balanced independent process pairs
+produce process means, geometric paired ratios and a two-sided 95% log-Student-t
+interval (df 5). Setup and first-use clocks are retained separately. The whole
+invocation has a hard deadline, at most 3,600 seconds.
+
+Original graphs contain random noise: their manifest explicitly declares
+`stochastic_outputs: true`. Workers check shapes, finite values, unchanged
+inputs and retained copies without claiming sample equality across different
+draws. The four private model tests qualify the actual core with controlled-noise
+companions first; see [numerical limits](../docs/model-support.md#paradee-runtime).
+A separate `--pilot` uses only three warmup and three measured calls and cannot
+establish performance parity. Preserve every attempted cohort and label pilots
+separately. `--cases` can split a prospective cohort across reserved VM windows;
+do not combine different products or select favorable repeats.

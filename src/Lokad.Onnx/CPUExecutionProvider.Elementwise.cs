@@ -289,10 +289,15 @@ public partial class CPUExecutionProvider
         var op = OpType.Less;
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         if (A.ElementType != B.ElementType)
         {
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (opts.Tensor.UseSimd && Vector.IsHardwareAccelerated && A is Tensor<float> single && B is Tensor<float> scalar)
+        {
+            var fast = RightScalarComparison(single, scalar, op);
+            if (fast is not null) return Success(op, fast);
         }
         switch (A.ElementType)
         {
