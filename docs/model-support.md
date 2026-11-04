@@ -48,8 +48,8 @@ strides, explicit pads and output padding, with `NOTSET`/`VALID` auto padding.
 Explicit `output_shape` and `SAME` auto padding are unsupported. Rank-3 Resize
 uses the existing nearest-neighbor implementation and its supported modes.
 
-Eight fixed input cases cover all four voices, two speeds, and lengths 14, 62,
-194 and 512. Original exports produce finite outputs of the recorded shapes;
+Eight fixed input cases cover all four voices, speeds 0.8, 1.0 and 1.2, and
+lengths 14, 62, 194 and 512. Original exports produce finite outputs of the recorded shapes;
 controlled-noise companions check exact duration decisions, pitch and cumulative
 phase within the usual `1e-4` scaled bound, and waveforms with peak absolute
 error at most `1e-3` and signal-to-error ratio at least 50 dB. These are numerical
