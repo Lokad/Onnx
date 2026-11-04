@@ -307,6 +307,10 @@ public partial struct Node
 
         OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
 
+        OpType.ConvTranspose => CPU.ConvTranspose(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"),
+            Ints("output_padding"), Ints("output_shape"), opt),
+
         OpType.ConvRelu => CPU.ConvRelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
 
@@ -454,6 +458,10 @@ public partial struct Node
         OpType.Flatten => CPU.Flatten(InputTensor(graph, 0), Int("axis", null), opt),
         OpType.GatherElements => CPU.GatherElements(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), opt),
         OpType.CumSum => CPU.CumSum(InputTensor(graph, 0), InputTensor(graph, 1), GetInt("exclusive", 0), GetInt("reverse", 0), opt),
+        OpType.RandomNormalLike => CPU.RandomNormalLike(InputTensor(graph, 0), GetInt("dtype", null), GetFloat("mean", null),
+            GetFloat("scale", null), GetFloat("seed", null), graph.NormalRandomState(Outputs), opt),
+        OpType.DequantizeLinear => DequantizeLinearChecked(graph, opt),
+        OpType.Mod => CPU.Mod(InputTensor(graph, 0), InputTensor(graph, 1), Int("fmod", null), opt),
 
         OpType.And => CPU.And(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 

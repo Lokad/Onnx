@@ -26,6 +26,7 @@ Directory.CreateDirectory(output);
 using var document = JsonDocument.Parse(File.ReadAllBytes(manifest));
 var spec = document.RootElement;
 var item = spec.GetProperty("cases").EnumerateArray().Single(c => Text(c, "key") == key);
+bool stochastic = item.TryGetProperty("stochastic_outputs", out var stochasticValue) && stochasticValue.GetBoolean();
 string core = HashFile(typeof(ComputationalGraph).Assembly.Location);
 Require(core == Text(spec, "core"), "Wrong actual product DLL");
 var flags = Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k => k.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase) || k.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) || k.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)).ToDictionary(k => k, Environment.GetEnvironmentVariable);
@@ -51,9 +52,26 @@ string[]? hashes = null;
 double[] errors = new double[expected.Length];
 var clocks = new List<object>();
 int warmups = key == "e5-30tok" ? 1200 : 600;
-int calls = mode == "verify" ? 3 : warmups + 180;
-for (int index = 0; index < calls; index++)
+int measuredCalls = 180;
+double minimumWarmupSeconds = 0;
+if (item.TryGetProperty("timing", out var timing))
 {
+    warmups = timing.GetProperty("warmup_calls").GetInt32();
+    measuredCalls = timing.GetProperty("measured_calls").GetInt32();
+    minimumWarmupSeconds = timing.GetProperty("warmup_seconds").GetDouble();
+    Require(warmups is >= 1 and <= 1200 && measuredCalls is >= 1 and <= 180
+        && double.IsFinite(minimumWarmupSeconds) && minimumWarmupSeconds is >= 0 and <= 60, "Invalid timing schedule");
+}
+long conditioningStart = Stopwatch.GetTimestamp();
+double? warmupElapsed = null;
+int warmupCount = 0, measuredCount = 0;
+for (int index = 0; ; index++)
+{
+    if (mode == "verify" && index == 3) break;
+    bool warmup = mode == "verify" || warmupCount < warmups
+        || Stopwatch.GetElapsedTime(conditioningStart).TotalSeconds < minimumWarmupSeconds;
+    if (mode == "timing" && !warmup && measuredCount == measuredCalls) break;
+    if (!warmup) warmupElapsed ??= Stopwatch.GetElapsedTime(conditioningStart).TotalSeconds;
     long start = Stopwatch.GetTimestamp();
     graph.Reset();
     Require(graph.Execute(feed, false), graph.LastErrorMessage ?? "Graph failed");
@@ -67,22 +85,33 @@ for (int index = 0; index < calls; index++)
         Require(actual.Length == reference.Length, "Output extent");
         for (int k = 0; k < actual.Length; k++)
         {
-            double error = Math.Abs((double)actual[k] - reference[k]) / Math.Max(1, Math.Abs((double)reference[k]));
-            Require(float.IsFinite(actual[k]) && float.IsFinite(reference[k]) && error <= 1e-4, "Native reference bound");
-            errors[j] = Math.Max(errors[j], error);
+            Require(float.IsFinite(actual[k]) && float.IsFinite(reference[k]), "Nonfinite graph output/reference");
+            if (!stochastic)
+            {
+                double error = Math.Abs((double)actual[k] - reference[k]) / Math.Max(1, Math.Abs((double)reference[k]));
+                Require(error <= 1e-4, "Native reference bound");
+                errors[j] = Math.Max(errors[j], error);
+            }
         }
-        if (hashes != null) Require(Hash(actual) == hashes[j] && Hash(first![j]) == hashes[j], "Nondeterministic or overwritten result");
+        if (hashes != null)
+        {
+            Require(Hash(first![j]) == hashes[j], "Overwritten result");
+            if (!stochastic) Require(Hash(actual) == hashes[j], "Nondeterministic result");
+        }
     }
     foreach (var p in feed) Require(HashInput(p.Value) == inputHashes[p.Key], "Input mutation");
     if (first == null) { first = outputs; hashes = outputs.Select(Hash).ToArray(); }
-    clocks.Add(new { index, warmup = mode == "verify" || index < warmups, ticks = end - start, frequency = Stopwatch.Frequency });
+    clocks.Add(new { index, warmup, ticks = end - start, frequency = Stopwatch.Frequency });
+    if (warmup) warmupCount++; else measuredCount++;
 }
 var arrays = new List<object>();
 for (int j = 0; j < expected.Length; j++)
 {
     string file = j + ".f32";
     using (var f = File.Create(Path.Combine(output, file))) f.Write(MemoryMarshal.AsBytes(first![j].AsSpan()));
-    arrays.Add(new { name = Text(expected[j], "name"), shape = Shape(expected[j]), file, sha256 = hashes![j], values = first![j].Length, max_scaled_error = errors[j] });
+    arrays.Add(new { name = Text(expected[j], "name"), shape = Shape(expected[j]), file, sha256 = hashes![j], values = first![j].Length,
+        max_scaled_error = stochastic ? (double?)null : errors[j] });
 }
 Require(!Process.GetCurrentProcess().Modules.Cast<ProcessModule>().Any(m => m.ModuleName.Contains("onnxruntime", StringComparison.OrdinalIgnoreCase)), "ORT loaded into managed worker");
-File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(new { passed = true, role = "current", key, mode, pid = Environment.ProcessId, runtime = Environment.Version.ToString(), core, consumer = HashFile(Assembly.GetExecutingAssembly().Location), flags, setup_seconds = setup.Elapsed.TotalSeconds, calls, clocks, arrays, inputs_unchanged = true, held_outputs_unchanged = true }, new JsonSerializerOptions { WriteIndented = true }));
+File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(new { passed = true, role = "current", key, mode, pid = Environment.ProcessId, runtime = Environment.Version.ToString(), core, consumer = HashFile(Assembly.GetExecutingAssembly().Location), flags,
+    stochastic_outputs = stochastic, warmup_elapsed_seconds = warmupElapsed, setup_seconds = setup.Elapsed.TotalSeconds, calls = clocks.Count, clocks, arrays, inputs_unchanged = true, held_outputs_unchanged = true }, new JsonSerializerOptions { WriteIndented = true }));

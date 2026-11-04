@@ -249,7 +249,7 @@ static class OpDump
                 fed.Add(Tuple.Create(args[i + 1].Substring(0, eq), args[i + 1].Substring(eq + 1)));
             }
         }
-        if (model is null || mode is null || outdir is null || fed.Count == 0) { Console.Error.WriteLine("Usage: OpDump --model m.onnx --mode scalar|simd|intrinsics --input name=file [--input ...] --outdir dir"); return 1; }
+        if (model is null || mode is null || outdir is null) { Console.Error.WriteLine("Usage: OpDump --model m.onnx --mode scalar|simd|intrinsics [--input name=file ...] --outdir dir"); return 1; }
         bool useSimd, useIntrinsics;
         if (mode == "scalar") { useSimd = false; useIntrinsics = false; }
         else if (mode == "simd") { useSimd = true; useIntrinsics = false; }

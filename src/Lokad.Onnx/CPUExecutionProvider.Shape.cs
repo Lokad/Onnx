@@ -133,9 +133,12 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt64:
             case TensorElementType.Float:
             case TensorElementType.Double:
+            case TensorElementType.Float16:
                 break;
             default: return InputTypeNotSupported(op, nameof(input), input);
         }
+        if (input.ElementType == TensorElementType.Float16 && to is not TensorElementType.Float and not TensorElementType.Double and not TensorElementType.Float16)
+            return AttributeNotSupported(op, "to", to.ToString(), "Half storage currently supports float/double widening and identity casts.");
         switch (to)
         {
             case TensorElementType.Bool: return Success(op, input.Cast<bool>());
@@ -149,7 +152,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt64: return Success(op, input.Cast<ulong>());
             case TensorElementType.Float: return Success(op, input.Cast<float>());
             case TensorElementType.Double: return Success(op, input.Cast<double>());
-            //case TensorElementType.Float16: return Success(op, input.Cast<Half>());
+            case TensorElementType.Float16 when input.ElementType == TensorElementType.Float16: return Success(op, input.Clone());
             //case TensorElementType.BFloat16: return Success(op, input.Cast<BFloat16>());
             default: return AttributeNotSupported(op, "to", to.ToString(), null);
 
@@ -526,8 +529,10 @@ public partial class CPUExecutionProvider
         // identically), but a non-float ROI fails load there, so it fails here;
         // extrapolation_value is unused in range (both verified against ORT 1.29).
         if (roi is not null && roi.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(roi), TensorElementType.Float, roi);
-        if (X.Rank != 4) return WrongInputShape(op, nameof(X), X, "Resize currently supports only 4D tensors (NCHW).");
-        if (targetSizes.Length != 4) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must have one entry per input dimension.");
+        if (X.Rank != 3 && X.Rank != 4) return WrongInputShape(op, nameof(X), X, "Resize supports rank-3 NCL (nearest) or rank-4 NCHW tensors.");
+        if (X.Rank == 3 && mode is not null and not "nearest")
+            return AttributeNotSupported(op, nameof(mode), mode, "Rank-3 Resize currently supports nearest mode only.");
+        if (targetSizes.Length != X.Rank) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must have one entry per input dimension.");
         if (targetSizes[0] != X.Dims[0] || targetSizes[1] != X.Dims[1]) return WrongInputShape(op, nameof(sizes), X, "Resize currently requires N and C dimensions to remain unchanged.");
         if (targetSizes.Any(z => z < 0)) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must be non-negative.");
         // Explicit sizes may hit zero only on empty input dims (verified
@@ -578,21 +583,25 @@ public partial class CPUExecutionProvider
         // refuses cubic there; the int cores below cover nearest/linear.
         if (resizeMode == MathOps.ResizeMode.Cubic && (X.ElementType is TensorElementType.UInt8 or TensorElementType.Int8 or TensorElementType.Int32))
             return Failure(op, "Resize mode cubic is not supported for integer inputs.");
-        switch (X.ElementType)
+        bool oneDimensional = X.Rank == 3;
+        if (oneDimensional)
         {
-            case TensorElementType.Float:
-                return Success(op, Tensor<float>.Resize((Tensor<float>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
-            case TensorElementType.Double:
-                return Success(op, Tensor<double>.Resize((Tensor<double>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
-            case TensorElementType.UInt8:
-                return Success(op, Tensor<byte>.Resize((Tensor<byte>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
-            case TensorElementType.Int8:
-                return Success(op, Tensor<sbyte>.Resize((Tensor<sbyte>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
-            case TensorElementType.Int32:
-                return Success(op, Tensor<int>.Resize((Tensor<int>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
-            default:
-                return InputTypeNotSupported(op, nameof(X), X);
+            X = ((INumericTensor)X).InsertDim(2);
+            targetSizes = new[] { targetSizes[0], targetSizes[1], 1, targetSizes[2] };
+            if (trueScales is not null) trueScales = new[] { trueScales[0], trueScales[1], 1.0, trueScales[2] };
         }
+        var result = X.ElementType switch
+        {
+            TensorElementType.Float => Success(op, Tensor<float>.Resize((Tensor<float>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales)),
+            TensorElementType.Double => Success(op, Tensor<double>.Resize((Tensor<double>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales)),
+            TensorElementType.UInt8 => Success(op, Tensor<byte>.Resize((Tensor<byte>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales)),
+            TensorElementType.Int8 => Success(op, Tensor<sbyte>.Resize((Tensor<sbyte>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales)),
+            TensorElementType.Int32 => Success(op, Tensor<int>.Resize((Tensor<int>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales)),
+            _ => InputTypeNotSupported(op, nameof(X), X),
+        };
+        if (oneDimensional && result.Status == OpStatus.Success)
+            result.Outputs[0] = ((INumericTensor)result.Outputs[0]).RemoveDim(2);
+        return result;
     }
 
     public static OpResult Unsqueeze(ITensor? data, ITensor? axes, ExecutionOptions? options)

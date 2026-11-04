@@ -19,13 +19,12 @@ public class CastBoundaryTests
     }
 
     [Fact]
-    public void HalfSource_RejectedCleanly()
+    public void HalfSource_WidensToFloatAndDouble()
     {
-        // ORT computes half casts, but half kernels are out of scope, so
-        // the provider fails descriptively instead of throwing from
-        // CastOps (which has no half source handler).
+        // Half storage widens exactly without requiring Half arithmetic kernels.
         var h = DenseTensor<Half>.OfValues(new Half[] { (Half)1.5f });
-        Assert.Equal(OpStatus.Failure, CPU.Cast(h, TensorElementType.Float, null).Status);
+        Assert.Equal(new[] { 1.5f }, ((Tensor<float>)CPU.Cast(h, TensorElementType.Float, null).Outputs[0]).ToArray());
+        Assert.Equal(new[] { 1.5 }, ((Tensor<double>)CPU.Cast(h, TensorElementType.Double, null).Outputs[0]).ToArray());
     }
 
     [Fact]

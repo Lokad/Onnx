@@ -31,17 +31,33 @@ def validate(directory, build, name, engine, mode, manifest, native_versions):
     else:
         evidence.require(value['native_versions']==native_versions, 'native graph versions changed')
     case=next(c for c in manifest['cases'] if c['key']==name)
+    stochastic=case.get('stochastic_outputs',False)
+    evidence.require(type(stochastic) is bool and value.get('stochastic_outputs',False)==stochastic, 'graph stochastic-output contract changed')
     evidence.require([a['name'] for a in value['arrays']]==[a['name'] for a in case['outputs']], 'graph output names changed')
     for actual,expected in zip(value['arrays'],case['outputs'],strict=True):
         filename=actual['file']
         evidence.require(Path(filename).name==filename and '\\' not in filename, 'invalid graph array filename')
         evidence.require(actual['shape']==expected['shape'] and actual['values']==math.prod(expected['shape']), 'graph output shape changed')
         evidence.require((directory/filename).stat().st_size==4*actual['values'] and evidence.sha256(directory/filename)==actual['sha256'], 'graph array changed')
+        if stochastic:evidence.require(actual.get('max_scaled_error') is None,'stochastic graph claims sample equality')
     clocks=value['clocks'];warmups=1200 if name=='e5-30tok' else 600
-    expected_count=3 if mode=='verify' else warmups+180
-    evidence.require(value['calls']==len(clocks)==expected_count, 'graph call count changed')
+    custom=case.get('timing')
+    if custom is not None:
+        warmups=custom['warmup_calls'];measured=custom['measured_calls'];seconds=custom['warmup_seconds']
+        evidence.require(type(warmups) is int and 1<=warmups<=1200 and type(measured) is int and 1<=measured<=180
+                         and type(seconds) in (int,float) and math.isfinite(seconds) and 0<=seconds<=60,'invalid graph timing schedule')
+    if mode=='timing' and custom is not None:
+        actual_warmups=sum(clock['warmup'] is True for clock in clocks)
+        evidence.require(actual_warmups>=warmups and len(clocks)-actual_warmups==measured,'custom graph call count changed')
+        elapsed=value.get('warmup_elapsed_seconds')
+        evidence.require(type(elapsed) in (int,float) and math.isfinite(elapsed) and elapsed>=seconds,'graph warmup duration too short')
+        warmups=actual_warmups
+    else:
+        expected_count=3 if mode=='verify' else warmups+180
+        evidence.require(len(clocks)==expected_count, 'graph call count changed')
+    evidence.require(value['calls']==len(clocks), 'graph clock count changed')
     for i,clock in enumerate(clocks):
-        evidence.require(clock['index']==i and clock['warmup']==(mode=='verify' or i<warmups), 'graph call order changed')
+        evidence.require(clock['index']==i and type(clock['warmup']) is bool and clock['warmup']==(mode=='verify' or i<warmups), 'graph call order changed')
         evidence.require(type(clock['ticks']) is int and clock['ticks']>0 and type(clock['frequency']) is int and clock['frequency']>0, 'invalid graph clock')
     return value,[clock['ticks']*1000/clock['frequency'] for clock in clocks if not clock['warmup']]
 
@@ -50,6 +66,8 @@ def compare(managed, native):
     import json
     left=json.loads((managed/'result.json').read_text(encoding='utf-8-sig'))
     right=json.loads((native/'result.json').read_text(encoding='utf-8-sig'))
+    stochastic=left.get('stochastic_outputs',False)
+    evidence.require(type(stochastic) is bool and right.get('stochastic_outputs',False)==stochastic,'native graph stochastic-output contract differs')
     evidence.require([a['name'] for a in left['arrays']]==[a['name'] for a in right['arrays']], 'native graph names differ')
     count=0;worst=0.
     for a,b in zip(left['arrays'],right['arrays'],strict=True):
@@ -57,10 +75,11 @@ def compare(managed, native):
         evidence.require(evidence.sha256(managed/a['file'])==a['sha256'] and evidence.sha256(native/b['file'])==b['sha256'], 'complete graph array changed')
         x,y=floats(managed/a['file']),floats(native/b['file'])
         evidence.require(len(x)==len(y)==a['values'] and all(math.isfinite(v) for v in x) and all(math.isfinite(v) for v in y), 'native graph extent/finite check failed')
-        worst=max(worst,max((abs(float(u)-v)/max(1,abs(float(v))) for u,v in zip(x,y,strict=True)),default=0.))
+        if not stochastic:
+            worst=max(worst,max((abs(float(u)-v)/max(1,abs(float(v))) for u,v in zip(x,y,strict=True)),default=0.))
         count+=len(x)
     evidence.require(worst<=1e-4, 'complete graph/native arrays exceed1e-4')
-    return dict(values=count,maximum_scaled_error=worst)
+    return dict(values=count,maximum_scaled_error=None if stochastic else worst,stochastic_outputs=stochastic)
 
 
 def child(build, output, name, engine, mode, pair, manifest_path, manifest, native_versions, env, cpu, dotnet, python, index, deadline):

@@ -43,6 +43,7 @@ public static class OperatorSchemas
         [OpType.Mul] = Def(OpType.Mul, 2, 2),
         [OpType.Pow] = Def(OpType.Pow, 2, 2),
         [OpType.Conv] = Def(OpType.Conv, 2, 3),
+        [OpType.ConvTranspose] = Def(OpType.ConvTranspose, 2, 3),
         [OpType.Relu] = Def(OpType.Relu, 1, 1),
         [OpType.MaxPool] = Def(OpType.MaxPool, 1, 1),
         [OpType.MatMul] = Def(OpType.MatMul, 2, 2),
@@ -116,6 +117,9 @@ public static class OperatorSchemas
         [OpType.Flatten] = Def(OpType.Flatten, 1, 1),
         [OpType.GatherElements] = Def(OpType.GatherElements, 2, 2, 1, 1, 11, false),
         [OpType.CumSum] = Def(OpType.CumSum, 2, 2, 1, 1, 11, false),
+        [OpType.RandomNormalLike] = Def(OpType.RandomNormalLike, 1, 1),
+        [OpType.DequantizeLinear] = Def(OpType.DequantizeLinear, 2, 3, 1, 1, 13, false),
+        [OpType.Mod] = Def(OpType.Mod, 2, 2, 1, 1, 10, false),
     });
 
     public static bool IsStandardDomain(string? domain) =>

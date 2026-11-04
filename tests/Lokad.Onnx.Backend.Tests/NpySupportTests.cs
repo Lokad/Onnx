@@ -74,6 +74,18 @@ public class NpySupportTests
     }
 
     [Fact]
+    public void Float64_RetainsPhasePrecisionAndEightBytePayloadValidation()
+    {
+        var values = new[] { 1.0, 1.0 + 1e-12, -0.0, double.PositiveInfinity, double.NaN };
+        var bytes = Build("<f8", new[] { values.Length }, PayloadOf(values));
+        var tensor = Assert.IsAssignableFrom<Tensor<double>>(WithFile(bytes, NpySupport.ReadTensor));
+        Assert.Equal(values, tensor.ToArray());
+        Assert.NotEqual(tensor.GetValue(0), tensor.GetValue(1));
+        ExpectInvalid(bytes.Take(bytes.Length - 1).ToArray());
+        WithFile(bytes, path => { Assert.Throws<InvalidDataException>(() => NpySupport.ReadFloat32(path)); return 0; });
+    }
+
+    [Fact]
     public void Int32_Scalar_And_Int64_Matrix_RoundTrip()
     {
         byte[] s32 = Build("<i4", Array.Empty<int>(), PayloadOf(new int[] { 42 }));
@@ -112,7 +124,7 @@ public class NpySupportTests
     [Fact]
     public void UnsupportedDtype_Throws()
     {
-        ExpectInvalid(Build("<f8", new[] { 1 }, new byte[8]));
+        ExpectInvalid(Build("<f2", new[] { 1 }, new byte[2]));
     }
 
     [Fact]

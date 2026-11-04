@@ -1,0 +1,90 @@
+namespace Lokad.Onnx;
+
+using System;
+using System.Linq;
+using System.Numerics;
+using static OpResult;
+
+public partial class CPUExecutionProvider
+{
+    public static OpResult DequantizeLinear(ITensor? input, ITensor? scale, ITensor? zeroPoint, int? axis, ExecutionOptions? options)
+    {
+        const OpType op = OpType.DequantizeLinear;
+        if (input is null) return MissingInput(op, nameof(input));
+        if (scale is null) return MissingInput(op, nameof(scale));
+        (options ?? ExecutionOptions.Default).Validated();
+        if (input.ElementType is not TensorElementType.Int8 and not TensorElementType.UInt8)
+            return InputTypeNotSupported(op, nameof(input), input);
+        if (scale.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(scale), TensorElementType.Float, scale);
+        if (scale.Rank > 1 || scale.Length == 0) return WrongInputShape(op, nameof(scale), scale, "Scale must be a scalar or nonempty channel vector.");
+        var factors = ((Tensor<float>)scale).ToArray();
+        foreach (float value in factors)
+            if (!float.IsFinite(value) || value <= 0f) return Failure(op, "Dequantization scales must be finite and positive.");
+        if (zeroPoint is not null)
+        {
+            if (zeroPoint.ElementType != input.ElementType) return WrongInputType(op, nameof(zeroPoint), input.ElementType, zeroPoint);
+            if (zeroPoint.Rank > 1 || zeroPoint.Length != scale.Length)
+                return WrongInputShape(op, nameof(zeroPoint), zeroPoint, "Zero point must match the scalar or channel scale.");
+        }
+        int dim = axis ?? 1, inner = 1;
+        if (factors.Length > 1)
+        {
+            if (dim < 0) dim += input.Rank;
+            if (dim < 0 || dim >= input.Rank) return Failure(op, "DequantizeLinear axis is outside the input rank.");
+            if (factors.Length != input.Dims[dim]) return WrongInputShape(op, nameof(scale), scale, "Scale length must equal the quantized axis extent.");
+            // Empty output requires no indexing, even when other extents are large.
+            if (input.Length != 0)
+                for (int d = dim + 1; d < input.Rank; d++) inner = checked(inner * input.Dims[d]);
+        }
+        return input.ElementType == TensorElementType.Int8
+            ? Success(op, DequantizeValues((Tensor<sbyte>)input, factors, (Tensor<sbyte>?)zeroPoint, inner))
+            : Success(op, DequantizeValues((Tensor<byte>)input, factors, (Tensor<byte>?)zeroPoint, inner));
+    }
+
+    static DenseTensor<float> DequantizeValues<T>(Tensor<T> input, float[] factors, Tensor<T>? zeroPoint, int inner) where T : unmanaged, IBinaryInteger<T>
+    {
+        var values = input.ToArray();
+        var zeros = zeroPoint?.ToArray();
+        var result = new DenseTensor<float>(input.Dimensions.ToArray());
+        var target = result.Buffer.Span;
+        for (int i = 0; i < values.Length; i++)
+        {
+            int channel = factors.Length == 1 ? 0 : i / inner % factors.Length;
+            int difference = int.CreateChecked(values[i]) - (zeros is null ? 0 : int.CreateChecked(zeros[channel]));
+            target[i] = difference * factors[channel];
+        }
+        return result;
+    }
+
+    public static OpResult Mod(ITensor? a, ITensor? b, int? fmod, ExecutionOptions? options)
+    {
+        const OpType op = OpType.Mod;
+        if (a is null) return MissingInput(op, nameof(a));
+        if (b is null) return MissingInput(op, nameof(b));
+        if (a.ElementType != b.ElementType) return WrongInputType(op, nameof(b), a.ElementType, b);
+        if (fmod is not null && fmod != 0 && fmod != 1) return AttributeNotSupported(op, nameof(fmod), fmod.ToString()!, "Expected 0 or 1.");
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        if ((a.ElementType is TensorElementType.Float or TensorElementType.Double) && fmod != 1)
+            return AttributeNotSupported(op, nameof(fmod), (fmod ?? 0).ToString(), "Floating-point Mod requires fmod=1.");
+        if (b is Tensor<int> integers && integers.Any(value => value == 0)
+            || b is Tensor<long> longs && longs.Any(value => value == 0))
+            return Failure(op, "Mod divisor cannot be zero.");
+        return a switch
+        {
+            Tensor<int> t => Success(op, IntegerMod(t, (Tensor<int>)b, fmod == 1, opts)),
+            Tensor<long> t => Success(op, IntegerMod(t, (Tensor<long>)b, fmod == 1, opts)),
+            Tensor<float> t => Success(op, t.BroadcastApply((Tensor<float>)b, static (x, y) => x % y, opts.Tensor)),
+            Tensor<double> t => Success(op, t.BroadcastApply((Tensor<double>)b, static (x, y) => x % y, opts.Tensor)),
+            _ => InputTypeNotSupported(op, nameof(a), a),
+        };
+    }
+
+    static Tensor<T> IntegerMod<T>(Tensor<T> a, Tensor<T> b, bool fmod, ExecutionOptions options) where T : unmanaged, IBinaryInteger<T>, ISignedNumber<T>
+    {
+        return a.BroadcastApply(b, (x, y) =>
+        {
+            T result = y == T.NegativeOne ? T.Zero : x % y;
+            return !fmod && result != T.Zero && (result < T.Zero) != (y < T.Zero) ? result + y : result;
+        }, options.Tensor);
+    }
+}

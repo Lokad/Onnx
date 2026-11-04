@@ -15,6 +15,8 @@ using static Lokad.Onnx.Runtime;
 /// An optional bounded cache retains only arrays released by earlier calls.
 /// Explicit contexts own independent caches; a facade's transient context
 /// borrows its serialized owner's cache for that call.
+/// Random operators likewise retain advancing streams in an explicit context
+/// or in the serialized facade, independently of the shared prepared plan.
 /// </remarks>
 public sealed class GraphExecution : ComputationalGraph
 {
@@ -25,6 +27,7 @@ public sealed class GraphExecution : ComputationalGraph
         ReleaseReshapeViews = prepared.ReleaseReshapeViews;
         if (borrowReleasedBuffers)
         {
+            BorrowRandomState(prepared);
             if (ReuseReleasedBuffers) ReleasedBuffers = prepared.GetReleasedBuffers();
             else prepared.ReleasedBuffers?.Clear();
         }

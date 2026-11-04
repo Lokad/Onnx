@@ -10,7 +10,7 @@ namespace Lokad.Onnx.Tests.Support;
 /// Single consolidation of the previously duplicated header/payload parsers:
 /// validates magic, version, header bounds, little-endian dtype, C order,
 /// shape product, and exact payload size before materializing tensors.
-/// Supported dtypes are float32 ("<f4"), int32 ("<i4"), int64 ("<i8").
+/// Supported dtypes are float32/float64 ("<f4"/"<f8"), int32 ("<i4"), int64 ("<i8").
 /// </summary>
 internal static class NpySupport
 {
@@ -19,6 +19,7 @@ internal static class NpySupport
     {
         var (kind, shape, payload) = ReadCore(path);
         if (kind == "<f4") return ToTensor<float>(payload, shape);
+        if (kind == "<f8") return ToTensor<double>(payload, shape);
         if (kind == "<i4") return ToTensor<int>(payload, shape);
         return ToTensor<long>(payload, shape);
     }
@@ -76,7 +77,7 @@ internal static class NpySupport
         string header = System.Text.Encoding.ASCII.GetString(raw, headerOff, headerLen);
         var fields = ParseFields(header, path);
         string kind = fields["descr"];
-        if (kind != "<f4" && kind != "<i4" && kind != "<i8")
+        if (kind != "<f4" && kind != "<f8" && kind != "<i4" && kind != "<i8")
             throw new InvalidDataException("Unsupported NPY dtype " + kind + ": " + path + ".");
         if (fields["fortran_order"] != "False")
             throw new InvalidDataException("Fortran-order NPY is not supported: " + path + ".");
@@ -85,7 +86,7 @@ internal static class NpySupport
         try
         {
             foreach (int d in shape) n = checked(n * d);
-            n = checked(n * (kind == "<i8" ? 8 : 4));
+            n = checked(n * (kind is "<i8" or "<f8" ? 8 : 4));
         }
         catch (OverflowException ex)
         {

@@ -1,0 +1,11 @@
+{
+ "case": "paradee_resize1d_double",
+ "seed": 20260904,
+ "opset": 17,
+ "ir": 8,
+ "env": {
+  "onnx": "1.22.0",
+  "onnxruntime": "1.29.0",
+  "numpy": "2.2.4"
+ }
+}

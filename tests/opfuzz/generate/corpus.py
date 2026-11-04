@@ -476,6 +476,44 @@ def paradee_runtime_cases():
          dtypes={"x": TensorProto.DOUBLE, "axis": TensorProto.INT64, "z": TensorProto.DOUBLE},
          feed_dtypes={"x": np.float64, "axis": np.int64}, opset=17)
 
+def paradee_spatial_quantization_cases():
+    x = (np.arange(20, dtype=np.float32).reshape(1, 4, 5) % 11 - 5) * .25
+    w = (np.arange(24, dtype=np.float32).reshape(4, 2, 3) % 7 - 3) * .5
+    bias = np.arange(4, dtype=np.float32) * .125
+    emit("paradee_convtranspose_grouped", helper.make_node("ConvTranspose", ["x", "w", "b"], ["z"],
+         group=2, strides=[2], pads=[1, 1], output_padding=[1]),
+         [("x", x.shape), ("w", w.shape), ("b", bias.shape)], [("z", [1, 4, 10])], {"x": x, "w": w, "b": bias}, opset=17)
+    x = (np.arange(24, dtype=np.float32).reshape(1, 6, 4) % 11 - 5) * .125
+    w = (np.arange(42, dtype=np.float32).reshape(6, 1, 7) % 7 - 3) * .25
+    emit("paradee_convtranspose_reconstruction", helper.make_node("ConvTranspose", ["x", "w"], ["z"], strides=[3]),
+         [("x", x.shape), ("w", w.shape)], [("z", [1, 1, 16])], {"x": x, "w": w}, opset=17)
+    for name, shape, factor, output in (("double", (2, 2, 3), 2., (2, 2, 6)), ("fractional", (1, 1, 3), 1.6, (1, 1, 4))):
+        x = np.arange(1, np.prod(shape)+1, dtype=np.float32).reshape(shape)
+        scale = np.array([1., 1., factor], dtype=np.float32)
+        emit("paradee_resize1d_"+name, helper.make_node("Resize", ["x", "", "scales"], ["z"],
+             mode="nearest", coordinate_transformation_mode="asymmetric", nearest_mode="floor"),
+             [("x", shape), ("scales", [3])], [("z", output)], {"x": x, "scales": scale}, opset=17)
+    x = np.array([[-128, -1, 127], [2, -20, 30]], dtype=np.int8)
+    scales = np.array([.5, 2.], dtype=np.float32)
+    zeros = np.array([-5, 10], dtype=np.int8)
+    emit("paradee_dequantize_axis0", helper.make_node("DequantizeLinear", ["x", "scales", "zeros"], ["z"], axis=0),
+         [("x", x.shape), ("scales", scales.shape), ("zeros", zeros.shape)], [("z", x.shape)],
+         {"x": x, "scales": scales, "zeros": zeros}, dtypes={"x": TensorProto.INT8, "zeros": TensorProto.INT8},
+         feed_dtypes={"x": np.int8, "zeros": np.int8}, opset=17)
+    x = np.array([0, 128, 255], dtype=np.uint8)
+    scale = np.array(.5, dtype=np.float32);zero = np.array(128, dtype=np.uint8)
+    emit("paradee_dequantize_scalar", helper.make_node("DequantizeLinear", ["x", "scale", "zero"], ["z"]),
+         [("x", [3]), ("scale", []), ("zero", [])], [("z", [3])], {"x": x, "scale": scale, "zero": zero},
+         dtypes={"x": TensorProto.UINT8, "zero": TensorProto.UINT8}, feed_dtypes={"x": np.uint8, "zero": np.uint8}, opset=17)
+    x = np.array([[-7], [7]], dtype=np.int64);y = np.array([[3, -3]], dtype=np.int64)
+    for fmod in (0, 1):
+        emit("paradee_mod_%d" % fmod, helper.make_node("Mod", ["x", "y"], ["z"], fmod=fmod),
+             [("x", x.shape), ("y", y.shape)], [("z", [2, 2])], {"x": x, "y": y},
+             dtypes={name: TensorProto.INT64 for name in ("x", "y", "z")}, feed_dtypes={"x": np.int64, "y": np.int64}, opset=17)
+    half = np.array([0., -0., 2.**-24, 1.5, 65504., np.inf, np.nan], dtype=np.float16)
+    emit("paradee_half_cast", helper.make_node("Cast", ["half"], ["z"], to=TensorProto.FLOAT), [], [("z", [7])], {},
+         inits=[onnx.numpy_helper.from_array(half, "half")], opset=17, allow_nonfinite=True)
+
 if __name__ == "__main__":
     for op in ["Add", "Sub", "Mul", "Div"]:
         binary_cases(op)
@@ -489,4 +527,5 @@ if __name__ == "__main__":
     shape_extra_cases()
     conv_basic_cases()
     paradee_runtime_cases()
+    paradee_spatial_quantization_cases()
     print("cases:", len([d for d in os.listdir(ROOT) if os.path.isdir(os.path.join(ROOT, d))]))

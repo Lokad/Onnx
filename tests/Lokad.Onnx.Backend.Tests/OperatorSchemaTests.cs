@@ -205,20 +205,18 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void ModHonestlyUnsupported_FailsCleanly()
+    public void ModSupportMatchesExecution()
     {
-        // C11: no Mod kernel exists; the dead OpType.Mod enum member must stay
-        // honestly unsupported with a clean reason-naming failure, never a throw.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Mod));
-        var node = Nod(OpType.Mod, "", 13,
-            new[] { "x", "y" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Mod));
+        var node = NodAttrs(OpType.Mod, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false, new() { ["fmod"] = 1 });
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 7f, -7f }));
         Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 3f, 3f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Mod", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new[] { 1f, -1f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]
@@ -1146,19 +1144,18 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void DequantizeLinearHonestlyUnsupported_FailsCleanly()
+    public void DequantizeLinearSupportMatchesExecution()
     {
-        // C11: no DequantizeLinear schema, provider, kernel, or dispatch arm exists
-        // anywhere in src (quantized compute is out of scope); same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.DequantizeLinear));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.DequantizeLinear));
         var node = Nod(OpType.DequantizeLinear, "", 14,
-            new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+            new[] { "x", "scale" }, new[] { "z" }, false);
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(14);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        Bind(graph, "x", DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 2 }));
+        Bind(graph, "scale", DenseTensor<float>.OfValues(new[] { .5f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("DequantizeLinear", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new[] { .5f, 1f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]

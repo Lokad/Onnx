@@ -31,9 +31,17 @@ internal static class CastOps
             case TensorElementType.UInt64: return FromUInt64((Tensor<ulong>)source, target);
             case TensorElementType.Float: return FromFloat((Tensor<float>)source, target);
             case TensorElementType.Double: return FromDouble((Tensor<double>)source, target);
+            case TensorElementType.Float16: return FromHalf((Tensor<Half>)source, target);
             default: throw new NotSupportedException($"Cast from {source.ElementType} is not supported.");
         }
     }
+
+    static ITensor FromHalf(Tensor<Half> source, TensorElementType target) => target switch
+    {
+        TensorElementType.Float => Convert<Half, float>(source, static value => (float)value),
+        TensorElementType.Double => Convert<Half, double>(source, static value => (double)value),
+        _ => throw NoTarget(target),
+    };
 
     static DenseTensor<U> Convert<S, U>(Tensor<S> src, Func<S, U> f) where S : unmanaged where U : unmanaged
     {
