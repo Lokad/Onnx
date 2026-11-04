@@ -445,6 +445,16 @@ public partial struct Node
 
         OpType.Floor => CPU.Floor(InputTensor(graph, 0), opt),
 
+        OpType.Exp => CPU.Exp(InputTensor(graph, 0), opt),
+        OpType.Round => CPU.Round(InputTensor(graph, 0), opt),
+        OpType.IsNaN => CPU.IsNaN(InputTensor(graph, 0), opt),
+        OpType.Greater => CPU.Greater(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.GreaterOrEqual => CPU.GreaterOrEqual(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.Min => CPU.Min(graph.GetInputTensors(Inputs), opt),
+        OpType.Flatten => CPU.Flatten(InputTensor(graph, 0), Int("axis", null), opt),
+        OpType.GatherElements => CPU.GatherElements(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), opt),
+        OpType.CumSum => CPU.CumSum(InputTensor(graph, 0), InputTensor(graph, 1), GetInt("exclusive", 0), GetInt("reverse", 0), opt),
+
         OpType.And => CPU.And(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.Not => CPU.Not(InputTensor(graph, 0), opt),

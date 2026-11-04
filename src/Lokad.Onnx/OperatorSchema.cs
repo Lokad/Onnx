@@ -107,6 +107,15 @@ public static class OperatorSchemas
         [OpType.InstanceNormalization] = Def(OpType.InstanceNormalization, 3, 3, 1, 1, 6, false),
         [OpType.LeakyRelu] = Def(OpType.LeakyRelu, 1, 1, 1, 1, 6, false),
         [OpType.LogSoftmax] = Def(OpType.LogSoftmax, 1, 1),
+        [OpType.Exp] = Def(OpType.Exp, 1, 1),
+        [OpType.Round] = Def(OpType.Round, 1, 1, 1, 1, 11, false),
+        [OpType.IsNaN] = Def(OpType.IsNaN, 1, 1, 1, 1, 9, false),
+        [OpType.Greater] = Def(OpType.Greater, 2, 2, 1, 1, 7, false),
+        [OpType.GreaterOrEqual] = Def(OpType.GreaterOrEqual, 2, 2, 1, 1, 12, false),
+        [OpType.Min] = Def(OpType.Min, 1, Unbounded, 1, 1, 8, false),
+        [OpType.Flatten] = Def(OpType.Flatten, 1, 1),
+        [OpType.GatherElements] = Def(OpType.GatherElements, 2, 2, 1, 1, 11, false),
+        [OpType.CumSum] = Def(OpType.CumSum, 2, 2, 1, 1, 11, false),
     });
 
     public static bool IsStandardDomain(string? domain) =>

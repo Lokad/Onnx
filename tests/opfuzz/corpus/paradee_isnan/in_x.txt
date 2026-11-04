@@ -1,0 +1,2 @@
+float32 1 4
+nan inf -inf 0.0

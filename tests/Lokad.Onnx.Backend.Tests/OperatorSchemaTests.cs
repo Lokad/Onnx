@@ -54,6 +54,44 @@ public class OperatorSchemaTests
         graph.Inputs[name] = tensor;
     }
 
+    [Theory]
+    [InlineData(OpType.Flatten)]
+    [InlineData(OpType.Greater)]
+    [InlineData(OpType.GreaterOrEqual)]
+    [InlineData(OpType.Exp)]
+    [InlineData(OpType.Min)]
+    [InlineData(OpType.IsNaN)]
+    [InlineData(OpType.CumSum)]
+    public void ParadeeOperatorSupportMatchesExecution(OpType op)
+    {
+        var graph = Graph(17);
+        Bind(graph, "x", DenseTensor<float>.OfValues(op == OpType.Exp ? new[] { 0f } : new[] { 1f, 2f }));
+        string[] inputs;
+        if (op == OpType.CumSum)
+        {
+            Bind(graph, "axis", new DenseTensor<long>(new long[] { 0 }, Array.Empty<int>()));
+            inputs = new[] { "x", "axis" };
+        }
+        else if (op is OpType.Greater or OpType.GreaterOrEqual or OpType.Min)
+        {
+            Bind(graph, "y", DenseTensor<float>.OfValues(new[] { 0f }));
+            inputs = new[] { "x", "y" };
+        }
+        else inputs = new[] { "x" };
+        var node = Nod(op, "", 17, inputs, new[] { "z" }, false);
+        Assert.True(CPUExecutionProvider.SupportsOp(op));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.True(result.Status == OpStatus.Success, result.Message);
+        if (op is OpType.Greater or OpType.GreaterOrEqual or OpType.IsNaN)
+            Assert.Equal(op == OpType.IsNaN ? new[] { false, false } : new[] { true, true },
+                ((Tensor<bool>)result.Outputs[0]).ToArray());
+        else
+            Assert.Equal(op switch { OpType.Exp => new[] { 1f }, OpType.Min => new[] { 0f, 0f },
+                OpType.CumSum => new[] { 1f, 3f }, _ => new[] { 1f, 2f } },
+                ((Tensor<float>)result.Outputs[0]).ToArray());
+    }
+
     [Fact]
     public void ImportedRotaryEmbedding_Rejected()
     {
@@ -264,38 +302,6 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void FlattenHonestlyUnsupported_FailsCleanly()
-    {
-        // C11: no Flatten kernel exists anywhere in src; same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Flatten));
-        var node = Nod(OpType.Flatten, "", 13,
-            new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(13);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Flatten", r.Message ?? "");
-    }
-
-    [Fact]
-    public void GreaterHonestlyUnsupported_FailsCleanly()
-    {
-        // C11: no Greater schema, provider, kernel, or dispatch arm exists
-        // anywhere in src; same honest contract as Sigmoid/Log/Flatten.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Greater));
-        var node = Nod(OpType.Greater, "", 13,
-            new[] { "x", "y" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(13);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 2f }));
-        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 1f }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Greater", r.Message ?? "");
-    }
-
-    [Fact]
     public void AndHonestlySupported_ExecutesCleanly()
     {
         // And gained a schema entry, bool kernel, and dispatch arm, so
@@ -376,23 +382,6 @@ public class OperatorSchemaTests
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(new bool[] { false }, ((Tensor<bool>)r.Outputs[0]).ToArray());
-    }
-
-    [Fact]
-    public void GreaterOrEqualHonestlyUnsupported_FailsCleanly()
-    {
-        // C11: no GreaterOrEqual schema, provider, kernel, or dispatch arm
-        // exists anywhere in src; same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.GreaterOrEqual));
-        var node = Nod(OpType.GreaterOrEqual, "", 13,
-            new[] { "x", "y" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(13);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 2f }));
-        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 1f }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("GreaterOrEqual", r.Message ?? "");
     }
 
     [Fact]
@@ -512,22 +501,6 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void ExpHonestlyUnsupported_FailsCleanly()
-    {
-        // C11: no Exp schema, provider, kernel, or dispatch arm exists
-        // anywhere in src (only MathF.Exp call sites); same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Exp));
-        var node = Nod(OpType.Exp, "", 13,
-            new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(13);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 0f }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Exp", r.Message ?? "");
-    }
-
-    [Fact]
     public void MaxHonestlyUnsupported_FailsCleanly()
     {
         // C11: no Max schema, provider, kernel, or dispatch arm exists
@@ -542,23 +515,6 @@ public class OperatorSchemaTests
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("Max", r.Message ?? "");
-    }
-
-    [Fact]
-    public void MinHonestlyUnsupported_FailsCleanly()
-    {
-        // C11: no Min schema, provider, kernel, or dispatch arm exists
-        // anywhere in src (only Math.Min call sites); same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Min));
-        var node = Nod(OpType.Min, "", 13,
-            new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(13);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
-        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 2f }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Min", r.Message ?? "");
     }
 
     [Fact]
@@ -647,23 +603,6 @@ public class OperatorSchemaTests
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("BitShift", r.Message ?? "");
-    }
-
-    [Fact]
-    public void IsNaNHonestlyUnsupported_FailsCleanly()
-    {
-        // C11: no IsNaN schema, provider, kernel, or dispatch arm exists
-        // anywhere in src (unlike the pinned IsInf); same honest contract
-        // (verified end to end via OpDump).
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.IsNaN));
-        var node = Nod(OpType.IsNaN, "", 20,
-            new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(20);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("IsNaN", r.Message ?? "");
     }
 
     [Fact]
@@ -1057,22 +996,6 @@ public class OperatorSchemaTests
         }
         Assert.NotEmpty(OperatorSchemas.All);
         Assert.True(CPUExecutionProvider.SupportsOp(OpType.Add));
-    }
-
-    [Fact]
-    public void CumSumHonestlyUnsupported_FailsCleanly()
-    {
-        // C11: no CumSum schema, provider, kernel, or dispatch arm exists
-        // anywhere in src; same honest contract (verified end to end via OpDump).
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.CumSum));
-        var node = Nod(OpType.CumSum, "", 14,
-            new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(14);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("CumSum", r.Message ?? "");
     }
 
     [Fact]

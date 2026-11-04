@@ -52,6 +52,7 @@
     <None Update="fixtures\audio-resampling-short.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\signal-reference.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\parakeet-text.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="fixtures\paradee-inputs.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="images\mnist2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -34,12 +34,13 @@ def txt_save(path, arr):
     arr = np.asarray(arr)
     dtype = {np.dtype("float32"): "float32", np.dtype("float64"): "float64", np.dtype("int64"): "int64", np.dtype("int32"): "int32", np.dtype("bool"): "bool", np.dtype("uint32"): "uint32", np.dtype("uint64"): "uint64", np.dtype("int8"): "int8", np.dtype("uint8"): "uint8", np.dtype("int16"): "int16", np.dtype("uint16"): "uint16"}[arr.dtype]
     with open(path, "w", newline="\n") as f:
-        f.write("%s %d %s\n" % (dtype, arr.ndim, " ".join(str(d) for d in arr.shape)))
+        f.write(("%s %d %s" % (dtype, arr.ndim, " ".join(str(d) for d in arr.shape))).rstrip() + "\n")
         if arr.dtype == np.dtype("bool"):
             f.write(" ".join("1" if v else "0" for v in arr.ravel()))
         else:
             f.write(" ".join(repr(float(v)) if arr.dtype not in (np.dtype("int64"), np.dtype("int32"), np.dtype("uint32"), np.dtype("uint64"), np.dtype("int8"), np.dtype("uint8"), np.dtype("int16"), np.dtype("uint16")) else str(int(v)) for v in arr.ravel()))
-        f.write("\n")
+        if arr.size:
+            f.write("\n")
 
 def eshape(rank, max_dim=6):
     return [rng.randint(1, max_dim) for _ in range(rank)]
@@ -424,6 +425,57 @@ def shape_extra_cases():
     node = helper.make_node("Shape", ["x"], ["z"])
     emit("shape_full", node, [("x", [2, 3, 4])], [("z", [3])], {"x": a}, dtypes={"z": TensorProto.INT64}, opset=15)
 
+def paradee_runtime_cases():
+    # Small, frozen opset-17 references; model weights and phonemization are not required.
+    for name, values in (("Exp", [-2., 0., 1e-12, 2.]), ("Round", [-2.5, -1.5, -.5, .5, 1.5, 2.5])):
+        x = np.array(values, dtype=np.float64)
+        emit("paradee_" + name.lower(), helper.make_node(name, ["x"], ["z"]),
+             [("x", x.shape)], [("z", x.shape)], {"x": x},
+             dtypes={"x": TensorProto.DOUBLE, "z": TensorProto.DOUBLE}, feed_dtypes={"x": np.float64}, opset=17)
+    x = np.array([np.nan, np.inf, -np.inf, 0.], dtype=np.float32)
+    emit("paradee_isnan", helper.make_node("IsNaN", ["x"], ["z"]), [("x", [4])], [("z", [4])],
+         {"x": x}, dtypes={"z": TensorProto.BOOL}, opset=17)
+    for name in ("Greater", "GreaterOrEqual"):
+        x = np.array([[np.nan], [2.], [1.]], dtype=np.float32)
+        y = np.array([[1., 2.]], dtype=np.float32)
+        emit("paradee_"+name.lower(), helper.make_node(name, ["x", "y"], ["z"]),
+             [("x", x.shape), ("y", y.shape)], [("z", [3, 2])], {"x": x, "y": y},
+             dtypes={"z": TensorProto.BOOL}, opset=17)
+    emit("paradee_min", helper.make_node("Min", ["x", "y", "limit"], ["z"]),
+         [("x", [2, 1]), ("y", [1, 3]), ("limit", [1])], [("z", [2, 3])],
+         {"x": np.array([[3.], [6.]], dtype=np.float32), "y": np.array([[4., 2., np.nan]], dtype=np.float32),
+          "limit": np.array([4.], dtype=np.float32)}, opset=17, allow_nonfinite=True)
+    x = np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+    emit("paradee_flatten", helper.make_node("Flatten", ["x"], ["z"], axis=-1),
+         [("x", x.shape)], [("z", [6, 4])], {"x": x}, opset=17)
+    x = np.empty((2, 0, 3), dtype=np.float32)
+    emit("paradee_flatten_empty", helper.make_node("Flatten", ["x"], ["z"], axis=2),
+         [("x", x.shape)], [("z", [0, 3])], {"x": x}, opset=17)
+    x = np.array([[1, 2, 3], [4, 5, 6]], dtype=np.int64)
+    indices = np.array([[2, 0], [-1, 1]], dtype=np.int64)
+    emit("paradee_gatherelements", helper.make_node("GatherElements", ["x", "indices"], ["z"], axis=-1),
+         [("x", x.shape), ("indices", indices.shape)], [("z", indices.shape)], {"x": x, "indices": indices},
+         dtypes={name: TensorProto.INT64 for name in ("x", "indices", "z")},
+         feed_dtypes={"x": np.int64, "indices": np.int64}, opset=17)
+    axis = np.array(-1, dtype=np.int64)
+    for exclusive in (0, 1):
+        for reverse in (0, 1):
+            emit("paradee_cumsum_%d_%d" % (exclusive, reverse),
+                 helper.make_node("CumSum", ["x", "axis"], ["z"], exclusive=exclusive, reverse=reverse),
+                 [("x", x.shape), ("axis", [])], [("z", x.shape)], {"x": x, "axis": axis},
+                 dtypes={name: TensorProto.INT64 for name in ("x", "axis", "z")},
+                 feed_dtypes={"x": np.int64, "axis": np.int64}, opset=17)
+    x = np.array([9007199254740993, 1, -2], dtype=np.int64)
+    emit("paradee_cumsum_int64", helper.make_node("CumSum", ["x", "axis"], ["z"]),
+         [("x", x.shape), ("axis", [])], [("z", x.shape)], {"x": x, "axis": axis},
+         dtypes={name: TensorProto.INT64 for name in ("x", "axis", "z")},
+         feed_dtypes={"x": np.int64, "axis": np.int64}, opset=17)
+    x = np.array([1., 1e-12, 1e-12], dtype=np.float64)
+    emit("paradee_cumsum_double", helper.make_node("CumSum", ["x", "axis"], ["z"]),
+         [("x", x.shape), ("axis", [])], [("z", x.shape)], {"x": x, "axis": axis},
+         dtypes={"x": TensorProto.DOUBLE, "axis": TensorProto.INT64, "z": TensorProto.DOUBLE},
+         feed_dtypes={"x": np.float64, "axis": np.int64}, opset=17)
+
 if __name__ == "__main__":
     for op in ["Add", "Sub", "Mul", "Div"]:
         binary_cases(op)
@@ -436,4 +488,5 @@ if __name__ == "__main__":
     gather_extra_cases()
     shape_extra_cases()
     conv_basic_cases()
+    paradee_runtime_cases()
     print("cases:", len([d for d in os.listdir(ROOT) if os.path.isdir(os.path.join(ROOT, d))]))
