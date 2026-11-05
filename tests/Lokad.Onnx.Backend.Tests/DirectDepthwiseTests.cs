@@ -159,6 +159,29 @@ public class DirectDepthwiseTests
     }
 
     [Fact]
+    public void PaddedSevenTapLinesPreserveBordersTailsAndLiveValues()
+    {
+        foreach (int width in Enumerable.Range(1, 65).Concat(new[] { 118, 394 }))
+        {
+            var storage = Values(3 * width + 10, 17);
+            var x = new DenseTensor<float>(storage.AsMemory(5, 3 * width), new[] { 1, 3, 1, width });
+            var w = Data(new[] { 3, 1, 1, 7 }, 29);
+            var b = width % 2 == 0 ? null : Data(new[] { 3 }, 31);
+            var first = Check(x, w, b, 3, new[] { 0, 3, 0, 3 }, new[] { 1, 1 }, null, null, true);
+            var held = first.ToArray();
+            x.Buffer.Span[0] = -x.Buffer.Span[0]; w.Buffer.Span[0] = .75f;
+            Check(x, w, b, 3, new[] { 0, 3, 0, 3 }, new[] { 1, 1 }, null, null, true);
+            EqualBits(held, first.ToArray());
+        }
+        foreach (float value in new[] { -0f, float.Epsilon, float.MaxValue, float.PositiveInfinity, float.NaN })
+        {
+            var x = Data(new[] { 1, 2, 1, 29 }, 17); var w = Data(new[] { 2, 1, 1, 7 }, 29);
+            x.Buffer.Span[0] = value; w.Buffer.Span[6] = value;
+            Check(x, w, null, 2, new[] { 0, 3, 0, 3 }, new[] { 1, 1 }, null, null, true);
+        }
+    }
+
+    [Fact]
     public void SpecialValuesIncludingPaddingMatch()
     {
         float[] special = [-0f, 0f, float.Epsilon, -float.Epsilon, float.MaxValue, -float.MaxValue,

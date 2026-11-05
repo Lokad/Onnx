@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx;
 
@@ -37,6 +38,22 @@ public abstract partial class Tensor<T> where T : unmanaged
             {
                 float* panels = packed is null ? b : p;
                 if (packed is not null) MathOps.PackPanelsB(reduction, columns, b, panels);
+                // Reuse the matrix dispatcher's wider consumer for the bounded
+                // large-row, medium-reduction territory. Its accumulation order
+                // is unchanged; the existing temporary provides contiguous rows.
+                if (AblationSwitches.EnablePackedAvx512Rows && Avx512F.IsSupported
+                    && rows >= 256 && reduction >= 256 && reduction <= 1024 && columns >= 32)
+                {
+                    temporary.Slice(0, rows * columns).Clear();
+                    if (MathOps.TryPackedAvx512Rows(rows, reduction, columns, a, panels, t))
+                    {
+                        for (int row = 0; row < rows; row++)
+                        for (int col = 0; col < columns; col++)
+                            c[row * outputStride + col] = hasBias
+                                ? t[row * columns + col] + bi[row] : t[row * columns + col];
+                        return true;
+                    }
+                }
                 ConvDirectOutput.Multiply(grouped, reduction, columns, a, panels, c,
                     outputStride, bi, hasBias);
                 MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(remainder,

@@ -5,12 +5,106 @@ using Lokad.Onnx.Optimization;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
-/// G01-M1: the shared fact snapshot answers producer, consumer, output, dtype,
-/// dimension and constant queries on a hand-built graph, and the pass runner with
-/// zero registered passes changes nothing. No fusion reads the substrate yet.
+/// Checks conservative producer, consumer, output, dtype, dimension and constant facts.
 /// </summary>
 public class GraphFactsTests
 {
+    [Fact]
+    public void RecurrentOutputsProveFloatOnlyWithMatchingSupportedInputs()
+    {
+        var graph = new ComputationalGraph{Opset=new(){[""]=17}};
+        graph.Inputs["x"] = new DenseTensor<float>(new[]{4,1,2});
+        graph.Initializers["w"] = new DenseTensor<float>(new[]{2,8,2});
+        graph.Initializers["r"] = new DenseTensor<float>(new[]{2,8,2});
+        var node = new Node{Op=OpType.LSTM,OpTypeName="LSTM",Inputs=new[]{"x","w","r"},Outputs=new[]{"y","h","c"},
+            Attributes=new(){["hidden_size"]=2,["direction"]="bidirectional"},OpsetVersion=17};
+        graph.Nodes.Add(node);
+        var facts=GraphFacts.Build(graph);
+        foreach(string name in new[]{"y","h","c"}) Assert.Equal(TensorElementType.Float,facts.Dtypes[name]);
+        graph.Initializers["r"] = new DenseTensor<double>(new[]{2,8,2});
+        Assert.False(GraphFacts.Build(graph).Dtypes.ContainsKey("y"));
+        graph.Initializers["r"] = new DenseTensor<float>(new[]{2,8,2});
+        node.Domain="custom";graph.Nodes[0]=node;
+        Assert.False(GraphFacts.Build(graph).Dtypes.ContainsKey("y"));
+    }
+
+    [Fact]
+    public void DequantizedDtypeRequiresScaleZeroPointAndAttributesToMatch()
+    {
+        var graph=new ComputationalGraph{Opset=new(){[""]=17}};
+        graph.Initializers["x"]=new DenseTensor<sbyte>(new[]{2,3});
+        graph.Initializers["s"]=DenseTensor<float>.OfValues(new[]{.5f});
+        graph.Initializers["z"]=DenseTensor<sbyte>.OfValues(new sbyte[]{0});
+        var node=new Node{Op=OpType.DequantizeLinear,OpTypeName="DequantizeLinear",Inputs=new[]{"x","s","z"},Outputs=new[]{"y"},Attributes=new(),OpsetVersion=17};
+        graph.Nodes.Add(node);
+        Assert.Equal(TensorElementType.Float,GraphFacts.Build(graph).Dtypes["y"]);
+        graph.Initializers["z"]=DenseTensor<byte>.OfValues(new byte[]{0});
+        Assert.False(GraphFacts.Build(graph).Dtypes.ContainsKey("y"));
+        graph.Initializers["z"]=DenseTensor<sbyte>.OfValues(new sbyte[]{0});
+        node.Attributes["output_dtype"]=(int)TensorElementType.Double;
+        Assert.False(GraphFacts.Build(graph).Dtypes.ContainsKey("y"));
+    }
+
+    [Theory]
+    [InlineData(OpType.Identity)]
+    [InlineData(OpType.Clip)]
+    [InlineData(OpType.Floor)]
+    [InlineData(OpType.GatherElements)]
+    [InlineData(OpType.Flatten)]
+    [InlineData(OpType.CumSum)]
+    [InlineData(OpType.Exp)]
+    [InlineData(OpType.Round)]
+    [InlineData(OpType.LeakyRelu)]
+    [InlineData(OpType.InstanceNormalization)]
+    [InlineData(OpType.Pad)]
+    public void SupportedValuePreservingOperatorsPropagateDtype(OpType op)
+    {
+        var graph=new ComputationalGraph{Opset=new(){[""]=17}};
+        graph.Inputs["x"]=new DenseTensor<float>(new[]{1,2,3});
+        graph.Initializers["i"]=DenseTensor<long>.OfValues(new long[]{0});
+        graph.Initializers["s"]=DenseTensor<float>.OfValues(new[]{1f,1f});
+        graph.Initializers["b"]=DenseTensor<float>.OfValues(new[]{0f,0f});
+        string[] inputs=op switch
+        {
+            OpType.GatherElements or OpType.CumSum or OpType.Pad=>new[]{"x","i"},
+            OpType.InstanceNormalization=>new[]{"x","s","b"},
+            _=>new[]{"x"}
+        };
+        var node=new Node{Op=op,OpTypeName=op.ToString(),Inputs=inputs,Outputs=new[]{"y"},Attributes=new(),OpsetVersion=17};
+        graph.Nodes.Add(node);
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
+        Assert.Equal(TensorElementType.Float,GraphFacts.Build(graph).Dtypes["y"]);
+        node.Domain="custom";graph.Nodes[0]=node;
+        Assert.False(GraphFacts.Build(graph).Dtypes.ContainsKey("y"));
+    }
+
+    [Fact]
+    public void FusedMaskedSoftmaxPreservesMatchingInputTypes()
+    {
+        var graph = new ComputationalGraph { Opset = new() { [""] = 17 } };
+        graph.Inputs["x"] = new DenseTensor<float>(new[] { 2, 3 });
+        graph.Inputs["mask"] = new DenseTensor<float>(new[] { 3 });
+        var node = new Node { Op = OpType.MaskedSoftmax, OpTypeName = "MaskedSoftmax", IsFused = true,
+            Inputs = new[] { "x", "mask" }, Outputs = new[] { "y" }, Attributes = new(), OpsetVersion = 17 };
+        graph.Nodes.Add(node);
+        Assert.Equal(TensorElementType.Float, GraphFacts.Build(graph).Dtypes["y"]);
+        graph.Inputs["mask"] = new DenseTensor<double>(new[] { 3 });
+        Assert.False(GraphFacts.Build(graph).Dtypes.ContainsKey("y"));
+        graph.Inputs["mask"] = new DenseTensor<float>(new[] { 3 });
+        node.Domain = "custom"; graph.Nodes[0] = node;
+        Assert.False(GraphFacts.Build(graph).Dtypes.ContainsKey("y"));
+    }
+
+    [Fact]
+    public void ShapeProducesInt64RegardlessOfInputDtype()
+    {
+        var graph = new ComputationalGraph { Opset = new() { [""] = 17 } };
+        graph.Inputs["x"] = new DenseTensor<double>(new[] { 2, 3 });
+        graph.Nodes.Add(new Node { Op = OpType.Shape, OpTypeName = "Shape", Inputs = new[] { "x" },
+            Outputs = new[] { "y" }, Attributes = new(), OpsetVersion = 17 });
+        Assert.Equal(TensorElementType.Int64, GraphFacts.Build(graph).Dtypes["y"]);
+    }
+
     static OnnxModel TinyModel()
     {
         var mp = new OnnxModel { Name = "tiny-facts" };

@@ -6,6 +6,31 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class BatchedOperandTests
 {
+    [Theory]
+    [InlineData(5, 8, 7, 17)]
+    [InlineData(9, 8, 80, 301)]
+    [InlineData(3, 16, 33, 65)]
+    public void SharedRightMatrixUsesLiveValuesAndOverwritesDestination(int batches, int rows, int inner, int columns)
+    {
+        var x = new DenseTensor<float>(Enumerable.Range(0,batches*rows*inner).Select(i=>(i%7-3)*.125f).ToArray(),new[]{1,batches,rows,inner});
+        var y = new DenseTensor<float>(Enumerable.Range(0,inner*columns).Select(i=>(i%11-5)*.125f).ToArray(),new[]{inner,columns});
+        var destination = new DenseTensor<float>(new[]{1,batches,rows,columns});
+        var originalX = x.ToArray();
+        for (int revision=0;revision<2;revision++)
+        {
+            var expected = Tensor<float>.MatMul(x,y,TensorExecutionOptions.Scalar).ToArray();
+            destination.Buffer.Span.Fill(float.NaN);
+            var actual = Tensor<float>.MatMul(x,y,destination,TensorExecutionOptions.Auto);
+            Assert.Same(destination,actual);
+            Assert.Equal(expected,actual.ToArray());
+            Assert.Equal(expected,Tensor<float>.MatMul(x,y,TensorExecutionOptions.Auto).ToArray());
+            var held=actual.ToArray();
+            y.SetValue(0,y.GetValue(0)+.25f);
+            Assert.Equal(held,actual.ToArray());
+        }
+        Assert.Equal(originalX,x.ToArray());
+    }
+
     static Tensor<T> Multiply<T>(Tensor<T> a, Tensor<T> b, TensorExecutionOptions options) where T : unmanaged =>
         typeof(T) == typeof(double) ? (Tensor<T>)(object)Tensor<double>.MatMul((Tensor<double>)(object)a, (Tensor<double>)(object)b, options) :
         typeof(T) == typeof(int) ? (Tensor<T>)(object)Tensor<int>.MatMul((Tensor<int>)(object)a, (Tensor<int>)(object)b, options) :

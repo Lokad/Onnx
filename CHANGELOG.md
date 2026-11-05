@@ -12,6 +12,10 @@
 - Accelerate eligible float ConvTranspose1D through the existing matrix kernels
   and overlap-add, and large float comparisons against a scalar. Preserve scalar
   execution and mutable initializer behavior.
+- Reuse Conv1D and dequantization storage, vectorize live INT8 conversion, merge
+  eligible shared-weight matrix batches, and accelerate reflection padding and
+  seven-tap depthwise convolution. Retain type information through recurrent and
+  fused attention nodes so existing activation fusions remain available.
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.

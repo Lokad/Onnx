@@ -2,6 +2,7 @@ namespace Lokad.Onnx;
 
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 
@@ -27,6 +28,7 @@ internal static class PreparedLstmProjection
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     internal static void Multiply(ReadOnlySpan<float> input, ReadOnlySpan<float> panel, Span<float> output, bool useIntrinsics = true)
     {
         if (panel.Length != checked(input.Length * output.Length))

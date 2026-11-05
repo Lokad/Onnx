@@ -7,8 +7,8 @@ using static Lokad.Onnx.MathOps;
 
 public abstract partial class Tensor<T> where T : unmanaged
 {
-    // Bypass expanded patches and per-channel matrix dispatch for the two
-    // measured nine-tap depthwise geometries. Other options keep their old path.
+    // Bypass expanded patches and per-channel matrix dispatch for measured
+    // line and spatial depthwise geometries. Other options keep their old path.
     static unsafe bool TryConvDirectDepthwise(DenseTensor<float> input, DenseTensor<float> weight,
         DenseTensor<float>? bias, DenseTensor<float> output, int n, int group, int channels,
         int height, int width, int filters, int kh, int kw, int dh, int dw, int sh, int sw,
@@ -18,8 +18,10 @@ public abstract partial class Tensor<T> where T : unmanaged
             || !options.UseSimd || !options.UseIntrinsics || options.MaxDegreeOfParallelism != 1
             || !Avx2.IsSupported || !Fma.IsSupported || dh != 1 || dw != 1)
             return false;
-        bool line = height == 1 && outHeight == 1 && kh == 1 && kw == 9 && sh == 1 && sw == 1
-            && pad.top == 0 && pad.left == 0 && pad.bottom == 0 && pad.right == 0;
+        bool line = height == 1 && outHeight == 1 && kh == 1 && sh == 1 && sw == 1
+            && pad.top == 0 && pad.bottom == 0
+            && (kw == 9 && pad.left == 0 && pad.right == 0
+                || kw == 7 && pad.left == 3 && pad.right == 3);
         bool spatial = kh == 3 && kw == 3 && sh == 2 && sw == 2
             && pad.top == 1 && pad.left == 1 && pad.bottom == 1 && pad.right == 1;
         if (!line && !spatial) return false;
@@ -31,7 +33,10 @@ public abstract partial class Tensor<T> where T : unmanaged
             for (int c = 0; c < channels; c++)
             {
                 float bi = bias is null ? 0f : b[c];
-                if (line)
+                if (line && kw == 7)
+                    RunDirectDepthwisePaddedSeven(x + c * width, w + c * 7, y + c * outWidth,
+                        width, outWidth, bias is not null, bi);
+                else if (line)
                     RunDirectDepthwiseLine(x + c * width, w + c * 9, y + c * outWidth,
                         outWidth, bias is not null, bi);
                 else
@@ -41,6 +46,44 @@ public abstract partial class Tensor<T> where T : unmanaged
             }
         }
         return true;
+    }
+
+    static unsafe void RunDirectDepthwisePaddedSeven(float* x, float* w, float* y,
+        int width, int count, bool hasBias, float bias)
+    {
+        int ceiling = count / 8 * 8;
+        var w0 = Vector256.Create(w[0]); var w1 = Vector256.Create(w[1]); var w2 = Vector256.Create(w[2]);
+        var w3 = Vector256.Create(w[3]); var w4 = Vector256.Create(w[4]); var w5 = Vector256.Create(w[5]);
+        var w6 = Vector256.Create(w[6]); var bv = Vector256.Create(bias);
+        int j = 0;
+        // Include zero-padding products, even for exceptional weights. Preserve
+        // the generic matrix path's FMA boundary at the last complete eight.
+        float Point(int position)
+        {
+            float sum = 0f;
+            for (int q = 0; q < 7; q++)
+            {
+                int index = position - 3 + q;
+                float value = (uint)index < (uint)width ? x[index] : 0f;
+                sum = position < ceiling ? MathF.FusedMultiplyAdd(value, w[q], sum) : sum + value * w[q];
+            }
+            return hasBias ? sum + bias : sum;
+        }
+        for (; j < Math.Min(3, count); j++) y[j] = Point(j);
+        int end = Math.Min(ceiling, width - 3);
+        for (; j + 8 <= end; j += 8)
+        {
+            float* start = x + j - 3;
+            var sum = Fma.MultiplyAdd(Avx.LoadVector256(start), w0, Vector256<float>.Zero);
+            sum = Fma.MultiplyAdd(Avx.LoadVector256(start + 1), w1, sum);
+            sum = Fma.MultiplyAdd(Avx.LoadVector256(start + 2), w2, sum);
+            sum = Fma.MultiplyAdd(Avx.LoadVector256(start + 3), w3, sum);
+            sum = Fma.MultiplyAdd(Avx.LoadVector256(start + 4), w4, sum);
+            sum = Fma.MultiplyAdd(Avx.LoadVector256(start + 5), w5, sum);
+            sum = Fma.MultiplyAdd(Avx.LoadVector256(start + 6), w6, sum);
+            Avx.Store(y + j, hasBias ? Avx.Add(sum, bv) : sum);
+        }
+        for (; j < count; j++) y[j] = Point(j);
     }
 
     static unsafe void RunDirectDepthwiseLine(float* x, float* w, float* y, int count, bool hasBias, float bias)

@@ -19,6 +19,10 @@ public class ConvDirectOutputTests
     [InlineData(128, 65, 8, false)]
     [InlineData(256, 1152, 2, true)]
     [InlineData(256, 2304, 2, false)]
+    [InlineData(256, 256, 32, true)]
+    [InlineData(602, 600, 32, false)]
+    [InlineData(602, 600, 45, true)]
+    [InlineData(602, 600, 64, false)]
     public void StridedProductPreservesInputsAndGuards(int rows, int reduction, int columns, bool hasBias)
     {
         int stride = columns + 11;
@@ -48,6 +52,33 @@ public class ConvDirectOutputTests
             else Assert.Equal(0, accountant.TotalScratchBytes);
             EqualBits(expected, actual);
             Assert.All(temp.Take(3).Concat(temp.TakeLast(3)), value => Assert.Equal(-12345.25f, value));
+        }
+    }
+
+    [Fact]
+    public void WideRowsPreserveExceptionalClassificationAndSignedZeros()
+    {
+        if (!Fma.IsSupported) return;
+        const int rows = 602, reduction = 600, columns = 45, stride = columns + 7;
+        foreach (float special in new[] { -0f, float.Epsilon, float.MaxValue,
+            float.PositiveInfinity, float.NegativeInfinity, float.NaN })
+        {
+            var w = Enumerable.Range(0, rows * reduction).Select(i => (i % 7 - 3) * .125f).ToArray();
+            var p = Enumerable.Range(0, reduction * columns).Select(i => (i % 11 - 5) * .125f).ToArray();
+            w[0] = special; w[reduction * 599 + 17] = special; p[0] = special;
+            var expected = new float[rows * columns];
+            Assert.True(Tensor<float>.TryConvPortableRows(w, p, expected, rows, reduction, columns, TensorExecutionOptions.Auto));
+            var actual = Enumerable.Repeat(-12345.25f, rows * stride).ToArray();
+            var temporary = Enumerable.Repeat(float.NaN, rows * columns).ToArray();
+            Assert.True(Tensor<float>.TryConvDirectOutput(w, p, temporary, actual, default, false,
+                rows, reduction, columns, stride, TensorExecutionOptions.Auto));
+            for (int row = 0; row < rows; row++)
+            for (int col = 0; col < stride; col++)
+            {
+                float value = col < columns ? expected[row * columns + col] : -12345.25f;
+                if (float.IsNaN(value)) Assert.True(float.IsNaN(actual[row * stride + col]));
+                else Assert.Equal(BitConverter.SingleToInt32Bits(value), BitConverter.SingleToInt32Bits(actual[row * stride + col]));
+            }
         }
     }
 

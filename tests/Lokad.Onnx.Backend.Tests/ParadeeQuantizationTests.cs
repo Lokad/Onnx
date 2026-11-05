@@ -2,6 +2,51 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class ParadeeQuantizationTests
 {
+    [Fact]
+    public void ConversionOverwritesDirtyPooledStorageAndRetainsOutstandingResults()
+    {
+        var input = new DenseTensor<sbyte>(Enumerable.Range(0,134).Select(i=>(sbyte)(i-128)).ToArray(),new[]{2,67});
+        var scales = DenseTensor<float>.OfValues(new[]{.5f,2f});
+        var zeros = DenseTensor<sbyte>.OfValues(new sbyte[]{127,-128});
+        var expected = Output<float>(CPUExecutionProvider.DequantizeLinear(input,scales,zeros,0,null)).ToArray();
+        var pool = new TensorBufferPool();
+        var dirty = pool.Rent<float>(134);Array.Fill(dirty,float.NaN);pool.Return(dirty);
+        var first = Assert.IsType<DenseTensor<float>>(Output<float>(CPUExecutionProvider.DequantizeLinear(input,scales,zeros,0,null,pool)));
+        Assert.True(System.Runtime.InteropServices.MemoryMarshal.TryGetArray((ReadOnlyMemory<float>)first.Buffer,out var firstArray));
+        Assert.Same(dirty,firstArray.Array);
+        Assert.Equal(expected,first.ToArray());
+        input.SetValue(0,0);scales.SetValue(0,1f);
+        var second = Assert.IsType<DenseTensor<float>>(Output<float>(CPUExecutionProvider.DequantizeLinear(input,scales,zeros,0,null,pool)));
+        Assert.True(System.Runtime.InteropServices.MemoryMarshal.TryGetArray((ReadOnlyMemory<float>)second.Buffer,out var secondArray));
+        Assert.NotSame(firstArray.Array,secondArray.Array);
+        Assert.Equal(-127f,second.GetValue(0));
+        Assert.Equal(expected,first.ToArray());
+        Assert.Equal(1,pool.Reused);
+    }
+
+    [Fact]
+    public void GraphDequantizationKeepsReturnedOutputsAcrossResetAndChangedInputs()
+    {
+        var graph = new ComputationalGraph{Opset=new(){[""]=17}};
+        graph.Metadata["Name"] = "dequantized-output-ownership";
+        graph.Inputs["x"] = new DenseTensor<sbyte>(new[]{2,67});
+        graph.Initializers["s"] = DenseTensor<float>.OfValues(new[]{.5f});
+        graph.Outputs["y"] = new DenseTensor<float>(new[]{2,67});
+        graph.Nodes.Add(new Node{Name="dq",Op=OpType.DequantizeLinear,OpTypeName="DequantizeLinear",Inputs=new[]{"x","s"},Outputs=new[]{"y"},Attributes=new(),OpsetVersion=17});
+        graph.Prepare();
+        var held = new List<(Tensor<float> Tensor,float[] Values)>();
+        for(int repeat=0;repeat<4;repeat++)
+        {
+            var input = new DenseTensor<sbyte>(Enumerable.Range(0,134).Select(i=>(sbyte)(i-128+repeat)).ToArray(),new[]{2,67});
+            graph.Reset();
+            Assert.True(graph.Execute(new Dictionary<string,ITensor>{{"x",input}},false),graph.LastErrorMessage);
+            var actual = Assert.IsAssignableFrom<Tensor<float>>(graph.Outputs["y"]);
+            Assert.Equal(input.ToArray().Select(v=>v*.5f),actual.ToArray());
+            held.Add((actual,actual.ToArray()));
+            foreach(var previous in held) Assert.Equal(previous.Values,previous.Tensor.ToArray());
+        }
+    }
+
     static Tensor<T> Output<T>(OpResult result) where T : unmanaged
     {
         Assert.True(result.Status == OpStatus.Success, result.Message);

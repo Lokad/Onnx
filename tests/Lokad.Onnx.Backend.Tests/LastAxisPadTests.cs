@@ -6,9 +6,44 @@ using CPU = Lokad.Onnx.CPUExecutionProvider;
 
 namespace Lokad.Onnx.Backend.Tests;
 
-// Draft tests for the isolated candidate; not included in the selected suite.
+// Independent layout and ownership checks for the contiguous last-axis path.
 public class LastAxisPadTests
 {
+    [Theory]
+    [InlineData(1, 5, 7)]
+    [InlineData(2, 7, 4)]
+    [InlineData(7, 2, 3)]
+    [InlineData(33, 8, 9)]
+    public void ReflectionCopiesInteriorAndPreservesEveryBit(int width, int left, int right)
+    {
+        float[] special = [0f, -0f, float.PositiveInfinity, float.NegativeInfinity,
+            BitConverter.Int32BitsToSingle(0x7fc12345), 1.25f, -17.5f];
+        foreach(bool view in new[]{false,true})
+        {
+            Tensor<float> input = new DenseTensor<float>(Enumerable.Range(0,6*width).Select(i=>special[i%special.Length]).ToArray(),
+                view ? new[]{2,width,3} : new[]{2,3,width});
+            if(view) input = (Tensor<float>)CPU.Transpose(input,new[]{0,2,1},null,null).Outputs[0];
+            var values=input.ToArray();
+            int outputWidth=width+left+right;
+            var expected=new float[6*outputWidth];
+            for(int flat=0;flat<expected.Length;flat++)
+            {
+                int column=flat%outputWidth-left;
+                if(width==1) column=0;
+                while(column<0||column>=width) column=column<0 ? -column : 2*(width-1)-column;
+                expected[flat]=values[flat/outputWidth*width+column];
+            }
+            var pads=DenseTensor<long>.OfValues(new long[]{0,0,left,0,0,right});
+            var result=CPU.Pad(input,pads,null,"reflect",null,null,null);
+            Assert.Equal(OpStatus.Success,result.Status);
+            var output=(Tensor<float>)result.Outputs[0];
+            EqualBits(expected,output.ToArray());
+            EqualBits(values,input.ToArray());
+            input.SetValue(0,99f);
+            EqualBits(expected,output.ToArray());
+        }
+    }
+
     static void EqualBits<T>(T[] expected, T[] actual) where T : unmanaged =>
         Assert.True(MemoryMarshal.AsBytes(expected.AsSpan())
             .SequenceEqual(MemoryMarshal.AsBytes(actual.AsSpan())));

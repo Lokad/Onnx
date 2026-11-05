@@ -28,6 +28,9 @@ public class SigmoidMulFusionTests
     static ComputationalGraph UnknownGraph(ITensor input)
     {
         var graph = Graph(input);
+        // Bind x at execution without a static tensor or descriptor. Identity
+        // now propagates known dtypes, so it alone cannot make a type unknown.
+        graph.Inputs["x"] = null!;
         var sigmoid = graph.Nodes[0]; sigmoid.Inputs = new[] { "q" }; graph.Nodes[0] = sigmoid;
         var mul = graph.Nodes[1]; mul.Inputs = new[] { "q", "s" }; graph.Nodes[1] = mul;
         graph.Nodes.Insert(0, Node(OpType.Identity, new[] { "x" }, "q"));
@@ -128,13 +131,17 @@ public class SigmoidMulFusionTests
         var plain = UnknownGraph(input); var fused = UnknownGraph(input);
         Assert.False(GraphFacts.Build(fused).Dtypes.ContainsKey("q"));
         Assert.Equal(1, GraphFusion.FuseSigmoidMul(fused, GraphFacts.Build(fused)));
+        plain.Inputs["x"] = input; fused.Inputs["x"] = input;
         Equal(((Tensor<float>)Run(plain, input, ExecutionOptions.Default)).ToArray(),
             ((Tensor<float>)Run(fused, input, ExecutionOptions.Default)).ToArray());
         var integer = new DenseTensor<int>(new[] { 1, 2, 3 }, new[] { 3 });
         plain = UnknownGraph(integer); fused = UnknownGraph(integer);
         Assert.Equal(1, GraphFusion.FuseSigmoidMul(fused, GraphFacts.Build(fused)));
         foreach (var graph in new[] { plain, fused })
+        {
+            graph.Inputs["x"] = integer;
             Assert.False(graph.Execute(new Dictionary<string, ITensor> { ["x"] = integer }, true, ExecutionProvider.CPU, ExecutionOptions.Default));
+        }
         Assert.Equal(new[] { 1, 2, 3 }, integer.ToArray());
     }
 

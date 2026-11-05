@@ -746,6 +746,15 @@ where T : unmanaged
         if (!HasStandardStrides(destination)) throw new ArgumentException("Destination must have standard row-major strides.", nameof(destination));
         var px = plan.PromoteX ? x.InsertDim(0) : x;
         var py = plan.PromoteY ? y.InsertDim(y.Rank) : y;
+        if (CanFlattenSharedRight(x, y, options, out int rows))
+        {
+            // A shared rank-2 right operand lets consecutive left matrices become
+            // consecutive rows of one product, retaining the original output shape.
+            var left = px.Reshape(rows, px.Dimensions[^1]);
+            var flatTarget = new DenseTensor<float>(destination.Buffer, new[] { rows, py.Dimensions[1] });
+            DispatchWideProjectionMatMul2DCore(left, py, flatTarget, options, clearDestination);
+            return destination;
+        }
         if (px.Rank == 2 && py.Rank == 2)
         {
             var dd = destination.dimensions;
@@ -787,6 +796,17 @@ where T : unmanaged
         return destination;
     }
 
+    static bool CanFlattenSharedRight(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options, out int rows)
+    {
+        rows = 0;
+        if (!options.UseSimd || !Vector.IsHardwareAccelerated || options.MaxDegreeOfParallelism > 1 || x.Rank < 3 || y.Rank != 2
+            || x.GetType() != typeof(DenseTensor<float>) || y.GetType() != typeof(DenseTensor<float>)
+            || !HasStandardStrides((DenseTensor<float>)x) || !HasStandardStrides((DenseTensor<float>)y)
+            || x.Length == 0 || x.Dimensions[^1] == 0 || y.Dimensions[1] == 0) return false;
+        rows = checked((int)(x.Length / x.Dimensions[^1]));
+        return rows >= 32 && rows > x.Dimensions[^2];
+    }
+
 
     /// <summary>Computes the float matrix product, renting the output from the pool when provided.</summary>
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options, TensorBufferPool? pool)
@@ -811,6 +831,8 @@ where T : unmanaged
     {
         options.Validate();
         var (plan, px, py) = PlanMatMul(x, y);
+        if (CanFlattenSharedRight(x, y, options, out _))
+            return MatMulInto(x, y, new DenseTensor<float>(plan.OutputShape), options, clearDestination: false);
         Tensor<float> core;
         if (px.Rank == 2 && py.Rank == 2)
         {

@@ -7,8 +7,8 @@ namespace Lokad.Onnx.Optimization;
 /// Immutable-after-build snapshot of provable load-time facts over one node list.
 /// Passes read facts through pure lookups; nothing here mutates the graph. The snapshot
 /// is rebuilt whenever a pass reports a change, so facts never describe a newer list.
-/// Dtype proving mirrors the historical per-fusion rules exactly (same accept/refuse answers);
-/// only the plumbing is shared. Rank, dimensions and constants cover what load can prove
+/// Dtype proving follows supported operator contracts, refusing unknown or mismatched
+/// inputs. Rank, dimensions and constants cover what load can prove
 /// cheaply: model inputs, initializer rank/dtype (never foldable values) and
 /// standard-domain Constant nodes. Produced tensors without a
 /// static source stay unknown rather than guessed.
@@ -159,6 +159,15 @@ internal sealed class GraphFacts
                 if (!third.HasValue || third.Value != madd.Value) return null;
                 return madd;
             }
+            if (pn.Op == OpType.MaskedSoftmax)
+            {
+                // The fused operation preserves the Add result's dtype, including
+                // its requirement that scores and mask have matching types.
+                var addition = pn;
+                addition.IsFused = false;
+                addition.Op = OpType.Add;
+                return ProveNodeDtype(graph, nodes, producer, addition, visiting, memo);
+            }
             if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu
                 && pn.Op != OpType.FusedRmsNormalization && pn.Op != OpType.FusedSigmoidMul
                 && pn.Op != OpType.FusedConformerConv) return null;
@@ -203,6 +212,37 @@ internal sealed class GraphFacts
             return left;
         }
         if (!IsFusableParticipant(pn)) return null;
+        if (pn.Op == OpType.Shape) return TensorElementType.Int64;
+        if (pn.Op == OpType.LSTM)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length < 3) return null;
+            foreach (int index in new[] { 0, 1, 2, 3, 5, 6, 7 })
+            {
+                if (index >= pn.Inputs.Length || string.IsNullOrEmpty(pn.Inputs[index]))
+                {
+                    if (index < 3) return null;
+                    continue;
+                }
+                if (ProveDtype(graph, nodes, producer, pn.Inputs[index], visiting, memo) != TensorElementType.Float) return null;
+            }
+            if (pn.Inputs.Length > 4 && !string.IsNullOrEmpty(pn.Inputs[4]))
+            {
+                var lengths = ProveDtype(graph, nodes, producer, pn.Inputs[4], visiting, memo);
+                if (lengths is not TensorElementType.Int32 and not TensorElementType.Int64) return null;
+            }
+            return TensorElementType.Float;
+        }
+        if (pn.Op == OpType.DequantizeLinear)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length < 2 || pn.GetInt("block_size", 0) != 0
+                || pn.GetInt("output_dtype", 0) is not 0 and not (int)TensorElementType.Float) return null;
+            var source = ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
+            if (source is not TensorElementType.Int8 and not TensorElementType.UInt8
+                || ProveDtype(graph, nodes, producer, pn.Inputs[1], visiting, memo) != TensorElementType.Float) return null;
+            if (pn.Inputs.Length > 2 && !string.IsNullOrEmpty(pn.Inputs[2])
+                && ProveDtype(graph, nodes, producer, pn.Inputs[2], visiting, memo) != source) return null;
+            return TensorElementType.Float;
+        }
         if (pn.Op == OpType.Add || pn.Op == OpType.Sub || pn.Op == OpType.Mul || pn.Op == OpType.Div || pn.Op == OpType.Pow)
         {
             if (pn.Inputs is null || pn.Inputs.Length != 2) return null;
@@ -258,7 +298,7 @@ internal sealed class GraphFacts
             if (!left.HasValue || !right.HasValue || left.Value != right.Value) return null;
             return left;
         }
-        if (pn.Op == OpType.Conv || pn.Op == OpType.Gemm)
+        if (pn.Op == OpType.Conv || pn.Op == OpType.ConvTranspose || pn.Op == OpType.Gemm)
         {
             if (pn.Inputs is null || pn.Inputs.Length < 2) return null;
             var first = ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
@@ -298,7 +338,18 @@ internal sealed class GraphFacts
         }
         switch (pn.Op)
         {
+            case OpType.Identity:
+            case OpType.Clip:
+            case OpType.Floor:
             case OpType.Gather:
+            case OpType.GatherElements:
+            case OpType.Flatten:
+            case OpType.CumSum:
+            case OpType.Exp:
+            case OpType.Round:
+            case OpType.LeakyRelu:
+            case OpType.InstanceNormalization:
+            case OpType.Pad:
             case OpType.Split:
             case OpType.SplitToSequence:
             case OpType.SequenceAt:

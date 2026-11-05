@@ -9,6 +9,9 @@ using static OpResult;
 public partial class CPUExecutionProvider
 {
     public static OpResult DequantizeLinear(ITensor? input, ITensor? scale, ITensor? zeroPoint, int? axis, ExecutionOptions? options)
+        => DequantizeLinear(input, scale, zeroPoint, axis, options, null);
+
+    internal static OpResult DequantizeLinear(ITensor? input, ITensor? scale, ITensor? zeroPoint, int? axis, ExecutionOptions? options, TensorBufferPool? pool)
     {
         const OpType op = OpType.DequantizeLinear;
         if (input is null) return MissingInput(op, nameof(input));
@@ -38,16 +41,18 @@ public partial class CPUExecutionProvider
                 for (int d = dim + 1; d < input.Rank; d++) inner = checked(inner * input.Dims[d]);
         }
         return input.ElementType == TensorElementType.Int8
-            ? Success(op, DequantizeValues((Tensor<sbyte>)input, factors, (Tensor<sbyte>?)zeroPoint, inner, opts.Tensor.UseSimd))
-            : Success(op, DequantizeValues((Tensor<byte>)input, factors, (Tensor<byte>?)zeroPoint, inner, opts.Tensor.UseSimd));
+            ? Success(op, DequantizeValues((Tensor<sbyte>)input, factors, (Tensor<sbyte>?)zeroPoint, inner, opts.Tensor.UseSimd, pool))
+            : Success(op, DequantizeValues((Tensor<byte>)input, factors, (Tensor<byte>?)zeroPoint, inner, opts.Tensor.UseSimd, pool));
     }
 
-    static DenseTensor<float> DequantizeValues<T>(Tensor<T> input, float[] factors, Tensor<T>? zeroPoint, int inner, bool useSimd) where T : unmanaged, IBinaryInteger<T>
+    static DenseTensor<float> DequantizeValues<T>(Tensor<T> input, float[] factors, Tensor<T>? zeroPoint, int inner, bool useSimd, TensorBufferPool? pool) where T : unmanaged, IBinaryInteger<T>
     {
         var dense = input.ToRowMajor();
         var values = dense.Buffer.Span.Slice(0, checked((int)input.Length));
         var zeros = zeroPoint?.ToArray();
-        var result = new DenseTensor<float>(input.Dimensions.ToArray());
+        var dimensions = input.Dimensions.ToArray();
+        var result = pool is null ? new DenseTensor<float>(dimensions)
+            : new DenseTensor<float>(pool.Rent<float>(values.Length), dimensions);
         var target = result.Buffer.Span;
         int block = factors.Length == 1 ? values.Length : inner;
         int channel = 0;
@@ -64,7 +69,7 @@ public partial class CPUExecutionProvider
         where T : unmanaged, IBinaryInteger<T>
     {
         int i = 0;
-        if (useSimd && Vector.IsHardwareAccelerated)
+        if (useSimd && Vector.IsHardwareAccelerated && values.Length >= Vector<byte>.Count)
         {
             int width = Vector<byte>.Count;
             var scale = new Vector<float>(factor);
