@@ -2,6 +2,45 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class GatherLayoutTests
 {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void ScalarCopiesPreservePayloadsOffsetsAndIndependentStorage(int axis)
+    {
+        int[] bits = { int.MinValue, 0x7fc01234, unchecked((int)0xff801234), 0x3f800000 };
+        var storage = new float[10];
+        for (int i = 0; i < bits.Length; i++) storage[3 + i] = BitConverter.Int32BitsToSingle(bits[i]);
+        int[] shape = Enumerable.Repeat(1, 3).ToArray();
+        shape[axis] = bits.Length;
+        var data = new DenseTensor<float>(storage.AsMemory(3, bits.Length), shape);
+        var indexStorage = new[] { -99, 0, -1, 1, -3, 2, -4, -99 };
+        var indices = new DenseTensor<int>(indexStorage.AsMemory(1, 6), new[] { 2, 3 });
+        var result = Tensor<float>.Gather(data, indices, axis - 3);
+        Assert.Equal(shape.Take(axis).Concat(new[] { 2, 3 }).Concat(shape.Skip(axis + 1)), result.Dimensions.ToArray());
+        Assert.Equal(new[] { bits[0], bits[3], bits[1], bits[1], bits[2], bits[0] },
+            result.ToArray().Select(BitConverter.SingleToInt32Bits));
+        result.SetValue(0, 123f);
+        Assert.Equal(bits, data.ToArray().Select(BitConverter.SingleToInt32Bits));
+        Assert.Equal(new[] { -99, 0, -1, 1, -3, 2, -4, -99 }, indexStorage);
+    }
+
+    [Theory]
+    [InlineData(int.MinValue)]
+    [InlineData(-5)]
+    [InlineData(4)]
+    [InlineData(int.MaxValue)]
+    public void ScalarCopiesRetainInvalidIndexFailureAndInputValues(int invalid)
+    {
+        var data = DenseTensor<int>.OfValues(new[] { 10, 20, 30, 40 });
+        var indices = DenseTensor<int>.OfValues(new[] { 0, -1, invalid });
+        var error = Assert.Throws<ArgumentOutOfRangeException>(() => Tensor<int>.Gather(data, indices, 0));
+        Assert.Equal("indices", error.ParamName);
+        Assert.Equal(invalid, error.ActualValue);
+        Assert.Equal(new[] { 10, 20, 30, 40 }, data.ToArray());
+        Assert.Equal(new[] { 0, -1, invalid }, indices.ToArray());
+    }
+
     static Tensor<int> Layout(int[] values, int[] dimensions, int layout)
     {
         if (layout == 1 && dimensions.Length == 0)

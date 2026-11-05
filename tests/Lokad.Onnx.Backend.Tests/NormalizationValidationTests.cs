@@ -1,5 +1,8 @@
 namespace Lokad.Onnx.Backend.Tests;
 
+using System.Numerics;
+using System.Runtime.InteropServices;
+
 public class NormalizationValidationTests
 {
     static DenseTensor<float> Data() => new(new[] { 1f, 2f, 3f, 4f, 5f, 6f }, new[] { 1, 2, 3 });
@@ -88,6 +91,79 @@ public class NormalizationValidationTests
         Assert.Equal(0L, BitConverter.DoubleToInt64Bits(output[1]));
         Assert.Equal(-(double).01f, output[2]);
         Assert.Equal(2.0, output[3]);
+    }
+
+    public static IEnumerable<object?[]> LeakyAlphaValues()
+    {
+        foreach (float? alpha in new float?[] { null, .1f, .2f, 0f, -0f, -.5f,
+            float.PositiveInfinity, float.NegativeInfinity, float.NaN })
+            yield return new object?[] { alpha };
+    }
+
+    [Theory]
+    [MemberData(nameof(LeakyAlphaValues))]
+    public void LeakyReluFloatPreservesPayloadBitsAcrossModesAndLayouts(float? alpha)
+    {
+        var values = Enumerable.Range(0, 513).Select(i =>
+            BitConverter.Int32BitsToSingle(unchecked((int)(0x9e3779b9u * (uint)i)))).ToArray();
+        int[] exceptional = { 0, int.MinValue, 0x7f800000, unchecked((int)0xff800000),
+            0x7fc01234, unchecked((int)0xffc02345), 0x7f801234, unchecked((int)0xff802345) };
+        for (int i = 0; i < exceptional.Length; i++)
+            values[i] = values[values.Length - 1 - i] = BitConverter.Int32BitsToSingle(exceptional[i]);
+        AssertLeakyBits(values, alpha ?? .01f, alpha);
+    }
+
+    [Theory]
+    [MemberData(nameof(LeakyAlphaValues))]
+    public void LeakyReluDoublePreservesPayloadBitsAcrossModesAndLayouts(float? alpha)
+    {
+        var values = Enumerable.Range(0, 513).Select(i =>
+            BitConverter.Int64BitsToDouble(unchecked((long)(0x9e3779b97f4a7c15ul * (ulong)i)))).ToArray();
+        long[] exceptional = { 0, long.MinValue, 0x7ff0000000000000, unchecked((long)0xfff0000000000000),
+            0x7ff8000000001234, unchecked((long)0xfff8000000002345),
+            0x7ff0000000001234, unchecked((long)0xfff0000000002345) };
+        for (int i = 0; i < exceptional.Length; i++)
+            values[i] = values[values.Length - 1 - i] = BitConverter.Int64BitsToDouble(exceptional[i]);
+        AssertLeakyBits(values, (double)(alpha ?? .01f), alpha);
+    }
+
+    static void AssertLeakyBits<T>(T[] values, T alpha, float? attribute)
+        where T : unmanaged, IFloatingPointIeee754<T>
+    {
+        var expected = values.Select(value => value < T.Zero ? alpha * value : value).ToArray();
+        var storage = new T[values.Length + 6];
+        values.CopyTo(storage, 3);
+        var dense = new DenseTensor<T>(storage.AsMemory(3, values.Length), new[] { values.Length });
+        var backing = new DenseTensor<T>(new[] { values.Length, 2 });
+        for (int i = 0; i < values.Length; i++) backing[i, 0] = values[i];
+        var view = backing.Slice(new SliceIndex(0, values.Length), SliceIndex.Index(0));
+        var before = MemoryMarshal.AsBytes(storage.AsSpan()).ToArray();
+        foreach (var input in new Tensor<T>[] { dense, view })
+        foreach (var mode in new[] { ExecutionOptions.Scalar, ExecutionOptions.Simd, ExecutionOptions.Default })
+        {
+            var result = CPUExecutionProvider.LeakyRelu(input, attribute, mode);
+            Assert.Equal(OpStatus.Success, result.Status);
+            var output = Assert.IsType<DenseTensor<T>>(result.Outputs[0]);
+            Assert.Equal(input.Dimensions.ToArray(), output.Dimensions.ToArray());
+            Assert.True(MemoryMarshal.AsBytes(expected.AsSpan()).SequenceEqual(MemoryMarshal.AsBytes(output.Buffer.Span)));
+            output.SetValue(0, T.One);
+            Assert.True(MemoryMarshal.AsBytes(values.AsSpan()).SequenceEqual(MemoryMarshal.AsBytes(input.ToArray().AsSpan())));
+        }
+        Assert.Equal(before, MemoryMarshal.AsBytes(storage.AsSpan()).ToArray());
+    }
+
+    [Fact]
+    public void LeakyReluScalarAndEmptyInputsRetainShape()
+    {
+        foreach (var input in new[] { DenseTensor<float>.Scalar(-2f), new DenseTensor<float>(new[] { 2, 0, 3 }) })
+        {
+            var result = CPUExecutionProvider.LeakyRelu(input, .25f, ExecutionOptions.Default);
+            Assert.Equal(OpStatus.Success, result.Status);
+            var output = (Tensor<float>)result.Outputs[0];
+            Assert.Equal(input.Dimensions.ToArray(), output.Dimensions.ToArray());
+            Assert.Equal(input.Length, output.Length);
+            if (input.Length != 0) Assert.Equal(-.5f, output.GetValue(0));
+        }
     }
 
     [Theory]

@@ -76,19 +76,32 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         return input.ElementType switch
         {
-            TensorElementType.Float => Success(op, LeakyReluTyped((Tensor<float>)input, alpha ?? .01f, opts.Tensor.CopyReporter)),
-            TensorElementType.Double => Success(op, LeakyReluTyped((Tensor<double>)input, (double)(alpha ?? .01f), opts.Tensor.CopyReporter)),
+            TensorElementType.Float => Success(op, LeakyReluTyped((Tensor<float>)input, alpha ?? .01f, opts.Tensor)),
+            TensorElementType.Double => Success(op, LeakyReluTyped((Tensor<double>)input, (double)(alpha ?? .01f), opts.Tensor)),
             _ => InputTypeNotSupported(op, nameof(input), input)
         };
     }
 
-    static DenseTensor<T> LeakyReluTyped<T>(Tensor<T> input, T alpha, ICopyAccountant? copy) where T : unmanaged, IFloatingPointIeee754<T>
+    static DenseTensor<T> LeakyReluTyped<T>(Tensor<T> input, T alpha, TensorExecutionOptions options) where T : unmanaged, IFloatingPointIeee754<T>
     {
-        var x = Tensor<T>.RequireContiguous(input, nameof(input), copy);
+        var x = Tensor<T>.RequireContiguous(input, nameof(input), options.CopyReporter);
         var output = new DenseTensor<T>(x.Dimensions.ToArray());
         var xs = x.Buffer.Span;
         var ys = output.Buffer.Span;
-        for (int i = 0; i < xs.Length; i++) ys[i] = xs[i] < T.Zero ? alpha * xs[i] : xs[i];
+        int i = 0;
+        if (options.UseSimd && Vector.IsHardwareAccelerated)
+        {
+            var source = MemoryMarshal.Cast<T, Vector<T>>(xs);
+            var target = MemoryMarshal.Cast<T, Vector<T>>(ys);
+            var factor = new Vector<T>(alpha);
+            for (int v = 0; v < source.Length; v++)
+            {
+                var value = source[v];
+                target[v] = Vector.ConditionalSelect(Vector.LessThan(value, Vector<T>.Zero), factor * value, value);
+            }
+            i = source.Length * Vector<T>.Count;
+        }
+        for (; i < xs.Length; i++) ys[i] = xs[i] < T.Zero ? alpha * xs[i] : xs[i];
         return output;
     }
 

@@ -28,6 +28,8 @@
   convolutions on AVX-512 CPUs, retaining the existing dot-product arithmetic.
 - Pack bounded short float matrix products for the existing AVX-512 kernels,
   preserving the ordered arithmetic and live right-hand operands.
+- Vectorize float and double LeakyRelu and directly copy eligible Gather values,
+  preserving exceptional values, scalar execution and independent output storage.
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.

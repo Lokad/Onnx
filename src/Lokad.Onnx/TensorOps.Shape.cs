@@ -566,6 +566,12 @@ where T : unmanaged
             var indexSpan = denseIndices.Buffer.Span;
             var srcSpan = denseData.Buffer.Span;
             var dstSpan = output.Buffer.Span;
+            if (outer == 1 && inner == 1)
+            {
+                for (int j = 0; j < indexSpan.Length; j++)
+                    dstSpan[j] = srcSpan[NormalizeGatherIndex(indexSpan[j], axisDim, nameof(indices))];
+                return output;
+            }
             var rows = new int[indexSpan.Length];
             for (int j = 0; j < rows.Length; j++) rows[j] = NormalizeGatherIndex(indexSpan[j], axisDim, nameof(indices));
             for (int o = 0; o < outer; o++)
