@@ -59,6 +59,10 @@ public class PreparedLstmProjectionTests
         // Check steady-state allocations after first-use and tiering work.
         for (int i = 0; i < 64; i++) PreparedLstmProjection.Multiply(input, packed, actual.AsSpan(1, columns));
         Equal(expected, actual);
+        // A background collection can retire this thread's allocation context
+        // and charge its unused remainder to the counter (dotnet/runtime#134724).
+        // Finish pending GC before measuring; keep the zero-byte assertion exact.
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, blocking: true);
         long allocated = MeasureAllocations(input, packed, actual.AsSpan(1, columns));
         Assert.Equal(0, allocated);
         Equal(expected, actual); Assert.Equal(inputHash, Hash(input)); Assert.Equal(packedHash, Hash(packed));
