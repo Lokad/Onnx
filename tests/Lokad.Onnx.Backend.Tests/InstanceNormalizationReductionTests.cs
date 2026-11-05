@@ -7,6 +7,37 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class InstanceNormalizationReductionTests
 {
+    [Theory]
+    [InlineData(-1)] [InlineData(int.MinValue)] [InlineData(int.MaxValue)]
+    public void InvalidPrefixRetainsCheckedScalarFailure(int alignedStart)
+    {
+        Assert.Throws<IndexOutOfRangeException>(() => FloatReduction.Sum(new float[8], alignedStart, 0, false, true));
+    }
+
+    [Fact]
+    public void FourLaneVectorsPreserveScalarTreeAcrossPrefixesAndTails()
+    {
+        float[] cycle = [100000000f, 1f, -100000000f, 1f, -0f, 0f, .125f, -.375f];
+        foreach (int width in Enumerable.Range(0, 66).Concat(new[] { 118, 194, 394, 789 }))
+        foreach (int offset in new[] { 0, 1, 3 })
+        {
+            var storage = Enumerable.Repeat(123456.75f, width + 8).ToArray();
+            for (int i = 0; i < width; i++) storage[offset + i] = cycle[(i + width) % cycle.Length];
+            if (width > 0 && width % 17 == 0) storage[offset + width - 1] = float.NaN;
+            var saved = storage.Select(BitConverter.SingleToInt32Bits).ToArray();
+            for (int aligned = 0; aligned <= Math.Min(3, width); aligned++)
+            foreach (bool squared in new[] { false, true })
+            {
+                var row = storage.AsSpan(offset, width);
+                float expected = FloatReduction.Sum(row, aligned, .25f, squared);
+                float actual = FloatReduction.Sum(row, aligned, .25f, squared, true);
+                if (float.IsNaN(expected)) Assert.True(float.IsNaN(actual));
+                else Assert.Equal(BitConverter.SingleToInt32Bits(expected), BitConverter.SingleToInt32Bits(actual));
+            }
+            Assert.Equal(saved, storage.Select(BitConverter.SingleToInt32Bits));
+        }
+    }
+
     static JsonDocument Fixture() => JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "fixtures", "instance-normalization-long.json")));
     static float Value(string bits) => BitConverter.Int32BitsToSingle(unchecked((int)uint.Parse(bits, NumberStyles.HexNumber, CultureInfo.InvariantCulture)));
     static string Hash(float[] values) => Convert.ToHexStringLower(SHA256.HashData(MemoryMarshal.AsBytes(values.AsSpan())));
@@ -15,7 +46,7 @@ public class InstanceNormalizationReductionTests
     {
         using var fixture = Fixture();
         foreach (var item in fixture.RootElement.GetProperty("cases").EnumerateArray())
-            for (int mode = 0; mode < 3; mode++) yield return new object[] { item.GetProperty("name").GetString()!, mode };
+            for (int mode = 0; mode < 4; mode++) yield return new object[] { item.GetProperty("name").GetString()!, mode };
     }
 
     [Theory]

@@ -1,10 +1,51 @@
 namespace Lokad.Onnx;
 
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 /// <summary>Fixed four-lane float reduction, independent of managed buffer address.</summary>
 internal static class FloatReduction
 {
+    internal static float Sum(ReadOnlySpan<float> row, int alignedStart, float mean, bool squared, bool useIntrinsics)
+    {
+        if (!useIntrinsics || !Vector128.IsHardwareAccelerated || (uint)alignedStart > (uint)row.Length
+            || row.Length - alignedStart < 4)
+            return Sum(row, alignedStart, mean, squared);
+        int alignedEnd = alignedStart + (row.Length - alignedStart) / 4 * 4;
+        ref float source = ref MemoryMarshal.GetReference(row);
+        var center = Vector128.Create(mean);
+        int index = alignedStart;
+        var first = Value(Vector128.LoadUnsafe(ref source, (nuint)index), center, squared);
+        index += 4;
+        if (index < alignedEnd)
+        {
+            var second = Value(Vector128.LoadUnsafe(ref source, (nuint)index), center, squared);
+            index += 4;
+            for (; index <= alignedEnd - 8; index += 8)
+            {
+                first = Vector128.Add(first, Value(Vector128.LoadUnsafe(ref source, (nuint)index), center, squared));
+                second = Vector128.Add(second, Value(Vector128.LoadUnsafe(ref source, (nuint)(index + 4)), center, squared));
+            }
+            first = Vector128.Add(first, second);
+            if (index < alignedEnd)
+                first = Vector128.Add(first, Value(Vector128.LoadUnsafe(ref source, (nuint)index), center, squared));
+        }
+        // Keep the scalar/Eigen lane tree, prefix and suffix order exactly.
+        float sum = (first.GetElement(0) + first.GetElement(2)) + (first.GetElement(1) + first.GetElement(3));
+        for (int i = 0; i < alignedStart; i++) sum += Value(row[i], mean, squared);
+        for (int i = alignedEnd; i < row.Length; i++) sum += Value(row[i], mean, squared);
+        return sum;
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    static Vector128<float> Value(Vector128<float> value, Vector128<float> mean, bool squared)
+    {
+        if (!squared) return value;
+        var delta = Vector128.Subtract(value, mean);
+        return Vector128.Multiply(delta, delta);
+    }
+
     internal static float Sum(ReadOnlySpan<float> row, int alignedStart, float mean, bool squared)
     {
         if (row.Length == 0) return 0;

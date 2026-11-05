@@ -16,6 +16,8 @@
   eligible shared-weight matrix batches, and accelerate reflection padding and
   seven-tap depthwise convolution. Retain type information through recurrent and
   fused attention nodes so existing activation fusions remain available.
+- Vectorize InstanceNormalization statistics and output transforms while retaining
+  its fixed float reduction order and scalar fallback.
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.

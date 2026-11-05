@@ -3,6 +3,7 @@ namespace Lokad.Onnx;
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using static OpResult;
 
 public partial class CPUExecutionProvider
@@ -40,13 +41,29 @@ public partial class CPUExecutionProvider
             // Eigen float path. A linear float sum loses substantial accuracy
             // on long, nearly constant audio channels. Logical row alignment
             // keeps results independent of the backing array/window address.
-            float mean = FloatReduction.Sum(row, Math.Min((-start) & 3, spatial), 0, false) / spatial;
-            float variance = FloatReduction.Sum(row, 0, mean, true);
+            bool useIntrinsics = opts.Tensor.UseSimd && opts.Tensor.UseIntrinsics;
+            float mean = FloatReduction.Sum(row, Math.Min((-start) & 3, spatial), 0, false, useIntrinsics) / spatial;
+            float variance = FloatReduction.Sum(row, 0, mean, true, useIntrinsics);
             // Retain float statistics and the folded affine transform: wider
             // centered arithmetic has a different large-offset cancellation.
             float channelScale = (1f / MathF.Sqrt(variance / spatial + eps)) * s.Buffer.Span[channel];
             float channelShift = b.Buffer.Span[channel] - mean * channelScale;
-            for (int k = 0; k < spatial; k++) ys[start + k] = xs[start + k] * channelScale + channelShift;
+            var destination = ys.Slice(start, spatial);
+            int k = 0;
+            if (opts.Tensor.UseSimd && Vector.IsHardwareAccelerated)
+            {
+                var values = MemoryMarshal.Cast<float, Vector<float>>(row);
+                var target = MemoryMarshal.Cast<float, Vector<float>>(destination);
+                var factor = new Vector<float>(channelScale);
+                var shift = new Vector<float>(channelShift);
+                for (int v = 0; v < values.Length; v++)
+                {
+                    var scaled = values[v] * factor;
+                    target[v] = scaled + shift;
+                }
+                k = values.Length * Vector<float>.Count;
+            }
+            for (; k < spatial; k++) destination[k] = row[k] * channelScale + channelShift;
         }
         return Success(op, output);
     }
