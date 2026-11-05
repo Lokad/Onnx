@@ -24,6 +24,8 @@
   custom-activation paths and the existing projection and bias arithmetic.
 - Bulk-copy slices with a reversed last axis while preserving every value bit
   and independent output storage.
+- Reuse wider spatial tiles and bounded weight-row blocks for eligible float
+  convolutions on AVX-512 CPUs, retaining the existing dot-product arithmetic.
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.

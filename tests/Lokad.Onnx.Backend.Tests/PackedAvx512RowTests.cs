@@ -30,45 +30,58 @@ public class PackedAvx512RowTests
         var random = new Random(20260918);
         foreach (int m in new[] { 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 64, 128, 512 })
         foreach (var (n, k) in new[] { (1, 32), (3, 64), (31, 96), (65, 384), (65, 33), (65, 39), (65, 40), (65, 63), (65, 65), (65, 95), (65, 751) })
+            CheckProduct(random, m, n, k);
+    }
+
+    [SkippableFact]
+    public unsafe void BoundedRowBlocksKeepFmaOrderAndTailGuards()
+    {
+        Skip.If(!Avx512F.IsSupported || !Fma.IsSupported, "AVX-512F and FMA required.");
+        var random = new Random(20261105);
+        foreach (var (m, n, k) in new[] { (256, 256, 64), (257, 257, 127),
+            (601, 600, 96), (602, 600, 128), (769, 1024, 65), (1024, 256, 128) })
+            CheckProduct(random, m, n, k);
+    }
+
+    static unsafe void CheckProduct(Random random, int m, int n, int k)
+    {
+        const int offset = 3;
+        const float guard = -12345.5f;
+        var a = Enumerable.Repeat(guard, offset + m * n + offset).ToArray();
+        var b = new float[n * k];
+        var packed = Enumerable.Repeat(guard, offset + n * k + offset).ToArray();
+        var output = Enumerable.Repeat(guard, offset + m * k + offset).ToArray();
+        for (int i = 0; i < m * n; i++) a[offset + i] = random.NextSingle() * 2 - 1;
+        for (int i = 0; i < b.Length; i++) b[i] = random.NextSingle() * 2 - 1;
+        // Nonzero destinations exercise accumulation, not just fresh zeros.
+        for (int i = 0; i < m * k; i++) output[offset + i] = random.NextSingle() * 2 - 1;
+        var expected = (float[])output.Clone();
+        var originalA = (float[])a.Clone();
+        var originalB = (float[])b.Clone();
+        for (int row = 0; row < m; row++)
+        for (int col = 0; col < k; col++)
         {
-            const int offset = 3;
-            const float guard = -12345.5f;
-            var a = Enumerable.Repeat(guard, offset + m * n + offset).ToArray();
-            var b = new float[n * k];
-            var packed = Enumerable.Repeat(guard, offset + n * k + offset).ToArray();
-            var output = Enumerable.Repeat(guard, offset + m * k + offset).ToArray();
-            for (int i = 0; i < m * n; i++) a[offset + i] = random.NextSingle() * 2 - 1;
-            for (int i = 0; i < b.Length; i++) b[i] = random.NextSingle() * 2 - 1;
-            // Nonzero destinations exercise accumulation, not just fresh zeros.
-            for (int i = 0; i < m * k; i++) output[offset + i] = random.NextSingle() * 2 - 1;
-            var expected = (float[])output.Clone();
-            var originalA = (float[])a.Clone();
-            var originalB = (float[])b.Clone();
-            for (int row = 0; row < m; row++)
-            for (int col = 0; col < k; col++)
+            float acc = expected[offset + row * k + col];
+            for (int reduction = 0; reduction < n; reduction++)
             {
-                float acc = expected[offset + row * k + col];
-                for (int reduction = 0; reduction < n; reduction++)
-                {
-                    float av = a[offset + row * n + reduction], bv = b[reduction * k + col];
-                    int fmaColumns = k / 32 * 32 + k % 32 / 8 * 8;
-                    acc = col < fmaColumns ? MathF.FusedMultiplyAdd(bv, av, acc) : acc + av * bv;
-                }
-                expected[offset + row * k + col] = acc;
+                float av = a[offset + row * n + reduction], bv = b[reduction * k + col];
+                int fmaColumns = k / 32 * 32 + k % 32 / 8 * 8;
+                acc = col < fmaColumns ? MathF.FusedMultiplyAdd(bv, av, acc) : acc + av * bv;
             }
-            fixed (float* ap = a, bp = b, pp = packed, cp = output)
-            {
-                MathOps.PackPanelsB(n, k, bp, pp + offset);
-                var packedBefore = (float[])packed.Clone();
-                Assert.True(MathOps.TryPackedAvx512Rows(m, n, k, ap + offset, pp + offset, cp + offset));
-                Assert.Equal(packedBefore, packed);
-            }
-            Assert.Equal(originalA, a);
-            Assert.Equal(originalB, b);
-            for (int i = 0; i < output.Length; i++)
-                Assert.True(BitConverter.SingleToInt32Bits(expected[i]) == BitConverter.SingleToInt32Bits(output[i]),
-                    $"{m}x{n}x{k} index {i}: expected {expected[i]:R}, actual {output[i]:R}");
-            Assert.All(packed.Take(offset).Concat(packed.TakeLast(offset)), x => Assert.Equal(guard, x));
+            expected[offset + row * k + col] = acc;
         }
+        fixed (float* ap = a, bp = b, pp = packed, cp = output)
+        {
+            MathOps.PackPanelsB(n, k, bp, pp + offset);
+            var packedBefore = (float[])packed.Clone();
+            Assert.True(MathOps.TryPackedAvx512Rows(m, n, k, ap + offset, pp + offset, cp + offset));
+            Assert.Equal(packedBefore, packed);
+        }
+        Assert.Equal(originalA, a);
+        Assert.Equal(originalB, b);
+        for (int i = 0; i < output.Length; i++)
+            Assert.True(BitConverter.SingleToInt32Bits(expected[i]) == BitConverter.SingleToInt32Bits(output[i]),
+                $"{m}x{n}x{k} index {i}: expected {expected[i]:R}, actual {output[i]:R}");
+        Assert.All(packed.Take(offset).Concat(packed.TakeLast(offset)), x => Assert.Equal(guard, x));
     }
 }

@@ -21,7 +21,18 @@ public partial class MathOps
         if (rest == 1) { main -= 12; rest = 13; }
         if (rest == 4 && main >= 12) { main -= 12; rest = 16; }
         else if (rest == 2 && main >= 12) { main -= 12; rest = 14; }
-        if (main > 0)
+        if (m is >= 256 and <= 1024 && n is >= 256 and <= 1024
+            && fullColumns is >= 64 and <= 128)
+        {
+            // Several column panels reuse a bounded block of weight rows.
+            // Blocks remain multiples of the existing 12-row consumer; its
+            // reduction and the original tail-row assignments stay unchanged.
+            for (int row = 0; row < main; row += 96)
+            for (int column = 0; column < fullColumns; column += 32)
+                PackedTile12(System.Math.Min(96, main - row), n, x + row * n,
+                    packed + column * n, dest + row * k, k, column);
+        }
+        else if (main > 0)
             for (int column = 0; column < fullColumns; column += 32)
                 PackedTile12(main, n, x, packed + column * n, dest, k, column);
         x += main * n;

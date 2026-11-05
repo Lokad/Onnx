@@ -42,7 +42,7 @@ where T : unmanaged
     // Validate expanded storage independently of the input/weight backing sizes.
     // The spatial planner keeps the first candidate's 32-column minimum panel.
     internal static (int columns, int reduction, int blockColumns, int scratchElements)
-        PlanConvSpatialScratch(int channels, int kh, int kw, int filters, int height, int width)
+        PlanConvSpatialScratch(int channels, int kh, int kw, int filters, int height, int width, bool useWideRows = false)
     {
         int columns = checked(height * width);
         int reduction = checked(channels * kh * kw);
@@ -54,6 +54,16 @@ where T : unmanaged
             const int panel = 32;
             long aligned = Math.Max(panel, fit / panel * panel);
             blockColumns = (int)Math.Min(columns, aligned);
+        }
+        // The wide row consumer benefits from several panels sharing each
+        // weight row. Keep this bounded 1D territory within 1 MiB of scratch.
+        if (useWideRows && height == 1 && kh == 1 && blockColumns < columns
+            && filters is >= 256 and <= 1024 && (filters & 1) == 0 && filters % 3 != 0
+            && reduction is >= 256 and <= 1024 && columns >= 64)
+        {
+            int wider = Math.Min(128, (columns - 1) / 32 * 32);
+            if (wider > blockColumns && ((long)reduction + filters) * wider <= 1024 * 1024 / sizeof(float))
+                blockColumns = wider;
         }
         long elements = (long)reduction * blockColumns;
         if (blockColumns < columns) elements += (long)filters * blockColumns;
@@ -197,7 +207,9 @@ where T : unmanaged
         }
         if (TryConvDirectDepthwise(xd, wd, bd, output, N, group, C, H, W, M,
             kH, kW, dH, dW, sH, sW, pad, outH, outW, options)) return output;
-        var spatial = PlanConvSpatialScratch(C, kH, kW, M, outH, outW);
+        bool wideRows = group == 1 && H == 1 && options.UseSimd && options.UseIntrinsics
+            && AblationSwitches.EnablePackedAvx512Rows && Avx512F.IsSupported && Fma.IsSupported;
+        var spatial = PlanConvSpatialScratch(C, kH, kW, M, outH, outW, wideRows);
         int tileN = spatial.columns, blockN = spatial.blockColumns;
         if (blockN < tileN)
         {

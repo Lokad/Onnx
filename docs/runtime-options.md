@@ -60,6 +60,12 @@ clears them. Model weights, packed weights, caller-held outputs and other live
 allocations are outside this budget. Loading APIs separately accept a
 `maximumPackedWeightBytes` limit for retained packed matrix weights.
 
+Eligible float convolutions with one spatial axis can use wider tiles on
+AVX-512 CPUs. This path bounds its combined spatial patch/output allocation to
+1 MiB and its additional packed patch to 512 KiB. These are transient scratch
+buffers; scratch diagnostics sum requested rental bytes rather than measuring
+concurrent peak memory.
+
 Prepared 3×3 convolutions ordinarily use two-output Winograd tiles. Applications
 can opt into four-output tiles before creating execution contexts:
 
