@@ -24,6 +24,8 @@
   custom-activation paths and the existing projection and bias arithmetic.
 - Bulk-copy slices with a reversed last axis while preserving every value bit
   and independent output storage.
+- Clamp strided float convolution patch-copy ranges once per row, preserving
+  padding and every value bit while avoiding per-value index checks.
 - Reuse wider spatial tiles and bounded weight-row blocks for eligible float
   convolutions on AVX-512 CPUs, retaining the existing dot-product arithmetic.
 - Pack bounded short float matrix products for the existing AVX-512 kernels,

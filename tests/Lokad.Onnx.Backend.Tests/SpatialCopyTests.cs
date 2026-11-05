@@ -6,6 +6,41 @@ namespace Lokad.Onnx.Backend.Tests;
 public class SpatialCopyTests
 {
     [Theory]
+    [InlineData(150, 600, 36000, 0, 0)]
+    [InlineData(150, 600, 118800, 301, 79)]
+    [InlineData(75, 150, 35550, 151, 79)]
+    [InlineData(3, 7, 29, 100, 77)]
+    [InlineData(int.MaxValue, 3, 5, 0, 0)]
+    [InlineData(int.MaxValue, 3, 5, int.MaxValue, int.MaxValue)]
+    public unsafe void StridedRangesClampPaddingAndKeepExactBits(
+        int stride, int kernel, int width, int left, int right)
+    {
+        int columns = checked((int)(((long)width + left + right - kernel) / stride + 1));
+        var input = Enumerable.Range(0, width)
+            .Select(i => BitConverter.Int32BitsToSingle(unchecked((int)(0x80000000u + (uint)i * 0x1234567u)))).ToArray();
+        var before = input.Select(BitConverter.SingleToInt32Bits).ToArray();
+        foreach (int chunk in new[] { 1, 32, 128, columns }.Distinct())
+        for (int start = 0; start < columns; start += chunk)
+        {
+            int count = Math.Min(chunk, columns - start);
+            var output = Enumerable.Repeat(12345f, kernel * count + 6).ToArray();
+            fixed (float* source = input)
+            fixed (float* destination = output)
+                MathOps.Im2colRange(source, 1, 1, width, 1, kernel, 1, 1, 1, stride,
+                    0, left, 0, right, columns, start, count, destination + 3);
+            for (int k = 0; k < kernel; k++)
+            for (int i = 0; i < count; i++)
+            {
+                long index = (long)(start + i) * stride + k - left;
+                int expected = index >= 0 && index < width ? before[(int)index] : 0;
+                Assert.Equal(expected, BitConverter.SingleToInt32Bits(output[3 + k * count + i]));
+            }
+            Assert.All(output.Take(3).Concat(output.TakeLast(3)), v => Assert.Equal(12345f, v));
+        }
+        Assert.Equal(before, input.Select(BitConverter.SingleToInt32Bits));
+    }
+
+    [Theory]
     [InlineData(1, 1, 1, 1, 2)]
     [InlineData(1, 1, 65, 65, 3)]
     [InlineData(2, 3, 4, 7, 5)]

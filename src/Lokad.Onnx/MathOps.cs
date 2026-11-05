@@ -3296,10 +3296,21 @@ public partial class MathOps
                 }
                 else
                 {
-                    for (int i = 0; i < count; i++)
+                    long origin = col0 + (long)first * strideX;
+                    int begin = origin < 0
+                        ? (int)Math.Min(count, (-origin + strideX - 1) / strideX) : 0;
+                    int finish = origin >= srcW ? 0
+                        : (int)Math.Min(count, ((long)srcW - 1 - origin) / strideX + 1);
+                    output[..begin].Clear();
+                    output[finish..].Clear();
+                    if (finish > begin)
                     {
-                        long sx = col0 + (long)(first + i) * strideX;
-                        output[i] = sx >= 0 && sx < srcW ? line[(int)sx] : 0f;
+                        // Both endpoints are inside the source row. Retain
+                        // every payload bit without per-value bounds checks.
+                        float* source = line + (int)(origin + (long)begin * strideX);
+                        fixed (float* destination = output)
+                            for (int i = begin; i < finish; i++, source += strideX)
+                                destination[i] = *source;
                     }
                 }
             }
