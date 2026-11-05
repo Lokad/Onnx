@@ -3,6 +3,7 @@ namespace Lokad.Onnx.Backend.Tests;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text.Json;
+using Google.Protobuf;
 using Lokad.Onnx.Tests.Support;
 using Xunit.Abstractions;
 
@@ -21,6 +22,10 @@ public class ParadeeRuntimeTests(ITestOutputHelper output)
     public void Int8ControlledNoiseMatchesOrt() => Qualify("int8", true);
     [SkippableFact]
     public void Int8OriginalExportRuns() => Qualify("int8", false);
+    [SkippableFact]
+    public void Fp32WaveformOnlyMatchesOrt() => Qualify("fp32", true, true);
+    [SkippableFact]
+    public void Int8WaveformOnlyMatchesOrt() => Qualify("int8", true, true);
 
     static string FileHash(string path)
     {
@@ -76,7 +81,7 @@ public class ParadeeRuntimeTests(ITestOutputHelper output)
         return maximum;
     }
 
-    void Qualify(string variant, bool controlled)
+    void Qualify(string variant, bool controlled, bool waveformOnly = false)
     {
         string? root = Environment.GetEnvironmentVariable("LONNX_PARADEE_FIXTURES");
         Skip.If(string.IsNullOrWhiteSpace(root), "Set LONNX_PARADEE_FIXTURES to the frozen private fixture directory.");
@@ -99,9 +104,32 @@ public class ParadeeRuntimeTests(ITestOutputHelper output)
             : "a6989796692ac173597e15d405c971989202d5c73cfad65f22e90bd7b6c97da1", model.GetProperty("original_sha256").GetString());
         string role = controlled ? "controlled" : "original";
         string path = CheckedPath(root!, model, role, role + "_sha256");
-        var graph = OnnxImport.Load(path);
+        ComputationalGraph? graph;
+        if (waveformOnly)
+        {
+            // Remove diagnostic outputs before import/optimization so they cannot
+            // extend lifetimes or prevent an original-graph optimization.
+            var proto = global::Onnx.ModelProto.Parser.ParseFrom(File.ReadAllBytes(path));
+            var waveform = proto.Graph.Output.Single(value => value.Name == "waveform").Clone();
+            proto.Graph.Output.Clear();
+            proto.Graph.Output.Add(waveform);
+            byte[] companion = proto.ToByteArray();
+            string checksum = Convert.ToHexStringLower(SHA256.HashData(companion));
+            Assert.Equal(variant == "fp32" ? "9b488fcca28ea8858c98f42e9d92ad914d683407329495a70f2c69bf9da55100"
+                : "9093ae13938b9d5a5686f105930e1f8b8e0655aa7e798aefe65d4fd093744e30", checksum);
+            output.WriteLine("waveform_only_model_sha256={0}", checksum);
+            graph = OnnxImport.Load(companion);
+            role = "controlled-waveform-only";
+        }
+        else graph = OnnxImport.Load(path);
         Assert.True(graph is not null, OnnxImport.LastErrorMessage);
         graph!.Prepare();
+        if (waveformOnly)
+        {
+            Assert.Single(graph.OutputDescs);
+            Assert.Single(graph.Outputs);
+            Assert.Contains(graph.Nodes, node => node.Op == OpType.FusedHarmonicSum);
+        }
         var cases = model.GetProperty("cases").EnumerateArray().ToArray();
         Assert.Equal(declared.Keys.Order(), cases.Select(c => c.GetProperty("key").GetString()!).Order());
         var held = new List<(float[] Values, string Hash)>();
@@ -142,15 +170,18 @@ public class ParadeeRuntimeTests(ITestOutputHelper output)
                         squaredError += ((double)actual[i] - expected[i]) * ((double)actual[i] - expected[i]);
                         squaredReference += (double)expected[i] * expected[i];
                     }
-                    var durations = Assert.IsAssignableFrom<Tensor<float>>(graph.Outputs[model.GetProperty("duration_output").GetString()!]);
-                    var expectedDurations = (Tensor<float>)Read(root!, tensors.GetProperty("durations"));
-                    Assert.Equal(expectedDurations.Dimensions.ToArray(), durations.Dimensions.ToArray());
-                    Assert.Equal(expectedDurations.ToArray(), durations.ToArray());
-                    foreach (var checkpoint in model.GetProperty("upstream_outputs").EnumerateObject())
+                    if (!waveformOnly)
                     {
-                        var expectedCheckpoint = Read(root!, tensors.GetProperty(checkpoint.Name));
-                        double error = MaximumScaledError(expectedCheckpoint, graph.Outputs[checkpoint.Value.GetString()!]!);
-                        Assert.True(error <= MaximumUpstreamError, key + "/" + checkpoint.Name + " scaled error " + error.ToString("R"));
+                        var durations = Assert.IsAssignableFrom<Tensor<float>>(graph.Outputs[model.GetProperty("duration_output").GetString()!]);
+                        var expectedDurations = (Tensor<float>)Read(root!, tensors.GetProperty("durations"));
+                        Assert.Equal(expectedDurations.Dimensions.ToArray(), durations.Dimensions.ToArray());
+                        Assert.Equal(expectedDurations.ToArray(), durations.ToArray());
+                        foreach (var checkpoint in model.GetProperty("upstream_outputs").EnumerateObject())
+                        {
+                            var expectedCheckpoint = Read(root!, tensors.GetProperty(checkpoint.Name));
+                            double error = MaximumScaledError(expectedCheckpoint, graph.Outputs[checkpoint.Value.GetString()!]!);
+                            Assert.True(error <= MaximumUpstreamError, key + "/" + checkpoint.Name + " scaled error " + error.ToString("R"));
+                        }
                     }
                     if (first is not null) Assert.Equal(first, actual);
                 }

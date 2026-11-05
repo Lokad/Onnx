@@ -37,6 +37,8 @@
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.
+- Qualify waveform-only noise-controlled companions as well, so diagnostic
+  outputs cannot hide differences in the original graph's tensor lifetimes.
 - Add a separate [Paradee CPU comparison](tests/benchmarks/paradee-runtime-20261104.md)
   with six process pairs per workload and all worker clocks. The original exports
   initially measured about 3.1–5.2 times slower than ORT on the 14-/62-token inputs.
