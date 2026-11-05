@@ -1,7 +1,7 @@
 namespace Lokad.Onnx;
 
 // The learned transform and VBx equations follow pyannote.audio / BUTSpeechFIT VBx.
-// Adapted to managed request-local storage; see NOTICE.txt and Apache-2.0.txt.
+// Adapted to managed request-local storage; see Apache-2.0.txt.
 
 using System;
 using System.Collections.Generic;

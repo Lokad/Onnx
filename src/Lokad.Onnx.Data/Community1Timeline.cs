@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 
 // Window, count and reconstruction rules follow pyannote.audio 4.0.0.
-// See NOTICE.txt. Time coordinates are SincNet receptive fields, not 10 / 589.
+// Time coordinates are SincNet receptive fields, not 10 / 589.
 internal sealed record Community1Interval(double Start, double End, int Speaker);
 internal sealed record Community1Frames(bool[] Values, int Frames, int Speakers);
 
