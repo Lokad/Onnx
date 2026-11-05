@@ -207,5 +207,6 @@ public enum OpType
     FusedRmsNormalization,
     FusedSigmoidMul,
     FusedConformerConv,
+    FusedHarmonicSum,
 }
 

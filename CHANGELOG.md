@@ -18,12 +18,14 @@
   fused attention nodes so existing activation fusions remain available.
 - Vectorize InstanceNormalization statistics and output transforms while retaining
   its fixed float reduction order and scalar fallback.
+- Stream eligible harmonic frequency masks, sine products and float sums into
+  their output, preserving live operands, arithmetic order and scalar fallback.
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.
 - Add a separate [Paradee CPU comparison](tests/benchmarks/paradee-runtime-20261104.md)
   with six process pairs per workload and all worker clocks. The original exports
-  remain about 3.1–5.2 times slower than ORT on the measured 14-/62-token inputs.
+  initially measured about 3.1–5.2 times slower than ORT on the 14-/62-token inputs.
 
 ## 0.5.0 — 2026-10-30
 

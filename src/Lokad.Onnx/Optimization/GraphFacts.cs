@@ -169,7 +169,7 @@ internal sealed class GraphFacts
                 return ProveNodeDtype(graph, nodes, producer, addition, visiting, memo);
             }
             if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu
-                && pn.Op != OpType.FusedRmsNormalization && pn.Op != OpType.FusedSigmoidMul
+                && pn.Op != OpType.FusedRmsNormalization && pn.Op != OpType.FusedSigmoidMul && pn.Op != OpType.FusedHarmonicSum
                 && pn.Op != OpType.FusedConformerConv) return null;
             if (pn.Inputs is null || pn.Inputs.Length < 1) return null;
             return ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
