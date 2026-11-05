@@ -3,6 +3,7 @@ namespace Lokad.Onnx;
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using static OpResult;
 
 public partial class CPUExecutionProvider
@@ -12,7 +13,7 @@ public partial class CPUExecutionProvider
         const OpType op = OpType.DequantizeLinear;
         if (input is null) return MissingInput(op, nameof(input));
         if (scale is null) return MissingInput(op, nameof(scale));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         if (input.ElementType is not TensorElementType.Int8 and not TensorElementType.UInt8)
             return InputTypeNotSupported(op, nameof(input), input);
         if (scale.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(scale), TensorElementType.Float, scale);
@@ -37,23 +38,71 @@ public partial class CPUExecutionProvider
                 for (int d = dim + 1; d < input.Rank; d++) inner = checked(inner * input.Dims[d]);
         }
         return input.ElementType == TensorElementType.Int8
-            ? Success(op, DequantizeValues((Tensor<sbyte>)input, factors, (Tensor<sbyte>?)zeroPoint, inner))
-            : Success(op, DequantizeValues((Tensor<byte>)input, factors, (Tensor<byte>?)zeroPoint, inner));
+            ? Success(op, DequantizeValues((Tensor<sbyte>)input, factors, (Tensor<sbyte>?)zeroPoint, inner, opts.Tensor.UseSimd))
+            : Success(op, DequantizeValues((Tensor<byte>)input, factors, (Tensor<byte>?)zeroPoint, inner, opts.Tensor.UseSimd));
     }
 
-    static DenseTensor<float> DequantizeValues<T>(Tensor<T> input, float[] factors, Tensor<T>? zeroPoint, int inner) where T : unmanaged, IBinaryInteger<T>
+    static DenseTensor<float> DequantizeValues<T>(Tensor<T> input, float[] factors, Tensor<T>? zeroPoint, int inner, bool useSimd) where T : unmanaged, IBinaryInteger<T>
     {
-        var values = input.ToArray();
+        var dense = input.ToRowMajor();
+        var values = dense.Buffer.Span.Slice(0, checked((int)input.Length));
         var zeros = zeroPoint?.ToArray();
         var result = new DenseTensor<float>(input.Dimensions.ToArray());
         var target = result.Buffer.Span;
-        for (int i = 0; i < values.Length; i++)
+        int block = factors.Length == 1 ? values.Length : inner;
+        int channel = 0;
+        for (int start = 0; start < values.Length; start += block)
         {
-            int channel = factors.Length == 1 ? 0 : i / inner % factors.Length;
-            int difference = int.CreateChecked(values[i]) - (zeros is null ? 0 : int.CreateChecked(zeros[channel]));
-            target[i] = difference * factors[channel];
+            int zero = zeros is null ? 0 : int.CreateChecked(zeros[channel]);
+            DequantizeBlock(values.Slice(start, block), target.Slice(start, block), factors[channel], zero, useSimd);
+            if (++channel == factors.Length) channel = 0;
         }
         return result;
+    }
+
+    static void DequantizeBlock<T>(ReadOnlySpan<T> values, Span<float> target, float factor, int zero, bool useSimd)
+        where T : unmanaged, IBinaryInteger<T>
+    {
+        int i = 0;
+        if (useSimd && Vector.IsHardwareAccelerated)
+        {
+            int width = Vector<byte>.Count;
+            var scale = new Vector<float>(factor);
+            var offset = new Vector<float>(zero);
+            if (typeof(T) == typeof(sbyte))
+            {
+                var bytes = MemoryMarshal.Cast<T, sbyte>(values);
+                for (; i <= values.Length - width; i += width)
+                {
+                    Vector.Widen(new Vector<sbyte>(bytes.Slice(i, width)), out var low, out var high);
+                    Vector.Widen(low, out var a, out var b);
+                    Vector.Widen(high, out var c, out var d);
+                    StoreDequantized(Vector.ConvertToSingle(a), Vector.ConvertToSingle(b), Vector.ConvertToSingle(c), Vector.ConvertToSingle(d), target.Slice(i, width), scale, offset);
+                }
+            }
+            else
+            {
+                var bytes = MemoryMarshal.Cast<T, byte>(values);
+                for (; i <= values.Length - width; i += width)
+                {
+                    Vector.Widen(new Vector<byte>(bytes.Slice(i, width)), out var low, out var high);
+                    Vector.Widen(low, out var a, out var b);
+                    Vector.Widen(high, out var c, out var d);
+                    StoreDequantized(Vector.ConvertToSingle(a), Vector.ConvertToSingle(b), Vector.ConvertToSingle(c), Vector.ConvertToSingle(d), target.Slice(i, width), scale, offset);
+                }
+            }
+        }
+        for (; i < values.Length; i++) target[i] = (int.CreateChecked(values[i]) - zero) * factor;
+    }
+
+    static void StoreDequantized(Vector<float> a, Vector<float> b, Vector<float> c, Vector<float> d,
+        Span<float> target, Vector<float> scale, Vector<float> offset)
+    {
+        // Byte values and zero points are exact in float, including their signed difference.
+        ((a - offset) * scale).CopyTo(target);
+        ((b - offset) * scale).CopyTo(target.Slice(Vector<float>.Count));
+        ((c - offset) * scale).CopyTo(target.Slice(2 * Vector<float>.Count));
+        ((d - offset) * scale).CopyTo(target.Slice(3 * Vector<float>.Count));
     }
 
     public static OpResult Mod(ITensor? a, ITensor? b, int? fmod, ExecutionOptions? options)

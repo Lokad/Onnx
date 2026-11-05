@@ -62,6 +62,54 @@ public class ParadeeQuantizationTests
         Assert.Empty(Output<float>(CPUExecutionProvider.DequantizeLinear(empty, DenseTensor<float>.OfValues(new[] { 1f, 2f }), null, 0, null)).ToArray());
     }
 
+    public static IEnumerable<object[]> ConversionLayouts()
+    {
+        foreach (bool unsigned in new[] { false, true })
+            foreach (bool view in new[] { false, true })
+                foreach (int axis in new[] { 0, 1, 2 })
+                    yield return new object[] { unsigned, view, axis };
+    }
+
+    [Theory]
+    [MemberData(nameof(ConversionLayouts))]
+    public void ConversionBlocksMatchIntegerOracleWithTailsViewsAndLiveChanges(bool unsigned, bool view, int axis)
+    {
+        int[] shape = view ? new[] { 2, 67, 3 } : new[] { 2, 3, 67 };
+        ITensor input = unsigned
+            ? new DenseTensor<byte>(Enumerable.Range(0, 402).Select(i => (byte)(i % 256)).ToArray(), shape)
+            : new DenseTensor<sbyte>(Enumerable.Range(0, 402).Select(i => (sbyte)(i % 256 - 128)).ToArray(), shape);
+        if (view) input = Assert.Single(CPUExecutionProvider.Transpose(input, new[] { 0, 2, 1 }, null, null).Outputs);
+        int channels = input.Dims[axis];
+        var scales = DenseTensor<float>.OfValues(Enumerable.Range(0, channels).Select(i => .01337f * (i + 1)).ToArray());
+        ITensor zeros = unsigned
+            ? DenseTensor<byte>.OfValues(Enumerable.Range(0, channels).Select(i => (byte)(i % 2 == 0 ? 255 : 0)).ToArray())
+            : DenseTensor<sbyte>.OfValues(Enumerable.Range(0, channels).Select(i => (sbyte)(i % 2 == 0 ? 127 : -128)).ToArray());
+        float[] Oracle()
+        {
+            int[] source = unsigned ? ((Tensor<byte>)input).ToArray().Select(v => (int)v).ToArray()
+                : ((Tensor<sbyte>)input).ToArray().Select(v => (int)v).ToArray();
+            int[] points = unsigned ? ((Tensor<byte>)zeros).ToArray().Select(v => (int)v).ToArray()
+                : ((Tensor<sbyte>)zeros).ToArray().Select(v => (int)v).ToArray();
+            int inner = input.Dims.Skip(axis + 1).Aggregate(1, (a, b) => a * b);
+            return source.Select((value, i) => (value - points[i / inner % channels]) * scales.GetValue(i / inner % channels)).ToArray();
+        }
+        var first = Output<float>(CPUExecutionProvider.DequantizeLinear(input, scales, zeros, axis, ExecutionOptions.Simd));
+        var held = first.ToArray();
+        for (int revision = 0; revision < 2; revision++)
+        {
+            var expected = Oracle().Select(BitConverter.SingleToInt32Bits).ToArray();
+            foreach (var options in new[] { ExecutionOptions.Scalar, ExecutionOptions.Simd })
+            {
+                var actual = Output<float>(CPUExecutionProvider.DequantizeLinear(input, scales, zeros, axis == 2 ? -1 : axis, options));
+                Assert.Equal(expected, actual.ToArray().Select(BitConverter.SingleToInt32Bits));
+            }
+            if (input is Tensor<byte> bytes) bytes.SetValue(0, 99); else ((Tensor<sbyte>)input).SetValue(0, -99);
+            if (zeros is Tensor<byte> byteZeros) byteZeros.SetValue(0, 0); else ((Tensor<sbyte>)zeros).SetValue(0, -128);
+            scales.SetValue(0, scales.GetValue(0) * 2);
+            Assert.Equal(held, first.ToArray());
+        }
+    }
+
     [Theory]
     [InlineData(0, new long[] { 2, -1, 1, -2 })]
     [InlineData(1, new long[] { -1, -1, 1, 1 })]

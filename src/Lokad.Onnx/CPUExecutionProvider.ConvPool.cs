@@ -39,7 +39,7 @@ public partial class CPUExecutionProvider
             int[]? st4 = strides is null ? null : new[] { 1, strides[0] };
             int[]? di4 = dilations is null ? null : new[] { 1, dilations[0] };
             int[]? pa4 = pads is null ? null : new[] { 0, pads[0], 0, pads[1] };
-            var conv = Conv(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options);
+            var conv = Conv(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options, pool);
             if (conv.Status != OpStatus.Success) return conv;
             var squeezed = Squeeze(conv.Outputs[0], DenseTensor<long>.OfValues(new long[] { 2 }), options);
             squeezed.Op = op;

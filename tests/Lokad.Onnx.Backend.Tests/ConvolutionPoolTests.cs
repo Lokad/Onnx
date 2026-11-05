@@ -8,7 +8,7 @@ public class ConvolutionPoolTests
 {
     public static IEnumerable<object[]> Cases()
     {
-        for (int shape = 0; shape < 6; shape++)
+        for (int shape = 0; shape < 9; shape++)
             foreach (bool scalar in new[] { false, true })
                 foreach (bool fused in new[] { false, true })
                     yield return new object[] { shape, scalar, fused };
@@ -43,7 +43,10 @@ public class ConvolutionPoolTests
             2 => (new[] { 2, 4, 7, 9 }, new[] { 6, 2, 3, 2 }, 2, new[] { 2, 1, 1, 2 }, new[] { 2, 1 }, new[] { 2, 1 }, "NOTSET"),
             3 => (new[] { 1, 3, 7, 8 }, new[] { 4, 3, 3, 3 }, 1, (int[]?)null, new[] { 2, 2 }, new[] { 1, 1 }, "SAME_UPPER"),
             4 => (new[] { 1, 3, 7, 8 }, new[] { 4, 3, 3, 3 }, 1, (int[]?)null, new[] { 2, 2 }, new[] { 1, 1 }, "SAME_LOWER"),
-            _ => (new[] { 1, 2, 8, 9 }, new[] { 3, 2, 2, 3 }, 1, (int[]?)null, new[] { 1, 2 }, new[] { 2, 1 }, "VALID")
+            5 => (new[] { 1, 2, 8, 9 }, new[] { 3, 2, 2, 3 }, 1, (int[]?)null, new[] { 1, 2 }, new[] { 2, 1 }, "VALID"),
+            6 => (new[] { 1, 4, 11 }, new[] { 6, 4, 1 }, 1, new[] { 0, 0 }, new[] { 1 }, new[] { 1 }, "NOTSET"),
+            7 => (new[] { 2, 4, 9 }, new[] { 6, 2, 3 }, 2, new[] { 1, 2 }, new[] { 2 }, new[] { 2 }, "NOTSET"),
+            _ => (new[] { 1, 3, 13 }, new[] { 3, 1, 3 }, 3, (int[]?)null, new[] { 2 }, new[] { 1 }, "SAME_UPPER")
         };
         var x = Values(c.x, 19); var w = Values(c.w, 27); var b = Values(new[] { c.w[0] }, 39);
         int[] originalX = Bits(x), originalW = Bits(w), originalB = Bits(b);
@@ -163,14 +166,9 @@ public class ConvolutionPoolTests
     }
 
     [Fact]
-    public void OneDimensionalAndDoubleFallbacksDoNotRent()
+    public void DoubleFallbackDoesNotRent()
     {
         var pool = new TensorBufferPool();
-        var x = Values(new[] { 1, 2, 5 }, 41); var w = Values(new[] { 3, 2, 1 }, 42);
-        var old = CPU.Conv(x, w, null, null, null, 1, null, null, null, ExecutionOptions.Default);
-        var actual = CPU.Conv(x, w, null, null, null, 1, null, null, null, ExecutionOptions.Default, pool);
-        Assert.Equal(OpStatus.Success, actual.Status);
-        Assert.Equal(Bits((Tensor<float>)old.Outputs[0]), Bits((Tensor<float>)actual.Outputs[0]));
         var xd = new DenseTensor<double>(new[] { 1.0, -2.0, 3.0, -4.0 }, new[] { 1, 1, 2, 2 });
         var wd = new DenseTensor<double>(new[] { 2.0 }, new[] { 1, 1, 1, 1 });
         var doubleResult = CPU.Conv(xd, wd, null, null, null, 1, null, null, null, ExecutionOptions.Default, pool);
