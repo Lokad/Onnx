@@ -66,6 +66,10 @@ AVX-512 CPUs. This path bounds its combined spatial patch/output allocation to
 buffers; scratch diagnostics sum requested rental bytes rather than measuring
 concurrent peak memory.
 
+Eligible short float matrix products can also pack the live right-hand operand
+for the existing AVX-512 kernels. This path requests at most 1 MiB of transient
+scratch and retains no packed payload between calls.
+
 Prepared 3×3 convolutions ordinarily use two-output Winograd tiles. Applications
 can opt into four-output tiles before creating execution contexts:
 

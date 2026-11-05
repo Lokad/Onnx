@@ -197,6 +197,11 @@ where T : unmanaged
             // those tails retain the existing FMA/separate-arithmetic boundary.
             bool wideDynamic = AblationSwitches.EnablePackedAvx512Rows && Avx512F.IsSupported;
             int blocked = m - (m % 2);
+            // Short even row groups amortize this bounded pack on AVX-512;
+            // other shapes retain the existing packing thresholds.
+            bool shortWidePacking = wideDynamic && m is >= 8 and < 64 && (m & 1) == 0
+                && n is >= 64 and <= 1024 && k is >= 64 and <= 1024
+                && (long)n * k <= 262144;
             if ((m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {
                 // P65: exact 3-row groups cover every row, so no scalar fixup follows.
@@ -218,7 +223,7 @@ where T : unmanaged
                     ArrayPool<float>.Shared.Return(packed);
                 }
             }
-            else if (blocked >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
+            else if ((blocked >= TiledPackMinRows || shortWidePacking) && (long)n * k <= TiledPackMaxElements)
             {
                 float[] packed = RentScratch<float>(n * k, options);
                 try
