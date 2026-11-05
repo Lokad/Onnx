@@ -20,6 +20,8 @@
   its fixed float reduction order and scalar fallback.
 - Stream eligible harmonic frequency masks, sine products and float sums into
   their output, preserving live operands, arithmetic order and scalar fallback.
+- Vectorize eligible standard LSTM cell activations while retaining scalar and
+  custom-activation paths and the existing projection and bias arithmetic.
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.

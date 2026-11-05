@@ -114,10 +114,12 @@ public partial class CPUExecutionProvider
         if (outputCount < 1 || outputCount > 3)
             return Failure(op, "LSTM supports 1..3 outputs but the node declares " + outputCount + ".");
         var gates = new Func<float, float>[actCount];
+        bool standardActivations = true;
         int alphaIndex = 0, betaIndex = 0;
         for (int i = 0; i < actCount; i++)
         {
             string name = acts[i]?.ToLowerInvariant() ?? "";
+            standardActivations &= name == (i % 3 == 0 ? "sigmoid" : "tanh");
             // ONNX/ORT consume each list independently, only for activations that
             // use that parameter. Missing entries use defaults; extras are ignored.
             bool usesAlpha = name is "affine" or "leakyrelu" or "thresholdedrelu" or "scaledtanh" or "hardsigmoid" or "elu";
@@ -152,8 +154,10 @@ public partial class CPUExecutionProvider
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
         int H = hiddenSize;
-        bool defaultCell = (activations is null || activations.Length == 0) && bd is not null
+        bool defaultCell = standardActivations && bd is not null
             && pd is null && !clip.HasValue && !inputForget;
+        bool vectorCell = defaultCell && H >= 16 && H <= 128
+            && opts.Tensor.UseSimd && System.Numerics.Vector.IsHardwareAccelerated;
         float[]? preparedInput = null, preparedRecurrent = null;
         if (seq == 1 && batch == 1 && numDirections == 1 && !reverse && inputSize == 640 && H == 640
             && opts.Tensor.UseSimd && System.Numerics.Vector.IsHardwareAccelerated)
@@ -233,7 +237,7 @@ public partial class CPUExecutionProvider
                     }
                     if (defaultCell)
                     {
-                        LstmDefaultCell(xw, hr, bd!.Buffer.Span.Slice(bDir, 8 * H), cv, hv, yArr.AsSpan(yOff, H));
+                        LstmDefaultCell(xw, hr, bd!.Buffer.Span.Slice(bDir, 8 * H), cv, hv, yArr.AsSpan(yOff, H), vectorCell);
                         continue;
                     }
                     for (int h = 0; h < H; h++)

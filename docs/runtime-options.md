@@ -12,6 +12,11 @@ execution diagnostics.
 `TensorExecutionOptions.MaxDegreeOfParallelism` defaults to one; eligible float
 MatMul kernels support opt-in parallel execution.
 
+Standard LSTM cells with 16-128 states can vectorize their activations when bias
+is present and clipping, peepholes and coupled gates are absent. Explicit and
+omitted default activation triples share dispatch. Vector activations can differ
+in last-bit rounding from `Scalar`.
+
 `ExecutionOptions.Memory` additionally allows eligible dead intermediate views to
 be released after their final use. The CLI `run` equivalent is `--optimize-memory`.
 

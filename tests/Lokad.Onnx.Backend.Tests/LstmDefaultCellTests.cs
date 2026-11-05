@@ -5,6 +5,7 @@ public class LstmDefaultCellTests
     [Theory]
     [InlineData("forward", 2)]
     [InlineData("forward", 16)]
+    [InlineData("forward", 17)]
     [InlineData("reverse", 24)]
     [InlineData("bidirectional", 128)]
     public void OmittedAndExplicitDefaultsKeepTrajectoryBitsAndOwnedInputs(string direction, int hidden)
@@ -39,18 +40,21 @@ public class LstmDefaultCellTests
         Assert.Equal(new[] { 9, 0 }, lens.ToArray());
     }
 
-    [Fact]
-    public void DefaultCellPreservesExceptionalValuesAndSignedZeros()
+    [Theory]
+    [InlineData(8)]
+    [InlineData(16)]
+    [InlineData(24)]
+    public void DefaultCellPreservesExceptionalValuesAndSignedZeros(int hidden)
     {
-        const int hidden = 8;
         float[] values = { float.NaN, float.PositiveInfinity, float.NegativeInfinity,
             float.MaxValue, -float.MaxValue, 0f, -0f, float.Epsilon };
         var x = new DenseTensor<float>(new float[2], new[] { 2, 1, 1 });
         var w = new DenseTensor<float>(new float[4 * hidden], new[] { 1, 4 * hidden, 1 });
         var r = new DenseTensor<float>(new float[4 * hidden * hidden], new[] { 1, 4 * hidden, hidden });
-        var b = new DenseTensor<float>(Enumerable.Range(0, 8 * hidden).Select(i => values[i % hidden]).ToArray(),
+        var b = new DenseTensor<float>(Enumerable.Range(0, 8 * hidden).Select(i => values[i % values.Length]).ToArray(),
             new[] { 1, 8 * hidden });
-        var c = new DenseTensor<float>(values.ToArray(), new[] { 1, 1, hidden });
+        var cellValues = Enumerable.Range(0, hidden).Select(i => values[i % values.Length]).ToArray();
+        var c = new DenseTensor<float>(cellValues.ToArray(), new[] { 1, 1, hidden });
         foreach (var options in new[] { ExecutionOptions.Scalar, ExecutionOptions.Default })
         {
             OpResult Run(string[]? acts) => CPUExecutionProvider.Lstm(x, w, r, b, null, null, c, null,
@@ -79,7 +83,7 @@ public class LstmDefaultCellTests
                 }
             }
         }
-        Assert.Equal(Bits(values), Bits(c.ToArray()));
+        Assert.Equal(Bits(cellValues), Bits(c.ToArray()));
     }
 
     static int[] Bits(float[] values) => values.Select(BitConverter.SingleToInt32Bits).ToArray();
