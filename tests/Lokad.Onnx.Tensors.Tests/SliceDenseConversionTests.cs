@@ -47,6 +47,52 @@ public class SliceDenseConversionTests
         parent.SetValue(27,-1);Assert.Equal(27,result.GetValue(0));
     }
 
+    [Theory]
+    [InlineData(13)]
+    [InlineData(35400)]
+    [InlineData(118200)]
+    public void ReversedRowsCopyEveryBitAndKeepIndependentStorage(int count)
+    {
+        const int offset=7,rows=4;
+        int columns=count+5;
+        var storage=new float[offset+rows*columns+11];
+        for(int i=0;i<storage.Length;i++)
+            storage[i]=BitConverter.Int32BitsToSingle(unchecked((int)(0x9e3779b9u*(uint)i)));
+        int[] special={0,int.MinValue,0x7f800000,unchecked((int)0xff800000),0x7fc01234,unchecked((int)0xffc02345)};
+        for(int i=0;i<special.Length;i++)storage[offset+columns+count+2-i]=BitConverter.Int32BitsToSingle(special[i]);
+        var before=Hash(storage);
+        var parent=new DenseTensor<float>(storage.AsMemory(offset,rows*columns),new[]{rows,columns});
+        var view=parent.Slice(new SliceIndex(1,3),new SliceIndex(count+2,2,-1));
+        var expected=new int[2*count];
+        for(int row=0;row<2;row++)for(int col=0;col<count;col++)
+            expected[row*count+col]=BitConverter.SingleToInt32Bits(storage[offset+(row+1)*columns+count+2-col]);
+        var dense=view.ToDenseTensor();
+        var reshaped=view.Reshape(2*count);
+        Assert.Equal(new[]{2,count},dense.Dimensions.ToArray());
+        Assert.Equal(expected,MemoryMarshal.Cast<float,int>(dense.Buffer.Span).ToArray());
+        Assert.Equal(expected,MemoryMarshal.Cast<float,int>(((DenseTensor<float>)reshaped).Buffer.Span).ToArray());
+        Assert.Equal(before,Hash(storage));
+        parent.SetValue(columns+count+2,123f);
+        Assert.Equal(expected[0],BitConverter.SingleToInt32Bits(dense.GetValue(0)));
+        dense.SetValue(0,456f);
+        Assert.Equal(123f,parent.GetValue(columns+count+2));
+        Assert.Equal(expected[0],BitConverter.SingleToInt32Bits(reshaped.GetValue(0)));
+        Assert.Equal(123f,view.ToDenseTensor().GetValue(0));
+    }
+
+    [Fact]
+    public void LastAxisReversalRetainsOuterGapsAndFallbacks()
+    {
+        var parent=Tensor<int>.Arange(0,60).Reshape(3,4,5);
+        var cropped=parent.Slice(new SliceIndex(1,3),new SliceIndex(1,3),new SliceIndex(4,1,-1));
+        Assert.Equal(new[]{29,28,27,34,33,32,49,48,47,54,53,52},cropped.ToDenseTensor().ToArray());
+        var nested=parent.Slice(new SliceIndex(1,3),new SliceIndex(1,3),SliceIndex.All)
+            .Slice(SliceIndex.All,SliceIndex.All,new SliceIndex(4,1,-1));
+        Assert.Equal(cropped.ToDenseTensor().ToArray(),nested.ToDenseTensor().ToArray());
+        var vector=Tensor<int>.Arange(0,7).Slice(new SliceIndex(6,null,-1));
+        Assert.Equal(new[]{6,5,4,3,2,1,0},vector.ToDenseTensor().ToArray());
+    }
+
     [Fact]
     public void FullViewStillOwnsItsCopy()
     {

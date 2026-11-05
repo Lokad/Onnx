@@ -216,7 +216,8 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
         return Clone().Reshape(dimensions);
     }
 
-    // Materialize unit-step row-major slices in contiguous regions. Reshape must
+    // Materialize unit-step row-major slices in contiguous regions. A reversed
+    // last axis copies the same region, then reverses its destination row. Reshape must
     // keep independent storage: removed rows leave gaps between those regions.
     bool TryCopyContiguousSlice([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out DenseTensor<T>? result)
     {
@@ -227,18 +228,22 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
             return false;
 
         int sourceStart = 0;
+        bool reverseLast = slices[^1].Step == -1;
         for (int axis = 0; axis < Rank; axis++)
         {
             var slice = slices[axis];
-            if (slice.IsIndex || slice.Step != 1 || slice.Count != this.dimensions[axis] ||
-                slice.Start < 0 || slice.Start > dense.dimensions[axis] - slice.Count)
+            int start = slice.Start;
+            if (reverseLast && axis == Rank - 1) start = checked(start - (slice.Count - 1));
+            else if (slice.Step != 1) return false;
+            if (slice.IsIndex || slice.Count != this.dimensions[axis] ||
+                start < 0 || start > dense.dimensions[axis] - slice.Count)
                 return false;
-            sourceStart = checked(sourceStart + slice.Start * dense.strides[axis]);
+            sourceStart = checked(sourceStart + start * dense.strides[axis]);
         }
 
         int innerAxis = Rank - 1;
         int blockLength = this.dimensions[innerAxis];
-        while (innerAxis > 0 && slices[innerAxis].Start == 0 &&
+        while (!reverseLast && innerAxis > 0 && slices[innerAxis].Start == 0 &&
                this.dimensions[innerAxis] == dense.dimensions[innerAxis])
         {
             innerAxis--;
@@ -258,7 +263,9 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
                 remaining /= this.dimensions[axis];
                 sourceOffset += coordinate * dense.strides[axis];
             }
-            source.Slice(sourceOffset, blockLength).CopyTo(destination.Slice(block * blockLength, blockLength));
+            var row = destination.Slice(block * blockLength, blockLength);
+            source.Slice(sourceOffset, blockLength).CopyTo(row);
+            if (reverseLast) row.Reverse();
         }
         return true;
     }
