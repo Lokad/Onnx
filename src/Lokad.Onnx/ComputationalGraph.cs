@@ -1566,7 +1566,16 @@ public partial class ComputationalGraph
                                 // Their executions own separate binding maps.
                                 MixInt(branch.Outputs.Count);
                                 foreach (var key in branch.Outputs.Keys) MixString(key);
-                                MixUlong((ulong)branch.ComputeStructureFingerprint(visiting));
+                                // Scramble a nested hash before feeding it into
+                                // the same FNV stream. Otherwise simultaneous
+                                // binding/declaration renames can cancel out.
+                                ulong child = (ulong)branch.ComputeStructureFingerprint(visiting);
+                                child ^= child >> 33;
+                                child *= 0xff51afd7ed558ccdUL;
+                                child ^= child >> 33;
+                                child *= 0xc4ceb9fe1a85ec53UL;
+                                child ^= child >> 33;
+                                MixUlong(child);
                             }
                     if (node.Inputs is null) MixInt(-1);
                     else

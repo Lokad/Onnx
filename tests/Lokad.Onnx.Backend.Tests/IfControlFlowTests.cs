@@ -306,6 +306,15 @@ public class IfControlFlowTests
     }
 
     [Fact]
+    public void BranchOutputRenamesDoNotDependOnObjectIdentity()
+    {
+        // Different branch identities expose cancellation between an enclosing
+        // output-name hash and the nested graph's declaration hash.
+        for (int instance = 0; instance < 8192; instance++)
+            MutatingBranchOutputNamesRefreshesParentCaptureReads(true);
+    }
+
+    [Fact]
     public void FailedBranchRetainsPriorResultAndReportsChildFailure()
     {
         var failing = new OnnxSubgraph

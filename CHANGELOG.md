@@ -30,6 +30,8 @@
   preserving the ordered arithmetic and live right-hand operands.
 - Vectorize float and double LeakyRelu and directly copy eligible Gather values,
   preserving exceptional values, scalar execution and independent output storage.
+- Prevent nested graph fingerprints from cancelling enclosing output-name changes,
+  so `If` branch output renames refresh captured-value lifetimes reliably.
 - Qualify both Paradee exports with frozen inputs and controlled-noise references
   on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
   use explicit signal-error bounds; they are not bitwise identical across engines.
