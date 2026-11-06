@@ -60,7 +60,7 @@ amplified by the harmonic synthesizer. Original exports contain
 
 The [fixed input tensors](../tests/Lokad.Onnx.Backend.Tests/fixtures/paradee-inputs.json)
 need no pronunciation library. Private model qualification uses
-`LONNX_PARADEE_FIXTURES` and the four tests in
+`LONNX_PARADEE_FIXTURES` and all six tests in
 [ParadeeRuntimeTests.cs](../tests/Lokad.Onnx.Backend.Tests/ParadeeRuntimeTests.cs).
 Ordinary CI runs the small operator fixtures offline; missing private models
 produce explicit skips. An explicitly supplied invalid asset root fails.

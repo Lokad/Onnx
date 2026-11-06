@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Refresh the [complete Paradee native comparison](tests/benchmarks/paradee-runtime-20261106-e42.md)
+  on the current runtime: original exports measure 0.95–1.31 times ORT latency
+  across four workloads with six fixed pairs each and every clock retained.
+
 - Prepare bounded snapshots of exactly recognized Fourier weight generators,
   checking every live operand before copying independently owned outputs.
   The [complete source comparison](tests/benchmarks/paradee-fourier-weights-20261106.md)

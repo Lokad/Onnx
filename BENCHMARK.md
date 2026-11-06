@@ -38,33 +38,32 @@ These are workload-specific observations on one host. DINOv2 remains excluded un
 ## Paradee runtime — unreleased, 2026-11-06
 
 The original Paradee-8M-v1.2 exports execute from fixed phoneme-ID tensors to
-owned waveforms. This separate **33.80-minute** comparison uses clean
-source `01eacacd`, .NET 11 RC3 and ORT 1.29.0 on the same VM. Each row retains
-six balanced independent process pairs, at least **32 calls and 40 seconds**
-of warmup per process, then 33 complete calls.
+owned waveforms. This fresh complete checkpoint uses clean source `e42a9028`,
+default .NET 11 RC3 and ORT 1.29.0 on the same VM. All 56 workers are retained
+across two prospectively fixed fair windows with identical binaries. Each row
+has six balanced independent engine pairs, at least **32 calls and 40 seconds**
+conditioning per process, then 33 complete calls.
 
 | Original export | Tokens / speed | Lokad.Onnx seconds | Microsoft ORT seconds | Paired Lokad / ORT | 95% interval |
 | --- | --- | ---: | ---: | ---: | --- |
-| Paradee FP32 | 14 / 1.0 | 0.027611 | 0.020634 | **1.3372** | [1.2636, 1.4151] |
-| Paradee FP32 | 62 / 0.8 | 0.073609 | 0.069981 | **1.0518** | [1.0352, 1.0687] |
-| Paradee INT8 | 14 / 1.0 | 0.035039 | 0.021946 | **1.5961** | [1.5543, 1.6391] |
-| Paradee INT8 | 62 / 0.8 | 0.078234 | 0.069825 | **1.1203** | [1.0943, 1.1469] |
+| Paradee FP32 | 14 / 1.0 | 0.025517 | 0.020952 | **1.2179** | [1.1901, 1.2463] |
+| Paradee FP32 | 62 / 0.8 | 0.068422 | 0.071793 | **0.9529** | [0.9331, 0.9731] |
+| Paradee INT8 | 14 / 1.0 | 0.029331 | 0.022419 | **1.3078** | [1.2626, 1.3546] |
+| Paradee INT8 | 62 / 0.8 | 0.069407 | 0.072240 | **0.9605** | [0.9297, 0.9923] |
 
 Times are arithmetic process means; ratios are geometric paired means with
 log-Student-t intervals (df 5). **ORT performance parity remains unproved.** INT8 weights are dequantized into FP32.
 Controlled-noise companions separately qualify exact durations, upstream error
 `<=1e-4`, waveform peak error `<=1e-3` and signal-to-error ratio `>=50 dB`.
-See the [current report](tests/benchmarks/paradee-runtime-20261106.md) and
-[all clocks and identities](tests/benchmarks/paradee-runtime-20261106.json).
-The [initial report](tests/benchmarks/paradee-runtime-20261104.md) retains its
-earlier runtime and ten-second protocol; those observations are not pooled here.
-The seven-model 0.5.0 figures above retain their original source and date.
-
-Later [harmonic](tests/benchmarks/paradee-harmonic-20261106.md),
+See the [current report](tests/benchmarks/paradee-runtime-20261106-e42.md) and
+[all clocks and identities](tests/benchmarks/paradee-runtime-20261106-e42.json).
+The [previous native checkpoint](tests/benchmarks/paradee-runtime-20261106.md)
+retains its earlier runtime; no source ratios are multiplied into these results.
+The intervening [harmonic](tests/benchmarks/paradee-harmonic-20261106.md),
 [wider Fourier](tests/benchmarks/paradee-wide-fourier-20261106.md) and
-[Fourier weight snapshot](tests/benchmarks/paradee-fourier-weights-20261106.md)
-source comparisons evaluate subsequent runtime changes. They do not replace the managed/ORT
-measurements above; a fresh native comparison remains pending.
+[weight-snapshot](tests/benchmarks/paradee-fourier-weights-20261106.md) changes
+are included in this measured runtime. The seven-model 0.5.0 figures above
+retain their original source and date.
 
 ## Running comparisons
 
