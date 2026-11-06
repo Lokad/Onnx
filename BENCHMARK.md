@@ -82,6 +82,11 @@ retains all six pairs per case: FP32 at 62 tokens is about 2% faster, while
 the other three intervals include no change. The native table above retains
 its measured e42 source and date.
 
+A [pooled-Gather experiment](tests/benchmarks/paradee-gather-pool-20261106.md)
+remains unmerged: short INT8 improves 4.7%, while short FP32 slows 2.3%; both
+effects have intervals excluding parity. Its allocation reduction establishes
+no common latency benefit. All observations remain in the report.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.
