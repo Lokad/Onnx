@@ -38,54 +38,40 @@ These are workload-specific observations on one host. DINOv2 remains excluded un
 ## Paradee runtime — unreleased, 2026-11-06
 
 The original Paradee-8M-v1.2 exports execute from fixed phoneme-ID tensors to
-owned waveforms. This fresh complete checkpoint uses clean source `e42a9028`,
-default .NET 11 RC3 and ORT 1.29.0 on the same VM. All 56 workers are retained
-across two prospectively fixed fair windows with identical binaries. Each row
-has six balanced independent engine pairs, at least **32 calls and 40 seconds**
-conditioning per process, then 33 complete calls.
+owned waveforms. This complete checkpoint uses clean source `b47c72c9`
+(runtime code `6d7d97c5`), default .NET 11 RC3 and ORT 1.29.0 on the same VM.
+All 56 workers and 24 pairs remain. Every row has six balanced independent
+engine pairs, at least **32 calls and 40 seconds** conditioning per process,
+then 33 complete calls.
 
 | Original export | Tokens / speed | Lokad.Onnx seconds | Microsoft ORT seconds | Paired Lokad / ORT | 95% interval |
 | --- | --- | ---: | ---: | ---: | --- |
-| Paradee FP32 | 14 / 1.0 | 0.025517 | 0.020952 | **1.2179** | [1.1901, 1.2463] |
-| Paradee FP32 | 62 / 0.8 | 0.068422 | 0.071793 | **0.9529** | [0.9331, 0.9731] |
-| Paradee INT8 | 14 / 1.0 | 0.029331 | 0.022419 | **1.3078** | [1.2626, 1.3546] |
-| Paradee INT8 | 62 / 0.8 | 0.069407 | 0.072240 | **0.9605** | [0.9297, 0.9923] |
+| Paradee FP32 | 14 / 1.0 | 0.022481 | 0.020406 | **1.1017** | [1.0862, 1.1173] |
+| Paradee FP32 | 62 / 0.8 | 0.060078 | 0.069696 | **0.8618** | [0.8423, 0.8818] |
+| Paradee INT8 | 14 / 1.0 | 0.026512 | 0.021962 | **1.2072** | [1.1878, 1.2269] |
+| Paradee INT8 | 62 / 0.8 | 0.061792 | 0.069588 | **0.8879** | [0.8744, 0.9016] |
 
 Times are arithmetic process means; ratios are geometric paired means with
-log-Student-t intervals (df 5). **ORT performance parity remains unproved.** INT8 weights are dequantized into FP32.
-Controlled-noise companions separately qualify exact durations, upstream error
-`<=1e-4`, waveform peak error `<=1e-3` and signal-to-error ratio `>=50 dB`.
-See the [current report](tests/benchmarks/paradee-runtime-20261106-e42.md) and
-[all clocks and identities](tests/benchmarks/paradee-runtime-20261106-e42.json).
-The [previous native checkpoint](tests/benchmarks/paradee-runtime-20261106.md)
-retains its earlier runtime; no source ratios are multiplied into these results.
-The intervening [harmonic](tests/benchmarks/paradee-harmonic-20261106.md),
-[wider Fourier](tests/benchmarks/paradee-wide-fourier-20261106.md) and
-[weight-snapshot](tests/benchmarks/paradee-fourier-weights-20261106.md) changes
-are included in this measured runtime. The seven-model 0.5.0 figures above
-retain their original source and date.
+two-sided log-Student-t intervals (df 5). **ORT performance parity remains unproved.**
+INT8 weights are dequantized into FP32. Controlled-noise companions separately
+qualify exact durations, upstream error `<=1e-4`, waveform peak `<=1e-3`
+and signal-to-error ratio `>=50 dB` on both frameworks.
+See the [current report](tests/benchmarks/paradee-runtime-20261106-b47.md) and
+[all clocks and identities](tests/benchmarks/paradee-runtime-20261106-b47.json).
+The [previous checkpoint](tests/benchmarks/paradee-runtime-20261106-e42.md)
+keeps its original runtime; no source ratios are multiplied into these results.
+The seven-model 0.5.0 figures above retain their original source and date.
 
-The later [live LSTM panel source comparison](tests/benchmarks/paradee-lstm-panels-20261106.md)
-retains six paired processes per case and all 56 workers. Its short FP32/INT8
-latency estimates are 4.6%/3.0% lower; all four confidence intervals include
-no change. This copy-only change is retained with that uncertainty explicit.
-The native table above keeps its measured e42 source and requires a fresh
-comparison before reporting updated ORT ratios.
-
-The [vector Exp/square source comparison](tests/benchmarks/paradee-arithmetic-20261106.md)
-retains every clock from six paired processes per case and records each
-confidence interval. It compares source variants; the native table above
-keeps its measured e42 product and date.
-
-The [packed-tail source comparison](tests/benchmarks/paradee-packed-tails-20261106.md)
-retains all six pairs per case: FP32 at 62 tokens is about 2% faster, while
-the other three intervals include no change. The native table above retains
-its measured e42 source and date.
+The retained [live LSTM panels](tests/benchmarks/paradee-lstm-panels-20261106.md),
+[vector Exp/square](tests/benchmarks/paradee-arithmetic-20261106.md) and
+[packed-tail](tests/benchmarks/paradee-packed-tails-20261106.md) source reports
+preserve their own observations and uncertainty. Their runtime changes are
+included in this fresh actual ORT checkpoint.
 
 A [pooled-Gather experiment](tests/benchmarks/paradee-gather-pool-20261106.md)
 remains unmerged: short INT8 improves 4.7%, while short FP32 slows 2.3%; both
-effects have intervals excluding parity. Its allocation reduction establishes
-no common latency benefit. All observations remain in the report.
+effects have intervals excluding parity. Lower allocation establishes no common
+latency benefit. All observations remain in that report.
 
 ## Running comparisons
 
