@@ -78,6 +78,10 @@ also remains unmerged: all four source confidence intervals include no change,
 and specific late wide/direct-wrapper corroboration was not established.
 Every pair and the failed trace check remain recorded; the native table is unchanged.
 
+A [live-reference lookup experiment](tests/benchmarks/paradee-live-refs-20261106.md)
+remains unmerged: short-input estimates improved by 0.6–0.8%, but all four source
+confidence intervals include no change. The actual native table is unchanged.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.
