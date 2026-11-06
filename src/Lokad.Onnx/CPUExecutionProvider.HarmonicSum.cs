@@ -66,7 +66,7 @@ public partial class CPUExecutionProvider
                         var mask = Vector512.ConditionalSelect(Vector512.LessThan(frequency, Vector512.Create(limit)), Vector512.Create(1f), Vector512<float>.Zero);
                         var gain = mask * amplitudeVector;
                         var argument = Vector512.Create(f[r]) * phaseVector;
-                        var sine = Vector512.Sin(argument);
+                        var sine = HarmonicSin(argument);
                         var product = sine * gain;
                         sum += product;
                     }
@@ -94,6 +94,29 @@ public partial class CPUExecutionProvider
             }
         }
         return output;
+    }
+
+    // sin(r) = r - r^3/3! + ... + r^13/13!. Splitting pi keeps
+    // cancellation accurate for the bounded interval; the existing BCL
+    // implementation handles every vector outside it, including NaNs.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Vector512<float> HarmonicSin(Vector512<float> x)
+    {
+        if (!Vector512.LessThanOrEqualAll(Vector512.Abs(x), Vector512.Create(4096f))) return Vector512.Sin(x);
+        var k = Vector512.Round(x * Vector512.Create(0.31830988618379067154f));
+        var r = Vector512.FusedMultiplyAdd(k, Vector512.Create(-3.14159274101257324219f), x);
+        r = Vector512.FusedMultiplyAdd(k, Vector512.Create(8.7422776573475857731e-8f), r);
+        var square = r * r;
+        var p = Vector512.Create(1f / 6227020800f);
+        p = Vector512.FusedMultiplyAdd(p, square, Vector512.Create(-1f / 39916800f));
+        p = Vector512.FusedMultiplyAdd(p, square, Vector512.Create(1f / 362880f));
+        p = Vector512.FusedMultiplyAdd(p, square, Vector512.Create(-1f / 5040f));
+        p = Vector512.FusedMultiplyAdd(p, square, Vector512.Create(1f / 120f));
+        p = Vector512.FusedMultiplyAdd(p, square, Vector512.Create(-1f / 6f));
+        var sine = Vector512.FusedMultiplyAdd(r * square, p, r);
+        var sign = Vector512.ShiftLeft(Vector512.ConvertToInt32(k) & Vector512.Create(1), 31);
+        sine = (sine.AsInt32() ^ sign).AsSingle();
+        return Vector512.ConditionalSelect(Vector512.Equals(x, Vector512<float>.Zero), x, sine);
     }
 
     static OpResult HarmonicPrimitives(ITensor? pitch, ITensor? harmonics, ITensor? limit, ITensor? amplitude,

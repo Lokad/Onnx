@@ -82,6 +82,10 @@ A [live-reference lookup experiment](tests/benchmarks/paradee-live-refs-20261106
 remains unmerged: short-input estimates improved by 0.6–0.8%, but all four source
 confidence intervals include no change. The actual native table is unchanged.
 
+A [bounded harmonic-sine source comparison](tests/benchmarks/paradee-harmonic-sine-20261106.md)
+shows 3–6% lower latency across all four original Paradee workloads, with all
+24 pairs favorable. This source result does not replace the actual native table.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.

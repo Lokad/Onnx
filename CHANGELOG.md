@@ -16,9 +16,10 @@
   [complete source comparison](tests/benchmarks/paradee-lstm-panels-20261106.md)
   has lower latency estimates across all four Paradee cases; every confidence
   interval includes no change. Fresh ORT parity remains unproven.
-- Refresh the [complete Paradee native comparison](tests/benchmarks/paradee-runtime-20261106-e42.md)
-  on the current runtime: original exports measure 0.95–1.31 times ORT latency
-  across four workloads with six fixed pairs each and every clock retained.
+- Retain the [latest completed Paradee native checkpoint](tests/benchmarks/paradee-runtime-20261106-b47.md):
+  both 62-token workloads pass the parity gate; the 14-token FP32/INT8 workloads
+  remain 10%/21% slower in that checkpoint. Subsequent source gains require a
+  fresh committed-product comparison and are not multiplied into these ratios.
 
 - Prepare bounded snapshots of exactly recognized Fourier weight generators,
   checking every live operand before copying independently owned outputs.
@@ -30,11 +31,14 @@
   The [complete source comparison](tests/benchmarks/paradee-wide-fourier-20261106.md)
   shows a 3.2% gain for short FP32 Paradee; the other intervals include no change,
   and short INT8's point estimate is 1.1% slower. ORT parity remains unproved.
-- Use sixteen float lanes for eligible harmonic synthesis on AVX-512 CPUs,
-  preserving the existing sine and accumulation arithmetic. The
-  [complete source comparison](tests/benchmarks/paradee-harmonic-20261106.md)
-  measured about 5–7% lower whole-model latency across the four Paradee workloads;
-  the short INT8 confidence interval includes no change. ORT parity remains unproved.
+- Accelerate eligible harmonic synthesis on AVX-512 CPUs with a bounded
+  split-pi sine polynomial, retaining scalar/portable paths, large/nonfinite
+  argument fallback, signed zeros and the existing accumulation order. The
+  [complete source comparison](tests/benchmarks/paradee-harmonic-sine-20261106.md)
+  shows 3–6% lower latency across all four original Paradee workloads, with all
+  confidence intervals below no change. Numerical bounds remain unchanged;
+  final committed-product ORT parity is still unproved.
+
 - Require all six private Paradee model checks before comparisons, including
   waveform-only companions. Condition each engine for at least 40 seconds and
   32 calls before timing, allowing default .NET tiering to settle.

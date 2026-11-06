@@ -70,7 +70,7 @@ public class HarmonicSumFusionTests
             Assert.Equal(1, GraphFusion.FuseHarmonicSum(fused, GraphFacts.Build(fused)));
             Assert.Equal(OpType.FusedHarmonicSum, Assert.Single(fused.Nodes).Op);
             var expected = Run(plain, feed, options); var actual = Run(fused, feed, options); var saved = actual.ToArray();
-            EqualBits(expected.ToArray(), saved); Assert.Equal(expected.Dimensions.ToArray(), actual.Dimensions.ToArray());
+            EqualFusedOutput(expected.ToArray(), saved, options, width); Assert.Equal(expected.Dimensions.ToArray(), actual.Dimensions.ToArray());
             foreach (var pair in feed)
             {
                 var tensor = (Tensor<float>)pair.Value;
@@ -78,7 +78,7 @@ public class HarmonicSumFusionTests
                 EqualBits(before[pair.Key], tensor.ToArray());
                 if (tensor.Length == 0) continue;
                 float previous = tensor.GetValue(0); tensor.SetValue(0, .375f);
-                EqualBits(Run(plain, feed, options).ToArray(), Run(fused, feed, options).ToArray());
+                EqualFusedOutput(Run(plain, feed, options).ToArray(), Run(fused, feed, options).ToArray(), options, width);
                 EqualBits(saved, actual.ToArray()); tensor.SetValue(0, previous);
             }
         }
@@ -164,6 +164,60 @@ public class HarmonicSumFusionTests
         Assert.Equal(OpStatus.Success, result.Status);
         Assert.Equal(new[] { 2, 8192 }, Assert.Single(result.Outputs).Dims);
         Assert.True(allocated < 100000, $"Allocated {allocated} bytes for a 64 KB output.");
+    }
+
+    [Fact]
+    public void BoundedWideSineMatchesIndependentDoubleSineAcrossItsDomain()
+    {
+        var random = new Random(719481);
+        var lane = new float[16];
+        for (int batch = 0; batch < 65536; batch++)
+        {
+            for (int j = 0; j < lane.Length; j++) lane[j] = (float)(8192 * random.NextDouble() - 4096);
+            var x = System.Runtime.Intrinsics.Vector512.Create((ReadOnlySpan<float>)lane);
+            var actual = CPUExecutionProvider.HarmonicSin(x);
+            for (int j = 0; j < lane.Length; j++)
+                Assert.True(Math.Abs(actual[j] - (float)Math.Sin(lane[j])) <= 3e-7f,
+                    $"Bounded sine at {lane[j]:R}: {actual[j]:R}");
+        }
+        foreach (float x in new[] { 0f, -0f, float.Epsilon, -float.Epsilon, -4096f, 4096f })
+        {
+            float actual = CPUExecutionProvider.HarmonicSin(System.Runtime.Intrinsics.Vector512.Create(x))[0];
+            Assert.True(Math.Abs(actual - (float)Math.Sin(x)) <= 3e-7f);
+            if (x == 0) Assert.Equal(BitConverter.SingleToInt32Bits(x), BitConverter.SingleToInt32Bits(actual));
+        }
+    }
+
+    [Fact]
+    public void BoundedWideSineDelegatesMixedSpecialAndOutOfRangeVectors()
+    {
+        var lane = new float[16];
+        foreach (float outside in new[] { MathF.BitIncrement(4096), MathF.BitDecrement(-4096),
+            float.MaxValue, -float.MaxValue, float.PositiveInfinity, float.NegativeInfinity, float.NaN })
+        for (int changed = 0; changed < lane.Length; changed++)
+        {
+            for (int j = 0; j < lane.Length; j++) lane[j] = (j - 8) * .375f;
+            lane[changed] = outside;
+            var x = System.Runtime.Intrinsics.Vector512.Create((ReadOnlySpan<float>)lane);
+            var expected = System.Runtime.Intrinsics.Vector512.Sin(x); var actual = CPUExecutionProvider.HarmonicSin(x);
+            for (int j = 0; j < lane.Length; j++)
+                if (float.IsNaN(expected[j])) Assert.True(float.IsNaN(actual[j]));
+                else Assert.Equal(BitConverter.SingleToInt32Bits(expected[j]), BitConverter.SingleToInt32Bits(actual[j]));
+        }
+    }
+
+    static void EqualFusedOutput(float[] expected, float[] actual, ExecutionOptions options, int width)
+    {
+        bool boundedWide = options.Tensor.UseSimd && options.Tensor.UseIntrinsics
+            && options.Tensor.MaxDegreeOfParallelism == 1 && System.Runtime.Intrinsics.Vector512.IsHardwareAccelerated
+            && width >= 16 && width % System.Numerics.Vector<float>.Count == 0;
+        if (!boundedWide) { EqualBits(expected, actual); return; }
+        Assert.Equal(expected.Length, actual.Length);
+        for (int i = 0; i < expected.Length; i++)
+            if (float.IsNaN(expected[i])) Assert.True(float.IsNaN(actual[i]));
+            else if (float.IsInfinity(expected[i])) Assert.Equal(expected[i], actual[i]);
+            else Assert.True(float.IsFinite(actual[i]) && Math.Abs(actual[i] - expected[i]) / Math.Max(1, Math.Abs(expected[i])) <= 1e-5f,
+                $"Harmonic scaled error at {i}: expected={expected[i]:R}, actual={actual[i]:R}");
     }
 
     static void EqualBits(float[] expected, float[] actual)
