@@ -14,9 +14,10 @@ def digest(path):
 def qualify(path,core):
     document=ET.parse(path)
     results=document.findall('.//{*}UnitTestResult')
-    expected={'Fp32ControlledNoiseMatchesOrt','Fp32OriginalExportRuns','Int8ControlledNoiseMatchesOrt','Int8OriginalExportRuns'}
-    evidence.require(len(results)==4 and {r.attrib['testName'].split('.')[-1] for r in results}==expected,
-                     'Paradee qualification must contain exactly the four model tests')
+    expected={'Fp32ControlledNoiseMatchesOrt','Fp32OriginalExportRuns','Int8ControlledNoiseMatchesOrt','Int8OriginalExportRuns',
+              'Fp32WaveformOnlyMatchesOrt','Int8WaveformOnlyMatchesOrt'}
+    evidence.require(len(results)==6 and {r.attrib['testName'].split('.')[-1] for r in results}==expected,
+                     'Paradee qualification must contain exactly the six model tests')
     for result in results:
         evidence.require(result.attrib['outcome']=='Passed','Paradee model qualification did not pass')
         text=''.join(result.itertext())
@@ -62,7 +63,7 @@ def main():
     parser.add_argument('--native-python',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--cpu',type=int,default=2)
-    parser.add_argument('--max-seconds',type=int,default=1700)
+    parser.add_argument('--max-seconds',type=int,default=2700)
     parser.add_argument('--pilot',action='store_true')
     parser.add_argument('--cases',nargs='+')
     args=parser.parse_args()
@@ -86,7 +87,9 @@ def main():
         evidence.require(item.get('stochastic_outputs') is True,'Paradee timings must identify their stochastic outputs')
         evidence.require(digest(item['model'])==item['model_sha256'],'Paradee model identity changed')
         timing=item['timing']
-        wanted=dict(warmup_calls=3,warmup_seconds=0,measured_calls=3) if args.pilot else dict(warmup_calls=32,warmup_seconds=10,measured_calls=33)
+        # Default .NET tiering continued beyond 20 seconds in fixed 90-second
+        # timecourses. Keep both engines on the same conditioning schedule.
+        wanted=dict(warmup_calls=3,warmup_seconds=0,measured_calls=3) if args.pilot else dict(warmup_calls=32,warmup_seconds=40,measured_calls=33)
         evidence.require(timing==wanted,'Paradee timing schedule changed')
     versions=json.loads(subprocess.check_output([str(args.native_python),'-c',
         'import json,numpy,onnxruntime; print(json.dumps(dict(numpy=numpy.__version__,onnxruntime=onnxruntime.__version__)))'],text=True))
@@ -94,12 +97,12 @@ def main():
     env={k:v for k,v in os.environ.items() if not k.lower().startswith(('dotnet_','complus_','lokad_','lonnx_'))}
     pairs=1 if args.pilot else 6;workers=[];comparisons=[];index=0
     deadline=started+args.max_seconds
-    record=dict(protocol='paradee-runtime-pilot-v1' if args.pilot else 'paradee-runtime-v1',started_utc=started_utc,
+    record=dict(protocol='paradee-runtime-pilot-v1' if args.pilot else 'paradee-runtime-v2',started_utc=started_utc,
                 manifest=str(args.manifest),manifest_sha256=digest(args.manifest),core_sha256=core,
                 source_sha=source_sha,source_dirty=source_dirty,runner_sha256=digest(args.runner),
                 native_worker_sha256=digest(Path(graph.__file__).with_name('graph_native.py')),
                 qualification=qualification,native_versions=versions,
-                cases=cases,pairs=pairs,cpu=args.cpu,workers=workers,comparisons=comparisons)
+                cases=cases,pairs=pairs,cpu=args.cpu,timing=wanted,workers=workers,comparisons=comparisons)
     def child(case,engine,mode,pair):
         nonlocal index
         index+=1

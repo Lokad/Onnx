@@ -181,21 +181,27 @@ python eng/bench-paradee.py --manifest /path/to/benchmark.json \
   --qualification /path/to/paradee-default.trx \
   --dotnet /home/lokad/.dotnet11/dotnet \
   --native-python /path/to/ort-environment/bin/python \
-  --output /path/to/fresh-results --cpu 2 --max-seconds 1700
+  --output /path/to/fresh-results --cpu 2 --max-seconds 2700
 ```
 
-Reserve exclusive access to the shared VM first. Each engine uses at least 32
-warmup calls and ten seconds of warmup, then 33 measured calls including Reset,
+Reserve a contiguous 45-minute window on the shared VM first. Each engine uses at least 32
+warmup calls and 40 seconds of warmup, then 33 measured calls including Reset,
 execution and complete output copies. Six balanced independent process pairs
 produce process means, geometric paired ratios and a two-sided 95% log-Student-t
 interval (df 5). Setup and first-use clocks are retained separately. The whole
-invocation has a hard deadline, at most 3,600 seconds.
+invocation has a hard deadline, at most 3,600 seconds. The v2 protocol allows
+default .NET tiering to settle: fixed 90-second timecourses showed compilation
+continuing for 18–23 seconds and latency stabilizing after roughly 20–30 seconds.
+See the [conditioning evidence](../tests/benchmarks/paradee-conditioning-20261106.md).
+Historical v1 observations retain their original 10-second conditioning; do not
+combine their scores with v2 process pairs.
 
 Original graphs contain random noise: their manifest explicitly declares
 `stochastic_outputs: true`. Workers check shapes, finite values, unchanged
 inputs and retained copies without claiming sample equality across different
-draws. The four private model tests qualify the actual core with controlled-noise
-companions first; see [numerical limits](../docs/model-support.md#paradee-runtime).
+draws. All six private model tests must qualify the actual core first, including
+both original exports, controlled-noise graphs and waveform-only companions;
+see [numerical limits](../docs/model-support.md#paradee-runtime).
 A separate `--pilot` uses only three warmup and three measured calls and cannot
 establish performance parity. Preserve every attempted cohort and label pilots
 separately. `--cases` can split a prospective cohort across reserved VM windows;
