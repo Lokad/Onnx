@@ -128,6 +128,29 @@ public class HarmonicSumFusionTests
         Assert.Equal(0, GraphFusion.FuseHarmonicSum(graph, GraphFacts.Build(graph)));
     }
 
+    [SkippableTheory]
+    [InlineData(16)] [InlineData(24)] [InlineData(264)] [InlineData(35400)]
+    public void WideDefaultAndPortablePathsPreserveLargePhaseArithmetic(int width)
+    {
+        Skip.If(!System.Runtime.Intrinsics.Vector512.IsHardwareAccelerated, "Requires hardware-accelerated 512-bit vectors.");
+        var feed = Feed(width);
+        feed["phase"] = new DenseTensor<float>(Enumerable.Range(0, 2 * width)
+            .Select(i => ((i % 31) - 15) * 80000.25f + (i % 7) * .0009765625f).ToArray(), new[] { 2, 1, width });
+        feed["harmonics"] = new DenseTensor<float>(Enumerable.Range(1, 64).Select(i => (float)i).ToArray(), new[] { 1, 64, 1 });
+        feed["frequencies"] = new DenseTensor<float>(Enumerable.Range(1, 64).Select(i => i * (float)(2 * Math.PI)).ToArray(), new[] { 1, 64, 1 });
+        feed["limit"] = new DenseTensor<float>(new[] { 12000f }, Array.Empty<int>());
+        foreach (bool keep in new[] { false, true })
+        {
+            var plain = Graph(feed, keep: keep); var fused = Graph(feed, keep: keep);
+            Assert.Equal(1, GraphFusion.FuseHarmonicSum(fused, GraphFacts.Build(fused)));
+            var expected = Run(plain, feed, ExecutionOptions.Default);
+            var actual = Run(fused, feed, ExecutionOptions.Default);
+            EqualBits(expected.ToArray(), actual.ToArray());
+            Assert.Equal(expected.Dimensions.ToArray(), actual.Dimensions.ToArray());
+            EqualBits(expected.ToArray(), Run(fused, feed, ExecutionOptions.Simd).ToArray());
+        }
+    }
+
     [Fact]
     public void AlignedKernelAllocatesOnlyTheSmallOutput()
     {

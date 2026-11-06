@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Use sixteen float lanes for eligible harmonic synthesis on AVX-512 CPUs,
+  preserving the existing sine and accumulation arithmetic. The
+  [complete source comparison](tests/benchmarks/paradee-harmonic-20261106.md)
+  measured about 5–7% lower whole-model latency across the four Paradee workloads;
+  the short INT8 confidence interval includes no change. ORT parity remains unproved.
 - Require all six private Paradee model checks before comparisons, including
   waveform-only companions. Condition each engine for at least 40 seconds and
   32 calls before timing, allowing default .NET tiering to settle.
