@@ -72,6 +72,11 @@ no change. This copy-only change is retained with that uncertainty explicit.
 The native table above keeps its measured e42 source and requires a fresh
 comparison before reporting updated ORT ratios.
 
+The [vector Exp/square source comparison](tests/benchmarks/paradee-arithmetic-20261106.md)
+retains every clock from six paired processes per case and records each
+confidence interval. It compares source variants; the native table above
+keeps its measured e42 product and date.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.

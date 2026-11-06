@@ -193,7 +193,14 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
-            case TensorElementType.Float: return Success(op, ((Tensor<float>)A).BroadcastApply((Tensor<float>)B, MathF.Pow, opts.Tensor));
+            case TensorElementType.Float:
+                if (opts.Tensor.UseSimd && opts.Tensor.UseIntrinsics && Vector.IsHardwareAccelerated
+                    && opts.Tensor.MaxDegreeOfParallelism == 1 && A is DenseTensor<float> dense
+                    && !dense.IsReversedStride && dense.Buffer.Length == dense.Length
+                    && dense.strides.SequenceEqual(ArrayUtilities.GetStrides(dense.dimensions))
+                    && B is Tensor<float> { Rank: 0, Length: 1 } exponent && exponent.GetValue(0) == 2f)
+                    return Success(op, dense.BroadcastApply<MultiplyBroadcast<float>>(dense, opts.Tensor));
+                return Success(op, ((Tensor<float>)A).BroadcastApply((Tensor<float>)B, MathF.Pow, opts.Tensor));
             case TensorElementType.Double: return Success(op, ((Tensor<double>)A).BroadcastApply((Tensor<double>)B, Math.Pow, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply((Tensor<int>)B, IntPow, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply((Tensor<long>)B, LongPow, opts.Tensor));

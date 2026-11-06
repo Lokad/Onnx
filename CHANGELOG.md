@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Use existing vector operations for eligible dense float Exp and live scalar
+  Pow(x, 2), retaining all other execution paths and numerical bounds. See the
+  [complete four-case source comparison](tests/benchmarks/paradee-arithmetic-20261106.md)
+  for paired estimates and uncertainty. Fresh ORT parity remains unproven.
 - Reuse the existing SIMD transpose for live LSTM projection panels, preserving
   every weight bit and the existing arithmetic. The
   [complete source comparison](tests/benchmarks/paradee-lstm-panels-20261106.md)

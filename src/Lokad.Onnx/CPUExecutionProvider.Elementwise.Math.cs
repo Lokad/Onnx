@@ -6,8 +6,22 @@ using static OpResult;
 
 public partial class CPUExecutionProvider
 {
-    public static OpResult Exp(ITensor? input, ExecutionOptions? options) =>
-        FloatingMap(OpType.Exp, input, MathF.Exp, Math.Exp, options);
+    public static OpResult Exp(ITensor? input, ExecutionOptions? options)
+    {
+        if (input is DenseTensor<float> dense && input.GetType() == typeof(DenseTensor<float>)
+            && !dense.IsReversedStride && dense.Buffer.Length == dense.Length
+            && dense.strides.SequenceEqual(ArrayUtilities.GetStrides(dense.dimensions)))
+        {
+            var tensor = (options ?? ExecutionOptions.Default).Validated().Tensor;
+            if (tensor.UseSimd && tensor.UseIntrinsics && Vector.IsHardwareAccelerated
+                && tensor.MaxDegreeOfParallelism == 1)
+            {
+                Profiler.StartOpStage(OpStage.Math);
+                return Success(OpType.Exp, dense.VectorizedApply(Vector.Exp, MathF.Exp, tensor));
+            }
+        }
+        return FloatingMap(OpType.Exp, input, MathF.Exp, Math.Exp, options);
+    }
 
     public static OpResult Round(ITensor? input, ExecutionOptions? options) =>
         FloatingMap(OpType.Round, input, MathF.Round, Math.Round, options);
