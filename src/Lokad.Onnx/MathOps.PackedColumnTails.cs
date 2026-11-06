@@ -6,6 +6,38 @@ namespace Lokad.Onnx;
 
 public partial class MathOps
 {
+    // Two adjacent full tail lanes share the same live A broadcasts.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    internal static unsafe void PackedColumnTailSixteenRows(int rows,int reduction,int outputStride,int packedStride,float* a,float* b,float* c)
+    {
+        for(int row=0;row<rows;row+=8)
+        {
+            float* a0=a+row*reduction;float* a1=a0+reduction;float* a2=a1+reduction;float* a3=a2+reduction;
+            float* a4=a3+reduction;float* a5=a4+reduction;float* a6=a5+reduction;float* a7=a6+reduction;
+            float* output=c+row*outputStride;
+            var c0=*(Vector512<float>*)output;var c1=*(Vector512<float>*)(output+outputStride);
+            var c2=*(Vector512<float>*)(output+2*outputStride);var c3=*(Vector512<float>*)(output+3*outputStride);
+            var c4=*(Vector512<float>*)(output+4*outputStride);var c5=*(Vector512<float>*)(output+5*outputStride);
+            var c6=*(Vector512<float>*)(output+6*outputStride);var c7=*(Vector512<float>*)(output+7*outputStride);
+            for(int j=0;j<reduction;j++)
+            {
+                var bv=*(Vector512<float>*)(b+j*packedStride);
+                c0=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a0[j]),c0);
+                c1=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a1[j]),c1);
+                c2=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a2[j]),c2);
+                c3=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a3[j]),c3);
+                c4=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a4[j]),c4);
+                c5=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a5[j]),c5);
+                c6=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a6[j]),c6);
+                c7=Vector512.FusedMultiplyAdd(bv,Vector512.Create(a7[j]),c7);
+            }
+            *(Vector512<float>*)output=c0;*(Vector512<float>*)(output+outputStride)=c1;
+            *(Vector512<float>*)(output+2*outputStride)=c2;*(Vector512<float>*)(output+3*outputStride)=c3;
+            *(Vector512<float>*)(output+4*outputStride)=c4;*(Vector512<float>*)(output+5*outputStride)=c5;
+            *(Vector512<float>*)(output+6*outputStride)=c6;*(Vector512<float>*)(output+7*outputStride)=c7;
+        }
+    }
+
     // The compact tail retains its original row stride. Eight output rows
     // share each B vector without splitting or reordering any reduction.
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
@@ -116,9 +148,13 @@ public partial class MathOps
             float* T = P + tiles * N * (4 * Vector256<float>.Count);
             int rv = rem / Vector256<float>.Count;
             int sharedRows = M >= 64 && N >= 64 ? M - M % 8 : 0;
+            bool wideTail = sharedRows > 0 && rem >= 16 && Avx512F.IsSupported
+                && AblationSwitches.EnablePackedAvx512Rows;
+            if (wideTail)
+                PackedColumnTailSixteenRows(sharedRows, N, K, rem, A, T, C + blocked);
             for (int tt = 0; tt < rv; tt++)
             {
-                if (sharedRows > 0)
+                if (sharedRows > 0 && (!wideTail || tt >= 2))
                     PackedColumnTailEightRows(sharedRows, N, K, rem, A,
                         T + tt * Vector256<float>.Count, C + blocked + tt * Vector256<float>.Count);
                 for (int i = sharedRows; i < M; i += 2)

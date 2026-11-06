@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Process eligible packed matrix tails with sixteen AVX-512 float lanes,
+  preserving reduction order and existing fallbacks. The
+  [complete source comparison](tests/benchmarks/paradee-packed-tails-20261106.md)
+  shows about 2% lower FP32 62-token Paradee latency; the other intervals
+  include no change. Fresh ORT parity remains unproved.
 - Use existing vector operations for eligible dense float Exp and live scalar
   Pow(x, 2), retaining all other execution paths and numerical bounds. See the
   [complete four-case source comparison](tests/benchmarks/paradee-arithmetic-20261106.md)
