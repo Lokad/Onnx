@@ -129,6 +129,15 @@ internal sealed class GraphFacts
     {
         if (pn.IsFused)
         {
+            if (pn.Op == OpType.FusedFourierWeights && Node.IsStandardDomain(pn.Domain))
+            {
+                if (pn.Inputs is not { Length: 7 }) return null;
+                TensorElementType[] types = [TensorElementType.Int64, TensorElementType.Int64, TensorElementType.Int64,
+                    TensorElementType.Float, TensorElementType.Float, TensorElementType.Float, TensorElementType.Int64];
+                for (int i = 0; i < types.Length; i++)
+                    if (ProveDtype(graph, nodes, producer, pn.Inputs[i], visiting, memo) != types[i]) return null;
+                return TensorElementType.Float;
+            }
             if (!Node.IsStandardDomain(pn.Domain)) return null;
             if (pn.Op == OpType.ConvRelu || pn.Op == OpType.AddRelu || pn.Op == OpType.BiasGelu || pn.Op == OpType.GemmGelu)
             {

@@ -44,6 +44,7 @@ internal static class GraphOptimizer
         new Pass("gelu-tanh", GraphFusion.FuseGeluTanhPass),
         new Pass("sigmoid-mul", GraphFusion.FuseSigmoidMul),
         new Pass("harmonic-sum", GraphFusion.FuseHarmonicSum),
+        new Pass("fourier-weights", GraphFusion.FuseFourierWeights),
         new Pass("convrelu", GraphFusion.FuseConvReluPass),
         new Pass("addrelu", GraphFusion.FuseAddReluPass),
         new Pass("biasgelu", GraphFusion.FuseBiasGeluPass),

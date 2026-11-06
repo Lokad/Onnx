@@ -434,6 +434,7 @@ public partial struct Node
 
         OpType.Sigmoid => CPU.Sigmoid(InputTensor(graph, 0), opt),
         OpType.FusedSigmoidMul => CPU.SigmoidMul(InputTensor(graph, 0), opt),
+        OpType.FusedFourierWeights => FourierWeightsPrepared(graph, opt),
         OpType.FusedHarmonicSum => CPU.HarmonicSum(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             InputTensor(graph, 3), InputTensor(graph, 4), InputTensor(graph, 5), InputTensor(graph, 6),
             Int("keepdims", null), Int("noop_with_empty_axes", null), opt),

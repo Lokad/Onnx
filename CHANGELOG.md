@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Prepare bounded snapshots of exactly recognized Fourier weight generators,
+  checking every live operand before copying independently owned outputs.
+  The [complete source comparison](tests/benchmarks/paradee-fourier-weights-20261106.md)
+  measured 13.2% lower short INT8 Paradee latency and 6.5% lower medium latency;
+  FP32 intervals include no change. ORT parity remains unproved.
 - Process sixteen frames per vector in prepared forward Fourier convolutions on
   AVX-512 CPUs, retaining the existing roots, numerical guards and fallback.
   The [complete source comparison](tests/benchmarks/paradee-wide-fourier-20261106.md)

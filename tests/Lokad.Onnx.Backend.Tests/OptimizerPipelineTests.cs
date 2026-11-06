@@ -55,7 +55,7 @@ public class OptimizerPipelineTests
     [Fact]
     public void StandardPassSet_IsComplete()
     {
-        Assert.Equal(new[] { "layernorm", "rmsnorm", "rope", "gelu", "gelu-tanh", "sigmoid-mul", "harmonic-sum", "convrelu", "addrelu", "biasgelu", "gemmgelu", "scalematmul", "maskedsoftmax", "constfold", "reshape-zerocopy" },
+        Assert.Equal(new[] { "layernorm", "rmsnorm", "rope", "gelu", "gelu-tanh", "sigmoid-mul", "harmonic-sum", "fourier-weights", "convrelu", "addrelu", "biasgelu", "gemmgelu", "scalematmul", "maskedsoftmax", "constfold", "reshape-zerocopy" },
             Optimization.GraphOptimizer.Passes.Select(p => p.Name));
     }
 }

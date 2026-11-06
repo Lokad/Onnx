@@ -208,5 +208,6 @@ public enum OpType
     FusedSigmoidMul,
     FusedConformerConv,
     FusedHarmonicSum,
+    FusedFourierWeights,
 }
 

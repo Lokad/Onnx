@@ -60,9 +60,10 @@ The [initial report](tests/benchmarks/paradee-runtime-20261104.md) retains its
 earlier runtime and ten-second protocol; those observations are not pooled here.
 The seven-model 0.5.0 figures above retain their original source and date.
 
-Later [harmonic](tests/benchmarks/paradee-harmonic-20261106.md) and
-[wider Fourier](tests/benchmarks/paradee-wide-fourier-20261106.md) source comparisons
-evaluate subsequent runtime changes. They do not replace the managed/ORT
+Later [harmonic](tests/benchmarks/paradee-harmonic-20261106.md),
+[wider Fourier](tests/benchmarks/paradee-wide-fourier-20261106.md) and
+[Fourier weight snapshot](tests/benchmarks/paradee-fourier-weights-20261106.md)
+source comparisons evaluate subsequent runtime changes. They do not replace the managed/ORT
 measurements above; a fresh native comparison remains pending.
 
 ## Running comparisons

@@ -88,6 +88,7 @@ public static class OperatorSchemas
         [OpType.MaskedSoftmax] = Def(OpType.MaskedSoftmax, 2, 2, 1, 1, 1, true),
         [OpType.FusedRmsNormalization] = Def(OpType.FusedRmsNormalization, 5, 5, 1, 1, 1, true),
         [OpType.FusedSigmoidMul] = Def(OpType.FusedSigmoidMul, 1, 1, 1, 1, 1, true),
+        [OpType.FusedFourierWeights] = Def(OpType.FusedFourierWeights, 7, 7, 1, 1, 1, true),
         [OpType.FusedHarmonicSum] = Def(OpType.FusedHarmonicSum, 7, 7, 1, 1, 1, true),
         [OpType.FusedConformerConv] = Def(OpType.FusedConformerConv, 8, 8, 1, 1, 1, true),
         [OpType.Gemm] = Def(OpType.Gemm, 2, 3),

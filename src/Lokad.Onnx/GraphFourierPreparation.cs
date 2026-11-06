@@ -67,8 +67,9 @@ internal static class GraphFourierPreparation
                         else if (facts.Producer.TryGetValue(item.Name, out int producer))
                         {
                             var parent = graph.Nodes[producer];
-                            if (!parent.IsFused && Node.IsStandardDomain(parent.Domain)
-                                && parent.Op is OpType.Unsqueeze or OpType.Mul or OpType.Concat)
+                            if (Node.IsStandardDomain(parent.Domain)
+                                && (!parent.IsFused && parent.Op is OpType.Unsqueeze or OpType.Mul or OpType.Concat
+                                    || parent.IsFused && parent.Op == OpType.FusedFourierWeights))
                                 foreach (string input in parent.Inputs) if (!string.IsNullOrEmpty(input)) pending.Push((input, item.Depth + 1));
                         }
                     }
