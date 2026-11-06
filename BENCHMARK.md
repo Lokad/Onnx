@@ -73,6 +73,11 @@ remains unmerged: short INT8 improves 4.7%, while short FP32 slows 2.3%; both
 effects have intervals excluding parity. Lower allocation establishes no common
 latency benefit. All observations remain in that report.
 
+A [wider convolution-admission experiment](tests/benchmarks/paradee-conv-admission-20261106.md)
+also remains unmerged: all four source confidence intervals include no change,
+and specific late wide/direct-wrapper corroboration was not established.
+Every pair and the failed trace check remain recorded; the native table is unchanged.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.
