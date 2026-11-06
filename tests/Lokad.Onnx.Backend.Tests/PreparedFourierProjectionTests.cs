@@ -1,6 +1,8 @@
 using System.Buffers;
 using System.Numerics;
 using System.Runtime.Intrinsics.X86;
+using System.Runtime.Intrinsics;
+using System.Runtime.CompilerServices;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -90,12 +92,18 @@ public class PreparedFourierProjectionTests
         var rented = Enumerable.Range(0, 4).Select(_ => ArrayPool<Vector<float>>.Shared.Rent(n)).ToArray();
         foreach (var array in rented) Array.Fill(array, new Vector<float>(float.NaN));
         foreach (var array in rented) ArrayPool<Vector<float>>.Shared.Return(array);
+        if (Vector512.IsHardwareAccelerated)
+        {
+            var wideRented = Enumerable.Range(0, 4).Select(_ => ArrayPool<Vector512<float>>.Shared.Rent(n)).ToArray();
+            foreach (var array in wideRented) Array.Fill(array, Vector512.Create(float.NaN));
+            foreach (var array in wideRented) ArrayPool<Vector512<float>>.Shared.Return(array);
+        }
         var scratch = new ScratchAccountant();
         var plan = PreparedFourierProjection.Hann(n);
         Assert.True(plan.TryWrite(input.Buffer.Span, weight.Buffer.Span, step, storage.AsSpan(4, expected.Length), scratch));
         Near(expected, storage.AsSpan(4, expected.Length).ToArray());
         Assert.All(storage.Take(4).Concat(storage.TakeLast(4)), value => Assert.True(float.IsNaN(value)));
-        Assert.Equal(4L * n * Vector<float>.Count * sizeof(float), scratch.TotalScratchBytes);
+        Assert.Equal(4L * n * (Vector512.IsHardwareAccelerated ? 16 : Vector<float>.Count) * sizeof(float), scratch.TotalScratchBytes);
         Assert.Equal(PreparedFourierProjection.RequiredBytes(n), plan.RetainedBytes);
     }
 
@@ -348,5 +356,92 @@ public class PreparedFourierProjectionTests
         Assert.Equal(PreparedFourierProjection.RequiredBytes(30), graph.RetainedPackedWeightBytes);
         var output = Run(graph);
         Assert.Equal(output.ToArray(), ((Tensor<float>)graph.Outputs["z"]).ToArray());
+    }
+
+    [Theory]
+    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(5)] [InlineData(16)]
+    [InlineData(25)] [InlineData(30)] [InlineData(75)] [InlineData(128)] [InlineData(150)] [InlineData(600)]
+    public void WideTransformPreservesEachExistingLaneBit(int n)
+    {
+        var random = new Random(1055 + n);
+        var real = new Vector512<float>[n]; var imaginary = new Vector512<float>[n];
+        var outR = new Vector512<float>[n]; var outI = new Vector512<float>[n];
+        for (int k = 0; k < n; k++)
+        {
+            var r = Enumerable.Range(0, 16).Select(_ => (float)(random.NextDouble() - .5)).ToArray();
+            var i = Enumerable.Range(0, 16).Select(_ => (float)(random.NextDouble() - .5)).ToArray();
+            real[k] = Vector512.Create((ReadOnlySpan<float>)r); imaginary[k] = Vector512.Create((ReadOnlySpan<float>)i);
+            outR[k] = Vector512.Create(float.NaN); outI[k] = Vector512.Create(float.NaN);
+        }
+        var beforeR = (Vector512<float>[])real.Clone(); var beforeI = (Vector512<float>[])imaginary.Clone();
+        var transform = new FrameFourierTransform(n);
+        transform.Forward(real, imaginary, outR, outI);
+        for (int first = 0; first < 16; first += Vector<float>.Count)
+        {
+            var r = new Vector<float>[n]; var i = new Vector<float>[n];
+            var expectedR = new Vector<float>[n]; var expectedI = new Vector<float>[n];
+            for (int k = 0; k < n; k++)
+            {
+                r[k] = new(Enumerable.Range(first, Vector<float>.Count).Select(lane => real[k].GetElement(lane)).ToArray());
+                i[k] = new(Enumerable.Range(first, Vector<float>.Count).Select(lane => imaginary[k].GetElement(lane)).ToArray());
+            }
+            transform.Forward(r, i, expectedR, expectedI);
+            for (int k = 0; k < n; k++) for (int lane = 0; lane < Vector<float>.Count; lane++)
+            {
+                Assert.Equal(BitConverter.SingleToInt32Bits(expectedR[k][lane]), BitConverter.SingleToInt32Bits(outR[k].GetElement(first + lane)));
+                Assert.Equal(BitConverter.SingleToInt32Bits(expectedI[k][lane]), BitConverter.SingleToInt32Bits(outI[k].GetElement(first + lane)));
+            }
+        }
+        Assert.Equal(beforeR, real); Assert.Equal(beforeI, imaginary);
+        Assert.Equal(2L * n * Vector<float>.Count * sizeof(float), transform.RetainedBytes);
+    }
+
+    [Fact]
+    public void WideTransformRejectsAliasedOrIncompleteStorage()
+    {
+        var transform = new FrameFourierTransform(30);
+        var real = new Vector512<float>[30]; var imaginary = new Vector512<float>[30];
+        var outR = new Vector512<float>[30]; var outI = new Vector512<float>[30];
+        Assert.Throws<ArgumentException>(() => transform.Forward(real, imaginary, real, outI));
+        Assert.Throws<ArgumentException>(() => transform.Forward(real, imaginary, outR, outR));
+        Assert.Throws<ArgumentException>(() => transform.Forward(real, imaginary, outR, new Vector512<float>[29]));
+    }
+
+    [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "WriteWide")]
+    static extern void WriteWide(PreparedFourierProjection plan, ReadOnlySpan<float> input,
+        int step, int frames, Span<float> output, IScratchAccountant? scratch);
+
+    [Theory]
+    [InlineData(1)] [InlineData(7)] [InlineData(8)] [InlineData(9)]
+    [InlineData(16)] [InlineData(17)] [InlineData(33)]
+    public void WidePackingOverwritesDirtyScratchAndPartialFrameStorage(int frames)
+    {
+        const int n = 30, step = 7;
+        var input = Input(n, frames, step); var before = input.ToArray(); var weights = Weights(n);
+        var expected = Reference(input, weights, step);
+        var output = Enumerable.Repeat(float.NaN, expected.Length + 8).ToArray();
+        var scratchArrays = Enumerable.Range(0, 4).Select(_ => ArrayPool<Vector512<float>>.Shared.Rent(n)).ToArray();
+        foreach (var array in scratchArrays) Array.Fill(array, Vector512.Create(float.NaN));
+        foreach (var array in scratchArrays) ArrayPool<Vector512<float>>.Shared.Return(array);
+        var scratch = new ScratchAccountant();
+        WriteWide(PreparedFourierProjection.Hann(n), input.Buffer.Span, step, frames,
+            output.AsSpan(4, expected.Length), scratch);
+        Near(expected, output.AsSpan(4, expected.Length).ToArray());
+        Assert.Equal(before, input.ToArray());
+        Assert.All(output.Take(4).Concat(output.TakeLast(4)), value => Assert.True(float.IsNaN(value)));
+        Assert.Equal(4L * n * 16 * sizeof(float), scratch.TotalScratchBytes);
+    }
+
+    [SkippableFact]
+    public void DefaultProviderUsesWideScratchWithoutRetainingMorePayload()
+    {
+        Skip.IfNot(Vector512.IsHardwareAccelerated && Fma.IsSupported, "Requires hardware512 intrinsic projection.");
+        var graph = Graph(); var input = Input(30, 17, 7); var weights = Weights(30); var scratch = new ScratchAccountant();
+        var options = ExecutionOptions.Default with { Tensor = ExecutionOptions.Default.Tensor with
+            { FourierProjections = graph.FourierProjections, ScratchReporter = scratch } };
+        var actual = Reference(input, weights, 7, options);
+        Near(Reference(input, weights, 7), actual);
+        Assert.Equal(4L * 30 * 16 * sizeof(float), scratch.TotalScratchBytes);
+        Assert.Equal(PreparedFourierProjection.RequiredBytes(30), graph.RetainedPackedWeightBytes);
     }
 }

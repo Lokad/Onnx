@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Process sixteen frames per vector in prepared forward Fourier convolutions on
+  AVX-512 CPUs, retaining the existing roots, numerical guards and fallback.
+  The [complete source comparison](tests/benchmarks/paradee-wide-fourier-20261106.md)
+  shows a 3.2% gain for short FP32 Paradee; the other intervals include no change,
+  and short INT8's point estimate is 1.1% slower. ORT parity remains unproved.
 - Use sixteen float lanes for eligible harmonic synthesis on AVX-512 CPUs,
   preserving the existing sine and accumulation arithmetic. The
   [complete source comparison](tests/benchmarks/paradee-harmonic-20261106.md)

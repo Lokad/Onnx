@@ -4,6 +4,7 @@ using System;
 using System.Buffers;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 /// <summary>
 /// Private windowed-Fourier recipe. Every live convolution weight bit must
@@ -98,6 +99,11 @@ internal sealed class PreparedFourierProjection
             float magnitude = MathF.Abs(value);
             if (!float.IsFinite(value) || magnitude > 1e20f || magnitude != 0 && magnitude < 1e-30f) return false;
         }
+        if (Vector512.IsHardwareAccelerated)
+        {
+            WriteWide(input, step, frames, output, scratch);
+            return true;
+        }
         int width = Vector<float>.Count;
         Vector<float>[]? dataR = null, dataI = null, spectrumR = null, spectrumI = null;
         try
@@ -142,6 +148,55 @@ internal sealed class PreparedFourierProjection
             if (dataI is not null) ArrayPool<Vector<float>>.Shared.Return(dataI);
             if (spectrumR is not null) ArrayPool<Vector<float>>.Shared.Return(spectrumR);
             if (spectrumI is not null) ArrayPool<Vector<float>>.Shared.Return(spectrumI);
+        }
+    }
+    void WriteWide(ReadOnlySpan<float> input, int step, int frames, Span<float> output, IScratchAccountant? scratch)
+    {
+        int bins = Length / 2 + 1;
+        int width = Vector512<float>.Count;
+        Vector512<float>[]? dataR = null, dataI = null, spectrumR = null, spectrumI = null;
+        try
+        {
+            dataR = ArrayPool<Vector512<float>>.Shared.Rent(Length);
+            dataI = ArrayPool<Vector512<float>>.Shared.Rent(Length);
+            spectrumR = ArrayPool<Vector512<float>>.Shared.Rent(Length);
+            spectrumI = ArrayPool<Vector512<float>>.Shared.Rent(Length);
+            scratch?.AddScratchBytes(4L * Length * width * sizeof(float));
+            Span<float> values = stackalloc float[width];
+            for (int frame = 0; frame < frames; frame += width)
+            {
+                int count = Math.Min(width, frames - frame);
+                for (int j = 0; j < Length; j++)
+                {
+                    for (int lane = 0; lane < count; lane++) values[lane] = input[(frame + lane) * step + j];
+                    values[count..].Clear();
+                    dataR[j] = Vector512.Create((ReadOnlySpan<float>)values) * Vector512.Create((float)window[j]);
+                    dataI[j] = Vector512<float>.Zero;
+                }
+                transform.Forward(dataR, dataI, spectrumR, spectrumI);
+                for (int k = 0; k < bins; k++)
+                {
+                    int real = k * frames + frame, imaginary = (bins + k) * frames + frame;
+                    if (count == width)
+                    {
+                        spectrumR[k].CopyTo(output.Slice(real, width));
+                        spectrumI[k].CopyTo(output.Slice(imaginary, width));
+                    }
+                    else for (int lane = 0; lane < count; lane++)
+                    {
+                        output[real + lane] = spectrumR[k][lane];
+                        output[imaginary + lane] = spectrumI[k][lane];
+                    }
+                }
+            }
+            return;
+        }
+        finally
+        {
+            if (dataR is not null) ArrayPool<Vector512<float>>.Shared.Return(dataR);
+            if (dataI is not null) ArrayPool<Vector512<float>>.Shared.Return(dataI);
+            if (spectrumR is not null) ArrayPool<Vector512<float>>.Shared.Return(spectrumR);
+            if (spectrumI is not null) ArrayPool<Vector512<float>>.Shared.Return(spectrumI);
         }
     }
 }

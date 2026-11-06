@@ -60,6 +60,11 @@ The [initial report](tests/benchmarks/paradee-runtime-20261104.md) retains its
 earlier runtime and ten-second protocol; those observations are not pooled here.
 The seven-model 0.5.0 figures above retain their original source and date.
 
+Later [harmonic](tests/benchmarks/paradee-harmonic-20261106.md) and
+[wider Fourier](tests/benchmarks/paradee-wide-fourier-20261106.md) source comparisons
+evaluate subsequent runtime changes. They do not replace the managed/ORT
+measurements above; a fresh native comparison remains pending.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.
