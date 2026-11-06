@@ -5,6 +5,11 @@
 - Require all six private Paradee model checks before comparisons, including
   waveform-only companions. Condition each engine for at least 40 seconds and
   32 calls before timing, allowing default .NET tiering to settle.
+- Accelerate exactly recognized windowed Fourier convolutions with a prepared
+  vectorized transform. Check live weights before every use and retain the
+  ordinary convolution fallback. The [complete source comparison](tests/benchmarks/paradee-fourier-20261106.md)
+  measured 8–12% lower latency across the four Paradee workloads; ORT parity
+  remains unproved.
 - Run the published Paradee-8M-v1.2 FP32 and INT8 ONNX exports from supplied
   phoneme-ID, speed and voice tensors through the core graph API. See
   [tested exports and numerical limits](docs/model-support.md#paradee-runtime).

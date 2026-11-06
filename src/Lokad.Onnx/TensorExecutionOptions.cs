@@ -62,6 +62,9 @@ public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntri
     /// <summary>Immutable bounded LSTM projection weights shared by graph contexts.</summary>
     internal IReadOnlyDictionary<float[], PackedLstmWeight>? PackedLstmWeights { get; init; }
 
+    /// <summary>Private immutable windowed-Fourier templates shared by graph contexts.</summary>
+    internal IReadOnlyDictionary<int, PreparedFourierProjection[]>? FourierProjections { get; init; }
+
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false, 1);
 
     public static TensorExecutionOptions Simd => new TensorExecutionOptions(true, false, 1);

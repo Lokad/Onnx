@@ -197,6 +197,15 @@ where T : unmanaged
         var oMem = output.Buffer;
         var bMem = bd is null ? default : bd.Buffer;
         bool hasBias = bd is not null;
+        if (options.UseSimd && options.UseIntrinsics && options.MaxDegreeOfParallelism == 1 && Vector.IsHardwareAccelerated
+            && N == 1 && C == 1 && group == 1 && H == 1 && kH == 1 && outH == 1 && sH == 1
+            && dH == 1 && dW == 1 && !hasBias && M == 2 * (kW / 2 + 1)
+            && pad.top == 0 && pad.bottom == 0 && pad.left == 0 && pad.right == 0
+            && options.FourierProjections is { } fourier && fourier.TryGetValue(kW, out var projections))
+        {
+            foreach (var projection in projections)
+                if (projection.TryWrite(xMem.Span, wMem.Span, sW, oMem.Span, options.ScratchReporter)) return output;
+        }
         if (TryConvBlockedSpatial(xd, weight, wd, bd, output, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, options)) return output;
         if (kH == 1 && kW == 1 && sH == 1 && sW == 1 && dH == 1 && dW == 1
             && pad.top == 0 && pad.left == 0 && pad.bottom == 0 && pad.right == 0

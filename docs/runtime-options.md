@@ -58,7 +58,15 @@ Zero disables retention between runs; negative budgets are rejected. Array-count
 caps still apply. Reset preserves eligible cached arrays; preparation invalidation
 clears them. Model weights, packed weights, caller-held outputs and other live
 allocations are outside this budget. Loading APIs separately accept a
-`maximumPackedWeightBytes` limit for retained packed matrix weights.
+`maximumPackedWeightBytes` limit shared by retained matrix, convolution, LSTM
+and Fourier payloads.
+
+Exactly recognized windowed Fourier convolutions can use a prepared vectorized
+transform. Preparation retains private weight templates, windows and roots within
+that shared budget. Every call checks all live weight bits before admission;
+changed weights, unsupported geometry or execution modes, and unsafe numerical
+inputs use ordinary convolution. This path changes floating-point accumulation
+order; see the [Paradee numerical limits and source comparison](../tests/benchmarks/paradee-fourier-20261106.md).
 
 Eligible float convolutions with one spatial axis can use wider tiles on
 AVX-512 CPUs. This path bounds its combined spatial patch/output allocation to

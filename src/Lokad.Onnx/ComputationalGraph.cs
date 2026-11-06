@@ -71,6 +71,7 @@ public partial class ComputationalGraph
     internal Dictionary<float[], PackedMatMulWeight> PackedWeights => preparation.PackedWeights;
     internal Dictionary<float[], PackedConvWeight> PackedConvWeights => preparation.PackedConvWeights;
     internal Dictionary<float[], PackedLstmWeight> PackedLstmWeights => preparation.PackedLstmWeights;
+    internal IReadOnlyDictionary<int, PreparedFourierProjection[]>? FourierProjections => preparation.FourierProjections;
 
     internal object FoldLock => preparation.FoldLock;
 
@@ -268,6 +269,7 @@ public partial class ComputationalGraph
                 PackedWeights.Clear();
                 PackedConvWeights.Clear();
                 PackedLstmWeights.Clear();
+                preparation.FourierProjections = null;
                 RetainedPackedWeightBytes = 0;
             }
         }
@@ -968,7 +970,7 @@ public partial class ComputationalGraph
             {
                 ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy,
                 PackedMatMulWeights = PackedWeights, PackedConvWeights = PackedConvWeights,
-                PackedLstmWeights = PackedLstmWeights
+                PackedLstmWeights = PackedLstmWeights, FourierProjections = FourierProjections
             }
         };
         livePayloadBytes = LivePayloadBytes();
@@ -1414,9 +1416,11 @@ public partial class ComputationalGraph
     {
         ReleasedBuffers?.Clear();
         FoldConstantTransposes();
+        preparation.FourierProjections = null;
         GraphPacking.PackMatMulWeights(this);
         GraphConvPacking.PackWeights(this);
         GraphLstmPacking.PackWeights(this);
+        preparation.FourierProjections = GraphFourierPreparation.Build(this);
         // Preparation assigns stable sequential identities by file-order
         // position: unlike name hashes they are distinct for duplicate or
         // anonymous names and identical across processes.
