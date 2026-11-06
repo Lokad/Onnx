@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Reuse the existing SIMD transpose for live LSTM projection panels, preserving
+  every weight bit and the existing arithmetic. The
+  [complete source comparison](tests/benchmarks/paradee-lstm-panels-20261106.md)
+  has lower latency estimates across all four Paradee cases; every confidence
+  interval includes no change. Fresh ORT parity remains unproven.
 - Refresh the [complete Paradee native comparison](tests/benchmarks/paradee-runtime-20261106-e42.md)
   on the current runtime: original exports measure 0.95–1.31 times ORT latency
   across four workloads with six fixed pairs each and every clock retained.

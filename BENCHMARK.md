@@ -65,6 +65,13 @@ The intervening [harmonic](tests/benchmarks/paradee-harmonic-20261106.md),
 are included in this measured runtime. The seven-model 0.5.0 figures above
 retain their original source and date.
 
+The later [live LSTM panel source comparison](tests/benchmarks/paradee-lstm-panels-20261106.md)
+retains six paired processes per case and all 56 workers. Its short FP32/INT8
+latency estimates are 4.6%/3.0% lower; all four confidence intervals include
+no change. This copy-only change is retained with that uncertainty explicit.
+The native table above keeps its measured e42 source and requires a fresh
+comparison before reporting updated ORT ratios.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.

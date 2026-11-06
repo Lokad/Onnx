@@ -18,6 +18,25 @@ internal static class PreparedLstmProjection
             || source.Length != checked(inputs * outputs * directions) || target.Length != source.Length)
             throw new ArgumentException("Projection packing dimensions do not match the supplied spans.");
         int block = ColumnsPerBlock, length = checked(inputs * outputs);
+        if (System.Runtime.Intrinsics.X86.Avx.IsSupported)
+        {
+            // Each existing output panel is a contiguous [columns,inputs]
+            // matrix. Reuse the bit-preserving transpose without changing
+            // the packed layout, live weight reads or projection arithmetic.
+            unsafe
+            {
+                fixed (float* src = source)
+                fixed (float* dst = target)
+                for (int d = 0; d < directions; d++)
+                for (int o = 0; o < outputs; o += block)
+                {
+                    int columns = Math.Min(block, outputs - o);
+                    int offset = d * length + o * inputs;
+                    MathOps.transpose_unsafe_shuffle8x8_lastTwoAxes(1, 1, columns, inputs, src + offset, dst + offset);
+                }
+            }
+            return;
+        }
         for (int d = 0; d < directions; d++)
         for (int o = 0; o < outputs; o += block)
         {
