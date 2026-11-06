@@ -47,9 +47,10 @@
   use explicit signal-error bounds; they are not bitwise identical across engines.
 - Qualify waveform-only noise-controlled companions as well, so diagnostic
   outputs cannot hide differences in the original graph's tensor lifetimes.
-- Add a separate [Paradee CPU comparison](tests/benchmarks/paradee-runtime-20261104.md)
-  with six process pairs per workload and all worker clocks. The original exports
-  initially measured about 3.1–5.2 times slower than ORT on the 14-/62-token inputs.
+- Refresh the [Paradee CPU comparison](tests/benchmarks/paradee-runtime-20261106.md)
+  with six process pairs per workload, forty-second conditioning and all clocks.
+  The original 14-/62-token exports measure 1.05–1.60 times ORT latency;
+  retain the [initial report](tests/benchmarks/paradee-runtime-20261104.md) separately.
 
 ## 0.5.0 — 2026-10-30
 

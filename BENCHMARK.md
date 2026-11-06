@@ -35,28 +35,29 @@ Complete-output, finite-value, input-immutability, repeat and held-output checks
 
 These are workload-specific observations on one host. DINOv2 remains excluded under its full-output gate; Whisper has no matched timing. See [model support](docs/model-support.md). The [historical report](tests/benchmarks/release-0.5.0-sustained-20261030.md) retains earlier source controls and unfavorable observations, including the DinoV3 source-control miss and separate corroboration. No earlier clocks are relabeled or pooled into this run.
 
-## Paradee runtime — unreleased, 2026-11-04
+## Paradee runtime — unreleased, 2026-11-06
 
-The original Paradee-8M-v1.2 exports now execute from fixed phoneme-ID tensors
-to owned waveforms. A separate **11.45-minute** comparison on the same VM uses
-clean source `3cd4f761`, .NET 11 RC3 and ORT 1.29.0. Six balanced independent
-process pairs per row warm for at least 32 calls / ten seconds, then measure
-33 complete calls per process.
+The original Paradee-8M-v1.2 exports execute from fixed phoneme-ID tensors to
+owned waveforms. This separate **33.80-minute** comparison uses clean
+source `01eacacd`, .NET 11 RC3 and ORT 1.29.0 on the same VM. Each row retains
+six balanced independent process pairs, at least **32 calls and 40 seconds**
+of warmup per process, then 33 complete calls.
 
 | Original export | Tokens / speed | Lokad.Onnx seconds | Microsoft ORT seconds | Paired Lokad / ORT | 95% interval |
-|---|---|---:|---:|---:|---|
-| Paradee FP32 | 14 / 1.0 | 0.082032 | 0.021306 | **3.848** | [3.664, 4.040] |
-| Paradee FP32 | 62 / 0.8 | 0.222321 | 0.070990 | **3.128** | [2.932, 3.337] |
-| Paradee INT8 | 14 / 1.0 | 0.116148 | 0.022440 | **5.165** | [4.782, 5.578] |
-| Paradee INT8 | 62 / 0.8 | 0.219429 | 0.070682 | **3.102** | [2.965, 3.246] |
+| --- | --- | ---: | ---: | ---: | --- |
+| Paradee FP32 | 14 / 1.0 | 0.027611 | 0.020634 | **1.3372** | [1.2636, 1.4151] |
+| Paradee FP32 | 62 / 0.8 | 0.073609 | 0.069981 | **1.0518** | [1.0352, 1.0687] |
+| Paradee INT8 | 14 / 1.0 | 0.035039 | 0.021946 | **1.5961** | [1.5543, 1.6391] |
+| Paradee INT8 | 62 / 0.8 | 0.078234 | 0.069825 | **1.1203** | [1.0943, 1.1469] |
 
 Times are arithmetic process means; ratios are geometric paired means with
-log-Student-t intervals (df 5). ORT performance parity remains open. INT8 weights
-are dequantized into FP32 during execution. Original graphs contain random noise;
-controlled companions separately qualify exact durations, pitch/phase within
-`1e-4`, waveform peak error `<=1e-3` and signal-to-error ratio `>=50 dB`.
-See the [full report and setup times](tests/benchmarks/paradee-runtime-20261104.md)
-and [all clocks and identities](tests/benchmarks/paradee-runtime-20261104.json).
+log-Student-t intervals (df 5). **ORT performance parity remains unproved.** INT8 weights are dequantized into FP32.
+Controlled-noise companions separately qualify exact durations, upstream error
+`<=1e-4`, waveform peak error `<=1e-3` and signal-to-error ratio `>=50 dB`.
+See the [current report](tests/benchmarks/paradee-runtime-20261106.md) and
+[all clocks and identities](tests/benchmarks/paradee-runtime-20261106.json).
+The [initial report](tests/benchmarks/paradee-runtime-20261104.md) retains its
+earlier runtime and ten-second protocol; those observations are not pooled here.
 The seven-model 0.5.0 figures above retain their original source and date.
 
 ## Running comparisons
