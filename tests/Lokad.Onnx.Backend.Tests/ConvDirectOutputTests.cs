@@ -7,6 +7,138 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class ConvDirectOutputTests
 {
+    [SkippableFact]
+    public unsafe void WideStridedKernelKeepsZeroAndAccumulatingSeeds()
+    {
+        Skip.If(!Avx512F.IsSupported || !Fma.IsSupported, "AVX-512F and FMA required.");
+        const int offset = 3;
+        const float guard = -12345.25f;
+        foreach (var (rows, reduction, columns) in new[] { (8, 1, 16), (16, 7, 27),
+            (24, 31, 32), (40, 65, 59), (64, 64, 128), (96, 65, 95),
+            (128, 966, 59), (256, 1542, 32), (256, 256, 127), (1024, 64, 33) })
+        foreach (bool zeroSeed in new[] { true, false })
+        {
+            if (!zeroSeed && columns < 32) continue;
+            int stride = columns + 11;
+            var a = Enumerable.Range(0, rows * reduction).Select(i => (i % 31 - 15) / 997f).ToArray();
+            var b = Enumerable.Range(0, reduction * columns).Select(i => (i % 37 - 18) / 991f).ToArray();
+            var packed = new float[b.Length];
+            var beforeA = a.ToArray(); var beforeB = b.ToArray();
+            var output = Enumerable.Repeat(guard, offset + rows * stride + offset).ToArray();
+            for (int row = 0; row < rows; row++)
+                for (int col = 0; col < columns; col++)
+                    output[offset + row * stride + col] = zeroSeed ? float.NaN : (row % 7 - 3) * .125f;
+            var expected = output.ToArray();
+            for (int row = 0; row < rows; row++)
+                for (int col = 0; col < columns; col++)
+                    expected[offset + row * stride + col] = ReferenceProduct(a, b, row, reduction, columns, col,
+                        zeroSeed ? 0f : expected[offset + row * stride + col]);
+            fixed (float* ap = a, bp = b, pp = packed, cp = output)
+            {
+                MathOps.PackPanelsB(reduction, columns, bp, pp);
+                var oldPacked = packed.ToArray();
+                for (int repeat = 0; repeat < 2; repeat++)
+                {
+                    if (repeat != 0)
+                        for (int row = 0; row < rows; row++)
+                            for (int col = 0; col < columns; col++)
+                                output[offset + row * stride + col] = zeroSeed ? float.NaN : (row % 7 - 3) * .125f;
+                    long before = GC.GetAllocatedBytesForCurrentThread();
+                    Assert.True(MathOps.TryPackedAvx512Rows(rows, reduction, columns, ap, pp, cp + offset, stride, zeroSeed));
+                    long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+                    if (repeat != 0) Assert.Equal(0, allocated);
+                    EqualBits(expected, output); EqualBits(oldPacked, packed);
+                }
+            }
+            EqualBits(beforeA, a); EqualBits(beforeB, b);
+        }
+    }
+
+    [SkippableFact]
+    public void WideDirectOutputPreservesLiveInputsSpecialValuesAndUnusedTemporary()
+    {
+        Skip.If(!Avx512F.IsSupported || !Fma.IsSupported, "AVX-512F and FMA required.");
+        foreach (var (rows, reduction, columns) in new[] { (64, 64, 16), (64, 65, 27),
+            (96, 64, 59), (128, 966, 59), (160, 896, 128), (256, 1542, 32) })
+        foreach (bool hasBias in new[] { false, true })
+        {
+            float[] specials = reduction < 100 ? new[] { 0f, -0f, float.Epsilon,
+                float.MaxValue, float.PositiveInfinity, float.NegativeInfinity, float.NaN } : new[] { .125f };
+            foreach (float special in specials)
+            {
+                int stride = columns + 11;
+                var a = Enumerable.Range(0, rows * reduction).Select(i => (i % 7 - 3) * .125f).ToArray();
+                var b = Enumerable.Range(0, reduction * columns).Select(i => (i % 11 - 5) * .125f).ToArray();
+                var bias = hasBias ? Enumerable.Range(0, rows).Select(i => (i % 7 - 3) * .25f).ToArray() : Array.Empty<float>();
+                a[0] = special; a[(rows - 1) * reduction + 1] = special; b[columns - 1] = special;
+                for (int pass = 0; pass < 2; pass++)
+                {
+                    a[reduction] += .25f; b[columns] -= .5f; if (hasBias) bias[1] -= .125f;
+                    var oldA = a.ToArray(); var oldB = b.ToArray(); var oldBias = bias.ToArray();
+                    var output = Enumerable.Repeat(-12345.25f, rows * stride + 6).ToArray();
+                    var expected = output.ToArray();
+                    for (int row = 0; row < rows; row++)
+                        for (int col = 0; col < columns; col++)
+                        {
+                            float value = ReferenceProduct(a, b, row, reduction, columns, col, 0f);
+                            expected[3 + row * stride + col] = hasBias ? value + bias[row] : value;
+                        }
+                    var temporary = Enumerable.Repeat(float.NaN, rows * columns).ToArray();
+                    var oldTemporary = temporary.ToArray(); var accountant = new ScratchAccountant();
+                    Assert.True(Tensor<float>.TryConvDirectOutput(a, b, temporary,
+                        output.AsSpan(3, rows * stride), bias, hasBias, rows, reduction, columns, stride,
+                        TensorExecutionOptions.Auto with { ScratchReporter = accountant }));
+                    for (int i = 0; i < expected.Length; i++)
+                        if (float.IsNaN(expected[i])) Assert.True(float.IsNaN(output[i]));
+                        else Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(output[i]));
+                    EqualBits(oldA, a); EqualBits(oldB, b); EqualBits(oldBias, bias); EqualBits(oldTemporary, temporary);
+                    Assert.Equal(columns <= 32 ? 0L : (long)reduction * columns * sizeof(float), accountant.TotalScratchBytes);
+                }
+            }
+        }
+    }
+
+    [SkippableFact]
+    public unsafe void WideDirectStorageAndModeRefusalPreserveMemory()
+    {
+        Skip.If(!Avx512F.IsSupported || !Fma.IsSupported, "AVX-512F and FMA required.");
+        Assert.False(MathOps.TryPackedAvx512Rows(9, 64, 32, null, null, null, 43, true));
+        Assert.False(MathOps.TryPackedAvx512Rows(64, 64, 32, null, null, null, 31, true));
+        Assert.False(MathOps.TryPackedAvx512Rows(64, 64, 15, null, null, null, 26, true));
+        foreach (string broken in new[] { "weights", "patch", "temporary", "output", "bias", "stride", "overlap" })
+        {
+            const int rows = 96, reduction = 64, columns = 27;
+            var a = new float[rows * reduction]; var b = new float[reduction * columns];
+            var temp = new float[rows * columns]; var output = Enumerable.Repeat(19f, rows * 38).ToArray();
+            var bias = new float[rows]; int stride = 38;
+            switch (broken)
+            {
+                case "weights": a = new float[a.Length - 1]; break;
+                case "patch": b = new float[b.Length - 1]; break;
+                case "temporary": temp = new float[temp.Length - 1]; break;
+                case "output": output = new float[(rows - 1) * stride + columns - 1]; break;
+                case "bias": bias = new float[rows - 1]; break;
+                case "stride": stride = 26; break;
+                case "overlap": output = a; break;
+            }
+            var before = new[] { a, b, temp, output, bias }.Select(v => v.ToArray()).ToArray();
+            var accountant = new ScratchAccountant();
+            Assert.Throws<ArgumentException>(() => Tensor<float>.TryConvDirectOutput(a, b, temp, output, bias,
+                true, rows, reduction, columns, stride, TensorExecutionOptions.Auto with { ScratchReporter = accountant }));
+            foreach (var pair in before.Zip(new[] { a, b, temp, output, bias })) EqualBits(pair.First, pair.Second);
+            Assert.Equal(0, accountant.TotalScratchBytes);
+        }
+    }
+
+    static float ReferenceProduct(float[] a, float[] b, int row, int reduction, int columns, int col, float seed)
+    {
+        int fusedEnd = columns / 32 * 32 + columns % 32 / 8 * 8;
+        for (int j = 0; j < reduction; j++)
+            seed = col < fusedEnd ? MathF.FusedMultiplyAdd(a[row * reduction + j], b[j * columns + col], seed)
+                : seed + a[row * reduction + j] * b[j * columns + col];
+        return seed;
+    }
+
     static void EqualBits(float[] expected, float[] actual) =>
         Assert.True(MemoryMarshal.AsBytes(expected.AsSpan()).SequenceEqual(MemoryMarshal.AsBytes(actual.AsSpan())));
 
@@ -90,7 +222,7 @@ public class ConvDirectOutputTests
         foreach (var option in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd })
             Assert.False(Tensor<float>.TryConvDirectOutput(default, default, default, output, default, false,
                 32, 64, 2, 2, option with { ScratchReporter = accountant }));
-        foreach (var shape in new[] { (0, 64, 32), (30, 64, 32), (33, 64, 32), (96, 64, 32),
+        foreach (var shape in new[] { (0, 64, 32), (30, 64, 32), (33, 64, 32), (95, 64, 32),
             (32, 63, 32), (32, 64, 0), (32, 1024, 65), (64, int.MaxValue, 2) })
             Assert.False(Tensor<float>.TryConvDirectOutput(default, default, default, output, default, false,
                 shape.Item1, shape.Item2, shape.Item3, shape.Item3, TensorExecutionOptions.Auto with { ScratchReporter = accountant }));

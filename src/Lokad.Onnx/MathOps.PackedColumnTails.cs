@@ -139,8 +139,9 @@ public partial class MathOps
     // M is even. Complete eight-column lanes use FMA; the final masked lanes
     // retain their separate multiply/add order from the original two-row route.
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    internal static unsafe void PackedColumnTailsEvenRows(int M, int N, int K, float* A, float* P, float* C)
+    internal static unsafe void PackedColumnTailsEvenRows(int M, int N, int K, float* A, float* P, float* C, int outputStride = 0)
     {
+        int stride = outputStride == 0 ? K : outputStride;
         int tiles = K / 32, blocked = tiles * 32;
         int rem = K - blocked;
         if (rem > 0)
@@ -151,18 +152,18 @@ public partial class MathOps
             bool wideTail = sharedRows > 0 && rem >= 16 && Avx512F.IsSupported
                 && AblationSwitches.EnablePackedAvx512Rows;
             if (wideTail)
-                PackedColumnTailSixteenRows(sharedRows, N, K, rem, A, T, C + blocked);
+                PackedColumnTailSixteenRows(sharedRows, N, stride, rem, A, T, C + blocked);
             for (int tt = 0; tt < rv; tt++)
             {
                 if (sharedRows > 0 && (!wideTail || tt >= 2))
-                    PackedColumnTailEightRows(sharedRows, N, K, rem, A,
+                    PackedColumnTailEightRows(sharedRows, N, stride, rem, A,
                         T + tt * Vector256<float>.Count, C + blocked + tt * Vector256<float>.Count);
                 for (int i = sharedRows; i < M; i += 2)
                 {
                     var Ap1 = A + i * N;
                     var Ap2 = Ap1 + N;
-                    var rC1 = (Vector256<float>*)(C + i * K + blocked);
-                    var rC2 = (Vector256<float>*)(C + (i + 1) * K + blocked);
+                    var rC1 = (Vector256<float>*)(C + i * stride + blocked);
+                    var rC2 = (Vector256<float>*)(C + (i + 1) * stride + blocked);
                     Vector256<float> c1 = rC1[tt];
                     Vector256<float> c2 = rC2[tt];
                     for (int j = 0; j < N; ++j)
@@ -184,15 +185,15 @@ public partial class MathOps
             int tail = rem - vcols;
             int maskedRows = tail > 0 && Avx2.IsSupported ? sharedRows : 0;
             if (maskedRows > 0)
-                PackedColumnMaskedEightRows(maskedRows, N, K, rem, tail, A,
+                PackedColumnMaskedEightRows(maskedRows, N, stride, rem, tail, A,
                     T + vcols, C + blocked + vcols);
             if (tail > 0)
             for (int i = maskedRows; i < M; i += 2)
             {
                 var Ap1 = A + i * N;
                 var Ap2 = Ap1 + N;
-                var Cp1 = C + i * K + blocked + vcols;
-                var Cp2 = Cp1 + K;
+                var Cp1 = C + i * stride + blocked + vcols;
+                var Cp2 = Cp1 + stride;
                 // E94: masked-vector narrow tail. Same j-ascending mul-then-add
                 // order per element as the scalar switch it replaces (MULPS then
                 // ADDPS, never FMA), so results agree bit-wise. Integer maskmov

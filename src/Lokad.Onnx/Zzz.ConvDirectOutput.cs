@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx;
@@ -11,7 +12,11 @@ public abstract partial class Tensor<T> where T : unmanaged
         ReadOnlySpan<float> bias, bool hasBias, int rows, int reduction,
         int columns, int outputStride, TensorExecutionOptions options)
     {
-        if (!CanUseConvPortableRows(rows, reduction, columns, options)) return false;
+        bool directWide = options.UseSimd && options.UseIntrinsics && Fma.IsSupported
+            && AblationSwitches.EnablePackedAvx512Rows && Avx512F.IsSupported
+            && rows is >= 64 and <= 1024 && (rows & 7) == 0
+            && reduction is >= 64 and <= 4096 && columns is >= 16 and <= 128;
+        if (!directWide && !CanUseConvPortableRows(rows, reduction, columns, options)) return false;
         long extent = (long)(rows - 1) * outputStride + columns;
         if ((long)rows * reduction > weights.Length || (long)reduction * columns > patch.Length
             || (long)rows * columns > temporary.Length || outputStride < columns
@@ -28,7 +33,6 @@ public abstract partial class Tensor<T> where T : unmanaged
         {
             int grouped = rows / 6 * 6;
             int remainder = rows - grouped;
-            temporary.Slice(0, remainder * columns).Clear();
             fixed (float* a = weights)
             fixed (float* b = patch)
             fixed (float* t = temporary)
@@ -38,6 +42,26 @@ public abstract partial class Tensor<T> where T : unmanaged
             {
                 float* panels = packed is null ? b : p;
                 if (packed is not null) MathOps.PackPanelsB(reduction, columns, b, panels);
+                // Only complete 12/8-row groups enter the strided zero-seeded
+                // route. Logical packed columns and final row stride differ.
+                if (directWide && MathOps.TryPackedAvx512Rows(rows, reduction, columns,
+                    a, panels, c, outputStride, zeroSeed: true))
+                {
+                    if (hasBias)
+                        for (int row = 0; row < rows; row++)
+                        {
+                            int col = 0;
+                            var offset = Vector512.Create(bi[row]);
+                            for (; col <= columns - 16; col += 16)
+                            {
+                                float* cell = c + row * outputStride + col;
+                                *(Vector512<float>*)cell = Avx512F.Add(*(Vector512<float>*)cell, offset);
+                            }
+                            for (; col < columns; col++) c[row * outputStride + col] += bi[row];
+                        }
+                    return true;
+                }
+                temporary.Slice(0, remainder * columns).Clear();
                 // Reuse the matrix dispatcher's wider consumer for the bounded
                 // large-row, medium-reduction territory. Its accumulation order
                 // is unchanged; the existing temporary provides contiguous rows.

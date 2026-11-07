@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Write eligible AVX-512 convolution tiles directly into the final output,
+  reusing existing packed kernels and preserving reduction and bias order. The
+  [complete source comparison](tests/benchmarks/paradee-direct-wide-conv-20261107.md)
+  measures 3.9% lower short FP32 Paradee latency; the other three intervals
+  include no change. Fresh committed-product ORT parity remains unproved.
 - Process eligible packed matrix tails with sixteen AVX-512 float lanes,
   preserving reduction order and existing fallbacks. The
   [complete source comparison](tests/benchmarks/paradee-packed-tails-20261106.md)

@@ -10,10 +10,14 @@ namespace Lokad.Onnx;
 // Enabled by default; disable with LOKAD_ONNX_PACKED_AVX512_ROWS=0 for diagnostics.
 public partial class MathOps
 {
-    internal static unsafe bool TryPackedAvx512Rows(int m, int n, int k, float* x, float* packed, float* dest)
+    internal static unsafe bool TryPackedAvx512Rows(int m, int n, int k, float* x, float* packed, float* dest,
+        int outputStride = 0, bool zeroSeed = false)
     {
-        if (!Avx512F.IsSupported || !Fma.IsSupported || m < 8 || n <= 0 || k < 32)
+        if (!Avx512F.IsSupported || !Fma.IsSupported || m < 8 || n <= 0 || k < (zeroSeed ? 16 : 32)
+            || outputStride != 0 && outputStride < k
+            || (zeroSeed || outputStride != 0 && outputStride != k) && (m & 7) != 0)
             return false;
+        int stride = outputStride == 0 ? k : outputStride;
         int fullColumns = k / 32 * 32;
         float* allX = x; float* allDest = dest;
         int main = m / 12 * 12;
@@ -30,21 +34,29 @@ public partial class MathOps
             for (int row = 0; row < main; row += 96)
             for (int column = 0; column < fullColumns; column += 32)
                 PackedTile12(System.Math.Min(96, main - row), n, x + row * n,
-                    packed + column * n, dest + row * k, k, column);
+                    packed + column * n, dest + row * stride, stride, column, zeroSeed);
         }
         else if (main > 0)
             for (int column = 0; column < fullColumns; column += 32)
-                PackedTile12(main, n, x, packed + column * n, dest, k, column);
+                PackedTile12(main, n, x, packed + column * n, dest, stride, column, zeroSeed);
         x += main * n;
-        dest += main * k;
+        dest += main * stride;
         int eights = 0;
         while (rest >= 8 && rest != 9) { eights += 8; rest -= 8; }
         if (eights > 0)
             for (int column = 0; column < fullColumns; column += 32)
-                PackedTile8(eights, n, x, packed + column * n, dest, k, column);
+                PackedTile8(eights, n, x, packed + column * n, dest, stride, column, zeroSeed);
         x += eights * n;
-        dest += eights * k;
-        if (fullColumns != k) PackedColumnTailsEvenRows(main + eights, n, k, allX, packed, allDest);
+        dest += eights * stride;
+        if (fullColumns != k)
+        {
+            // Tail consumers accumulate. Clear only their logical lanes;
+            // full panels seed registers directly and row padding stays intact.
+            if (zeroSeed)
+                for (int row = 0; row < m; row++)
+                    new System.Span<float>(allDest + row * stride + fullColumns, k - fullColumns).Clear();
+            PackedColumnTailsEvenRows(main + eights, n, k, allX, packed, allDest, stride);
+        }
         if (rest == 0) return true;
         if (rest % 3 == 0)
             mm_unsafe_vectorized_intrinsics_3x4packed(rest, n, k, x, packed, dest);
@@ -65,7 +77,7 @@ public partial class MathOps
                               float* panel,
                               float* C,
                               int K,
-                              int kb)
+                              int kb, bool zeroSeed = false)
     {
             for (int i = 0; i < M; i += 12)
             {
@@ -79,30 +91,30 @@ public partial class MathOps
                 // style) so the twelve C-row pointers do not stay live
                 // across the reduction loop and spill the A-row bases.
                 float* cGroup = C + i * K + kb;
-                Vector512<float> c00 = ((Vector512<float>*)(cGroup))[0];
-                Vector512<float> c01 = ((Vector512<float>*)(cGroup))[1];
-                Vector512<float> c10 = ((Vector512<float>*)(cGroup + 1 * K))[0];
-                Vector512<float> c11 = ((Vector512<float>*)(cGroup + 1 * K))[1];
-                Vector512<float> c20 = ((Vector512<float>*)(cGroup + 2 * K))[0];
-                Vector512<float> c21 = ((Vector512<float>*)(cGroup + 2 * K))[1];
-                Vector512<float> c30 = ((Vector512<float>*)(cGroup + 3 * K))[0];
-                Vector512<float> c31 = ((Vector512<float>*)(cGroup + 3 * K))[1];
-                Vector512<float> c40 = ((Vector512<float>*)(cGroup + 4 * K))[0];
-                Vector512<float> c41 = ((Vector512<float>*)(cGroup + 4 * K))[1];
-                Vector512<float> c50 = ((Vector512<float>*)(cGroup + 5 * K))[0];
-                Vector512<float> c51 = ((Vector512<float>*)(cGroup + 5 * K))[1];
-                Vector512<float> c70 = ((Vector512<float>*)(cGroup + 6 * K))[0];
-                Vector512<float> c71 = ((Vector512<float>*)(cGroup + 6 * K))[1];
-                Vector512<float> c80 = ((Vector512<float>*)(cGroup + 7 * K))[0];
-                Vector512<float> c81 = ((Vector512<float>*)(cGroup + 7 * K))[1];
-                Vector512<float> c90 = ((Vector512<float>*)(cGroup + 8 * K))[0];
-                Vector512<float> c91 = ((Vector512<float>*)(cGroup + 8 * K))[1];
-                Vector512<float> cA0 = ((Vector512<float>*)(cGroup + 9 * K))[0];
-                Vector512<float> cA1 = ((Vector512<float>*)(cGroup + 9 * K))[1];
-                Vector512<float> cB0 = ((Vector512<float>*)(cGroup + 10 * K))[0];
-                Vector512<float> cB1 = ((Vector512<float>*)(cGroup + 10 * K))[1];
-                Vector512<float> cC0 = ((Vector512<float>*)(cGroup + 11 * K))[0];
-                Vector512<float> cC1 = ((Vector512<float>*)(cGroup + 11 * K))[1];
+                Vector512<float> c00 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[0];
+                Vector512<float> c01 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[1];
+                Vector512<float> c10 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[0];
+                Vector512<float> c11 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[1];
+                Vector512<float> c20 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[0];
+                Vector512<float> c21 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[1];
+                Vector512<float> c30 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[0];
+                Vector512<float> c31 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[1];
+                Vector512<float> c40 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[0];
+                Vector512<float> c41 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[1];
+                Vector512<float> c50 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[0];
+                Vector512<float> c51 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[1];
+                Vector512<float> c70 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[0];
+                Vector512<float> c71 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[1];
+                Vector512<float> c80 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[0];
+                Vector512<float> c81 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[1];
+                Vector512<float> c90 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 8 * K))[0];
+                Vector512<float> c91 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 8 * K))[1];
+                Vector512<float> cA0 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 9 * K))[0];
+                Vector512<float> cA1 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 9 * K))[1];
+                Vector512<float> cB0 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 10 * K))[0];
+                Vector512<float> cB1 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 10 * K))[1];
+                Vector512<float> cC0 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 11 * K))[0];
+                Vector512<float> cC1 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 11 * K))[1];
                 float* weightRow = panel;
                 for (nint j = 0; j < N; ++j, weightRow += 2 * Vector512<float>.Count)
                 {
@@ -181,7 +193,7 @@ public partial class MathOps
                               float* panel,
                               float* C,
                               int K,
-                              int kb)
+                              int kb, bool zeroSeed = false)
     {
             for (int i = 0; i < M; i += 8)
             {
@@ -199,22 +211,22 @@ public partial class MathOps
                 float* a5 = aGroup + 5 * N;
                 float* a6 = aGroup + 6 * N;
                 float* a7 = aGroup + 7 * N;
-                Vector512<float> c00 = ((Vector512<float>*)(cGroup))[0];
-                Vector512<float> c01 = ((Vector512<float>*)(cGroup))[1];
-                Vector512<float> c10 = ((Vector512<float>*)(cGroup + 1 * K))[0];
-                Vector512<float> c11 = ((Vector512<float>*)(cGroup + 1 * K))[1];
-                Vector512<float> c20 = ((Vector512<float>*)(cGroup + 2 * K))[0];
-                Vector512<float> c21 = ((Vector512<float>*)(cGroup + 2 * K))[1];
-                Vector512<float> c30 = ((Vector512<float>*)(cGroup + 3 * K))[0];
-                Vector512<float> c31 = ((Vector512<float>*)(cGroup + 3 * K))[1];
-                Vector512<float> c40 = ((Vector512<float>*)(cGroup + 4 * K))[0];
-                Vector512<float> c41 = ((Vector512<float>*)(cGroup + 4 * K))[1];
-                Vector512<float> c50 = ((Vector512<float>*)(cGroup + 5 * K))[0];
-                Vector512<float> c51 = ((Vector512<float>*)(cGroup + 5 * K))[1];
-                Vector512<float> c60 = ((Vector512<float>*)(cGroup + 6 * K))[0];
-                Vector512<float> c61 = ((Vector512<float>*)(cGroup + 6 * K))[1];
-                Vector512<float> c70 = ((Vector512<float>*)(cGroup + 7 * K))[0];
-                Vector512<float> c71 = ((Vector512<float>*)(cGroup + 7 * K))[1];
+                Vector512<float> c00 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[0];
+                Vector512<float> c01 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[1];
+                Vector512<float> c10 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[0];
+                Vector512<float> c11 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[1];
+                Vector512<float> c20 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[0];
+                Vector512<float> c21 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[1];
+                Vector512<float> c30 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[0];
+                Vector512<float> c31 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[1];
+                Vector512<float> c40 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[0];
+                Vector512<float> c41 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[1];
+                Vector512<float> c50 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[0];
+                Vector512<float> c51 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[1];
+                Vector512<float> c60 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[0];
+                Vector512<float> c61 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[1];
+                Vector512<float> c70 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[0];
+                Vector512<float> c71 = zeroSeed ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[1];
                 for (int j = 0; j < N; ++j)
                 {
                     var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
