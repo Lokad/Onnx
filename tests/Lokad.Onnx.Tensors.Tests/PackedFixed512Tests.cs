@@ -7,8 +7,12 @@ namespace Lokad.Onnx.Tensors.Tests;
 public unsafe class PackedFixed512Tests
 {
     delegate bool Kernel(int rows, int reduction, int columns, float* input, float* packed, float* output);
+    delegate bool RowsKernel(int rows, int reduction, int columns, float* input, float* packed,
+        float* output, int outputStride, bool zeroSeed);
     static Kernel Resolve(string name) => typeof(MathOps)
         .GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic)!.CreateDelegate<Kernel>();
+    static RowsKernel ResolveRows() => typeof(MathOps)
+        .GetMethod("TryPackedAvx512Rows", BindingFlags.Static | BindingFlags.NonPublic)!.CreateDelegate<RowsKernel>();
 
     [SkippableTheory]
     [InlineData(512)]
@@ -56,6 +60,8 @@ public unsafe class PackedFixed512Tests
         var output = Enumerable.Repeat(-12345.5f, rows * columns + 10).ToArray();
         fixed (float* a = input, b = packed, c = output)
         {
+            // Check the general binding even when AVX-512 numerical tests skip.
+            Assert.False(ResolveRows()(rows, 0, columns, a, b, c + 5, 0, false));
             Assert.False(Resolve("TryPackedAvx512Fixed512Rows")(rows, reduction, columns, a, b, c + 5));
             Assert.False(Resolve("TryPackedAvx512FixedWideRows")(rows, reduction, columns, a, b, c + 5));
         }
@@ -85,7 +91,7 @@ public unsafe class PackedFixed512Tests
         {
             MathOps.PackPanelsB(reduction, columns, b, p + offset);
             var packedBefore = packed.ToArray();
-            Assert.True(Resolve("TryPackedAvx512Rows")(rows, reduction, columns, a + offset, p + offset, e + offset));
+            Assert.True(ResolveRows()(rows, reduction, columns, a + offset, p + offset, e + offset, 0, false));
             Assert.True(Resolve(reduction == 512 ? "TryPackedAvx512Fixed512Rows" : "TryPackedAvx512FixedWideRows")(rows, reduction, columns, a + offset, p + offset, c + offset));
             EqualBits(packedBefore, packed);
         }
