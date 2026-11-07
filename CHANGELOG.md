@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Avoid temporary shape and stride arrays in prepared conversion checks,
+  preserving live node, attribute, tensor and byte validation.
 - Prepare eligible initializer-only conversion prefixes using the existing
   bounded weight cache, preserving live edits, independent mutable outputs and
   subclass failure behavior. The

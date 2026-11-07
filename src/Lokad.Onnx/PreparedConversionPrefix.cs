@@ -180,8 +180,13 @@ internal sealed class PreparedConversionPrefix
         && a.Outputs.SequenceEqual(b.Outputs) && SameAttributes(a.Attributes, b.Attributes);
 
     static bool SameAttributes(Dictionary<string, object>? a, Dictionary<string, object>? b)
-        => (a?.Count ?? 0) == (b?.Count ?? 0) && (a is null || a.All(pair => b is not null
-            && b.TryGetValue(pair.Key, out var value) && Equals(pair.Value, value)));
+    {
+        if ((a?.Count ?? 0) != (b?.Count ?? 0)) return false;
+        if (a is not null)
+            foreach (var pair in a)
+                if (b is null || !b.TryGetValue(pair.Key, out var value) || !Equals(pair.Value, value)) return false;
+        return true;
+    }
 
     static bool Standard(ITensor tensor) => tensor switch
     {
@@ -189,12 +194,21 @@ internal sealed class PreparedConversionPrefix
         DenseTensor<sbyte> t => Standard(t), DenseTensor<byte> t => Standard(t),
         DenseTensor<long> t => Standard(t), _ => false
     };
-    static bool Standard<T>(DenseTensor<T> value) where T : unmanaged => value.GetType() == typeof(DenseTensor<T>) && !value.IsReversedStride
-        && value.Buffer.Length == value.Length && value.strides.SequenceEqual(ArrayUtilities.GetStrides(value.dimensions));
+    static bool Standard<T>(DenseTensor<T> value) where T : unmanaged
+    {
+        if (value.GetType() != typeof(DenseTensor<T>) || value.IsReversedStride
+            || value.Buffer.Length != value.Length || value.strides.Length != value.dimensions.Length) return false;
+        int stride = 1;
+        for (int i = value.dimensions.Length - 1; i >= 0; i--)
+        {
+            if (value.dimensions[i] < 0 || value.strides[i] != stride) return false;
+            stride = checked(stride * value.dimensions[i]);
+        }
+        return true;
+    }
 
     static bool SameValue(ITensor a, ITensor b)
     {
-        if (!Standard(a) || !a.Dims.SequenceEqual(b.Dims)) return false;
         return (a, b) switch
         {
             (DenseTensor<float> x, DenseTensor<float> y) => SameBits(x, y),
@@ -205,5 +219,6 @@ internal sealed class PreparedConversionPrefix
         };
     }
     static bool SameBits<T>(DenseTensor<T> a, DenseTensor<T> b) where T : unmanaged
-        => MemoryMarshal.AsBytes(a.Buffer.Span).SequenceEqual(MemoryMarshal.AsBytes(b.Buffer.Span));
+        => Standard(a) && a.Dimensions.SequenceEqual(b.Dimensions)
+            && MemoryMarshal.AsBytes(a.Buffer.Span).SequenceEqual(MemoryMarshal.AsBytes(b.Buffer.Span));
 }

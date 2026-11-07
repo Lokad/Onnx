@@ -162,6 +162,27 @@ public class PreparedConversionPrefixTests(ITestOutputHelper output)
         Assert.False(plan.TryBind(1, graph.Nodes[1], graph, out _));
     }
 
+    [Fact]
+    public void LiveAdmissionChecksAvoidTransientMetadataAllocations()
+    {
+        var graph = Graph();
+        var plan = PreparedConversionPrefix.Create(graph);
+        if (!Vector.IsHardwareAccelerated) { Assert.Null(plan); return; }
+        Assert.NotNull(plan);
+        for (int i = 0; i < 256; i++) Assert.True(plan.Matches(graph, ExecutionOptions.Default));
+        bool matches = true;
+        long start = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 256; i++) matches &= plan.Matches(graph, ExecutionOptions.Default);
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - start;
+        output.WriteLine("Admission checks: 256; transient metadata bytes: {0}", allocated);
+        output.WriteLine("Core SHA256: {0}", Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(
+            File.ReadAllBytes(typeof(ComputationalGraph).Assembly.Location))));
+        Assert.True(matches);
+        Assert.Equal(0L, allocated);
+        graph.Initializers["q"].SetValue(0, (sbyte)99);
+        Assert.False(plan.Matches(graph, ExecutionOptions.Default));
+    }
+
     [SkippableFact]
     public void OriginalInt8OptimizedPrefixIsAdmittedWithoutRewritingModel()
     {
