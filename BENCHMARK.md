@@ -35,56 +35,43 @@ Complete-output, finite-value, input-immutability, repeat and held-output checks
 
 These are workload-specific observations on one host. DINOv2 remains excluded under its full-output gate; Whisper has no matched timing. See [model support](docs/model-support.md). The [historical report](tests/benchmarks/release-0.5.0-sustained-20261030.md) retains earlier source controls and unfavorable observations, including the DinoV3 source-control miss and separate corroboration. No earlier clocks are relabeled or pooled into this run.
 
-## Paradee runtime — unreleased, 2026-11-06
+## Paradee runtime — unreleased, 2026-11-07
 
-The original Paradee-8M-v1.2 exports execute from fixed phoneme-ID tensors to
-owned waveforms. This complete checkpoint uses clean source `b47c72c9`
-(runtime code `6d7d97c5`), default .NET 11 RC3 and ORT 1.29.0 on the same VM.
-All 56 workers and 24 pairs remain. Every row has six balanced independent
-engine pairs, at least **32 calls and 40 seconds** conditioning per process,
-then 33 complete calls.
+The original Paradee-8M-v1.2 exports run from supplied phoneme-ID tensors to
+owned waveforms. This complete checkpoint uses clean source `bb2ce132`, default
+.NET 11 RC3 and ORT 1.29.0 on the same VM. All 56 workers and 24 pairs remain.
+Every workload has six balanced independent engine pairs; each process keeps
+at least **32 calls and 40 seconds** conditioning, then 33 complete calls.
 
 | Original export | Tokens / speed | Lokad.Onnx seconds | Microsoft ORT seconds | Paired Lokad / ORT | 95% interval |
 | --- | --- | ---: | ---: | ---: | --- |
-| Paradee FP32 | 14 / 1.0 | 0.022481 | 0.020406 | **1.1017** | [1.0862, 1.1173] |
-| Paradee FP32 | 62 / 0.8 | 0.060078 | 0.069696 | **0.8618** | [0.8423, 0.8818] |
-| Paradee INT8 | 14 / 1.0 | 0.026512 | 0.021962 | **1.2072** | [1.1878, 1.2269] |
-| Paradee INT8 | 62 / 0.8 | 0.061792 | 0.069588 | **0.8879** | [0.8744, 0.9016] |
+| Paradee FP32 | 14 / 1.0 | 0.021325 | 0.020479 | **1.0413** | [1.0286, 1.0541] |
+| Paradee FP32 | 62 / 0.8 | 0.056330 | 0.069635 | **0.8088** | [0.7896, 0.8285] |
+| Paradee INT8 | 14 / 1.0 | 0.025161 | 0.021868 | **1.1502** | [1.1078, 1.1942] |
+| Paradee INT8 | 62 / 0.8 | 0.060161 | 0.069673 | **0.8633** | [0.8450, 0.8821] |
 
 Times are arithmetic process means; ratios are geometric paired means with
-two-sided log-Student-t intervals (df 5). **ORT performance parity remains unproved.**
-INT8 weights are dequantized into FP32. Controlled-noise companions separately
-qualify exact durations, upstream error `<=1e-4`, waveform peak `<=1e-3`
-and signal-to-error ratio `>=50 dB` on both frameworks.
-See the [current report](tests/benchmarks/paradee-runtime-20261106-b47.md) and
-[all clocks and identities](tests/benchmarks/paradee-runtime-20261106-b47.json).
-The [previous checkpoint](tests/benchmarks/paradee-runtime-20261106-e42.md)
-keeps its original runtime; no source ratios are multiplied into these results.
+two-sided log-Student-t intervals (df 5). Both 62-token cases pass the point and
+upper-endpoint `<1.03` gate. The 14-token FP32/INT8 estimates are 4.1%/15.0%
+slower; **overall ORT performance parity remains unproved**.
+
+INT8 weights dequantize into FP32. Both frameworks pass the existing numerical,
+ownership, full-scalar and native differential checks. Controlled companions
+retain upstream scaled error `<=1e-4`, waveform peak `<=1e-3` and signal-to-error
+ratio `>=50 dB`. The complete invocation finished in 33.65 minutes.
+See the [current report](tests/benchmarks/paradee-runtime-20261107-bb2.md) and
+[all clocks and identities](tests/benchmarks/paradee-runtime-20261107-bb2.json).
+
+The [previous checkpoint](tests/benchmarks/paradee-runtime-20261106-b47.md) keeps
+its original source and measurements. The retained
+[bounded harmonic-sine source comparison](tests/benchmarks/paradee-harmonic-sine-20261106.md)
+has its own matched controls; its ratios are not multiplied into this table.
 The seven-model 0.5.0 figures above retain their original source and date.
 
-The retained [live LSTM panels](tests/benchmarks/paradee-lstm-panels-20261106.md),
-[vector Exp/square](tests/benchmarks/paradee-arithmetic-20261106.md) and
-[packed-tail](tests/benchmarks/paradee-packed-tails-20261106.md) source reports
-preserve their own observations and uncertainty. Their runtime changes are
-included in this fresh actual ORT checkpoint.
-
-A [pooled-Gather experiment](tests/benchmarks/paradee-gather-pool-20261106.md)
-remains unmerged: short INT8 improves 4.7%, while short FP32 slows 2.3%; both
-effects have intervals excluding parity. Lower allocation establishes no common
-latency benefit. All observations remain in that report.
-
-A [wider convolution-admission experiment](tests/benchmarks/paradee-conv-admission-20261106.md)
-also remains unmerged: all four source confidence intervals include no change,
-and specific late wide/direct-wrapper corroboration was not established.
-Every pair and the failed trace check remain recorded; the native table is unchanged.
-
-A [live-reference lookup experiment](tests/benchmarks/paradee-live-refs-20261106.md)
-remains unmerged: short-input estimates improved by 0.6–0.8%, but all four source
-confidence intervals include no change. The actual native table is unchanged.
-
-A [bounded harmonic-sine source comparison](tests/benchmarks/paradee-harmonic-sine-20261106.md)
-shows 3–6% lower latency across all four original Paradee workloads, with all
-24 pairs favorable. This source result does not replace the actual native table.
+The [pooled-Gather](tests/benchmarks/paradee-gather-pool-20261106.md),
+[convolution-admission](tests/benchmarks/paradee-conv-admission-20261106.md) and
+[live-reference lookup](tests/benchmarks/paradee-live-refs-20261106.md) experiments
+remain unmerged. Their complete observations and uncertainty remain available.
 
 ## Running comparisons
 
