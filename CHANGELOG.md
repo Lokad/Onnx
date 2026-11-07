@@ -2,108 +2,41 @@
 
 ## Unreleased
 
-- Vectorize eligible Clip operations while preserving ordered bounds, NaN bits,
-  signed zeros, exact integer values and the scalar fallback.
-- Avoid temporary shape and stride arrays in prepared conversion checks,
-  preserving live node, attribute, tensor and byte validation.
-- Prepare eligible initializer-only conversion prefixes using the existing
-  bounded weight cache, preserving live edits, independent mutable outputs and
-  subclass failure behavior. The
-  [complete source comparison](tests/benchmarks/paradee-conversion-prefix-20261107.md)
-  measures 10.0% lower short INT8 Paradee latency, with a 1.7% short FP32 cost;
-  both longer-case intervals include no change. Fresh committed-product ORT
-  parity remains unproved.
-- Write eligible AVX-512 convolution tiles directly into the final output,
-  reusing existing packed kernels and preserving reduction and bias order. The
-  [complete source comparison](tests/benchmarks/paradee-direct-wide-conv-20261107.md)
-  measures 3.9% lower short FP32 Paradee latency; the other three intervals
-  include no change. Fresh committed-product ORT parity remains unproved.
-- Process eligible packed matrix tails with sixteen AVX-512 float lanes,
-  preserving reduction order and existing fallbacks. The
-  [complete source comparison](tests/benchmarks/paradee-packed-tails-20261106.md)
-  shows about 2% lower FP32 62-token Paradee latency; the other intervals
-  include no change. Fresh ORT parity remains unproved.
-- Use existing vector operations for eligible dense float Exp and live scalar
-  Pow(x, 2), retaining all other execution paths and numerical bounds. See the
-  [complete four-case source comparison](tests/benchmarks/paradee-arithmetic-20261106.md)
-  for paired estimates and uncertainty. Fresh ORT parity remains unproven.
-- Reuse the existing SIMD transpose for live LSTM projection panels, preserving
-  every weight bit and the existing arithmetic. The
-  [complete source comparison](tests/benchmarks/paradee-lstm-panels-20261106.md)
-  has lower latency estimates across all four Paradee cases; every confidence
-  interval includes no change. Fresh ORT parity remains unproven.
-- Refresh the [complete Paradee native checkpoint](tests/benchmarks/paradee-runtime-20261107-9a2.md)
-  after direct wide convolution output, retaining all 56 workers and 24 pairs
-  with unchanged numerical limits. Native parity remains unproved for INT8 / 14 tokens.
-
-
-- Prepare bounded snapshots of exactly recognized Fourier weight generators,
-  checking every live operand before copying independently owned outputs.
-  The [complete source comparison](tests/benchmarks/paradee-fourier-weights-20261106.md)
-  measured 13.2% lower short INT8 Paradee latency and 6.5% lower medium latency;
-  FP32 intervals include no change. ORT parity remains unproved.
-- Process sixteen frames per vector in prepared forward Fourier convolutions on
-  AVX-512 CPUs, retaining the existing roots, numerical guards and fallback.
-  The [complete source comparison](tests/benchmarks/paradee-wide-fourier-20261106.md)
-  shows a 3.2% gain for short FP32 Paradee; the other intervals include no change,
-  and short INT8's point estimate is 1.1% slower. ORT parity remains unproved.
-- Accelerate eligible harmonic synthesis on AVX-512 CPUs with a bounded
-  split-pi sine polynomial, retaining scalar/portable paths, large/nonfinite
-  argument fallback, signed zeros and the existing accumulation order. The
-  [complete source comparison](tests/benchmarks/paradee-harmonic-sine-20261106.md)
-  shows 3–6% lower latency across all four original Paradee workloads, with all
-  confidence intervals below no change. Numerical bounds remain unchanged;
-  final committed-product ORT parity is still unproved.
-
-- Require all six private Paradee model checks before comparisons, including
-  waveform-only companions. Condition each engine for at least 40 seconds and
-  32 calls before timing, allowing default .NET tiering to settle.
-- Accelerate exactly recognized windowed Fourier convolutions with a prepared
-  vectorized transform. Check live weights before every use and retain the
-  ordinary convolution fallback. The [complete source comparison](tests/benchmarks/paradee-fourier-20261106.md)
-  measured 8–12% lower latency across the four Paradee workloads; ORT parity
-  remains unproved.
-- Run the published Paradee-8M-v1.2 FP32 and INT8 ONNX exports from supplied
-  phoneme-ID, speed and voice tensors through the core graph API. See
-  [tested exports and numerical limits](docs/model-support.md#paradee-runtime).
+- Run the original Paradee-8M-v1.2 FP32 and INT8 exports from supplied
+  phoneme-ID, speed and voice tensors to owned waveforms. The
+  [complete CPU comparison](tests/benchmarks/paradee-runtime-20261107-2f3b.md) establishes
+  parity on all four 14-/62-token workloads: every paired ratio and upper 95%
+  endpoint is below 1.03. No speech frontend or helper API is added.
 - Add ConvTranspose1D, rank-3 nearest Resize, RandomNormalLike, CumSum,
   GatherElements, Flatten, Exp, Round, IsNaN, ordered comparisons and variadic Min.
-  Add Half-to-float/double storage conversion, DequantizeLinear and Mod for the
+- Add Half-to-float/double storage conversion, DequantizeLinear and Mod for the
   INT8 export; general FP16 arithmetic remains unsupported.
-- Accelerate eligible float ConvTranspose1D through the existing matrix kernels
-  and overlap-add, and large float comparisons against a scalar. Preserve scalar
-  execution and mutable initializer behavior.
-- Reuse Conv1D and dequantization storage, vectorize live INT8 conversion, merge
-  eligible shared-weight matrix batches, and accelerate reflection padding and
-  seven-tap depthwise convolution. Retain type information through recurrent and
-  fused attention nodes so existing activation fusions remain available.
-- Vectorize InstanceNormalization statistics and output transforms while retaining
-  its fixed float reduction order and scalar fallback.
-- Stream eligible harmonic frequency masks, sine products and float sums into
-  their output, preserving live operands, arithmetic order and scalar fallback.
-- Vectorize eligible standard LSTM cell activations while retaining scalar and
-  custom-activation paths and the existing projection and bias arithmetic.
-- Bulk-copy slices with a reversed last axis while preserving every value bit
-  and independent output storage.
-- Clamp strided float convolution patch-copy ranges once per row, preserving
-  padding and every value bit while avoiding per-value index checks.
-- Reuse wider spatial tiles and bounded weight-row blocks for eligible float
-  convolutions on AVX-512 CPUs, retaining the existing dot-product arithmetic.
-- Pack bounded short float matrix products for the existing AVX-512 kernels,
-  preserving the ordered arithmetic and live right-hand operands.
-- Vectorize float and double LeakyRelu and directly copy eligible Gather values,
-  preserving exceptional values, scalar execution and independent output storage.
-- Prevent nested graph fingerprints from cancelling enclosing output-name changes,
-  so `If` branch output renames refresh captured-value lifetimes reliably.
-- Qualify both Paradee exports with frozen inputs and controlled-noise references
-  on .NET 10 and .NET 11, including hardware-disabled execution. Random waveforms
-  use explicit signal-error bounds; they are not bitwise identical across engines.
-- Qualify waveform-only noise-controlled companions as well, so diagnostic
-  outputs cannot hide differences in the original graph's tensor lifetimes.
-- Refresh the [Paradee CPU comparison](tests/benchmarks/paradee-runtime-20261106.md)
-  with six process pairs per workload, forty-second conditioning and all clocks.
-  The original 14-/62-token exports measure 1.05–1.60 times ORT latency;
-  retain the [initial report](tests/benchmarks/paradee-runtime-20261104.md) separately.
+- Prepare bounded constant conversions and recognized Fourier weight recipes
+  through the existing cache. Preserve live node, attribute, shape and byte
+  checks, subclass failure behavior and independently mutable outputs. Avoid
+  temporary metadata arrays during the live checks.
+- Accelerate eligible windowed Fourier convolutions and harmonic synthesis
+  with prepared vector transforms and bounded sine evaluation. Retain live
+  weight checks, arithmetic bounds, signed-zero and large/nonfinite fallbacks.
+- Improve float convolution and matrix kernels with bounded AVX-512 tiles,
+  direct output writes, wider column tails and existing packed-weight reuse.
+  Preserve accumulation order, mutable operands and scalar execution.
+- Vectorize eligible recurrent activations, InstanceNormalization, Exp,
+  scalar-square Pow, ordered Clip and float/double LeakyRelu, preserving their
+  numerical contracts and unsupported-mode/custom-activation fallbacks.
+- Reuse convolution/dequantization storage and improve Gather, reflection
+  padding, reversed-axis slice copies, seven-tap depthwise convolution and
+  shared-weight matrix batches while preserving input and output ownership.
+- Prevent nested graph fingerprints from cancelling enclosing output-name
+  changes, so If branch renames refresh captured-value lifetimes reliably.
+- Qualify both exports on .NET 10 and .NET 11, including full hardware-disabled
+  execution, controlled-noise and waveform-only references, native differential
+  checks and exact-build AVX-512 coverage. Random waveforms retain explicit
+  signal-error bounds rather than a cross-engine bitwise-equality claim.
+- Refresh [established-model controls](tests/benchmarks/paradee-established-controls-20261107.md)
+  and the [complete seven-model benchmark](tests/benchmarks/runtime-full-20261107-2f3b.md),
+  retaining all 58 workers and actual elapsed time of 39.33 minutes.
+
 
 ## 0.5.0 — 2026-10-30
 
