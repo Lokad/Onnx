@@ -130,6 +130,13 @@ public partial struct Node
     }
 
 
+    // Only independent-output numerical operators below borrow this view.
+    ITensor? ReadOnlyWeight(ComputationalGraph graph, int index)
+    {
+        var input = InputTensor(graph, index);
+        return input is PreparedFloatTensor prepared ? prepared.BorrowReadOnly() : input;
+    }
+
     public ITensor? InputTensor(ComputationalGraph graph, int index) =>
         index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
 
@@ -302,16 +309,16 @@ public partial struct Node
 
         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
 
-        OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+        OpType.Conv => CPU.Conv(InputTensor(graph, 0), ReadOnlyWeight(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
 
         OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
 
-        OpType.ConvTranspose => CPU.ConvTranspose(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+        OpType.ConvTranspose => CPU.ConvTranspose(InputTensor(graph, 0), ReadOnlyWeight(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"),
             Ints("output_padding"), Ints("output_shape"), opt),
 
-        OpType.ConvRelu => CPU.ConvRelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+        OpType.ConvRelu => CPU.ConvRelu(InputTensor(graph, 0), ReadOnlyWeight(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
 
         OpType.AddRelu => Sub32Gate(graph, OpType.Add) ?? CPU.AddRelu(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
@@ -324,10 +331,10 @@ public partial struct Node
 
         OpType.GlobalAveragePool => CPU.GlobalAveragePool(InputTensor(graph, 0), opt),
 
-        OpType.MatMul => MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.MatMul => MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), ReadOnlyWeight(graph, 1), opt, graph.ActivePool),
 
-        OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
-        OpType.GemmGelu => CPU.GemmGelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0, Attr<string>("approximate", null)),
+        OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), ReadOnlyWeight(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
+        OpType.GemmGelu => CPU.GemmGelu(InputTensor(graph, 0), ReadOnlyWeight(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0, Attr<string>("approximate", null)),
 
         OpType.ScaledMatMul => Attr<string>("placement", null) == "trailing"
             ? CPU.ScaledMatMulTrailing(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool)
@@ -487,7 +494,7 @@ public partial struct Node
 
         OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis", null), GetFloat("epsilon", null), Int("stash_type", null), Outputs.Length, opt, graph.ActivePool),
 
-        OpType.LSTM => CPU.Lstm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), InputTensor(graph, 5), InputTensor(graph, 6), InputTensor(graph, 7),
+        OpType.LSTM => CPU.Lstm(InputTensor(graph, 0), ReadOnlyWeight(graph, 1), ReadOnlyWeight(graph, 2), ReadOnlyWeight(graph, 3), InputTensor(graph, 4), InputTensor(graph, 5), InputTensor(graph, 6), InputTensor(graph, 7),
             Attr<string>("direction", null), Attr<string[]>("activations", null), Attr<float[]>("activation_alpha", null), Attr<float[]>("activation_beta", null),
             GetFloat("clip", null), RequiredInt("hidden_size"), (GetInt("input_forget", 0) ?? 0) != 0, GetInt("layout", 0) ?? 0, Outputs.Length, opt, graph.ActivePool),
 

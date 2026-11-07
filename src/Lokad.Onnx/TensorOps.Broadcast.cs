@@ -176,6 +176,12 @@ where T : unmanaged
         storage = default;
         origin = 0;
         steps = Array.Empty<int>();
+        if (input is PreparedFloatTensor prepared)
+        {
+            storage = (Memory<T>)(object)prepared.WritableMemory;
+            steps = input.strides;
+            return true;
+        }
         if (input.GetType() == typeof(DenseTensor<T>))
         {
             storage = ((DenseTensor<T>)input).Buffer;
@@ -183,13 +189,14 @@ where T : unmanaged
             return true;
         }
         var owner = input;
-        while (owner.GetType() != typeof(DenseTensor<T>))
+        while (owner.GetType() != typeof(DenseTensor<T>) && owner is not PreparedFloatTensor)
         {
             if (owner.GetType() == typeof(TensorSlice<T>)) owner = ((TensorSlice<T>)owner).parent;
             else if (owner.GetType() == typeof(BroadcastedTensor<T>)) owner = ((BroadcastedTensor<T>)owner).source;
             else return false;
         }
-        storage = ((DenseTensor<T>)owner).Buffer;
+        storage = owner is PreparedFloatTensor preparedOwner
+            ? (Memory<T>)(object)preparedOwner.WritableMemory : ((DenseTensor<T>)owner).Buffer;
         var coordinates = new int[input.Rank];
         steps = new int[input.Rank];
         origin = input.GetStorageIndex(coordinates);

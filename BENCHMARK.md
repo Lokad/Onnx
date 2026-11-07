@@ -63,6 +63,11 @@ its original source and observations. No earlier clocks or source ratios are
 pooled into this table. The seven-model 0.5.0 figures above retain their original
 source and date.
 
+The subsequent [prepared-conversion source comparison](tests/benchmarks/paradee-conversion-prefix-20261107.md)
+measures 10.0% lower short INT8 latency and 1.7% higher short FP32 latency;
+both longer-case intervals include no change. Those figures use a managed
+source control. A fresh committed-product ORT comparison is pending.
+
 ## Running comparisons
 
 Use [eng/bench.py --model full](eng/bench.md) with qualified committed products and prepared local assets. Build/fixture preparation and CI waiting happen before the timed invocation. Reuse `models/multilingual-e5-small/model.onnx`. Individual e5/Gemma/audio source comparisons remain available through the same command; Gemma defaults to 128 tokens and 768 values.

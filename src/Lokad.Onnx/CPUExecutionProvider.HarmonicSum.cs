@@ -33,7 +33,7 @@ public partial class CPUExecutionProvider
 
     static bool HarmonicDense(ITensor? input, out DenseTensor<float> value)
     {
-        value = input as DenseTensor<float> ?? null!;
+        value = input is PreparedFloatTensor prepared ? prepared.ToDenseTensor() : input as DenseTensor<float> ?? null!;
         return value is not null && !value.IsReversedStride && value.Buffer.Length == value.Length
             && value.strides.SequenceEqual(ArrayUtilities.GetStrides(value.dimensions));
     }

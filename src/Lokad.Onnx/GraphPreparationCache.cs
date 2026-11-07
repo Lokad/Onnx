@@ -15,5 +15,6 @@ internal sealed class GraphPreparationCache
     internal IReadOnlyDictionary<string, PreparedFourierWeights>? FourierWeights;
     internal readonly object FoldLock = new();
     internal readonly object PrepareLock = new();
+    internal PreparedConversionPrefix? ConversionPrefix;
     internal bool Winograd4;
 }

@@ -270,7 +270,7 @@ public partial class ComputationalGraph
                 PackedWeights.Clear();
                 PackedConvWeights.Clear();
                 PackedLstmWeights.Clear();
-                preparation.FourierProjections = null; preparation.FourierWeights = null;
+                preparation.FourierProjections = null; preparation.FourierWeights = null; preparation.ConversionPrefix = null;
                 RetainedPackedWeightBytes = 0;
             }
         }
@@ -974,6 +974,8 @@ public partial class ComputationalGraph
                 PackedLstmWeights = PackedLstmWeights, FourierProjections = FourierProjections
             }
         };
+        var conversionPrefix = provider == ExecutionProvider.CPU && preparation.ConversionPrefix is { } prefix
+            && prefix.Matches(this, nodeOptions) ? prefix : null;
         livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)
@@ -1003,7 +1005,13 @@ public partial class ComputationalGraph
                 }
                 try
                 {
-                    r = node.Execute(this, provider, nodeOptions);
+                    if (conversionPrefix is not null && count <= conversionPrefix.Count
+                        && conversionPrefix.TryBind(count - 1, node, this, out r)) { }
+                    else
+                    {
+                        conversionPrefix = null;
+                        r = node.Execute(this, provider, nodeOptions);
+                    }
                 }
                 finally
                 {
@@ -1417,7 +1425,7 @@ public partial class ComputationalGraph
     {
         ReleasedBuffers?.Clear();
         FoldConstantTransposes();
-        preparation.FourierProjections = null; preparation.FourierWeights = null;
+        preparation.FourierProjections = null; preparation.FourierWeights = null; preparation.ConversionPrefix = null;
         GraphPacking.PackMatMulWeights(this);
         GraphConvPacking.PackWeights(this);
         GraphLstmPacking.PackWeights(this);
@@ -1435,6 +1443,8 @@ public partial class ComputationalGraph
             if (node.Op != OpType.Constant) NormalizeIntArrayAttributes(node.Attributes);
             Nodes[i] = node;
         }
+        preparation.ConversionPrefix = PreparedConversionPrefix.Create(this);
+        if (preparation.ConversionPrefix is { } prefix) RetainedPackedWeightBytes += prefix.RetainedBytes;
         var lastUse = new Dictionary<string, int>(StringComparer.Ordinal);
         nodeReadNames = null;
         for (int i = 0; i < Nodes.Count; i++)
@@ -1979,6 +1989,7 @@ public partial class ComputationalGraph
             }
             return false;
         }
+        if (typed is PreparedFloatTensor) return true;
         if (typed is OwnedPackedTensor packed) { root = packed.PackedArray; return true; }
         if (typed is BroadcastedTensor<float> broadcast) return TryCollectSingleRoot(broadcast.source, out root);
         if (typed is TensorSlice<float> slice) return TryCollectSingleRoot(slice.parent, out root);
@@ -2095,6 +2106,7 @@ public partial class ComputationalGraph
             }
             return false;
         }
+        if (typed is PreparedFloatTensor) return true;
         if (typed is OwnedPackedTensor packed) { roots.Add(packed.PackedArray); return true; }
         if (typed is BroadcastedTensor<float> broadcast) return CollectAliasRoot(broadcast.source, roots);
         if (typed is TensorSlice<float> slice) return CollectAliasRoot(slice.parent, roots);
@@ -2150,6 +2162,7 @@ public partial class ComputationalGraph
         }
         if (tensor is not Tensor<float> typed) return false;
         if (typed is DenseTensor<float> dense) return SharesBuffer(candidate, dense.Buffer);
+        if (typed is PreparedFloatTensor) return false;
         if (typed is OwnedPackedTensor packed) return ReferenceEquals(candidate, packed.PackedArray);
         if (typed is BroadcastedTensor<float> broadcast) return SharesPooledStorage(candidate, broadcast.source);
         if (typed is TensorSlice<float> slice) return SharesPooledStorage(candidate, slice.parent);

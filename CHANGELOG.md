@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Prepare eligible initializer-only conversion prefixes using the existing
+  bounded weight cache, preserving live edits, independent mutable outputs and
+  subclass failure behavior. The
+  [complete source comparison](tests/benchmarks/paradee-conversion-prefix-20261107.md)
+  measures 10.0% lower short INT8 Paradee latency, with a 1.7% short FP32 cost;
+  both longer-case intervals include no change. Fresh committed-product ORT
+  parity remains unproved.
 - Write eligible AVX-512 convolution tiles directly into the final output,
   reusing existing packed kernels and preserving reduction and bias order. The
   [complete source comparison](tests/benchmarks/paradee-direct-wide-conv-20261107.md)
