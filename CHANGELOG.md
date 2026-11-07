@@ -21,10 +21,10 @@
   [complete source comparison](tests/benchmarks/paradee-lstm-panels-20261106.md)
   has lower latency estimates across all four Paradee cases; every confidence
   interval includes no change. Fresh ORT parity remains unproven.
-- Refresh the [complete Paradee native checkpoint](tests/benchmarks/paradee-runtime-20261107-bb2.md)
-  after bounded harmonic sine: both 62-token workloads pass the parity gate;
-  14-token FP32/INT8 remain 4.1%/15.0% slower. All 56 workers and 24 pairs remain,
-  with unchanged numerical limits. Overall ORT parity remains unproved.
+- Refresh the [complete Paradee native checkpoint](tests/benchmarks/paradee-runtime-20261107-9a2.md)
+  after direct wide convolution output, retaining all 56 workers and 24 pairs
+  with unchanged numerical limits. Native parity remains unproved for INT8 / 14 tokens.
+
 
 - Prepare bounded snapshots of exactly recognized Fourier weight generators,
   checking every live operand before copying independently owned outputs.

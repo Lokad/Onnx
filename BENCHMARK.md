@@ -38,40 +38,30 @@ These are workload-specific observations on one host. DINOv2 remains excluded un
 ## Paradee runtime — unreleased, 2026-11-07
 
 The original Paradee-8M-v1.2 exports run from supplied phoneme-ID tensors to
-owned waveforms. This complete checkpoint uses clean source `bb2ce132`, default
-.NET 11 RC3 and ORT 1.29.0 on the same VM. All 56 workers and 24 pairs remain.
-Every workload has six balanced independent engine pairs; each process keeps
-at least **32 calls and 40 seconds** conditioning, then 33 complete calls.
+owned waveforms. This fresh comparison uses clean source `9a2f27e6`, default
+.NET 11 RC3 and ORT 1.29.0 on the same VM. All 56 workers and 24 pairs remain;
+each timing process conditions for at least **32 calls and 40 seconds**, then
+measures 33 complete Reset/Execute/waveform-copy calls.
 
 | Original export | Tokens / speed | Lokad.Onnx seconds | Microsoft ORT seconds | Paired Lokad / ORT | 95% interval |
 | --- | --- | ---: | ---: | ---: | --- |
-| Paradee FP32 | 14 / 1.0 | 0.021325 | 0.020479 | **1.0413** | [1.0286, 1.0541] |
-| Paradee FP32 | 62 / 0.8 | 0.056330 | 0.069635 | **0.8088** | [0.7896, 0.8285] |
-| Paradee INT8 | 14 / 1.0 | 0.025161 | 0.021868 | **1.1502** | [1.1078, 1.1942] |
-| Paradee INT8 | 62 / 0.8 | 0.060161 | 0.069673 | **0.8633** | [0.8450, 0.8821] |
+| Paradee FP32 | 14 / 1.0 | 0.020507 | 0.020485 | **1.0010** | [0.9910, 1.0112] |
+| Paradee FP32 | 62 / 0.8 | 0.055020 | 0.069407 | **0.7926** | [0.7757, 0.8097] |
+| Paradee INT8 | 14 / 1.0 | 0.024293 | 0.021855 | **1.1111** | [1.0807, 1.1425] |
+| Paradee INT8 | 62 / 0.8 | 0.057379 | 0.069403 | **0.8267** | [0.8114, 0.8422] |
 
 Times are arithmetic process means; ratios are geometric paired means with
-two-sided log-Student-t intervals (df 5). Both 62-token cases pass the point and
-upper-endpoint `<1.03` gate. The 14-token FP32/INT8 estimates are 4.1%/15.0%
-slower; **overall ORT performance parity remains unproved**.
+two-sided log-Student-t intervals (df 5). **Native parity remains unproved for INT8 / 14 tokens.** The invocation finished in
+33.60 minutes. INT8 weights dequantize into FP32.
+Both frameworks pass the original numerical, ownership, full-scalar and native
+differential gates: operator/upstream scaled error <=1e-4, waveform peak <=1e-3,
+signal-to-error >=50 dB. See the [current report](tests/benchmarks/paradee-runtime-20261107-9a2.md)
+and [all clocks and identities](tests/benchmarks/paradee-runtime-20261107-9a2.json).
 
-INT8 weights dequantize into FP32. Both frameworks pass the existing numerical,
-ownership, full-scalar and native differential checks. Controlled companions
-retain upstream scaled error `<=1e-4`, waveform peak `<=1e-3` and signal-to-error
-ratio `>=50 dB`. The complete invocation finished in 33.65 minutes.
-See the [current report](tests/benchmarks/paradee-runtime-20261107-bb2.md) and
-[all clocks and identities](tests/benchmarks/paradee-runtime-20261107-bb2.json).
-
-The [previous checkpoint](tests/benchmarks/paradee-runtime-20261106-b47.md) keeps
-its original source and measurements. The retained
-[bounded harmonic-sine source comparison](tests/benchmarks/paradee-harmonic-sine-20261106.md)
-has its own matched controls; its ratios are not multiplied into this table.
-The seven-model 0.5.0 figures above retain their original source and date.
-
-The [pooled-Gather](tests/benchmarks/paradee-gather-pool-20261106.md),
-[convolution-admission](tests/benchmarks/paradee-conv-admission-20261106.md) and
-[live-reference lookup](tests/benchmarks/paradee-live-refs-20261106.md) experiments
-remain unmerged. Their complete observations and uncertainty remain available.
+The [previous checkpoint](tests/benchmarks/paradee-runtime-20261107-bb2.md) retains
+its original source and observations. No earlier clocks or source ratios are
+pooled into this table. The seven-model 0.5.0 figures above retain their original
+source and date.
 
 ## Running comparisons
 
