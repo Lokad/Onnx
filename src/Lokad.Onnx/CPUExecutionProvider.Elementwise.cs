@@ -577,7 +577,7 @@ public partial class CPUExecutionProvider
     {
         var op = OpType.Clip;
         if (data is null) return MissingInput(op, nameof(data));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated().Tensor;
         if (opset > 0 && opset < 6) return AttributeNotSupported(op, nameof(opset), opset.ToString(), "Clip support begins at opset 6.");
         bool legacy = opset < 11;
         if (legacy && (min is not null || max is not null))
@@ -599,17 +599,17 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         return data.ElementType switch
         {
-            TensorElementType.Float => ClipTyped((Tensor<float>)data, min, max, attrMin ?? float.MinValue, attrMax ?? float.MaxValue),
+            TensorElementType.Float => ClipTyped((Tensor<float>)data, min, max, attrMin ?? float.MinValue, attrMax ?? float.MaxValue, opts.UseSimd),
             TensorElementType.Double => ClipTyped((Tensor<double>)data, min, max,
                 legacy ? (double)(attrMin ?? float.MinValue) : double.MinValue,
-                legacy ? (double)(attrMax ?? float.MaxValue) : double.MaxValue),
-            TensorElementType.Int32 => ClipTyped((Tensor<int>)data, min, max, int.MinValue, int.MaxValue),
-            TensorElementType.Int64 => ClipTyped((Tensor<long>)data, min, max, long.MinValue, long.MaxValue),
+                legacy ? (double)(attrMax ?? float.MaxValue) : double.MaxValue, opts.UseSimd),
+            TensorElementType.Int32 => ClipTyped((Tensor<int>)data, min, max, int.MinValue, int.MaxValue, opts.UseSimd),
+            TensorElementType.Int64 => ClipTyped((Tensor<long>)data, min, max, long.MinValue, long.MaxValue, opts.UseSimd),
             _ => InputTypeNotSupported(op, nameof(data), data)
         };
     }
 
-    static OpResult ClipTyped<T>(Tensor<T> input, ITensor? min, ITensor? max, T defaultMin, T defaultMax) where T : unmanaged, INumber<T>
+    static OpResult ClipTyped<T>(Tensor<T> input, ITensor? min, ITensor? max, T defaultMin, T defaultMax, bool useSimd) where T : unmanaged, INumber<T>
     {
         T lo = min is Tensor<T> lower ? lower.GetValue(0) : defaultMin;
         T hi = max is Tensor<T> upper ? upper.GetValue(0) : defaultMax;
@@ -617,7 +617,21 @@ public partial class CPUExecutionProvider
         var y = DenseTensor<T>.OfShape(x.Dimensions.ToArray());
         var source = x.Buffer.Span;
         var destination = y.Buffer.Span;
-        for (int i = 0; i < source.Length; i++)
+        int i = 0;
+        if (useSimd && Vector.IsHardwareAccelerated && source.Length >= Vector<T>.Count)
+        {
+            int width = Vector<T>.Count;
+            var lowerBound = new Vector<T>(lo);
+            var upperBound = new Vector<T>(hi);
+            for (; i <= source.Length - width; i += width)
+            {
+                var value = new Vector<T>(source.Slice(i, width));
+                value = Vector.ConditionalSelect(Vector.LessThan(value, lowerBound), lowerBound, value);
+                value = Vector.ConditionalSelect(Vector.GreaterThan(value, upperBound), upperBound, value);
+                value.CopyTo(destination.Slice(i, width));
+            }
+        }
+        for (; i < source.Length; i++)
         {
             T value = source[i];
             // ONNX Clip applies the lower clamp, then the upper clamp. A single

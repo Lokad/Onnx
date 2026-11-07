@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Vectorize eligible Clip operations while preserving ordered bounds, NaN bits,
+  signed zeros, exact integer values and the scalar fallback.
 - Avoid temporary shape and stride arrays in prepared conversion checks,
   preserving live node, attribute, tensor and byte validation.
 - Prepare eligible initializer-only conversion prefixes using the existing
