@@ -9,10 +9,18 @@ Set-Location $root
 function Fail($msg) { Write-Host "FAIL smoke-pack: $msg"; exit 1 }
 
 $packageOutput = [IO.Path]::GetFullPath($Output)
-& dotnet pack src/Lokad.Onnx/Lokad.Onnx.csproj -c $Configuration -o $packageOutput --tl:off --nologo -v minimal | Out-Null
+$stamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
+$smokeRoot = Join-Path $packageOutput 'consumers'
+$work = Join-Path $smokeRoot ("app-" + $stamp)
+$feed = Join-Path $work "feed"
+New-Item -ItemType Directory $feed | Out-Null
+# Pack into this run's empty feed; an older or future-dated package in Output
+# must never be mistaken for the archive produced by this invocation.
+& dotnet pack src/Lokad.Onnx/Lokad.Onnx.csproj -c $Configuration -o $feed --tl:off --nologo -v minimal
 if ($LASTEXITCODE -ne 0) { Fail "core pack failed" }
-$nupkg = Get-ChildItem -LiteralPath $packageOutput -Filter 'Lokad.Onnx.*.nupkg' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $nupkg) { Fail "no core nupkg found under $packageOutput" }
+$packages = @(Get-ChildItem -LiteralPath $feed -Filter 'Lokad.Onnx.*.nupkg')
+if ($packages.Count -ne 1) { Fail "expected exactly one fresh core nupkg under $feed" }
+$nupkg = $packages[0]
 if ($nupkg.Name -notmatch "^Lokad\.Onnx\.(.+)\.nupkg$") { Fail ("unexpected package name: " + $nupkg.Name) }
 $version = $Matches[1]
 Write-Host "PASS pack"
@@ -57,13 +65,6 @@ try {
 }
 finally { $zip.Dispose() }
 Write-Host "PASS contents"
-$stamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
-$smokeRoot = Join-Path $packageOutput 'consumers'
-$work = Join-Path $smokeRoot ("app-" + $stamp)
-$feed = Join-Path $work "feed"
-New-Item -ItemType Directory -Force $work | Out-Null
-New-Item -ItemType Directory -Force $feed | Out-Null
-Copy-Item $nupkg.FullName $feed
 # Reuse the dependency already restored for the core; do not contact a remote feed.
 $coreAssets = Get-Content (Join-Path $root 'src/Lokad.Onnx/obj/project.assets.json') -Raw | ConvertFrom-Json
 $protobufPackage = $coreAssets.packageFolders.PSObject.Properties.Name |
@@ -121,6 +122,9 @@ $prefix = $smokeRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar) + [System
 if (-not $resolvedWork.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
     Fail "scratch cleanup path is outside artifacts/smoke-pack"
 }
+Get-ChildItem -LiteralPath $feed -Filter 'Lokad.Onnx.*' |
+    Where-Object { $_.Extension -in @('.nupkg', '.snupkg') } |
+    Copy-Item -Destination $packageOutput
 Remove-Item -LiteralPath $resolvedWork -Recurse -Force
 Write-Host "PASS consume"
 Write-Host "PASS smoke-pack"

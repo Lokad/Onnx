@@ -36,7 +36,7 @@ Use `OnnxImport.Load` for `byte[]` or `ReadOnlyMemory<byte>` input; it returns
 null on failure and records import diagnostics. Generated `Onnx`
 messages and `ProtoConversions` are included in the core package, as in v0.3.0.
 
-See the [core API guide](https://github.com/Lokad/Onnx/blob/master/src/Lokad.Onnx/README.md)
+See the [core API guide](src/Lokad.Onnx/README.md)
 for execution options, import behavior and output lifetime.
 
 ## Build and try the CLI
@@ -69,22 +69,22 @@ does not remove or overwrite shared cache entries to repair a mismatch.
 
 | Task | Models and guides |
 |---|---|
-| Text embeddings | [EmbeddingGemma 2 (FP32)](https://github.com/Lokad/Onnx/blob/master/tests/embeddinggemma2/README.md), [multilingual-e5-small](https://github.com/Lokad/Onnx/blob/master/tests/e5/README.md) |
+| Text embeddings | [EmbeddingGemma 2 (FP32)](tests/embeddinggemma2/README.md), [multilingual-e5-small](tests/e5/README.md) |
 | Image inference | MNIST, DINOv2, DINOv3, ResNet50 |
-| Speech transcription | [Whisper Large V3 Turbo](https://github.com/Lokad/Onnx/blob/master/tests/whisper/README.md), [Parakeet TDT 0.6B V3](https://github.com/Lokad/Onnx/blob/master/tests/parakeet/transcribe/README.md) |
-| Speaker diarization | [pyannote Community-1](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/diarization/README.md) |
-| Waveform synthesis from tensors | [Paradee-8M-v1.2 FP32 / INT8](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md#paradee-runtime) through the core graph API |
+| Speech transcription | [Whisper Large V3 Turbo](tests/whisper/README.md), [Parakeet TDT 0.6B V3](tests/parakeet/transcribe/README.md) |
+| Speaker diarization | [pyannote Community-1](tests/pyannote/diarization/README.md) |
+| Waveform synthesis from tensors | [Paradee-8M-v1.2 FP32 / INT8](docs/model-support.md#paradee-runtime) through the core graph API |
 | Transformer graph execution | GPT-2 |
 
 Support depends on the export's operators, opsets, element types and shapes.
-The [support matrix](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md)
+The [support matrix](docs/model-support.md)
 records tested exports and remaining limitations.
-[Benchmarks](https://github.com/Lokad/Onnx/blob/master/BENCHMARK.md) compare
+[Benchmarks](BENCHMARK.md) compare
 specific workloads with Microsoft ONNX Runtime.
 
 ## Development
 
-See the [development guide](https://github.com/Lokad/Onnx/blob/master/docs/code-maintenance.md)
+See the [development guide](docs/code-maintenance.md)
 for project boundaries, setup, validation and packaging. After building the solution:
 
 ```powershell
@@ -93,9 +93,9 @@ dotnet test eng/Tests.slnx -c Release --no-build --tl:off --nologo -v minimal
 
 Tests use bundled fixtures and explicitly staged local models. Missing large
 assets produce explicit skips. Python is needed for the separate native-reference
-checks, described in the [testing guide](https://github.com/Lokad/Onnx/blob/master/tests/README.md).
+checks, described in the [testing guide](tests/README.md).
 
 Run `pack.cmd` to build the core NuGet package. See the
-[changelog](https://github.com/Lokad/Onnx/blob/master/CHANGELOG.md) for release
-history and [runtime options](https://github.com/Lokad/Onnx/blob/master/docs/runtime-options.md)
+[changelog](CHANGELOG.md) for release
+history and [runtime options](docs/runtime-options.md)
 for memory policies and diagnostics.

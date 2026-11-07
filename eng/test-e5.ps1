@@ -11,7 +11,7 @@ Set-Location $root
 # moves last-ulp results run to run under contention; verified: scalar repeats
 # drift ~1e-05 in a few dozen cells with OSR on and are byte-identical with it
 # off. Tolerances remain the correctness bar; this only stabilizes repeats.
-# The perf lane (bench.ps1) intentionally keeps default JIT settings.
+# The perf lane (eng/bench.py) intentionally keeps default JIT settings.
 $savedJitOSR = $env:DOTNET_JitOSR
 try {
     $env:DOTNET_JitOSR = '0'

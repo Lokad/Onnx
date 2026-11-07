@@ -4,7 +4,7 @@
 
 The solution targets .NET 10 and .NET 11. The core `src/Lokad.Onnx` project is the only
 NuGet package. It contains tensors, CPU kernels, ONNX import and generated
-messages, the neutral `OnnxModel` description, graph preparation and execution.
+messages, the `OnnxModel` data description, graph preparation and execution.
 Google.Protobuf 3.33.5 or newer is its only runtime dependency.
 
 [Data](../src/Lokad.Onnx.Data/README.md) provides text/image/audio workflows;

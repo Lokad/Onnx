@@ -2,9 +2,8 @@
 
 This component comparison uses the exact kernels from the closed
 [AMD arithmetic/code proof](../projection-reduction-blocks/proof-results-20260920.md).
-It adds no product code, model inference or ORT timing. The complete prospective
-[ExecPlan](../../../.agent/m2-reduction-block-timing-20260920.md) fixes the workload,
-conditioning, sample order, limits and decision rules before execution.
+It adds no product code, model inference or ORT timing. The workload,
+conditioning, sample order and verification boundaries are described below.
 
 Each of four fresh AMD workers measures five synthetic e5 projection banks.
 Every visit clears outputs and computes all72 independent matrices, including

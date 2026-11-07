@@ -4,8 +4,7 @@ This diagnostic tests three source-defined intermediate rounding groups and
 their union across all21 existing frontend inputs and32 pipeline windows. It
 keeps the captured managed Hamming/mel float coefficients, exact `.97f`, FFT,
 framing and final float output type. It changes no product code or acceptance
-threshold. The [ExecPlan](../../../.agent/m3-filterbank-precision-20260920.md)
-defines the prospective arithmetic, complete-array checks and nomination rules.
+threshold. The arithmetic variants and complete-array checks are described below.
 
 Variants are Original; Frame (mean/DC/preemphasis/window in double); Spectrum
 (FFT components/magnitude/power in double); Output (log/centering in double);

@@ -53,7 +53,7 @@ public static class OnnxImport
 
     /// <summary>
     /// Parses a model from caller-owned memory without a <c>ToArray()</c> copy:
-    /// the pinned protobuf parser reads <see cref="ReadOnlyMemory{T}.Span"/>
+    /// the protobuf parser reads <see cref="ReadOnlyMemory{T}.Span"/>
     /// directly and the resulting DTO owns its bytes afterwards.
     /// </summary>
     /// <remarks>

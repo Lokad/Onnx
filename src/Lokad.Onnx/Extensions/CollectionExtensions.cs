@@ -22,18 +22,15 @@ namespace Lokad.Onnx
         public static string JoinWithSpaces(this IEnumerable<string> s) => string.Join(" ", s);
 
         public static T FailIfKeyNotPresent<T>(this Dictionary<string, object> d, string k)
-            => d.ContainsKey(k) ? (T)d[k] : throw new KeyNotFoundException($"The required key {k} is not present.");
+            => d.TryGetValue(k, out var value) ? (T)value : throw new KeyNotFoundException($"The required key {k} is not present.");
 
-        public static T? TryGet<T>(this Dictionary<string, object> d, string k) => d.ContainsKey(k) ? (T)d[k] : default(T);
+        public static T? TryGet<T>(this Dictionary<string, object> d, string k) => d.TryGetValue(k, out var value) ? (T)value : default(T);
 
-        public static T Get<T>(this Dictionary<string, object> d, string k) => d.ContainsKey(k) ? (T)d[k] : throw new KeyNotFoundException();
+        public static T Get<T>(this Dictionary<string, object> d, string k) => d.TryGetValue(k, out var value) ? (T)value : throw new KeyNotFoundException();
 
         public static void AddIfNotExists<K, V>(this Dictionary<K, V> d, K k, V v) where K : notnull
         {
-            if (!d.ContainsKey(k))
-            {
-                d.Add(k, v);
-            }
+            d.TryAdd(k, v);
         }
 
         

@@ -1,0 +1,40 @@
+<Project>
+  <!-- Keep one repository README. Only its packaged copy needs absolute links. -->
+  <PropertyGroup>
+    <_PackageReadme>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(BaseIntermediateOutputPath)', 'package-readme', 'README.md'))</_PackageReadme>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(_PackageReadme)" Pack="true" PackagePath="/README.md" Visible="false" />
+  </ItemGroup>
+
+  <UsingTask TaskName="ResolvePackageReadmeLinks" TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <InputFile ParameterType="System.String" Required="true" />
+      <OutputFile ParameterType="System.String" Required="true" />
+      <ProjectUrl ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var root = new Uri(ProjectUrl.TrimEnd('/') + "/blob/master/");
+        var text = Regex.Replace(File.ReadAllText(InputFile), @"(?<=\]\()[^\s)]+(?=\))", match =>
+        {
+            Uri absolute;
+            return match.Value.StartsWith("#") || Uri.TryCreate(match.Value, UriKind.Absolute, out absolute)
+                ? match.Value : new Uri(root, match.Value).AbsoluteUri;
+        });
+        Directory.CreateDirectory(Path.GetDirectoryName(OutputFile));
+        File.WriteAllText(OutputFile, text, new UTF8Encoding(false));
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="PreparePackageReadme" BeforeTargets="_GetPackageFiles">
+    <ResolvePackageReadmeLinks InputFile="$(MSBuildProjectDirectory)/../../README.md"
+                              OutputFile="$(_PackageReadme)" ProjectUrl="$(PackageProjectUrl)" />
+  </Target>
+</Project>

@@ -93,10 +93,8 @@ load/execution completes first.
 ## CPU comparisons and packaging
 
 Use the [routine benchmark command](../../eng/bench.md) for warmed, matched
-e5/Gemma comparisons against ORT. The root bench.ps1 script measures a fresh CLI
-process for each e5 sample, including startup/model load in wall time; its
-separate warmup process does not warm later samples. Microbenchmarks live in
-tests/Lokad.Onnx.Bench.
+e5/Gemma comparisons against ORT. Microbenchmarks live in
+[tests/Lokad.Onnx.Bench](../../tests/Lokad.Onnx.Bench).
 
 The core package contains tensors, ONNX import and graph execution, with
 Google.Protobuf as its only runtime dependency. Data and CLI use that importer.

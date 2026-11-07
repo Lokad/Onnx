@@ -42,10 +42,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="..\..\CHANGELOG.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -56,6 +52,8 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.111" PrivateAssets="All" />
     <PackageReference Include="Google.Protobuf" Version="3.33.5" />
   </ItemGroup>
+
+  <Import Project="../../eng/PackageReadme.targets" />
 
   <Target Name="EnforceReleasePackageConfiguration" BeforeTargets="GenerateNuspec"
           Condition="&apos;$(Configuration)&apos; != &apos;Release&apos; and &apos;$(AllowNonReleasePackage)&apos; != &apos;true&apos;">
