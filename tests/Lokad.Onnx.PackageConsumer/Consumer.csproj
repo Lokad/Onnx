@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <AssemblyName>Lokad.Onnx.PackageConsumer</AssemblyName>
-    <CorePackageVersion Condition="'$(CorePackageVersion)' == ''">0.5.0</CorePackageVersion>
+    <CorePackageVersion Condition="'$(CorePackageVersion)' == ''">0.6.0</CorePackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Lokad.Onnx" Version="[$(CorePackageVersion)]" />

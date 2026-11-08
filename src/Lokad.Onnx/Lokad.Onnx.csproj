@@ -13,13 +13,13 @@
     <Description>100% managed-code ONNX inference for .NET: tensor types and kernels, file-order graph execution over a CPU provider, and transparent buffer pooling.</Description>
     <Company>Lokad</Company>
     <Authors>Lokad</Authors>
-    <AssemblyVersion>0.5.0</AssemblyVersion>
-    <FileVersion>0.5.0</FileVersion>
-    <Version>0.5.0</Version>
+    <AssemblyVersion>0.6.0</AssemblyVersion>
+    <FileVersion>0.6.0</FileVersion>
+    <Version>0.6.0</Version>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>0.5.0 adds .NET 10 and .NET 11 targets and restores integrated ONNX file and buffer import with one Google.Protobuf dependency. Data and CLI remain nonpackable source projects. See CHANGELOG.md for changes and migration notes.</PackageReleaseNotes>
+    <PackageReleaseNotes>0.6.0 adds support for the original Paradee-8M-v1.2 FP32 and INT8 exports, additional ONNX operators and CPU kernel optimizations. Targets .NET 10 and .NET 11 with Google.Protobuf as the only runtime dependency. See CHANGELOG.md for details.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/Lokad/Onnx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Lokad/Onnx.git</RepositoryUrl>

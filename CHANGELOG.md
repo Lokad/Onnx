@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 — 2026-11-08
 
 - Run the original Paradee-8M-v1.2 FP32 and INT8 exports from supplied
   phoneme-ID, speed and voice tensors to owned waveforms. The
@@ -36,6 +36,12 @@
 - Refresh [established-model controls](tests/benchmarks/paradee-established-controls-20261107.md)
   and the [complete seven-model benchmark](tests/benchmarks/runtime-full-20261107-2f3b.md),
   retaining all 58 workers and actual elapsed time of 39.33 minutes.
+- Unify current CPU figures in the [benchmark overview](BENCHMARK.md) and use
+  relative repository links. Resolve links in the packaged README from the same
+  source document; remove obsolete agent plans and the startup benchmark script.
+- Isolate package smoke outputs so older or future-dated archives cannot be
+  mistaken for the package produced by the current invocation. Avoid repeated
+  dictionary lookups in collection helpers.
 
 
 ## 0.5.0 — 2026-10-30
