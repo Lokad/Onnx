@@ -2,6 +2,8 @@
 
 ## 0.6.0 — 2026-11-08
 
+Published on [NuGet.org](https://www.nuget.org/packages/Lokad.Onnx/0.6.0).
+
 - Run the original Paradee-8M-v1.2 FP32 and INT8 exports from supplied
   phoneme-ID, speed and voice tensors to owned waveforms. The
   [complete CPU comparison](tests/benchmarks/paradee-runtime-20261107-2f3b.md) establishes
